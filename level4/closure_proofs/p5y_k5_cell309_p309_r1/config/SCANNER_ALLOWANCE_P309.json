@@ -1,16 +1,70 @@
 {
- "schema": "P309_SCANNER_ALLOWANCE/1",
- "authority": "owner rulings 2 (governance/OWNER_RULINGS_2_P309_VERBATIM.md), section OWNER RULING - QUARANTINE SCANNER; spec fc2/FC2_SPEC_R2.md section 7",
- "scope": "the research scanner's TARGET_PATH finding for exactly the production marker NAME, as inert metadata, in exactly the listed files, under conditions (a)-(e); nothing else",
- "marker_literal": "refs/p5y-k5-cell309-p309-r1/target-consumed",
- "constant_name": "PRODUCTION_MARKER",
- "files": [
-  "code/p309_guard.py",
-  "verify/srk_verify_indep_scoped.py"
+ "schema": "P309_SCANNER_ALLOWANCE/2",
+ "authority": "owner rulings 2 (governance/OWNER_RULINGS_2_P309_VERBATIM.md), section OWNER RULING - QUARANTINE SCANNER; spec fc2/FC2_SPEC_R2.md section 7; rev. 2 of this file adds the pending-result ref NAME (the second exactly-once ref of package section A), in the guard file only, under the same conditions -- a proposed extension recorded in governance/P309_REV2C_AMENDMENTS.md for independent review",
+ "scope": "the research scanner's TARGET_PATH finding for exactly these exactly-once ref NAMES, as inert metadata, in exactly the listed files, under conditions (a)-(e); nothing else",
+ "names": [
+  {
+   "literal": "refs/p5y-k5-cell309-p309-r1/target-consumed",
+   "constant": "PRODUCTION_MARKER",
+   "files": [
+    "code/p309_guard.py",
+    "verify/srk_verify_indep_scoped.py"
+   ]
+  },
+  {
+   "literal": "refs/p5y-k5-cell309-p309-r1/pending-result",
+   "constant": "PENDING_REF",
+   "files": [
+    "code/p309_guard.py"
+   ]
+  }
  ],
- "mutating_git_verbs": ["update-ref", "push", "tag", "branch", "symbolic-ref", "replace", "notes", "fetch", "-d", "--delete", "-D"],
+ "mention_names": [
+  "PRODUCTION_MARKER",
+  "PENDING_REF",
+  "marker_ref",
+  "pending_ref",
+  "ref_namespace",
+  "_PROD_NAMESPACE"
+ ],
+ "mutating_git_verbs": [
+  "update-ref",
+  "push",
+  "tag",
+  "branch",
+  "symbolic-ref",
+  "replace",
+  "notes",
+  "fetch",
+  "-d",
+  "--delete",
+  "-D"
+ ],
  "production_ref_namespace": "refs/p5y-k5-cell309-p309-r1/",
- "production_grant_markers": ["P309_GRANT.json", "authorization/P309_GRANT"],
- "never_permits": ["creation of the marker ref", "mutation of the marker", "consumption of the marker", "construction of a production grant", "bypass of quarantine", "hidden evaluation"],
- "amendment_rule": "adding a file (e.g. the FC6 driver) requires a reviewed amendment of this file before the freeze"
+ "production_grant_markers": [
+  "P309_GRANT.json",
+  "authorization/P309_GRANT"
+ ],
+ "exactly_once_sites": [
+  {
+   "file": "code/p309_driver.py",
+   "function": "_arm_marker",
+   "ast_sha256": "1ee764b7b1cfca7b2fbda9b394e8af235239a2d308905a9f07f521b39b80be0c"
+  },
+  {
+   "file": "code/p309_driver.py",
+   "function": "_persist_pending",
+   "ast_sha256": "13ee3ec3b7ba4c3ff80103c16671d4697967bfb177f4ae964084c95ab2fbbaaf"
+  }
+ ],
+ "exactly_once_sites_rule": "a MARKER_MUTATION finding is sanctioned only inside a function listed here by file, function name and the sha256 of its ast.dump; every listed function must begin with a call to _assert_execute_context and be referenced only by run_execute, after_marker or run_seal_only (QC12 T4); the two sites are the FC6 exactly-once machinery (rev. 2c A10) and are subject to the independent pre-freeze review",
+ "never_permits": [
+  "creation of the marker ref outside a reviewed exactly-once site",
+  "mutation of the marker",
+  "consumption of the marker",
+  "construction of a production grant",
+  "bypass of quarantine",
+  "hidden evaluation"
+ ],
+ "amendment_rule": "adding a file or a site requires a reviewed amendment of this file before the freeze"
 }

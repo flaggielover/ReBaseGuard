@@ -384,8 +384,7 @@ if __name__ == "__main__":
     out = {"utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "guard_sha256": G.own_id()[7:], "test_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
            "git_head": sh(REPO, "rev-parse", "HEAD").strip(), "all_pass": ok, "results": res}
-    (FNS / "evidence" / "fc2").mkdir(parents=True, exist_ok=True)
-    (FNS / "evidence" / "fc2" / "GUARD_TESTS.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
+    (E.evidence_dir("fc2") / "GUARD_TESTS.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
     for k, v in res.items():
         print(f"[{'PASS' if v['pass'] else 'FAIL'}] {k}  {'' if v['pass'] else v['detail']}")
     sys.exit(0 if ok else 1)

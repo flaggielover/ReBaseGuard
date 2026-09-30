@@ -1,6 +1,13 @@
 """Mechanical evidence for the U2 corrected proposition (owner rulings 2, 2026-09-30; formal campaign p5y_k5_cell309_p309_r1).
 
-  python3 code/u2_structure_check.py      -> evidence/u2/U2_STRUCTURE_CHECK.json; exit 0 iff every check passes
+  python3 code/u2_structure_check.py      -> evidence/u2/U2_STRUCTURE_CHECK_V2.json; exit 0 iff every check passes
+
+Version 2 (U2 check conditions U3/U4): adds U3a (adapter fields bound by AST to the frozen tct_rule roles), U3b
+(srk_coefficients selects exactly min(old, new), None -> old), U3c (Stage-1 isolation over every loaded C1B module and
+the guard modules with a role whitelist; RLR307 helper and C1B pins against their own pin tables) and U4 (the driver,
+the rehearsal and the FC2 components: direct() called unchanged via the shim, no forbidden consumer call, Stage-1
+functions read no record or measurement, record fields only in their frozen roles, target inputs only from the
+historical control / execute, FC2 components isolated).  Version 1 evidence (U2_STRUCTURE_CHECK.json) stays as committed.
 
 Nothing is evaluated: no kernel, no consumer function, no cell.  Every check is a static analysis of pinned source
 text (Python AST) or of JSON key names.  No number of any tail cell is read or printed.
@@ -298,10 +305,18 @@ def s2_inventory() -> dict:
     }
 
 
-def _scan_module(rel: str) -> dict:
+def _scan_module(rel: str, refusal_lists=()) -> dict:
+    """refusal_lists: module-level names whose string constants are refusal patterns (a guard's forbidden-path list),
+    excluded from the record-word scan and reported separately."""
     raw, tree = _src(rel)
     imports, reads, named = set(), [], set()
+    skip = set()
+    for n in tree.body:
+        if isinstance(n, ast.Assign) and any(getattr(t, "id", None) in refusal_lists for t in n.targets):
+            skip |= {id(x) for x in ast.walk(n)}
     for n in ast.walk(tree):
+        if id(n) in skip:
+            continue
         if isinstance(n, ast.Import):
             imports.update(a.name.split(".")[0] for a in n.names)
         elif isinstance(n, ast.ImportFrom) and n.module:
@@ -321,11 +336,23 @@ def _scan_module(rel: str) -> dict:
             "record_words_in_string_constants": sorted(named)}
 
 
+C1B_LOAD_ORDER = ("c1b_gauss", "c1b_kernel", "c1b_float", "c1b_pw", "c1b_prov", "c1b_certpw")
+GUARD_MODULES = {"q309_guard": RNS + "code/q309_guard.py", "p309_guard": "level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_guard.py"}
+GUARD_ALLOWED_IMPORTS = {"q309_guard", "__future__", "ast", "datetime", "fractions", "hashlib", "importlib", "json", "os",
+                         "pathlib", "platform", "re", "socket", "subprocess", "sys"}
+
+
 def s3_isolation() -> dict:
     out = {k: _scan_module(v) for k, v in STAGE1.items()}
     pins = json.loads((REPO / C1B_PINS).read_bytes())
-    for f in pins["load_bearing"]:
+    for f in sorted(set(pins["load_bearing"]) | {n + ".py" for n in C1B_LOAD_ORDER}):
         out["c1b:" + f] = _scan_module(C1B_DIR + f)
+    for k, v in GUARD_MODULES.items():                     # role whitelist: a guard imports only stdlib + q309_guard
+        r = _scan_module(v, refusal_lists=("FORBIDDEN_PATH_PATTERNS",))
+        r["non_whitelisted_imports"] = sorted(set(r["imports"]) - GUARD_ALLOWED_IMPORTS)
+        if r["non_whitelisted_imports"]:
+            r["consumer_or_record_imports"] = r["consumer_or_record_imports"] + r["non_whitelisted_imports"]
+        out["guard:" + k] = r
     return out
 
 
@@ -346,6 +373,165 @@ def s4_no_record_recompute() -> dict:
             "adapter_subscripts_record_fields": adapter_touch}
 
 
+# ------------------------------------------------------------------ U3(a): adapter fields bound to the frozen roles
+FIELD_BINDING = {   # adapter key -> (adapter expression with m/obj_r/A, frozen expression in tct_rule, with names)
+    "sF": ("F(m['sup']['F'])", "sup:F"), "sD": ("F(m['sup']['D'])", "sup:D"), "sH": ("F(m['sup']['H'])", "sup:H"),
+    "fF": ("F(m['delta_F']) + F(m['eps_src'][0])", "F(meas_r['delta_F']) + F(meas_r['eps_src'][0])"),
+    "fD": ("F(m['delta_D']) + F(m['eps_src'][1])", "F(meas_r['delta_D']) + F(meas_r['eps_src'][1])"),
+    "fH": ("F(m['delta_H']) + F(m['eps_src'][2])", "F(meas_r['delta_H']) + F(meas_r['eps_src'][2])"),
+    "fG": ("F(obj_r['f_G'])", "obj:f_G"), "Env4": ("F(obj_r['env4'])", "obj:env4"),
+    "sigma3": ("F(obj_r['sigma3'])", "sig:sigma3"), "sigma4": ("F(obj_r['sigma4'])", "sig:sigma4"),
+    "eps3": ("F(m['eps_src'][3])", "F(meas_r['eps_src'][3])"),
+    "rho": ("F(rho)", None), "A0": ("F(A['A0'])", None), "A1": ("F(A['A1'])", None), "A2": ("F(A['A2'])", None)}
+
+
+def u3_field_binding() -> dict:
+    _, ad = _src(SRC["srk_adapter"])
+    _, tr = _src(SRC["tct_rule"])
+    fr = _fn(ad, "fields_for_r")
+    ret = _returned(fr)
+    got = {k.value: ast.unparse(v) for k, v in zip(ret.keys, ret.values)} if isinstance(ret, ast.Dict) else {}
+    to = _fn(tr, "tail_object")
+    frozen = {n.targets[0].id: ast.unparse(n.value) for n in ast.walk(to) if isinstance(n, ast.Assign)
+              and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name)}
+    gen = [ast.unparse(n.value) for n in ast.walk(to) if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Tuple)
+           and [e.id for e in n.targets[0].elts] == ["sF", "sD", "sH"]]
+    ret_obj = _returned(to)
+    obj_keys = {k.value: ast.unparse(v) for k, v in zip(ret_obj.keys, ret_obj.values)}
+    sig = ast.unparse(_fn(tr, "sigmas"))
+    res = {}
+    for key, (aexpr, fexpr) in FIELD_BINDING.items():
+        ok = got.get(key, "").replace('"', "'") == aexpr
+        if fexpr and fexpr.startswith("sup:"):
+            ok = ok and gen == ["(F(meas_r['sup'][x]) for x in ('F', 'D', 'H'))"]
+        elif fexpr and fexpr.startswith("obj:"):
+            ok = ok and fexpr[4:] in obj_keys
+        elif fexpr and fexpr.startswith("sig:"):
+            ok = ok and f"'{fexpr[4:]}'" in sig
+        elif fexpr:
+            ok = ok and (fexpr in frozen.values() or fexpr in ast.unparse(to))
+        res[key] = ok
+    res["_no_extra_keys"] = set(got) == set(FIELD_BINDING)
+    return res
+
+
+def u3_branch_selection() -> dict:
+    _, sa = _src(SRC["srk_assemble"])
+    sc = _fn(sa, "srk_coefficients")
+    txt = {n.targets[0].id: ast.unparse(n.value) for n in ast.walk(sc) if isinstance(n, ast.Assign)
+           and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name)}
+    tup = [n for n in ast.walk(sc) if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Tuple)
+           and [getattr(e, "id", None) for e in n.targets[0].elts] == ["old3", "old4"]]
+    rs = _fn(sa, "rad_srk")
+    uses = [ast.unparse(n.value) for n in ast.walk(rs) if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Tuple)
+            and [getattr(e, "id", None) for e in n.targets[0].elts][:2] == ["B3", "B4"]]
+    return {"old_is_frozen_product": bool(tup) and ast.unparse(tup[0].value) == "(A0 * f['fG'], A0 * f['Env4'])",
+            "B3_is_min_old_new": txt.get("B3") == "old3 if new3 is None or new3 >= old3 else new3",
+            "B4_is_min_old_new": txt.get("B4") == "old4 if new4 is None or new4 >= old4 else new4",
+            "rad_uses_selected_branches": uses == ["srk_coefficients(f, g)"]}
+
+
+# ------------------------------------------------------------------ U4: the drivers and the FC2 components
+DRIVER = {"p309_driver": "level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_driver.py",
+          "p309_rehearse": "level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_rehearse.py"}
+VARIANT = "level4/closure_proofs/p5y_k5_cell309_p309_r1/verify/srk_verify_indep_scoped.py"
+FORBIDDEN_CONSUMER_CALLS = {"main", "compose", "requirement", "classify", "critical_ratio", "atom_constant_requirement",
+                            "adopted_state", "tail_enclosures", "order3_inputs"}
+STAGE1_FUNCS = {"stage1a", "job_stage1a", "stage1b", "job_stage1b", "run_jobs", "_spawn_job", "stage1a_jobs",
+                "_check_worker_pins", "decoy_stage1a", "decoy_stage1b"}
+STAGE1_FORBIDDEN_NAMES = {"cell_inputs", "s_i1", "historical_control", "evaluate_srk", "evaluate_tct", "meas", "aux",
+                          "ci", "ad", "tct_inputs_target", "adopted_inputs", "registry_c1", "registry_c2",
+                          "record_manifest", "c2_forecast", "coverage_r5"}
+RECORD_FIELDS = {"C_upper", "auxiliary_evidence", "eps_cell_refined", "R2_interval", "M_R2", "R_interval", "D_interval",
+                 "record_sha256", "candidate_suprema", "midpoint_eps"}
+
+
+def u4_drivers() -> dict:
+    out = {}
+    trees = {k: _src(v)[1] for k, v in DRIVER.items()}
+    d = trees["p309_driver"]
+    ev = _fn(d, "evaluate_srk")
+    direct_calls = [n for n in ast.walk(ev) if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+                    and n.func.attr == "direct"]
+    shim_ok = (len(direct_calls) == 1 and isinstance(direct_calls[0].args[0], ast.Name)
+               and direct_calls[0].args[0].id == "shim")
+    cross = any(isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr ==
+                "tail_enclosure_crosscheck" for n in ast.walk(ev))
+    shim_cls = next(n for n in ast.walk(d) if isinstance(n, ast.ClassDef) and n.name == "_SRKShim")
+    te = next(n for n in shim_cls.body if isinstance(n, ast.FunctionDef) and n.name == "tail_enclosure")
+    te_ok = any(isinstance(n, ast.Raise) for n in ast.walk(te)) and "self._args" in ast.unparse(te)
+    out["i_direct_called_unchanged_via_shim"] = shim_ok and cross and te_ok
+    bad_calls = []
+    for k, t in trees.items():
+        for n in ast.walk(t):
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr in FORBIDDEN_CONSUMER_CALLS:
+                bad_calls.append(f"{k}:{n.lineno}:{n.func.attr}")
+            if isinstance(n, ast.Constant) and isinstance(n.value, str) and (
+                    "baseline" in n.value or "FEASIBILITY_GATES" in n.value):
+                bad_calls.append(f"{k}:{n.lineno}:gate-baseline string")
+    out["ii_no_forbidden_consumer_calls"] = not bad_calls
+    out["ii_detail"] = bad_calls
+    leaks = []
+    for fn in [n for n in ast.walk(d) if isinstance(n, ast.FunctionDef) and n.name in STAGE1_FUNCS]:
+        names = {x.id for x in ast.walk(fn) if isinstance(x, ast.Name)} | {
+            x.value for x in ast.walk(fn) if isinstance(x, ast.Constant) and isinstance(x.value, str)} | {
+            x.attr for x in ast.walk(fn) if isinstance(x, ast.Attribute)}
+        hit = sorted(names & STAGE1_FORBIDDEN_NAMES)
+        if hit:
+            leaks.append(f"{fn.name}:{hit}")
+    out["iii_stage1_reads_no_record_or_measurement"] = not leaks
+    out["iii_detail"] = leaks
+    stores, reads_outside = [], []
+    for k, t in trees.items():
+        fn_of = {}
+        for fnode in [n for n in ast.walk(t) if isinstance(n, ast.FunctionDef)]:
+            for x in ast.walk(fnode):
+                fn_of.setdefault(id(x), fnode.name)
+        for n in ast.walk(t):
+            if isinstance(n, ast.Subscript) and isinstance(n.slice, ast.Constant) and n.slice.value in RECORD_FIELDS:
+                where = fn_of.get(id(n))
+                if isinstance(n.ctx, ast.Store):
+                    stores.append(f"{k}:{where}:{n.slice.value}")
+                elif k == "p309_driver" and where not in ("cell_inputs",):
+                    reads_outside.append(f"{k}:{where}:{n.slice.value}")
+    # the one store allowed is C2 main's copy of the adopted C_upper into the measurement dict, in cell_inputs
+    out["iv_record_fields_read_only_in_frozen_roles"] = (stores == ["p309_driver:cell_inputs:C_upper"]
+                                                         and not reads_outside)
+    out["iv_detail"] = {"stores": stores, "reads_outside_cell_inputs": reads_outside}
+    ci = _fn(d, "cell_inputs")
+    callers = sorted({fn.name for fn in ast.walk(d) if isinstance(fn, ast.FunctionDef) and fn.name != "cell_inputs"
+                      and any(isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "cell_inputs"
+                              for n in ast.walk(fn))})
+    out["v_cell_inputs_callers"] = callers
+    out["v_cell_inputs_only_from_the_control"] = callers == ["historical_control"] and "execute" in ast.unparse(ci)
+    comp = {k: _scan_module(v) for k, v in {"p309_guard": GUARD_MODULES["p309_guard"], "variant": VARIANT}.items()
+            if (REPO / v).exists()}
+    out["vi_fc2_components_isolated"] = all(not v["consumer_or_record_imports"]
+                                            and not v["record_words_in_string_constants"] for v in comp.values())
+    out["vi_detail"] = {k: {"imports": v["imports"], "record_words": v["record_words_in_string_constants"]}
+                        for k, v in comp.items()}
+    return out
+
+
+def pins_match_stage1b() -> dict:
+    """the RLR307 helpers against the 307 driver's HELPER_SHA256 and the C1B files against C1B_R2_CODE_PINS."""
+    import re as _re
+    drv = (REPO / "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/rlr307_driver.py").read_text()
+    tree = ast.parse(drv)
+    helper = next(ast.literal_eval(n.value) for n in tree.body if isinstance(n, ast.Assign)
+                  and getattr(n.targets[0], "id", "") == "HELPER_SHA256")
+    out = {}
+    for name, want in helper.items():
+        rel = "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/" + name
+        out[rel] = hashlib.sha256((REPO / rel).read_bytes()).hexdigest() == want
+    cpins = json.loads((REPO / C1B_PINS).read_bytes())["pins"]
+    for n in C1B_LOAD_ORDER:
+        rel = C1B_DIR + n + ".py"
+        want = cpins[n + ".py"]
+        out[rel] = bool(_re.fullmatch(r"[0-9a-f]{64}", want)) and hashlib.sha256((REPO / rel).read_bytes()).hexdigest() == want
+    return out
+
+
 def pins_match() -> dict:
     man = json.loads((REPO / MANIFEST).read_bytes())
     pins = {p["path"]: p for p in man["code_pins"]}
@@ -360,6 +546,7 @@ def pins_match() -> dict:
 def main() -> int:
     s1, s2, s3, s4 = s1_identity(), s2_inventory(), s3_isolation(), s4_no_record_recompute()
     pm = pins_match()
+    u3a, u3b, u4, p1b = u3_field_binding(), u3_branch_selection(), u4_drivers(), pins_match_stage1b()
     checks = {
         "S1_symbolic_identity": all(v for k, v in s1.items() if isinstance(v, bool)),
         "S3_stage1_no_consumer_or_record_import": all(not v["consumer_or_record_imports"] for v in s3.values()),
@@ -369,15 +556,21 @@ def main() -> int:
                                                                {"R2_interval", "M_R2", "R_interval", "D_interval"}),
         "S4_adapter_touches_no_record_field": not s4["adapter_subscripts_record_fields"],
         "pins": all(v == "PINNED_MATCH" for v in pm.values()),
+        "U3a_adapter_fields_bound_to_frozen_roles": all(u3a.values()),
+        "U3b_branch_selection_is_min": all(u3b.values()),
+        "U3c_stage1b_pins": all(p1b.values()),
+        "U4_drivers": all(v for k, v in u4.items() if isinstance(v, bool)),
     }
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True).stdout.strip()
     out = {"schema": "p309.u2-structure-check/1", "git_head": head,
            "utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "tool_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-           "ok": all(checks.values()), "checks": checks, "S1": s1, "S2": s2, "S3": s3, "S4": s4, "pins": pm}
-    d = FNS / "evidence" / "u2"
-    d.mkdir(parents=True, exist_ok=True)
-    (d / "U2_STRUCTURE_CHECK.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
+           "ok": all(checks.values()), "checks": checks, "S1": s1, "S2": s2, "S3": s3, "S4": s4, "pins": pm,
+           "U3a": u3a, "U3b": u3b, "U3c_pins_stage1b": p1b, "U4": u4, "version": 2}
+    sys.path.insert(0, str(FNS / "code"))
+    import p309_env as E
+    d = E.evidence_dir("u2")
+    (d / "U2_STRUCTURE_CHECK_V2.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
     print(json.dumps({"ok": out["ok"], "checks": checks}, indent=1))
     return 0 if out["ok"] else 1
 

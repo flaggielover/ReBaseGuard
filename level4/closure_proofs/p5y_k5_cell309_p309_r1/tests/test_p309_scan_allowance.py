@@ -84,7 +84,29 @@ def run() -> dict:
     R["C10_refusal_test_mark_does_not_cover_literal"] = res["verdict"] == "FAIL"
     res = full_scan({"code/p309_guard.py": GUARD})
     R["C11_formal_planted_control_fires_all"] = res["formal_controls_fire_all_kinds"]
-    R["C12_allowed_findings_are_listed"] = len(res["allowed_marker_name"]) == 1
+    R["C12_allowed_findings_are_listed"] = len(res["allowed_marker_name"]) == len(S.NAMES)
+    # the pending-result NAME: allowed only in the guard
+    pend = [n for n in S.NAMES if n["constant"] == "PENDING_REF"][0]["literal"]
+    res = full_scan({"code/p309_guard.py": GUARD, "code/p309_driver_x.py": 'P = "' + pend + '"\n'})
+    R["C13_pending_literal_outside_guard"] = res["verdict"] == "FAIL"
+    # exactly-once sites: an unlisted ref mutation through a context attribute is a finding ...
+    site_src = ("def _arm_marker(ctx, c):\n    _assert_execute_context(ctx)\n"
+                "    return git('update-ref', ctx.marker_ref, c, '0' * 40)\n")
+    R["C14_unlisted_site_is_a_finding"] = "MARKER_MUTATION" in kinds(site_src, "code/p309_driver.py")
+    # ... a listed site (file, function, ast sha) is sanctioned, and any change to its body is a finding again
+    import hashlib as _h
+    fn = next(n for n in ast.walk(ast.parse(site_src)) if isinstance(n, ast.FunctionDef))
+    saved = list(S.SITES)
+    S.SITES[:] = [{"file": "code/p309_driver.py", "function": "_arm_marker",
+                   "ast_sha256": _h.sha256(ast.dump(fn).encode()).hexdigest()}]
+    try:
+        hits: list = []
+        ok_listed = not S.formal_rules(ast.parse(site_src), "code/p309_driver.py", hits) and len(hits) == 1
+        changed = site_src.replace("'0' * 40", "'HEAD'")
+        R["C15_listed_site_sanctioned_changed_body_refused"] = ok_listed and "MARKER_MUTATION" in kinds(
+            changed, "code/p309_driver.py")
+    finally:
+        S.SITES[:] = saved
     return R
 
 
@@ -97,8 +119,7 @@ if __name__ == "__main__":
     out = {"utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "scan_sha256": hashlib.sha256((FNS / "code" / "p309_scan.py").read_bytes()).hexdigest(),
            "test_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), "all_pass": ok, "results": r}
-    (FNS / "evidence" / "fc2").mkdir(parents=True, exist_ok=True)
-    (FNS / "evidence" / "fc2" / "SCAN_ALLOWANCE_CONTROLS.json").write_text(json.dumps(out, indent=1,
+    (E.evidence_dir("fc2") / "SCAN_ALLOWANCE_CONTROLS.json").write_text(json.dumps(out, indent=1,
                                                                                       sort_keys=True) + "\n")
     for k, v in r.items():
         print(f"[{'PASS' if v else 'FAIL'}] {k}")

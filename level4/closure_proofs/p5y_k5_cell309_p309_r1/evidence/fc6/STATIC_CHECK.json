@@ -1,0 +1,57 @@
+{
+ "all_pass": true,
+ "driver_sha256": "992178a8ce28e704e366dc0c4e3a581b3da75bbb0e6ae02d01958b8077f1dfae",
+ "results": {
+  "T1_no_path_from_qualification_modes_to_target": {
+   "detail": {
+    "_job": [],
+    "decoy-stage1a": [],
+    "decoy-stage1b": [],
+    "preflight": [],
+    "rehearse": []
+   },
+   "pass": true
+  },
+  "T2_fc4_static_items": {
+   "detail": [],
+   "pass": true
+  },
+  "T3_target_inputs_only_via_the_control": {
+   "detail": {
+    "cell_inputs": [
+     "historical_control"
+    ],
+    "historical_control": [
+     "run_execute"
+    ]
+   },
+   "pass": true
+  },
+  "T4_exactly_once_sites": {
+   "detail": {
+    "_arm_marker": {
+     "ok": true,
+     "referrers": [
+      "run_execute"
+     ],
+     "starts_with_assert": true
+    },
+    "_persist_pending": {
+     "ok": true,
+     "referrers": [
+      "after_marker",
+      "run_seal_only"
+     ],
+     "starts_with_assert": true
+    }
+   },
+   "pass": true
+  },
+  "T5_formal_scan": {
+   "detail": "PASS",
+   "pass": true
+  }
+ },
+ "tool_sha256": "51c74412a5eddf38c5308f26a11745ff1e42f512dafc8ea81bf0709f93eb3536",
+ "utc": "2026-09-30T03:31:22Z"
+}

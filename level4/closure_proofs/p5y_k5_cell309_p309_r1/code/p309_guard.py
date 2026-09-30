@@ -37,6 +37,7 @@ TEST_GEOMETRY = (F(3), F(1, 2))
 
 # ---- spec section 2.1: production context (hard-coded; the only occurrence of the marker literal) ---------------
 PRODUCTION_MARKER = "refs/p5y-k5-cell309-p309-r1/target-consumed"  # q309: literal-ok (inert marker NAME; read-only use)
+PENDING_REF = "refs/p5y-k5-cell309-p309-r1/pending-result"  # q309: literal-ok (inert pending-ref NAME; read-only here)
 _PROD_NAMESPACE = "refs/p5y-k5-cell309-p309-r1/"  # q309: literal-ok (ref namespace, read-only use)
 _FNS_REL = "level4/closure_proofs/p5y_k5_cell309_p309_r1/"
 _PROD_GRANT_PATH = _FNS_REL + "authorization/P309_GRANT.json"
@@ -45,6 +46,7 @@ _PROD_CELL = 309  # q309: literal-ok (the grant's cell field must equal this; co
 
 # ---- spec section 2.2: test context constants ---------------------------------------------------------------------
 TEST_MARKER = "refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_MARKER"
+TEST_PENDING_REF = "refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_PENDING"
 _TEST_NAMESPACE = "refs/p309-test/"
 _TEST_GRANT_PATH = "TEST_ONLY/P309_TEST_GRANT.json"
 _TEST_MANIFEST_PATH = "TEST_ONLY/P309_TEST_FREEZE_MANIFEST.json"
@@ -120,6 +122,7 @@ class _Production:
     geometry = REAL_GEOMETRY
     band = REAL_BAND
     marker_ref = PRODUCTION_MARKER
+    pending_ref = PENDING_REF
     ref_namespace = _PROD_NAMESPACE
     grant_path = _PROD_GRANT_PATH
     manifest_path = _PROD_MANIFEST_PATH
@@ -148,6 +151,7 @@ class TestContext:
     geometry = TEST_GEOMETRY
     band = TEST_BAND
     marker_ref = TEST_MARKER
+    pending_ref = TEST_PENDING_REF
     ref_namespace = _TEST_NAMESPACE
     grant_path = _TEST_GRANT_PATH
     manifest_path = _TEST_MANIFEST_PATH

@@ -8,6 +8,7 @@
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -31,3 +32,13 @@ def log(script: str, purpose: str, *, klass: str, drifts=None, notes: str = "") 
 def exposure(ref: str, path: str, *, content: str, necessity: str, carried_309_numbers: bool) -> dict:
     return Q.log_exposure("formal-campaign coordinator", ref, path, content=content, necessity=necessity,
                           carried_309_numbers=carried_309_numbers)
+
+
+def evidence_dir(sub: str) -> Path:
+    """where a formal tool writes its evidence: FNS/evidence/<sub> by default; during qualification the QC runner sets
+    P309_EVIDENCE_DIR so that every output lands under qualification/ (the qualification commit may touch nothing else,
+    rev. 2c A8)."""
+    base = Path(os.environ.get("P309_EVIDENCE_DIR", str(FNS / "evidence")))
+    d = base / sub
+    d.mkdir(parents=True, exist_ok=True)
+    return d

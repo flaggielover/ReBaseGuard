@@ -77,14 +77,61 @@ def run() -> dict:
             res[name] = fired
         U.SRC.clear(); U.SRC.update(saved_src)
         U.STAGE1.clear(); U.STAGE1.update(saved_s1)
+        # ---- version 2 controls (U2 check U3(d)): RV1-RV3 and the U3c / U4 extensions
+        v2 = [
+            ("RV1_sH_takes_a_new_adopted_product", "srk_adapter", 'F(m["sup"]["H"]),',
+             'F(m["sup"]["H"]) + F(m["delta_H"]) * F(m["sup"]["D"]),', "U3a"),
+            ("RV2_sigma3_multiplied_by_an_adopted_sup", "srk_adapter", '"sigma3": F(obj_r["sigma3"])',
+             '"sigma3": F(obj_r["sigma3"]) * F(m["sup"]["F"])', "U3a"),
+            ("RV3_selection_adds_an_adopted_product", "srk_assemble",
+             "B3 = old3 if new3 is None or new3 >= old3 else new3",
+             'B3 = old3 if new3 is None or new3 >= old3 else new3 + f["sH"] * f["sD"]', "U3b"),
+        ]
+        for name, key, old, new, check in v2:
+            U.SRC.clear(); U.SRC.update(saved_src)
+            U.SRC[key] = planted(saved_src[key], old, new, tmp)
+            r = U.u3_field_binding() if check == "U3a" else U.u3_branch_selection()
+            res[name] = not all(r.values())
+        U.SRC.clear(); U.SRC.update(saved_src)
+        saved_g = dict(U.GUARD_MODULES)
+        U.GUARD_MODULES["p309_guard"] = planted(saved_g["p309_guard"], "\nimport hashlib\n",
+                                                "\nimport hashlib\nimport tct_rule\n", tmp)
+        res["U3c_guard_imports_a_consumer"] = any(v["consumer_or_record_imports"] for v in U.s3_isolation().values())
+        U.GUARD_MODULES.clear(); U.GUARD_MODULES.update(saved_g)
+        saved_d = dict(U.DRIVER)
+        drv = saved_d["p309_driver"]
+        u4 = [
+            ("U4i_direct_not_through_the_shim", 'res = con["C2F"].direct(shim, R,', 'res = con["C2F"].direct(con["T"], R,',
+             "i_direct_called_unchanged_via_shim"),
+            ("U4ii_forbidden_consumer_call", "    shim = _SRKShim(", "    con[\"FC\"].compose(None, 5, None)\n    shim = _SRKShim(",
+             "ii_no_forbidden_consumer_calls"),
+            ("U4iii_stage1_reads_target_inputs", "    wb, subs = S.cell_blocks(cell[0], cell[1])\n    specs",
+             "    wb, subs = S.cell_blocks(cell[0], cell[1])\n    _x = cell_inputs\n    specs",
+             "iii_stage1_reads_no_record_or_measurement"),
+            ("U4iv_record_interval_rewritten", "    shim = _SRKShim(", '    ci["ad"]["R2_interval"] = None\n    shim = _SRKShim(',
+             "iv_record_fields_read_only_in_frozen_roles"),
+            ("U4v_target_inputs_from_another_function", "def stage1a_jobs() -> list:\n",
+             "def stage1a_jobs() -> list:\n    cell_inputs(None, None, 0)\n", "v_cell_inputs_only_from_the_control"),
+        ]
+        for name, old, new, key in u4:
+            U.DRIVER.clear(); U.DRIVER.update(saved_d)
+            U.DRIVER["p309_driver"] = planted(drv, old, new, tmp)
+            try:
+                res[name] = U.u4_drivers()[key] is False
+            except Exception:  # noqa: BLE001
+                res[name] = True
+        U.DRIVER.clear(); U.DRIVER.update(saved_d)
+        res["genuine_U3_U4"] = (all(U.u3_field_binding().values()) and all(U.u3_branch_selection().values())
+                                and all(v for v in U.u4_drivers().values() if isinstance(v, bool)))
     return res
 
 
 if __name__ == "__main__":
     r = run()
     import datetime, hashlib, json
-    (FNS / "evidence" / "u2").mkdir(parents=True, exist_ok=True)
-    (FNS / "evidence" / "u2" / "U2_CONTROLS.json").write_text(json.dumps(
+    sys.path.insert(0, str(FNS / "code"))
+    import p309_env as E
+    (E.evidence_dir("u2") / "U2_CONTROLS_V2.json").write_text(json.dumps(
         {"utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
          "test_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
          "checker_sha256": hashlib.sha256((FNS / "code" / "u2_structure_check.py").read_bytes()).hexdigest(),
