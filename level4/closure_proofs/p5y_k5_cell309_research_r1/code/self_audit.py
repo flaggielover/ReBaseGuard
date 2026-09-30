@@ -133,9 +133,9 @@ def run(label: str) -> tuple:
     res["A10_verifier_probes_no_inband_evaluation"] = pe.returncode == 0
     remote = subprocess.run(["git", "ls-remote", "origin", f"refs/heads/{BRANCH}"], cwd=REPO, capture_output=True,
                             text=True).stdout.split()
-    detail["A10_local_head"] = git("rev-parse", "HEAD")
-    detail["A10_remote_head"] = remote[0] if remote else None
-    detail["A10_dirty"] = git("status", "--porcelain").splitlines()
+    detail["A11_local_head"] = git("rev-parse", "HEAD")
+    detail["A11_remote_head"] = remote[0] if remote else None
+    detail["A11_dirty"] = git("status", "--porcelain").splitlines()
     ok = all(res.values())
     out = {"label": label, "utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "ok": ok, "checks": res, "detail": detail,

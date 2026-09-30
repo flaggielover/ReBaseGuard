@@ -120,3 +120,12 @@ RESEARCHABLE as trust.**
 
 Only R16 (with its option R17 and the optional min-composed component R4) is unblocked by data, host and liability.
 The preferred-route rule is fixed in `registry/ROUTE_SELECTION_RULE.md` before any decoy comparison between routes.
+
+## Status update (2026-09-30 ~00:5xZ; after independent review R2)
+
+| route | class now | basis |
+|---|---|---|
+| R16 SRK (whole kernel), as P309 package 1 with R4 min-composed | **FREEZE_READY** | Review R2 phases A–D (C1–C4 closed); single-code-state qualification: 19/19 jobs, 87 certificates independently ACCEPTED, v2 batteries 1868/1868, MC 55/55 + 8/8, A2 end to end PASS. An actual freeze needs owner authorization (P0-1) |
+| R17 SRK-T | RESEARCHABLE (OUT of package 1, rule S C5) | No certified D_lo path on decoys. The declared taboo family was withdrawn before any result (ERRATA E-15). Reconsideration is possible only before any 309 number exists, and requires the full family |
+| R4 RLR | min-composed component of P309 (owner decision G3) | unchanged |
+| all other routes | unchanged (see the table above) | — |

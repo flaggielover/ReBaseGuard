@@ -6,7 +6,7 @@
 For each recorded verification in verify/VERIFY_RESULTS.json (harness v2, current) and in the last harness-v1 record
 (commit bf5c87c4), the probe certificates are RECONSTRUCTED with the harness's own constructors (mutants(), malformed();
 building the dicts evaluates nothing), matched to the recorded outcome by name, and split into
-  evaluated  (any outcome other than REFUSE: the verifier computed something), and
+  evaluated  (any outcome other than REFUSE; conservative: sha256 and (C4) rejections are counted as evaluated), and
   refused    (REFUSE: rejected at parse time, before any evaluation).
 Reported: per harness version and geometry class, the drift envelope [min, max] over block and weight_block of the
 EVALUATED probes, and every probe meeting the band with its outcome.  The self-tests' kernel closed-form check is
@@ -48,6 +48,10 @@ def meets_band(a: Fr, b: Fr) -> bool:
 
 
 def envelope(harness, results: dict, v2: bool) -> dict:
+    """v2=True: only verifications whose mutant records carry the CURRENT harness sha (v2-stamped) are rebuilt with the
+    v2 constructors; v1-annotated records (the preliminary certificates) are covered by the v1 pass.  Counts are per
+    PROBE (a probe meets the band if its block or its weight block does)."""
+    cur = results.get("harness", {}).get("current_harness_sha256")
     env, inband, counts = {}, [], Counter()
     for rel, fr in results["files"].items():
         d = json.loads((NS / rel).read_text())
@@ -56,6 +60,8 @@ def envelope(harness, results: dict, v2: bool) -> dict:
         fk = d.get("kernel")
         for lab, e in fr.items():
             if not isinstance(e, dict) or "verdict" not in e:
+                continue
+            if v2 and not all(m.get("harness_sha256") == cur for m in e.get("mutants", {}).values()):
                 continue
             raw = d["certificates"][lab]
             probes = [("genuine", raw, e["verdict"])]
@@ -67,12 +73,14 @@ def envelope(harness, results: dict, v2: bool) -> dict:
             for name, c, verdict in probes:
                 ivs = [c.get("block")] + ([c["weight_block"]] if c.get("weight_block") else [])
                 counts[("evaluated" if verdict != "REFUSE" else "refused", "real" if real else "synthetic")] += 1
+                hit = False
                 for iv in ivs:
                     try:
                         a, b = Fr(iv[0]), Fr(iv[1])
                     except (TypeError, ValueError, ZeroDivisionError):
                         continue
-                    if real and meets_band(a, b):
+                    if real and meets_band(a, b) and not hit:
+                        hit = True
                         inband.append({"file": rel.split("/")[-1], "cert": lab, "probe": name, "outcome": verdict})
                     if verdict == "REFUSE":
                         continue

@@ -127,3 +127,23 @@ Closure-only.
 | taboo family | not run: SRK-T is OUT of package 1, so it would add nothing load-bearing |
 | tightness (decoy-only; not load-bearing) | Γ/MC 0.99–1.39 on whole blocks. The loosest are the small-drift real-kernel blocks |
 | independent route review R2 | phase A: no science blocker, and P-1/P-2 repaired. Phase B is being launched now |
+
+## Phase 3 decision (2026-09-30 ~00:5xZ; after independent review R2 = FREEZE_READY)
+
+**Preferred route (rule S, unchanged since 13:52Z):** P309 package 1, made of:
+* the frozen K5-B direct clause;
+* the TC-T order-0 channel term replaced by the SRK-0 whole-kernel B3/B4 min construction;
+* supply S = (A0_I1, min(A1_I1, A1_RLR), min(A2_I1, A2_RLR)).
+
+It is closure-only. SRK-T is OUT (C5).
+
+**Class: FREEZE_READY.** This is independent review R2 (`reviews/REVIEW_SRK_R2.md`, line 2), phase A–D:
+* phase B: FREEZE_READY_WITH_CONDITIONS, with conditions C1–C3;
+* phase C: C1–C3 closed, with a new condition C4;
+* phase D: C4 closed, with no blocker of any class.
+
+The reviewer states that this classifies readiness only. **An actual freeze requires owner authorization (protocol
+precondition P0-1)**, so the research campaign stops at **READY_TO_FREEZE_PENDING_OWNER_AUTHORIZATION**.
+
+The decision used no 309 quantity and no decoy gain. Efficacy at 309 is unknown by design. If SRK fails to certify at
+309, the route falls back to TC-T: that is safe, but it spends the single evaluation.
