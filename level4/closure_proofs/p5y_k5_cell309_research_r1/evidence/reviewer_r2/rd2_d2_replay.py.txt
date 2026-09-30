@@ -1,0 +1,28 @@
+import random, re, inspect, sys
+from fractions import Fraction as Fr
+src = open("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1/tests/test_verify_selftests.py").read()
+body = src[src.index("def test_closed_form_vs_quadrature"):src.index("class TestTaylorModels")]
+assert "random.Random(11)" in body and "rnd.uniform(-0.3, 0.3)" in body and "rnd.randint(-8, 8), 8" in body
+rnd = random.Random(11); rows = []
+for (h, k) in ((Fr(5), Fr(1, 2)), (Fr(3), Fr(1, 2)), (Fr(4), Fr(1, 3))):
+    for taboo in (False, True):
+        d = rnd.choice([2, 4, 5])
+        P0 = {(a, b): Fr(rnd.randint(-9, 9), rnd.randint(1, 5)) for a in range(d + 1) for b in range(d + 1 - a)}
+        P1 = {(a, b): Fr(rnd.randint(-9, 9), rnd.randint(1, 5)) for a in range(d + 1) for b in range(d + 1 - a)}
+        ec = Fr(rnd.randint(-8, 8), 8)
+        S = float(h - 2 * k)
+        for typ in ('tri', 'small', 'axp', 'axm', 'tri'):
+            if typ == 'tri':
+                p = rnd.uniform(0, S); m = rnd.uniform(0, S - p)
+            elif typ == 'small':
+                p = rnd.uniform(0, float(k)); m = rnd.uniform(0, float(k) - p)
+            elif typ == 'axp':
+                p, m = rnd.uniform(S, float(h)), 0.0
+            else:
+                p, m = 0.0, rnd.uniform(S, float(h))
+            e = float(ec) + rnd.uniform(-0.3, 0.3)
+            rows.append((str(h), str(k), taboo, typ, str(ec), round(e, 6)))
+real = [r for r in rows if r[0] == "5" and r[1] == "1/2"]
+for r in real: print(r)
+print("real-kernel |e| max:", max(abs(r[5]) for r in real), "| any real in [1.2, 2.6]:", any(1.2 <= abs(r[5]) <= 2.6 for r in real),
+      "| all geometries |e| max:", max(abs(r[5]) for r in rows))

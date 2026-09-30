@@ -10,6 +10,7 @@ Copied from the reviewer's scratch folder after review R2 phase B (2026-09-29 ~2
 
 | file | sha256 |
 |---|---|
+| `harness_v1_bf5c87c4.py.txt` | `54840bf4d364f7b4853b542d74f81f9c5cdbd9ad97e5b447a1a2b808e2a8d2be` |
 | `ledger_scan.py.txt` | `4dbba86b060a315713aa0886bb9a12629dae2f7aa47f49cd395a93a885fb09fa` |
 | `rd2_0_scan.py.txt` | `2caae1a666ab8ccf3f6e044242478a9246757e651fd4bb28f47b49f59aff479e` |
 | `rd2_1_cellblocks.py.txt` | `d2abd8d947cf461f48cefa12b43fb522e809d64d4b4fcf3e2ada1e3b2a0044db` |
@@ -33,6 +34,8 @@ Copied from the reviewer's scratch folder after review R2 phase B (2026-09-29 ~2
 | `rd2_c2_selftests.py.txt` | `1bccd44ee26cab9e1152b4ccd2129e096d2480b8ecca44f6758b52a1df59e556` |
 | `rd2_c3_battery.out` | `922e43b5738d0a6fee1ddcbc0d5c0f22e1bed506b7ed2aef4dec99254063ede3` |
 | `rd2_c3_battery.py.txt` | `97c9d5d06cc5b95c1532034b0cb6b20bf8f27d0349ddd87b57c25268571c6e1c` |
+| `rd2_d1_envelope.py.txt` | `6549afc42910a76c2aef44ad80cb8b581b12408bd1fb65f51e739ee2c2c3806f` |
+| `rd2_d2_replay.py.txt` | `f2663a0c718ef832f5e9601f726e98e87ae07ec61e92cd8f38c5b8df6c8ff333` |
 | `rd2_t.py.txt` | `665b9b8f3e81a6dfc6454e87881e15a428cd9543e17b5ea67f90e1881db241bf` |
 | `rd2_t_certmut.out` | `cf2950850f2b7bd9e7054e351cf37ce71218ee049e87582ebcab824c3b4ffd12` |
 | `reviewer_exec_ledger.jsonl` | `e9a160fc672d53cb0451de49f5358a839ba209a9400733a3d4429faccef3e5a6` |
@@ -45,4 +48,4 @@ Copied from the reviewer's scratch folder after review R2 phase B (2026-09-29 ~2
 | `reviewer_exec_ledger_vf.jsonl` | `041cc6b6959ca0a8d91b9ed75b3a014e4095b9db5a5ad0e29b4bd32474fb19a3` |
 | `reviewer_exec_ledger_vf2.jsonl` | `ecfd576ba67cf7ed282a2b9b0d3bca3f8dbb21addfc09b72886b113be8bf3f30` |
 
-Phase C files (rd2_c*, reviewer_exec_ledger_c*) were added 2026-09-30 ~00:2xZ, with their 14 execution lines also transcribed into the ledger.
+Phase C files (rd2_c*, reviewer_exec_ledger_c*) added 2026-09-30 ~00:2xZ; phase D scripts (rd2_d*, harness_v1_bf5c87c4) added ~00:4xZ (read-only runs; no ledger lines needed).

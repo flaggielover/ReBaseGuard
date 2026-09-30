@@ -1,5 +1,5 @@
 # Independent route review R2 of SRK (cell-309 research campaign r1)
-ROUTE_REVIEW: FREEZE_READY_WITH_CONDITIONS
+ROUTE_REVIEW: FREEZE_READY
 
 **Status.** Final, 2026-09-29.
 * Phase A was reviewed at `a748ac49`…`daa7e885` (16:19–16:40Z). Phase B was reviewed at `bf5c87c4` (23:11–23:40Z),
@@ -838,3 +838,158 @@ The owner-governance list (ii) is unchanged. FC3, FC5 and FC6 are unchanged.
   * RD2-C3: 4 batteries, real kernel |e| ≤ 21/32 plus parse-time `7q`.
 * No run touched a cell 305–309 or evaluated any drift in the band or its mirror. Nothing was written in the
   repository except this file. No git write. No process was started or stopped other than my own.
+
+---
+
+## Phase D (2026-09-30): C4 closure check at HEAD `2d7fe899` (content commit `426461c8`)
+
+### 0D. Phase-D reviewer execution declaration (written before any Phase-D run)
+
+The rules are the same as before: `PYTHONDONTWRITEBYTECODE=1`; library calls only; ledgers
+`scratchpad/r2/reviewer_exec_ledger_d*.jsonl`; nothing written in the repository except this file.
+
+**Firewall.** The brief excludes `ledger/INCIDENT_*`, so I do **not** open `ledger/INCIDENT_309R1_03_*`. I assess
+309R1-03 from primary evidence only: the v1 harness at bf5c87c4, VERIFY_RESULTS.json at bf5c87c4, and the verifier's
+parse order.
+
+| id | what | kernel / geometry / drift | evaluates? |
+|---|---|---|---|
+| RD2-D0 | read-only: v1 harness bytes and hash from git (bf5c87c4); VERIFY_RESULTS at bf5c87c4 and HEAD; `evidence/VERIFIER_PROBE_ENVELOPE.json`; the new ledger lines; ERRATA E-17; `code/self_audit.py` A10 and `code/verifier_probe_envelope.py` source; `srk_verify_indep.Cert.__init__` order | none | no |
+| RD2-D1 | my own probe-envelope recomputation. Rebuild every v1 probe with the v1 harness constructors (`mutants`, `malformed`, loaded from the bf5c87c4 bytes in a scratch copy) for every certificate recorded at bf5c87c4, and every v2 probe with the HEAD constructors for the 87 rerun certificates. Classify each probe's block and weight block (drift range, band-meeting), and match it by name to the recorded outcome (parse-time REFUSE vs evaluated). **Constructors only: no `verify_cert` call, no kernel evaluation** | none | no |
+| RD2-D2 | RNG replay of `test_closed_form_vs_quadrature` (seed 11) with every kernel or quadrature call removed, to list the realized (h, k, e). This checks the real-kernel drift envelope of the self-tests I ran in Phase C | none | no |
+
+I do not run `code/verifier_probe_envelope.py` (code/ is outside the brief's allowed-running set, and its `__main__`
+writes evidence). I compare my RD2-D1 results with its committed output instead.
+
+### Phase-D verdict (supersedes the Phase-C condition list; line 2 updated)
+
+**FREEZE_READY.**
+* All four conditions, C1 to C4, are **CLOSED**.
+* No science, implementation, verifier or evidence blocker remains, and no class G item exists.
+* The repair introduces no new blocker. The only change it adds is a formal-campaign requirement, folded into FC2
+  below.
+* Owner governance (ii) and the formal-campaign items (iii) remain, as the brief allows for this class. They are listed
+  below. As before, this classification authorizes nothing: an actual freeze requires owner authorization (P0-1).
+
+**C4: CLOSED.** Everything below was recomputed by me (RD2-D0, D1, D2).
+* **Ledger and errata.**
+  * Three RETROACTIVE ledger lines now record the verifier's executions: the v1 batch, the v2 batteries and the
+    self-tests. My 14 Phase-B/C lines are transcribed as well; the `_c2` and `_c3` transcriptions are
+    byte-identical to my scratch files.
+  * ERRATA E-17 covers (a) the missing lines and the 37/32 envelope beyond the declared 33/32; (b) the corrected E-15
+    timing, 15:59:14Z–16:07:36Z, which matches the ledger; (c) b5ad2372 vs 7209af81; (d) ledgering in the FC2
+    re-qualification.
+  * The self-audit (`SELF_AUDIT_post_C4.json`) is all PASS, including A10, with max ledgered drift 37/32.
+  * No impl/, verify/, tests/ or config/ file changed.
+* **The envelopes, recomputed independently (RD2-D1).**
+  * Method: I rebuilt every probe with the harness constructors themselves. v1 was loaded from the bf5c87c4 bytes (sha
+    `54840bf4`; the constructors are unchanged in drift terms across all v1 versions since be2bb0e6). v2 came from
+    HEAD, v2-stamped records only.
+  * Each probe was classified by **parsing only** (`Cert` constructor, quarantine and sha flags; no `verify_cert`, no
+    kernel), and I kept only probes that reach the kernel claims (C1)–(C3).
+  * **v1:** real kernel **[−1/8, 37/32]**, synthetic [1/8, 37/32].
+  * **v2:** real **[−1/3, 37/32]**, synthetic [−1/12, 37/32].
+  * My parse classes agree with the recorded outcome on every probe (0 mismatches).
+  * I scanned every drift printed in reasons and failing cells across all 31 committed VERIFY_RESULTS versions: the
+    real-kernel range is **[−1/3, 37/32], and none is in the band.**
+  * All of this equals the coordinator's `VERIFIER_PROBE_ENVELOPE.json` envelopes.
+* **Self-tests (RD2-D2).** I replayed the seed-11 RNG of `test_closed_form_vs_quadrature` with the quadrature removed.
+  The realized real-kernel drifts are all negative, with **max |e| = 1.0497** (e ≈ −1.05, mirror side, far from
+  [−13/5, −6/5]). The maximum over all geometries is 1.0798. `K_quad`, `closed` and the verifier consume no random
+  numbers, so the replay is exact.
+* **Tool NOTE (F; conclusions unaffected).** `code/verifier_probe_envelope.py`:
+  * counts any non-REFUSE as "evaluated", which includes sha and (C4) rejections that never touch the kernel. This is
+    conservative;
+  * in its v2 pass, applies v2 constructors to the 20 preliminary certificates whose records are v1, pairing them by
+    name. For example, the v2 7h probe (−1/3) is paired with the v1 7h outcome (+1/3);
+  * counts in-band intervals rather than probes (hence "97");
+  * its self-audit detail keys still say `A10_dirty` / `A10_local_head` for what is now A11.
+
+  My cleaner recomputation gives the same envelopes and the same in-band findings. Tidying the tool (restricting the v2
+  pass to v2-stamped records) is a cosmetic FC1 item.
+
+**Incident 309R1-03: agree, liability NONE (assessed from primary evidence; I did not open the incident file, per
+the brief's firewall).**
+* **What happened.** The v1 harness (bf5c87c4 bytes, `malformed()`) built `7h` by shifting `block` by +1/3 with no
+  band check and without moving `weight_block`.
+* **Where it went in band.** On the 5 real-kernel certificates of h5 [1, 33/32], the shifted block [4/3, 131/96] is in
+  the band. I rebuilt all 5 and matched them to their bf5c87c4 records.
+* **Why nothing was computed.** Each was refused inside `Cert.__init__` ("weight_block does not contain block",
+  srk_verify_indep.py:232), which is pure parsing. `verify_cert` returns REFUSE on a `CertError` before anything else
+  (:1441–1444). The quarantine flag (:254–259, refusal at :1447–1450) would have refused it next, still before any
+  evaluation: two independent parse-time barriers.
+* **Nothing else reached the band.** The only other in-band v1 probes are the sanctioned 7q probes (41 refused for
+  weight_block, 15 for quarantine). In v2 the only in-band probes are 41 7q, all refused for quarantine. No in-band
+  probe of any version reached the kernel, and no recorded drift in any version is in the band. The only output was
+  a reason string with no quantity.
+* **Classification.** NONE is right for target liability: no computation, exposure or proxy. Process lesson: harness
+  v1 relied on the verifier's refusals instead of guarding its own probe construction; v2's 7h calls `_meets_band`.
+
+This incident implies a new formal-campaign requirement; I added it to FC2 below, and it is not a blocker. Under a
+grant-scoped verifier the band refusal is lifted. A mutant battery run on the 309 certificates would then *evaluate*
+shifted and widened probes: 4L/4R/4B at ±1/8, 7h at ±1/3. Those drifts lie far outside the granted hull Ew, possibly
+in neighbouring quarantined cells' drift ranges. v2's `_meets_band` reads the verifier's `QUARANTINE_BANDS`, so it
+would not stop them.
+
+**Reviewer disclosure (my Phase-C declaration).** For RD2-C2 (the self-tests) I declared "real kernel |e| ≤ 1".
+The actual envelope is |e| ≤ 1.0497 (e ≈ −1.05), from the closed-form test's seeded draws.
+* My transcribed ledger line (`[-1, 1]`) therefore understates it. The retroactive self-test line, bound 11/10 and
+  naming "reviewers", covers it.
+* It is out of band and on the mirror side. The brief's e ≤ 33/32 restriction applies to certifier runs, not to NS
+  tests, so no rule was broken; the declaration was inaccurate.
+* I note it here, and the coordinator may transcribe this correction.
+
+### Final lists (as of Phase D)
+
+**(i) Science / implementation:** blockers none; conditions none (C1–C4 closed).
+
+**(ii) Owner governance:** as in the Verdict section above, with two additions:
+* acknowledge incident **309R1-03** (liability NONE), alongside the other incident disclosures;
+* accept, as with R1 G4, the **unverifiable pre-commit development runs** of the verifier self-tests (E-17(a)).
+
+The list is:
+* G1 (accept the MEDIUM-HIGH liability);
+* G2 (authorize the campaign, including in-band Stage-1 over Ew);
+* G3 (RLR);
+* U2 (rule, or confirm not triggered);
+* U3 (floor extension, or explicit CLOSURE_ONLY, before Stage 1);
+* SRK-T reconsideration, optional, before any 309 number;
+* unknown efficacy at 309;
+* the recorded user items: incident acknowledgements, cell set, grant, new real computation, push/merge.
+
+**P0-1:** an actual protocol freeze requires owner authorization. This verdict authorizes nothing.
+
+**(iii) Formal-campaign items:**
+* **FC1 (pin set).** The producer (`377057be…`, lock 2a03e838); gate, adapter (b5ad2372) and assemble; verifier
+  `a32d5d39…` or its grant-scoped successor; harness v2 `3455c141…`; self-tests `8357be85…`; spec, theorem, configs,
+  §12 constants, verifier parameters, Python version.
+  * Cosmetic: tidy `verifier_probe_envelope.py` (see the tool NOTE).
+* **FC2 (grant-scoped band handling).** Replace the producer's q309 guard and the verifier's `QUARANTINE_BANDS`
+  refusal with grant-scoped mechanisms covering exactly Ew. Re-qualify the resulting verifier identity (v2 battery and
+  21 self-tests on the decoys) before the seal, with every execution ledgered (E-17(d)). **New (from 309R1-03):**
+  * on in-band (309) certificates, the formal run must use **genuine-only verification**;
+  * no mutant battery and no shifted, widened or probe construction may reach the verifier unless it is proved to lie
+    inside Ew;
+  * the band check that guards probe construction must not depend on the verifier's (lifted) band list.
+* **FC3 (Stage-1 driver).** Fail to Γ̄ = +∞, with no retry.
+* **FC4 (Stage-2 driver).** In-process pinned verdicts and `verifier_id`. A static check that forbids `_TOKEN`,
+  `object.__setattr__`, and rebinding `_REAL_GEOMETRY_ITEMS` or `REAL_GEOMETRY`.
+* **FC5.** RLR 309 Stage-1 blocks.
+* **FC6.** Grant, seal, sandbox qualification (307 anatomy), and independent qualification, execution and adjudication
+  reviews.
+
+### Phase-D disclosures
+
+* **Exposures.** No 305–309 number was seen. I did not open `ledger/INCIDENT_309R1_03_*`, which the brief excludes.
+  The only band values met are the refusal-probe block literals (7q; v1 7h's [4/3, 131/96]), which carry no cell
+  quantity.
+* **Executions** (declared in §0D before running):
+  * RD2-D0: read-only;
+  * RD2-D1: harness constructors and `Cert` parsing only; no `verify_cert` and no kernel evaluation, so no ledger line
+    is needed; `scratchpad/r2/reviewer_exec_ledger_d1.jsonl` was set but not written;
+  * RD2-D2: pure RNG replay.
+* Scripts: `scratchpad/r2/rd2_d1_envelope.py`, `rd2_d2_replay.py`, and `harness_v1_bf5c87c4.py` (the git bytes, sha
+  `54840bf4…`).
+* Nothing was written in the repository except this file. No git write. No process was started or stopped other than
+  my own.
+

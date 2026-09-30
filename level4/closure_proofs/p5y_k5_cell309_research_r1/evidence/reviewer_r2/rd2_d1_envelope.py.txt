@@ -1,0 +1,93 @@
+import sys, json, subprocess, importlib.util, collections
+from fractions import Fraction as Fr
+from pathlib import Path
+REPO = "/home/user/ReBaseGuard"; NSR = "level4/closure_proofs/p5y_k5_cell309_research_r1"; NS = Path(REPO) / NSR
+SP = Path(sys.argv[1]).parent
+sys.path.insert(0, str(NS / "verify")); sys.path.insert(0, str(NS / "code"))
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import srk_verify_indep as V
+def load(path, name):
+    spec = importlib.util.spec_from_file_location(name, path); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
+H1 = load(SP / "harness_v1_bf5c87c4.py", "harness_v1")
+H2 = load(NS / "verify/run_verify_all.py", "harness_v2")
+BAND = (Fr(6, 5), Fr(13, 5))
+def inband(a, b): return not (b < BAND[0] or a > BAND[1]) or not (b < -BAND[1] or a > -BAND[0])
+def git(*a): return subprocess.run(["git", *a], cwd=REPO, capture_output=True, text=True).stdout
+def parse_class(c, fk):
+    """parse only (Cert constructor + flags); no verify_cert, no kernel evaluation"""
+    try:
+        cert = V.Cert(c, fk)
+    except V.CertError as ex:
+        return "PARSE_REFUSE", None
+    if cert.quarantined: return "QUARANTINE_REFUSE", None
+    if not cert.sha_ok: return "SHA_REJECT", None
+    return "REACHES_C4", (min(cert.e_lo, cert.w_lo), max(cert.e_hi, cert.w_hi), cert.h == 5 and cert.k == Fr(1, 2))
+def analyse(label, H, results, v2, only_v2_stamped):
+    env = {}; inb = collections.Counter(); inb_eval = []; mism = []; n = collections.Counter()
+    for rel, fr in results["files"].items():
+        d = json.loads((NS / rel).read_text()); fk = d.get("kernel")
+        for lab, e in fr.items():
+            if not isinstance(e, dict) or "verdict" not in e: continue
+            raw = d["certificates"][lab]
+            if e.get("sha256") != raw["sha256"]: mism.append((rel, lab, "cert sha differs from record")); continue
+            built = list(H.mutants(raw)) + list(H.malformed(raw, fk) if v2 else H.malformed(raw))
+            items = [("genuine", raw, e)] + [(t[0], t[1], e["mutants"][t[0]]) for t in built if t[0] in e.get("mutants", {})]
+            if only_v2_stamped and any(r.get("harness_version") != "v2" for _, _, r in items[1:]): continue
+            names_rec = set(e.get("mutants", {})); names_built = {t[0] for t in built}
+            if names_rec - names_built: mism.append((rel, lab, "recorded but not rebuilt", sorted(names_rec - names_built)))
+            for name, c, r in items:
+                cls, rng = parse_class(c, fk if (not v2 or not name.startswith("7f")) else None)
+                rv, rr = r["verdict"], (r.get("reason") or "")
+                # consistency: parse-time classes must match recorded REFUSE; evaluated classes must not be REFUSE
+                recorded_refuse = rv == "REFUSE"
+                if (cls in ("PARSE_REFUSE", "QUARANTINE_REFUSE")) != recorded_refuse: mism.append((rel, lab, name, cls, rv, rr[:50]))
+                ivs = [c.get("block")] + ([c["weight_block"]] if isinstance(c.get("weight_block"), list) else [])
+                real = Fr(d["geometry"]["h"]) == 5 and Fr(d["geometry"]["k"]) == Fr(1, 2)
+                for iv in ivs:
+                    try: a, b = Fr(iv[0]), Fr(iv[1])
+                    except Exception: continue
+                    if real and inband(min(a, b), max(a, b)):
+                        inb[(name.split("_")[0], cls)] += 1
+                        if cls == "REACHES_C4": inb_eval.append((rel, lab, name))
+                if cls == "REACHES_C4":
+                    lo, hi, isreal = rng; k = "real" if isreal else "synthetic"
+                    reached_claims = not (rv == "REJECT" and rr.startswith("(C4)"))
+                    n[(k, "reaches C1-C3" if reached_claims else "stops at C4")] += 1
+                    if reached_claims:
+                        L, Hh = env.get(k, (lo, hi)); env[k] = (min(L, lo), max(Hh, hi))
+                else:
+                    n[("real" if real else "synthetic", cls)] += 1
+    print(f"== {label}: envelope of probes reaching the kernel claims:", {k: (str(v[0]), str(v[1])) for k, v in env.items()})
+    print("   counts:", dict(n))
+    print("   real-kernel in-band probes by (kind, parse class):", dict(inb), " evaluated in band:", inb_eval)
+    print("   mismatches (rebuild vs record):", len(mism)); [print("     ", m) for m in mism[:8]]
+R1 = json.loads(git("show", f"bf5c87c4:{NSR}/verify/VERIFY_RESULTS.json"))
+R2 = json.loads((NS / "verify/VERIFY_RESULTS.json").read_text())
+analyse("v1 (records at bf5c87c4, harness 54840bf4)", H1, R1, False, False)
+analyse("v2 (records at HEAD, v2-stamped only)", H2, R2, True, True)
+# every committed VERIFY_RESULTS version: all drift values printed in refutation/failure reasons and 'cell' fields
+import re
+commits = git("log", "--format=%h", "--", f"{NSR}/verify/VERIFY_RESULTS.json").split()
+evals = []
+for cm in commits:
+    txt = git("show", f"{cm}:{NSR}/verify/VERIFY_RESULTS.json")
+    try: R = json.loads(txt)
+    except Exception: continue
+    for rel, fr in R.get("files", {}).items():
+        try: d = json.loads((NS / rel).read_text()) if (NS / rel).exists() else None
+        except Exception: d = None
+        real = d is None or (Fr(d["geometry"]["h"]) == 5 and Fr(d["geometry"]["k"]) == Fr(1, 2))
+        for lab, e in fr.items():
+            if not isinstance(e, dict): continue
+            recs = [e] + list(e.get("mutants", {}).values())
+            for r in recs:
+                for s in (r.get("reason") or "", r.get("cell") or ""):
+                    for mt in re.finditer(r"e\)? = \(?[^)]*?,\s*[^,]*?,\s*(-?\d+(?:/\d+)?)\)", s):
+                        evals.append((cm, rel, real, Fr(mt.group(1))))
+                    for mt in re.finditer(r"e=\[(-?\d+(?:/\d+)?),(-?\d+(?:/\d+)?)\]", s):
+                        evals.append((cm, rel, real, Fr(mt.group(1)))); evals.append((cm, rel, real, Fr(mt.group(2))))
+realv = [v for c, r, re_, v in evals if re_]
+print("recorded evaluation drifts (from reasons/cells) across", len(commits), "VERIFY_RESULTS versions:", len(evals),
+      "| real-kernel min/max:", (str(min(realv)), str(max(realv))) if realv else None,
+      "| any real in band:", any(inband(v, v) for v in realv))
