@@ -260,6 +260,28 @@ OPEN. MB r1 is INDETERMINATE. The successor MB-S is prepared, and its freeze and
 2. The freeze decision in `governance/USER_DECISION_BRIEF_308_SUCCESSOR.md` §A (`03ca1bcf`): grant or withhold, caps
    option (i) or (ii), finality (i) or (ii), members (i) or (ii). The S1 ruling comes later.
 
+## 34. Update after delivery (2026-09-30 00:16Z): implementation delta review
+
+**DELTA_REJECTED** (`reviews/REVIEW_IMPLEMENTATION_MBS308_DELTA.md`, `99185dcb`; non-holder reviewIMPL). The reviewer's own
+re-runs at `35cabb50`: static 9/9, launch 8/8, state 44/44, crash 47/47, mutants 46/47.
+
+| condition | ruling |
+|---|---|
+| R1 (stale locks, CAS) | **MET**, plus a required correction **C-1**: drop `packed-refs.lock` from the campaign's lock set. The campaign never owns it, and a live git holder is invisible to `lsof`, so moving it aside could lose refs in the shared repository |
+| R2 (launcher boot-out) | **MET**; note N-2: an identity recorded while `ps` failed reads DEAD (safe by timing, not by design) |
+| R4 (gate tests) | **MET**; the earlier escapes X2 and X3 now die |
+| R3 (constants) | **NOT MET**: ratified, but not applied, and M33 is still non-deterministic. The proposed M33 run kills it (9.6 s vs 98.4 s against the 60 s bound) |
+| M4 | **PASS**: builder2 changed no operational number |
+
+**Reviewer's disclosed deviation.** Two synthetic-payload LaunchAgents ran under the builder's test label prefix, not the
+review prefix. Both were booted out; their 0-byte logs remain in `~/Library/Logs/ReBaseGuard/mbs308-test/`.
+
+**Afterwards (coordinator check):** no launchd job remains, the successor worktree is clean at `35cabb50`, MB r1's marker is
+still `afa93072`, and no successor ref exists.
+
+**Next.** A bounded application of R3 and C-1 by a non-holder, then an R3-only delta, would make the build
+IMPLEMENTATION_ACCEPTED as a pre-freeze candidate. The same pass should take N-1 to N-3 (recommended, not gating).
+
 ## Final block
 
 ```
@@ -281,15 +303,15 @@ independent governance review: GOVERNANCE_REJECTED (e3c60491), then DELTA_ACCEPT
 route: MB-S (MB r1 science byte-identical; infrastructure only)
 independent scientific review: ROUTE_ACCEPTED under RC1-RC6 (a1d1c7d4); delta REJECTED (fc723105); R3 DELTA_ACCEPTED (87d0b2b9)
 protocol: DRAFT only (not frozen)
-detachment: launchd launcher proven by test; DEF-2 repaired (35cabb50), delta review running
-persistence: crash-safe spool -> CAS -> seal built; DEF-1 repaired (35cabb50), delta review running
-crash tests: crash 47/47, state 44/44, mutants 46/47 (M33 timing-dependent) at 35cabb50; independent re-run in the delta
+detachment: launchd launcher proven by test; DEF-2 repaired (35cabb50), R2 MET in the delta (99185dcb)
+persistence: crash-safe spool -> CAS -> seal built; DEF-1 repaired (35cabb50), R1 MET in the delta, correction C-1 (packed-refs.lock) open
+crash tests: crash 47/47, state 44/44, mutants 46/47 (M33 timing-dependent) at 35cabb50, independently re-run; implementation delta DELTA_REJECTED on R3 only (99185dcb)
 freeze: NOT FROZEN
 qualification: NOT STARTED
 independent qualification review: NONE
 new target authorization: NONE
 new target evaluations: 0
-remaining blocker: R3 application (blocked; needs you); implementation delta; your freeze decision (brief §A); verifier/manifest/leak scanner; qualification; your S1 ruling
+remaining blocker: R3 + C-1 application (ratifier blocked; needs you) and an R3-only delta; your freeze decision (brief §A); verifier/manifest/leak scanner; qualification; your S1 ruling
 
 K5
 ---
