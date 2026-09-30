@@ -43,7 +43,11 @@ QDIR = FNS / "qualification"
 SCRATCH = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/qualification")
 MIRROR_PATHS = ["level4/closure_proofs/p5y_k5_cell309_research_r1",
                 "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum",
-                "level4/closure_proofs/p5y_k5_tail_overnight_research/validation"]
+                "level4/closure_proofs/p5y_k5_tail_overnight_research/validation",
+                "level4/closure_proofs/p5y_k5_tail_overnight_research/code/ov_fixtures.py",       # QC03's imports
+                "level4/closure_proofs/p5y_k5_tail_overnight_research/code/ov_quarantine.py",
+                "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/D_309/code/d309_core.py",
+                "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/D_309/code/d309_rso.py"]
 RMIR = "level4/closure_proofs/p5y_k5_cell309_research_r1"
 PY = sys.executable
 

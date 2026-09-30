@@ -47,7 +47,13 @@ EXTRA_CODE = [CP + "p5y_k5_m5_tail_closure/code/tct_rule.py", CP + "p5y_k5_m5_ta
               CP + "p5y_k5_cell307_rlr_r1/code/rlr307_stage1.py",
               CP + "p5y_k5_cell307_rlr_r1/code/rlr307_independent.py",
               CP + "p5y_k5_cell307_rlr_r1/code/rlr307_pinned.py",
-              CP + "p5y_k5_tail_overnight_research/validation/C1B_R2_CODE_PINS.json"]
+              CP + "p5y_k5_tail_overnight_research/validation/C1B_R2_CODE_PINS.json",
+              # QC03's research test (test_srk_fsm_truth) imports these overnight cell-309-stream modules; they are
+              # read in the archive mirror only, and pinned so that qualification runs on frozen bytes (dry run)
+              CP + "p5y_k5_tail_overnight_research/code/ov_fixtures.py",
+              CP + "p5y_k5_tail_overnight_research/code/ov_quarantine.py",
+              CP + "p5y_k5_tail_overnight_research/streams/D_309/code/d309_core.py",
+              CP + "p5y_k5_tail_overnight_research/streams/D_309/code/d309_rso.py"]
 C1B_DIR = CP + "p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/"
 C1B_LOAD_ORDER = ("c1b_gauss", "c1b_kernel", "c1b_float", "c1b_pw", "c1b_prov", "c1b_certpw")
 

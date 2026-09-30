@@ -137,3 +137,25 @@ and 1, were displayed (exposure ledger).
 
 **Direction:** none. Without the fix, QC09 would have failed, and every execute would have been refused before the
 marker.
+
+## FE-10: QC03's research test depended on unpinned, unmirrored inputs (found by the pre-freeze dry run of the QC runner)
+
+**Finding.** The coordinator dry-ran the QC runner's items before the freeze, into scratch output. That run is
+development, not the qualification. In it, QC03 failed at import:
+* `tests/test_srk_fsm_truth.py` (research) imports `d309_core` and `d309_rso`, from the overnight cell-309 stream
+  `p5y_k5_tail_overnight_research/streams/D_309/code/`;
+* through them it imports `ov_fixtures` and `ov_quarantine`, from `p5y_k5_tail_overnight_research/code/`.
+
+None of the four was in the qualification's `git archive` mirror or in the freeze manifest's pins.
+
+**Fix.**
+* The four files are added to the mirror paths (`code/p309_qualify.py`) and to the manifest's pinned code
+  (`code/make_freeze_manifest.py`). Qualification therefore runs them on frozen bytes.
+* Re-checked in development: QC03 passes (12 declared seeds, mutants caught).
+* No other file changed.
+* These are cell-309 overnight-stream code files. They are not part of any cell-308 campaign.
+
+**Why the dry run.** A27 allows no retry, so a plumbing defect found during the frozen qualification would have ended
+the attempt.
+
+**Direction:** none.
