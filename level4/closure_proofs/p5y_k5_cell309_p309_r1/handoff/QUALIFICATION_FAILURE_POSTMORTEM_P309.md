@@ -118,3 +118,49 @@ recorded 18 minutes earlier.
 5. **Host durability.** The attempt takes about 5.5 hours and cannot resume (A27). Choose the host with that in mind.
 6. **Reviews.** As before: a delta review of the fix, R4-style re-confirmation, then freeze, qualification and
    review.
+
+## 7. Corrections from the independent postmortem review (additive; the text above stays as first written)
+
+`reviews/REVIEW_QUALIFICATION_POSTMORTEM_P309.md` (sha256 `00531409…`) returned **POSTMORTEM_DISPUTED**. It confirmed
+every conclusion above:
+* the freeze;
+* the single attempt;
+* Q11's root cause, including a counterfactual (the same synthetic chain placed on the real F passes);
+* the classification;
+* the interruption;
+* that the governance requires stopping (in-place repair is also impossible: `tests/` is frozen, and A24 allows only
+  one freeze record);
+* target integrity;
+* the successor notes.
+
+It disputed five statements as overstated or unverified. They are corrected here in the reviewer's words:
+* **D1 (§3, QC-D5).** Instead of "so they were probably exposed to the same defect", read: they share `new_sandbox`
+  and `build_chain`, so their sandboxes also carry two freeze-record commits. However, no backstop control reads the
+  freeze record (the sites, `_site_backstop` and the guard's `premarker_check` never call `recorded_freeze`,
+  `check_grant` or `freeze_commit`), so this defect gives no reason to expect them to fail. They were never run, and
+  their outcome is unknown.
+* **D2 (§5).** Instead of "0 in all 100 QC11 sandboxes", read: 0 in all 100 sandbox directories under
+  `scratchpad/qc11_sandboxes/`: 57 from the attempt's QC11, 42 from pre-freeze development and 1 from the postmortem
+  diagnostic.
+* **D3 (§1).** Instead of "two reviewed allowlist entries", read: two allowlist entries, with reasons, whose check
+  was assigned to the qualification review (brief addendum 8), which has not taken place. The postmortem review's
+  item 1 finds the six hits to be rule statements.
+* **D4 (§4).** The first restart (about 15:19Z, "restarted only the harness and left processes alive") and "No host
+  control could prevent it" are the coordinator's unverified account; neither is recorded in the repository. The
+  coordinator's basis was its own session observations: a restart notice, then `uptime` showing 12 h 57 min and the
+  detached dry run still alive.
+* **D5 (§6.5).** Instead of "about 5.5 hours", read: about 5.5 hours for QC01–QC-U2 alone; a complete attempt takes
+  about 5.7–5.9 hours.
+
+None of D1–D5 changes the verdict, the stop, the target counter or the successor route.
+
+**The reviewer's firewall disclosure.** The reviewer's first pin check hashed every pinned blob. That piped the bytes
+of four pinned cell-307 campaign files through sha256:
+* `p5y_k5_cell307_rlr_r1/protocol/RLR307_FREEZE.json`;
+* `code/rlr307_stage1.py`;
+* `code/rlr307_independent.py`;
+* `code/rlr307_pinned.py`.
+
+Their content was never displayed; only hash equality was printed. The reviewer then switched to comparing blob IDs
+(metadata only). This departs from the brief's "no cell-307 … campaign file beyond git metadata". The reads are the
+same class as the freeze-manifest generator's pin hashing of those same files. No cell 305–309 value was read.
