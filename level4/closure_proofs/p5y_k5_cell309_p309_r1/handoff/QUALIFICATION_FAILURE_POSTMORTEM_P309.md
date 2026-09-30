@@ -164,3 +164,20 @@ of four pinned cell-307 campaign files through sha256:
 Their content was never displayed; only hash equality was printed. The reviewer then switched to comparing blob IDs
 (metadata only). This departs from the brief's "no cell-307 … campaign file beyond git metadata". The reads are the
 same class as the freeze-manifest generator's pin hashing of those same files. No cell 305–309 value was read.
+
+## 8. Corrections from the postmortem review follow-up (additive; amends section 7)
+
+`reviews/REVIEW_QUALIFICATION_POSTMORTEM_FOLLOWUP_P309.md` returned **CORRECTIONS_DISPUTED**. It confirmed:
+* D1, D2, D3 and D5 as applied;
+* the disclosure as recorded;
+* that nothing else in the report changed.
+
+It required two further corrections, applied here in its words:
+* **F1 (the §4 count; extends D4).** Add to section 7's D4: "The count 'That was the second restart in this session'
+  is also withdrawn. `governance/briefs_recovered/README.md` records two container restarts in this session on
+  2026-09-29 (items 7 and 14). The coordinator's `uptime` basis would also place a host boot at about 02:22Z on
+  2026-09-30. The 22:41:12Z reboot is therefore at least the third restart in this session."
+* **F2 (section 7's introduction).** Instead of "(the same synthetic chain placed on the real F passes)", read "(a
+  synthetic freeze and freeze record placed on the real F pass `recorded_freeze`; no QC11 flow was run)".
+
+Neither changes the verdict, the stop, the target counter or the successor route.
