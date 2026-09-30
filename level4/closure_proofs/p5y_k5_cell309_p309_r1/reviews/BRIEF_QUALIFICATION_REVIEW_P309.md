@@ -123,3 +123,12 @@ Also include:
   * V01–V09 (`validate-grant`).
 * **Checklist 17 (scope).** Check that the proposal carries the `grant_validation` step: run validate-grant before
   the grant commit, and a refused grant commit is terminal without a new owner decision.
+
+## Addendum 3 (before issue; delta-3 review conditions G5, G6)
+
+* **Checklist 3 and 4 (timing, one attempt), G6 and FE-11.** The execution-ledger rows after `77991be1` have not been
+  reviewed by any independence review. They include the coordinator's second pre-freeze dry run (from
+  2026-09-30 06:53:35Z) and R4 follow-up 2's runs. Review them.
+* **Pre-freeze lines.** The research-test lines of both pre-freeze dry runs read "qualification: …" (FE-11). They are
+  development because they are dated before the freeze record. After the freeze record there must be exactly one
+  `QUALIFICATION RUN START` line and no other QC-runner line outside the single run.

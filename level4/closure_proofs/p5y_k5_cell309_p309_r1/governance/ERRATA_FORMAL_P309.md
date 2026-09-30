@@ -174,3 +174,24 @@ liabilities.
 **Rule from now on.** Any further structural check of `cells.json` filters out the 305–309 entries before parsing their
 values, unless that is strictly necessary. The only production reader is `execute`, after `check_grant`.
 QC11 no longer reads `cells.json` at all (E4).
+
+## FE-11: the pre-freeze dry runs' ledger lines carry the label "qualification:" (delta-3 condition G5; append-only)
+
+**Finding (delta-3 review G5).** Delta-2 condition E6 asked that the pre-freeze dry-run lines of the execution ledger
+be labelled "dry run". The QC runner takes its label from `ATT["label"]` (default "qualification"). The coordinator's
+dry-run scripts did not set it, so:
+* the research-test lines of the first dry run, 2026-09-30 04:57:47Z–05:38:57Z, read "qualification: …";
+* so do those of the second dry run, from 2026-09-30 06:53:35Z (QC03, QC08, QC10, QC09).
+
+Each dry run opens with its own line, "PRE-FREEZE dry run … (development, not the qualification)".
+
+**Record.** E6's label clause is met by **dating** instead of by label:
+* every "qualification:" line dated before the freeze record is development;
+* after the freeze record, the QC runner is invoked once only, for the single run (A27). QC13
+  (`single_qualification_run_since_the_freeze_record`) and the qualification review enforce this.
+
+This is a departure from E6's letter. It is carried as a liability.
+
+**Going forward.** Any further pre-freeze dry run sets `ATT["label"]` to "dry run (pre-freeze, development)".
+
+**Direction:** none.

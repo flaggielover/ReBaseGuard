@@ -62,7 +62,7 @@ DISCLOSED_LIABILITIES = [
     "briefs not committed before issue (C5; recovered verbatim, content not timing)",
     "zero computed target-equivalent proxies; one qualitative mental proxy exposure (309R1-01) and one mental in-band "
     "estimate (309R1-02) (formal errata FE-4)",
-    "the formal errata FE-1..FE-8", "host dependence of the Stage-1a outcome when the budget binds",
+    "the formal errata FE-1..FE-11", "host dependence of the Stage-1a outcome when the budget binds",
     "rev. 2c closure-relevant changes with direction (delta review section 5): A4 toward closure (restores "
     "executability); E1-1 toward closure (prevents a silent SRK loss); A6 toward a conclusive outcome (no wall cap; wall "
     "time unbounded); A5 a new parameter, efficacy-relevant, ambiguous direction, the maximal per-job limit 21 600 s "
@@ -105,6 +105,16 @@ DISCLOSED_LIABILITIES = [
     "316 above, by the cover's ordering; both guard-checked outside the band), which the research SRK decoy rule "
     "avoided (delta-2 E5; A15/D6 unchanged)",
     "second delta result-chasing component LOW (delta-2 review)",
+    "third-delta rule choices with direction (delta-3 review G3(a)): A31 fail-closed with no efficacy effect (if the "
+    "grant expires between the dry admission and arming, the backstop refuses before the marker); A34 authority toward "
+    "a conclusive outcome (a quote of the owner containing <, >, ->, TBD or TODO is admitted); A34 worktree against "
+    "malformed grants, before the marker; validate-grant toward a conclusive outcome",
+    "validate-grant reads the target's pinned cells.json entry after the qualification review: the same class as the "
+    "proposal tool's C4 read, compared and not displayed, one exposure row per run (delta-3 review G3(b))",
+    "third delta result-chasing component LOW (delta-3 review)",
+    "E6's 'dry run' label clause is met by dating, not by label: every 'qualification:' execution-ledger line dated "
+    "before the freeze record is development (the pre-freeze dry runs); a departure from E6's letter (delta-3 G5; "
+    "formal erratum FE-11)",
 ]
 REVIEWS = {
     "incident_independence": (NS + "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309.md", "## 10. Conditions"),
@@ -234,9 +244,16 @@ def build() -> dict:
                                                "strings, pinned ids, host, worktree (the field required, A34), "
                                                "runtime, issued_utc not in the future, an authority that is not the "
                                                "proposal's placeholder text (A34), committer identity (A21)",
-                        "grant_validation": "validate-grant on the uncommitted candidate before the grant commit, the "
-                                            "same checks as execute's (A34); a grant commit that execute refuses is "
-                                            "terminal without a new owner decision",
+                        "grant_validation": "validate-grant on the uncommitted candidate before the grant commit "
+                                            "(A34) checks the candidate's content and the chain below it: execute's "
+                                            "shared grant-content checks, the chain walk, the guard's field parser "
+                                            "and checks 2, 3, 5-9, a clean tree and an attached branch; only execute "
+                                            "checks the guard's check 4 (the grant commit itself), the interpreter "
+                                            "flags, the branch and not-evaluated checks, the result paths, the input "
+                                            "bindings, the governance state, the consumer-cover agreement and the "
+                                            "historical control; a PASS does not guarantee admission; a grant commit "
+                                            "that execute refuses is terminal without a new owner decision "
+                                            "(delta-3 G4)",
                         "site_backstop": "at each exactly-once site, before its ref mutation: arm only in execute "
                                          "mode, with the guard's pre-marker grant checks passing and this process's "
                                          "run nonce; pending only with a marker whose commit carries the grant (and "
