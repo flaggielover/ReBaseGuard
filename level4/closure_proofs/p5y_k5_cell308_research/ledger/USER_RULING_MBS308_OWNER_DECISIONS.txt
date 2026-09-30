@@ -1,0 +1,633 @@
+OWNER DECISIONS FOR CELL-308 MB-S SUCCESSOR
+AND CONDITIONAL OVERNIGHT EXECUTION AUTHORIZATION
+
+I have reviewed the extracted decision brief.
+
+I now record the following owner decisions prospectively, before the MB-S
+freeze, before official qualification, and before any MB-S Cell-308 target
+evaluation.
+
+These decisions are made without using any MB-S target result, inferred lost
+MB-r1 result, target margin, tail figure, or expected Cell-308 outcome.
+
+======================================================================
+1. S16(c) — FREEZE PERMISSION
+======================================================================
+
+Decision:
+
+    S16(c) = OPTION (A): GIVE PERMISSION
+
+I authorize the MB-S successor freeze once every other required prospective
+freeze condition has been established and independently accepted.
+
+This permission covers:
+
+- creation of the MB-S freeze commit;
+- binding of the frozen protocol;
+- freeze manifest;
+- re-pinned helper/platform pins;
+- R-rule constants;
+- the MBS-6/MBS-7/MBS-8 decisions recorded below;
+- official target-free qualification at the frozen commit.
+
+This decision does NOT by itself authorize:
+
+- a grant;
+- a Cell-308 target marker;
+- a Cell-308 target evaluation.
+
+All other freeze gates remain mandatory.
+
+======================================================================
+2. MBS-6 — FINALITY
+======================================================================
+
+Decision:
+
+    MBS-6 = OPTION (i): FINAL
+
+If MB-S ends in an INDETERMINATE-class outcome, that outcome is final for
+route MB on Cell 308.
+
+No further route-MB Cell-308 evaluation is authorized after such an outcome.
+
+This is adopted prospectively as the engineering default identified in the
+decision brief, not as a scientific recommendation and not because of any
+expected Cell-308 result.
+
+Any scientifically distinct future route, if governance permits one, remains
+subject to its own separately applicable governance.
+
+======================================================================
+3. MBS-7 — SCIENTIFIC MEMBERSHIP
+======================================================================
+
+Decision:
+
+    MBS-7 = OPTION (i): KEEP MB-S SCIENCE UNCHANGED
+
+Do NOT add C11R-I2 or COR-T to MB-S.
+
+Preserve the already-built and reviewed byte-identical MB-S science, subject
+to the frozen platform/helper/guard provisions already established.
+
+This is adopted prospectively as the engineering default identified in the
+decision brief because it is the implementation already built, reviewed and
+qualified prospectively.
+
+It is NOT adopted because of any expectation about Γ(5,308).
+
+Do not reopen the changed-science branch.
+
+======================================================================
+4. MBS-8 — CAPS
+======================================================================
+
+Decision:
+
+    MBS-8 = OPTION (i): MB r1 r3 CAPS
+
+Freeze:
+
+    EVAL_CAP = 8 hours per attempt, awake time
+
+Per-job CPU caps:
+
+    RLR = 1800 / 4200 / 8700 s
+    C2b = 1800 / 1800 / 2700 s
+    C1b = 1800 s
+    VER = 1800 s
+
+and:
+
+    PRE_CAP = 1800 s
+    WORKERS = 5
+
+EVAL_CAP is explicitly per attempt and on awake time.
+
+Sleep does not count.
+
+This is adopted prospectively as the engineering default identified in the
+decision brief.
+
+Do NOT derive MBS-8 option-(ii) caps from MB-S official decoy runtimes.
+
+Q12 must therefore remain a genuine prospective pass/fail check of these
+fixed caps, not a consistency check whose values are derived from the same
+official runs.
+
+If Q12 fails:
+
+    STOP BEFORE THE TARGET.
+
+Do not increase the caps after observing the failure within this frozen
+campaign.
+
+======================================================================
+5. S1 — OWNER GRANT RULING
+======================================================================
+
+Decision:
+
+    S1 = OPTION (A): GIVE THE RULING
+
+This ruling is CONDITIONAL on the complete prospective chain:
+
+    valid freeze
+    ->
+    official qualification
+    ->
+    QUALIFICATION_ACCEPTED independent review
+    ->
+    valid grant bound to those exact artifacts.
+
+I authorize exactly ONE MB-S consumed evaluation of Cell 308, which would be
+the second consumed evaluation of Cell 308 overall.
+
+This authorization applies to MB-S only.
+
+I lift mitigation 5 for MB-S only.
+
+Sections 20, 21 and 23 remain binding on MB r1.
+
+MB-S is a NEW GOVERNANCE DECISION.
+
+It is NOT a rerun justified on host grounds.
+
+I reaffirm U1-U8 for MB-S under the interpretation already established by the
+accepted successor governance.
+
+I confirm:
+
+    MBS-6 = (i)
+    MBS-7 = (i)
+    MBS-8 = (i)
+
+The grant must carry this ruling verbatim or by the exact binding mechanism
+required by the frozen governance, including its required digest/provenance
+fields.
+
+This ruling does NOT bypass:
+
+- freeze review;
+- official qualification;
+- independent qualification review;
+- U7;
+- U8;
+- host preflight;
+- grant validation;
+- exactly-once controls.
+
+If any mandatory pre-target gate fails, this ruling does NOT authorize
+execution.
+
+======================================================================
+6. EXACTLY-ONCE LIMIT
+======================================================================
+
+This owner ruling authorizes at most:
+
+    ONE NEW CELL-308 MB-S TARGET EVALUATION
+
+The current successor count is:
+
+    0
+
+If the valid MB-S marker is written, Cell 308's overall consumed count becomes
+2.
+
+A second MB-S `execute` is forbidden.
+
+A resume of the same properly checkpointed evaluation under the frozen
+protocol is not a new evaluation.
+
+A crash, cap hit, worker death, platform failure, INDETERMINATE outcome, or
+scientifically unfavorable result does NOT replenish this authorization.
+
+There is NO authorization for another MB-S target evaluation.
+
+======================================================================
+7. §11.2 SEQUENCING ISSUE
+======================================================================
+
+My MBS-8 decision removes the option-(ii) cap-derivation dependency on official
+decoy runtimes.
+
+However, the remaining R-rule sequencing issue must still be resolved
+prospectively and without target information.
+
+Do NOT invent an owner preference among protocol §11.2 options (a)-(d).
+
+Instead:
+
+1. complete Builder5's current R-MEM / disk / host-readiness work;
+2. determine the exact currently accepted prospective resolution of the
+   R-rule sequencing issue;
+3. obtain the required independent review;
+4. use that resolution only if it follows mechanically from already accepted
+   governance or from an independently accepted engineering implementation
+   that does not require another owner scientific-policy choice.
+
+If §11.2 still requires an explicit owner choice among (a)-(d), and no
+already-ratified prospective rule uniquely determines it:
+
+    STOP BEFORE FREEZE
+    and ask me only that remaining question.
+
+Do not choose among (a)-(d) based on convenience, target expectation, or
+desired closure.
+
+======================================================================
+8. FINISH BUILDER5 FIRST
+======================================================================
+
+Do not freeze immediately merely because these owner decisions now exist.
+
+First finish the currently running Builder5 scope, including:
+
+- O-1;
+- O-2;
+- O-3;
+- K-1;
+- disk-space gate;
+- scratch-lifecycle gate;
+- re-pin tooling;
+- R-MEM input recording;
+- resume-equivalence decoy;
+- host-readiness checklist;
+- all associated tests;
+- all associated mutants.
+
+Mechanically verify final bytes.
+
+Then obtain the planned fresh independent review.
+
+Any review rejection must be preserved.
+
+For bounded decision-independent defects:
+
+    preserve
+    -> repair
+    -> rerun affected final-byte checks
+    -> fresh independent review
+    -> continue.
+
+======================================================================
+9. FINAL DECISION BRIEF / MBS-10
+======================================================================
+
+Update the decision brief to reflect the actual accepted implementation state.
+
+Have the fresh non-holder neutrality reader perform MBS-10.
+
+Preserve the reader verdict.
+
+The owner decisions above are prospective and may be recorded now, but do not
+use them as permission to weaken or skip MBS-10.
+
+======================================================================
+10. FREEZE
+======================================================================
+
+After Builder5 acceptance, MBS-10 acceptance, resolution of §11.2, and every
+other S16 condition:
+
+create the MB-S freeze.
+
+Bind exactly:
+
+- final reviewed bytes;
+- protocol;
+- manifest;
+- helper/platform pins;
+- guard diff;
+- R-rule constants;
+- MBS-6 = (i);
+- MBS-7 = (i);
+- MBS-8 = (i);
+- EVAL_CAP = 8 h awake time per attempt;
+- the listed per-job caps;
+- PRE_CAP = 1800 s;
+- WORKERS = 5;
+- recovery semantics;
+- host contract;
+- exactly-once semantics.
+
+Obtain any required independent freeze review.
+
+Do not mutate the frozen scientific object after acceptance.
+
+======================================================================
+11. OFFICIAL QUALIFICATION
+======================================================================
+
+Run the complete official target-free qualification only against the exact
+frozen object.
+
+This includes all mandatory:
+
+- test suites;
+- mutant matrices;
+- MBR1_REPRO;
+- QS-RESUME-DECOY;
+- Q12;
+- official decoy runs;
+- host readings;
+- R-rule checks;
+- disk/host checks;
+- QC13-S and other governance checks.
+
+Under MBS-8(i), Q12 must genuinely test the fixed caps.
+
+If any mandatory qualification gate fails:
+
+    STOP BEFORE TARGET CONSUMPTION.
+
+Do not tune against the failure inside the frozen campaign.
+
+======================================================================
+12. INDEPENDENT QUALIFICATION REVIEW
+======================================================================
+
+After qualification passes, obtain the required fresh independent review.
+
+Execution remains forbidden unless the explicit verdict is:
+
+    QUALIFICATION_ACCEPTED
+
+The reviewer must verify the exact frozen bytes, qualification evidence,
+target quarantine, host contract, provenance, and absence of post-freeze
+tuning.
+
+======================================================================
+13. GRANT
+======================================================================
+
+Only after QUALIFICATION_ACCEPTED:
+
+construct the single MB-S grant.
+
+It must bind the exact:
+
+- owner ruling;
+- freeze;
+- qualification;
+- qualification review;
+- driver digest;
+- manifest;
+- target identity;
+- host/execution contract;
+- exactly-once semantics.
+
+Validate the grant independently if required.
+
+There must be only one usable grant.
+
+======================================================================
+14. FINAL HOST PREFLIGHT
+======================================================================
+
+Immediately before target consumption verify all frozen requirements,
+including:
+
+- AC power;
+- required lid/sleep state;
+- sleep prevention;
+- automatic macOS/critical-update installation disabled as required;
+- restart hazards controlled;
+- thermal state;
+- memory pressure;
+- free disk >= frozen threshold;
+- host identity;
+- boot identity;
+- platform pins;
+- Git configuration safety;
+- no stale/conflicting driver;
+- exact frozen commit;
+- no existing MB-S marker;
+- no pending-result state;
+- successor target count still zero.
+
+Any failure:
+
+    STOP BEFORE MARKER CREATION.
+
+======================================================================
+15. EXECUTION AUTHORIZATION
+======================================================================
+
+If and only if every preceding gate succeeds, I explicitly authorize the
+validated MB-S grant to be consumed and authorize exactly one Cell-308 MB-S
+target execution.
+
+At that point:
+
+    write the exactly-once marker according to the frozen protocol
+    ->
+    execute the frozen target
+    ->
+    persist checkpoints/results according to the crash-safe protocol.
+
+Do not ask me again merely to repeat this same authorization if every bound
+condition is satisfied.
+
+This is my explicit prospective authorization for that conditional execution.
+
+======================================================================
+16. CRASH / RESUME
+======================================================================
+
+The execution must not depend on Claude Desktop remaining alive.
+
+Use the frozen detached execution mechanism.
+
+If the UI, harness or Claude Desktop disconnects:
+
+do NOT infer that the evaluator died.
+
+Do NOT start another evaluation.
+
+Use only the frozen status/recover/resume machinery.
+
+UNKNOWN is never DEAD.
+
+Interruptions use the same consumed evaluation and verified checkpoints.
+
+At most 3 resumes are permitted within the frozen 7-day window.
+
+Every frozen INDETERMINATE condition remains final under MBS-6(i).
+
+======================================================================
+17. RESULT PERSISTENCE AND SEAL
+======================================================================
+
+If a valid result is produced:
+
+persist it durably according to the frozen state machine before relying on
+late-stage interactive operations.
+
+Then perform the frozen seal procedure.
+
+Do not alter the scientific result.
+
+Do not rerun because the result is unfavorable.
+
+Do not select among multiple target outputs.
+
+======================================================================
+18. EXECUTION REVIEW AND ADJUDICATION
+======================================================================
+
+After sealing, obtain the required fresh independent execution review.
+
+Verify:
+
+- exactly-once ancestry;
+- grant;
+- marker;
+- freeze;
+- qualification;
+- qualification review;
+- result durability;
+- no duplicate target evaluation;
+- no post-result modification;
+- provenance.
+
+Only after accepted execution evidence:
+
+apply the frozen scientific closure criterion mechanically.
+
+Report the result exactly as established.
+
+Do not change the criterion after observing Γ.
+
+Do not manufacture CELL308_CLOSED.
+
+A valid negative scientific result remains a valid result.
+
+======================================================================
+19. STATUS CHANGES
+======================================================================
+
+Do not alter r5, create r6, close K5, or close P5Y merely because execution
+occurred.
+
+Only make downstream status changes if the accepted adjudication and existing
+governance explicitly authorize them.
+
+Preserve historical MB r1 = INDETERMINATE.
+
+======================================================================
+20. CELL 309
+======================================================================
+
+Cell 309 remains:
+
+    EXTERNALLY_IN_PROGRESS
+
+Do not inspect, modify, merge, synchronize or use Cell-309 target-bearing work
+from this session.
+
+======================================================================
+21. AUTONOMOUS OVERNIGHT CONTINUATION
+======================================================================
+
+I authorize autonomous continuation through the complete chain:
+
+    Builder5 completion
+    ->
+    final-byte verification
+    ->
+    independent review
+    ->
+    bounded repair/re-review if necessary
+    ->
+    final decision-brief update
+    ->
+    MBS-10 neutrality review
+    ->
+    §11.2 prospective sequencing resolution
+    ->
+    freeze
+    ->
+    official qualification
+    ->
+    independent qualification review
+    ->
+    grant construction/validation
+    ->
+    final host preflight
+    ->
+    exactly-one MB-S target execution
+    ->
+    recovery/resume if legitimately required
+    ->
+    durable result
+    ->
+    seal
+    ->
+    independent execution review
+    ->
+    scientific adjudication
+
+Do not stop at an intermediate step merely because I am away.
+
+For bounded target-free implementation defects:
+
+    preserve
+    -> repair
+    -> test
+    -> review
+    -> continue.
+
+After target consumption, follow ONLY the frozen recovery semantics.
+
+======================================================================
+22. STOP CONDITIONS
+======================================================================
+
+Stop only if:
+
+A. §11.2 still requires a genuine unresolved owner choice;
+
+B. a mandatory freeze/qualification/review gate fails in a way that cannot
+   legally be repaired prospectively;
+
+C. host preflight fails and cannot safely be restored without owner action;
+
+D. the target has been consumed and the frozen state machine requires an
+   owner action not already authorized here;
+
+E. scientific adjudication completes.
+
+Do not weaken a gate merely to avoid stopping.
+
+======================================================================
+23. FINAL REPORT
+======================================================================
+
+When the campaign stops, provide one consolidated report containing:
+
+- final Builder5 status;
+- all review verdicts;
+- MBS-10 verdict;
+- §11.2 resolution;
+- owner-decision record;
+- freeze identity;
+- qualification results;
+- qualification-review verdict;
+- grant identity;
+- host-preflight result;
+- target marker identity;
+- exact number of new MB-S target evaluations;
+- execution/recovery history;
+- sealed scientific result, if one exists;
+- execution-review verdict;
+- adjudication verdict;
+- every new commit/ref;
+- every incident;
+- r5/r6/K5/P5Y status;
+- exact next owner action, if any.
+
+Proceed autonomously now.
