@@ -1,0 +1,217 @@
+{
+ "all_pass": true,
+ "git_head": "78bd6a987677ee10fb579a2817cc2acc149c9503",
+ "guard_sha256": "77b220d9dd5e1c9170f5985c16b6eae34e457f0b7aaf7a647882580b4c6548e2",
+ "results": {
+  "D1_real_band_production_no_grant": {
+   "detail": "('REFUSE', 'quarantine: ValueError: no grant at HEAD')",
+   "pass": true
+  },
+  "D1b_real_mirror_production_no_grant": {
+   "detail": "('REFUSE', 'quarantine: ValueError: no grant at HEAD')",
+   "pass": true
+  },
+  "D1c_decoy_interval_not_banded": {
+   "detail": "",
+   "pass": true
+  },
+  "D1d_guard_interval_raises": {
+   "detail": "DRIFT_BAND_REFUSED [1.4, 1.5]: quarantine: ValueError: no grant at HEAD",
+   "pass": true
+  },
+  "D1e_production_adapter_real_band_raises": {
+   "detail": "",
+   "pass": true
+  },
+  "D1f_producer_call_site_refuses": {
+   "detail": "",
+   "pass": true
+  },
+  "N10a2_test_ctx_refuses_production_shaped_grant": {
+   "detail": "",
+   "pass": true
+  },
+  "N10a_production_ctx_ignores_sandbox": {
+   "detail": "",
+   "pass": true
+  },
+  "N10b_real_band_with_test_ctx": {
+   "detail": "",
+   "pass": true
+  },
+  "N10c_testcontext_refuses_repo_root": {
+   "detail": "TestContext refused: the sandbox is this repository",
+   "pass": true
+  },
+  "N10c_testcontext_refuses_repo_subdir": {
+   "detail": "TestContext refused: the sandbox is this repository",
+   "pass": true
+  },
+  "N11_synthetic_marker_not_production": {
+   "detail": "",
+   "pass": true
+  },
+  "N12_guard_has_no_review_mode": {
+   "detail": "",
+   "pass": true
+  },
+  "N13a_fail_closed_on_git_error": {
+   "detail": "",
+   "pass": true
+  },
+  "N13b_testcontext_non_git_raises": {
+   "detail": "RuntimeError",
+   "pass": true
+  },
+  "N1_no_test_grant": {
+   "detail": "",
+   "pass": true
+  },
+  "N2_ew_lo_ge_hi": {
+   "detail": "",
+   "pass": true
+  },
+  "N2_invalid_json": {
+   "detail": "",
+   "pass": true
+  },
+  "N2_missing_field": {
+   "detail": "",
+   "pass": true
+  },
+  "N2_non_rational": {
+   "detail": "",
+   "pass": true
+  },
+  "N2_unknown_schema": {
+   "detail": "",
+   "pass": true
+  },
+  "N2_wrong_type": {
+   "detail": "",
+   "pass": true
+  },
+  "N3a_wrong_cell_string": {
+   "detail": "",
+   "pass": true
+  },
+  "N3b_wrong_cell_type": {
+   "detail": "",
+   "pass": true
+  },
+  "N4a_interval_leaves_Ew": {
+   "detail": "",
+   "pass": true
+  },
+  "N4b_Ew_not_outward_hull": {
+   "detail": "",
+   "pass": true
+  },
+  "N4c_narrower_Ew_excludes_block": {
+   "detail": "",
+   "pass": true
+  },
+  "N5_wrong_guard_id": {
+   "detail": "",
+   "pass": true
+  },
+  "N6a_manifest_sha_mismatch": {
+   "detail": "",
+   "pass": true
+  },
+  "N6b_own_file_not_in_manifest": {
+   "detail": "",
+   "pass": true
+  },
+  "N6c_own_file_other_sha": {
+   "detail": "",
+   "pass": true
+  },
+  "N6d_frozen_commit_unknown": {
+   "detail": "",
+   "pass": true
+  },
+  "N6e_frozen_commit_not_ancestor": {
+   "detail": "",
+   "pass": true
+  },
+  "N7a_marker_absent": {
+   "detail": "",
+   "pass": true
+  },
+  "N7b_marker_elsewhere": {
+   "detail": "",
+   "pass": true
+  },
+  "N7c_extra_namespace_ref": {
+   "detail": "",
+   "pass": true
+  },
+  "N7d_head_not_grant_commit": {
+   "detail": "",
+   "pass": true
+  },
+  "N7e_grant_commit_touches_other_file": {
+   "detail": "",
+   "pass": true
+  },
+  "N7f_two_commits_add_grant": {
+   "detail": "",
+   "pass": true
+  },
+  "N7g_expired": {
+   "detail": "",
+   "pass": true
+  },
+  "N7h_strict_descendant_on_other_ref": {
+   "detail": "",
+   "pass": true
+  },
+  "N8a_wrong_host": {
+   "detail": "",
+   "pass": true
+  },
+  "N8b_wrong_runtime": {
+   "detail": "",
+   "pass": true
+  },
+  "N9a_test_ctx_real_band_geometry_5": {
+   "detail": "",
+   "pass": true
+  },
+  "N9b_test_ctx_real_band_geometry_3": {
+   "detail": "",
+   "pass": true
+  },
+  "N9c_production_ctx_test_band": {
+   "detail": "",
+   "pass": true
+  },
+  "N9d_test_adapter_real_band_raises": {
+   "detail": "",
+   "pass": true
+  },
+  "P1_test_band_admitted_inside_Ew": {
+   "detail": "[('ADMIT', 'admitted under grant commit d7824b83da22 (TEST)'), ('ADMIT', 'admitted under grant commit d7824b83da22 (TEST)')]",
+   "pass": true
+  },
+  "P1b_guard_interval_and_adapter_allowed": {
+   "detail": "",
+   "pass": true
+  },
+  "S1_production_context_immutable": {
+   "detail": "",
+   "pass": true
+  },
+  "S2_production_singleton": {
+   "detail": "",
+   "pass": true
+  },
+  "Z_no_production_marker_or_grant_anywhere": {
+   "detail": "[]",
+   "pass": true
+  }
+ },
+ "test_sha256": "160135efae03b5ed4e6803697221ba7b9742e5619de25ff039562d19e1373ec1",
+ "utc": "2026-09-30T03:02:38Z"
+}
