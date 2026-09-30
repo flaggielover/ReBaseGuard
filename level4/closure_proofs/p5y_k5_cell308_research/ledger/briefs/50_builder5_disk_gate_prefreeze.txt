@@ -1,0 +1,104 @@
+BUILD REQUEST (brief 50) — fresh non-holder builder `builder5`: disk-safety and scratch-lifecycle gate, re-pin
+tooling, R-MEM input recording, QS-RESUME-DECOY and the host-readiness checklist (recorded before sending).
+Target-free. Not frozen; nothing here authorises a freeze, a qualification run or any target step.
+
+WHO YOU ARE. A FRESH builder who is not a holder of any MB r1 run observation. Operational numbers and qualification
+tooling are roles the T6 ruling's M4 reserves to non-holders. You are independent of builder3, builder4, the
+coordinator editorR3C1 and every reviewer.
+
+OBJECT. Successor worktree /Users/suzhe/ReBaseGuard-c308mbs (branch p5y-k5-cell308-mbs-r1), clean at cc723527f63f4e69bfe36f86680d8fdaf481900e (the
+integrated qualification framework of builder4). NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1. Research namespace
+/Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research (read-only for you except the ledger).
+Read first: the protocol draft (all of it), BUILD_REPORT sections 1-8 and 10-15 (not 9), research
+ledger/enospc_2026-09-30/ENOSPC_AUDIT.md (the incident that motivates task 1), governance/CONSTANTS_RATIFICATION_MBS308.md
+(3c2a7854; items 14, 23, 24 and the R-rules), and the code and tests.
+
+WHY. On 2026-09-30 the data volume ran nearly full during sandbox-heavy test runs (each mutant-matrix run leaves about
+0.8 GB of sandbox per mutant); one test run was contaminated. The user asked for a prospective, target-free disk-space
+and scratch-lifecycle gate before the freeze, and for all other decision-independent freeze preparation.
+
+TASK 0 — LIVENESS ROBUSTNESS REPAIRS requested by the non-holder reviewer reviewB5 (research
+ reviews/REVIEW_OPTIONB_LIVENESS_MBS308.md, commit 2308651e; read its findings O-1, O-2, O-3, O-4 and K-1).
+ a. O-1 (REQUIRED before the freeze): `ps -o lstart` prints LOCAL time, so a change of the system time zone during a
+    run makes identity_state read a live recorded process as DEAD (the reviewer's probe: ALIVE -> DEAD), which could
+    let a resume start beside a live driver or the launcher boot out a live job. Make the start-time comparison
+    independent of the time zone (e.g. obtain the start time in a zone-independent form for both the recorded and the
+    current reading), keep every positive-evidence property (UNKNOWN is never dead), and add a test that changes the
+    zone between recording and checking (planted, e.g. through the environment of the reading) plus a mutant.
+ b. O-2 (an empty lockfile is breakable between its O_EXCL creation and its write) and O-3 (after a LOCK_RACE
+    put-back the lock has two links and every later acquire refuses: fail closed but stuck): repair each, or write a
+    reasoned no-change for the reviewer to rule on; tests and mutants for what you change.
+ c. K-1: add the two missing single-failure test cases (a failed boot-UUID read alone; a failed command read alone)
+    so that reviewB5's surviving Y5 / Y6 mutants die; O-4 (`ps` shows an unreadable command as "(name)" with exit 0):
+    repair or rule.
+ No operational number changes in task 0.
+
+TASK 1 — DISK-SAFETY AND SCRATCH-LIFECYCLE GATE (the user's requirements, all binding).
+ a. Three classes. ACTIVE (a scratch root whose recorded owner identity is not positively dead, or any root without a
+    valid lifecycle record), FINISHED (evidence of a completed run: reports, JSON, logs, probes, verdicts), DISPOSABLE
+    (reconstructable sandbox state only: sandbox clones and bare base stores inside a root marked FINISHED whose owner
+    is positively dead — use HOST.identity_state; UNKNOWN is never dead).
+ b. Cleanup may remove ONLY DISPOSABLE paths, and must NEVER remove: committed evidence; JSON reports; reviewer
+    verdicts; ledgers; manifests; refs; active worktrees (anything under the repository's worktrees or common dir);
+    active builder or qualification scratch; the target marker, pending-result state, spool, seals. Refuse symlinks and
+    anything whose real path leaves the scratch root; dry-run by default; every deletion recorded (value-free list).
+ c. Wire it in: the mutant runner deletes each mutant's sandbox once its result file is written and verified (so a
+    matrix never accumulates sandboxes); the qualification verifier and the mutant runner check free space before
+    starting and before each heavy phase and FAIL CLOSED when it is insufficient or unreadable.
+ d. A free-space probe failure must never read as sufficient space (check the driver's existing free_disk gate for the
+    same property; if it fails open, fix it — a fail-closed fix is not a new number).
+ e. THRESHOLDS. Derive, do not invent. Measure (target-free) the peak scratch usage of each suite, of one mutant's
+    sandbox, of the base store, of the verifier's QS runs with per-mutant cleanup, and the repository / spool growth of
+    a synthetic sealed run; take the ratification's own reasoning for swap growth (item 23). Define
+    QUAL_MIN_FREE_BYTES (qualification) and check the ratified MIN_FREE_DISK (2 GiB, item 23, execution) against the
+    same measurements, with an explicit written safety margin and every input recorded (protocol section 8 or 11 and
+    BUILD_REPORT). If your derivation says the execution threshold should be STRICTER than the ratified 2 GiB, write it
+    as a proposed amendment for the reviewer (keep 2 GiB in the code until a reviewer accepts it); never make it
+    looser. If any portion depends on the user's pending MBS-7 / MBS-8 decisions (e.g. which qualification cases
+    exist), leave that portion PENDING_USER_DECISION.
+ f. Tests and mutants (each killed by assertion) proving: insufficient disk fails closed before irreversible work
+    (verifier official start, mutant runner start, the driver's execute preflight); cleanup cannot target active
+    scratch; cannot target evidence (JSON, reports, ledgers, manifests, verdicts); cannot target refs; cannot target the
+    target marker (or pending / spool / seal); a probe failure does not read as sufficient space.
+TASK 2 — RE-PIN TOOLING. A dry-run-by-default tool (e.g. code/mbs308_repin.py) that recomputes HELPER_SHA256
+ mechanically, and at the freeze would produce PLATFORM_PINS from the qualification host's readings, writing only
+ with an explicit flag; plus the validated DRIVER_DIFF.md generator (difflib SequenceMatcher(autojunk=False), 3 lines
+ of context, labels carried) as a committed tool that first reproduces the committed DRIVER_DIFF.md byte for byte.
+ Tests in sandboxes. Do NOT re-pin PLATFORM_PINS now.
+TASK 3 — R-MEM INPUT RECORDING. builder4 found that the driver's decoy record lacks R-MEM's D (the driver's own peak
+ RSS, RUSAGE_SELF) and the ≤ 0.5 s RSS-growth sampler that R-MEM step 6 needs. Add both to the decoy path WITHOUT
+ changing any carried (text-identical) function: in the lifecycle code only (e.g. main()'s decoy branch or a lifecycle
+ wrapper), recorded fields only, no effect on any computed value; re-pin; DRIVER_DIFF.md regenerated; the static RC1 /
+ MBS-9 tests must still pass. Test with the synthetic evaluator (or the dev decoy only if unavoidable, ledgered as
+ NONTARGET_DRIFT_VALIDATION).
+TASK 4 — QS-RESUME-DECOY. builder4 declared it PENDING (MBS-7). Its definition (a complete decoy cell run
+ uninterrupted, and interrupted by SIGKILL after k checkpoints and resumed; every certified leaf of Stage 1 and of every
+ Stage-2 decoy bundle byte-identical) does not depend on which science is frozen. If you agree, implement the case in
+ the verifier (official form as protocol section 11 describes; its evidence is produced only at the official
+ qualification), with a dev-form test on decoy 297 block 0 at the dev ladder (the existing dev-decoy pattern,
+ ledgered as NONTARGET_DRIFT_VALIDATION), and argue the decision-independence in BUILD_REPORT. If you disagree, leave
+ it PENDING and say why. Do not touch MBR1_REPRO, QC01-QC08, Q12 or R_RULES_OFFICIAL.
+TASK 5 — HOST-READINESS CHECKLIST. In protocol section 8, a checklist of what must be true before the official
+ qualification and before any execution: automatic macOS / critical-update installation disabled (a user action; the
+ campaign never changes it), automatic restart behaviour, AC power, sleep prevention and the lid (caffeinate cannot
+ stop lid-close sleep), thermal level, the disk thresholds of task 1, memory pressure, boot identity, host identity
+ (the platform pins). Say for each item how it is checked (existing gate, new gate, or a recorded user action), and
+ add a READ-ONLY host-readiness report mode if useful (no system setting is ever changed).
+TASK 6 — BUILD_REPORT section 16 (additive): what you read, what you built, the threshold derivation, results, and
+ your exposure statement.
+
+RUN on your final code: static, launch, state, crash, qualify and your new suites, and the full mutant matrix (now with
+per-mutant cleanup — verify the peak scratch stays small and record it). Every kill by the target's own assertion.
+
+ABSOLUTE RULES. No cell-308 target evaluation, direct or indirect; nothing may evaluate Γ(5,308; ·), cells 305-309 or
+any drift in [6/5, 13/5] or its mirror (the only science you may run is the dev decoy on cell 297 block 0, ledgered);
+cell 309 out of scope; no authorization, grant, marker, pending result, seal, freeze manifest in the worktree, or
+official qualification run; no system-setting change of any kind. Change no ratified operational number (a stricter
+execution disk threshold only as a proposal). MBS-2 reading restrictions (no REVIEW_EXECUTION_INTERRUPTION*,
+audit/EXECUTION_INTERRUPTION_*, REVIEW_SUCCESSOR_GOVERNANCE_308*, INCIDENT_INDEPENDENCE_REVIEW_MBS308* incl. T6,
+COORDINATOR_EXPOSURE_DISCLOSURE*, nothing under p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/, no
+BUILD_REPORT section 9, no other session's or agent's scratchpad, nothing under /Users/suzhe/.claude/); disclose any MB
+r1 run observation already in your context. Sandboxes on your OWN --no-local base store; no real ref; NO git writes.
+Launch tests: synthetic payload, booted out, no plist left. Ledger via code/c308_quarantine.log_event
+(agent='builder5', target_evaluations=0). Check free space before every heavy run and delete your own sandboxes after
+it. REPORT in 15 lines or fewer.
