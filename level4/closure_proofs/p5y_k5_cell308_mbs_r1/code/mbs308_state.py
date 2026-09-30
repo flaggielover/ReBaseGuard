@@ -788,16 +788,23 @@ LSOF = "/usr/sbin/lsof"
 
 
 def git_lockfiles(st: Store) -> list:
-    """The campaign's git lockfiles, relative to the common dir: refs/p5y-k5-cell308-mbs-r1/*.lock, the branch lock,
-    packed-refs.lock (what a reset or power loss inside a ref write leaves)."""
+    """The campaign's git lockfiles, relative to the common dir: refs/p5y-k5-cell308-mbs-r1/*.lock and the branch lock
+    (what a reset or power loss inside one of the campaign's own ref writes leaves).
+
+    C-1 (REVIEW_IMPLEMENTATION_MBS308_DELTA): packed-refs.lock is NEVER a campaign lockfile. It blocks only ref
+    deletion, which the campaign never performs, so the campaign never creates or owns it; whenever it exists it
+    belongs to some other git process of the shared repository (gc, pack-refs, a ref deletion in any worktree), and a
+    live git holder has no open descriptor, so lsof cannot prove it stale. It is never listed, never moved and never
+    deleted here; MB r1's carried check_clean refuses it before the marker (nothing consumed), and after the marker a
+    ref write it prevented would fail as a recorded RefWriteError (fail closed; git keeps its own lock)."""
     cd = st.common_dir()
     out = []
     d = cd / REF_PREFIX.rstrip("/")
     if d.is_dir():
         out += sorted(f"{REF_PREFIX}{p.name}" for p in d.iterdir() if p.name.endswith(".lock"))
-    for rel in (st.branch_ref + ".lock", "packed-refs.lock"):
-        if os.path.lexists(cd / rel):
-            out.append(rel)
+    rel = st.branch_ref + ".lock"
+    if os.path.lexists(cd / rel):
+        out.append(rel)
     return out
 
 
@@ -815,25 +822,33 @@ def lockfile_open(path) -> bool | None:
     return None
 
 
+def _not_dead(ident, boot_uuid: str | None, exclude_pid: int | None) -> bool:
+    """N-3: a RECORDED campaign process identity holds the lockfiles unless it is positively DEAD
+    (HOST.identity_state); a failed `ps` or boot-UUID reading (UNKNOWN) is never evidence of death. No recorded
+    identity: no process."""
+    if not isinstance(ident, dict) or ident.get("pid") == exclude_pid:
+        return False
+    return HOST.identity_state(ident, boot_uuid) != "DEAD"
+
+
 def git_lock_info(st: Store, boot_uuid: str | None = None, exclude_pid: int | None = None) -> dict:
-    """Read-only. The lockfiles are STALE only when no live campaign process exists (the O_EXCL recover lock's
-    holder, the pidfile, the journal's recorded process) AND no process has any of them open."""
+    """Read-only. The lockfiles are STALE only when every recorded campaign process (the O_EXCL recover lock's
+    holder, the pidfile, the journal's recorded process) is positively dead AND no process has any of them open."""
     locks = git_lockfiles(st)
     if not locks:
         return {"git_locks": [], "git_locks_stale": None}
     live = []
     jrec = Journal.read(st)[1]
-    if jrec is not None and HOST.identity_alive(jrec.get("process"), boot_uuid) and \
-            (jrec.get("process") or {}).get("pid") != exclude_pid:
+    if jrec is not None and _not_dead(jrec.get("process"), boot_uuid, exclude_pid):
         live.append("journal_process")
-    prec, pst = read_pidfile(st, boot_uuid)
-    if pst == "LIVE" and (prec.get("identity") or {}).get("pid") != exclude_pid:
+    prec, _pst = read_pidfile(st, boot_uuid)
+    if isinstance(prec, dict) and _not_dead(prec.get("identity"), boot_uuid, exclude_pid):
         live.append("pidfile")
     try:
         holder = json.loads(st.spool_read(LOCKFILE) or b"{}").get("identity")
     except (ValueError, AttributeError, StateError):
         holder = None
-    if HOST.identity_alive(holder, boot_uuid) and (holder or {}).get("pid") != exclude_pid:
+    if _not_dead(holder, boot_uuid, exclude_pid):
         live.append("recover_lock")
     opened = {rel: lockfile_open(st.common_dir() / rel) for rel in locks}
     return {"git_locks": locks, "git_locks_live_campaign_process": live,

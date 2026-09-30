@@ -128,10 +128,11 @@ performs exactly the frozen action.
 | CONSUMED_COMPUTING | marker, journal ARMING … PENDING_RESULT, and the recorded process identity (pid, start time, command sha256) is alive under the **same boot UUID** | wait; `resume`, `close-indeterminate`, `seal-only`, `execute` refuse |
 | CONSUMED_INTERRUPTED | otherwise (the recorded process is dead or the boot UUID changed; checkpoints permit; budget and deadline remain; same platform) | `resume` (mandatory) |
 
-**Stale git lockfiles (repair R1 iii).** Every classification also lists the campaign's git lockfiles
-(`refs/p5y-k5-cell308-mbs-r1/*.lock`, the branch lock, `packed-refs.lock`, what a reset inside a ref write leaves).
-They are **stale** only when no live campaign process exists (the O_EXCL recover lock's holder, the pidfile, the
-journal's recorded process) and no process has any of them open (`lsof`). They do not change the state. `recover`,
+**Stale git lockfiles (repair R1 iii; correction C-1; note N-3).** Every classification also lists the campaign's git
+lockfiles (`refs/p5y-k5-cell308-mbs-r1/*.lock` and the branch lock: what a reset inside one of the campaign's own ref
+writes leaves). They are **stale** only when every recorded campaign process (the O_EXCL recover lock's holder, the
+pidfile, the journal's recorded process) is positively dead (a failed `ps` or boot-UUID reading is UNKNOWN, never
+dead) and no process has any of them open (`lsof`). They do not change the state. `recover`,
 in every state except CONSUMED_COMPUTING and **before** resume / seal / close, performs the frozen, recorded,
 value-free action: under the O_EXCL lock it re-verifies staleness and **moves** each lockfile into
 `<spool>/git-locks-aside/` (never deletes it; never renames it inside `refs/`, where it would read as a ref), appending
@@ -139,6 +140,14 @@ one record (name, size, birth / change times, destination, who) to `<spool>/reco
 lockfiles: `recover` does nothing and exits 8. `execute`, `resume`, `seal-only` and `close-indeterminate` refuse
 `GIT_LOCKED` while any campaign lockfile exists. A durable pre-marker intent whose marker write failed
 (ABORTED_INTENT, no marker) is taken over by the next `execute` like a stale ARMING intent.
+
+**`packed-refs.lock` is never a campaign lockfile (C-1).** It blocks only ref deletion, which the campaign never
+performs, so the campaign never creates or owns it: whenever it exists it belongs to some other git process of the
+shared repository (gc, pack-refs, a ref deletion in any worktree), and a live git holder has no open descriptor, so
+`lsof` cannot prove it stale. The campaign never lists, moves or deletes it. Before the marker, MB r1's carried
+`check_clean` refuses `GIT_LOCKED` while it exists (nothing consumed; git releases its own lock). After the marker it
+does not block the campaign's ref creates and updates, and a ref write that fails for any reason takes the recorded
+`RefWriteError` path of §5 (fail closed); the campaign never works around a git lock.
 
 A verified sealed / pending / spool record wins over the journal (a crash between an artifact write and the journal
 update is resolved by the artifact). A file whose canonical layout, self sha256, schema, completeness (`complete: true`
@@ -216,7 +225,9 @@ persistence are redone). Fault points F4–F12 are placed at the steps above (§
   `-I -S -B` + driver + mode; RunAtLoad true; KeepAlive false; AbandonProcessGroup true; ProcessType Standard; logs in
   `~/Library/Logs/ReBaseGuard/mbs308/`; WorkingDirectory the worktree; `MBS308_LAUNCH_LABEL` = the label) and starts it
   with `launchctl bootstrap gui/<uid>`. `execute` is refused unless the driver's `preflight` passes first; `resume`
-  unless `status` prints CONSUMED_INTERRUPTED.
+  unless `status` prints CONSUMED_INTERRUPTED. The preflight runs synchronously with the timeout **PRE_CAP_S + 100 s**,
+  a rule and not a number (ratification item 31): the launcher reads PRE_CAP_S from the driver's own bytes, so the
+  driver's own PRE_CAP refusal always comes before the launcher's kill, and the timeout follows any change of PRE_CAP_S.
 * The launcher records label, pid, PPID, PGID, SID, uid, start time, boot UUID, command sha256 and **proves detachment
   by test, not by PPID = 1**: not a descendant of the launcher's tree, a different session, launchd names the job as
   running with this pid. With `--wait` it boots the job out when it ends; `cleanup <label>` boots out a finished job.
@@ -225,7 +236,9 @@ persistence are redone). Fault points F4–F12 are placed at the steps above (§
   launchd check). `--wait` and `cleanup <label>` boot a job out only when its **recorded identity** (pid, start time,
   boot UUID, command sha256) is positively dead (the pid is gone, belongs to another process, or the boot UUID
   changed); a failing, timed-out or unparseable `launchctl print` decides nothing, and a job whose identity was never
-  recorded is never booted out automatically.
+  recorded is never booted out automatically. A field of the identity that was never recorded (a `ps` or boot-UUID
+  read failed at launch) is never compared (note N-2): while the pid exists such an identity is UNKNOWN, never dead;
+  once the pid is gone it is dead.
 * The driver's `execute` and `resume` refuse unless `XPC_SERVICE_NAME` **equals** the label (the hosting app exports
   `XPC_SERVICE_NAME=0`, so presence alone proves nothing), the parent is launchd and `launchctl print` names this pid.
 * Caffeinate is supervised: `caffeinate -i -m -s -w <driver pid>` is re-spawned whenever it dies; every spawn, death and
@@ -237,9 +250,11 @@ persistence are redone). Fault points F4–F12 are placed at the steps above (§
 
 **Preflight gates** (each refuses before the marker, or before the attempt counter moves at `resume`): AC power;
 lowpowermode 0; thermal-pressure level 0; free disk ≥ 2 GiB on the repository volume; memory pressure normal
-(`kern.memorystatus_vm_pressure_level` = 1); free memory ≥ 2 GiB (vm_stat free + inactive + speculative + purgeable;
-GC-10); host exclusivity: no process above 25 % CPU other than this process tree and a documented OS / UI allow-list
-(GC-10); boot UUID recorded; no live campaign pidfile; **automatic OS installation disabled** (DR2 c:
+(`kern.memorystatus_vm_pressure_level` = 1); free memory ≥ FREE_MEM_MIN (vm_stat free + inactive + speculative +
+purgeable; GC-10; provisional 2 GiB, frozen by R-FREE below); host exclusivity: no process above EXCL_CPU_PCT (25 %;
+R-EXCL-PCT below) CPU other than this process tree and the allow-list EXCL_ALLOW (GC-10; provisional: the 39 names
+the ratifier read in the driver ∪ {`spotlightknowledged.updater`, `cloudd`, `BackgroundShortcutRunner`,
+`modelcatalogd`}, ratification item 16; frozen by R-ALLOW below); boot UUID recorded; no live campaign pidfile; **automatic OS installation disabled** (DR2 c:
 `defaults read /Library/Preferences/com.apple.SoftwareUpdate` AutomaticallyInstallMacOSUpdates and CriticalUpdateInstall
 must be 0; a missing key is enabled; AutomaticDownload and ConfigDataInstall are recorded; read-only, never changed);
 launched by the launcher (execute / resume only).
@@ -265,10 +280,68 @@ exactly-once. A reboot is detected by the boot UUID and is CONSUMED_INTERRUPTED,
 **Caps.** MB r1's caps are unchanged: per-job CPU caps (RLIMIT_CPU in fresh workers), PRE_CAP 1800 s before the marker,
 **EVAL_CAP 8 h per attempt, counted on CLOCK_UPTIME_RAW** (awake time: from the marker or the resume start, never
 across a sleep; a hit is an execution failure → INDETERMINATE). **Memory (GC-10):** a per-worker RSS watchdog kills a
-worker above the cap (recorded; the pool breaks; INDETERMINATE, never a silent drop). Provisional cap 3 GiB; the frozen
-rule is max(3 × the largest official decoy per-job peak RSS, 1 GiB), derived at qualification from the official decoy
-runs only (dev decoy tonight: RLR d4 72 MB, C1B d4 70 MB, C2B N20 88 MB, VER d4 40 MB). A broken pool is released by
+worker above the cap (recorded; the pool breaks; INDETERMINATE, never a silent drop). Provisional cap 3 GiB, ratified
+for the pre-freeze build and as the measurement cap of the official decoys only; the frozen cap is the output of rule
+R-MEM below (the ratification replaced the draft rule "3 × the largest per-job peak, at least 1 GiB" by the stricter
+R-MEM), derived at qualification from the official decoy runs only (dev decoy of the build: RLR d4 72 MB, C1B d4
+70 MB, C2B N20 88 MB, VER d4 40 MB). A broken pool is released by
 SIGKILL (the workers ignore SIGTERM), so a worker death cannot hang the driver.
+
+**Constants set by rule at the freeze (CONSTANTS_RATIFICATION_MBS308, research `3c2a7854`,
+CONSTANTS_RATIFIED_WITH_CHANGES, non-holder ratifier; review R3).** `MEM_CAP_BYTES`, `FREE_MEM_MIN_BYTES`,
+`EXCL_CPU_PCT` and `EXCL_ALLOW` are frozen as the outputs of the four rules below, computed from the official
+qualification evidence and never from any target run, with every input recorded in the qualification. The values in
+the code are provisional (ratified for the pre-freeze build only). The rules are carried **verbatim** from the
+ratification's section "Written rules" (its dev-input illustration is not part of the rules; its optional builder
+recommendation, a path test for R-ALLOW (b), is not taken in this build, so R-ALLOW (b) is checked and recorded for each
+addition at the freeze). In R-ALLOW, "the current 39 names" are the 39 names of `EXCL_ALLOW` that the ratifier read
+(driver sha256 `7bc2a619…`; the same 39 names at
+`35cabb50`).
+
+**R-MEM (MEM_CAP).**
+1. *Inputs.* The OFFICIAL decoy runs of the MB-S qualification: the real driver's `decoy` under the launchd launcher,
+   frozen ladder, WORKERS 5, the decoy cells of the qualification plan. Each runs with the provisional cap (3 GiB) and
+   MEM_POLL_S 2 s. A decoy with any memory-watchdog event is **not a valid input**. It is re-run with the provisional
+   cap doubled, within the step-5 bound.
+2. P = max over every job of every valid official decoy of max(`job_maxrss_bytes` [ru_maxrss of the job's fresh worker],
+   `worker_peak_rss_bytes` [watchdog ps]). D = the driver's own peak RSS in those runs (the qualification records
+   ru_maxrss of RUSAGE_SELF).
+3. s = max over each (kind, rung) that appears in two or more valid runs of (largest peak / smallest peak). s = 1 if no
+   rung appears twice.
+4. **MEM_CAP = roundup_256MiB(max(k × P, 1 GiB)), k = max(3, 2s).**
+5. *Feasibility (host readings at qualification).* MEM_CAP + (WORKERS − 1) × P + D ≤ hw.memsize − W_idle, where W_idle
+   is vm_stat "wired down" × page size in the prepared idle state. If violated, the qualification **fails on memory**.
+   k, WORKERS and the floor are never reduced silently.
+6. *Poll re-check.* g = the highest RSS growth rate seen by a ≤ 0.5 s qualification sampler. Require
+   g × MEM_POLL_S ≤ 0.1 × MEM_CAP; otherwise MEM_POLL_S = max(0.5 s, 0.1 × MEM_CAP / g).
+
+**R-FREE (FREE_MEM_MIN).** FREE_MEM_MIN = max(2 GiB, roundup_256MiB(MEM_CAP + (WORKERS − 1) × P + D)), with the R-MEM
+values. It is measured as the driver's own `free_memory_bytes` (vm_stat free + inactive + speculative + purgeable).
+
+*Attainability.* The qualification records ≥ 10 readings, 30 s apart, of the prepared host (AC power, the operator's
+apps quit, the hosting app idle). At least 3 consecutive readings must reach FREE_MEM_MIN. Otherwise it records
+GATE_UNATTAINABLE: `execute` cannot start on this host, and the value is never reduced silently.
+
+**R-EXCL-PCT (EXCL_CPU_PCT).** EXCL_CPU_PCT = 25. There is exactly one exception. If the hosting app that runs the
+launcher, which cannot be quit, exceeds 25 in any prepared-state reading, then EXCL_CPU_PCT = min(50,
+roundup_5(1.25 × its maximum reading)). The ceiling of 50 is half the median official-decoy worker reading (about 99),
+so a process computing like a worker is always refused. Any other process above the threshold must be quit (or pass
+R-ALLOW); it is never a reason to raise the threshold.
+
+**R-ALLOW (EXCL_ALLOW).** The frozen list = the current 39 names ∪ the basename (`comm.rsplit('/')[-1]`, as
+`busy_processes` computes it) of every process that meets both conditions:
+- (a) it exceeds EXCL_CPU_PCT in any prepared-state qualification reading (≥ 10, 30 s apart) or in this ratification's
+  H3 readings;
+- (b) its executable path lies under `/System/`, `/usr/libexec/`, `/usr/sbin/`, `/sbin/` or `/Library/Apple/`
+  (SIP-protected OS locations).
+
+Never added: anything under `/Applications`, `/Users`, `/opt`, `/usr/local`, `/Library/Frameworks`, `/usr/bin` or
+`/bin` (tools a user can invoke), any Python interpreter, or the hosting app. Each addition is recorded with its path
+and reading.
+
+The sixteen other ratified items stand as built (ratification table). The ref-write retry schedule of repair R1 (i)
+reuses MB r1's frozen `SEAL_RETRY_DELAYS` = 0.5, 1, 2, 4 s (review item 33; source (a), MB r1's driver; completion
+only; no new number).
 
 ## 9. Pre-marker checks (MB r1's, re-targeted) and GC-8
 

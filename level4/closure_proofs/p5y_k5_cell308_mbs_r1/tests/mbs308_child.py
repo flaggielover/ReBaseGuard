@@ -5,7 +5,8 @@
 
 actions: execute | resume | recover | seal-only | close-indeterminate | status | classify | decoy-ckpt
 spec: fault {point: {"at": k, "how": "exit"|"kill"}}, boot_uuid (the classifier's boot UUID input, a simulated
-reboot), mbr1_git_dir, control_pass, mem_cap_mb, eval_cap_s, skip_not_evaluated, decoy {...}.
+reboot), mbr1_git_dir, control_pass, mem_cap_mb, eval_cap_s, skip_not_evaluated, decoy {...}, ps_fail_pids (`ps`
+readings fail for these pids: a planted reading failure, N-3).
 The last stdout line is a JSON object {"rc": ..., ...}. The driver never evaluates cell 308 here.
 """
 from __future__ import annotations
@@ -43,6 +44,11 @@ def main() -> int:
         p.write_bytes(p.read_bytes() + b"\n# planted by the test\n")
     if spec.get("skip_clean"):                     # R4: isolate a later refusal from the (tested) clean-tree check
         D.check_clean = lambda: None
+    if spec.get("ps_fail_pids"):                   # N-3: `ps` fails for these pids (a planted reading failure)
+        bad = {int(p) for p in spec["ps_fail_pids"]}
+        real_start, real_cmd = D.HOST.process_start, D.HOST.process_command_sha256
+        D.HOST.process_start = lambda pid, text=None: None if int(pid) in bad else real_start(pid, text)
+        D.HOST.process_command_sha256 = lambda pid, text=None: None if int(pid) in bad else real_cmd(pid, text)
     if action == "platform":
         print(json.dumps({"rc": 0, "platform": D.platform_readings()}))
         return 0

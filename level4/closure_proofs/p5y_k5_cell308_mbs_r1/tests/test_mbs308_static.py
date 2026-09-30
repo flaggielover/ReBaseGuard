@@ -258,5 +258,51 @@ def t_launcher_plist_contract():
     return {"ok": ok}
 
 
+RATIFICATION_COMMIT = "3c2a78544899c5772ea95b7b228b1059f056e3fd"
+RATIFICATION_REL = "level4/closure_proofs/p5y_k5_cell308_research/governance/CONSTANTS_RATIFICATION_MBS308.md"
+RATIFIED_EXCL_ADDITIONS = {"spotlightknowledged.updater", "cloudd", "BackgroundShortcutRunner", "modelcatalogd"}
+PRE_R3_BUILD = "35cabb507c70686e0545c3036dacc452dc7fe6ff"      # the build the implementation delta review rejected
+
+
+def _norm(s: str) -> str:
+    return " ".join(s.split())
+
+
+def _driver_set(src: str, name: str):
+    for n in ast.parse(src).body:
+        if isinstance(n, ast.Assign) and [getattr(t, "id", None) for t in n.targets] == [name]:
+            v = n.value
+            return set(ast.literal_eval(v.args[0] if isinstance(v, ast.Call) else v))
+    return None
+
+
+def t_r3_ratified_rules_applied():
+    """R3 (REVIEW_IMPLEMENTATION_MBS308_DELTA condition 1): the protocol draft's section 8 carries the ratification's
+    written rules R-MEM, R-FREE (with its attainability clause), R-EXCL-PCT and R-ALLOW (with its exclusions) VERBATIM
+    (whitespace-normalised), read from the committed ratification 3c2a7854; the superseded memory rule is no longer
+    stated as the frozen rule; section 7 states the launcher's preflight timeout as PRE_CAP_S + 100; and EXCL_ALLOW is
+    exactly the 39 names of the rejected build 35cabb50 plus the four ratified OS daemons."""
+    rat = git_show(RATIFICATION_COMMIT, RATIFICATION_REL).decode()
+    sec = rat.split("## Written rules", 1)[1].split("\n## Evidence", 1)[0] if "## Written rules" in rat else ""
+    paras = [p for p in sec.split("\n\n") if p.strip()]
+    starts = ("**R-MEM (MEM_CAP).**", "**R-FREE (FREE_MEM_MIN).**", "*Attainability.*", "**R-EXCL-PCT (EXCL_CPU_PCT).**",
+              "**R-ALLOW (EXCL_ALLOW).**", "Never added:")
+    rules = {s: next((p for p in paras if p.strip().startswith(s)), None) for s in starts}
+    proto = (T.NSS / "protocol/MBS308_PROTOCOL_DRAFT.md").read_text()
+    s8 = proto.split("\n## 8.", 1)[1].split("\n## 9.", 1)[0]
+    s7 = proto.split("\n## 7.", 1)[1].split("\n## 8.", 1)[0]
+    verbatim = {s: p is not None and _norm(p) in _norm(s8) for s, p in rules.items()}
+    superseded = "the frozen rule is max(3 × the largest official decoy per-job peak RSS, 1 GiB)"
+    old = _driver_set(git_show(PRE_R3_BUILD, T.NS_REL + "/code/mbs308_driver.py").decode(), "EXCL_ALLOW")
+    new = _driver_set(code("mbs308_driver.py").read_text(), "EXCL_ALLOW")
+    allow_ok = old is not None and len(old) == 39 and not (old & RATIFIED_EXCL_ADDITIONS) and \
+        new == old | RATIFIED_EXCL_ADDITIONS
+    timeout_rule = "PRE_CAP_S + 100" in _norm(s7)
+    ok = all(verbatim.values()) and _norm(superseded) not in _norm(s8) and timeout_rule and allow_ok
+    return {"ok": ok, "verbatim": verbatim, "superseded_absent": _norm(superseded) not in _norm(s8),
+            "timeout_rule_in_s7": timeout_rule, "excl_allow": {"old": len(old or ()), "new": len(new or ()),
+                                                              "ok": allow_ok}}
+
+
 if __name__ == "__main__":
     T.cli(globals())

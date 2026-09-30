@@ -515,3 +515,137 @@ M17 (marker without compare-and-swap) was re-targeted to the restructured marker
 
 The repair run used only sandboxes cloned from the separate no-local base store, the synthetic evaluator, the synthetic launchd payload and the dev decoy (297, block 0, dev ladder, 2 workers); 0 target evaluations; no ref, commit or staging in the real repository.
 
+
+## 13. Repairs R3 + C-1, and the bounded hardening N-2 / N-3 (implementation delta review REVIEW_IMPLEMENTATION_MBS308_DELTA, DELTA_REJECTED, research 99185dcb; editor `editorR3C1`)
+
+**Scope.** Only the delta review's remaining conditions: R3 (apply the non-holder ratification
+`governance/CONSTANTS_RATIFICATION_MBS308.md`, research 3c2a7854, CONSTANTS_RATIFIED_WITH_CHANGES, exactly; the
+deterministic M33 run) and C-1 (`packed-refs.lock` out of the campaign's lock handling), plus the reviewer's
+recommended N-2 and N-3 (a failed `ps` is never evidence of death). **No operational value was chosen by the
+editor:** every changed constant is a ratified ruling, and every test-only value is the builder's proposal as the
+reviewer checked it. The science, the guard, the 46 carried driver definitions and MB r1's bytes are unchanged.
+Base 35cabb50; working tree only until the repair commit.
+
+**Read for this repair.** The delta review (99185dcb) and the ratification (3c2a7854); BUILD_REPORT sections 1-8 and
+10-12 (section 9 was not opened); the successor's code, tests and protocol draft; MB r1's `mb308_driver.py` at freeze r3
+c46434a3 (only to regenerate DRIVER_DIFF.md) and `mb308_stage1.jobs` (job order, for the M33 argument); CPython 3.14's
+`concurrent/futures/process.py`; in the research namespace, briefs 42, 43 and 43-E1, the brief index, the ledger's
+format, governance erratum E1 section D3 and the conditions register's holder rows. No MBS-2 file and nothing under MB r1's
+review, adjudication, postexec or evidence directories was opened.
+
+**Exposure disclosure (for the reviewer's ruling under the T6 ruling's M4).** This editing session's auto-loaded
+memory, written earlier by the coordinator (a holder), carries a qualitative chronology of MB r1's one execution,
+including clock times. It carries no per-job, progress, CPU, memory, host or science figure. It is not repeated
+anywhere in this build, and no edit here depends on it: every operational value applied is the ratifier's, and the
+M33 test values are builder2's proposal as reviewIMPL measured it.
+
+### R3: the ratified constants, applied exactly
+
+| ratification item | where | before (35cabb50) | after |
+|---|---|---|---|
+| 16 EXCL_ALLOW | `code/mbs308_driver.py` | the 39 names | the same 39 ∪ {`spotlightknowledged.updater`, `cloudd`, `BackgroundShortcutRunner`, `modelcatalogd`} (provisional; R-ALLOW at the freeze) |
+| 31 launcher preflight timeout | `code/mbs308_launch.py` `pre_launch` | `timeout=1900` | `timeout=PRE_CAP_S + 100`, with `PRE_CAP_S = driver_literal("PRE_CAP_S")` read from the driver's own bytes (the launcher never imports the driver, which would load the science); the value is still 1900 s at PRE_CAP_S 1800, and it follows any change of PRE_CAP_S |
+| 10 / 11 MEM_CAP | driver comment; protocol s8 | comment stated the superseded rule | value unchanged (3 GiB, provisional); the comment and protocol s8 state R-MEM |
+| 14 FREE_MEM_MIN | driver comment; protocol s8 | "free memory >= 2 GiB" | value unchanged (2 GiB, provisional); R-FREE |
+| 15 EXCL_CPU_PCT | driver comment; protocol s8 | 25 | value unchanged (25); R-EXCL-PCT (its single exception is a freeze-time rule, so no code) |
+| rules | protocol s8 | none | R-MEM, R-FREE (with its attainability clause), R-EXCL-PCT and R-ALLOW (with its exclusions), copied programmatically from the committed ratification; the four constants frozen as rule outputs from official evidence; the superseded memory rule removed; the optional builder recommendation (a path test for R-ALLOW (b)) not taken, so (b) is checked and recorded per addition at the freeze |
+| 33 (review) | protocol s8; here | not listed | the ref-write retry of repair R1 (i) reuses MB r1's frozen `SEAL_RETRY_DELAYS` = 0.5, 1, 2, 4 s (source (a); completion only; no new number) |
+| launcher rule text | protocol s7; launcher docstring | none | the preflight timeout stated as the rule PRE_CAP_S + 100 s |
+
+The sixteen items ratified as they stand are unchanged.
+
+**Pins.** `HELPER_SHA256` re-pinned for the three edited helpers (guard unchanged):
+`mbs308_host.py` `26ac9538071ee1803b900c96390fbbba12f1ca6841ca7cf3cbb7d9533763d08d`, `mbs308_state.py` `aaf76e86a059d07d24f868a2f136333af210a4ac8632f0aa757d4233e5cd5aff`, `mbs308_launch.py` `38cb35a31a80f174b9f84837840c8f6cabdb9982d8d7a668fdb76993f01ba1cb`. Driver sha256 `d13688d120fb7efb64e5c08169ea6481a93fb8b110f0f442e2030092ac8c4aa4`.
+PLATFORM_PINS and SCIENCE_PINS unchanged. **DRIVER_DIFF.md** regenerated: 22 hunks, the same classes and the same
+touched definitions per hunk; only hunks 4 (the MEM_CAP comment and the helper pins) and 8 (the GC-10 comment and
+EXCL_ALLOW) change content, the rest shift line numbers. The generator (Python `difflib.SequenceMatcher`,
+`autojunk=False`, 3 lines of context, labels carried) first reproduced the committed 35cabb50 DRIVER_DIFF.md byte for
+byte; it lives in the editor's scratch and is not part of the namespace.
+
+**M33, deterministic.** `t_S01_worker_death` now starts with the run `{"worker_die": "RLR.0.6", "job_sleep": 90}`
+under the unchanged 60 s bound (harness timeout 150 s, so an unreleased run fails the bound by assertion, never by an
+exception); the seven existing runs follow unchanged. Why it cannot depend on timing: every synthetic job sleeps 90 s;
+RLR.0.6 is the first job of MB r1's order (`jobs` sorts by kind weight, then rung, then block) and dies at once; the
+other worker has either taken the next job (a 90 s sleep) or is blocked reading the call queue. It ignores SIGTERM,
+and CPython 3.14's `terminate_broken` holds the executor's shutdown lock while it joins every worker, so the driver's
+`shutdown` blocks until that worker exits by itself (at least 90 s) unless `_MemWatch._release_broken` SIGKILLs it
+within one 2 s poll. M33 removes exactly that release.
+
+### C-1: `packed-refs.lock` is never the campaign's
+
+* `mbs308_state.git_lockfiles` lists only `refs/p5y-k5-cell308-mbs-r1/*.lock` and the branch lock. Since
+  `move_stale_git_locks`, `git_lock_info`, the classifier, `recover` and every post-marker `GIT_LOCKED` refusal
+  (`check_not_evaluated`, `resume`, `seal-only`, `close-indeterminate`) take their set from it, `packed-refs.lock` is
+  no longer detected, refused on after the marker, moved aside or recorded. Nothing else in the campaign code names
+  it except MB r1's carried, text-identical `check_clean`, which still refuses it before the marker (nothing
+  consumed). After the marker it does not block the campaign's ref creates and updates; a ref write that fails for
+  any reason takes the recorded `RefWriteError` path (fail closed). No replacement mechanism touches it.
+* Protocol s4: the lock set, and a paragraph stating why `packed-refs.lock` is never a campaign lockfile.
+* Tests: `t_L09_packed_refs_lock_stale` is replaced by `t_L09_packed_refs_lock_never_moved` (planted after a crash,
+  mid-run at the 4th checkpoint, at F8, and before execute; each time the file stays in place byte for byte,
+  git-locks-aside stays empty, no recover action names it; the runs seal with no failed ref write; before execute the
+  refusal is `GIT_LOCKED` with nothing consumed and execute seals once git's lock is gone).
+  `t_L11_packed_refs_lock_open` becomes `t_L11_campaign_lock_open` (the open-handle guard, now on the campaign's
+  ckpt lock). M38 re-targeted to it; new M48 restores `packed-refs.lock` to the lock set.
+* The test library's sandbox reset (`wipe_state`) still unlinks a planted `packed-refs.lock` in the SANDBOX: test
+  harness only, never campaign code.
+
+### N-2 / N-3 (bounded R2 hardening)
+
+* **N-2**, `mbs308_host.identity_state`: a recorded field that is missing (an identity recorded while `ps` or the
+  boot-UUID read failed) is never compared. While the pid exists such an identity is UNKNOWN (the launcher keeps
+  waiting and never boots it out); once the pid is gone it is DEAD. A complete record behaves as before.
+  Test `launch::t_identity_state_positive_evidence`; mutant M49.
+* **N-3**, `mbs308_state.git_lock_info`: a recorded campaign identity (journal process, pidfile, recover-lock holder)
+  holds the campaign lockfiles unless `identity_state` is DEAD; a failed `ps` (UNKNOWN) keeps them held (recover exits
+  8, nothing done). Test `crash::t_L12_lock_ps_failure_not_stale` (child-harness knob `ps_fail_pids`, a planted
+  reading failure); mutant M50; M37's fragment re-targeted to the rewritten pidfile line (same meaning).
+* **Left for a separate reviewed delta (documented, not changed):** the other `identity_alive` users, where a failed
+  `ps` still reads as "not alive": the classifier's CONSUMED_COMPUTING test (M11's line: a live computing driver whose
+  `ps` fails would classify CONSUMED_INTERRUPTED, and a resume would race it; only the journal CAS / LostOwnership
+  protects), `Lock.acquire` (a live holder's recover lock could be broken; the journal CAS is the second line),
+  `read_pidfile` (preflight's other-job gate; pre-marker, the marker CAS decides) and `check_not_evaluated`'s
+  stale-intent takeover (pre-marker, the marker CAS decides). Changing them changes the frozen state table (protocol
+  s4), which is beyond this delta. N-1 (`cur == new` as success) is also not applied.
+* Test infrastructure: the mutant runner forwards `MBS308_BASE_STORE` to its target tests, so a matrix run uses its
+  own base store rather than the library default.
+
+### Tests and mutants (this code; reports in the editor's scratch)
+
+* `test_mbs308_static.py`: **10/10 PASS** (the 9 carried + `t_r3_ratified_rules_applied`). Negative controls on a
+  scratch copy: a one-token change of R-MEM, a dropped daemon, a missing timeout rule and the superseded rule restored
+  each make it FAIL; the unedited copy passes.
+* `test_mbs308_launch.py`: **10/10 PASS** (the 8 carried + `t_identity_state_positive_evidence`,
+  `t_preflight_timeout_rule`: timeout 1900 at PRE_CAP_S 1800, 1334 when a copy's PRE_CAP_S is 1234). Real launchd jobs
+  with the synthetic payload under the test prefix, all booted out, no plist left;
+  `t_launcher_refuses_execute_when_preflight_fails` ran the real driver's read-only `preflight` (PREFLIGHT_FAILED on
+  this host).
+* `test_mbs308_state.py`: **45/45 PASS** (the 44 carried + `t_gc10_ratified_allow_list`).
+* `test_mbs308_crash.py`: **48/48 PASS** (L09 replaced, L11 renamed, + L12), twice (the second run on the final
+  test bytes, after the L09 fix below). The deterministic S01 run, unmutated: 10.7 s and 7.3 s (bound 60 s).
+* `test_mbs308_decoy.py`: not re-run. It computes a real dev decoy (cell 297) through paths this repair does not
+  touch (checkpointing pool, checkpointer, stage 1); nothing it exercises changed.
+* **Mutant matrix: 52/52 KILLED; the unmutated code passes every target test.** M01-M47 as before (M37's fragment
+  and M38's target re-targeted, meanings unchanged) + M48 (C-1), M49 (N-2), M50 (N-3), M51 (the four daemons), M52 (the
+  timeout literal). Every per-mutant result file was checked: each kill is the target test's own assertion, with no
+  error, timeout or missing result. **One correction:** in the full matrix M48's first "kill" was an exception in
+  L09's own clean-up (`lk.unlink()` after the mutant had moved the file aside). L09 now removes the planted file with
+  `missing_ok=True` after its assertions; re-run: unmutated L09 PASS, M48 KILLED by assertion (the lock was listed
+  and moved aside in sub-cases (a) and (d)).
+* **M33, three independent runs (the matrix and two `--only M33` runs):** KILLED each time by the deterministic run
+  alone (95.6 s, 96.6 s, 96.3 s against the 60 s bound; status otherwise correct, rc 5), while the seven carried runs
+  passed under M33 in two of the three (in the third one carried run also happened to hang, 100.7 s: the old,
+  timing-dependent kill). Unmutated, the deterministic run took 7.4 s and 8.1 s in those runs' unmutated phases.
+
+### Integrity
+
+* **New cell-308 target evaluations: 0.** Every state-changing test used the synthetic evaluator in sandboxes cloned
+  from the editor's own `git clone --no-local --bare` base store; the only real-driver invocations were the read-only
+  `preflight` (launch test) and `status` in a sandbox copy (static test). Cells 305-309 and cell 309's campaign were
+  not touched.
+* Real repository, checked before the repair commit: the 144 refs are byte-identical to the pre-edit snapshot
+  (2026-09-30T02:30:03Z); **no ref under `refs/p5y-k5-cell308-mbs-r1/`**; MB r1's marker still names
+  `afa930727d084a5b70e6b85d30ca8f34c0e8ae74`; no `mbs308-spool` in the real git dir; no `packed-refs.lock`; no object
+  created or modified in the real object store since the snapshot (checked with a positive control). No launchd job or
+  plist of the campaign is left.
+* MB r1's bytes, the guard, the science pins, PLATFORM_PINS and the historical reviews are unchanged.

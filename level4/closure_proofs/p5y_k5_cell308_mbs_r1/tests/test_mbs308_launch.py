@@ -358,5 +358,82 @@ def t_launcher_refuses_execute_when_preflight_fails():
     return {"ok": refused == "PREFLIGHT_FAILED" and before == after, "refused": refused}
 
 
+def t_identity_state_positive_evidence():
+    """N-2 (REVIEW_IMPLEMENTATION_MBS308_DELTA): identity_state never reads DEAD from a field that was never recorded
+    (an identity recorded while `ps` or the boot-UUID read failed): a live process whose record lacks the start time,
+    the command sha256 or the boot UUID is UNKNOWN (never booted out, never counted dead), and DEAD once its pid is
+    gone. A complete record of a live process is ALIVE, a failing `ps` makes it UNKNOWN, a reused pid is DEAD."""
+    H, L, S = mods()
+    h = T.Helper(60)
+    try:
+        full = H.identity(h.p.pid)
+        partial = {k: dict(full, **{k: None}) for k in ("start_time", "command_sha256", "boot_uuid")}
+        alive = {k: H.identity_state(v) for k, v in partial.items()}
+        alive_full = H.identity_state(full)
+        reused = H.identity_state(dict(full, start_time="Thu Jan  1 00:00:00 1970"))
+        real = H.process_start
+        H.process_start = lambda pid, text=None: None                 # planted failing `ps`
+        try:
+            ps_failed = H.identity_state(full)
+        finally:
+            H.process_start = real
+    finally:
+        h.kill()
+    dead = {k: H.identity_state(v) for k, v in partial.items()}
+    complete = all(full.get(k) for k in ("pid", "start_time", "boot_uuid", "command_sha256"))
+    return {"ok": complete and all(v == "UNKNOWN" for v in alive.values()) and alive_full == "ALIVE"
+            and reused == "DEAD" and ps_failed == "UNKNOWN" and all(v == "DEAD" for v in dead.values())
+            and H.identity_state(full) == "DEAD",
+            "partial_alive": alive, "full_alive": alive_full, "reused": reused, "ps_failed": ps_failed,
+            "partial_dead": dead}
+
+
+def t_preflight_timeout_rule():
+    """R3 (ratification item 31): the launcher's preflight timeout is the RULE PRE_CAP_S + 100 s, with PRE_CAP_S the
+    driver's own. Checked on the code under test (the driver's PRE_CAP_S read independently here) and on a copy whose
+    driver PRE_CAP_S differs: the launcher's timeout must follow it (a literal would not)."""
+    import ast
+    import importlib.util
+    import shutil
+    H, L, S = mods()
+
+    def pre_cap(driver: Path) -> int:
+        for n in ast.parse(driver.read_text()).body:
+            if isinstance(n, ast.Assign) and [getattr(t, "id", None) for t in n.targets] == ["PRE_CAP_S"]:
+                return ast.literal_eval(n.value)
+        raise AssertionError("no PRE_CAP_S")
+
+    def timeout_of(mod) -> int | None:
+        seen = []
+
+        def fake_run(args, timeout=60):
+            seen.append(timeout)
+            return subprocess.CompletedProcess(args, 0, "MBS308 PREFLIGHT PASS\n", "")
+        real = mod._run
+        mod._run = fake_run
+        try:
+            got = mod.pre_launch("execute")
+        finally:
+            mod._run = real
+        return seen[0] if got == {"preflight": "PASS"} and len(seen) == 1 else None
+    here = timeout_of(L)
+    want_here = pre_cap(T.code_dir() / "mbs308_driver.py") + 100
+    d = TMP / "follow" / "level4/closure_proofs/p5y_k5_cell308_mbs_r1/code"
+    if d.exists():
+        shutil.rmtree(d)
+    d.mkdir(parents=True)
+    for f in ("mbs308_launch.py", "mbs308_host.py"):
+        shutil.copy(T.code_dir() / f, d / f)
+    src = (T.code_dir() / "mbs308_driver.py").read_text()
+    lines = [ln for ln in src.splitlines(keepends=True) if ln.startswith("PRE_CAP_S = ")]
+    (d / "mbs308_driver.py").write_text(src.replace(lines[0], "PRE_CAP_S = 1234\n", 1) if len(lines) == 1 else src)
+    spec = importlib.util.spec_from_file_location("mbs308_launch_follow", d / "mbs308_launch.py")
+    L2 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(L2)
+    moved = timeout_of(L2)
+    return {"ok": len(lines) == 1 and here == want_here and pre_cap(d / "mbs308_driver.py") == 1234 and moved == 1334,
+            "timeout": here, "expected": want_here, "timeout_when_pre_cap_is_1234": moved}
+
+
 if __name__ == "__main__":
     T.cli(globals())

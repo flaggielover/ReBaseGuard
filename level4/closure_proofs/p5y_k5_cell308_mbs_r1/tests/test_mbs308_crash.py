@@ -157,20 +157,31 @@ for _p in EXPECT:
 def t_S01_worker_death():
     """A worker death is an execution failure (MB r1 rule): the pool breaks, the remaining workers (which ignore
     SIGTERM) are released by SIGKILL, and the attempt seals TARGET_EVALUATION_FAILED -> INDETERMINATE, promptly (no
-    hang), whichever job dies and whatever the other workers are doing."""
+    hang), whichever job dies and whatever the other workers are doing.
+
+    R3 (REVIEW_IMPLEMENTATION_MBS308_DELTA, condition 2): the FIRST run decides the broken-pool release (mutant M33)
+    without depending on timing. Every synthetic job sleeps 90 s and RLR.0.6, the first job of MB r1's job order, dies
+    at once, so when the pool breaks the other worker is inside a 90 s job (or blocked on the call queue). It ignores
+    SIGTERM, and concurrent.futures' terminate_broken joins it while holding the executor's shutdown lock, so only the
+    SIGKILL release can end this run inside the 60 s bound. Its harness timeout (150 s) exceeds the 90 s sleep: an
+    unreleased run ends (or is stopped) after the bound and fails it by assertion, never by an exception."""
     runs = {}
     ok = True
-    for key in ("C2B.2.20", "C2B.1.20", "C1B.2.4", "RLR.2.4", "RLR.0.6", "C2B.2.20", "C2B.0.20"):
+    plan = [({"worker_die": "RLR.0.6", "job_sleep": 90}, 150)] + \
+        [({"worker_die": key}, 90) for key in ("C2B.2.20", "C2B.1.20", "C1B.2.4", "RLR.2.4", "RLR.0.6", "C2B.2.20",
+                                               "C2B.0.20")]
+    for spec, timeout in plan:
         ch = fresh()
         t0 = time.time()
-        r = T.child(sb(), "execute", {"worker_die": key}, timeout=90)
+        r = T.child(sb(), "execute", spec, timeout=timeout)
         rec = sb().sealed_record()
         st = status()
         r2 = recover()
         good = r["out"] == {"rc": 5} and rec is not None and rec["status"] == "TARGET_EVALUATION_FAILED" \
             and "BrokenProcessPool" in rec["target"]["error"] and st == "INDETERMINATE" \
             and action_of(r2) == "materialize" and one_marker(ch) and time.time() - t0 < 60
-        runs[key + f"#{len(runs)}"] = {"ok": good, "seconds": round(time.time() - t0, 1), "rc": r["out"]}
+        tag = spec["worker_die"] + (f"+sleep{spec['job_sleep']}" if spec.get("job_sleep") else "")
+        runs[tag + f"#{len(runs)}"] = {"ok": good, "seconds": round(time.time() - t0, 1), "rc": r["out"]}
         ok = ok and good
     return {"ok": ok, "runs": runs}
 
@@ -485,13 +496,59 @@ def t_L08_branch_lock():
             and one_marker(ch), "run": r["out"], "state": s1}
 
 
-def t_L09_packed_refs_lock_stale():
-    ch = fresh()
+def _intact(p: Path) -> bool:
+    """The planted lockfile is still in place, byte for byte (sb().plant_lock and the fault hook write these bytes)."""
+    return p.is_file() and not p.is_symlink() and p.read_bytes() == b"0" * 40 + b"\n"
+
+
+def t_L09_packed_refs_lock_never_moved():
+    """C-1 (REVIEW_IMPLEMENTATION_MBS308_DELTA): packed-refs.lock is never a campaign lockfile. It blocks only ref
+    deletion, which the campaign never performs, and a live git holder is invisible to lsof, so the campaign never
+    lists, moves or deletes it. (a) Planted after a crash: the classification lists no lockfile, recover resumes and
+    seals. (b) Planted mid-run (at the 4th checkpoint) and (c) once the result is durable (F8): the run seals itself
+    with no failed ref write. (d) Planted before execute: MB r1's carried check_clean refuses GIT_LOCKED with nothing
+    consumed and recover does nothing; once git's lock is gone (the test removes it, as git would), execute seals. In
+    every case the planted file stays in place byte for byte, git-locks-aside stays empty and no recover action names
+    it."""
+    base = baseline()
+    lk = sb().lock_path(PACKED_LOCK)
+
+    def untouched() -> bool:
+        return _intact(lk) and sb().locks_aside() == [] and not any(a.get("lock") == PACKED_LOCK for a in _actions())
+    ch = fresh()                                                                            # (a)
     T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
     sb().plant_lock(PACKED_LOCK)
+    cls = classify()
     r = recover()
-    return {"ok": moved_locks(r) == 1 and status() == "SEALED" and sealed_ok() and one_marker(ch)
-            and _actions()[-1]["lock"] == PACKED_LOCK, "recover": r["out"]}
+    ok_a = cls.get("git_locks") == [] and r["out"] == {"rc": 0} and action_of(r) == "resume" \
+        and moved_locks(r) is None and status() == "SEALED" and sealed_ok() and one_marker(ch) and untouched()
+    a = {"listed": cls.get("git_locks"), "recover": r["out"], "action": action_of(r), "untouched": untouched()}
+    lk.unlink(missing_ok=True)          # missing only if something moved it: the assertions above already failed
+    out = {}
+    for tag, point, at in (("b", "F3", 4), ("c", "F8", 1)):                                 # (b), (c)
+        ch = fresh()
+        r = T.child(sb(), "execute", _plant(point, PACKED_LOCK, at=at))
+        rec = sb().sealed_record()
+        life = (rec or {}).get("lifecycle", {})
+        out[tag] = {"ok": r["out"] == {"rc": 0} and status() == "SEALED" and sealed_ok() and one_marker(ch)
+                    and T.certified_bytes(rec) == base and not life.get("ref_write_failures")
+                    and not life.get("stage1_context", {}).get("checkpoint_write_failures") and untouched(),
+                    "run": r["out"], "planted_during_run": lk.exists()}
+        if lk.exists():
+            lk.unlink()
+    ch = fresh()                                                                            # (d)
+    sb().plant_lock(PACKED_LOCK)
+    d1 = T.child(sb(), "execute")
+    d_state = status()
+    d_rec = recover()
+    d_held = untouched()
+    lk.unlink(missing_ok=True)          # git's own lock is released (by git; never by the campaign)
+    d2 = T.child(sb(), "execute")
+    ok_d = d1["out"] == {"rc": 2, "refused": "GIT_LOCKED"} and d_state == "NO_TARGET_CONSUMED" \
+        and action_of(d_rec) == "none" and moved_locks(d_rec) is None and d_held and d2["out"] == {"rc": 0} \
+        and sealed_ok() and one_marker(ch)
+    return {"ok": ok_a and out["b"]["ok"] and out["c"]["ok"] and ok_d, "a": a, "b": out["b"], "c": out["c"],
+            "d": [d1["out"], d_state, action_of(d_rec), d_held, d2["out"]]}
 
 
 def t_L10_lock_with_live_campaign_process():
@@ -516,11 +573,13 @@ def t_L10_lock_with_live_campaign_process():
             and one_marker(ch), "first": r1["out"], "second": r2["out"]}
 
 
-def t_L11_packed_refs_lock_open():
-    """A lockfile that some process holds open (lsof) is NOT stale (a live git command elsewhere in the repository)."""
+def t_L11_campaign_lock_open():
+    """A campaign lockfile that some process holds open (lsof) is NOT stale: recover does nothing; once it is closed,
+    recover moves it aside and resumes. (C-1: this case planted packed-refs.lock, which is no longer a campaign
+    lockfile; it now plants the campaign's own ckpt ref lock.)"""
     ch = fresh()
     T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
-    lk = sb().plant_lock(PACKED_LOCK)
+    lk = sb().plant_lock(CKPT_LOCK)
     holder = subprocess.Popen([T.PY, "-I", "-S", "-B", "-c", f"import time; f = open({str(lk)!r}); time.sleep(120)"],
                               stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
@@ -532,7 +591,33 @@ def t_L11_packed_refs_lock_open():
         holder.wait()
     r2 = recover()
     return {"ok": r1["out"] == {"rc": 8} and held and moved_locks(r2) == 1 and status() == "SEALED" and sealed_ok()
-            and one_marker(ch), "first": r1["out"], "second": r2["out"]}
+            and one_marker(ch) and _actions()[-1]["lock"] == CKPT_LOCK, "first": r1["out"], "second": r2["out"]}
+
+
+def t_L12_lock_ps_failure_not_stale():
+    """N-3 (REVIEW_IMPLEMENTATION_MBS308_DELTA): a campaign lockfile is NOT stale while a recorded campaign process
+    identity cannot be read. The pidfile names a live process and `ps` fails for it (planted): its identity is UNKNOWN,
+    never dead, so recover does nothing (exit 8). Once the pid is gone (positive evidence of death, whatever `ps`
+    does), recover moves the lock aside and resumes."""
+    ch = fresh()
+    T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
+    lk = sb().plant_lock(JOURNAL_LOCK)
+    code = str(sb().p(T.NS_REL + "/code"))
+    if code not in sys.path:
+        sys.path.insert(0, code)
+    import mbs308_host as H
+    h = T.Helper(120)
+    try:
+        ident = H.identity(h.p.pid)
+        (sb().spool() / "driver.pid").write_text(json.dumps({"identity": ident}))
+        r1 = recover(ps_fail_pids=[h.p.pid])
+        held = lk.exists() and sb().locks_aside() == []
+    finally:
+        h.kill()
+    r2 = recover(ps_fail_pids=[h.p.pid])
+    complete = all(ident.get(k) for k in ("pid", "start_time", "boot_uuid", "command_sha256"))
+    return {"ok": complete and r1["out"] == {"rc": 8} and held and moved_locks(r2) == 1 and status() == "SEALED"
+            and sealed_ok() and one_marker(ch), "first": r1["out"], "second": r2["out"]}
 
 
 if __name__ == "__main__":

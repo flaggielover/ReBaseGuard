@@ -652,6 +652,33 @@ def t_gc10_start_gates():
     return {"ok": ok, "cases": {k: v.get("refused", "PASS") for k, v in out.items()}}
 
 
+# R3: the four Apple OS daemons of CONSTANTS_RATIFICATION_MBS308 item 16 (H3 readings; paths as the ratifier's H3/H4)
+RATIFIED_DAEMONS = {
+    "spotlightknowledged.updater": "/usr/libexec/spotlightknowledged.updater",
+    "cloudd": "/System/Library/PrivateFrameworks/CloudKitDaemon.framework/Support/cloudd",
+    "BackgroundShortcutRunner": "/System/Library/PrivateFrameworks/WorkflowKit.framework/XPCServices/"
+                                "BackgroundShortcutRunner.xpc/Contents/MacOS/BackgroundShortcutRunner",
+    "modelcatalogd": "/System/Library/PrivateFrameworks/ModelCatalogRuntime.framework/Support/modelcatalogd",
+}
+
+
+def t_gc10_ratified_allow_list():
+    """R3 (ratification item 16): the DRIVER's exclusivity gate on planted ps readings passes each of the four ratified
+    OS daemons above the threshold, one at a time and all together; the allow-list stays a list of names, so an OS
+    daemon that is not on it still refuses start (host_exclusive)."""
+    fresh()
+    big = 8 * 2 ** 30
+    out = {}
+    for i, (name, path) in enumerate(RATIFIED_DAEMONS.items()):
+        out[name] = _gates(_vm(big), PS_QUIET + f" {4300 + i}     1  70.0 {path}\n")
+    out["all_four"] = _gates(_vm(big), PS_QUIET + "".join(f" {4310 + i}     1  52.0 {p}\n"
+                                                          for i, p in enumerate(RATIFIED_DAEMONS.values())))
+    out["unlisted_os_daemon"] = _gates(_vm(big), PS_QUIET + " 4320     1  70.0 /usr/libexec/notratifiedd\n")
+    ok = all(out[k]["rc"] == 0 and all(out[k]["gates"].values()) for k in (*RATIFIED_DAEMONS, "all_four")) \
+        and out["unlisted_os_daemon"] == {"rc": 2, "refused": "HOST_PREFLIGHT", "detail": "HOST_PREFLIGHT: host_exclusive"}
+    return {"ok": ok, "cases": {k: v.get("refused", "PASS") for k, v in out.items()}}
+
+
 PIN_OVERRIDE = {"pin_override": {"os_build": "25Z999"}}
 RESEARCH_REL = "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json"
 SCIENCE_REL = T.NSF_REL + "/code/mb308_supply.py"

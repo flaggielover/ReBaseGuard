@@ -194,8 +194,9 @@ ENV = {"PATH": "/usr/bin:/bin", "HOME": os.environ.get("HOME", "/var/empty"), "G
        "GIT_NO_REPLACE_OBJECTS": "1", "LC_ALL": "C"}
 SCHEMA = STATE.RESULT_SCHEMA
 OUTCOMES = ("CELL308_CLOSED_UNDER_MB", "CELL308_NOT_CLOSED_UNDER_MB", "CELL308_EXECUTION_INDETERMINATE")
-# GC-10 (provisional; to be re-derived at qualification from the OFFICIAL decoy runs, never from any target run):
-# per-worker RSS cap = max(3 x the largest official decoy per-job peak RSS, 1 GiB); host headroom at preflight.
+# GC-10 (provisional; set at the freeze by rule R-MEM of CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854; protocol
+# section 8) from the OFFICIAL decoy runs, never from any target run). The provisional 3 GiB is ratified for the
+# pre-freeze build and as the measurement cap of the official decoys only.
 MEM_CAP_BYTES = 3 * 1024 ** 3
 MEM_POLL_S = 2.0
 # RC2: the platform the qualification measured; preflight / execute / resume refuse on any mismatch (re-pinned at
@@ -214,9 +215,9 @@ PLATFORM_PINS = {
 # helper modules of this campaign, pinned by sha256 (the grant binds this driver's own sha256). Re-pinned at freeze.
 HELPER_SHA256 = {
     "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
-    "mbs308_host.py": "fed4ea2b83975d388decfa12f29afffc8e9dd2a1cdfa8b941bf85ce70855fc89",
-    "mbs308_state.py": "807008ef5ac756d6a0f86a5b7667e213fbbdfba00ae420813b4b5c2728f154e3",
-    "mbs308_launch.py": "c829b9ed375d25f5e1386001831015f2dde0fa07dcccd283ba822b0290022028",
+    "mbs308_host.py": "26ac9538071ee1803b900c96390fbbba12f1ca6841ca7cf3cbb7d9533763d08d",
+    "mbs308_state.py": "aaf76e86a059d07d24f868a2f136333af210a4ac8632f0aa757d4233e5cd5aff",
+    "mbs308_launch.py": "38cb35a31a80f174b9f84837840c8f6cabdb9982d8d7a668fdb76993f01ba1cb",
 }
 PIN.GUARD_SHA256 = HELPER_SHA256["mbs308_guard.py"]
 # per-job CPU caps (REVIEW_A0_CERTIFIER_R1 C3): each Stage-1 job runs in a FRESH worker process (max_tasks_per_child
@@ -503,15 +504,19 @@ def check_launched() -> dict:
     return rec
 
 
-# GC-10 host headroom and exclusivity (recorded; each refuses start)
+# GC-10 host headroom and exclusivity (recorded; each refuses start). Provisional values; each is frozen at the freeze
+# as the output of its rule in CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854; protocol section 8): FREE_MEM_MIN by
+# R-FREE, EXCL_CPU_PCT by R-EXCL-PCT, EXCL_ALLOW by R-ALLOW.
 FREE_MEM_MIN_BYTES = 2 * 1024 ** 3
 EXCL_CPU_PCT = 25.0
+# the 39 names as read by the ratifier, plus the four Apple OS daemons it ratified (item 16, H3 / H4)
 EXCL_ALLOW = frozenset({"kernel_task", "WindowServer", "launchd", "logd", "mds", "mds_stores", "mdworker",
                         "mdworker_shared", "coreaudiod", "powerd", "hidd", "bluetoothd", "configd", "syslogd",
                         "opendirectoryd", "distnoted", "cfprefsd", "trustd", "securityd", "loginwindow", "Dock",
                         "SystemUIServer", "ControlCenter", "Finder", "backupd", "spindump", "ReportCrash",
                         "sysmond", "thermalmonitord", "watchdogd", "runningboardd", "symptomsd", "remoted",
-                        "bird", "fseventsd", "diskarbitrationd", "coreservicesd", "notifyd", "UserEventAgent"})
+                        "bird", "fseventsd", "diskarbitrationd", "coreservicesd", "notifyd", "UserEventAgent",
+                        "spotlightknowledged.updater", "cloudd", "BackgroundShortcutRunner", "modelcatalogd"})
 
 
 def free_memory_bytes(text: str | None = None) -> int | None:

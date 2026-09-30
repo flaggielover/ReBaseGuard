@@ -126,11 +126,11 @@ MUTANTS = {
             "R1 (ii) undone: a journal conflict after the durable result stops the seal"),
     "M36": ("mbs308_driver.py", '            moved = STATE.move_stale_git_locks(store(), boot_uuid)', '            moved = []',
             "crash::t_L02_journal_lock_after_crash", "R1 (iii) undone: recover never moves stale git lockfiles aside"),
-    "M37": ("mbs308_state.py", '    if pst == "LIVE" and (prec.get("identity") or {}).get("pid") != exclude_pid:\n'
+    "M37": ("mbs308_state.py", '    if isinstance(prec, dict) and _not_dead(prec.get("identity"), boot_uuid, exclude_pid):\n'
             '        live.append("pidfile")\n', '', "crash::t_L10_lock_with_live_campaign_process",
             "R1 (iii) guard undone: a lock is 'stale' although a live campaign process holds the pidfile"),
     "M38": ("mbs308_state.py", '"git_locks_stale": not live and all(v is False for v in opened.values())}',
-            '"git_locks_stale": not live}', "crash::t_L11_packed_refs_lock_open",
+            '"git_locks_stale": not live}', "crash::t_L11_campaign_lock_open",
             "R1 (iii) guard undone: a lockfile held open by a live process is moved aside"),
     "M39": ("mbs308_driver.py", '        if jrec is None or jrec["state"] not in ("ARMING", "ABORTED_INTENT") or \\',
             '        if jrec is None or jrec["state"] not in ("ARMING",) or \\', "crash::t_L01_marker_lock",
@@ -155,6 +155,22 @@ MUTANTS = {
             "state::t_pins_resume_science", "science pins not re-verified at execute / resume (R4)"),
     "M47": ("mbs308_driver.py", '        if git("ls-tree", tip, "--", ev).stdout.strip():', '        if False:',
             "state::t_gc8_evidence_at_head_and_mbr1_branch", "GC-8 evidence path at HEAD / on MB r1's branch ignored (R4)"),
+    # ---- R3 + C-1 + N-2 / N-3 (implementation delta review REVIEW_IMPLEMENTATION_MBS308_DELTA, 99185dcb)
+    "M48": ("mbs308_state.py", '    rel = st.branch_ref + ".lock"\n    if os.path.lexists(cd / rel):\n        out.append(rel)\n',
+            '    for rel in (st.branch_ref + ".lock", "packed-refs.lock"):\n        if os.path.lexists(cd / rel):\n'
+            '            out.append(rel)\n', "crash::t_L09_packed_refs_lock_never_moved",
+            "C-1 undone: packed-refs.lock is a campaign lockfile again (listed, refused on, moved aside)"),
+    "M49": ("mbs308_host.py", '    if ident.get("start_time") and st != ident["start_time"]:',
+            '    if st != ident.get("start_time"):', "launch::t_identity_state_positive_evidence",
+            "N-2 undone: an identity recorded without its start time reads DEAD for a live process"),
+    "M50": ("mbs308_state.py", '    return HOST.identity_state(ident, boot_uuid) != "DEAD"',
+            '    return HOST.identity_alive(ident, boot_uuid)', "crash::t_L12_lock_ps_failure_not_stale",
+            "N-3 undone: a failed `ps` makes a live campaign process read dead, so its lockfile is moved aside"),
+    "M51": ("mbs308_driver.py", ',\n                        "spotlightknowledged.updater", "cloudd", "BackgroundShortcutRunner", '
+            '"modelcatalogd"})', '})', "state::t_gc10_ratified_allow_list",
+            "R3 undone: the four ratified OS daemons are not on the exclusivity allow-list"),
+    "M52": ("mbs308_launch.py", 'timeout=PRE_CAP_S + 100)', 'timeout=1900)', "launch::t_preflight_timeout_rule",
+            "R3 undone: the launcher's preflight timeout is the literal 1900 s, not the rule PRE_CAP_S + 100 s"),
 }
 
 
@@ -189,7 +205,8 @@ def make_code(tag: str, mutant: tuple | None) -> Path:
 def run_target(target: str, code: Path, tag: str) -> dict:
     mod, test = target.split("::")
     out = TMP / tag / "result.json"
-    env = dict(T.GENV, MBS308_TEST_CODE_DIR=str(code), MBS308_SCRATCH=str(TMP / tag / "scratch"))
+    env = dict(T.GENV, MBS308_TEST_CODE_DIR=str(code), MBS308_SCRATCH=str(TMP / tag / "scratch"),
+               MBS308_BASE_STORE=str(T.BASE_STORE))            # the runner's own base store, never another default
     (TMP / tag / "scratch").mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     p = subprocess.run([T.PY, "-I", "-S", "-B", str(TESTS / f"test_mbs308_{mod}.py"), test, "--out", str(out)],

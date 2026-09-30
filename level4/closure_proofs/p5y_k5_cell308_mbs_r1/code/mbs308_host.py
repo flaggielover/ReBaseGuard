@@ -410,7 +410,9 @@ def identity_alive(ident, boot_uuid: str | None = None) -> bool:
 def identity_state(ident, boot_uuid: str | None = None) -> str:
     """R2: "DEAD" only on POSITIVE evidence that the recorded process is gone -- the boot UUID changed, the pid does not
     exist, or the pid now belongs to another process (other start time or command). "ALIVE" when all four fields
-    match. "UNKNOWN" when a reading fails (a failed `ps`, an unreadable boot UUID): never treated as dead."""
+    match. "UNKNOWN" when a reading fails (a failed `ps`, an unreadable boot UUID): never treated as dead.
+    N-2: a field that was never recorded (an identity recorded while `ps` or the boot-UUID read failed) is never
+    compared: it can neither prove death nor complete a match, so a live pid with an incomplete record is UNKNOWN."""
     if not isinstance(ident, dict) or not ident.get("pid"):
         return "UNKNOWN"
     cur_boot = boot_session_uuid() if boot_uuid is None else boot_uuid
@@ -429,12 +431,14 @@ def identity_state(ident, boot_uuid: str | None = None) -> str:
     st = process_start(ident["pid"])
     if st is None:
         return "UNKNOWN"
-    if st != ident.get("start_time"):
+    if ident.get("start_time") and st != ident["start_time"]:
         return "DEAD"
     cs = process_command_sha256(ident["pid"])
     if cs is None:
         return "UNKNOWN"
-    return "ALIVE" if cs == ident.get("command_sha256") else "DEAD"
+    if ident.get("command_sha256") and cs != ident["command_sha256"]:
+        return "DEAD"
+    return "ALIVE" if all(ident.get(k) for k in ("boot_uuid", "start_time", "command_sha256")) else "UNKNOWN"
 
 
 # ------------------------------------------------------------------ the caffeinate supervisor (section 5)
