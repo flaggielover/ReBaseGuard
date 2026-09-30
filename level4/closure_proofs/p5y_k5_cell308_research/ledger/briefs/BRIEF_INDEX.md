@@ -56,6 +56,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 44 | 44_reviewR3C1_DELTA.txt | fresh independent delta review of R3 + C-1 (+ N-2 / N-3) at 191ce4a9 (editor editorR3C1) | Agent | see ledger | no (tail-figure scan: 0 hits) |
 | 44-N | 44_reviewR3C1_DELTA_NOTES.txt | practical notes appended to brief 44 as sent (interpreter, scratch, shell quirks, time budget) | Agent (same prompt) | see ledger | no |
 | 45 | 45_builder3_optionB_liveness.txt | non-holder builder3: user T6/M4 option B (withdraw W, re-apply N items 16 and 31) + liveness delta L (classifier, Lock.acquire, L12 journal source) | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 46 | 46_builder4_qualification_framework.txt | non-holder builder4: successor qualification framework, decision-independent cases only (option-dependent cases declared PENDING_USER_DECISION) | Agent | see ledger | no (tail-figure scan: 0 hits) |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.

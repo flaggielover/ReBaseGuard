@@ -1,0 +1,89 @@
+BUILD REQUEST — fresh non-holder builder `builder4`: the successor's qualification FRAMEWORK, decision-independent
+parts only (recorded before sending). Target-free. Not frozen; nothing here authorises a freeze, a qualification run
+or any target step.
+
+WHO YOU ARE. A FRESH builder who is not a holder of any MB r1 run observation. Qualification tooling is a role the
+T6 ruling's M4 reserves to non-holders. You are independent of builder3 (who is finishing a liveness delta in the
+successor worktree), of the editor editorR3C1 (the coordinator) and of every reviewer.
+
+WHY. The user asked for all target-free freeze preparation that does NOT depend on their pending decisions S16(c)
+(freeze permission), MBS-6 (finality), MBS-7 (C11R-I2 / COR-T members: option (ii) would change the science and need
+"new code, new reviews, a new qualification") and MBS-8 (caps: (i) MB r1's r3 caps, or (ii) MB r1's frozen section
+3.2 rule applied to MB-S's own official decoy runtimes under its launcher). Research
+governance/USER_DECISION_BRIEF_308_SUCCESSOR.md section A and governance/SUCCESSOR_CONDITIONS_REGISTER_308.md give the
+decisions and where they bind. So: build the framework and every case that is the same under every option; DECLARE
+the option-dependent cases but leave them failing closed.
+
+WHERE. Develop in YOUR OWN scratch copy of the successor namespace, NOT in the worktree: `git -C /Users/suzhe/ReBaseGuard
+archive b0dd8e937389d7d8f24bad8087863852b13309ae level4/closure_proofs/p5y_k5_cell308_mbs_r1 | tar -x -C <scratch>/tree`
+(tests can point at a code copy through MBS308_TEST_CODE_DIR and MBS308_SCRATCH / MBS308_BASE_STORE; read the
+testlib). The worktree /Users/suzhe/ReBaseGuard-c308mbs is being changed by builder3 and then reviewed; you touch it
+ONLY when the coordinator sends "INTEGRATE <commit>": then copy your new and changed files onto that commit's worktree,
+re-run, and report (no git writes).
+Models to read: MB r1's code/mb308_qualify.py, code/mb308_manifest.py, config/QUALIFICATION_CASES.json and protocol
+sections 9-10 (level4/closure_proofs/p5y_k5_cell308_mb_r1/); the successor's protocol draft (sections 1, 4-11), code
+and tests, BUILD_REPORT sections 1-8 and 10-14 (not 9); the ratification governance/CONSTANTS_RATIFICATION_MBS308.md
+(3c2a7854) for the R-rules.
+
+BUILD (decision-independent):
+1. code/mbs308_manifest.py — the Q8 freeze-manifest writer, modelled on MB r1's: EVERY namespace file except the
+   manifest itself and the post-freeze directories, and EVERY pinned external file (the MB r1 science modules of
+   SCIENCE_PINS at their MB r1 paths, the research pins, the tail-pattern file, anything else the driver or the
+   verifier pins), each with sha256 and git blob at HEAD; the driver sha256; any guard-geometry field QC12 needs.
+   Never run it against the real worktree (the freeze is not authorised); exercise it in sandboxes / your copy only.
+2. code/mbs308_qualify.py — the verifier FRAMEWORK with MB r1's modes (official / --review / --dev) and discipline
+   (every case summary carries a boolean `pass`; the aggregator fails loudly on a missing or non-boolean one; a dev
+   report can never be an official PASS), successor identity and paths, preconditions (freeze head, no review / grant /
+   result / marker / spool result, clean namespace, the protocol section 8 host readiness for official runs), and
+   config/MBS308_QUALIFICATION_CASES.json (case -> gates). Implement these cases:
+   * QS-STATIC, QS-STATE, QS-CRASH, QS-LAUNCH, QS-MUTANTS: run the namespace's suites and the mutant matrix
+     (sandboxes on a separate --no-local base store; launch tests with the synthetic payload), record counts, pass iff
+     all pass and every mutant is killed by assertion;
+   * QC09 (guard) adapted to the one-line guard diff; QC11-S static structure (what MB r1's QC11 checks that the
+     successor's static suite does not already cover, or a reasoned statement that QS-STATIC covers it);
+   * QC12-S leak scans, adapted from MB r1's QC12: tail-figure patterns read at RUN TIME from the pinned sanctioned
+     file, neutral planted controls built at run time, the committed-record token scan with the successor manifest's
+     guard-geometry exemption, the timing-key exemption for post-freeze JSON evidence; counts and file names only,
+     never a value (do not print or inspect record tokens yourself; test with planted tokens);
+   * QC13-S temporal / governance state checked by commit and path (governance, route and incident acceptances; S14;
+     the implementation reviews accepted; the T6 / M4 rulings; the user's freeze decision record present — a check that
+     fails closed while that record is absent);
+   * Q8-S: the manifest check (every namespace file listed and matching, externals matching, driver sha, bindings).
+   * R-RULES: pure functions that compute MEM_CAP_BYTES (R-MEM), FREE_MEM_MIN_BYTES (R-FREE, with its attainability
+     test), EXCL_CPU_PCT (R-EXCL-PCT) and EXCL_ALLOW (R-ALLOW, with its path-class test and exclusions) from input
+     records EXACTLY as protocol section 8 states them (every number in them is the ratification's, none yours), with
+     planted unit tests covering every branch (a decoy with a watchdog event is not a valid input; the feasibility
+     failure; GATE_UNATTAINABLE; each exclusion class of R-ALLOW; the single R-EXCL-PCT exception and its ceiling).
+3. DECLARE, do not build, the option-dependent cases: QC01-QC08 (science families on decoys / committed records),
+   MBR1_REPRO and QS-RESUME-DECOY (depend on MBS-7), Q12 caps and the official decoy measurement records that feed the
+   R-rules (depend on MBS-8 and on how the protocol sequences the official decoys relative to the freeze). Each returns
+   {"pass": false, "status": "PENDING_USER_DECISION", "depends_on": [...]}, so no qualification can pass until they
+   are built after the user's decisions.
+4. tests/test_mbs308_qualify.py (target-free: sandboxes, synthetic evaluator, planted records) covering the
+   aggregator, each implemented case (pass and planted failure), the PENDING cases failing closed and the R-rule
+   functions; new mutants in tests/test_mbs308_mutants.py for each new gate (killed by assertion).
+5. Protocol draft section 11: the qualification plan (case -> gates -> status BUILT / PENDING_USER_DECISION), and a
+   short, neutral statement of the sequencing question the R-rules and MBS-8 option (ii) raise (the rules take
+   "official decoy runs" as inputs while the frozen code must already carry the values) — state the question and the
+   options you see; do not decide it.
+6. BUILD_REPORT section 15 (additive) with what you read, what you built, results, and your exposure statement.
+
+ABSOLUTE RULES.
+- No cell-308 target evaluation, direct or indirect; nothing may evaluate Γ(5,308; ·), cells 305-309 or any drift in
+  [6/5, 13/5] or its mirror; no decoy computation with the real science either (the science cases are not built now);
+  cell 309 out of scope; no authorization, grant, marker, pending result, seal, freeze manifest in the worktree, or
+  official qualification run.
+- Change no operational number of the campaign (caps, limits, timeouts, thresholds, allow-list, budgets, polls).
+- MBS-2 reading restrictions: do NOT open reviews/REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*,
+  reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*, reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308* (T6 included),
+  COORDINATOR_EXPOSURE_DISCLOSURE*, anything under p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/ (you
+  may check such paths EXIST by `git ls-tree` / `git log --format=%H`, never read them), BUILD_REPORT section 9, any
+  other session's or agent's scratchpad, or anything under /Users/suzhe/.claude/. Disclose any MB r1 run observation
+  already in your context.
+- Sandboxes only on your OWN `git clone --no-local --bare` base store; never the real object store; no real ref; NO
+  git writes. Launch tests: synthetic payload, all booted out, no plist left.
+- Ledger every run through the research namespace's code/c308_quarantine.log_event (klass 'SYNTHETIC_VALIDATION' or
+  'INFRASTRUCTURE', agent='builder4', target_evaluations=0).
+
+REPORT when the scratch build is complete (then wait for INTEGRATE), and again after integration: files, test counts,
+mutants, PENDING list, open questions — 12 lines or fewer each.
