@@ -410,3 +410,149 @@ No gaps. All notes are text-level and change no rule of the package as written.
   drift in the band or its mirror. The only real-kernel evaluations were envelope primitives at e ∈ [0, 1/2] (RD3-3).
 * **Writes.** Nothing was written in the repository except this file. No git write. No process was started or stopped
   other than my own.
+
+---
+
+## Follow-up (2026-09-30): check of package rev. 2 against N1–N19
+
+### F0. Follow-up execution declaration (written before any run beyond read-only checks)
+
+Reviewed state: HEAD `a2678cc7`. It contains package rev. 2 (`814ff984`, which also preserves the text above verbatim)
+and manifest rev. 2 (`2db92936`). The same brief, firewall and hard rules apply. The text above is not rewritten; only
+line 2 is updated at the end.
+
+| id | what | kernel / geometry / drift | evaluates? |
+|---|---|---|---|
+| FU-0 | Read-only checks: `git diff` of rev. 2; reading `protocol_prep/*` rev. 2 and the new ledger lines in `ZERO_TARGET_LEDGER.jsonl` / `CHECKPOINT_PUSHES.jsonl`; manifest rev. 2 pins recomputed as in RD3-0 (outside NS: blob by tree lookup only); sha256 of `make_candidate_manifest.py.txt` against `MANIFEST_GENERATOR_SHA256.txt` and the dangling `5ddf7b58` tool; comparison of `evidence/reviewer_r3/*` with my scratch files | none | no |
+| FU-1 | `code/self_audit.py` `run()` through my RD3-1 wrapper (A10 through the RD3-2 wrapper), output to `scratchpad/r3/`, to confirm A1–A10 at HEAD | none | no |
+
+The generator is not run: it names target-input paths and reads bytes outside NS. No test is re-run, because no
+`impl/`, `code/`, `verify/` or `tests/` file changed since my runs (checked in FU-0). Nothing touches cells 305–309 or
+evaluates any drift in the band or its mirror.
+
+**Executed as declared.**
+* **FU-0 (read-only checks).**
+  * Since `1d8efbbb`, no `impl/`, `code/`, `verify/`, `tests/`, `config/`, `theory/` or `registry/` file changed
+    (`git diff --stat` is empty), so my RD3 test results stand.
+  * Manifest rev. 2 (`repository_head` `814ff984`): 45 code pins (37 NS, 8 outside) and 7 data pins. **Every blob
+    matches** at `814ff984` and at HEAD. The sha256 of all 37 NS pins matches the committed bytes and the working tree.
+    Pins outside NS were checked by blob only. The data pins carry only `path` and `git_blob`. Every rev.-1 pin is
+    kept with identical blob and sha256. `protocol_prep/` did not change between `814ff984` and HEAD except the
+    manifest and generator files.
+  * `make_candidate_manifest.py.txt` hashes to `cb6694cc…`, which equals `MANIFEST_GENERATOR_SHA256.txt`. Against the
+    dangling `5ddf7b58` tool it differs only by the added pin paths, the floor-r2 data path (still `rev-parse` only),
+    the relabelled Python field and one open item.
+  * The six files in `evidence/reviewer_r3/` are byte-identical to my scratch files. Ledger line 535, the transcription
+    of my runs, is accurate.
+* **FU-1 (self-audit at HEAD `a2678cc7`).** A1–A10 all PASS, with 536 ledger lines and max drift 37/32. The A10 envelope
+  output is again byte-identical to the committed file. A11: local = remote = `a2678cc7`; the only dirt is this file.
+  Outputs are in `scratchpad/r3/fu/`.
+* Nothing in NS was written except this file. No git write.
+
+### F1. Per-note status (rev. 2)
+
+| note | status | evidence |
+|---|---|---|
+| N1 per-rung serialization; record everything | **SETTLED** | `P309_PROTOCOL.md:50-53` (one certificate per CERTIFIED (b, i, rung) via `certificate_json` on a single-rung block record, which works because `certificate_json` picks the best of the rungs it is given, `impl/srk_certify.py:324-331`), `:63` (min over admitted rungs), `:81-82` (all certificates, verdicts and the GateResult report sealed); `P309_FORMAL_PACKAGE.md:19`, `:38` (QC08), `:40` (QC10), `:110-111` (§E); brief checklist item 7 (`P309_REVIEW_BRIEFS.md:61-62`) |
+| N2 Stage-1a failure mapping, budget and fallback wording | **SETTLED** (new notes F2.1–F2.2 on budget mechanics) | `P309_PROTOCOL.md:69-80` (mapping table), `:114` (adapter refusal is an exception), `:136`, `:183-185` (honest (a)–(d) consequence); `P309_FORMAL_PACKAGE.md:21`, `:25`, `:41` (QC11), `:164-166`; `P309_OWNER_DECISIONS.md:23` (owner row with the alternative), `:25` (efficacy wording consistent) |
+| N3 in-run independent checks | **SETTLED** | `P309_PROTOCOL.md:126-130`, `:134`, `:136`, `:96-97` |
+| N4 FC2 order and positive path | **SETTLED** (new note F2.4 on review mode) | `P309_PROTOCOL.md:162-171`; `P309_FORMAL_PACKAGE.md:46` (QC16), `:23` (freeze additions); `P309_REVIEW_BRIEFS.md:56-58` |
+| N5 full review briefs | **SETTLED** | `P309_REVIEW_BRIEFS.md`: common firewall with R1 G6 (`:7-22`); verdict tokens (`:41`, `:74`, `:97`, `:110`); a self-contained 17-item checklist (`:50-73`); genuine-only restated for the execution reviewer (`:80-83`). The 307 checklist is not reproduced because it is firewalled, and the self-contained list is a reasonable substitute |
+| N6 gates | **SETTLED** (README stale, F2.7) | `P309_FORMAL_PACKAGE.md:49-50` (Q01–Q17, one per QC, none waivable); QC order fixed (`:43-47`) |
+| N7 FC4 static items | **SETTLED** | `P309_FORMAL_PACKAGE.md:42` (QC12: `_REAL_GEOMETRY_ITEMS` / `REAL_GEOMETRY` rebinding; pinned N / max_depth), `:189-190`; `P309_PROTOCOL.md:57-59` |
+| N8 FC2 lettering, self-tests, probe guard | **SETTLED** | `P309_PROTOCOL.md:157-181` and `P309_FORMAL_PACKAGE.md:183-187` use the same (a)–(d); the 21 self-tests are in QC16 (`:46`) and §7(b) (`:167`); the probe guard is independent of every lifted list (`P309_PROTOCOL.md:178-180`) |
+| N9 post-seal verification | **SETTLED** (qualification of review mode: F2.4) | `P309_FORMAL_PACKAGE.md:131-138` (review-mode admission: marker names the grant and the sealed result lists the sha256; genuine only; disagreement → INDETERMINATE); `P309_PROTOCOL.md:137` |
+| N10 historical-control digest | **SETTLED** | `P309_PROTOCOL.md:119-122`, `:137`; `P309_FORMAL_PACKAGE.md:76`, `:115`, `:130`; `P309_REVIEW_BRIEFS.md:94` |
+| N11 owner list and liabilities | **SETTLED** | `P309_OWNER_DECISIONS.md:18` (cell set), `:20` (G3 MEDIUM), `:24` (309R1-03, E-3, E-17(a), generator run), `:31` (separate grant), `:32` (push/merge); `P309_PROTOCOL.md:19` (P0-2); `P309_FORMAL_PACKAGE.md:95-96` (grant liabilities) |
+| N12 Stage-1b | **SETTLED as a rule choice, flagged** (F3; F2.3 on the Stage-1b budget) | `P309_PROTOCOL.md:93-97`; `P309_FORMAL_PACKAGE.md:22`, `:167-169`, `:191-192`, QC17 `:47`; owner flag `P309_OWNER_DECISIONS.md:20` with the alternative "require the RLR307 NOT_CLOSED rule" |
+| N13 pins and generator | **PARTLY SETTLED** | Added: A1 declaration, `TARGET_QUARANTINE_309.json`, 12 test files, the four package documents, floor r2 (data, blob only). The generator is preserved as inert text with a matching sha256. The Python field is relabelled (manifest `:16`). Generator runs are ledgered (`ledger/ZERO_TARGET_LEDGER.jsonl:536`). §A uses no prefixes (`P309_FORMAL_PACKAGE.md:23`). **Still unpinned:** `tests/planted_control_q309.py` (the scan's planted control, required by `q309_guard.scan` for QC15/A4), `registry/PHASE3_ROUTE_COMPARISON.md` (the SRK-T OUT record cited at `P309_PROTOCOL.md:83` via rule S) and `ERRATA.md` (E-15 / E-17(d), cited as binding). `c1b_kernel.py` (QC01) is pinned only if C1B_R2_CODE_PINS covers it, which I cannot check. See F2.6 on the ledger line |
+| N14 QC coverage | **SETTLED** | `P309_FORMAL_PACKAGE.md:47` (QC17 S construction incl. the None → S_I1 fallback), `:40` (QC10 on the execution host; interpreter/platform pinned, also `:23`, `:74`); `P309_PROTOCOL.md:21`, `:84-86` |
+| N15 Ew adjacency and non-re-attribution | **SETTLED** | `P309_PROTOCOL.md:36-39`, `:181`; `P309_FORMAL_PACKAGE.md:101-105`; `P309_OWNER_DECISIONS.md:17` |
+| N16 wording | **SETTLED** | `P309_PROTOCOL.md:84-86` (T10 described as what it is; QC10 must show), `:147-148` (probe envelope 37/32 and −1/3); `P309_FORMAL_PACKAGE.md:36` ("The research qualification gave 1868/1868"; probe envelope; ledgered) |
+| N17 U3 | **SETTLED** | `P309_PROTOCOL.md:20`, `:124`; `P309_FORMAL_PACKAGE.md:15`; `P309_OWNER_DECISIONS.md:22`; brief checklist item 17 (`P309_REVIEW_BRIEFS.md:73`) |
+| N18 authorship evidence | **SETTLED** | `P309_PROTOCOL.md:160-161`, `:172-177`; brief checklist item 5 (`P309_REVIEW_BRIEFS.md:56-58`) |
+| N19 Stage-2 wording, cell_blocks / run_block | **SETTLED** | `P309_PROTOCOL.md:115-116`, `:43-49` |
+
+### F2. New or remaining issues introduced by rev. 2 (all text-level; no gap)
+
+* **F2.1 Budget versus determinism.** §2.8 says every Stage-1a output is "a pure function of the pinned bytes and the
+  pinned interpreter/platform" (`P309_PROTOCOL.md:84`). But the budget-exhaustion fallback (`:75`) makes the set of
+  certificates depend on timing whenever the budget binds. Since Γ̄ is a min over admitted rungs, the outcome could
+  then depend on host speed. Add the caveat: determinism holds only when the budget does not bind. The sealed record
+  already stores the budget used and the timings (`P309_FORMAL_PACKAGE.md:116-117`).
+* **F2.2 Budget mechanics are undefined.** State the following in the text, or in the driver pinned at the freeze and
+  exercised by QC11:
+  * what "CPU-h" measures (the summed CPU time of the worker processes, or wall time × workers);
+  * whether in-process verification counts toward the budget;
+  * the job granularity and the fixed job order. With `run_block` as the job, `run_block` returns only when all its
+    rungs are done, so one unfinished sub-block drops every rung of that sub-block. Since Γ̄_i needs every sub-block,
+    that means all four indices fall back;
+  * that stopping at the budget is done by not starting jobs and discarding unfinished ones, not by an exception.
+    Otherwise it would read as a §2.5 exception, giving EXECUTION_INDETERMINATE.
+* **F2.3 Stage-1b budget.** The 21 600 s Stage-1b budget has no mapping in protocol §3. Only the §A row
+  (`P309_FORMAL_PACKAGE.md:25`), whose "(protocol §2.5)" reference is Stage-1a-only, implies fallback. Say in §3 that
+  Stage-1b budget exhaustion is treated like CERTIFICATION_FAILED (fallback to S_I1), or state otherwise.
+* **F2.4 Review mode is not qualified.** The verifier's review mode has its own admission logic (the marker names the
+  grant, and the sealed result lists the sha256) (`P309_FORMAL_PACKAGE.md:131-134`). QC16 qualifies only the official
+  grant-scoped mode (`:46`). A review-mode bug that refuses a genuine certificate would, by the post-seal row
+  (`P309_PROTOCOL.md:137`), turn a sealed closure into EXECUTION_INDETERMINATE. Add review-mode refusal and admission
+  tests to QC16, in the sandbox, with a test band and hull only.
+* **F2.5 Band wording.** "The band is forbidden except under QC16's test substitution" (`P309_FORMAL_PACKAGE.md:27`)
+  and "except the QC16 test substitution" (`P309_REVIEW_BRIEFS.md:72`) read as if QC16 may touch the real band. QC16
+  never uses the real band (`P309_PROTOCOL.md:169-170`). Reword: "the real band is forbidden without exception; QC16
+  substitutes a test band".
+* **F2.6 Ledger timing.** The GOVERNANCE line `ledger/ZERO_TARGET_LEDGER.jsonl:536`, stamped 00:34:10Z and committed
+  at 00:34:11Z, lists generator runs at "~00:0xZ, ~00:3xZ, **~01:0xZ**". The last of these was still in the future when
+  the line was written (I checked the clock at 00:37Z). Append a correction line, since the ledger is append-only.
+* **F2.7 README.** `protocol_prep/README.md:8` still says "QC01–QC16" (now QC01–QC17). `:3` says rev. 2 "settles every
+  note", but N13 is partial (F1). `:21` says the generator "reads git metadata only" while it hashes committed bytes of
+  code files (the next clause says so).
+* **F2.8 Incident-independence scope.** Rev. 2 adds three rule choices, all made by the exposed coordinator after
+  review R3 and before any 309 Stage-1 number: the §2.5 mapping, the 48 CPU-h budget and the Stage-1b fallback.
+  P0-2 records that RLR's "knockout is known" (`P309_PROTOCOL.md:19`). List these three choices explicitly in the
+  incident-independence brief's task 1 (`P309_REVIEW_BRIEFS.md:34-37`), so their target independence is assessed. The
+  generic "design, parameters" wording covers them only implicitly.
+
+### F3. Are the rule choices coherent and correctly flagged?
+
+* **N2 mapping: coherent.**
+  * It separates anticipated, declared non-success from malfunction:
+    * non-CERTIFIED statuses, non-ACCEPT verdicts and budget exhaustion fall back (safe for validity, by the min
+      construction);
+    * any exception is EXECUTION_INDETERMINATE (the target is consumed, with no conclusion and no retry).
+  * Neither branch allows a retry or a parameter change, and the table stays exhaustive through the catch-all row.
+  * The alternative (exceptions → fallback) is offered to the owner as a pre-freeze decision
+    (`P309_PROTOCOL.md:79-80`; `P309_OWNER_DECISIONS.md:23`), and the efficacy risk of each branch is stated.
+  * The QC16 positive path and QC11 reduce the risk that a guard or verifier defect is first met in the single
+    execution.
+* **The 48 CPU-h budget: coherent.**
+  * Its basis is target-free: about 10× the qualified decoy cell. That cell costs about 4.5 CPU-h (decoy only; I make
+    no extrapolation to 309).
+  * It is fixed before any 309 number, and it is disclosed to the owner inside the mapping row.
+  * Only its mechanics (F2.1, F2.2) need writing down.
+* **N12 Stage-1b fallback: coherent, and correctly flagged under G3.**
+  * RLR enters only through min(A1_I1, A1_RLR) and min(A2_I1, A2_RLR). None → S_I1 is a valid supply (THEOREM_SRK §3;
+    rule S C2), and it mirrors the SRK fallback.
+  * The RLR307 certifier rules stay verbatim; only the outcome mapping differs, and the text says so.
+  * QC17 covers the None → S_I1 construction.
+  * Exceptions and reconstruction mismatches remain EXECUTION_INDETERMINATE.
+  * The owner row states the asymmetry with RLR307 and offers the RLR307 NOT_CLOSED rule as the alternative
+    (`P309_OWNER_DECISIONS.md:20`).
+  * The change favours closure in the failure case. It was chosen before any 309 Stage-1 number existed. Its
+    target independence belongs to the incident-independence review (F2.8).
+
+### F4. Follow-up verdict
+
+**COMPLETE_WITH_NOTES** (line 2 unchanged in value, reconfirmed for rev. 2 at `a2678cc7`).
+* 18 of 19 notes are SETTLED. N13 is PARTLY SETTLED: three NS files are still unpinned, and `c1b_kernel.py` coverage
+  is unverifiable by me.
+* Rev. 2 introduces no gap and no rule inconsistency that needs new science. F2.1–F2.8 are text-level fixes. F2.1–F2.4
+  should be written before a freeze, because the frozen driver will otherwise fix the budget and review-mode behaviour
+  without reviewed text.
+* Nothing here authorizes a freeze: it still requires the owner (P0-1).
+
+**Follow-up disclosures.**
+* I saw no 305–309 value. I met only file paths and blob ids of the 309 input files and of the floor-r2 specification
+  (metadata), and the class-level description of THEOREM_TCT lines 12 and 39 in the briefs (no values).
+* The only runs were FU-0 (read-only) and FU-1 (self-audit, no evaluation).
+* Nothing in the repository was written except this file. No git write.
