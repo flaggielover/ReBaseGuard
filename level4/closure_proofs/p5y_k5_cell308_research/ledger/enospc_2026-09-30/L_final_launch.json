@@ -1,0 +1,242 @@
+{
+ "failed": [],
+ "module": "/Users/suzhe/ReBaseGuard-c308mbs/level4/closure_proofs/p5y_k5_cell308_mbs_r1/tests/test_mbs308_launch.py",
+ "n": 10,
+ "passed": 10,
+ "results": {
+  "t_identity_state_positive_evidence": {
+   "detail": {
+    "full_alive": "ALIVE",
+    "ok": true,
+    "partial_alive": {
+     "boot_uuid": "UNKNOWN",
+     "command_sha256": "UNKNOWN",
+     "start_time": "UNKNOWN"
+    },
+    "partial_dead": {
+     "boot_uuid": "DEAD",
+     "command_sha256": "DEAD",
+     "start_time": "DEAD"
+    },
+    "ps_failed": "UNKNOWN",
+    "reused": "DEAD"
+   },
+   "ok": true,
+   "seconds": 0.4
+  },
+  "t_launch_never_boots_out_after_bootstrap": {
+   "detail": {
+    "alive_after_failure": true,
+    "ok": true,
+    "raised": true,
+    "teardown": {
+     "bootout_rc": 0,
+     "still_loaded": false
+    }
+   },
+   "ok": true,
+   "seconds": 2.1
+  },
+  "t_launchd_integration": {
+   "detail": {
+    "caffeinate": {
+     "command": "/usr/bin/caffeinate -i -m -s -w 8731",
+     "deaths": 1,
+     "killed": 8733,
+     "respawned": 8760,
+     "respawns": 1
+    },
+    "cleanup": {
+     "bootout_rc": 0,
+     "still_loaded": false
+    },
+    "detachment_by_launcher": {
+     "detached": true,
+     "job_ancestors": [
+      8731,
+      1
+     ],
+     "job_pid": 8731,
+     "job_sid": 1,
+     "launchctl_pid": 8731,
+     "launchd_names_job_running": true,
+     "launcher_ancestors": [
+      8729,
+      8728,
+      8725,
+      8555,
+      6299,
+      6298,
+      4728
+     ],
+     "launcher_pid": 8729,
+     "launcher_sid": 8728,
+     "not_descendant_of_launcher_tree": true,
+     "ppid_recorded_not_relied_on": 1,
+     "session_differs": true
+    },
+    "job_not_in_killed_session": true,
+    "job_survives": true,
+    "label": "org.rebaseguard.mbs308.test.20260930T103633",
+    "launch_record": {
+     "boot_uuid": "A7417159-025C-461F-8BF8-3F9C7F3C58CB",
+     "pgid": 8731,
+     "pid": 8731,
+     "ppid": 1,
+     "refused": null,
+     "sid": 1,
+     "uid": 501
+    },
+    "ok": true,
+    "payload": {
+     "label": "org.rebaseguard.mbs308.test.20260930T103633",
+     "launched_by_launchd": {
+      "label": "org.rebaseguard.mbs308.test.20260930T103633",
+      "launchctl_pid": 8731,
+      "pass": true,
+      "ppid": 1,
+      "xpc_service_name_matches": true
+     },
+     "pid": 8731,
+     "ppid": 1,
+     "preferred_encoding": "utf-8",
+     "sid": 1,
+     "xpc_service_name": "org.rebaseguard.mbs308.test.20260930T103633"
+    },
+    "pidfile": {
+     "after_exit": "STALE",
+     "while_running": "LIVE"
+    },
+    "respawn_ok": true,
+    "session_killed": {
+     "left": [],
+     "members_killed": 2
+    }
+   },
+   "ok": true,
+   "seconds": 4.9
+  },
+  "t_launcher_death_while_waiting": {
+   "detail": {
+    "job_alive_after_launcher_death": true,
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 1.8
+  },
+  "t_launcher_refuses_execute_when_preflight_fails": {
+   "detail": {
+    "ok": true,
+    "refused": "PREFLIGHT_FAILED"
+   },
+   "ok": true,
+   "seconds": 1.8
+  },
+  "t_ppid1_is_not_detachment": {
+   "detail": {
+    "ok": true,
+    "proof": {
+     "detached": false,
+     "job_ancestors": [
+      8904,
+      1
+     ],
+     "job_pid": 8904,
+     "job_sid": 8555,
+     "launchctl_pid": null,
+     "launchd_names_job_running": false,
+     "launcher_ancestors": [
+      8725,
+      8555,
+      6299,
+      6298,
+      4728
+     ],
+     "launcher_pid": 8725,
+     "launcher_sid": 8555,
+     "not_descendant_of_launcher_tree": true,
+     "ppid_recorded_not_relied_on": 1,
+     "session_differs": false
+    }
+   },
+   "ok": true,
+   "seconds": 0.0
+  },
+  "t_preflight_gates_planted": {
+   "detail": {
+    "cases": {
+     "AutomaticallyInstallMacOSUpdates=1": true,
+     "AutomaticallyInstallMacOSUpdates=missing": true,
+     "CriticalUpdateInstall=1": true,
+     "CriticalUpdateInstall=missing": true,
+     "batt": true,
+     "boot": true,
+     "free": true,
+     "job_and_launcher": true,
+     "memory": true,
+     "pmset": true,
+     "thermal": true
+    },
+    "ok": true,
+    "real_host_software_update": {
+     "auto_install_enabled": true,
+     "enabled": {
+      "AutomaticDownload": true,
+      "AutomaticallyInstallMacOSUpdates": true,
+      "ConfigDataInstall": true,
+      "CriticalUpdateInstall": true
+     },
+     "missing_means_enabled": true,
+     "values": {
+      "AutomaticDownload": 1,
+      "AutomaticallyInstallMacOSUpdates": 1,
+      "ConfigDataInstall": 1,
+      "CriticalUpdateInstall": 1
+     }
+    }
+   },
+   "ok": true,
+   "seconds": 0.0
+  },
+  "t_preflight_timeout_rule": {
+   "detail": {
+    "expected": 1900,
+    "ok": true,
+    "timeout": 1900,
+    "timeout_when_pre_cap_is_1234": 1334
+   },
+   "ok": true,
+   "seconds": 0.0
+  },
+  "t_supervisor_respawns_in_process": {
+   "detail": {
+    "first": 8915,
+    "ok": true,
+    "record": {
+     "deaths": 1,
+     "respawns": 1,
+     "spawns": 2
+    },
+    "second": 8916,
+    "stopped": 2
+   },
+   "ok": true,
+   "seconds": 0.4
+  },
+  "t_wait_cleanup_ignores_failing_print": {
+   "detail": {
+    "alive_during_wait": true,
+    "booted_out_after_death": true,
+    "cleanup_while_alive": "STILL_RUNNING",
+    "ok": true,
+    "teardown": {
+     "bootout_rc": 3,
+     "still_loaded": false
+    }
+   },
+   "ok": true,
+   "seconds": 3.4
+  }
+ },
+ "seconds": 14.9
+}

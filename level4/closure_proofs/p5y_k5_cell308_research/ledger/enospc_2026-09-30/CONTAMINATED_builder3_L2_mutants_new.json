@@ -1,0 +1,100 @@
+{
+ "killed": 6,
+ "matrix": {
+  "M11": {
+   "breaks": "resume on a live process",
+   "error": null,
+   "file": "mbs308_state.py",
+   "killed": true,
+   "rc": 1,
+   "seconds": 22.5,
+   "target": "state::t_computing_then_interrupted",
+   "test_passed": false
+  },
+  "M50": {
+   "breaks": "N-3 undone: a failed `ps` makes a live campaign process read dead, so its lockfile is moved aside",
+   "error": null,
+   "file": "mbs308_state.py",
+   "killed": true,
+   "rc": 1,
+   "seconds": 28.3,
+   "target": "crash::t_L12_lock_ps_failure_not_stale",
+   "test_passed": false
+  },
+  "M53": {
+   "breaks": "liveness delta undone at the classifier: a failed `ps` makes the live recorded process read dead (CONSUMED_INTERRUPTED), so a resume could race it",
+   "error": null,
+   "file": "mbs308_state.py",
+   "killed": true,
+   "rc": 1,
+   "seconds": 26.2,
+   "target": "state::t_computing_ps_failure_not_interrupted",
+   "test_passed": false
+  },
+  "M54": {
+   "breaks": "liveness delta undone at Lock.acquire: a failed `ps` makes the live holder read dead, so its recover lock is broken",
+   "error": null,
+   "file": "mbs308_state.py",
+   "killed": true,
+   "rc": 1,
+   "seconds": 29.9,
+   "target": "crash::t_S13_lock_ps_failure_not_broken",
+   "test_passed": false
+  },
+  "M55": {
+   "breaks": "N-3 undone for the journal source only (reviewR3C1's X4): a failed `ps` makes the journal's live recorded process read dead, so the lockfiles read stale",
+   "error": null,
+   "file": "mbs308_state.py",
+   "killed": true,
+   "rc": 1,
+   "seconds": 30.3,
+   "target": "crash::t_L13_lock_sources_ps_failure_each",
+   "test_passed": false
+  },
+  "M56": {
+   "breaks": "N-3 undone for the recover-lock source only: a failed `ps` makes the live lock holder read dead, so the lockfiles read stale",
+   "error": null,
+   "file": "mbs308_state.py",
+   "killed": true,
+   "rc": 1,
+   "seconds": 22.5,
+   "target": "crash::t_L13_lock_sources_ps_failure_each",
+   "test_passed": false
+  }
+ },
+ "survivors": [],
+ "total": 6,
+ "unmutated": {
+  "crash::t_L12_lock_ps_failure_not_stale": {
+   "error": "RuntimeError: git ('checkout', '-q', '-B') failed: fatal: unable to write new index file\n",
+   "rc": 1,
+   "seconds": 6.1,
+   "test_passed": false
+  },
+  "crash::t_L13_lock_sources_ps_failure_each": {
+   "error": "RuntimeError: git ('config', 'user.email', 'sandbox@invalid') failed: fatal: cannot change to '/private/tmp/claude-501/-Users-suzhe-ReBaseGuard/fb722654-cd8d-472d-928c-34a116f8b315/scratchpad/builder3/scratch/L2/t_mutants/UNMUTATED/scratch/t_crash/sbx': No such file or directory\n",
+   "rc": 1,
+   "seconds": 0.5,
+   "test_passed": false
+  },
+  "crash::t_S13_lock_ps_failure_not_broken": {
+   "error": "RuntimeError: git ('checkout', '-q', '-f') failed: error: invalid object 100644 7d0a6330be60c5ba8b1285b828ab513e998736a9 for 'level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_driver.py'\nerror: invalid object 100644 7d0a6330be60c5ba8b1285b828ab513e998736a9 for 'level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_driver.py'\nfatal: unable to",
+   "rc": 1,
+   "seconds": 6.3,
+   "test_passed": false
+  },
+  "state::t_computing_ps_failure_not_interrupted": {
+   "error": "RuntimeError: git ('checkout', '-q', '-B') failed: fatal: unable to write new index file\n",
+   "rc": 1,
+   "seconds": 3.7,
+   "test_passed": false
+  },
+  "state::t_computing_then_interrupted": {
+   "error": "RuntimeError: git ('checkout', '-q', '-B') failed: fatal: unable to write new index file\n",
+   "rc": 1,
+   "seconds": 4.0,
+   "test_passed": false
+  }
+ },
+ "unmutated_all_pass": false
+}

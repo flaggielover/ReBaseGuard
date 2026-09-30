@@ -1,0 +1,78 @@
+NARROW DELTA REVIEW REQUEST (brief 47) — fresh independent reviewer `reviewB5` (recorded before sending). Your verdict is not
+predetermined.
+
+WHO YOU ARE. A FRESH reviewer who is not a holder of any MB r1 run observation, independent of the builder
+(`builder3`), of the editor (`editorR3C1`) and of the earlier reviewers.
+
+OBJECT. Successor branch p5y-k5-cell308-mbs-r1, worktree /Users/suzhe/ReBaseGuard-c308mbs,
+NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1. Three additive commits on top of 191ce4a9 (the DELTA_ACCEPTED
+pre-freeze candidate, research review 58cfe66b, preserved in history):
+  W 4a960e061ee78b2799f9a750e90b70a4e728e8a4 — builder3 withdraws the editor's application of ratification items 16 and 31 (restores 35cabb50 bytes);
+  N b0dd8e937389d7d8f24bad8087863852b13309ae — builder3 re-applies items 16 and 31 from the ratification (user ruling T6/M4 option B);
+  L 216c465fd48d779ceef876fd13b1422773dfea31 — builder3's liveness delta (classifier CONSUMED_COMPUTING test and Lock.acquire: positive evidence; L12
+            journal source).
+The builder's account is BUILD_REPORT section 14 — a claim to check. The coordinator's mechanical byte-level
+re-check of N is research ledger/OPTION_B_RECHECK.json (commit b3cc9675) — also a claim to check: re-run it or write
+your own.
+
+WHY. The user ruled option B on the T6 ruling's M4 (research ledger line of 5e7b8cdc): a genuine non-holder re-applies
+the four ratified allow-list names and the PRE_CAP_S + 100 timeout expression, followed by a mechanical byte-level
+re-check; and, before the freeze, the liveness delta recommended by reviewR3C1 (research
+reviews/REVIEW_IMPLEMENTATION_MBS308_DELTA_R3.md, 58cfe66b, section 3: "a failed ps on a live driver could let a
+resume start alongside it"; coverage note X4). Brief 45 (research ledger/briefs/45_builder3_optionB_liveness.txt) is
+what the builder was asked.
+
+SCOPE (only these; everything else must be unchanged relative to 191ce4a9):
+1. Option B. (a) W restores exactly the two spans; (b) N's EXCL_ALLOW = the 39 names of 35cabb50 ∪ the four names of
+   ratification item 16 (governance/CONSTANTS_RATIFICATION_MBS308.md, 3c2a7854), nothing else; (c) N's launcher
+   timeout is the rule PRE_CAP_S + 100 and follows the driver's PRE_CAP_S without importing the driver; (d) the
+   byte-level comparison of N with 191ce4a9 (report every byte difference and judge whether any is operational);
+   (e) pins and DRIVER_DIFF.md correct; (f) the R3 gates and mutants M51 / M52 still pass / die.
+2. Liveness delta. (a) Only the two named sites changed; a recorded identity is alive unless identity_state is DEAD,
+   no recorded identity is no process; (b) the classifier and Lock.acquire tests are specific and non-vacuous; (c) the
+   L12 extension tests the journal-recorded source of git_lock_info on its own and kills an X4-style mutant (write
+   and run X4 yourself, and any other mutant you think the tests should kill); (d) no new operational number; (e)
+   consequences of the change (a permanently failing `ps` keeps the campaign in CONSUMED_COMPUTING / LOCKED: fail
+   closed) are stated in protocol section 4.
+3. ENOSPC incident (must be ruled explicitly). The data volume was nearly full (about 5.3 GiB free observed; builders
+   reported ENOSPC and < 1 GiB) until the coordinator's cleanup at 2026-09-30T08:59:48Z (only sandbox clones and base
+   stores of two FINISHED scratch areas; list in research ledger/enospc_2026-09-30/COORDINATOR_DELETED_SANDBOXES.txt).
+   The coordinator's audit (ledger/enospc_2026-09-30/ENOSPC_AUDIT_STEP_L.json + ENOSPC_AUDIT.md, tool included) finds one
+   contaminated run, builder3's first liveness-mutant run (preserved as CONTAMINATED_builder3_L2_mutants_new.json: its
+   unmutated phase failed on "unable to write new index file", "invalid object" and a deleted sandbox), superseded by a
+   clean re-run and by the full 57-mutant matrix run after the cleanup; builder3's final suites ran before the cleanup
+   and were re-run by the coordinator on the committed bytes of L on clean disk. Judge independently whether any
+   evidence the delta relies on was produced or invalidated by disk exhaustion (exit codes, stderr, partial or
+   zero-length JSON, missing result files, kills by exception / failed clone / failed git write / timeout), and re-run
+   what you rely on yourself on ample disk (check free space before and after your runs; delete your own sandboxes
+   after each matrix run, keeping the JSON reports).
+4. Specific safety questions (answer each): (a) in the repaired liveness paths (classifier, Lock.acquire,
+   git_lock_info), can a failed   PID TTY           TIME CMD
+ 6329 ttys001    0:00.11 /bin/zsh -l or boot-UUID reading ever be read as positive evidence that a recorded live
+   process is dead? (b) is Lock.acquire safe (a live holder's lock never broken; a dead holder's lock breakable; the
+   LOCK_RACE path intact)? (c) is the classifier / resume behaviour safe (no resume can start beside a live or
+   unverifiable recorded driver; a rebooted or positively dead one still resumes)? (d) does the L12/L13 coverage test
+   the journal-recorded process on its own, not only the pidfile? (e) is reviewR3C1's X4 now killed (write and run it
+   yourself)? (f) are the negative controls of the new tests non-vacuous (each would fail if its gate were removed)?
+   (g) no target exposure anywhere.
+5. Scope and governance: no other file changed except as the brief allows; no operational value chosen by anyone
+   other than the ratifier; the builder's exposure statement.
+
+ABSOLUTE RULES. (as brief 44) No cell-308 target evaluation, direct or indirect; nothing may evaluate Γ(5,308; ·),
+cells 305-309 or any drift in [6/5, 13/5] or its mirror; cell 309 out of scope; no authorization, grant, marker,
+pending result or seal. MBS-2 reading restrictions (no REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*,
+REVIEW_SUCCESSOR_GOVERNANCE_308*, INCIDENT_INDEPENDENCE_REVIEW_MBS308* incl. T6, COORDINATOR_EXPOSURE_DISCLOSURE*,
+nothing under p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/, no BUILD_REPORT section 9, no other
+session's or agent's scratchpad, nothing under /Users/suzhe/.claude/); disclose any MB r1 run observation already in
+your context. Sandboxes on your OWN --no-local base store only; no real ref; NO git writes. Launch tests: synthetic
+payload, all booted out, no plist left. Ledger via code/c308_quarantine.log_event (agent='reviewB5',
+target_evaluations=0).
+
+RE-RUN on the committed bytes of L: static, launch, state and crash suites; the full mutant matrix; your own X4 and
+any extra mutants. Report counts.
+
+OUTPUT. Write /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_OPTIONB_LIVENESS_MBS308.md:
+line 1 the title; line 2 EXACTLY one of DELTA_ACCEPTED or DELTA_REJECTED (once); sections for 1-5, each ruled
+MET / NOT MET (and the section-4 questions answered yes / no). DELTA_ACCEPTED only if option B and the liveness delta are both independently found satisfied. State
+whether the build at L remains IMPLEMENTATION_ACCEPTED as a pre-freeze candidate. Final message: the verdict line and
+a 10-line summary.

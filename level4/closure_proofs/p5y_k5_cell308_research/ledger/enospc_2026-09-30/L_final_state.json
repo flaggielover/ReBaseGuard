@@ -1,0 +1,638 @@
+{
+ "failed": [],
+ "module": "/Users/suzhe/ReBaseGuard-c308mbs/level4/closure_proofs/p5y_k5_cell308_mbs_r1/tests/test_mbs308_state.py",
+ "n": 46,
+ "passed": 46,
+ "results": {
+  "t_budget_exhausted": {
+   "detail": {
+    "attempt3": "CONSUMED_INTERRUPTED",
+    "attempt4": [
+     "PROCESS_DEAD",
+     "RESUME_BUDGET_EXHAUSTED"
+    ],
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 2.0
+  },
+  "t_budget_real_resumes": {
+   "detail": {
+    "checkpoints": 12,
+    "ok": true,
+    "recover": {
+     "rc": 5
+    },
+    "states": [
+     "CONSUMED_INTERRUPTED",
+     "CONSUMED_INTERRUPTED",
+     "CONSUMED_INTERRUPTED",
+     "CONSUMED_UNRECORDED"
+    ]
+   },
+   "ok": true,
+   "seconds": 20.3
+  },
+  "t_cas_ref_conflict_vs_infrastructure": {
+   "detail": {
+    "conflict": true,
+    "created": true,
+    "infra": "RefWriteError",
+    "ok": true,
+    "recorded": true,
+    "retried": true
+   },
+   "ok": true,
+   "seconds": 1.6
+  },
+  "t_ckpt_future_seq": {
+   "detail": {
+    "ok": true,
+    "rejected": [
+     "RLR.0.4"
+    ],
+    "variant": "future_seq"
+   },
+   "ok": true,
+   "seconds": 11.2
+  },
+  "t_ckpt_job_swap": {
+   "detail": {
+    "ok": true,
+    "rejected": [
+     "RLR.0.4"
+    ],
+    "variant": "job_swap"
+   },
+   "ok": true,
+   "seconds": 11.5
+  },
+  "t_ckpt_never_read_after_terminal": {
+   "detail": {
+    "ok": true,
+    "refused": true
+   },
+   "ok": true,
+   "seconds": 7.0
+  },
+  "t_ckpt_other_attempt": {
+   "detail": {
+    "ok": true,
+    "rejected": [
+     "RLR.0.4"
+    ],
+    "variant": "other_attempt"
+   },
+   "ok": true,
+   "seconds": 11.1
+  },
+  "t_ckpt_tree_inconsistent": {
+   "detail": {
+    "classified": [
+     "PROCESS_DEAD",
+     "CKPT_TREE_INCONSISTENT"
+    ],
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 9.3
+  },
+  "t_ckpt_wrong_driver": {
+   "detail": {
+    "ok": true,
+    "rejected": [
+     "RLR.0.4"
+    ],
+    "variant": "wrong_driver"
+   },
+   "ok": true,
+   "seconds": 12.0
+  },
+  "t_ckpt_wrong_grant": {
+   "detail": {
+    "ok": true,
+    "rejected": [
+     "RLR.0.4"
+    ],
+    "variant": "wrong_grant"
+   },
+   "ok": true,
+   "seconds": 11.1
+  },
+  "t_ckpt_wrong_platform": {
+   "detail": {
+    "ok": true,
+    "rejected": [
+     "RLR.0.4"
+    ],
+    "variant": "wrong_platform"
+   },
+   "ok": true,
+   "seconds": 11.7
+  },
+  "t_ckpt_wrong_record_hash": {
+   "detail": {
+    "ok": true,
+    "rejected": [
+     "RLR.0.4"
+    ],
+    "variant": "wrong_record_hash"
+   },
+   "ok": true,
+   "seconds": 12.0
+  },
+  "t_computing_ps_failure_not_interrupted": {
+   "detail": {
+    "ok": true,
+    "planted_identity_state": "UNKNOWN",
+    "recover": {
+     "rc": 0
+    },
+    "resume": {
+     "rc": 2,
+     "refused": "RESUME_REFUSED"
+    },
+    "states": [
+     "CONSUMED_COMPUTING",
+     "CONSUMED_INTERRUPTED",
+     "SEALED"
+    ],
+    "wait": {
+     "rc": 8
+    }
+   },
+   "ok": true,
+   "seconds": 8.3
+  },
+  "t_computing_then_interrupted": {
+   "detail": {
+    "close": {
+     "rc": 2,
+     "refused": "NO_DISCRETIONARY_ABANDONMENT"
+    },
+    "ok": true,
+    "recover": {
+     "rc": 0
+    },
+    "resume": {
+     "rc": 2,
+     "refused": "RESUME_REFUSED"
+    },
+    "states": [
+     "CONSUMED_COMPUTING",
+     "CONSUMED_INTERRUPTED",
+     "SEALED"
+    ],
+    "wait": {
+     "rc": 8
+    }
+   },
+   "ok": true,
+   "seconds": 8.9
+  },
+  "t_control_failed": {
+   "detail": {
+    "chain": "935add91",
+    "ok": true,
+    "rerun": {
+     "rc": 2,
+     "refused": "CONSUMED"
+    },
+    "run": {
+     "rc": 3
+    }
+   },
+   "ok": true,
+   "seconds": 3.4
+  },
+  "t_deadline": {
+   "detail": {
+    "6d": "CONSUMED_INTERRUPTED",
+    "8d": [
+     "PROCESS_DEAD",
+     "DEADLINE_PASSED"
+    ],
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 2.0
+  },
+  "t_enc_dec_lossless": {
+   "detail": {
+    "ok": true,
+    "refuses_unknown": true,
+    "roundtrip": true
+   },
+   "ok": true,
+   "seconds": 0.0
+  },
+  "t_execute_refuses_outside_launchd": {
+   "detail": {
+    "ok": true,
+    "run": {
+     "rc": 2,
+     "refused": "NOT_LAUNCHED_BY_LAUNCHER"
+    }
+   },
+   "ok": true,
+   "seconds": 2.4
+  },
+  "t_gc10_ratified_allow_list": {
+   "detail": {
+    "cases": {
+     "BackgroundShortcutRunner": "PASS",
+     "all_four": "PASS",
+     "cloudd": "PASS",
+     "modelcatalogd": "PASS",
+     "spotlightknowledged.updater": "PASS",
+     "unlisted_os_daemon": "HOST_PREFLIGHT"
+    },
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 1.4
+  },
+  "t_gc10_start_gates": {
+   "detail": {
+    "cases": {
+     "busy_allow_listed": "PASS",
+     "busy_other": "HOST_PREFLIGHT",
+     "busy_own_child": "PASS",
+     "good": "PASS",
+     "low_memory": "HOST_PREFLIGHT",
+     "vm_unreadable": "HOST_PREFLIGHT"
+    },
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 1.5
+  },
+  "t_gc8_evidence_at_head_and_mbr1_branch": {
+   "detail": {
+    "head": "MBR1_STATE: HEAD holds an NSF/evidence path",
+    "mbr1_branch": "MBR1_STATE: refs/heads/p5y-k5-cell308-mb-r1 holds an NSF/evidence path",
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 1.8
+  },
+  "t_gc8_mbr1_state": {
+   "detail": {
+    "ok": true,
+    "refusals": {
+     "emergency_file": {
+      "rc": 2,
+      "refused": "MBR1_STATE"
+     },
+     "evidence_path": {
+      "rc": 2,
+      "refused": "MBR1_STATE"
+     },
+     "extra_ref": {
+      "rc": 2,
+      "refused": "MBR1_STATE"
+     },
+     "marker_moved": {
+      "rc": 2,
+      "refused": "MBR1_STATE"
+     },
+     "pending_ref": {
+      "rc": 2,
+      "refused": "MBR1_STATE"
+     }
+    },
+    "unplanted": {
+     "rc": 0
+    }
+   },
+   "ok": true,
+   "seconds": 9.6
+  },
+  "t_indeterminate_after_worker_death": {
+   "detail": {
+    "ok": true,
+    "sealed_status": "TARGET_EVALUATION_FAILED",
+    "status": "INDETERMINATE"
+   },
+   "ok": true,
+   "seconds": 7.0
+  },
+  "t_journal_cas": {
+   "detail": {
+    "conflict_raised": true,
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 0.5
+  },
+  "t_marker_cas": {
+   "detail": {
+    "after": [
+     "ABORTED_INTENT"
+    ],
+    "before": [
+     "NO_JOURNAL"
+    ],
+    "ok": true,
+    "run": {
+     "rc": 2,
+     "refused": "CONSUMED"
+    }
+   },
+   "ok": true,
+   "seconds": 3.2
+  },
+  "t_no_abandonment": {
+   "detail": {
+    "ok": true,
+    "refusals": {
+     "close-indeterminate": {
+      "rc": 2,
+      "refused": "NO_DISCRETIONARY_ABANDONMENT"
+     },
+     "execute": {
+      "rc": 2,
+      "refused": "CONSUMED"
+     },
+     "seal-only": {
+      "rc": 2,
+      "refused": "SEAL_ONLY"
+     }
+    }
+   },
+   "ok": true,
+   "seconds": 6.3
+  },
+  "t_no_in_run_observation": {
+   "detail": {
+    "bad_stderr": [],
+    "bad_stdout": [],
+    "host_log": 2,
+    "journal_entries": 7,
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 11.4
+  },
+  "t_no_target_consumed": {
+   "detail": {
+    "ok": true,
+    "recover": {
+     "rc": 0
+    },
+    "status": "NO_TARGET_CONSUMED"
+   },
+   "ok": true,
+   "seconds": 11.1
+  },
+  "t_pending_result": {
+   "detail": {
+    "ok": true,
+    "recover": {
+     "rc": 0
+    },
+    "status": "PENDING_RESULT"
+   },
+   "ok": true,
+   "seconds": 9.1
+  },
+  "t_persistence_contract": {
+   "detail": {
+    "corrupt_read_back": "DETECTED",
+    "ok": true,
+    "second_write": "SPOOL_RESULT_EXISTS",
+    "sequence": [
+     "rename",
+     "fsync",
+     "fcntl",
+     "fsync",
+     "fcntl",
+     "rename",
+     "fsync",
+     "fcntl"
+    ],
+    "tmp": "NEVER_READ"
+   },
+   "ok": true,
+   "seconds": 0.3
+  },
+  "t_pins_execute_platform": {
+   "detail": {
+    "ok": true,
+    "run": {
+     "rc": 2,
+     "refused": "PLATFORM_PIN_MISMATCH"
+    }
+   },
+   "ok": true,
+   "seconds": 2.6
+  },
+  "t_pins_execute_research": {
+   "detail": {
+    "ok": true,
+    "run": {
+     "rc": 2,
+     "refused": "PIN_MISMATCH"
+    }
+   },
+   "ok": true,
+   "seconds": 1.2
+  },
+  "t_pins_execute_science": {
+   "detail": {
+    "ok": true,
+    "run": {
+     "rc": 2,
+     "refused": "SCIENCE_PIN_MISMATCH"
+    }
+   },
+   "ok": true,
+   "seconds": 1.2
+  },
+  "t_pins_resume_platform": {
+   "detail": {
+    "attempt_after": 1,
+    "ok": true,
+    "refusal": {
+     "rc": 2,
+     "refused": "PLATFORM_PIN_MISMATCH"
+    },
+    "state_after": "CONSUMED_INTERRUPTED"
+   },
+   "ok": true,
+   "seconds": 14.2
+  },
+  "t_pins_resume_research": {
+   "detail": {
+    "attempt_after": 1,
+    "ok": true,
+    "refusal": {
+     "rc": 2,
+     "refused": "PIN_MISMATCH"
+    },
+    "state_after": "CONSUMED_INTERRUPTED"
+   },
+   "ok": true,
+   "seconds": 13.4
+  },
+  "t_pins_resume_science": {
+   "detail": {
+    "attempt_after": 1,
+    "ok": true,
+    "refusal": {
+     "rc": 2,
+     "refused": "SCIENCE_PIN_MISMATCH"
+    },
+    "state_after": "CONSUMED_INTERRUPTED"
+   },
+   "ok": true,
+   "seconds": 14.5
+  },
+  "t_pins_science_fresh_process": {
+   "detail": {
+    "execute_rc": 1,
+    "ok": true,
+    "recover_rc": 1
+   },
+   "ok": true,
+   "seconds": 13.7
+  },
+  "t_platform_mismatch_at_resume": {
+   "detail": {
+    "classified": [
+     "PROCESS_DEAD",
+     "PLATFORM_PIN_MISMATCH"
+    ],
+    "final": "INDETERMINATE",
+    "ok": true,
+    "recover": {
+     "rc": 5
+    },
+    "same_platform": "CONSUMED_INTERRUPTED"
+   },
+   "ok": true,
+   "seconds": 10.7
+  },
+  "t_reboot": {
+   "detail": {
+    "ok": true,
+    "other_boot": "CONSUMED_INTERRUPTED",
+    "recover": {
+     "rc": 0
+    },
+    "same_boot": "CONSUMED_COMPUTING"
+   },
+   "ok": true,
+   "seconds": 7.6
+  },
+  "t_result_durable_unsealed": {
+   "detail": {
+    "ok": true,
+    "recover": {
+     "rc": 0
+    },
+    "status": "RESULT_DURABLE_UNSEALED"
+   },
+   "ok": true,
+   "seconds": 8.9
+  },
+  "t_sealed_materialize": {
+   "detail": {
+    "ok": true,
+    "recover": {
+     "rc": 0
+    },
+    "rerun": {
+     "rc": 2,
+     "refused": "CONSUMED"
+    }
+   },
+   "ok": true,
+   "seconds": 7.7
+  },
+  "t_stale_pidfile": {
+   "detail": {
+    "ok": true,
+    "states": {
+     "absent": "ABSENT",
+     "dead": "STALE",
+     "exact": "LIVE",
+     "wrong_boot": "STALE",
+     "wrong_cmd": "STALE",
+     "wrong_start": "STALE"
+    }
+   },
+   "ok": true,
+   "seconds": 1.0
+  },
+  "t_two_consecutive_failures": {
+   "detail": {
+    "close": {
+     "rc": 5
+    },
+    "ok": true,
+    "resume": {
+     "rc": 6
+    },
+    "then": [
+     "PROCESS_DEAD",
+     "CKPT_CONSECUTIVE_FAILURES"
+    ]
+   },
+   "ok": true,
+   "seconds": 9.5
+  },
+  "t_unrecorded_journal_invalid": {
+   "detail": {
+    "classified": [
+     "JOURNAL_INVALID"
+    ],
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 0.7
+  },
+  "t_unrecorded_no_journal_then_indeterminate": {
+   "detail": {
+    "after": [
+     "INDETERMINATE",
+     {
+      "rc": 2,
+      "refused": "CONSUMED"
+     },
+     {
+      "rc": 2,
+      "refused": "RESUME_REFUSED"
+     }
+    ],
+    "classified": [
+     "NO_JOURNAL"
+    ],
+    "ok": true,
+    "recover": {
+     "rc": 5
+    }
+   },
+   "ok": true,
+   "seconds": 2.6
+  },
+  "t_verify_result_units": {
+   "detail": {
+    "ok": true,
+    "reasons": {
+     "absent": "ABSENT",
+     "driver": "DRIVER_BINDING",
+     "good": "",
+     "grant": "GRANT_BINDING",
+     "incomplete": "NOT_COMPLETE",
+     "relayout": "SELF_HASH_OR_LAYOUT",
+     "truncated": "SELF_HASH_OR_LAYOUT",
+     "wrong_hash": "SELF_HASH_OR_LAYOUT"
+    }
+   },
+   "ok": true,
+   "seconds": 0.0
+  }
+ },
+ "seconds": 318.4
+}

@@ -1,0 +1,209 @@
+{
+ "failed": [],
+ "module": "/Users/suzhe/ReBaseGuard-c308mbs/level4/closure_proofs/p5y_k5_cell308_mbs_r1/tests/test_mbs308_static.py",
+ "n": 10,
+ "passed": 10,
+ "results": {
+  "t_execute_and_resume_require_launcher_and_pins": {
+   "detail": {
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 0.0
+  },
+  "t_fault_hook_test_only": {
+   "detail": {
+    "assignments": [
+     [
+      "mbs308_state.py",
+      "None"
+     ]
+    ],
+    "cli": [
+     2,
+     "MBS308 REFUSED TEST_HOOKS_PRESENT: MBS308_TEST_ANY"
+    ],
+    "cli_without_hooks": [
+     0,
+     "NO_TARGET_CONSUMED"
+    ],
+    "ok": true,
+    "points": [
+     "F1",
+     "F10",
+     "F11",
+     "F12",
+     "F2",
+     "F3",
+     "F4",
+     "F5",
+     "F6",
+     "F7",
+     "F8",
+     "F9"
+    ]
+   },
+   "ok": true,
+   "seconds": 4.4
+  },
+  "t_launcher_plist_contract": {
+   "detail": {
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 0.0
+  },
+  "t_mbs12_static_carryovers": {
+   "detail": {
+    "decoy_cells": [
+     "297",
+     "316"
+    ],
+    "files_naming_c3_knockout": [],
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 0.0
+  },
+  "t_mbs9_referenced_module_names": {
+   "detail": {
+    "differing": [],
+    "functions_closed_over": 36,
+    "names_checked": 61,
+    "ok": true,
+    "report": {
+     "CODE": "IDENTICAL assign",
+     "CON": "ALLOWED: MB r1's mb308_consumer, executed from its pinned bytes (SCIENCE_PINS) instead of imported",
+     "DECOY_BUNDLES": "IDENTICAL assign",
+     "DECOY_CELLS": "IDENTICAL assign",
+     "DECOY_SEED": "IDENTICAL assign",
+     "ENV": "IDENTICAL assign",
+     "EVAL_CAP_S": "IDENTICAL assign",
+     "F": "IDENTICAL import",
+     "FIELDS": "IDENTICAL assign",
+     "FIRST_COMPLETED": "IDENTICAL import",
+     "GUARD": "ALLOWED: mbs308_guard: MB r1's guard with the successor's marker ref only (t_rc1_guard_diff_only_marker)",
+     "HELPER_SHA256": "ALLOWED: identity: the successor's helper modules (the science modules are pinned by SCIENCE_PINS)",
+     "HERE": "IDENTICAL assign",
+     "Inconsistent": "IDENTICAL def",
+     "IndependentCheckFailed": "IDENTICAL def",
+     "LINEAGE": "ALLOWED: identity: MB r1's lineage plus MB r1's own chain (c46434a3, 7eb057bb, 47bb37c7, afa93072, 21e99cf0)",
+     "PIN": "ALLOWED: MB r1's mb308_pinned, executed from its pinned bytes (SCIENCE_PINS) instead of imported",
+     "Path": "IDENTICAL import",
+     "ProcessPoolExecutor": "ALLOWED: lifecycle: bound to mbs308_state.CheckpointingPool (checkpoints, RSS record, memory watchdog)",
+     "R6_NAME": "IDENTICAL assign",
+     "REHEARSAL_CELLS": "IDENTICAL assign",
+     "REPO": "IDENTICAL assign",
+     "RUNG_CPU_CAP_S": "IDENTICAL assign",
+     "Refusal": "IDENTICAL def",
+     "S1M": "ALLOWED: MB r1's mb308_stage1, executed from its pinned bytes (SCIENCE_PINS) instead of imported",
+     "SUP": "ALLOWED: MB r1's mb308_supply, executed from its pinned bytes (SCIENCE_PINS) instead of imported",
+     "TARGET_CELL": "IDENTICAL assign",
+     "WORKERS": "IDENTICAL assign",
+     "_W": "IDENTICAL assign",
+     "_ser_block": "IDENTICAL def",
+     "_set_job_cap": "IDENTICAL def",
+     "_worker_init": "IDENTICAL def",
+     "_worker_job": "IDENTICAL def",
+     "admitted_pairs": "IDENTICAL def",
+     "check_cpu_caps": "IDENTICAL def",
+     "check_helpers": "IDENTICAL def",
+     "compose_and_consume": "IDENTICAL def",
+     "controls": "IDENTICAL def",
+     "decide": "IDENTICAL def",
+     "decoy_bundles": "IDENTICAL def",
+     "decoy_cover": "IDENTICAL def",
+     "fs": "IDENTICAL def",
+     "git": "IDENTICAL def",
+     "hashlib": "IDENTICAL import",
+     "json": "IDENTICAL import",
+     "jsonable": "IDENTICAL def",
+     "load_consumer": "IDENTICAL def",
+     "load_science": "IDENTICAL def",
+     "multiprocessing": "IDENTICAL import",
+     "public_stage1": "IDENTICAL def",
+     "r0_order3_variant": "IDENTICAL def",
+     "read_pinned": "IDENTICAL def",
+     "resource": "IDENTICAL import",
+     "sha": "IDENTICAL def",
+     "signal": "IDENTICAL import",
+     "stage1": "IDENTICAL def",
+     "subprocess": "IDENTICAL import",
+     "supply_scaled_variant": "IDENTICAL def",
+     "target_geometry": "IDENTICAL def",
+     "time": "IDENTICAL import",
+     "wait": "ALLOWED: lifecycle: bound to mbs308_state.checkpointing_wait (one durable checkpoint per completed job)"
+    }
+   },
+   "ok": true,
+   "seconds": 0.1
+  },
+  "t_no_mbr1_driver_mode_invoked": {
+   "detail": {
+    "hits": [],
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 0.0
+  },
+  "t_r3_ratified_rules_applied": {
+   "detail": {
+    "excl_allow": {
+     "new": 43,
+     "ok": true,
+     "old": 39
+    },
+    "ok": true,
+    "superseded_absent": true,
+    "timeout_rule_in_s7": true,
+    "verbatim": {
+     "**R-ALLOW (EXCL_ALLOW).**": true,
+     "**R-EXCL-PCT (EXCL_CPU_PCT).**": true,
+     "**R-FREE (FREE_MEM_MIN).**": true,
+     "**R-MEM (MEM_CAP).**": true,
+     "*Attainability.*": true,
+     "Never added:": true
+    }
+   },
+   "ok": true,
+   "seconds": 0.1
+  },
+  "t_rc1_guard_diff_only_marker": {
+   "detail": {
+    "changed_lines": [
+     "-CONSUMED_REF = \"refs/p5y-k5-cell308-mb-r1/target-consumed\"",
+     "+CONSUMED_REF = \"refs/p5y-k5-cell308-mbs-r1/target-consumed\""
+    ],
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 0.0
+  },
+  "t_rc1_science_glue_text_identical": {
+   "detail": {
+    "compared": 34,
+    "differing": [],
+    "driver_c46434a3_equals_21e99cf0": true,
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 0.2
+  },
+  "t_science_pins_equal_mbr1_bytes": {
+   "detail": {
+    "copies_in_namespace": [],
+    "modules": {
+     "mb308_a0core": true,
+     "mb308_consumer": true,
+     "mb308_pinned": true,
+     "mb308_stage1": true,
+     "mb308_supply": true
+    },
+    "ok": true
+   },
+   "ok": true,
+   "seconds": 0.1
+  }
+ },
+ "seconds": 4.9
+}

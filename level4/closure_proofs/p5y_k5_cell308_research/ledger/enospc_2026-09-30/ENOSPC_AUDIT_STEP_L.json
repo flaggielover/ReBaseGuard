@@ -1,0 +1,417 @@
+{
+ "cleanup_utc": "2026-09-30T08:59:48+00:00",
+ "suites": {
+  "F_crash.json": {
+   "mtime_utc": "2026-09-30T07:44:32.014641+00:00",
+   "before_cleanup": true,
+   "n": 50,
+   "passed": 50,
+   "failed": [],
+   "errors": {},
+   "slowest": [
+    [
+     34.3,
+     "t_L03_journal_lock_during_seal"
+    ],
+    [
+     40.9,
+     "t_L05_ckpt_lock_midrun"
+    ],
+    [
+     60.1,
+     "t_S01_worker_death"
+    ]
+   ]
+  },
+  "F_launch.json": {
+   "mtime_utc": "2026-09-30T07:24:45.397342+00:00",
+   "before_cleanup": true,
+   "n": 10,
+   "passed": 10,
+   "failed": [],
+   "errors": {},
+   "slowest": [
+    [
+     2.1,
+     "t_launch_never_boots_out_after_bootstrap"
+    ],
+    [
+     3.8,
+     "t_wait_cleanup_ignores_failing_print"
+    ],
+    [
+     5.1,
+     "t_launchd_integration"
+    ]
+   ]
+  },
+  "F_state.json": {
+   "mtime_utc": "2026-09-30T07:31:44.763729+00:00",
+   "before_cleanup": true,
+   "n": 46,
+   "passed": 46,
+   "failed": [],
+   "errors": {},
+   "slowest": [
+    [
+     14.3,
+     "t_two_consecutive_failures"
+    ],
+    [
+     15.5,
+     "t_pins_resume_platform"
+    ],
+    [
+     20.5,
+     "t_budget_real_resumes"
+    ]
+   ]
+  },
+  "F_static.json": {
+   "mtime_utc": "2026-09-30T07:24:27.832719+00:00",
+   "before_cleanup": true,
+   "n": 10,
+   "passed": 10,
+   "failed": [],
+   "errors": {},
+   "slowest": [
+    [
+     0.1,
+     "t_r3_ratified_rules_applied"
+    ],
+    [
+     0.1,
+     "t_rc1_science_glue_text_identical"
+    ],
+    [
+     7.0,
+     "t_fault_hook_test_only"
+    ]
+   ]
+  },
+  "L1_crash_new.json": {
+   "mtime_utc": "2026-09-30T07:08:28.304227+00:00",
+   "before_cleanup": true,
+   "n": 4,
+   "passed": 4,
+   "failed": [],
+   "errors": {},
+   "slowest": [
+    [
+     14.6,
+     "t_L12_lock_ps_failure_not_stale"
+    ],
+    [
+     16.8,
+     "t_L13_lock_sources_ps_failure_each"
+    ],
+    [
+     31.0,
+     "t_S13_lock_ps_failure_not_broken"
+    ]
+   ]
+  },
+  "L1_state_new.json": {
+   "mtime_utc": "2026-09-30T07:06:59.234926+00:00",
+   "before_cleanup": true,
+   "n": 2,
+   "passed": 2,
+   "failed": [],
+   "errors": {},
+   "slowest": [
+    [
+     10.1,
+     "t_computing_then_interrupted"
+    ],
+    [
+     23.9,
+     "t_computing_ps_failure_not_interrupted"
+    ]
+   ]
+  },
+  "N_launch.json": {
+   "mtime_utc": "2026-09-30T06:22:35.845640+00:00",
+   "before_cleanup": true,
+   "n": 10,
+   "passed": 10,
+   "failed": [],
+   "errors": {},
+   "slowest": [
+    [
+     2.1,
+     "t_launch_never_boots_out_after_bootstrap"
+    ],
+    [
+     3.4,
+     "t_wait_cleanup_ignores_failing_print"
+    ],
+    [
+     4.5,
+     "t_launchd_integration"
+    ]
+   ]
+  },
+  "N_state_r3.json": {
+   "mtime_utc": "2026-09-30T06:22:09.208218+00:00",
+   "before_cleanup": true,
+   "n": 1,
+   "passed": 1,
+   "failed": [],
+   "errors": {},
+   "slowest": [
+    [
+     11.5,
+     "t_gc10_ratified_allow_list"
+    ]
+   ]
+  },
+  "N_static.json": {
+   "mtime_utc": "2026-09-30T06:21:57.700412+00:00",
+   "before_cleanup": true,
+   "n": 10,
+   "passed": 10,
+   "failed": [],
+   "errors": {},
+   "slowest": [
+    [
+     0.1,
+     "t_r3_ratified_rules_applied"
+    ],
+    [
+     0.1,
+     "t_rc1_science_glue_text_identical"
+    ],
+    [
+     6.7,
+     "t_fault_hook_test_only"
+    ]
+   ]
+  },
+  "W_launch_r3.json": {
+   "mtime_utc": "2026-09-30T06:05:15.034664+00:00",
+   "before_cleanup": true,
+   "n": 1,
+   "passed": 0,
+   "failed": [
+    "t_preflight_timeout_rule"
+   ],
+   "errors": {},
+   "slowest": [
+    [
+     0.1,
+     "t_preflight_timeout_rule"
+    ]
+   ]
+  },
+  "W_state_r3.json": {
+   "mtime_utc": "2026-09-30T06:05:29.600266+00:00",
+   "before_cleanup": true,
+   "n": 1,
+   "passed": 0,
+   "failed": [
+    "t_gc10_ratified_allow_list"
+   ],
+   "errors": {},
+   "slowest": [
+    [
+     14.5,
+     "t_gc10_ratified_allow_list"
+    ]
+   ]
+  },
+  "W_static.json": {
+   "mtime_utc": "2026-09-30T06:05:14.935227+00:00",
+   "before_cleanup": true,
+   "n": 10,
+   "passed": 9,
+   "failed": [
+    "t_r3_ratified_rules_applied"
+   ],
+   "errors": {},
+   "slowest": [
+    [
+     0.1,
+     "t_r3_ratified_rules_applied"
+    ],
+    [
+     0.1,
+     "t_rc1_science_glue_text_identical"
+    ],
+    [
+     7.0,
+     "t_fault_hook_test_only"
+    ]
+   ]
+  }
+ },
+ "matrices": {
+  "L2_mutants_new.json": {
+   "mtime_utc": "2026-09-30T07:15:13.293074+00:00",
+   "before_cleanup": true,
+   "total": 6,
+   "killed": 6,
+   "survivors": [],
+   "unmutated_all_pass": false,
+   "unmutated_errors": {
+    "crash::t_L12_lock_ps_failure_not_stale": "RuntimeError: git ('checkout', '-q', '-B') failed: fatal: unable to write new index file\n",
+    "crash::t_L13_lock_sources_ps_failure_each": "RuntimeError: git ('config', 'user.email', 'sandbox@invalid') failed: fatal: cannot change to '/private/tmp/claude-501/-Users-suzhe-ReBaseGuard/fb722654-cd8d-472d-928c-34a116f8b315/scratchpad/builder3/scratch/L2/t_mutants/UNMUTATED/scratch/t_crash/sbx': No such file or directory\n",
+    "crash::t_S13_lock_ps_failure_not_broken": "RuntimeError: git ('checkout', '-q', '-f') failed: error: invalid object 100644 7d0a6330be60c5ba8b1285b828ab513e998736a9 for 'level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_driver.py'\nerror: invalid object 100644 7d0a6330be60c5ba8b1285b828ab513e998736a9 for 'level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_driver.py'\nfatal: unable to",
+    "state::t_computing_ps_failure_not_interrupted": "RuntimeError: git ('checkout', '-q', '-B') failed: fatal: unable to write new index file\n",
+    "state::t_computing_then_interrupted": "RuntimeError: git ('checkout', '-q', '-B') failed: fatal: unable to write new index file\n"
+   }
+  },
+  "L3_mutants_new.json": {
+   "mtime_utc": "2026-09-30T07:22:02.964027+00:00",
+   "before_cleanup": true,
+   "total": 6,
+   "killed": 6,
+   "survivors": [],
+   "unmutated_all_pass": true,
+   "unmutated_errors": {}
+  },
+  "M15_M57.json": {
+   "mtime_utc": "2026-09-30T08:38:41.880930+00:00",
+   "before_cleanup": true,
+   "total": 2,
+   "killed": 2,
+   "survivors": [],
+   "unmutated_all_pass": true,
+   "unmutated_errors": {}
+  },
+  "MX2_matrix.json": {
+   "mtime_utc": "2026-09-30T09:47:52.567972+00:00",
+   "before_cleanup": false,
+   "total": 57,
+   "killed": 57,
+   "survivors": [],
+   "unmutated_all_pass": true,
+   "unmutated_errors": {}
+  },
+  "MX_matrix.json": {
+   "mtime_utc": "2026-09-30T08:29:16.693505+00:00",
+   "before_cleanup": true,
+   "total": 56,
+   "killed": 55,
+   "survivors": [
+    "M15"
+   ],
+   "unmutated_all_pass": true,
+   "unmutated_errors": {}
+  },
+  "N_mutants_M51_M52.json": {
+   "mtime_utc": "2026-09-30T06:24:11.268717+00:00",
+   "before_cleanup": true,
+   "total": 2,
+   "killed": 2,
+   "survivors": [],
+   "unmutated_all_pass": true,
+   "unmutated_errors": {}
+  },
+  "dir:L3": {
+   "classes": {
+    "KILLED_BY_ASSERTION": 6,
+    "UNMUTATED_LAST_TARGET_PASS": 1
+   },
+   "signature_files": [],
+   "non_assertion": {}
+  },
+  "dir:M15": {
+   "classes": {
+    "KILLED_BY_ASSERTION": 2,
+    "UNMUTATED_LAST_TARGET_PASS": 1
+   },
+   "signature_files": [],
+   "non_assertion": {}
+  },
+  "dir:MX": {
+   "classes": {
+    "KILLED_BY_ASSERTION": 55,
+    "SURVIVED": 1,
+    "UNMUTATED_LAST_TARGET_PASS": 1
+   },
+   "signature_files": [
+    "M02",
+    "M24",
+    "M30"
+   ],
+   "non_assertion": {
+    "M15": "SURVIVED"
+   }
+  },
+  "dir:MX2": {
+   "classes": {
+    "KILLED_BY_ASSERTION": 57,
+    "UNMUTATED_LAST_TARGET_PASS": 1
+   },
+   "signature_files": [
+    "M02",
+    "M24",
+    "M30"
+   ],
+   "non_assertion": {}
+  }
+ },
+ "signature_hits": [
+  {
+   "file": "F_crash.json",
+   "match": "truncated",
+   "context": "\": \"CONSUMED_INTERRUPTED\"    },    \"ok\": true,    \"seconds\": 12.3   },   \"t_S06_truncated_result\": {    \"detail\": {     \"case\": \"truncated\",     \"classified\": [      \"SP"
+  },
+  {
+   "file": "F_crash.json",
+   "match": "truncated",
+   "context": " \"seconds\": 12.3   },   \"t_S06_truncated_result\": {    \"detail\": {     \"case\": \"truncated\",     \"classified\": [      \"SPOOL_RESULT_REJECTED:SELF_HASH_OR_LAYOUT\",      \"P"
+  },
+  {
+   "file": "F_crash.log",
+   "match": "truncated",
+   "context": "s) PASS t_S04_stale_pidfile (12.1 s) PASS t_S05_corrupt_tmp (12.3 s) PASS t_S06_truncated_result (15.1 s) PASS t_S07_wrong_result_hash (15.1 s) PASS t_S08_stale_pending_"
+  },
+  {
+   "file": "F_state.json",
+   "match": "truncated",
+   "context": "    \"incomplete\": \"NOT_COMPLETE\",      \"relayout\": \"SELF_HASH_OR_LAYOUT\",      \"truncated\": \"SELF_HASH_OR_LAYOUT\",      \"wrong_hash\": \"SELF_HASH_OR_LAYOUT\"     }    },  "
+  },
+  {
+   "file": "MX2_matrix.json",
+   "match": "truncated",
+   "context": ",    \"killed\": true,    \"rc\": 1,    \"seconds\": 25.1,    \"target\": \"crash::t_S06_truncated_result\",    \"test_passed\": false   },   \"M31\": {    \"breaks\": \"execute without "
+  },
+  {
+   "file": "MX2_matrix.json",
+   "match": "truncated",
+   "context": "ll,    \"rc\": 0,    \"seconds\": 66.4,    \"test_passed\": true   },   \"crash::t_S06_truncated_result\": {    \"error\": null,    \"rc\": 0,    \"seconds\": 26.4,    \"test_passed\": "
+  },
+  {
+   "file": "MX2_matrix.log",
+   "match": "truncated",
+   "context": ") PASS unmutated crash::t_S01_worker_death (66.4 s) PASS unmutated crash::t_S06_truncated_result (26.4 s) PASS unmutated crash::t_S11_memory_watchdog (18.8 s) PASS unmut"
+  },
+  {
+   "file": "MX2_matrix.log",
+   "match": "truncated",
+   "context": "s) KILLED M30 resume does not set a rejected spool result aside -> crash::t_S06_truncated_result (25.1 s) KILLED M31 execute without the launchd launcher -> state::t_exe"
+  },
+  {
+   "file": "MX_matrix.json",
+   "match": "truncated",
+   "context": ",    \"killed\": true,    \"rc\": 1,    \"seconds\": 37.6,    \"target\": \"crash::t_S06_truncated_result\",    \"test_passed\": false   },   \"M31\": {    \"breaks\": \"execute without "
+  },
+  {
+   "file": "MX_matrix.json",
+   "match": "truncated",
+   "context": "ll,    \"rc\": 0,    \"seconds\": 78.6,    \"test_passed\": true   },   \"crash::t_S06_truncated_result\": {    \"error\": null,    \"rc\": 0,    \"seconds\": 31.2,    \"test_passed\": "
+  },
+  {
+   "file": "MX_matrix.log",
+   "match": "truncated",
+   "context": ") PASS unmutated crash::t_S01_worker_death (78.6 s) PASS unmutated crash::t_S06_truncated_result (31.2 s) PASS unmutated crash::t_S11_memory_watchdog (21.9 s) PASS unmut"
+  },
+  {
+   "file": "MX_matrix.log",
+   "match": "truncated",
+   "context": "s) KILLED M30 resume does not set a rejected spool result aside -> crash::t_S06_truncated_result (37.6 s) KILLED M31 execute without the launchd launcher -> state::t_exe"
+  }
+ ],
+ "bad_json": []
+}

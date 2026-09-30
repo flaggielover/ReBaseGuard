@@ -1,0 +1,98 @@
+"""ENOSPC integrity audit of builder3's step-L evidence (read-only).
+
+Window: the data volume was low (about 5.3 GiB free observed; other builders reported ENOSPC and < 1 GiB) until the
+coordinator's cleanup at 2026-09-30T08:59:48Z. For every suite report and every matrix run: parse, report counts,
+list non-PASS entries with their error text, scan the text of every report / log / result file for disk-exhaustion
+signatures, flag zero-length or unparseable JSON, and classify each mutant kill: KILLED_BY_ASSERTION (ok False, no
+error), KILLED_BY_ERROR (error set: an exception, timeout or missing result), SURVIVED, or MISSING. Prints JSON.
+"""
+import json, re, sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+B3 = Path(sys.argv[1])
+CLEANUP = datetime(2026, 9, 30, 8, 59, 48, tzinfo=timezone.utc)
+SIG = re.compile(r"ENOSPC|No space left|Errno 28|disk full|Disk quota|short write|truncated|"
+                 r"unexpected EOF|JSONDecodeError|Expecting value", re.I)
+
+
+def mtime(p):
+    return datetime.fromtimestamp(p.stat().st_mtime, tz=timezone.utc)
+
+
+def load(p):
+    try:
+        t = p.read_text(errors="replace")
+    except OSError as e:
+        return None, f"unreadable: {e}"
+    if not t.strip():
+        return None, "zero-length"
+    try:
+        return json.loads(t), None
+    except ValueError as e:
+        return None, f"unparseable: {e}"
+
+
+out = {"cleanup_utc": CLEANUP.isoformat(), "suites": {}, "matrices": {}, "signature_hits": [], "bad_json": []}
+for p in sorted((B3 / "reports").iterdir()):
+    txt = p.read_text(errors="replace") if p.is_file() else ""
+    for m in SIG.finditer(txt):
+        out["signature_hits"].append({"file": p.name, "match": m.group(0),
+                                      "context": txt[max(0, m.start() - 80): m.end() + 80].replace("\n", " ")})
+    if p.suffix != ".json":
+        continue
+    obj, err = load(p)
+    if err:
+        out["bad_json"].append({"file": p.name, "why": err})
+        continue
+    rec = {"mtime_utc": mtime(p).isoformat(), "before_cleanup": mtime(p) < CLEANUP}
+    if isinstance(obj, dict) and "results" in obj:
+        res = obj["results"]
+        rec.update({"n": obj.get("n"), "passed": obj.get("passed"), "failed": obj.get("failed"),
+                    "errors": {k: v.get("error") for k, v in res.items() if v.get("error")},
+                    "slowest": sorted(((v.get("seconds") or 0), k) for k, v in res.items())[-3:]})
+        out["suites"][p.name] = rec
+    elif isinstance(obj, dict) and "matrix" in obj:
+        rec.update({"total": obj.get("total"), "killed": obj.get("killed"), "survivors": obj.get("survivors"),
+                    "unmutated_all_pass": obj.get("unmutated_all_pass"),
+                    "unmutated_errors": {k: v.get("error") for k, v in obj.get("unmutated", {}).items()
+                                         if v.get("error")}})
+        out["matrices"][p.name] = rec
+# per-mutant result files of every matrix run directory
+for run in sorted((B3 / "scratch").iterdir()):
+    tm = run / "t_mutants"
+    if not tm.is_dir():
+        continue
+    cls, sig = {}, []
+    for d in sorted(tm.iterdir()):
+        f = d / "result.json"
+        if not f.exists():
+            cls[d.name] = "MISSING"
+            continue
+        obj, err = load(f)
+        if err:
+            cls[d.name] = "BAD_JSON:" + err
+            continue
+        txt = f.read_text(errors="replace")
+        if SIG.search(txt):
+            sig.append(d.name)
+        (tname, r), = obj["results"].items() if len(obj.get("results", {})) == 1 else ((None, None),)
+        if r is None:
+            cls[d.name] = "MULTI_OR_EMPTY"
+        elif d.name == "UNMUTATED":
+            cls[d.name] = "UNMUTATED_LAST_TARGET_" + ("PASS" if r.get("ok") else "FAIL")
+        elif r.get("error"):
+            cls[d.name] = "KILLED_BY_ERROR: " + str(r["error"])[:160]
+        elif r.get("ok") is False:
+            cls[d.name] = "KILLED_BY_ASSERTION"
+        else:
+            cls[d.name] = "SURVIVED"
+    counts = {}
+    for v in cls.values():
+        k = v.split(":")[0]
+        counts[k] = counts.get(k, 0) + 1
+    out["matrices"].setdefault("dir:" + run.name, {}).update({"classes": counts, "signature_files": sig,
+                                                              "non_assertion": {k: v for k, v in cls.items()
+                                                                                if v not in ("KILLED_BY_ASSERTION",)
+                                                                                and not v.startswith("UNMUTATED")}})
+print(json.dumps(out, indent=1, default=str))
