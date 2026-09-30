@@ -490,6 +490,58 @@ def single_constants(tree) -> dict:
     return out
 
 
+def target_folds(n: ast.Call, fc, owner_node, depth: int = 3) -> tuple:
+    """(full, parts): loose folds of a write call's whole target -- following a plain name to the values its function
+    (or the module) binds to it, and a call of a function of this file to its return values (R4F M07: the path is
+    built into a local, or returned by a helper, first) -- and loose folds of the names / helper calls INSIDE the
+    target, where only a refs / hooks component counts (their last component is not the written file)"""
+    full, parts = [], []
+    tops = {f.name: f for f in fc.tree.body if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef))}
+
+    def bound(scope, name):
+        out = []
+        for m in ast.walk(scope):
+            vals = []
+            if isinstance(m, ast.Assign):
+                vals = [(t, m.value) for t in m.targets]
+            elif isinstance(m, (ast.AnnAssign, ast.NamedExpr)) and m.value is not None:
+                vals = [(m.target, m.value)]
+            elif isinstance(m, (ast.With, ast.AsyncWith)):
+                vals = [(it.optional_vars, it.context_expr) for it in m.items if it.optional_vars is not None]
+            out += [v for t, v in vals if isinstance(t, ast.Name) and t.id == name]
+        return out
+
+    def returns(fn):
+        return [r.value for r in ast.walk(fn) if isinstance(r, ast.Return) and r.value is not None]
+
+    def links(e, scope):
+        if isinstance(e, ast.Name):
+            return [(v, scope) for v in bound(scope, e.id)]
+        if isinstance(e, ast.Call) and isinstance(e.func, ast.Name) and e.func.id in tops:
+            return [(r, tops[e.func.id]) for r in returns(tops[e.func.id])]
+        return []
+
+    def walk(e, scope, d, whole):
+        (full if whole else parts).append(fold(e, fc.consts, loose=True))
+        if d == 0:
+            return
+        for v, sc in links(e, scope):
+            walk(v, sc, d - 1, whole)
+        for sub in ast.walk(e):
+            if sub is not e and isinstance(sub, (ast.Name, ast.Call)):
+                for v, sc in links(sub, scope):
+                    walk(v, sc, d - 1, False)
+    for x in _write_target_exprs(n):
+        walk(x, owner_node if owner_node is not None else fc.tree, depth, True)
+    return full, parts
+
+
+def _path_part_bad(sfold: str) -> bool:
+    comps = [c for c in sfold.replace("\\", "/").split("/") if c]
+    return bool(set(comps) & REF_ANY) or any(comps[i] == "logs" and comps[i + 1] in ("refs", "HEAD")
+                                              for i in range(len(comps) - 1))
+
+
 def _path_bad(sfold: str) -> str | None:
     comps = [c for c in sfold.replace("\\", "/").split("/") if c]
     if not comps:
@@ -861,8 +913,8 @@ def process_rules(tree, rel: str, root: Path, recurse=None) -> list:
         if isinstance(n, ast.Call) and fs_write_of(n, _atoms(n), fc):
             tex = _write_target_exprs(n)
             ta = write_target_atoms(n).union(*(_atoms(e) for e in tex))
-            tf = [fold(x, fc.consts, loose=True) for x in tex]
-            if (ta & gitdir or any(_has_gitdir_component(x) for x in tf)) and not (
+            tf, tparts = target_folds(n, fc, (own.get(id(n)) or (None, None))[1])
+            if (ta & gitdir or any(_has_gitdir_component(x) for x in tf + tparts)) and not (
                     _site_ok(tree, rel, fn_of.get(id(n))) or reviewed(rel, own.get(id(n)), "gitdir_write", tree)):
                 rec(n, "GITDIR_WRITE", _callee(n))
     # reviewed runners: every registered runner of this file is itself reviewed with the process permit
@@ -1012,13 +1064,14 @@ def formal_rules(tree, rel: str, sanctioned: list | None = None, root: Path = FN
             fs_write = fs_write_of(n, a, fc)
             writes = fs_write or gcls in ("object", "ref", "opaque")
             ta = (a if gcls in ("object", "ref", "opaque") else write_target_atoms(n)) if writes else set()
-            tf = [fold(x, fc.consts, loose=True) for x in _write_target_exprs(n)] if fs_write else []
+            tf, tparts = target_folds(n, fc, (own.get(id(n)) or (None, None))[1]) if fs_write else ([], [])
             if writes and (any(isinstance(x, str) and any(g_ in x for g_ in GRANT_MARKS) for x in list(ta) + tf)
                            or ta & grant_names):
                 rec(n, "GRANT_WRITE", fname or "call")
             if fs_write and (any(isinstance(x, str) and (x in ("refs", "packed-refs") or "refs/" in x
                                                           or x.startswith("logs/refs")) for x in ta)
-                             or any(_path_bad(x) for x in tf)) and not reviewed(rel, own.get(id(n)),
+                             or any(_path_bad(x) for x in tf) or any(_path_part_bad(x) for x in tparts)) \
+                    and not reviewed(rel, own.get(id(n)),
                                                                                 "ref_file_write", tree):
                 rec(n, "REF_FILE_WRITE", fname)
         elif isinstance(n, (ast.Assign, ast.AnnAssign)):

@@ -320,6 +320,15 @@ def run() -> dict:
                                                                       "    subprocess.run([sys.executable, '-c', 'import os; "
                                                                       "os.system(\"git update-ref refs/heads/x HEAD\")'])\n")},
              "PROCESS_FORBIDDEN"),
+            ("ref_path_through_a_with_local", {DRIVER: ("+", "def _l1(gd):\n    q = str(gd) + '/pac' + 'ked-refs'\n"
+                                                             "    with open(q, 'a') as fh:\n        fh.write('x')\n")},
+             "REF_FILE_WRITE"),
+            ("ref_path_returned_by_a_helper", {DRIVER: ("+", "def _h(gd):\n    return Path(gd) / ('re' + 'fs')\n\n\n"
+                                                             "def _l2(gd):\n    (_h(gd) / 'heads' / 'x').write_text('0')\n")},
+             "REF_FILE_WRITE"),
+            ("ref_path_through_an_inner_local", {DRIVER: ("+", "def _l3(gd):\n    r = Path(gd) / 'refs'\n"
+                                                               "    (r / 'heads' / 'x').write_text('0')\n")},
+             "REF_FILE_WRITE"),
             ("forbidden_git_option_after_verb", {"code/p309_rehearse.py": ("+", "def _o(repo):\n    return D.git('log', "
                                                                                "'--output=/tmp/x', repo=repo)\n")},
              "GIT_OPTION_FORBIDDEN"),

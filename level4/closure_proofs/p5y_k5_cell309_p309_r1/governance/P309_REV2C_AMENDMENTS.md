@@ -171,3 +171,16 @@ governs. **The two owner-ratified sites are unchanged:** `_arm_marker` AST sha25
 **Proposal and freeze parameters.** The proposal tool carries a `grant_validation` step before the
 `execution_procedure`. The freeze parameters carry `grant_rules.grant_validation`, `grant_rules.site_backstop`, the
 amended `premarker_admission` text, and the R4 follow-up liability.
+
+**A32 addendum (after `3cb5d513`, before any review of it).**
+* **Finding.** The coordinator's first complete D5 control run at `3cb5d513` gave 97 of 98 controls. R4's **M07 was not
+  rejected**: the ref path was built into a local variable (`p = Path(str(gd)) / ('re' + 'fs') / …`), and the write
+  went through that name. Schema 4 folded only the write call's own target expression.
+* **Fix.** Write targets are now also folded through:
+  * the values that the enclosing function, or the module, binds to a target name (assignments, walrus, `with … as`);
+  * the return values of a helper function of the same file;
+  * the names and helper calls inside the target, where only a `refs` or `hooks` component counts.
+* **Controls added.** A local bound by `with`, a helper's return value, and an inner local
+  (`C29_ref_path_through_a_with_local`, `C29_ref_path_returned_by_a_helper`, `C29_ref_path_through_an_inner_local`).
+* **Other changes.** The per-scan cache reset (`147ba3a2`) is an implementation fix with no rule change: repeated
+  plantings no longer retain every parsed tree.
