@@ -27,6 +27,7 @@ FNS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(FNS / "code"))
 import p309_env as E  # noqa: E402
 import p309_guard as G  # noqa: E402
+sys.path.insert(0, str(FNS / "tests"))     # r2: the runner starts this file isolated (-I): add tests/ explicitly
 import test_p309_exactly_once as X  # noqa: E402  (r2 P6(e): the shared sandbox base rule)
 
 REPO = E.REPO

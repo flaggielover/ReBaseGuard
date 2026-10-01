@@ -1,0 +1,243 @@
+{
+ "clone_base": "4abc7073c2b19d5b9b3540751b46a5686a45a489",
+ "controls": {
+  "R2_M01a": {
+   "caught": true,
+   "rc": 1,
+   "tail": "e \"/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/r2_drill_cloud_2/drill_20261001T132325Z/clone/level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_driver.py\", line 346, in recorded_freeze\n    raise Refusal(\"FREEZE_RECORD\", \"the freeze record was changed after it was made\")\np309_driver.Refusal: FREEZE_RECORD: the freeze record was changed after it was made\n"
+  },
+  "R2_M01b": {
+   "caught": true,
+   "rc": 1,
+   "tail": "r-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/r2_drill_cloud_2/drill_20261001T132325Z/clone/level4/closure_proofs/p5y_k5_cell309_p309_r2/tests/drill_mutant_M01b.py\", line 166, in build_chain\n    raise RuntimeError(f\"QC11 harness: {have} freeze-record commits in the sandbox chain, expected {want}\")\nRuntimeError: QC11 harness: 2 freeze-record commits in the sandbox chain, expected 1\n"
+  },
+  "after_reset_tip": true,
+  "no_production_namespace_ref": true,
+  "p309_repository_refused": {
+   "caught": true
+  },
+  "push_url_refused": {
+   "caught": true
+  },
+  "second_freeze_record": {
+   "caught": true,
+   "got": {
+    "detail": "FREEZE_RECORD: the freeze record was changed after it was made",
+    "refused": "FREEZE_RECORD"
+   }
+  },
+  "test_only_prior_ref": {
+   "caught": true,
+   "got": {
+    "detail": "CONSUMED: a ref exists under a marker namespace: ['refs/p5y-k5-cell309-TEST-ONLY-prior/x']",
+    "refused": "CONSUMED"
+   }
+  }
+ },
+ "drill_root": "/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/r2_drill_cloud_2/drill_20261001T132325Z",
+ "guard": {
+  "checks": {
+   "no_remote_or_push_url": true,
+   "own_common_dir": true,
+   "under_drill_root": true
+  },
+  "pass": true
+ },
+ "host": {
+  "continuity_pass": true,
+  "preflight_as_expected": true,
+  "preflight_rc": 1,
+  "provenance_rc": [
+   0,
+   0
+  ],
+  "r1_tree_unchanged": true
+ },
+ "items": {
+  "QC01": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 0.9
+  },
+  "QC02": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 1.3
+  },
+  "QC03": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 6.9
+  },
+  "QC04": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 0.2
+  },
+  "QC05": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 0.5
+  },
+  "QC07": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 142.0
+  },
+  "QC11": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 185.4
+  },
+  "QC12": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 8.8
+  },
+  "QC13": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 0.7
+  },
+  "QC14": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 61.9
+  },
+  "QC15": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 7.7
+  },
+  "QC16": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": false,
+   "rc": 0,
+   "tail": "[FAIL] QC16 (712.8 s)\nDRILL_ITEM_RESULT {\"qc\": \"QC16\", \"pass\": false, \"wall_s\": 712.8}\n",
+   "wall_s": 712.8
+  },
+  "QC17": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 0.1
+  },
+  "QC_D5": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 2866.3
+  },
+  "QC_U2": {
+   "confined": false,
+   "head_unchanged": true,
+   "pass": true,
+   "rc": 0,
+   "tail": "",
+   "wall_s": 2.3
+  }
+ },
+ "ledger": {
+  "band_hits": [],
+  "cells_touched": 0,
+  "counters": {
+   "new_target_evaluations": 0,
+   "target_equivalent_proxies": 0,
+   "target_informed_optimisation": 0
+  },
+  "rows": {
+   "level4/closure_proofs/p5y_k5_cell309_p309_r2/ledger/EXPOSURE_LEDGER.jsonl": [],
+   "level4/closure_proofs/p5y_k5_cell309_p309_r2/ledger/ZERO_TARGET_LEDGER.jsonl": [
+    "{\"cells_touched\": [], \"class\": \"GOVERNANCE\", \"drifts\": [], \"new_target_evaluations\": 0, \"notes\": \"static text scan\", \"purpose\": \"owner step 11: placeholder / choice scan of the frozen documents\", \"script\": \"code/p309_placeholder_check.py\", \"target_equivalent_proxies\": 0, \"target_informed_optimisation\": 0, \"utc\": \"2026-10-01T13:23:44Z\"}"
+   ]
+  },
+  "sha256": {
+   "level4/closure_proofs/p5y_k5_cell309_p309_r2/ledger/EXPOSURE_LEDGER.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "level4/closure_proofs/p5y_k5_cell309_p309_r2/ledger/ZERO_TARGET_LEDGER.jsonl": "29c02f4c44eaf4fe7d42e67af875d6721059c215decaa2c4afe8bfc639d6b59f"
+  }
+ },
+ "p309_after": {
+  "head": "4abc7073c2b19d5b9b3540751b46a5686a45a489",
+  "refs_sha256": "05e65eb7b2f575df617c06cec91080c920e79a6869be46c43d87a3fae8df70d3",
+  "status_sha256": "30bdda8045537cc97ad95e0e39b09e79b9aac2daf5ea81c2c48258a4d3f89f41"
+ },
+ "p309_before": {
+  "head": "4abc7073c2b19d5b9b3540751b46a5686a45a489",
+  "refs_sha256": "05e65eb7b2f575df617c06cec91080c920e79a6869be46c43d87a3fae8df70d3",
+  "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "p309_unchanged": false,
+ "pass": false,
+ "schema": "P309_R2_DRILL/1",
+ "statement": "development evidence only; no target input read; no quarantined cell evaluated; NEW \u0393309 TARGET EVALUATIONS = 0",
+ "tier": "cloud",
+ "topology": {
+  "F": "13a53aedf8f18ea50345dbb861eeb0f9e7fcee90",
+  "FR": "3fe4653e16bff1a5561b1144ea634635ea83a8e7",
+  "generators": [
+   0,
+   0,
+   0
+  ],
+  "tip": "c265aeb1f7888bb488670bb512c98a801bf7bfb9"
+ },
+ "utc_end": "2026-10-01T14:30:58Z",
+ "utc_start": "2026-10-01T13:23:24Z",
+ "verdicts": {
+  "controls": true,
+  "host": true,
+  "items": false,
+  "ledger": true,
+  "witness": true
+ },
+ "witness_after_items": {
+  "F_history_holds_no_record": true,
+  "one_record_commit": true,
+  "qc11_sandbox_descends_from_F": true,
+  "qc11_sandbox_one_record": true,
+  "recorded_freeze_is_F": true
+ },
+ "witness_before_items": {
+  "F_history_holds_no_record": true,
+  "one_record_commit": true,
+  "recorded_freeze_is_F": true
+ }
+}

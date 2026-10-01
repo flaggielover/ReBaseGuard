@@ -185,7 +185,12 @@ def p309_state() -> dict:
 
 def leftover(clone: Path) -> list:
     """uncommitted paths in the clone (porcelain, untracked included)"""
-    return [l[3:] for l in git(clone, "status", "--porcelain", "--untracked-files=all").splitlines() if l.strip()]
+    out = []
+    for line in git(clone, "status", "--porcelain", "--untracked-files=all").splitlines():
+        m = re.match(r"^\s*\S{1,2}\s+(.*)$", line)       # the runner strips the output's first leading space
+        if m:
+            out.append(m.group(1))
+    return out
 
 
 def confined(paths: list) -> bool:

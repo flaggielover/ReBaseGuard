@@ -1,0 +1,451 @@
+{
+ "schema": "P309_R2_REPIN_LIST/1",
+ "review_condition": "P6(g)",
+ "hash": "sha256 of ast.dump(<node>), CPython 3.11.15",
+ "compared": {
+  "r1": "4c754a73767903a5ad5dddff725f1e173a0a6876:level4/closure_proofs/p5y_k5_cell309_p309_r1/config/SCANNER_ALLOWANCE_P309.json",
+  "r2": "level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json at this commit"
+ },
+ "exactly_once_sites_and_backstop_pins_unchanged": [
+  [
+   "backstop_pins",
+   "code/p309_driver.py",
+   "_SITE_CODES"
+  ],
+  [
+   "backstop_pins",
+   "code/p309_driver.py",
+   "_assert_execute_context"
+  ],
+  [
+   "backstop_pins",
+   "code/p309_driver.py",
+   "_require_own_run_nonce"
+  ],
+  [
+   "backstop_pins",
+   "code/p309_driver.py",
+   "_site_backstop"
+  ],
+  [
+   "exactly_once_sites",
+   "code/p309_driver.py",
+   "_arm_marker"
+  ],
+  [
+   "exactly_once_sites",
+   "code/p309_driver.py",
+   "_persist_pending"
+  ]
+ ],
+ "rows": [
+  {
+   "list": "import_policy.module_level_exemptions",
+   "file": "verify/srk_verify_indep_scoped.py",
+   "name": "multiprocessing",
+   "r1_at_F": "9c72beccda731fe6ad1af6486c10cf5edfba37905ccf3a1c5346f2d534fdb3b6",
+   "r2": "56528523686818a0dee8cc7513af42d68e89e8455ceaa152d86c509a3e241247",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_guard.py",
+   "name": "TestContext.__init__",
+   "r1_at_F": "777ad64d080cb1b6c60439b7fcd0a8020a75bd88a03f851395113703d1a6af1b",
+   "r2": "d9e68b2b613bc4e3b846430f292734aa1b695b7578de230c0a0c9306721db9c6",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "git_read",
+   "r1_at_F": null,
+   "r2": "d817e314cd777d717c1735de64f3f160c356c0447ac88ad174e4e6e9cfc3e938",
+   "kind": "new"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "ntp_status",
+   "r1_at_F": null,
+   "r2": "aa74fb15029d0f77e0baccdf5c41fc064d8a2ea123005f86f11ea508366e3487",
+   "kind": "new"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "system_reads",
+   "r1_at_F": null,
+   "r2": "91c83aa07b10960085c56ec6f095f35f165be87df59a0b320dbb32755913b1f6",
+   "kind": "new"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_launch.py",
+   "name": "loaded_p309_units",
+   "r1_at_F": null,
+   "r2": "b8f68eb97eefe4bcefa8020f05b4b0a282e99cac495188bb909b5433c107071e",
+   "kind": "new"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_launch.py",
+   "name": "main",
+   "r1_at_F": null,
+   "r2": "f44d352bdbc0737610d2f2e28539023d68431a637de7534bc295cd66fa0c9124",
+   "kind": "new"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_qualify.py",
+   "name": "start_qhost_monitor",
+   "r1_at_F": null,
+   "r2": "26327a2bf38b9d48bd703a6b6ca575060fba316664644ec34fc5061ff804c7ee",
+   "kind": "new"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "controls",
+   "r1_at_F": null,
+   "r2": "d5049d2aa379896e2dce91de5229fb8028920f3d800174b8bcdca2206b2714cf",
+   "kind": "new"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "git",
+   "r1_at_F": null,
+   "r2": "9bc80915bcd2b8b6e88311d073061e5ff63f84f83e5434c43f8811f0802d19ff",
+   "kind": "new"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "run_py",
+   "r1_at_F": null,
+   "r2": "ef69938981a1e5f75568c92d3aa8565ca7c4415d768ddecf7877543a75e13ad4",
+   "kind": "new"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_exactly_once.py",
+   "name": "new_sandbox",
+   "r1_at_F": "3c315c1d1b312ade19d8cc8fd0f5a909761f02fc49d0105749e625b9184b5b70",
+   "r2": "9996a15fcf9bc2aed654101afd5a56f9fb028aebff2141d43ac963346dc60124",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_exactly_once.py",
+   "name": "pre_marker_flows",
+   "r1_at_F": "96f3e54f950ef9101fe3c4eb0767f7d855ca9412b7a5c27c52917ab2301cfc8c",
+   "r2": "e615cfb98bdc775f13b2b88985bac1a0d901e05a6f35f4aa9e62882282301af2",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_exactly_once.py",
+   "name": "validate_flows",
+   "r1_at_F": "2ca1373c0472a36dc5f19c1827b677f73737aafb5589fcc5b978ae97470b8a92",
+   "r2": "51ed8ad87236ef634da0fa1fd1660d8ff6200df615095f8c280ffc40e05dc816",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_guard.py",
+   "name": "new_sandbox",
+   "r1_at_F": "a4f2140849a96fab7ee678ad9e51687d3a903d6d2178d6a223fb007f7b00f2df",
+   "r2": "51e3a6bb9e1b2caceb0b8693b494ded892e392612e04f03bcd58bb4c733ea572",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_verify_scoped.py",
+   "name": "TestFC2Scoped.test_N10_production_cannot_be_synthesized",
+   "r1_at_F": "02b558f5cd4a07bc1b1bf1a83e4a4eac06bae2d9d88536e4a694990cccb8fba4",
+   "r2": "b11d41fde6c58ba71a48c7e921eae27a5a43e177096d27beb380219edb0d29cc",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "verify/scoped_sandbox.py",
+   "name": "Sandbox.__init__",
+   "r1_at_F": "1820ef2698731ac4eb5c7648f4a99dc9887443576a6932dc68ca91887aa7d981",
+   "r2": "a8a819ffde52c3078f9a78f9b047d6014f7077052f6bf0d4d3865d4ebccf4b94",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "ExecContext",
+   "r1_at_F": null,
+   "r2": "0f161c9a40f6d00a3968f7b631ca54979413253d645d05594cbad12b7addc295",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "Refusal",
+   "r1_at_F": null,
+   "r2": "e7a891c7738e63623a93e58e057275b9c27b8211072e772ebff2d0bfc11bd6e4",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "_chain_kind",
+   "r1_at_F": null,
+   "r2": "d9666bbd3f2bfc665b47c0c8fde5ee54b173729ba409ece446d124face3b91e4",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "_only",
+   "r1_at_F": null,
+   "r2": "bf0be73c1484d257fc2eaafbefe44b43cba5aad2cd5b43225c8e6a5f3bdc919a",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "check_grant",
+   "r1_at_F": null,
+   "r2": "2558c41dccda12404dcafcbf9b84be00538c912157c12da6dc7e816441add59b",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "check_not_evaluated",
+   "r1_at_F": null,
+   "r2": "d34414e9987d58fc3ce751e6af1372c0190ae9e7fd9b6b7ea07158918e181d13",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "freeze_commit",
+   "r1_at_F": null,
+   "r2": "fade479ef953d86e628d98c491ea4b283ebc026311128b894c87dce1fb8fd86f",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "git",
+   "r1_at_F": null,
+   "r2": "6da407af03f0c3a024065102f9d2c27adec4ba78b136a406124849ca6b5dbf35",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "git_dir",
+   "r1_at_F": null,
+   "r2": "fcff00ef25cda64c8d4ad1dc68489a1d2f9260ae4d2e8f2809449f60b12fa6ff",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "recorded_freeze",
+   "r1_at_F": null,
+   "r2": "e31631a844e5ce61811c2674f1302268541e932235d54ccbcab3b4262883f278",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "sha",
+   "r1_at_F": null,
+   "r2": "8f82e38b450ea02483f5896de89f4ec6b19f198fbe6d1b8c99ecea9316722715",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "verdict_ok",
+   "r1_at_F": null,
+   "r2": "30e1020074ee5f2d875ee34573f489379ba700f7869e007ebfc5c839974069fa",
+   "kind": "new"
+  },
+  {
+   "list": "production_read_path_pins",
+   "file": "code/p309_driver.py",
+   "name": "walk_chain",
+   "r1_at_F": null,
+   "r2": "d589dfceb22638a273c9a52aeee9c0dfc0180c0be57c3ccacb3d01a8fe9421b4",
+   "kind": "new"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "code/checkpoint_push_p309.py",
+   "name": "main",
+   "r1_at_F": "cefa7382a01f029bfe3db37e583ba92a00e2edab6610fc56d5199a5c1bc8cd2e",
+   "r2": "59b2c39084779d54bdac7305f17e585b153054c232b78171f537c1e6c33cef98",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "code/p309_host.py",
+   "name": "system_reads",
+   "r1_at_F": null,
+   "r2": "91c83aa07b10960085c56ec6f095f35f165be87df59a0b320dbb32755913b1f6",
+   "kind": "new"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "controls",
+   "r1_at_F": null,
+   "r2": "d5049d2aa379896e2dce91de5229fb8028920f3d800174b8bcdca2206b2714cf",
+   "kind": "new"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "main",
+   "r1_at_F": null,
+   "r2": "134e3e7bc214f56e7ce1d46fc7920bd37ecbe15485c59610a44a08fd777cf577",
+   "kind": "new"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "make_topology",
+   "r1_at_F": null,
+   "r2": "9b59c12fa22f27226590d870315370d72bae18a57ef0b70c63217205152b92e8",
+   "kind": "new"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "tests/test_p309_exactly_once.py",
+   "name": "admission_flows",
+   "r1_at_F": "6cc70f3495ee4f7376f12c48b82d85d93f353d4cdd3f15aa3d99776ddbb26fa9",
+   "r2": "2f99ff01f5174d7f965447725eba250754474a1096ecffcd59cca60b26a85149",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "tests/test_p309_exactly_once.py",
+   "name": "build_chain",
+   "r1_at_F": "02a5c528472d695a46deb1a06cbfbe1934748d1ba0d657f5a54a1d52d5d8177c",
+   "r2": "ba1764f6e9443762134d6f83445a12bbdcecfd99c42aec9f45f4755b358563bd",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "tests/test_p309_exactly_once.py",
+   "name": "new_sandbox",
+   "r1_at_F": "3c315c1d1b312ade19d8cc8fd0f5a909761f02fc49d0105749e625b9184b5b70",
+   "r2": "9996a15fcf9bc2aed654101afd5a56f9fb028aebff2141d43ac963346dc60124",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "tests/test_p309_exactly_once.py",
+   "name": "pre_marker_flows",
+   "r1_at_F": "96f3e54f950ef9101fe3c4eb0767f7d855ca9412b7a5c27c52917ab2301cfc8c",
+   "r2": "e615cfb98bdc775f13b2b88985bac1a0d901e05a6f35f4aa9e62882282301af2",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "tests/test_p309_exactly_once.py",
+   "name": "validate_flows",
+   "r1_at_F": "2ca1373c0472a36dc5f19c1827b677f73737aafb5589fcc5b978ae97470b8a92",
+   "r2": "51ed8ad87236ef634da0fa1fd1660d8ff6200df615095f8c280ffc40e05dc816",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "tests/test_p309_guard.py",
+   "name": "new_sandbox",
+   "r1_at_F": "a4f2140849a96fab7ee678ad9e51687d3a903d6d2178d6a223fb007f7b00f2df",
+   "r2": "51e3a6bb9e1b2caceb0b8693b494ded892e392612e04f03bcd58bb4c733ea572",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "tests/test_p309_guard.py",
+   "name": "run",
+   "r1_at_F": "520d1a9e1a5ae30794dbfd90ff4681d228455f3f69a820302ea803c2c3b6f5d9",
+   "r2": "f35b0adcd633056c4447a52d8130681d9e5375915512ec24cd55a4a9594c3ee4",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "tests/test_p309_site_backstop.py",
+   "name": "run",
+   "r1_at_F": "4b1320cff26c1f587052c9fd21d6aa710de275163470a8710ba49ea696d500a5",
+   "r2": "c3e35695fa76a1893d3c91a56f59732b4dee5c4f685dbb1f6faa40e822bac499",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "verify/scoped_sandbox.py",
+   "name": "Sandbox.__init__",
+   "r1_at_F": "1820ef2698731ac4eb5c7648f4a99dc9887443576a6932dc68ca91887aa7d981",
+   "r2": "a8a819ffde52c3078f9a78f9b047d6014f7077052f6bf0d4d3865d4ebccf4b94",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "t7_exemptions",
+   "file": "code/checkpoint_push_p309.py",
+   "name": "<module>",
+   "r1_at_F": "9d1cf93f27cf7200d055bb5ca9d93ae777483c92558f375434583f1bc7e32673",
+   "r2": "e022f018573dbed9aedf7cc492dac3ead043da93cdd9dd4de75f88857261be65",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "t7_exemptions",
+   "file": "code/p309_env.py",
+   "name": "<module>",
+   "r1_at_F": "b02c22e45055ba63f1c27461ebfd7c9080830c1cd9719476ba3b074251a74954",
+   "r2": "fd338ff88ad58c070b1a36edce2930cfc2e06d52df2beb6a9a0174076fba382a",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "t7_exemptions",
+   "file": "code/p309_scan.py",
+   "name": "<module>",
+   "r1_at_F": "f9c53ce0b6d4e400051783b5441c080912353edfef31b0ad5327d59b2546a6f8",
+   "r2": "ec6031cc492498beb3fd774da5cf2dabffca4bb7938a0813c6efeca246b2067b",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "t7_exemptions",
+   "file": "tests/test_p309_exactly_once.py",
+   "name": "<module>",
+   "r1_at_F": "44b1a4f84dbc26253b8d2bab8bcc3789536b98c1a695355723ac5817b6e8f332",
+   "r2": "4a2177e01d15ae85c47e78b35cf46c318a50e6f81a451dd038d3a862edd65712",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "t7_exemptions",
+   "file": "tests/test_p309_guard.py",
+   "name": "<module>",
+   "r1_at_F": "c3c5c907be89714109b3f0c58b627b38f27707c706873e11e0f26919997569e6",
+   "r2": "3e546d6ce69ab8a6d7e81d898d9a025a758682ab299c5c3952724b8aef29ede8",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "t7_exemptions",
+   "file": "tests/test_p309_site_backstop.py",
+   "name": "<module>",
+   "r1_at_F": "f80674272b14ae8dc3d6c2c3bd0bb920083df1f3234e69689712170288a81e4e",
+   "r2": "e129430c3290ff59193054d70f03163d3d424655d8c6c7c6a6dfd7feeb584d79",
+   "kind": "re-pinned"
+  },
+  {
+   "list": "t7_exemptions",
+   "file": "tests/test_verify_scoped.py",
+   "name": "<module>",
+   "r1_at_F": "1398968829daf35fd0d52efc5faaee4dbc7f2f271c022c257417cdcd71b81f0c",
+   "r2": "0ebcd94a496e58ebc95914273e7c12c08b580cc33416b2ef4d015b597927f24a",
+   "kind": "re-pinned"
+  }
+ ]
+}
