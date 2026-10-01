@@ -1,0 +1,147 @@
+"""P309-r2 launcher (R2-I6; plan section 7; review conditions P10, P11; addendum 2, F5).
+
+Starts ONE detached, fail-closed run in a transient systemd system unit, and never retries:
+
+  python3 -B code/p309_launch.py --mode {drill|official} --host-config HOST.json [--print-only]
+
+Before anything starts it requires all of these, in order, refusing on the first that fails:
+  1. P309_SCRATCH_ROOT is valid (P7); for an official run it must be empty;
+  2. the durability preflight passes (owner message 1, section 5.B; P15);
+  3. the cross-campaign exclusion gate passes (owner message 3, item 4; P9);
+  4. the isolation check passes (owner message 3, items 2 and 5);
+  5. no unit named p309-r2-* is loaded (no stale or concurrent P309 run).
+
+The unit:
+* Its name is p309-r2-drill-<utc> or p309-r2-qualify-<utc>, fixed by the mode. A drill can never carry the official
+  name, nor the reverse.
+* It runs as the P309 user (`--uid`/`--gid`; P12).
+* Its properties are Restart=no, KillMode=control-group, MemoryMax, OOMScoreAdjust and a low CPU and IO weight, plus
+  ProtectSystem=strict with ReadWritePaths for the P309 repository and scratch root only, PrivateTmp and
+  InaccessiblePaths for every foreign root (P9, P11).
+* Its environment is a fixed hermetic set (git, TMPDIR, P309_SCRATCH_ROOT, P309_FOREIGN_ROOTS). Nothing is inherited.
+* The program is the pinned interpreter with `-B` and the frozen script. argv[0] is not altered.
+
+The gate results, the host configuration and the exact unit command are written to
+<P309_SCRATCH_ROOT>/launch_<utc>.json before the start; the unit gets its path as P309_LAUNCH_RECORD, and the runner's
+Q-HOST refuses to start without it.
+--print-only stops after printing them. That is the only form used where systemd is absent, such as the cloud
+development tier.
+"""
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+FNS = Path(__file__).resolve().parents[1]
+REPO = FNS.parents[2]
+sys.path.insert(0, str(FNS / "code"))
+import p309_host as H  # noqa: E402
+
+UNIT_PREFIX = "p309-r2-"
+UNIT_NAME = {"drill": "p309-r2-drill-", "official": "p309-r2-qualify-"}
+SCRIPT = {"drill": ["code/p309_topology_drill.py", "--tier", "worker"],
+          "official": ["code/p309_qualify.py", "--workers", "4"]}
+LAUNCH_KEYS = ("unit_user", "unit_group", "memory_max", "oom_score_adjust", "cpu_weight", "io_weight")
+
+
+def refuse(msg: str) -> int:
+    print(json.dumps({"launched": False, "refused": msg}))
+    return 2
+
+
+def unit_name(mode: str, stamp: str) -> str:
+    name = UNIT_NAME[mode] + stamp
+    other = [m for m in UNIT_NAME if m != mode]
+    if not re.fullmatch(r"p309-r2-(drill|qualify)-\d{8}T\d{6}Z", name) or any(
+            name.startswith(UNIT_NAME[o]) for o in other):
+        raise H.HostError("unit name does not match its mode")
+    return name
+
+
+def loaded_p309_units() -> list:
+    """systemctl's read-only unit listing, filtered to the P309 prefix (None if systemctl is absent)."""
+    if not H.shutil.which("systemctl"):
+        return None
+    p = subprocess.run(["systemctl", "list-units", "--all", "--no-legend", "--plain"], stdin=subprocess.DEVNULL,
+                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, timeout=30)
+    return [l.split()[0] for l in p.stdout.splitlines() if l.split() and l.split()[0].startswith(UNIT_PREFIX)]
+
+
+def unit_argv(mode: str, name: str, cfg: dict, launch: dict, scratch: str, record: str) -> list:
+    foreign = list(cfg["foreign_roots"])
+    env = {"LC_ALL": "C", "PATH": "/usr/bin:/bin", "HOME": os.path.join(scratch, "home"),
+           "TMPDIR": os.path.join(scratch, "tmp"), "P309_SCRATCH_ROOT": scratch,
+           "P309_FOREIGN_ROOTS": os.pathsep.join(foreign), "GIT_CONFIG_NOSYSTEM": "1", "GIT_TERMINAL_PROMPT": "0",
+           "GIT_OPTIONAL_LOCKS": "0", "PYTHONDONTWRITEBYTECODE": "1", "PYTHONNOUSERSITE": "1",
+           "P309_LAUNCH_RECORD": record}
+    props = ["Restart=no", "KillMode=control-group", "MemoryMax=%s" % launch["memory_max"],
+             "OOMScoreAdjust=%d" % int(launch["oom_score_adjust"]), "CPUWeight=%d" % int(launch["cpu_weight"]),
+             "IOWeight=%d" % int(launch["io_weight"]), "ProtectSystem=strict", "PrivateTmp=yes",
+             "NoNewPrivileges=yes", "ReadWritePaths=%s %s" % (str(REPO), scratch),
+             "WorkingDirectory=%s" % str(FNS)]
+    props += ["InaccessiblePaths=-%s" % f for f in foreign]
+    argv = ["systemd-run", "--unit=" + name, "--uid=" + launch["unit_user"], "--gid=" + launch["unit_group"],
+            "--no-block"]
+    for p in props:
+        argv += ["--property=" + p]
+    for k in sorted(env):
+        argv += ["--setenv=%s=%s" % (k, env[k])]
+    script = SCRIPT[mode]
+    return argv + ["--", cfg["interpreter"], "-B", str(FNS / script[0])] + script[1:]
+
+
+def main(argv: list) -> int:
+    if "--mode" not in argv or "--host-config" not in argv:
+        print(__doc__)
+        return 2
+    mode = argv[argv.index("--mode") + 1]
+    if mode not in UNIT_NAME:
+        return refuse("unknown mode")
+    with open(argv[argv.index("--host-config") + 1]) as fh:
+        raw = json.load(fh)
+    launch = {k: raw.pop(k) for k in LAUNCH_KEYS if k in raw}
+    if set(launch) != set(LAUNCH_KEYS):
+        return refuse("launch settings missing: %s" % sorted(set(LAUNCH_KEYS) - set(launch)))
+    try:
+        cfg = H.load_config(["--config-json", json.dumps(raw)])
+        cfg["p309_repo"] = str(REPO)
+        cfg["require_empty_scratch"] = mode == "official"
+        stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+        name = unit_name(mode, stamp)
+        scratch = H.scratch_root(dict(os.environ), str(REPO), cfg)
+    except H.HostError as exc:
+        return refuse(str(exc))
+    record = {"schema": "P309_R2_LAUNCH/1", "utc": H.utc(), "mode": mode, "unit": name, "host_config": cfg}
+    record["preflight"] = H.durability_preflight(cfg, dict(os.environ), str(REPO))
+    record["gate"] = H.exclusion_gate(cfg)
+    record["isolation"] = H.isolation(cfg)
+    units = loaded_p309_units()
+    record["p309_units_loaded"] = units
+    out = os.path.join(scratch, "launch_%s.json" % stamp)
+    record["argv"] = unit_argv(mode, name, cfg, launch, scratch, out)
+    blockers = [k for k in ("preflight", "gate", "isolation") if not record[k]["pass"]]
+    if units is None or units:
+        blockers.append("p309_units_loaded" if units else "systemctl_absent")
+    record["blockers"] = blockers
+    with open(out, "x") as fh:                    # exclusive: a launch record is never overwritten
+        fh.write(json.dumps(record, indent=1, sort_keys=True, default=str) + "\n")
+    if "--print-only" in argv:
+        print(json.dumps({"launched": False, "print_only": True, "record": out, "blockers": blockers,
+                          "argv": record["argv"]}, indent=1))
+        return 0 if not blockers else 1
+    if blockers:
+        return refuse("blocked by %s (record %s)" % (blockers, out))
+    for d in ("home", "tmp"):                     # the unit's HOME and TMPDIR, inside the scratch root
+        os.mkdir(os.path.join(scratch, d))
+    p = subprocess.run(record["argv"], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                       universal_newlines=True, timeout=60)
+    print(json.dumps({"launched": p.returncode == 0, "unit": name, "record": out, "rc": p.returncode,
+                      "stderr_tail": p.stderr[-400:], "watch": "journalctl -u %s -f" % name}, indent=1))
+    return 0 if p.returncode == 0 else 1          # never retried: a failed start is reported, not repeated
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

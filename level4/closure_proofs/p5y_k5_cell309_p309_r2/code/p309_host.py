@@ -9,10 +9,12 @@ Read-only functions for the compute host that P309-r2 may share with cell 308 (o
   isolation(cfg)                 no campaign state shared with another checkout (owner message 3, items 2 and 5)
   durability_preflight(cfg)      the fail-closed durability gate (owner message 1, section 5.B; P15)
   scratch_root(env, repo, cfg)   P309_SCRATCH_ROOT validation (P7)
+  qhost_monitor(...)             Q-HOST sampling during a run (P10); rows on standard output; signals only its parent
 
 What it never does:
 * write anything except its own standard output: no file, no directory, no ref;
-* signal, renice or otherwise touch any process;
+* signal, renice or otherwise touch any process (the one exception: the Q-HOST monitor's single SIGTERM to
+  its own parent, the P309 runner);
 * read inside a foreign (cell-308) checkout. A foreign root is only stat()ed at its top directory, and access() is
   asked whether this user could read it;
 * run git anywhere but in the P309 repository;
@@ -23,6 +25,7 @@ What it never does:
 It must run on the worker's system python 3.6 or later (step 8a), so it avoids newer syntax.
 
   python3 p309_host.py {audit|gate|isolation|provenance|preflight|scratch} [--config PATH | --config-json JSON]
+  python3 p309_host.py qhost-monitor --config-json JSON --baseline-json JSON --parent PID --interval S   (runner only)
   python3 - audit --config-json '{...}' < p309_host.py      # step 8a: nothing is written on the worker
 
 Exit status: 0 if the subcommand passes (audit and provenance always pass), 1 if it fails, 2 on a usage error.
@@ -525,8 +528,44 @@ def audit(cfg):
             "foreign_roots": {sha(f): foreign_stat(f) for f in cfg["foreign_roots"]}}
 
 
+# --------------------------------------------------------------------------------------------- Q-HOST monitor
+def qhost_monitor(cfg, baseline, parent, interval):
+    """Q-HOST (P10): sample every <= `interval` s (at most 60) until the parent exits.  Each sample is one JSON row on
+    standard output (the runner points it into the attempt): continuity against the baseline, and whether cell-308 or
+    other ReBaseGuard heavy work is active (excluding this unit's own cgroup).  On a failed sample it signals the parent
+    (SIGTERM) once and stops; the parent records Q-HOST FAIL and exits, and the unit's KillMode=control-group stops the
+    rest.  It writes nothing else and signals no process but its own parent."""
+    import signal as _signal
+    interval = min(float(interval), 60.0)
+    heavy = float(cfg["heavy_cpu_fraction"])
+    while True:
+        if os.getppid() != parent:
+            return 0
+        t0 = time.time()
+        now = provenance(cfg)
+        cont = continuity(baseline, now, cfg)
+        rows = processes(cfg, min(20.0, interval / 2))
+        busy308 = [r["pid"] for r in rows if r["tag"] == "cell308" and (
+            r["cpu_fraction"] is None or r["cpu_fraction"] > heavy or r["heavy_pattern"])]
+        other = [r["pid"] for r in rows if r["tag"] == "other-rebaseguard" and (r["cpu_fraction"] or 0) > heavy]
+        ok = cont["pass"] and not busy308 and not other
+        sys.stdout.write(json.dumps({"utc": utc(), "pass": ok, "continuity": cont["checks"], "cell308_active_pids":
+                                     busy308, "other_heavy_pids": other, "suspended_s": now.get("suspended_s"),
+                                     "ntp_synchronized": now.get("ntp_synchronized")}, sort_keys=True) + "\n")
+        sys.stdout.flush()
+        if not ok:
+            os.kill(parent, _signal.SIGTERM)
+            return 1
+        time.sleep(max(0.0, interval - (time.time() - t0)))
+
+
 # ------------------------------------------------------------------------------------------------------ CLI
 def main(argv):
+    if argv and argv[0] == "qhost-monitor":
+        cfg = load_config(argv)
+        base = json.loads(argv[argv.index("--baseline-json") + 1])
+        return qhost_monitor(cfg, base, int(argv[argv.index("--parent") + 1]),
+                             float(argv[argv.index("--interval") + 1]))
     if not argv or argv[0] not in ("audit", "gate", "isolation", "provenance", "preflight", "scratch"):
         sys.stderr.write(__doc__)
         return 2

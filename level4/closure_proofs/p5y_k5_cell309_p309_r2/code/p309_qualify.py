@@ -16,6 +16,16 @@ namespace itself is never written).
 Preconditions (refused otherwise): HEAD's frozen directories equal the freeze commit's; the freeze manifest
 regenerates identically; the working tree is clean except qualification/ and the ledgers; no exactly-once ref exists.
 Nothing here reads a target input, evaluates a quarantined cell, or computes in the band.
+
+r2 Q-HOST (plan section 7; review P10; addendum 2): the run starts only through code/p309_launch.py.  Before the
+attempt directory and the RUN START line exist it refuses unless the launcher's record (P309_LAUNCH_RECORD, under
+P309_SCRATCH_ROOT, no blockers) names a unit this process runs in (INVOCATION_ID set; /proc/self/cgroup names the
+unit), the host is the one the launcher audited (Q-HOST continuity: boot, machine-id, hostname, instance,
+interpreter, glibc, no suspend), and the record's mode fits the repository (a drill runs in a clone under
+P309_SCRATCH_ROOT, the official run never does).  During the run a monitor (p309_host.py qhost-monitor, every <= 60 s)
+records continuity and cell-308 activity into the attempt; on a failure it signals this process, which records Q-HOST
+FAIL and the summary (pass false) and exits, and systemd's KillMode=control-group then stops every remaining process
+of the unit (owner decision OD-R2-5 option (i); option (ii) would need the owner to amend message 3 section 3).
 """
 from __future__ import annotations
 
@@ -26,6 +36,7 @@ import json
 import os
 import platform
 import random
+import signal
 import shutil
 import subprocess
 import sys
@@ -38,6 +49,7 @@ REPO = FNS.parents[2]
 sys.path.insert(0, str(FNS / "code"))
 import p309_env as E  # noqa: E402
 import p309_driver as D  # noqa: E402
+import p309_host as H  # noqa: E402  (r2 Q-HOST)
 
 QDIR = FNS / "qualification"
 SCRATCH = E.scratch_dir("qualification")   # r2 P7: under P309_SCRATCH_ROOT (validated; no fallback)
@@ -346,6 +358,122 @@ def qc_d5() -> dict:
     return {"pass": all(x["pass"] for x in parts), "parts": parts}
 
 
+def _under(path: Path, root: str) -> bool:
+    rp, rr = os.path.realpath(str(path)), os.path.realpath(root)
+    return rp == rr or rp.startswith(rr + os.sep)
+
+
+def qhost_preflight() -> dict:
+    """r2 P10: every Q-HOST refusal, before the attempt directory and the RUN START line exist.  Raises H.HostError."""
+    scratch = H.scratch_root(dict(os.environ), str(REPO), {"foreign_roots": []})
+    rec_path = os.environ.get("P309_LAUNCH_RECORD")
+    if not rec_path or not _under(Path(rec_path), scratch) or not Path(rec_path).is_file():
+        raise H.HostError("no launch record under P309_SCRATCH_ROOT: the run starts only through code/p309_launch.py")
+    rec = json.loads(Path(rec_path).read_text())
+    if rec.get("blockers") or rec.get("mode") not in ("drill", "official"):
+        raise H.HostError(f"the launch record has blockers or no valid mode: {rec.get('blockers')}")
+    if (rec["mode"] == "drill") != _under(REPO, scratch):
+        raise H.HostError("the launch mode does not fit the repository (a drill runs only in a clone under the scratch root)")
+    if not os.environ.get("INVOCATION_ID") or (rec.get("unit", "") + ".service") not in (
+            Path("/proc/self/cgroup").read_text() if Path("/proc/self/cgroup").exists() else ""):
+        raise H.HostError("not running inside the launched systemd unit")
+    cfg = H.load_config(["--config-json", json.dumps(rec["host_config"])])
+    now = H.provenance(cfg)
+    cont = H.continuity(rec["preflight"]["provenance"], now, cfg)
+    if not cont["pass"]:
+        raise H.HostError(f"the host changed since the launch: {cont['checks']}")
+    return {"record": rec_path, "unit": rec["unit"], "mode": rec["mode"], "cfg": cfg, "baseline": now,
+            "continuity_since_launch": cont}
+
+
+QHOST = {"monitor": None, "file": None}
+
+
+def _qhost_abort(signum, frame) -> None:
+    """the monitor's signal: record Q-HOST FAIL and the failed summary, then exit; KillMode=control-group stops the
+    rest of the unit (the heavy jobs).  Nothing is retried or resumed (R4 B8)."""
+    try:
+        xwrite(ATT["dir"] / "QHOST_FAIL.json", json.dumps({"utc": utc(), "signal": signum, "monitor_file": str(
+            QHOST["file"])}, indent=1) + "\n")
+        xwrite(QDIR / "P309_QUALIFICATION.json", json.dumps({
+            "schema": "P309_QUALIFICATION/2", "attempt": ATT["dir"].name, "utc": utc(), "pass": False,
+            "reason": "Q-HOST: the host changed or cell-308 heavy work appeared during the run (OD-R2-5 (i))",
+            "retry_rule": "none (R4 B8; r2 P23)"}, indent=1, sort_keys=True) + "\n")
+        E.log("code/p309_qualify.py", "QUALIFICATION ABORTED BY Q-HOST (the attempt is preserved; no retry)",
+              klass="GOVERNANCE", notes="r2 P10")
+    finally:
+        os._exit(3)
+
+
+def start_qhost_monitor(qh: dict) -> None:
+    xwrite(ATT["dir"] / "QHOST_BASELINE.json", json.dumps({k: qh[k] for k in (
+        "record", "unit", "mode", "baseline", "continuity_since_launch")}, indent=1, sort_keys=True, default=str) + "\n")
+    QHOST["file"] = ATT["dir"] / "QHOST_MONITOR.jsonl"
+    fh = open(os.open(QHOST["file"], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644), "w")
+    signal.signal(signal.SIGTERM, _qhost_abort)
+    QHOST["monitor"] = subprocess.Popen(
+        [PY, "-B", str(FNS / "code" / "p309_host.py"), "qhost-monitor", "--config-json", json.dumps(qh["cfg"]),
+         "--baseline-json", json.dumps(qh["baseline"]), "--parent", str(os.getpid()), "--interval", "60"],
+        stdout=fh, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL)
+
+
+def stop_qhost_monitor() -> dict:
+    """stop the monitor and read its rows: the run passes Q-HOST only if no row failed"""
+    mon = QHOST["monitor"]
+    if mon is not None:
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        mon.terminate()
+        try:
+            mon.wait(timeout=30)
+        except subprocess.TimeoutExpired:
+            mon.kill()
+    rows = [json.loads(l) for l in QHOST["file"].read_text().splitlines() if l.strip().startswith("{")]
+    return {"pass": bool(rows) and all(r.get("pass") for r in rows), "samples": len(rows),
+            "failed": [r for r in rows if not r.get("pass")][:3]}
+
+
+def items_table(m: Path, freeze: str, workers: int) -> dict:
+    """the qualification items, in order (r2: one function, so that the topology drill runs these very lambdas;
+    the runner gains no drill mode)"""
+    return {
+        "QC01": lambda: qc_research_simple(m, "tests/test_srk_port_identity.py"),
+        "QC02": lambda: qc_research_simple(m, "tests/test_srk_envelope.py"),
+        "QC03": lambda: qc_research_simple(m, "tests/test_srk_fsm_truth.py"),
+        "QC04": lambda: qc_research_simple(m, "tests/test_srk_assembly_twosided.py", opt=True),
+        "QC05": lambda: qc05(m),
+        "QC06": lambda: qc06(m),
+        "QC07": lambda: qc07(m),
+        "QC08": lambda: qc08(m, workers),
+        "QC09": lambda: qc09(workers),
+        "QC10": lambda: qc10(workers),
+        "QC11": lambda: qc_formal("tests/test_p309_exactly_once.py", flags=True),
+        "QC12": lambda: qc_formal("code/p309_static_check.py", flags=True),
+        "QC13": lambda: qc13(freeze),
+        "QC14": lambda: {**(lambda r: {"pass": r["rc"] == 0, "runs": [r]})(run(
+            [PY, "-B", str(FNS / "code" / "p309_driver.py"), "rehearse", "--out", str(ATT["dir"] / "QC14_REHEARSE.json")],
+            FNS)), "rehearse": json.loads((ATT["dir"] / "QC14_REHEARSE.json").read_text()) if (
+            ATT["dir"] / "QC14_REHEARSE.json").exists() else None},
+        "QC15": lambda: qc_formal("code/p309_self_audit.py", "QUALIFICATION"),
+        "QC16": qc16,
+        "QC17": qc17,
+        "QC_U2": qc_u2,
+        "QC_D5": qc_d5,
+    }
+
+
+def run_item(k: str, fn, freeze: str) -> dict:
+    """run one item and write its record exclusively into the attempt (a crashed item is a recorded FAIL)"""
+    t0 = time.time()
+    try:
+        res = fn()
+    except Exception as exc:  # noqa: BLE001 - a crashed QC is a FAIL, recorded
+        res = {"pass": False, "error": f"{type(exc).__name__}: {exc}"[:800]}
+    res.update({"qc": k, "freeze_commit": freeze, "utc": utc(), "wall_s": round(time.time() - t0, 1)})
+    xwrite(ATT["dir"] / f"{k}.json", json.dumps(res, indent=1, sort_keys=True, default=str) + "\n")
+    print(f"[{'PASS' if res['pass'] else 'FAIL'}] {k} ({res['wall_s']} s)", flush=True)
+    return res
+
+
 def host_rerun(workers: int) -> int:
     """rev. 2c A14 / delta D7: QC10 re-run on the owner-named host, before the grant commit.  Evidence goes to
     qualification/host_rerun/<host id>/ (exclusive), which the grant window admits (rev. 2c A8 as amended)."""
@@ -403,53 +531,32 @@ def main() -> int:
     if any(p.name.startswith("attempt_") for p in QDIR.iterdir()) or (QDIR / "P309_QUALIFICATION.json").exists():
         print("QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved)")
         return 2
+    try:
+        qh = qhost_preflight()                                # r2 P10: before the attempt directory and RUN START
+    except (H.HostError, OSError, ValueError, KeyError) as exc:
+        print(f"QUALIFICATION REFUSED: Q-HOST: {exc}")
+        return 2
     ATT["dir"] = QDIR / "attempt_1"
     os.mkdir(ATT["dir"])                                      # exclusive
     E.log("code/p309_qualify.py", f"{RUN_START} attempt_1 at the recorded freeze {freeze[:12]} (the single "
           "qualification run; R4 B8, delta-2 E6)", klass="GOVERNANCE", notes="no retry, no resumption")
     (ATT["dir"] / "evidence").mkdir()
+    start_qhost_monitor(qh)                                   # r2 P10: continuous Q-HOST sampling (<= 60 s)
     m = mirror(freeze)
-    items = {
-        "QC01": lambda: qc_research_simple(m, "tests/test_srk_port_identity.py"),
-        "QC02": lambda: qc_research_simple(m, "tests/test_srk_envelope.py"),
-        "QC03": lambda: qc_research_simple(m, "tests/test_srk_fsm_truth.py"),
-        "QC04": lambda: qc_research_simple(m, "tests/test_srk_assembly_twosided.py", opt=True),
-        "QC05": lambda: qc05(m),
-        "QC06": lambda: qc06(m),
-        "QC07": lambda: qc07(m),
-        "QC08": lambda: qc08(m, a.workers),
-        "QC09": lambda: qc09(a.workers),
-        "QC10": lambda: qc10(a.workers),
-        "QC11": lambda: qc_formal("tests/test_p309_exactly_once.py", flags=True),
-        "QC12": lambda: qc_formal("code/p309_static_check.py", flags=True),
-        "QC13": lambda: qc13(freeze),
-        "QC14": lambda: {**(lambda r: {"pass": r["rc"] == 0, "runs": [r]})(run(
-            [PY, "-B", str(FNS / "code" / "p309_driver.py"), "rehearse", "--out", str(ATT["dir"] / "QC14_REHEARSE.json")],
-            FNS)), "rehearse": json.loads((ATT["dir"] / "QC14_REHEARSE.json").read_text()) if (
-            ATT["dir"] / "QC14_REHEARSE.json").exists() else None},
-        "QC15": lambda: qc_formal("code/p309_self_audit.py", "QUALIFICATION"),
-        "QC16": qc16,
-        "QC17": qc17,
-        "QC_U2": qc_u2,
-        "QC_D5": qc_d5,
-    }
+    items = items_table(m, freeze, a.workers)
     results = {}
     for k, fn in items.items():
-        t0 = time.time()
-        try:
-            res = fn()
-        except Exception as exc:  # noqa: BLE001 - a crashed QC is a FAIL, recorded
-            res = {"pass": False, "error": f"{type(exc).__name__}: {exc}"[:800]}
-        res.update({"qc": k, "freeze_commit": freeze, "utc": utc(), "wall_s": round(time.time() - t0, 1)})
-        xwrite(ATT["dir"] / f"{k}.json", json.dumps(res, indent=1, sort_keys=True, default=str) + "\n")
-        results[k] = res
-        print(f"[{'PASS' if res['pass'] else 'FAIL'}] {k} ({res['wall_s']} s)", flush=True)
+        results[k] = run_item(k, fn, freeze)
+    qhost = stop_qhost_monitor()
+    xwrite(ATT["dir"] / "QHOST_SUMMARY.json", json.dumps(qhost, indent=1, sort_keys=True, default=str) + "\n")
     gates = {("Q" + k[2:]): bool(v.get("pass")) and v.get("freeze_commit") == freeze for k, v in results.items()}
+    gates["Q-HOST"] = qhost["pass"]                           # r2 P10
     summary = {"schema": "P309_QUALIFICATION/2", "freeze_commit": freeze, "attempt": ATT["dir"].name, "utc": utc(),
-               "pass": len(gates) == len(items) and all(gates.values()), "gates": gates, "retry_rule": "none (R4 B8)",
+               "pass": len(gates) == len(items) + 1 and all(gates.values()), "gates": gates, "retry_rule": "none (R4 B8)",
                "runtime": {"python": platform.python_version(), "implementation": platform.python_implementation(),
                            "platform": f"{sys.platform} {platform.machine()}", "host_id_sha256": D.G.host_id()},
                "files": {k: sha_file(ATT["dir"] / f"{k}.json") for k in results},
+               "qhost": {"unit": qh["unit"], "mode": qh["mode"], "baseline": qh["baseline"], "monitor": qhost},
                "statement": "no target input read; no quarantined cell evaluated; no in-band computation; "
                             "NEW Γ309 TARGET EVALUATIONS = 0"}
     xwrite(QDIR / "P309_QUALIFICATION.json", json.dumps(summary, indent=1, sort_keys=True) + "\n")
