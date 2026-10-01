@@ -70,6 +70,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 54 | 54_builder6_decisions_optionA_grant.txt | non-holder builder6 on 555f4cbf: decision-dependent cases (MBS-6/7/8 (i)), section 11.2 option (a) tools and R_RULES_OFFICIAL exact comparison (with the per-output analysis duty), the grant's two-record owner binding, host-preflight coverage | Agent | see ledger | no (tail-figure scan: 0 hits) |
 | 53/54-N | 53_54_SENT_NOTES.txt | how briefs 53 and 54 were sent (recorded file + sha256 check + practical notes) | Agent | see ledger | no |
 | 55 | 55_ratifier2_rule_readings.txt | fresh non-holder ratifier2: readings of the ratified R-rule text (READING-3, 6, 7; F-6; step 1 under option (a); the canonical form of each of the five outputs) | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 54-A | 54A_builder6_ratifier_addition.txt | addition to brief 54 sent to builder6: implement Part B against ratifier2's rulings; owner's open points fail closed, unresolved | SendMessage | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
