@@ -47,6 +47,20 @@ T10 (R4 follow-up 3: R4F3-C1, NF6, NF7; rev. 2c A43-A45) the host-git check prec
      with no GIT_ key (the Stage-1 jobs, and the verifier variant loaded inside them, inherit it);
    * the guard: _HERMETIC_GIT is exactly those two keys, and each of _git, _git_bytes and _git_ok applies it right
      after stripping GIT_* and stores no GIT_ key afterwards
+T11 (r2 QC11 repair; plan section 4.6; review P6(e)) the sandbox base rule:
+   * tests/test_p309_exactly_once.py defines sandbox_base(), which reads the real HEAD and validates a post-freeze
+     history through D.recorded_freeze; its new_sandbox and the guard harness's new_sandbox take their base from it;
+   * verify/scoped_sandbox.py Sandbox.__init__ takes its base from the verifier author's sandbox_base_commit();
+   * in tests/ and verify/, no other call reads the real repository's HEAD ("rev-parse" + "HEAD" on REPO, str(REPO),
+     own_repo() or the sandbox source) except the guard tests' report line (T11_REPORT_ONLY)
+T12 (r2 addendum 2, F1) no ref in either production namespace, anywhere: both r1's and r2's namespace start with the
+   driver's PRIOR_MARKER_PATTERNS[0]; both are refused by the guard's TestContext, the verifier variant's sandbox check
+   (FORBIDDEN_REF_NAMESPACES), the verifier's sandbox helper (_FORBIDDEN_REF_PREFIX) and QC13 (_FORBIDDEN_NAMESPACES);
+   both tokens are in the scanner's production_tokens
+T13 (r2 review P6(f)) the production read path is pinned: the call closure of recorded_freeze, check_grant, walk_chain
+   and check_not_evaluated (driver functions, and guard functions and classes reached through G.<name>) equals config
+   production_read_path_pins, name for name and AST sha256 for AST sha256 (CPython 3.11); the pin tool never refreshes
+   them
 """
 from __future__ import annotations
 
@@ -63,7 +77,8 @@ FILES = {"p309_driver": FNS / "code" / "p309_driver.py", "p309_rehearse": FNS / 
 T7_EXEMPT = {"code/p309_driver.py"}          # R4F2-C1(h): p309_postexec.py has a rule-specific, hash-bound exemption
 T7_FORBIDDEN = {"production_context", "_arm_marker", "_persist_pending", "after_marker", "reverify_production", "_MODE",
                 "_assert_execute_context", "_site_backstop", "_SITE_CODES", "_require_own_run_nonce"}
-T7_STRING_SCOPE = ("tests/", "code/p309_qualify.py", "code/p309_rehearse.py", "verify/run_verify_all_scoped.py")
+T7_STRING_SCOPE = ("tests/", "code/p309_qualify.py", "code/p309_rehearse.py", "verify/run_verify_all_scoped.py",
+                   "code/p309_host.py", "code/p309_launch.py", "code/p309_topology_drill.py")   # r2: P4, F5
 ALLOW = json.loads((FNS / "config" / "SCANNER_ALLOWANCE_P309.json").read_text())
 TARGET_FUNCS = {"run_execute", "after_marker", "evaluate_target", "historical_control", "cell_inputs", "check_grant",
                 "_arm_marker", "_persist_pending", "run_seal_only"}
@@ -77,6 +92,9 @@ MODE_ENTRIES = {"preflight": {"check_not_evaluated", "check_bindings", "check_go
                                    "check_host_git"},
                 "_job": {"job_stage1a", "job_stage1b"}}
 SITES = ("_arm_marker", "_persist_pending")
+T11_REPORT_ONLY = {("tests/test_p309_guard.py", "<module>")}     # the guard tests' report line records git_head only
+T11_BASE_FUNCS = {("tests/test_p309_exactly_once.py", "sandbox_base"), ("verify/scoped_sandbox.py", "sandbox_base_commit")}
+T13_START = ("recorded_freeze", "check_grant", "walk_chain", "check_not_evaluated")
 SITE_CALLERS = {"run_execute", "after_marker", "run_seal_only"}
 
 
@@ -451,6 +469,150 @@ def t8(dtree) -> dict:
     return out
 
 
+def _consts(tree) -> dict:
+    """module-level NAME = <constant or tuple of names/constants>"""
+    out = {}
+    for n in tree.body:
+        if isinstance(n, ast.Assign) and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name):
+            v = n.value
+            if isinstance(v, ast.Constant):
+                out[n.targets[0].id] = v.value
+            elif isinstance(v, ast.Tuple):
+                out[n.targets[0].id] = tuple(e.value if isinstance(e, ast.Constant) else
+                                             e.id if isinstance(e, ast.Name) else None for e in v.elts)
+    return out
+
+
+def _func(tree, qual: str):
+    """the function (or Class.method) named qual, or None"""
+    for n in tree.body:
+        if isinstance(n, ast.FunctionDef) and n.name == qual:
+            return n
+        if isinstance(n, ast.ClassDef) and qual.startswith(n.name + "."):
+            for m in n.body:
+                if isinstance(m, ast.FunctionDef) and m.name == qual.split(".", 1)[1]:
+                    return m
+    return None
+
+
+def _calls_named(node, names: set) -> bool:
+    for n in ast.walk(node):
+        if isinstance(n, ast.Call):
+            f = n.func
+            if (isinstance(f, ast.Name) and f.id in names) or (isinstance(f, ast.Attribute) and f.attr in names):
+                return True
+    return False
+
+
+def _owner_map(tree) -> dict:
+    """id(node) -> outermost top-level function or Class.method name ("<module>" otherwise)"""
+    out = {}
+    for top in tree.body:
+        if isinstance(top, ast.FunctionDef):
+            for n in ast.walk(top):
+                out[id(n)] = top.name
+        elif isinstance(top, ast.ClassDef):
+            for m in top.body:
+                if isinstance(m, ast.FunctionDef):
+                    for n in ast.walk(m):
+                        out[id(n)] = f"{top.name}.{m.name}"
+    return out
+
+
+def t11(root: Path) -> dict:
+    x = ast.parse((root / "tests" / "test_p309_exactly_once.py").read_text())
+    g = ast.parse((root / "tests" / "test_p309_guard.py").read_text())
+    v = ast.parse((root / "verify" / "scoped_sandbox.py").read_text())
+    sb = _func(x, "sandbox_base")
+    d = {"sandbox_base_defined_and_validates_through_recorded_freeze": sb is not None and _calls_named(sb, {"recorded_freeze"}),
+         "qc11_new_sandbox_uses_sandbox_base": _calls_named(_func(x, "new_sandbox") or ast.Module(body=[]), {"sandbox_base"}),
+         "guard_new_sandbox_uses_sandbox_base": _calls_named(_func(g, "new_sandbox") or ast.Module(body=[]), {"sandbox_base"}),
+         "verifier_sandbox_uses_sandbox_base_commit": _calls_named(_func(v, "Sandbox.__init__") or ast.Module(body=[]),
+                                                                   {"sandbox_base_commit"})}
+    real = {"REPO", "src", "own_repo", "own"}
+    stray = []
+    for sub in ("tests", "verify"):
+        for p in sorted((root / sub).glob("*.py")):
+            rel = f"{sub}/{p.name}"
+            tree = ast.parse(p.read_text())
+            own = _owner_map(tree)
+            for n in ast.walk(tree):
+                if not isinstance(n, ast.Call):
+                    continue
+                flat = []
+                for a in n.args:
+                    flat += a.elts if isinstance(a, (ast.List, ast.Tuple)) else [a]
+                lits = [a.value for a in flat if isinstance(a, ast.Constant)]
+                if "rev-parse" in lits and "HEAD" in lits and any(
+                        isinstance(m, ast.Name) and m.id in real for a in flat for m in ast.walk(a)):
+                    key = (rel, own.get(id(n), "<module>"))
+                    if key not in T11_BASE_FUNCS and key not in T11_REPORT_ONLY:
+                        stray.append(f"{rel}:{n.lineno} {key[1]}")
+    d["no_other_real_head_read_in_tests_or_verify"] = not stray
+    d["stray"] = stray[:10]
+    return {k: v for k, v in d.items()}
+
+
+def t12(root: Path) -> dict:
+    dc = _consts(ast.parse((root / "code" / "p309_driver.py").read_text()))
+    gt = ast.parse((root / "code" / "p309_guard.py").read_text())
+    gc = _consts(gt)
+    vc = _consts(ast.parse((root / "verify" / "srk_verify_indep_scoped.py").read_text()))
+    sc = _consts(ast.parse((root / "verify" / "scoped_sandbox.py").read_text()))
+    r1, r2 = gc.get("_PRIOR_NAMESPACE"), gc.get("_PROD_NAMESPACE")
+    pfx = (dc.get("PRIOR_MARKER_PATTERNS") or (None,))[0]
+    tc = _func(gt, "TestContext.__init__")
+    tc_names = {n.id for n in ast.walk(tc)} if tc else set()
+    qq = _func(ast.parse((root / "code" / "p309_qualify.py").read_text()), "qc13")
+    toks = set(ALLOW["production_tokens"])
+    return {"two_distinct_namespaces": bool(r1) and bool(r2) and r1 != r2
+            and r1.endswith("-r1/") and r2.endswith("-r2/"),
+            "both_start_with_prior_marker_pattern_0": bool(pfx) and r1.startswith(pfx) and r2.startswith(pfx),
+            "guard_forbidden_namespaces_is_both": gc.get("_FORBIDDEN_NAMESPACES") == ("_PROD_NAMESPACE", "_PRIOR_NAMESPACE"),
+            "guard_testcontext_refuses_both": {"_PROD_NAMESPACE", "_PRIOR_NAMESPACE"} <= tc_names,
+            "variant_forbidden_namespaces_is_both": vc.get("FORBIDDEN_REF_NAMESPACES") == (
+                "PRIOR_PRODUCTION_REF_NAMESPACE", "PRODUCTION_REF_NAMESPACE") and vc.get(
+                "PRIOR_PRODUCTION_REF_NAMESPACE") == r1 and str(vc.get("PRODUCTION_MARKER", "")).startswith(r2),
+            "verifier_sandbox_forbids_both": sc.get("_FORBIDDEN_REF_PREFIX") == (
+                "_FORBIDDEN_REF_PREFIX_R1", "_FORBIDDEN_REF_PREFIX_R2") and sc.get("_FORBIDDEN_REF_PREFIX_R1") == r1
+            and sc.get("_FORBIDDEN_REF_PREFIX_R2") == r2,
+            "qc13_checks_both": qq is not None and "_FORBIDDEN_NAMESPACES" in ast.unparse(qq),
+            "production_tokens_hold_both": bool(r1) and bool(r2) and r1.rstrip("/") in toks and r2.rstrip("/") in toks}
+
+
+def production_read_closure(root: Path) -> dict:
+    """name -> AST sha256 for the T13 call closure (driver functions; guard functions/classes reached as G.<name>)"""
+    dt = ast.parse((root / "code" / "p309_driver.py").read_text())
+    gt = ast.parse((root / "code" / "p309_guard.py").read_text())
+    dtop = {n.name: n for n in dt.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
+    gtop = {n.name: n for n in gt.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
+    seen, stack = {}, [("code/p309_driver.py", n) for n in T13_START]
+    while stack:
+        f, name = stack.pop()
+        table = dtop if f == "code/p309_driver.py" else gtop
+        key = f"{f}::{name}"
+        if key in seen or name not in table:
+            continue
+        node = table[name]
+        seen[key] = hashlib.sha256(ast.dump(node).encode()).hexdigest()
+        for n in ast.walk(node):
+            if isinstance(n, ast.Name) and n.id in table:
+                stack.append((f, n.id))
+            elif f == "code/p309_driver.py" and isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) \
+                    and n.value.id == "G" and n.attr in gtop:
+                stack.append(("code/p309_guard.py", n.attr))
+    return seen
+
+
+def t13(root: Path) -> dict:
+    now = production_read_closure(root)
+    pins = {f"{e['file']}::{e['name']}": e["ast_sha256"] for e in ALLOW.get("production_read_path_pins", {}).get(
+        "entries", [])}
+    return {"closure_nonempty": bool(now), "same_members": set(now) == set(pins),
+            "same_hashes": bool(pins) and all(now.get(k) == v for k, v in pins.items()),
+            "changed": sorted(k for k in set(now) | set(pins) if now.get(k) != pins.get(k))[:10]}
+
+
 def run(root: Path = FNS) -> dict:
     R = {}
     files = {"p309_driver": root / "code" / "p309_driver.py", "p309_rehearse": root / "code" / "p309_rehearse.py"}
@@ -527,6 +689,13 @@ def run(root: Path = FNS) -> dict:
     R["T9_validate_grant_runs_execute_prechecks"] = {"pass": all(d9.values()), "detail": d9}
     d10 = t10(dtree, ast.parse((root / "code" / "p309_guard.py").read_text()))
     R["T10_host_git_checked_before_git_writes"] = {"pass": all(d10.values()), "detail": d10}
+    d11 = t11(root)
+    R["T11_sandbox_base_rule"] = {"pass": all(v for k, v in d11.items() if k != "stray"), "detail": d11}
+    d12 = t12(root)
+    R["T12_both_production_namespaces_forbidden"] = {"pass": all(d12.values()), "detail": d12}
+    d13 = t13(root)
+    R["T13_production_read_path_pinned"] = {"pass": d13["closure_nonempty"] and d13["same_members"]
+                                            and d13["same_hashes"], "detail": d13}
     return R
 
 

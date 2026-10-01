@@ -65,6 +65,39 @@ def commit(sb: Path, parent, files: dict, msg: str, parents=None, modes=None) ->
         os.unlink(idx)
 
 
+def sandbox_base() -> tuple:
+    """r2 QC11 repair (plan section 4; review P6(a)/(b)): the sandbox base is decided by history, never by "HEAD".
+    * development -- no commit in HEAD's history touches this namespace's freeze record: the base is HEAD;
+    * post-freeze -- one does: the base is the recorded freeze commit F, as the unmodified D.recorded_freeze validates
+      it.  A malformed record raises RuntimeError here: the harness fails loudly, never in the shape of a refusal.
+    Precondition: the base's own history holds 0 freeze-record commits, so every sandbox chain below holds exactly the
+    record commits its flow builds (the postcondition in build_chain).  Returns (base commit, mode)."""
+    def hist(rev):
+        return subprocess.run(["git", "-C", str(REPO), "log", "--format=%H", rev, "--", D.FREEZE_RECORD_REL],
+                              capture_output=True, text=True, check=True).stdout.split()
+    head = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True,
+                          check=True).stdout.strip()
+    if not hist(head):
+        base, mode = head, "development"
+    else:
+        try:
+            base, mode = D.recorded_freeze(REPO, "HEAD"), "post-freeze"
+        except D.Refusal as exc:
+            raise RuntimeError(f"QC11 harness: HEAD's freeze record is malformed ({exc}); no sandbox base") from None
+    if hist(base):
+        raise RuntimeError("QC11 harness: the sandbox base's history holds a freeze-record commit (precondition)")
+    return base, mode
+
+
+def manifest_bytes() -> bytes:
+    """review P6(a): post-freeze, the manifest is taken from F itself; in development, from the working tree"""
+    base, mode = sandbox_base()
+    if mode == "post-freeze":
+        return subprocess.run(["git", "-C", str(REPO), "show", f"{base}:{D.MANIFEST_REL}"], capture_output=True,
+                              check=True).stdout
+    return (REPO / D.MANIFEST_REL).read_bytes()
+
+
 def new_sandbox(name: str) -> Path:
     """a light sandbox: `git init` + a read-only alternates link to this repository's object store (+ its shallow
     boundary).  This repository is a shallow clone, so `git clone --shared` would copy the whole pack (~445 MB) per
@@ -77,8 +110,7 @@ def new_sandbox(name: str) -> Path:
     (sb / ".git" / "objects" / "info" / "alternates").write_text(str(REPO / ".git" / "objects") + "\n")
     if (REPO / ".git" / "shallow").exists():
         shutil.copy(REPO / ".git" / "shallow", sb / ".git" / "shallow")
-    head = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True,
-                          check=True).stdout.strip()
+    head, _mode = sandbox_base()                 # r2 P6: F after the freeze, HEAD before it (never "HEAD" blindly)
     sh(sb, "update-ref", SB_BRANCH, head)
     sh(sb, "symbolic-ref", "HEAD", SB_BRANCH)
     sh(sb, "sparse-checkout", "set", "--no-cone", f"/{NS}/", "/TEST_ONLY/")
@@ -112,7 +144,7 @@ def build_chain(sb: Path, *, grant_over=None, grant_raw=None, drop_review=False,
                 freeze_record="ok") -> dict:
     """F (manifest; TEST_ONLY manifest = the same bytes) <- FR (freeze record) <- [extra] <- Q <- Rv <- [window] <- G"""
     base = sh(sb, "rev-parse", "HEAD").strip()
-    man = (REPO / D.MANIFEST_REL).read_bytes()
+    man = manifest_bytes()                       # r2 P6(a)
     # the sandbox freeze commit must change a frozen path even when the manifest bytes equal the base's (the driver
     # locates the freeze as the last commit touching the frozen directories); the nonce file exists only in sandboxes
     F_ = commit(sb, base, {D.MANIFEST_REL: man, G._TEST_MANIFEST_PATH: man,
@@ -125,6 +157,12 @@ def build_chain(sb: Path, *, grant_over=None, grant_raw=None, drop_review=False,
         tip = commit(sb, tip, {D.FREEZE_RECORD_REL: json.dumps({"freeze_commit": base}).encode()}, "freeze record")
     if freeze_record == "late_change":
         tip = commit(sb, tip, {D.FREEZE_RECORD_REL: json.dumps({"freeze_commit": F_, "x": 1}).encode()}, "record edit")
+    # r2 P6(b) postcondition: the chain holds exactly the record commits this flow built (the r1 defect showed as one
+    # more: the real record inherited from the base)
+    want = {"ok": 1, "wrong": 1, "late_change": 2}.get(freeze_record, 0)
+    have = len(sh(sb, "log", "--format=%H", tip, "--", D.FREEZE_RECORD_REL).split())
+    if have != want:
+        raise RuntimeError(f"QC11 harness: {have} freeze-record commits in the sandbox chain, expected {want}")
     if extra_after_freeze:
         tip = commit(sb, tip, extra_after_freeze, "a change after the freeze")
     if record_commits:
@@ -196,12 +234,30 @@ def ev_unserializable(con, prep):
     return {"cell": D.TARGET_CELL, "decision": {"mechanical_outcome": "NOT_CLOSED"}, "bad": object()}
 
 
+LAST_REFUSAL = {"text": ""}
+# r2 P6(c): the detail each FREEZE_RECORD flow must show (driver recorded_freeze)
+FREEZE_RECORD_DETAIL = {
+    "F14_qualification_touches_code": "a frozen directory changed after the recorded freeze",
+    "F16_frozen_dir_changed_after_freeze": "a frozen directory changed after the recorded freeze",
+    "A23_freeze_record_missing": "no freeze record",
+    "A24_freeze_record_names_another_commit": "the record commit is not the freeze commit's record-only child",
+    "A25_freeze_record_changed_later": "the freeze record was changed after it was made",
+}
+
+
+def detail_ok(name: str, code: str) -> bool:
+    """a FREEZE_RECORD refusal passes only with its own detail (a missing table entry fails)"""
+    return code != "FREEZE_RECORD" or (name in FREEZE_RECORD_DETAIL and FREEZE_RECORD_DETAIL[name] in LAST_REFUSAL["text"])
+
+
 def execute(sb, evaluator=ev_ok, control=OK_CONTROL, **kw):
+    LAST_REFUSAL["text"] = ""
     ctx = ctx_of(sb)
     try:
         return D.run_execute(OWN_SHA, ctx=ctx, prepare=kw.pop("prepare", PREP), evaluator=evaluator, control=control,
                              **kw)
     except D.Refusal as exc:
+        LAST_REFUSAL["text"] = str(exc)          # r2 P6(c): the detail, asserted by the FREEZE_RECORD flows
         return ("REFUSED", exc.code)
 
 
@@ -237,9 +293,9 @@ def pre_marker_flows() -> dict:
         after = (refs(sb), sh(sb, "rev-parse", "HEAD"))
         # refs and HEAD unchanged; execute creates no marker (F20 plants one in its setup, which must survive as is)
         nonce_ok = name == "F22b_run_nonce_exists" or not (git_dir_of(sb) / D.RUN_NONCE_NAME).exists()
-        R[name] = {"pass": (out == ("REFUSED", code) and before == after and nonce_ok
+        R[name] = {"pass": (out == ("REFUSED", code) and before == after and nonce_ok and detail_ok(name, code)
                             and (G.TEST_MARKER in before[0] or G.TEST_MARKER not in after[0])),
-                   "got": str(out)}
+                   "got": str(out), "detail": LAST_REFUSAL["text"][:200]}
         return sb
 
     refused("F01_no_grant_commit", "GRANT_MISSING", setup=lambda sb, c: (
@@ -307,8 +363,8 @@ def admission_flows() -> dict:
             setup(sb, c)
         before = refs(sb)
         out = execute(sb)
-        R[name] = {"pass": out == ("REFUSED", code) and refs(sb) == before and G.TEST_MARKER not in refs(sb),
-                   "got": str(out)}
+        R[name] = {"pass": out == ("REFUSED", code) and refs(sb) == before and G.TEST_MARKER not in refs(sb)
+                   and detail_ok(name, code), "got": str(out), "detail": LAST_REFUSAL["text"][:200]}
 
     w = F(20, 51) - F(1, 3)                                   # B1: a same-width neighbour of the declared cell
     lo, hi = F(1, 3) + w, F(20, 51) + w
@@ -568,7 +624,7 @@ def validate_flows() -> dict:
     grant commit: a PASS for the valid candidate, a named failing check for each defect, nothing written or moved; and
     a PASS candidate, committed alone, is admitted by execute (the validator and execute agree)."""
     R = {}
-    man = (REPO / D.MANIFEST_REL).read_bytes()
+    man = manifest_bytes()                       # r2 P6(a)
 
     def setup(name):
         sb = new_sandbox(name)

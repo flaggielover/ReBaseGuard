@@ -1357,5 +1357,75 @@
    "ast_sha256": "696a61027780f58966def2dbff4c393ddcb160a32ad934ffd45c91b9b3741592"
   }
  ],
- "backstop_pins_rule": "R4F2-C1(g): the runtime backstop (the three functions and the _SITE_CODES statement) is pinned by AST sha256 like the two sites, with the hashes R4 follow-up 2 recorded; QC12 T8 is an equality check against them; code/p309_scan_pins.py never refreshes them; any change is a new delta and is reported to the owner with the D5 record"
+ "backstop_pins_rule": "R4F2-C1(g): the runtime backstop (the three functions and the _SITE_CODES statement) is pinned by AST sha256 like the two sites, with the hashes R4 follow-up 2 recorded; QC12 T8 is an equality check against them; code/p309_scan_pins.py never refreshes them; any change is a new delta and is reported to the owner with the D5 record",
+ "production_read_path_pins": {
+  "rule": "r2 review P6(f) / QC12 T13: the call closure of recorded_freeze, check_grant, walk_chain and check_not_evaluated (driver functions and classes; guard functions/classes reached as G.<name>) is pinned by AST sha256 (ast.dump, CPython 3.11). Every hash equals the same function's hash at r1's freeze F 4c754a73 (computed 2026-10-01 by the coordinator; the delta review recomputes). code/p309_scan_pins.py never refreshes these; any change is a new delta and is reported.",
+  "entries": [
+   {
+    "file": "code/p309_driver.py",
+    "name": "ExecContext",
+    "ast_sha256": "0f161c9a40f6d00a3968f7b631ca54979413253d645d05594cbad12b7addc295"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "Refusal",
+    "ast_sha256": "e7a891c7738e63623a93e58e057275b9c27b8211072e772ebff2d0bfc11bd6e4"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "_chain_kind",
+    "ast_sha256": "d9666bbd3f2bfc665b47c0c8fde5ee54b173729ba409ece446d124face3b91e4"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "_only",
+    "ast_sha256": "bf0be73c1484d257fc2eaafbefe44b43cba5aad2cd5b43225c8e6a5f3bdc919a"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "check_grant",
+    "ast_sha256": "2558c41dccda12404dcafcbf9b84be00538c912157c12da6dc7e816441add59b"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "check_not_evaluated",
+    "ast_sha256": "d34414e9987d58fc3ce751e6af1372c0190ae9e7fd9b6b7ea07158918e181d13"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "freeze_commit",
+    "ast_sha256": "fade479ef953d86e628d98c491ea4b283ebc026311128b894c87dce1fb8fd86f"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "git",
+    "ast_sha256": "6da407af03f0c3a024065102f9d2c27adec4ba78b136a406124849ca6b5dbf35"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "git_dir",
+    "ast_sha256": "fcff00ef25cda64c8d4ad1dc68489a1d2f9260ae4d2e8f2809449f60b12fa6ff"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "recorded_freeze",
+    "ast_sha256": "e31631a844e5ce61811c2674f1302268541e932235d54ccbcab3b4262883f278"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "sha",
+    "ast_sha256": "8f82e38b450ea02483f5896de89f4ec6b19f198fbe6d1b8c99ecea9316722715"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "verdict_ok",
+    "ast_sha256": "30e1020074ee5f2d875ee34573f489379ba700f7869e007ebfc5c839974069fa"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "name": "walk_chain",
+    "ast_sha256": "d589dfceb22638a273c9a52aeee9c0dfc0180c0be57c3ccacb3d01a8fe9421b4"
+   }
+  ]
+ }
 }
