@@ -296,12 +296,18 @@ def controls(clone: Path, scratch: Path, drill_root: Path, topo: dict) -> dict:
     c["R2_M01a"] = {"rc": ra["rc"], "caught": ra["rc"] != 0 and "FREEZE_RECORD" in ta, "tail": ta[-400:]}
     c["R2_M01b"] = {"rc": rb["rc"], "caught": rb["rc"] != 0 and "QC11 harness" in tb, "tail": tb[-400:]}
     tip = git(clone, "rev-parse", "HEAD")
+    record_bytes = (clone / RECORD_REL).read_bytes()
+    ledgers_before = {rel: (clone / rel).read_bytes() for rel in LEDGER_RELS if (clone / rel).exists()}
     (clone / RECORD_REL).write_text(json.dumps({"freeze_commit": topo["F"], "planted": "second record"}) + "\n")
     git(clone, "add", RECORD_REL)
     git(clone, "commit", "-q", "-m", "drill control: a planted second freeze-record commit")
     fz = tagged(run_py([sys.executable, "-B", "-c", FREEZE_CODE], clone, scratch)["stdout"], "DRILL_FREEZE")
     c["second_freeze_record"] = {"caught": fz.get("refused") == "FREEZE_RECORD", "got": fz}
-    git(clone, "reset", "-q", "--hard", tip)
+    # back to the tip without touching the working tree's uncommitted ledger rows (F4): move the branch and the index
+    # only, then restore the record file's committed bytes
+    git(clone, "reset", "-q", "--mixed", tip)
+    (clone / RECORD_REL).write_bytes(record_bytes)
+    c["ledger_rows_kept_across_reset"] = all((clone / rel).read_bytes().startswith(b) for rel, b in ledgers_before.items())
     git(clone, "update-ref", TEST_PRIOR_REF, tip)
     pr = tagged(run_py([sys.executable, "-B", "-c", PRIOR_REF_CODE], clone, scratch)["stdout"], "DRILL_PRIOR")
     git(clone, "update-ref", "-d", TEST_PRIOR_REF)
