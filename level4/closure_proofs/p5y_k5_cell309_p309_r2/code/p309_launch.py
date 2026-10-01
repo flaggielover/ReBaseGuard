@@ -93,7 +93,8 @@ def unit_argv(mode: str, name: str, cfg: dict, launch: dict, scratch: str, recor
     return argv + ["--", cfg["interpreter"], "-B", str(FNS / script[0])] + script[1:]
 
 
-def main(argv: list) -> int:
+def main() -> int:
+    argv = sys.argv[1:]
     if "--mode" not in argv or "--host-config" not in argv:
         print(__doc__)
         return 2
@@ -114,7 +115,8 @@ def main(argv: list) -> int:
         scratch = H.scratch_root(dict(os.environ), str(REPO), cfg)
     except H.HostError as exc:
         return refuse(str(exc))
-    record = {"schema": "P309_R2_LAUNCH/1", "utc": H.utc(), "mode": mode, "unit": name, "host_config": cfg}
+    record = {"schema": "P309_R2_LAUNCH/1", "utc": H.utc(), "mode": mode, "unit": name, "host_config": cfg,
+              "scratch_root": scratch}
     record["preflight"] = H.durability_preflight(cfg, dict(os.environ), str(REPO))
     record["gate"] = H.exclusion_gate(cfg)
     record["isolation"] = H.isolation(cfg)
@@ -144,4 +146,4 @@ def main(argv: list) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(main())

@@ -81,7 +81,7 @@
   {
    "file": "code/checkpoint_push_p309.py",
    "function": "main",
-   "ast_sha256": "cefa7382a01f029bfe3db37e583ba92a00e2edab6610fc56d5199a5c1bc8cd2e",
+   "ast_sha256": "59b2c39084779d54bdac7305f17e585b153054c232b78171f537c1e6c33cef98",
    "reason": "the owner-authorized single-ref checkpoint push of the formal branch: commits the push record, fetches, pushes one explicit refspec; check 7 refuses any production-namespace ref"
   },
   {
@@ -93,25 +93,25 @@
   {
    "file": "tests/test_p309_exactly_once.py",
    "function": "new_sandbox",
-   "ast_sha256": "3c315c1d1b312ade19d8cc8fd0f5a909761f02fc49d0105749e625b9184b5b70",
+   "ast_sha256": "9996a15fcf9bc2aed654101afd5a56f9fb028aebff2141d43ac963346dc60124",
    "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
   },
   {
    "file": "tests/test_p309_exactly_once.py",
    "function": "build_chain",
-   "ast_sha256": "02a5c528472d695a46deb1a06cbfbe1934748d1ba0d657f5a54a1d52d5d8177c",
+   "ast_sha256": "ba1764f6e9443762134d6f83445a12bbdcecfd99c42aec9f45f4755b358563bd",
    "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
   },
   {
    "file": "tests/test_p309_exactly_once.py",
    "function": "pre_marker_flows",
-   "ast_sha256": "96f3e54f950ef9101fe3c4eb0767f7d855ca9412b7a5c27c52917ab2301cfc8c",
+   "ast_sha256": "e615cfb98bdc775f13b2b88985bac1a0d901e05a6f35f4aa9e62882282301af2",
    "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
   },
   {
    "file": "tests/test_p309_exactly_once.py",
    "function": "admission_flows",
-   "ast_sha256": "6cc70f3495ee4f7376f12c48b82d85d93f353d4cdd3f15aa3d99776ddbb26fa9",
+   "ast_sha256": "2f99ff01f5174d7f965447725eba250754474a1096ecffcd59cca60b26a85149",
    "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
   },
   {
@@ -123,7 +123,7 @@
   {
    "file": "tests/test_p309_guard.py",
    "function": "new_sandbox",
-   "ast_sha256": "a4f2140849a96fab7ee678ad9e51687d3a903d6d2178d6a223fb007f7b00f2df",
+   "ast_sha256": "51e3a6bb9e1b2caceb0b8693b494ded892e392612e04f03bcd58bb4c733ea572",
    "reason": "FC2 guard tests, sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
   },
   {
@@ -141,7 +141,7 @@
   {
    "file": "verify/scoped_sandbox.py",
    "function": "Sandbox.__init__",
-   "ast_sha256": "1820ef2698731ac4eb5c7648f4a99dc9887443576a6932dc68ca91887aa7d981",
+   "ast_sha256": "a8a819ffde52c3078f9a78f9b047d6014f7077052f6bf0d4d3865d4ebccf4b94",
    "reason": "verifier-author sandbox helper (E1-6 light sandbox; refuses production-namespace refs): read form of its own branch"
   },
   {
@@ -171,20 +171,44 @@
   {
    "file": "tests/test_p309_guard.py",
    "function": "run",
-   "ast_sha256": "520d1a9e1a5ae30794dbfd90ff4681d228455f3f69a820302ea803c2c3b6f5d9",
+   "ast_sha256": "f35b0adcd633056c4447a52d8130681d9e5375915512ec24cd55a4a9594c3ee4",
    "reason": "FC2 guard tests (N7j): `checkout --detach` inside a sandbox only (light repository under the scratchpad, TEST names only)"
   },
   {
    "file": "tests/test_p309_site_backstop.py",
    "function": "run",
-   "ast_sha256": "4b1320cff26c1f587052c9fd21d6aa710de275163470a8710ba49ea696d500a5",
+   "ast_sha256": "c3e35695fa76a1893d3c91a56f59732b4dee5c4f685dbb1f6faa40e822bac499",
    "reason": "backstop controls B07/B09b set the TEST marker in scratch sandboxes (update-ref through the QC11 sandbox runner); TEST names only"
   },
   {
    "file": "tests/test_p309_exactly_once.py",
    "function": "validate_flows",
-   "ast_sha256": "2ca1373c0472a36dc5f19c1827b677f73737aafb5589fcc5b978ae97470b8a92",
+   "ast_sha256": "51ed8ad87236ef634da0fa1fd1660d8ff6200df615095f8c280ffc40e05dc816",
    "reason": "QC11 V01-V11: moves the SANDBOX branch back to the grant commit's parent (update-ref, reset --hard) so that validate-grant sees HEAD at the would-be parent, and commits a validated TEST grant; sandbox branch only"
+  },
+  {
+   "file": "code/p309_host.py",
+   "function": "system_reads",
+   "ast_sha256": "91c83aa07b10960085c56ec6f095f35f165be87df59a0b320dbb32755913b1f6",
+   "reason": "r2 host package: `git version` only (no repository, no ref; classified ref-moving because `version` is not on the read-verb list)"
+  },
+  {
+   "file": "code/p309_topology_drill.py",
+   "function": "main",
+   "ast_sha256": "134e3e7bc214f56e7ce1d46fc7920bd37ecbe15485c59610a44a08fd777cf577",
+   "reason": "r2 topology drill: `git clone --single-branch --branch <r2 branch>` of the P309 repository into the drill root and `git remote remove origin` in that clone; nothing in the P309 repository moves (checked before/after)"
+  },
+  {
+   "file": "code/p309_topology_drill.py",
+   "function": "make_topology",
+   "ast_sha256": "9b59c12fa22f27226590d870315370d72bae18a57ef0b70c63217205152b92e8",
+   "reason": "r2 topology drill: `git add` / `git commit` of the synthetic F', FR' and the checkpoint-style record, in the drill clone only"
+  },
+  {
+   "file": "code/p309_topology_drill.py",
+   "function": "controls",
+   "ast_sha256": "d5049d2aa379896e2dce91de5229fb8028920f3d800174b8bcdca2206b2714cf",
+   "reason": "r2 topology drill controls, in the drill clone or its control repository only: a planted second record commit and `reset --hard` back; `update-ref` of the TEST-only prior ref refs/p5y-k5-cell309-TEST-ONLY-prior/x and its deletion; `git init` + `remote add` of the push-URL control repository; never a ref in either production namespace (F1)"
   }
  ],
  "ref_mutation_rule": "owner D5: a git call with a ref-moving verb is allowed only inside an exactly-once site or a function listed here by file, qualified name, AST sha256 and reason; entries are added only by review, and code/p309_scan_pins.py refreshes the hashes of listed entries before the freeze only (never the exactly-once sites)",
@@ -427,6 +451,27 @@
     "kind": "script",
     "leading": 1,
     "reason": "QC runner: QC01-QC04 run one research test of the archive mirror named literally by the caller"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "git_read",
+    "kind": "git",
+    "leading": 1,
+    "reason": "r2 host package: git -C <the P309 repository> <args> with a fixed hermetic environment; callers pass the repository first and only read verbs (rev-parse, symbolic-ref -q, for-each-ref, config --list, status)"
+   },
+   {
+    "file": "code/p309_topology_drill.py",
+    "function": "git",
+    "kind": "git",
+    "leading": 1,
+    "reason": "r2 topology drill: git -C <drill root, drill clone or drill control repository> <args> with a fixed hermetic environment; callers pass the directory first; every caller's verb is classified"
+   },
+   {
+    "file": "code/p309_topology_drill.py",
+    "function": "run_py",
+    "kind": "argv",
+    "leading": 0,
+    "reason": "r2 topology drill: runs a python argv of the drill clone's own files (scripts by path, or the drill's literal -c programs) with cwd in the clone and an environment built in the runner (no PYTHONPATH; the drill's scratch root); every caller's argv is checked"
    }
   ],
   "reviewed_functions": [
@@ -671,7 +716,7 @@
    {
     "file": "tests/test_p309_exactly_once.py",
     "function": "new_sandbox",
-    "ast_sha256": "3c315c1d1b312ade19d8cc8fd0f5a909761f02fc49d0105749e625b9184b5b70",
+    "ast_sha256": "9996a15fcf9bc2aed654101afd5a56f9fb028aebff2141d43ac963346dc60124",
     "permits": [
      "gitdir_write"
     ],
@@ -680,7 +725,7 @@
    {
     "file": "tests/test_p309_exactly_once.py",
     "function": "pre_marker_flows",
-    "ast_sha256": "96f3e54f950ef9101fe3c4eb0767f7d855ca9412b7a5c27c52917ab2301cfc8c",
+    "ast_sha256": "e615cfb98bdc775f13b2b88985bac1a0d901e05a6f35f4aa9e62882282301af2",
     "permits": [
      "gitdir_write"
     ],
@@ -708,7 +753,7 @@
    {
     "file": "tests/test_p309_exactly_once.py",
     "function": "validate_flows",
-    "ast_sha256": "2ca1373c0472a36dc5f19c1827b677f73737aafb5589fcc5b978ae97470b8a92",
+    "ast_sha256": "51ed8ad87236ef634da0fa1fd1660d8ff6200df615095f8c280ffc40e05dc816",
     "permits": [
      "gitdir_write",
      "ref_file_write"
@@ -736,7 +781,7 @@
    {
     "file": "tests/test_p309_guard.py",
     "function": "new_sandbox",
-    "ast_sha256": "a4f2140849a96fab7ee678ad9e51687d3a903d6d2178d6a223fb007f7b00f2df",
+    "ast_sha256": "51e3a6bb9e1b2caceb0b8693b494ded892e392612e04f03bcd58bb4c733ea572",
     "permits": [
      "gitdir_write"
     ],
@@ -754,7 +799,7 @@
    {
     "file": "tests/test_verify_scoped.py",
     "function": "TestFC2Scoped.test_N10_production_cannot_be_synthesized",
-    "ast_sha256": "02b558f5cd4a07bc1b1bf1a83e4a4eac06bae2d9d88536e4a694990cccb8fba4",
+    "ast_sha256": "b11d41fde6c58ba71a48c7e921eae27a5a43e177096d27beb380219edb0d29cc",
     "permits": [
      "gitdir_write"
     ],
@@ -783,7 +828,7 @@
    {
     "file": "verify/scoped_sandbox.py",
     "function": "Sandbox.__init__",
-    "ast_sha256": "1820ef2698731ac4eb5c7648f4a99dc9887443576a6932dc68ca91887aa7d981",
+    "ast_sha256": "a8a819ffde52c3078f9a78f9b047d6014f7077052f6bf0d4d3865d4ebccf4b94",
     "permits": [
      "gitdir_write"
     ],
@@ -938,7 +983,7 @@
    {
     "file": "code/p309_guard.py",
     "function": "TestContext.__init__",
-    "ast_sha256": "777ad64d080cb1b6c60439b7fcd0a8020a75bd88a03f851395113703d1a6af1b",
+    "ast_sha256": "d9e68b2b613bc4e3b846430f292734aa1b695b7578de230c0a0c9306721db9c6",
     "permits": [
      "introspection"
     ],
@@ -979,6 +1024,87 @@
      "introspection"
     ],
     "reason": "the verifier author's immutable TestContext sets its root with object.__setattr__"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "system_reads",
+    "ast_sha256": "91c83aa07b10960085c56ec6f095f35f165be87df59a0b320dbb32755913b1f6",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 host package: seven fixed read-only argvs (systemd-detect-virt, systemd-detect-virt --container, journalctl --list-boots, journalctl -k --since -30d, systemctl is-active unattended-upgrades.service, systemctl is-enabled dnf-automatic.timer, git version), each only if its program exists; no parameter"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "ntp_status",
+    "ast_sha256": "aa74fb15029d0f77e0baccdf5c41fc064d8a2ea123005f86f11ea508366e3487",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 host package: timedatectl show -p NTPSynchronized --value (read-only); no parameter"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "git_read",
+    "ast_sha256": "d817e314cd777d717c1735de64f3f160c356c0447ac88ad174e4e6e9cfc3e938",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 host package: the registered git runner (git -C <P309 repository> <args>; fixed hermetic env)"
+   },
+   {
+    "file": "code/p309_launch.py",
+    "function": "loaded_p309_units",
+    "ast_sha256": "b8f68eb97eefe4bcefa8020f05b4b0a282e99cac495188bb909b5433c107071e",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 launcher: systemctl list-units --all --no-legend --plain (read-only), filtered to p309-r2-*; no parameter"
+   },
+   {
+    "file": "code/p309_launch.py",
+    "function": "main",
+    "ast_sha256": "f44d352bdbc0737610d2f2e28539023d68431a637de7534bc295cd66fa0c9124",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 launcher: after the scratch-root, preflight, gate, isolation and loaded-unit checks pass and the launch record is written exclusively, runs ONE systemd-run argv built by unit_argv (unit name fixed by the mode; Restart=no; the hermetic environment) and never retries; no parameter (argv is read from sys.argv)"
+   },
+   {
+    "file": "code/p309_topology_drill.py",
+    "function": "git",
+    "ast_sha256": "9bc80915bcd2b8b6e88311d073061e5ff63f84f83e5434c43f8811f0802d19ff",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 topology drill: the registered git runner (fixed hermetic env with a drill identity)"
+   },
+   {
+    "file": "code/p309_topology_drill.py",
+    "function": "run_py",
+    "ast_sha256": "ef69938981a1e5f75568c92d3aa8565ca7c4415d768ddecf7877543a75e13ad4",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 topology drill: the registered argv runner (python of the drill clone's files; environment built here without PYTHONPATH)"
+   },
+   {
+    "file": "code/p309_topology_drill.py",
+    "function": "controls",
+    "ast_sha256": "d5049d2aa379896e2dce91de5229fb8028920f3d800174b8bcdca2206b2714cf",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 topology drill: runs the two R2-M01 mutant harness copies by path (written into the drill clone only, then deleted), through run_py"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "start_qhost_monitor",
+    "ast_sha256": "26327a2bf38b9d48bd703a6b6ca575060fba316664644ec34fc5061ff804c7ee",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 Q-HOST (P10): starts the p309_host.py qhost-monitor of this frozen tree as a child (python + a literal .py script), its output into the attempt; the monitor signals only this process"
    }
   ],
   "git_forbidden_options_note": "global options before the verb are allowlisted (git_global_options_*; anything else, e.g. -c, --git-dir, --work-tree, --exec-path, --namespace, is a finding); after the verb the listed options (program execution, output files, templates, prefixes, remotes) are findings",
@@ -1100,7 +1226,13 @@
    "var": [],
    "write-tree": [],
    "archive": [],
-   "add": []
+   "add": [],
+   "clone": [
+    "-q",
+    "--single-branch",
+    "--branch"
+   ],
+   "version": []
   },
   "git_verb_options_rule": "R4F2-C1(e): a literal option after the verb must be on that verb's list (an entry ending in '=' allows its prefix); a verb absent from the map takes no option; the lists are exactly the options the genuine tree uses (plus --end-of-options for the archive mirror and the scope listing of check_host_git)",
   "env_keys": [
@@ -1116,7 +1248,7 @@
     "PRODUCTION_REFERENCE",
     "MODULE_ATTRIBUTE_STORE"
    ],
-   "ast_sha256": "c3c5c907be89714109b3f0c58b627b38f27707c706873e11e0f26919997569e6",
+   "ast_sha256": "4e1f9fed0d4666ee914d4786283ca4ac3ab91cdb01a8da722ee23377784ac132",
    "reason": "the guard's own tests: S1 asserts that the guard's PRODUCTION context is immutable (an attempted store must raise), the production-context refusals of the REAL band run with no grant in existence, and _fail_closed swaps G._git_bytes for a raising stub and restores it; the guard never moves a ref and no driver site is referenced"
   },
   {
@@ -1125,7 +1257,7 @@
     "FORBIDDEN_NAME",
     "PRODUCTION_REFERENCE"
    ],
-   "ast_sha256": "f80674272b14ae8dc3d6c2c3bd0bb920083df1f3234e69689712170288a81e4e",
+   "ast_sha256": "e129430c3290ff59193054d70f03163d3d424655d8c6c7c6a6dfd7feeb584d79",
    "reason": "the runtime backstop controls (R4F F1(a)) must call the two sites, the execute-context assertion and the mode switch; every site call gets a SANDBOX context on a scratch sandbox with the TEST names; the production guard context and marker NAME appear only inside SANDBOX-kind shape controls, which are refused (CONTEXT) before any site check"
   },
   {
@@ -1141,7 +1273,7 @@
    "rules": [
     "MODULE_ATTRIBUTE_STORE"
    ],
-   "ast_sha256": "b02c22e45055ba63f1c27461ebfd7c9080830c1cd9719476ba3b074251a74954",
+   "ast_sha256": "fd338ff88ad58c070b1a36edce2930cfc2e06d52df2beb6a9a0174076fba382a",
    "reason": "points the research guard's two ledger paths (q309_guard.EXEC_LEDGER / EXPOSURE_LEDGER) at this namespace's ledgers, so that no formal run writes a research file"
   },
   {
@@ -1149,7 +1281,7 @@
    "rules": [
     "MODULE_ATTRIBUTE_STORE"
    ],
-   "ast_sha256": "f9c53ce0b6d4e400051783b5441c080912353edfef31b0ad5327d59b2546a6f8",
+   "ast_sha256": "ec6031cc492498beb3fd774da5cf2dabffca4bb7938a0813c6efeca246b2067b",
    "reason": "points the research scanner at the scanned root (q309_guard.NS) before calling it"
   },
   {
@@ -1157,7 +1289,7 @@
    "rules": [
     "MODULE_ATTRIBUTE_STORE"
    ],
-   "ast_sha256": "9d1cf93f27cf7200d055bb5ca9d93ae777483c92558f375434583f1bc7e32673",
+   "ast_sha256": "e022f018573dbed9aedf7cc492dac3ead043da93cdd9dd4de75f88857261be65",
    "reason": "the research-namespace scan in its `python -c` child points the research scanner at the research root (q309_guard.NS)"
   },
   {
@@ -1165,7 +1297,7 @@
    "rules": [
     "MODULE_ATTRIBUTE_STORE"
    ],
-   "ast_sha256": "44b1a4f84dbc26253b8d2bab8bcc3789536b98c1a695355723ac5817b6e8f332",
+   "ast_sha256": "4a2177e01d15ae85c47e78b35cf46c318a50e6f81a451dd038d3a862edd65712",
    "reason": "F-flow stub: replaces the driver's persist_emergency by a raising stub and restores it, to prove CONSUMED_UNRECORDED when both evidence channels fail; the stub is not a site and moves no ref"
   },
   {
@@ -1173,7 +1305,7 @@
    "rules": [
     "MODULE_ATTRIBUTE_STORE"
    ],
-   "ast_sha256": "1398968829daf35fd0d52efc5faaee4dbc7f2f271c022c257417cdcd71b81f0c",
+   "ast_sha256": "0ebcd94a496e58ebc95914273e7c12c08b580cc33416b2ef4d015b597927f24a",
    "reason": "the verifier author's tests: a tripwire on V.prepare (installed and restored), V.CTX for the shared test context, and N13's fault injection on V._run_git (restored); the variant moves no ref"
   },
   {
@@ -1220,6 +1352,7 @@
     "p309_env",
     "p309_guard",
     "p309_host",
+    "p309_qualify",
     "p309_rehearse",
     "p309_scan",
     "pathlib",
@@ -1241,6 +1374,7 @@
     "tempfile",
     "time",
     "types",
+    "urllib",
     "urllib.request"
    ],
    "tests": [
@@ -1318,7 +1452,7 @@
    {
     "file": "verify/srk_verify_indep_scoped.py",
     "module": "multiprocessing",
-    "ast_sha256": "9c72beccda731fe6ad1af6486c10cf5edfba37905ccf3a1c5346f2d534fdb3b6",
+    "ast_sha256": "56528523686818a0dee8cc7513af42d68e89e8455ceaa152d86c509a3e241247",
     "reason": "the verifier author's variant: a worker pool for batch verification; the workers run functions of this scanned file; no program is started"
    },
    {
@@ -1331,7 +1465,9 @@
   "r2_additions": {
    "code": {
     "p309_host": "r2 R2-I4/R2-I6: the read-only host package (provenance, Q-HOST continuity, exclusion gate, isolation, durability preflight, P309_SCRATCH_ROOT validation); imported by p309_env.scratch_dir (lazily), the launcher, the runner's Q-HOST and the drill",
-    "urllib.request": "r2 p309_host.imds only: AWS IMDSv2 read-only metadata at the link-local address 169.254.169.254 through a proxy-free opener, 1 s timeouts; the instance id is recorded only as sha256"
+    "urllib.request": "r2 p309_host.imds only: AWS IMDSv2 read-only metadata at the link-local address 169.254.169.254 through a proxy-free opener, 1 s timeouts; the instance id is recorded only as sha256",
+    "urllib": "r2: the package of urllib.request (p309_host.imds only)",
+    "p309_qualify": "r2: imported ONLY inside the topology drill's literal `python -c` programs, which run in the drill clone (the runner's items_table/run_item); the drill process itself never imports it (addendum 2, F2)"
    }
   }
  },

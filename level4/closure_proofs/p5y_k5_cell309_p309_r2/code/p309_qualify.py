@@ -18,14 +18,18 @@ regenerates identically; the working tree is clean except qualification/ and the
 Nothing here reads a target input, evaluates a quarantined cell, or computes in the band.
 
 r2 Q-HOST (plan section 7; review P10; addendum 2): the run starts only through code/p309_launch.py.  Before the
-attempt directory and the RUN START line exist it refuses unless the launcher's record (P309_LAUNCH_RECORD, under
-P309_SCRATCH_ROOT, no blockers) names a unit this process runs in (INVOCATION_ID set; /proc/self/cgroup names the
-unit), the host is the one the launcher audited (Q-HOST continuity: boot, machine-id, hostname, instance,
-interpreter, glibc, no suspend), and the record's mode fits the repository (a drill runs in a clone under
-P309_SCRATCH_ROOT, the official run never does).  During the run a monitor (p309_host.py qhost-monitor, every <= 60 s)
-records continuity and cell-308 activity into the attempt; on a failure it signals this process, which records Q-HOST
-FAIL and the summary (pass false) and exits, and systemd's KillMode=control-group then stops every remaining process
-of the unit (owner decision OD-R2-5 option (i); option (ii) would need the owner to amend message 3 section 3).
+attempt directory and the RUN START line exist, it refuses unless all of these hold:
+* the launcher's record (P309_LAUNCH_RECORD) has no blockers, and its scratch root holds both the record and this
+  run's P309_SCRATCH_ROOT;
+* this process runs in the unit the record names (INVOCATION_ID set; /proc/self/cgroup names the unit);
+* the host is the one the launcher audited (Q-HOST continuity: boot, machine-id, hostname, instance, interpreter,
+  glibc, no suspend);
+* the record's mode fits the repository (a drill runs in a clone under the launch's scratch root; the official run
+  never does).
+During the run a monitor (p309_host.py qhost-monitor, every <= 60 s) records continuity and cell-308 activity into the
+attempt.  On a failure it signals this process, which records Q-HOST FAIL and the summary (pass false) and exits;
+systemd's KillMode=control-group then stops every remaining process of the unit (owner decision OD-R2-5 option (i);
+option (ii) would need the owner to amend message 3 section 3).
 """
 from __future__ import annotations
 
@@ -367,13 +371,17 @@ def qhost_preflight() -> dict:
     """r2 P10: every Q-HOST refusal, before the attempt directory and the RUN START line exist.  Raises H.HostError."""
     scratch = H.scratch_root(dict(os.environ), str(REPO), {"foreign_roots": []})
     rec_path = os.environ.get("P309_LAUNCH_RECORD")
-    if not rec_path or not _under(Path(rec_path), scratch) or not Path(rec_path).is_file():
-        raise H.HostError("no launch record under P309_SCRATCH_ROOT: the run starts only through code/p309_launch.py")
+    if not rec_path or not Path(rec_path).is_file():
+        raise H.HostError("no launch record: the run starts only through code/p309_launch.py")
     rec = json.loads(Path(rec_path).read_text())
+    root = rec.get("scratch_root") or ""
+    if not root or not _under(Path(rec_path), root) or not _under(Path(scratch), root):
+        raise H.HostError("the launch record or this run's scratch root lies outside the launch's scratch root")
     if rec.get("blockers") or rec.get("mode") not in ("drill", "official"):
         raise H.HostError(f"the launch record has blockers or no valid mode: {rec.get('blockers')}")
-    if (rec["mode"] == "drill") != _under(REPO, scratch):
-        raise H.HostError("the launch mode does not fit the repository (a drill runs only in a clone under the scratch root)")
+    if (rec["mode"] == "drill") != _under(REPO, root):
+        raise H.HostError("the launch mode does not fit the repository (a drill runs only in a clone under the "
+                          "launch's scratch root; the official run never does)")
     if not os.environ.get("INVOCATION_ID") or (rec.get("unit", "") + ".service") not in (
             Path("/proc/self/cgroup").read_text() if Path("/proc/self/cgroup").exists() else ""):
         raise H.HostError("not running inside the launched systemd unit")

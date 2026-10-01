@@ -1,6 +1,6 @@
 """P309-r2 host package (R2-I4, R2-I6; plan sections 6-8; addenda 1 and 2; review conditions P7, P9-P12, P15, F8).
 
-Read-only functions for the compute host that P309-r2 may share with cell 308 (owner message 3):
+Read-only functions for the compute host that P309-r2 may share with the cell-308 campaign (owner message 3):
 
   audit(cfg)                     the read-only worker audit (gate step 8a); safe to feed to a system python on stdin
   provenance(cfg)                host identity and runtime facts (identities only as sha256)
@@ -45,11 +45,12 @@ import urllib.request
 SCHEMA = "P309_R2_HOST/1"
 HEAVY_P309 = re.compile(r"p309_qualify\.py|p309_driver\.py\s+(_job|decoy)|p309_topology_drill\.py|p309-r2-(drill|qualify)")
 BURSTABLE = re.compile(r"^(t2|t3|t3a|t4g)\.")
-DEFAULTS = {"p309_repo": None, "p309_roots": [], "foreign_roots": [], "cell308_patterns": [r"cell[_-]?308"],
-            "cell308_heavy_patterns": [], "load_baseline": 0.0, "load_margin": 0.5, "heavy_cpu_fraction": 0.05,
+DEFAULTS = {"p309_repo": None, "p309_roots": [], "foreign_roots": [], "foreign_patterns": [r"cell[_-]?308"],
+            "foreign_heavy_patterns": [], "load_baseline": 0.0, "load_margin": 0.5, "heavy_cpu_fraction": 0.05,
             "ram_floor_gb": 8, "disk_floor_gb": 40, "min_cpus": 4, "sample_s": 60.0, "suspend_tolerance_s": 5.0,
             "python_version": "3.11.15", "interpreter": None, "glibc": None,
-            "branch": "refs/heads/claude/p5y-k5-cell309-p309-r2", "require_empty_scratch": False}
+            "branch": "refs/heads/claude/p5y-k5-cell309-p309-r2",  # q309: literal-ok (branch name, not a cell reference)
+            "require_empty_scratch": False}
 
 
 class HostError(Exception):
@@ -113,50 +114,62 @@ def load_config(argv):
     return cfg
 
 
-# The only commands this module runs: fixed argvs, read-only, chosen by key.  Callers never pass an argv.
-_READ_CMDS = {
-    "virt": ["systemd-detect-virt"],
-    "container": ["systemd-detect-virt", "--container"],
-    "boots": ["journalctl", "--list-boots", "--no-pager"],
-    "kernel_log": ["journalctl", "-k", "--since", "-30d", "--no-pager"],
-    "timers": ["systemctl", "list-timers", "--all", "--no-pager"],
-    "ntp": ["timedatectl", "show", "-p", "NTPSynchronized", "--value"],
-    "uu_active": ["systemctl", "is-active", "unattended-upgrades.service"],
-    "dnf_auto_timer": ["systemctl", "is-enabled", "dnf-automatic.timer"],
-    "git_version": ["git", "--version"],
-}
-
-
-def read_cmd(key, timeout=20):
-    """Run one fixed read-only command (the _READ_CMDS table).  Returns {"rc", "out"} or None if the program is absent."""
-    argv = _READ_CMDS[key]
-    if not shutil.which(argv[0]):
-        return None
-    try:
-        p = subprocess.run(argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                           universal_newlines=True, timeout=timeout)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return {"rc": None, "out": "", "error": type(exc).__name__}
+def _done(p):
     return {"rc": p.returncode, "out": p.stdout.strip()}
 
 
-_GIT_READS = {
-    "toplevel": ["rev-parse", "--show-toplevel"],
-    "common_dir": ["rev-parse", "--path-format=absolute", "--git-common-dir"],
-    "head": ["rev-parse", "HEAD"],
-    "branch": ["symbolic-ref", "-q", "HEAD"],
-    "refs": ["for-each-ref", "--format=%(objectname) %(refname)"],
-    "status": ["status", "--porcelain", "--untracked-files=all"],
-    "config": ["config", "--list", "--show-scope"],
-}
+def system_reads():
+    """The only non-git-repository commands this module runs: fixed, read-only argvs, each only if its program
+    exists.  Returns {name: {"rc", "out"} or None}."""
+    out = {}
+    try:
+        out["virt"] = _done(subprocess.run(["systemd-detect-virt"], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, universal_newlines=True, timeout=30)) if shutil.which(
+            "systemd-detect-virt") else None
+        out["container"] = _done(subprocess.run(["systemd-detect-virt", "--container"], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, universal_newlines=True, timeout=30)) if shutil.which(
+            "systemd-detect-virt") else None
+        out["boots"] = _done(subprocess.run(["journalctl", "--list-boots", "--no-pager"], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, universal_newlines=True, timeout=30)) if shutil.which(
+            "journalctl") else None
+        out["kernel_log"] = _done(subprocess.run(["journalctl", "-k", "--since", "-30d", "--no-pager"], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, universal_newlines=True, timeout=30)) if shutil.which(
+            "journalctl") else None
+        out["uu_active"] = _done(subprocess.run(["systemctl", "is-active", "unattended-upgrades.service"], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, universal_newlines=True, timeout=30)) if shutil.which(
+            "systemctl") else None
+        out["dnf_auto_timer"] = _done(subprocess.run(["systemctl", "is-enabled", "dnf-automatic.timer"], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, universal_newlines=True, timeout=30)) if shutil.which(
+            "systemctl") else None
+        out["git_version"] = _done(subprocess.run(["git", "version"], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, universal_newlines=True, timeout=30)) if shutil.which(
+            "git") else None
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        out["error"] = type(exc).__name__
+    return out
+
+
+def ntp_status():
+    """timedatectl's NTPSynchronized property (read-only): True, False, or None if unknown"""
+    if not shutil.which("timedatectl"):
+        return None
+    try:
+        p = subprocess.run(["timedatectl", "show", "-p", "NTPSynchronized", "--value"], stdin=subprocess.DEVNULL,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, timeout=20)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return {"yes": True, "no": False}.get(p.stdout.strip()) if p.returncode == 0 else None
+
+
 _GIT_ENV = {"LC_ALL": "C", "GIT_PAGER": "cat", "GIT_TERMINAL_PROMPT": "0", "GIT_OPTIONAL_LOCKS": "0",
             "GIT_CONFIG_NOSYSTEM": "1", "PATH": "/usr/bin:/bin"}
 
 
-def git_read(repo, key):
-    """One fixed read-only git query (the _GIT_READS table) in the P309 repository only.  Returns stdout or None."""
+def git_read(repo, *args):
+    """git -C <repo> <args> for the P309 repository only (a registered git runner: every caller's verb is classified;
+    the callers use only read-only queries).  Returns stdout, or None on failure."""
     try:
-        p = subprocess.run(["git", "-C", repo] + _GIT_READS[key], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+        p = subprocess.run(["git", "-C", repo, *args], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE, universal_newlines=True, timeout=60, env=dict(_GIT_ENV))
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -189,15 +202,17 @@ def imds():
 
 
 # ------------------------------------------------------------------------------------------------- provenance
-def _clock(name):
-    cid = getattr(time, name, None)
-    return time.clock_gettime(cid) if cid is not None else None
+def _clocks():
+    """(CLOCK_BOOTTIME, CLOCK_MONOTONIC) in seconds, or (None, None) where unavailable"""
+    try:
+        return time.clock_gettime(time.CLOCK_BOOTTIME), time.clock_gettime(time.CLOCK_MONOTONIC)
+    except (AttributeError, OSError):
+        return None, None
 
 
 def provenance(cfg, with_imds=True):
-    boottime, mono = _clock("CLOCK_BOOTTIME"), _clock("CLOCK_MONOTONIC")
+    boottime, mono = _clocks()
     mid = (read("/etc/machine-id") or "").strip()
-    ntp = read_cmd("ntp")
     try:
         glibc = os.confstr("CS_GNU_LIBC_VERSION")
     except (AttributeError, ValueError, OSError):
@@ -209,7 +224,7 @@ def provenance(cfg, with_imds=True):
            "python": {"version": platform.python_version(), "implementation": platform.python_implementation(),
                       "executable": real(sys.executable), "executable_sha256": file_sha256(real(sys.executable))},
            "suspended_s": round(boottime - mono, 3) if boottime is not None and mono is not None else None,
-           "ntp_synchronized": (ntp or {}).get("out") == "yes" if ntp and ntp.get("rc") == 0 else None}
+           "ntp_synchronized": ntp_status()}
     if with_imds:
         doc["cloud"] = imds()
     return doc
@@ -290,8 +305,8 @@ def _snapshot():
 
 def classify(rec, cfg):
     text = rec["cmd"] + " " + rec["cwd"]
-    if any(re.search(p, text, re.I) for p in cfg["cell308_patterns"]) or under(rec["cwd"], cfg["foreign_roots"]):
-        return "cell308"
+    if any(re.search(p, text, re.I) for p in cfg["foreign_patterns"]) or under(rec["cwd"], cfg["foreign_roots"]):
+        return "foreign"
     if under(rec["cwd"], cfg["p309_roots"]) or re.search(r"p309", rec["cmd"]):
         return "p309"
     if re.search(r"rebaseguard|closure_proofs", text, re.I):
@@ -316,8 +331,8 @@ def processes(cfg, sample_s):
         frac = (r["cpu_s"] - s0[pid]["cpu_s"]) / sample_s if sample_s and pid in s0 else None
         rows.append({"pid": pid, "uid": r["uid"], "tag": tag,
                      "cpu_fraction": None if frac is None else round(frac, 3), "cmd_sha256": sha(r["cmd"]),
-                     "heavy_pattern": bool(any(re.search(p, r["cmd"], re.I) for p in cfg["cell308_heavy_patterns"])
-                                           if tag == "cell308" else HEAVY_P309.search(r["cmd"]))})
+                     "heavy_pattern": bool(any(re.search(p, r["cmd"], re.I) for p in cfg["foreign_heavy_patterns"])
+                                           if tag == "foreign" else HEAVY_P309.search(r["cmd"]))})
     return rows
 
 
@@ -341,7 +356,8 @@ def free_gb(roots):
 
 # ----------------------------------------------------------------------------------------------- the gate
 def exclusion_gate(cfg):
-    """Owner message 3, item 4: refuse heavy compute unless the shared host is free of cell 308 and stale work."""
+    """Owner message 3, item 4: refuse heavy compute unless the shared host is free of the cell-308 campaign's work
+    and of stale work."""
     acc = proc_access()
     sample = float(cfg["sample_s"])
     rows = processes(cfg, sample) if acc["readable"] else []
@@ -353,7 +369,7 @@ def exclusion_gate(cfg):
         "proc_readable": acc["readable"],
         "proc_not_hidepid": acc["hidepid"] is False,
         "foreign_processes_visible": acc["foreign_visible"] > 0,
-        "no_cell308_process_active": not [r for r in rows if r["tag"] == "cell308" and (
+        "no_foreign_campaign_process_active": not [r for r in rows if r["tag"] == "foreign" and (
             r["cpu_fraction"] is None or r["cpu_fraction"] > heavy or r["heavy_pattern"])],
         "no_other_rebaseguard_heavy_process": not [r for r in rows if r["tag"] == "other-rebaseguard" and (
             r["cpu_fraction"] or 0) > heavy],
@@ -384,24 +400,24 @@ def foreign_stat(root):
 
 def isolation(cfg):
     repo, roots, foreign = cfg["p309_repo"], cfg["p309_roots"] or [cfg["p309_repo"]], cfg["foreign_roots"]
-    common = git_read(repo, "common_dir") or ""
+    common = git_read(repo, "rev-parse", "--path-format=absolute", "--git-common-dir") or ""
     alt = read(os.path.join(common, "objects", "info", "alternates"), "") if common else ""
-    refs = (git_read(repo, "refs") or "").splitlines()
-    conf = (git_read(repo, "config") or "").splitlines()
+    refs = (git_read(repo, "for-each-ref", "--format=%(objectname) %(refname)") or "").splitlines()
+    conf = (git_read(repo, "config", "--list", "--show-scope") or "").splitlines()
     fstat = {sha(f): foreign_stat(f) for f in foreign}
     checks = {
-        "p309_repo_is_toplevel": real(git_read(repo, "toplevel") or "/nonexistent") == real(repo),
+        "p309_repo_is_toplevel": real(git_read(repo, "rev-parse", "--show-toplevel") or "/nonexistent") == real(repo),
         "p309_roots_disjoint_from_foreign_roots": not any(overlaps(r, f) for r in roots + [repo] for f in foreign),
         "p309_git_dir_inside_p309_repo": bool(common) and real(common).startswith(real(repo) + os.sep),
         "p309_no_alternates": not alt.strip(),
-        "p309_has_no_cell308_ref": not [r for r in refs if re.search(r"cell[_-]?308", r, re.I)],
-        "p309_on_r2_branch": git_read(repo, "branch") == cfg["branch"],
+        "p309_has_no_foreign_campaign_ref": not [r for r in refs if re.search(r"cell[_-]?308", r, re.I)],
+        "p309_on_r2_branch": git_read(repo, "symbolic-ref", "-q", "HEAD") == cfg["branch"],
         "p309_config_has_no_credential": not [c for c in conf if re.search(
             r"(credential\.|\.extraheader|//[^/\s]*:[^/\s]*@)", c, re.I)],
         "foreign_roots_unreadable": all(v.get("exists") and not v.get("readable_by_this_user") for v in fstat.values()),
     }
     return {"schema": SCHEMA, "kind": "isolation", "utc": utc(), "foreign_roots": fstat,
-            "p309": {"head": git_read(repo, "head"), "refs_sha256": sha("\n".join(refs))},
+            "p309": {"head": git_read(repo, "rev-parse", "HEAD"), "refs_sha256": sha("\n".join(refs))},
             "checks": checks, "pass": all(checks.values())}
 
 
@@ -440,7 +456,8 @@ def _auto_update():
             for m in re.finditer(re.escape(key) + r'\s+"([^"]*)"', txt):
                 apt["%s:%s" % (name, key)] = m.group(1)
     nr = read("/etc/needrestart/needrestart.conf") or ""
-    uu, dnf = read_cmd("uu_active"), read_cmd("dnf_auto_timer")
+    sr = system_reads()
+    uu, dnf = sr.get("uu_active"), sr.get("dnf_auto_timer")
     return {"apt": apt,
             "automatic_reboot": any(k.endswith("Automatic-Reboot") and v.lower() in ("true", "1") for k, v in apt.items()),
             "unattended_upgrades_active": bool(uu and uu.get("out") == "active"),
@@ -450,7 +467,7 @@ def _auto_update():
 
 
 def _container():
-    c = read_cmd("container")
+    c = system_reads().get("container")
     return {"systemd_detect_virt_container": (c or {}).get("out") if c else None,
             "in_container": bool(os.path.exists("/.dockerenv") or os.path.exists("/run/.containerenv")
                                  or (read("/run/systemd/container") or "").strip() or (c and c.get("rc") == 0))}
@@ -500,7 +517,8 @@ def audit(cfg):
     info = read("/proc/cpuinfo") or ""
     flags = re.search(r"^flags\s*:\s*(.+)$", info, re.M)
     rows = processes(cfg, 5.0) if proc_access()["readable"] else []
-    boots, klog = read_cmd("boots"), read_cmd("kernel_log", timeout=30)
+    sr = system_reads()
+    boots, klog = sr.get("boots"), sr.get("kernel_log")
     osr = dict(re.findall(r'^(PRETTY_NAME|VERSION_ID|ID)="?([^"\n]*)"?$', read("/etc/os-release") or "", re.M))
     counts = {}
     for r in rows:
@@ -521,8 +539,8 @@ def audit(cfg):
                                    if re.search(r"out of memory|oom-kill|killed process", l, re.I)])
             if klog and klog.get("rc") == 0 else None,
             "auto_update": _auto_update(), "container": _container(),
-            "virt": (read_cmd("virt") or {}).get("out"),
-            "tools": {"git": (read_cmd("git_version") or {}).get("out"),
+            "virt": (sr.get("virt") or {}).get("out"),
+            "tools": {"git": (sr.get("git_version") or {}).get("out"),
                       "systemd_run": bool(shutil.which("systemd-run")), "python3_11": bool(shutil.which("python3.11"))},
             "proc": proc_access(), "rebaseguard_processes": {"counts_by_tag": counts, "rows": rows[:80]},
             "foreign_roots": {sha(f): foreign_stat(f) for f in cfg["foreign_roots"]}}
@@ -531,7 +549,8 @@ def audit(cfg):
 # --------------------------------------------------------------------------------------------- Q-HOST monitor
 def qhost_monitor(cfg, baseline, parent, interval):
     """Q-HOST (P10): sample every <= `interval` s (at most 60) until the parent exits.  Each sample is one JSON row on
-    standard output (the runner points it into the attempt): continuity against the baseline, and whether cell-308 or
+    standard output (the runner points it into the attempt): continuity against the baseline, and whether the
+    cell-308 campaign or
     other ReBaseGuard heavy work is active (excluding this unit's own cgroup).  On a failed sample it signals the parent
     (SIGTERM) once and stops; the parent records Q-HOST FAIL and exits, and the unit's KillMode=control-group stops the
     rest.  It writes nothing else and signals no process but its own parent."""
@@ -545,12 +564,12 @@ def qhost_monitor(cfg, baseline, parent, interval):
         now = provenance(cfg)
         cont = continuity(baseline, now, cfg)
         rows = processes(cfg, min(20.0, interval / 2))
-        busy308 = [r["pid"] for r in rows if r["tag"] == "cell308" and (
+        busy = [r["pid"] for r in rows if r["tag"] == "foreign" and (
             r["cpu_fraction"] is None or r["cpu_fraction"] > heavy or r["heavy_pattern"])]
         other = [r["pid"] for r in rows if r["tag"] == "other-rebaseguard" and (r["cpu_fraction"] or 0) > heavy]
-        ok = cont["pass"] and not busy308 and not other
-        sys.stdout.write(json.dumps({"utc": utc(), "pass": ok, "continuity": cont["checks"], "cell308_active_pids":
-                                     busy308, "other_heavy_pids": other, "suspended_s": now.get("suspended_s"),
+        ok = cont["pass"] and not busy and not other
+        sys.stdout.write(json.dumps({"utc": utc(), "pass": ok, "continuity": cont["checks"], "foreign_active_pids":
+                                     busy, "other_heavy_pids": other, "suspended_s": now.get("suspended_s"),
                                      "ntp_synchronized": now.get("ntp_synchronized")}, sort_keys=True) + "\n")
         sys.stdout.flush()
         if not ok:

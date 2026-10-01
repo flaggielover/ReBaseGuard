@@ -562,7 +562,7 @@ def t12(root: Path) -> dict:
     r1, r2 = gc.get("_PRIOR_NAMESPACE"), gc.get("_PROD_NAMESPACE")
     pfx = (dc.get("PRIOR_MARKER_PATTERNS") or (None,))[0]
     tc = _func(gt, "TestContext.__init__")
-    tc_names = {n.id for n in ast.walk(tc)} if tc else set()
+    tc_names = {n.id for n in ast.walk(tc) if isinstance(n, ast.Name)} if tc else set()
     qq = _func(ast.parse((root / "code" / "p309_qualify.py").read_text()), "qc13")
     toks = set(ALLOW["production_tokens"])
     return {"two_distinct_namespaces": bool(r1) and bool(r2) and r1 != r2
