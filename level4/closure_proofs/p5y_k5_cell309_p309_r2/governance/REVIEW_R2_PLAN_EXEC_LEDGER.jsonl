@@ -1,0 +1,30 @@
+{"t":"2026-10-01","kind":"note","what":"ledger start; independent review of R2_PLAN.md at HEAD da754b8f; read-only; no execute/seal-only/validate-grant; no refs touched"}
+{"kind":"read","path":"level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/BRIEF_R2_PLAN_REVIEW.md"}
+{"kind":"read","path":"level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_PLAN.md"}
+{"kind":"git","cmd":"git rev-parse HEAD; git log --oneline -15; ls r1 campaign"}
+{"kind":"read","path":"r1/handoff/QUALIFICATION_FAILURE_POSTMORTEM_P309.md"}
+{"kind":"read","path":"r1/reviews/REVIEW_QUALIFICATION_POSTMORTEM_P309.md, _FOLLOWUP_P309.md, _FOLLOWUP_2_P309.md"}
+{"kind":"read","path":"r1/governance/P309_REV2C_AMENDMENTS.md (full)"}
+{"kind":"read","path":"r1/governance/OWNER_DECISIONS_P309_VERBATIM.md (full)"}
+{"kind":"read","path":"r1/governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md (full)"}
+{"kind":"read","path":"r1/tests/test_p309_exactly_once.py lines 1-260, grep FREEZE_RECORD flows"}
+{"kind":"read","path":"r1/code/p309_driver.py lines 1-130, 150-549, 820-889, 1205-1254 (no target values)"}
+{"kind":"read","path":"r1/code/p309_guard.py lines 36-185, 255-399"}
+{"kind":"read","path":"r1/code/p309_qualify.py (full)"}
+{"kind":"read","path":"r1/tests/test_p309_guard.py lines 1-120; r1/tests/test_p309_site_backstop.py lines 60-130"}
+{"kind":"read","path":"r1/verify/scoped_sandbox.py lines 1-120; grep variant for literals"}
+{"kind":"read","path":"r1/code/p309_self_audit.py lines 25-60, 95-167"}
+{"kind":"read","path":"r1/config/SCANNER_ALLOWANCE_P309.json structure (keys, lists)"}
+{"kind":"read","path":"r1/code/p309_scan.py lines 1255-1290, 1415-1472; grep"}
+{"kind":"read","path":"r1/freeze/P309_FREEZE_MANIFEST.json structure + runtime only"}
+{"kind":"read","path":"research impl/srk_float.py, srk_kernel.py import/grep lines only (libm use)"}
+{"kind":"git","cmd":"git diff --stat F HEAD frozen dirs; ls-tree -d closure_proofs names; rev-parse --is-shallow; merge-base eb9a9c22"}
+{"kind":"run","what":"python3 in-memory AST analysis (ast.parse only, nothing imported or executed) of r1 driver/tests/verify: site+backstop hashes vs allowance pins, and which pinned hashes change under an in-memory p309_r1->p309_r2 string replacement; NOT evidence; no file written"}
+{"kind":"read","path":"r1/ledger/ZERO_TARGET_LEDGER.jsonl: counters only (rows, nonzero target/proxy counts, RUN_START count); one row utc/class/purpose prefix (DISK EXHAUSTION, 2026-09-30T03:42:08Z) found by grep"}
+{"kind":"read","path":"r1/handoff/OVERNIGHT_REPORT_P309.md lines 100-125 (host section)"}
+{"kind":"read","path":"r1/verify/VERIFY_RESULTS_SCOPED.json top-level keys and harness/variant metadata only; no per-item results"}
+{"kind":"read","path":"r1/code/u2_structure_check.py lines 335-345, 430-445; make_freeze_manifest.py 20-75; checkpoint_push_p309.py 1-110; p309_static_check.py 60-82, 295-320; grep of make_freeze_params/self_audit/d5 test"}
+{"kind":"git","cmd":"for-each-ref (r1/r2/test namespaces: 0), rev-parse r5 blob, ls-tree name grep R6 (0), rev-parse r1 tree at c902fe2f and HEAD (equal), branch -a list, diff --quiet r1 ledger c902fe2f..HEAD"}
+{"kind":"note","what":"no scratch diagnostic run; no campaign code executed; no ls-remote; no cell-307/308 bytes read or hashed; no QC09 decoy output opened"}
+{"kind":"write","path":"level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/REVIEW_R2_PLAN.md","utc":"2026-10-01T11:49:30Z"}
+{"kind":"git","cmd":"grep line-number confirmations; git status"}
