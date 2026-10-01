@@ -5,7 +5,7 @@ This document is provider-independent. It names no address and no credential.
 **Its basis:**
 * the plan (`R2_PLAN.md` §6–§8);
 * addenda 1 and 2;
-* review conditions P9–P15, P20–P22 and F7–F8;
+* review conditions P9–P15, P20–P22 and F7–F8, and the delta review's C2–C9, C14 (`REVIEW_R2_DELTA.md`);
 * the owner's messages 1 and 3 (`OWNER_INSTRUCTIONS_R2_VERBATIM.md`).
 
 **The host it describes.** The host is the shared AWS ReBaseGuard worker that cell 308 uses (owner message 3). The
@@ -35,6 +35,9 @@ model is **shared host, exclusive heavy compute**:
 | OS | Linux with systemd as PID 1; not a container | `pid1_is_systemd`, `not_in_container`, `systemd_run_available` |
 | interpreter | **CPython 3.11.15 exactly**, P309-private, path pinned | `python_exact`, `interpreter_pinned` |
 | glibc | pinned to the value recorded at the audit | `glibc_pinned` |
+| runtime binding | the freeze manifest pins the python version, glibc and the interpreter binary's sha256; the driver refuses any difference (delta review C14) | `check_bindings` (driver) |
+| launch privilege | a polkit rule for the P309 user's `p309-r2-*` transient system units (the code never uses sudo) | the launcher's start |
+| unit stop | `KillSignal=SIGKILL`, `SendSIGKILL=yes`, `TimeoutStopSec=10s` (the heavy jobs ignore SIGTERM; C5) | the runner's `qhost_preflight` (`systemctl show`) |
 | git | ≥ 2.32 | audit `tools.git` |
 | durability | no automatic reboot; upgrades held; no pending reboot | `no_automatic_reboot`, `upgrades_held`, `no_pending_reboot` |
 | cloud | instance metadata readable; no scheduled maintenance; not spot | `cloud_metadata_available`, `no_scheduled_maintenance`, `not_spot` |
@@ -83,3 +86,36 @@ is unreadable to the P309 user with a top-directory `stat()`/`access()` only; it
 The isolation check (`code/p309_host.py isolation`) proves this for each run.
 
 **Data movement:** bulk data stays on the worker and GitHub. The owner's own machine is never a relay.
+
+**A world-readable checkout.** The isolation check runs as the P309 user outside the unit. If cell 308's checkout is
+world-readable (the 8a audit records this as a boolean), `foreign_roots_unreadable` fails. Proceeding would then need
+an owner amendment of message 3 §6, with the cell-308 operator's consent (OD-R2-4).
+
+## 6. Seeing cell 308 from a separate user (P9; delta review C2, A8)
+
+**The limit.** A separate P309 user cannot read another user's process working directory. So a cell-308 process is
+recognised only by one of these:
+* **its uid:** `foreign_uids`. It is required: the gate fails while it is empty or holds the P309 user's uid;
+* **its command line:** `foreign_patterns` and `foreign_heavy_patterns`;
+* **as unattributable:** a process of another non-root user whose working directory cannot be read. It counts as
+  foreign.
+
+If cell 308 runs as root, uid 0 must be listed, and then every root process counts as foreign. Kernel threads never
+count.
+
+**What fails, and when:**
+
+| | the start (exclusion gate) | during a run (Q-HOST monitor) |
+|---|---|---|
+| one foreign or unattributable process | blocks above 0.05 of a core, on a heavy pattern, or if it appeared during the 60 s sample | fails above 0.5 of a core, or on a heavy pattern; a newly seen process is judged one sample later |
+| all of them together | the load must be at most baseline + 0.5 | fails above 1.0 core |
+| the monitor itself | — | fails if it is dead at the stop, or any gap exceeds 60 s + 30 s |
+| the host | the durability preflight | fails on any continuity break (boot, machine-id, hostname, instance, interpreter, glibc, suspend); a final sample is taken at the stop |
+
+**Termination.** On a monitor failure, the runner SIGKILLs its own process tree at once and records Q-HOST FAIL. The
+unit's SIGKILL stop handles anything left. Detection takes up to about one interval, or two for a newly started
+process.
+
+**Records.** Foreign roots and the cell-308 patterns appear in every P309 record only as sha256: the launch record,
+the attempt's copy of it, and the unit properties (C9).
+
