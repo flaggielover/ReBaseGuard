@@ -14,8 +14,12 @@ NEW Γ309 TARGET EVALUATIONS = 0 throughout.
 the worker, and no `.pyc` is created:
 
 ```text
-python3 - audit --config-json '{"p309_roots": ["<planned P309 root>"], "foreign_roots": ["<cell-308 checkout path>"], "cell308_patterns": ["<cell-308 process pattern>"]}' < p309_host.py
+python3 - audit --config-json '{"p309_roots": ["<planned P309 root>"], "foreign_roots": ["<cell-308 checkout path>"], "foreign_patterns": ["cell[_-]?308"], "foreign_heavy_patterns": ["<cell-308 heavy-job pattern>"]}' < p309_host.py
 ```
+
+The keys are those `load_config` accepts: `foreign_patterns` and `foreign_heavy_patterns`. An unknown key, such as
+the `cell308_patterns` of this file's first version, is refused (delta review C15). See
+`R2_AWS_SESSION_INSTRUCTIONS.md` §1 for `foreign_uids`.
 
 **Getting `p309_host.py` there:**
 * it is the blob of `code/p309_host.py` at the reviewed commit;
@@ -25,7 +29,8 @@ python3 - audit --config-json '{"p309_roots": ["<planned P309 root>"], "foreign_
 **What the audit records:**
 * identities (hostname, machine-id, instance id) as sha256 only;
 * cell-308 processes as counts, pids, uids and command-line sha256 only;
-* cell 308's checkout only at its top directory: a `stat` hash, and whether this user could read it.
+* cell 308's checkout only at its top directory: a `stat` hash, whether it is world-readable, and whether this user
+  could read it.
 
 **Output.** The audit's JSON is preserved in FNS2 `evidence/host/AUDIT_<utc>.json`.
 
@@ -50,11 +55,12 @@ or HOST_SUITABILITY_PENDING.
    P309-only and kept out of the repository config.
 4. **The interpreter:** a P309-private CPython **3.11.15** under the P309 user's home, built or installed without
    touching the system Python. Record its path and sha256, and glibc's version, for the host configuration.
-5. **The launch privilege:** a sudo or polkit rule that lets the P309 user start exactly `systemd-run` units named
-   `p309-r2-*`, with the properties `code/p309_launch.py` sets. Nothing else.
+5. **The launch privilege:** a polkit rule that lets the P309 user start exactly transient system units named
+   `p309-r2-*`, with the properties `code/p309_launch.py` sets. Nothing else. The launcher calls `systemd-run`
+   directly; a sudo rule is not used by the code.
 6. **The durability holds** consented under OD-R2-4: automatic reboot off and upgrades held for the window.
 7. **The host configuration file** in the P309 user's home (not in the repository), with:
-   * `p309_roots`, `foreign_roots` and the cell-308 patterns;
+   * `p309_roots`, `foreign_roots`, `foreign_patterns`, `foreign_heavy_patterns` and `foreign_uids`;
    * the floors, the interpreter and glibc;
    * the launch settings: `unit_user`, `unit_group`, `memory_max`, `oom_score_adjust`, `cpu_weight`, `io_weight`.
 
@@ -65,7 +71,8 @@ After bootstrap, run `isolation` and `preflight` read-only. Both must pass.
 **When:** only when the exclusion gate passes, at the start of an agreed window.
 
 **How:** `python3 -B code/p309_launch.py --mode drill --host-config <file>` starts
-`code/p309_topology_drill.py --tier worker` in its own unit. It never retries.
+`code/p309_topology_drill.py --tier worker` in its own unit. It never retries. The unit gets the configuration file's
+path as `P309_HOST_CONFIG`, and the launch record binds its sha256.
 
 **What follows:**
 * the drill's ledger rows, witnesses and controls are committed in full under `evidence/drill/`;

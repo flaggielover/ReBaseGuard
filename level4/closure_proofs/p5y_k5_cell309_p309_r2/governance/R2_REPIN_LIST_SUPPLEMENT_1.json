@@ -1,0 +1,609 @@
+{
+ "schema": "P309_R2_REPIN_LIST_SUPPLEMENT/1",
+ "supplements": "governance/R2_REPIN_LIST.json (51 rows; unchanged)",
+ "round": "repairs after the r2 delta review (C2-C11, C14; advisories A1, A7, A10, A13)",
+ "hash": "sha256 of ast.dump(<node>), CPython 3.11.15",
+ "compared": {
+  "before": "447e0713:level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json (the reviewed commit)",
+  "after": "level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json at the commit that adds this file",
+  "r1_at_F": "4c754a73767903a5ad5dddff725f1e173a0a6876:level4/closure_proofs/p5y_k5_cell309_p309_r1/config/SCANNER_ALLOWANCE_P309.json"
+ },
+ "unchanged_lists": {
+  "exactly_once_sites": true,
+  "backstop_pins": true,
+  "production_read_path_pins": true,
+  "production_tokens": true,
+  "planted_control_files": true,
+  "mutating_git_verbs": true,
+  "production_ref_namespace": true
+ },
+ "import_allowlist_additions": {
+  "code": [
+   "pwd"
+  ],
+  "tests": [
+   "make_freeze_manifest",
+   "p309_qualify",
+   "time"
+  ],
+  "verify": []
+ },
+ "new_list_production_read_path_constant_pins": "23 entries; 22 equal r1's F; NS_REL differs by the relocation only (A10)",
+ "rows": [
+  {
+   "list": "ref_mutation_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "controls",
+   "reviewed_447e0713": "744890bf7876a3f02146e3554be0337766417e0c8afddbfeccd27cf4b78d072e",
+   "now": "5930c65d55e05141292ad968a8eb4429ea5642d28e9f4117fde3b30da0e5df71",
+   "r1_at_F": null,
+   "kind": "re-pinned (and permits/reason)",
+   "permits_now": null,
+   "reason_now": "r2 topology drill controls, in the drill clone or its control repository only: a planted second record commit and `reset --mixed` back (the working tree's ledger rows are kept; the record file's committed bytes are restored); `update-ref` of the TEST-only prior ref refs/p5y-k5-cell309-TEST-ONLY-prior/x and its deletion; `git init` + `remote add` of the push-URL control repository; never a ref in either production namespace (F1)"
+  },
+  {
+   "list": "ref_mutation_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "main",
+   "reviewed_447e0713": "a34def7bbc3ccfe8adddc23a40d67a799b0fa67e0c48a842a72c283f12711deb",
+   "now": "9db8d79256f007b817dd8f550e5e22c6e274fbc9ad8e63c86c56b491bc09ff28",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": null,
+   "reason_now": "r2 topology drill: `git clone --single-branch --branch <r2 branch>` of the P309 repository into the drill root and `git remote remove origin` in that clone; nothing in the P309 repository moves (checked before/after)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "_children_map",
+   "reviewed_447e0713": null,
+   "now": "0af8bd2f3f9933d0f3d1415569b422e1afef5ca3d7a70a7ceb59515ab4be5f2d",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 addendum 1 P4 / delta review A13: a /proc-reading function of the host package (read-only): /proc/<pid>/stat parent pids (for kill_own_descendants)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "_own_tree",
+   "reviewed_447e0713": null,
+   "now": "456bc0253fb24f90f2974721dec51e0280d66156ec17cfd5107dfef3b98b5bad",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 addendum 1 P4 / delta review A13: a /proc-reading function of the host package (read-only): /proc/<pid>/stat of this process's ancestors"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "_snapshot",
+   "reviewed_447e0713": null,
+   "now": "813ea689736e2f2b26a806376a2766f566a8dfc88ae86b82a1546d6492ba6f03",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 addendum 1 P4 / delta review A13: a /proc-reading function of the host package (read-only): /proc/<pid>/stat, cmdline, cwd (readlink) and cgroup of every process (cwd only to classify; never recorded)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "audit",
+   "reviewed_447e0713": null,
+   "now": "917c02750c785c08b20fcd47502767e633ee0dfd98a7d543e2ef541f279835b8",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 addendum 1 P4 / delta review A13: a /proc-reading function of the host package (read-only): /proc/cpuinfo, /proc/meminfo, /proc/uptime and processes() for the read-only 8a audit"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "kill_own_descendants",
+   "reviewed_447e0713": null,
+   "now": "c478e9891f637d4663614940bdab241c0b5a633ab0b5e88cb9b221f71e349c53",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "signal",
+    "proc_read"
+   ],
+   "reason_now": "r2 delta review C5: SIGSTOP then SIGKILL of the calling process's own descendants only (the /proc ppid tree below os.getpid(), never the caller or any other process); the runner calls it on a Q-HOST abort"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "mem_available_gb",
+   "reviewed_447e0713": null,
+   "now": "bdbe384c56ae7197abef35c34c362042c43a9080f959c6b685f57fef55f23054",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 addendum 1 P4 / delta review A13: a /proc-reading function of the host package (read-only): /proc/meminfo"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "proc_access",
+   "reviewed_447e0713": null,
+   "now": "280dc438cedf0859b9629f5490b2cac34d39ea5129e12da126bae6d54020f7e7",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 addendum 1 P4 / delta review A13: a /proc-reading function of the host package (read-only): /proc listing, mountinfo and pid owners (P9 visibility)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "processes",
+   "reviewed_447e0713": null,
+   "now": "5b005e693693d177c2ceac6edc4a7f52791a31e73540b4fa9ee7af4212d8f0ce",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 addendum 1 P4 / delta review A13: a /proc-reading function of the host package (read-only): two _snapshot samples; records only pid, uid, tag, CPU fraction, cmdline sha256, heavy flag"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "provenance",
+   "reviewed_447e0713": null,
+   "now": "51bb4fcef0bd5dcc5b07307f99e4fcf5501f2203718677bf824107beb3fb1311",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 addendum 1 P4 / delta review A13: a /proc-reading function of the host package (read-only): boot id, machine-id and hostname (as sha256), /proc clocks, glibc, interpreter"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "qhost_monitor",
+   "reviewed_447e0713": null,
+   "now": "eaeeb5c405db91a69713a4cdeea45269ec761988b398e3e86bc5292dd7b06ab7",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "signal",
+    "proc_read"
+   ],
+   "reason_now": "r2 Q-HOST (P10): the one signal of the host package's monitor, os.kill(parent, SIGTERM) to its own parent (the P309 runner) on a failed sample, after which it returns; samples /proc through processes() and provenance()"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "unit_properties",
+   "reviewed_447e0713": null,
+   "now": "fac8eee61eb56787bb03ca4452b277bafb76b78f2fbcc3549f471b88aaf5281d",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "process",
+    "proc_read"
+   ],
+   "reason_now": "r2 delta review C9: `systemctl show --no-pager -p <fixed list> -- <unit>` (read-only) for the P309 unit named in this process's own /proc/self/cgroup (matched against p309-r2-(drill|qualify|hostrerun)-<utc>.service); no parameter; inaccessible paths and the foreign-roots variable are returned only as sha256"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_launch.py",
+   "name": "loaded_p309_units",
+   "reviewed_447e0713": "b8f68eb97eefe4bcefa8020f05b4b0a282e99cac495188bb909b5433c107071e",
+   "now": "564efd36ecdc5b95cce84d7bfd9a3681499872f0c53951f284c3dd2565bec80c",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 launcher: systemctl list-units --all --no-legend --plain (read-only), filtered to p309-r2-*; no parameter"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_launch.py",
+   "name": "main",
+   "reviewed_447e0713": "f44d352bdbc0737610d2f2e28539023d68431a637de7534bc295cd66fa0c9124",
+   "now": "6f6657bd66d5a6765d7e1df7900d3bb0500fd0e43d5e8c302da233e2de515882",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 launcher: after the scratch-root, preflight, gate, isolation and loaded-unit checks pass and the launch record is written exclusively, runs ONE systemd-run argv built by unit_argv (unit name fixed by the mode; Restart=no; the hermetic environment) and never retries; no parameter (argv is read from sys.argv)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_qualify.py",
+   "name": "start_qhost_monitor",
+   "reviewed_447e0713": "26327a2bf38b9d48bd703a6b6ca575060fba316664644ec34fc5061ff804c7ee",
+   "now": "879fb02c8e8768fe1acd099f07bac42dd03c3521ed9f0aa2c0b97f8cb8326703",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 Q-HOST (P10): starts the p309_host.py qhost-monitor of this frozen tree as a child (python + a literal .py script), its output into the attempt; the monitor signals only this process"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_qualify.py",
+   "name": "stop_qhost_monitor",
+   "reviewed_447e0713": null,
+   "now": "bd5b9e9198486a4b5c7f9bd48b39844a1ad526af58f5aa411f5e62391f165e82",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "signal"
+   ],
+   "reason_now": "r2 Q-HOST (P10, C4): terminates (then, after 30 s, kills) its own monitor child only, after noting whether it was still alive"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "controls",
+   "reviewed_447e0713": "744890bf7876a3f02146e3554be0337766417e0c8afddbfeccd27cf4b78d072e",
+   "now": "5930c65d55e05141292ad968a8eb4429ea5642d28e9f4117fde3b30da0e5df71",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 topology drill: runs the two R2-M01 mutant harness copies by path (written into the drill clone only, then deleted), through run_py"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "case_k01",
+   "reviewed_447e0713": null,
+   "now": "50dd467a98dafb3316b9d065b625286041b1bba1b90535fe2f779f5348f35343",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 delta review C5: runs the literal TREE program with this environment plus P309_TEST_CODE; TREE builds a TEST process tree and calls kill_own_descendants on it"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "case_p02",
+   "reviewed_447e0713": null,
+   "now": "2c6aeb7d1cb7745e9a1244fae8fd8af100fcd87224fe2877c23eb4decd97933a",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 delta review C2/C11: setpriv (root only) starts one TEST busy python under TEST uid 64011 with its cwd in a mode-700 TEST root under P309_SCRATCH_ROOT, and runs the host package's gate (the committed p309_host.py fed on standard input) under TEST uid 64012; both literal argvs; the busy process is killed and reaped"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "case_q",
+   "reviewed_447e0713": null,
+   "now": "2e13935e697492fbc44c12db235c33deea92938557e0b94cfc8ccf826c32b361",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 delta review C11: runs the literal Q_CODE program (qhost_preflight refusal cases) with this process's environment minus INVOCATION_ID and P309_LAUNCH_RECORD, plus a TEST launch record path; this process's environment is never changed"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "launcher",
+   "reviewed_447e0713": null,
+   "now": "1fb8af6128f60da593b87924a4fe546dd55adf4c8454fbbdeab1937bcad32970",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 delta review C11: runs code/p309_launch.py (a literal .py of this tree) with a fixed environment (PATH, LC_ALL, HOME and the TEST P309_SCRATCH_ROOT); refusal and --print-only cases only, nothing is launched"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "stop",
+   "reviewed_447e0713": null,
+   "now": "1c47d58bc1964755c2a0f5fd33a1abce1ba1255d2f07a75bf5703137854d2118",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "signal"
+   ],
+   "reason_now": "r2 delta review C11: SIGKILLs and reaps one TEST child process of this test (Popen.kill on its own child only)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "verify/srk_verify_indep_scoped.py",
+   "name": "verify_cert",
+   "reviewed_447e0713": null,
+   "now": "065640ec6c2f855caf2bdf1f9e5ed975dd5baf798784ca4478dd21ee63dbbad8",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "signal"
+   ],
+   "reason_now": "r2 delta review A7 (registration only; the verifier variant is unchanged): pool.terminate() of the verifier's own multiprocessing pool, on its own worker processes"
+  },
+  {
+   "list": "t7_exemptions",
+   "file": "code/p309_scan.py",
+   "name": null,
+   "reviewed_447e0713": "ec6031cc492498beb3fd774da5cf2dabffca4bb7938a0813c6efeca246b2067b",
+   "now": "3d4c27765cee9bd4755d7126382d3ca54c007f9f940d2183102a1076b976fc35",
+   "r1_at_F": "f9c53ce0b6d4e400051783b5441c080912353edfef31b0ad5327d59b2546a6f8",
+   "kind": "re-pinned",
+   "permits_now": null,
+   "reason_now": "points the research scanner at the scanned root (q309_guard.NS) before calling it"
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "CHECKPOINT_LEDGER_REL",
+   "reviewed_447e0713": null,
+   "now": "77720af8fbdbb50ef8e1b3d2d9fc9ab52a8256bbaccbbc845dea749ee943aedd",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "CP",
+   "reviewed_447e0713": null,
+   "now": "45d26475d8d77a57f74313aa4b184c51dd41e9bc5fe3554a72096def20c33054",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "EMERGENCY_NAME",
+   "reviewed_447e0713": null,
+   "now": "1e39bcfc6802508049fe135142f65ca936f2715fcf0858b377d1a47c2ae62309",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "ENV",
+   "reviewed_447e0713": null,
+   "now": "6a6a1821467cc112fcc28269c8763bf5c2da6650c6f0521015895fdd50946fa5",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "EXEC_DIR_REL",
+   "reviewed_447e0713": null,
+   "now": "02e8dc6bf4036841ceb49f38d28775a822ab319c3593cb7b00d50481aca3bdac",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "FREEZE_RECORD_REL",
+   "reviewed_447e0713": null,
+   "now": "93d51d480120ddc532b7a316c7064a95c98595e6714c1fd38ea5f55a96620d09",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "FROZEN_DIRS",
+   "reviewed_447e0713": null,
+   "now": "5d18ecd1362cb01764473ce04bdede04695daa832ba12ee197de78d2fd9f11ad",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "HERE",
+   "reviewed_447e0713": null,
+   "now": "59a1f2b187a5c644106e209d0548c268b214b81875fdd99562b4494e79baac55",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "NS_REL",
+   "reviewed_447e0713": null,
+   "now": "3567c9fd7bb0eb4345267594440ae9286f95e2216f840048982e72c42ad7aa99",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "PRIOR_MARKER_PATTERNS",
+   "reviewed_447e0713": null,
+   "now": "776e4f085ccfe9cb4e7152e63b60a9f59260a1983570c15a0cce56bb9aa43c03",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "QREVIEW_PREFIX",
+   "reviewed_447e0713": null,
+   "now": "34badcb0960fde4345c5681c040f67642114db0fd08e002d4ee65b74cc6613ce",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "QREVIEW_REL",
+   "reviewed_447e0713": null,
+   "now": "3e8b25f60179dacf1c4a5188c9f8773d615583c2a03bc0552a80c476da016e21",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "QUAL_DIR_REL",
+   "reviewed_447e0713": null,
+   "now": "33a0ea1240b50897edd1b245998483ee274d8b54d2dfc1b10ee33aa77ea28100",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "QUAL_REL",
+   "reviewed_447e0713": null,
+   "now": "11be0a29ff2c16cf7e0ea2493bc14942f3039ba61b4c3c303d184420d3a1d98a",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "REPO",
+   "reviewed_447e0713": null,
+   "now": "75c0fb943c089fe1777297fd8181b4eeca697df80e6c839ec7cc1af57f254111",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "RESULT_NAME",
+   "reviewed_447e0713": null,
+   "now": "e4103a6050587f077f47ef0745d285e00ce45330d8af683480f28e2a66ecba9a",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "RESULT_REL",
+   "reviewed_447e0713": null,
+   "now": "8dbc644e1701902810493d5962941e621cb1250254b2df690e293a3f5031c2ff",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "RUN_NONCE_NAME",
+   "reviewed_447e0713": null,
+   "now": "93cfb2a20d80bfaa0ac5ca278067d43217d172869fbbca07c17027296cc0ac66",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "SANDBOX_RESULT_REL",
+   "reviewed_447e0713": null,
+   "now": "38800b543b3248a7609b6128754de6915900873b0739c891e5feb7a889bc0b3c",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "TARGET_CELL",
+   "reviewed_447e0713": null,
+   "now": "3929293cdbc7974cfff0305d5a48f941a5b1b4d79afbf0105e074d18575586f9",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "WINDOW_PATHS",
+   "reviewed_447e0713": null,
+   "now": "b04bca07c76da37d423cba3fc36f257029c7481fef4a55c6eeec9c2580707112",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_driver.py",
+   "name": "WINDOW_PREFIXES",
+   "reviewed_447e0713": null,
+   "now": "5f72d104e825085cd6b41c86dbe5ff7f65e9395dbbf1d2566c972bfaeb3160f5",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  },
+  {
+   "list": "production_read_path_constant_pins",
+   "file": "code/p309_guard.py",
+   "name": "_TEST_CELL",
+   "reviewed_447e0713": null,
+   "now": "9fc575f6be4425e5b94b896ecc317f4234b434f6a96964d27f8a600f18ffc584",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": null,
+   "reason_now": null
+  }
+ ]
+}

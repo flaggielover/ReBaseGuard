@@ -17,19 +17,29 @@ Preconditions (refused otherwise): HEAD's frozen directories equal the freeze co
 regenerates identically; the working tree is clean except qualification/ and the ledgers; no exactly-once ref exists.
 Nothing here reads a target input, evaluates a quarantined cell, or computes in the band.
 
-r2 Q-HOST (plan section 7; review P10; addendum 2): the run starts only through code/p309_launch.py.  Before the
-attempt directory and the RUN START line exist, it refuses unless all of these hold:
-* the launcher's record (P309_LAUNCH_RECORD) has no blockers, and its scratch root holds both the record and this
-  run's P309_SCRATCH_ROOT;
-* this process runs in the unit the record names (INVOCATION_ID set; /proc/self/cgroup names the unit);
+r2 Q-HOST (plan section 7; review P10; addendum 2; delta review C3-C5, C7, C9): the run, and the host re-run, start only
+through code/p309_launch.py.  Before the attempt directory and the RUN START (or HOST RERUN START) line exist, it
+refuses unless all of these hold:
+* the launcher's record (P309_LAUNCH_RECORD) has no blockers, its mode is the one this invocation needs (official or
+  drill for the run, host-rerun for the host re-run), and its scratch root holds both the record and this run's
+  P309_SCRATCH_ROOT;
+* the host configuration file (P309_HOST_CONFIG) has the bytes the record binds (sha256), and gives the configuration
+  the launcher used;
+* this process runs in the unit the record names (INVOCATION_ID set; /proc/self/cgroup names the unit), and the unit's
+  effective properties (`systemctl show`) include Restart=no, KillMode=control-group, KillSignal=SIGKILL,
+  NoNewPrivileges, PrivateTmp and ProtectSystem=strict;
 * the host is the one the launcher audited (Q-HOST continuity: boot, machine-id, hostname, instance, interpreter,
-  glibc, no suspend);
+  glibc, no suspend), and the cloud instance id, if the launch read one, is read again now (C3);
 * the record's mode fits the repository (a drill runs in a clone under the launch's scratch root; the official run
-  never does).
+  and the host re-run never do).
+The attempt keeps the start evidence: a copy of the (redacted) launch record with the gate, isolation and preflight
+results, the unit's effective properties, and their sha256 in QHOST_BASELINE.json (C9).
 During the run a monitor (p309_host.py qhost-monitor, every <= 60 s) records continuity and cell-308 activity into the
-attempt.  On a failure it signals this process, which records Q-HOST FAIL and the summary (pass false) and exits;
-systemd's KillMode=control-group then stops every remaining process of the unit (owner decision OD-R2-5 option (i);
-option (ii) would need the owner to amend message 3 section 3).
+attempt.  On a failure it signals this process, which SIGKILLs its own process tree at once (C5), records Q-HOST FAIL
+and the summary (pass false) and exits; systemd's KillMode=control-group with KillSignal=SIGKILL stops anything left
+(owner decision OD-R2-5 option (i); option (ii) would need the owner to amend message 3 section 3).  At the end Q-HOST
+passes only if every sample passed, the monitor was alive at the stop with no gap over the interval plus the
+tolerance (C4), and a final sample still shows the same host (A15).
 """
 from __future__ import annotations
 
@@ -367,77 +377,121 @@ def _under(path: Path, root: str) -> bool:
     return rp == rr or rp.startswith(rr + os.sep)
 
 
-def qhost_preflight() -> dict:
+UNIT_REQUIRED = {"Restart": ("no",), "KillMode": ("control-group",), "KillSignal": ("9", "SIGKILL"),
+                 "NoNewPrivileges": ("yes",), "PrivateTmp": ("yes",), "ProtectSystem": ("strict",)}
+
+
+def qhost_preflight(modes: tuple) -> dict:
     """r2 P10: every Q-HOST refusal, before the attempt directory and the RUN START line exist.  Raises H.HostError."""
     scratch = H.scratch_root(dict(os.environ), str(REPO), {"foreign_roots": []})
     rec_path = os.environ.get("P309_LAUNCH_RECORD")
     if not rec_path or not Path(rec_path).is_file():
         raise H.HostError("no launch record: the run starts only through code/p309_launch.py")
-    rec = json.loads(Path(rec_path).read_text())
+    rec_bytes = Path(rec_path).read_bytes()
+    rec = json.loads(rec_bytes)
     root = rec.get("scratch_root") or ""
     if not root or not _under(Path(rec_path), root) or not _under(Path(scratch), root):
         raise H.HostError("the launch record or this run's scratch root lies outside the launch's scratch root")
-    if rec.get("blockers") or rec.get("mode") not in ("drill", "official"):
-        raise H.HostError(f"the launch record has blockers or no valid mode: {rec.get('blockers')}")
+    if rec.get("blockers") or rec.get("mode") not in modes:
+        raise H.HostError(f"the launch record has blockers or a mode other than {modes}: {rec.get('blockers')}")
     if (rec["mode"] == "drill") != _under(REPO, root):
         raise H.HostError("the launch mode does not fit the repository (a drill runs only in a clone under the "
-                          "launch's scratch root; the official run never does)")
+                          "launch's scratch root; the official run and the host re-run never do)")
     if not os.environ.get("INVOCATION_ID") or (rec.get("unit", "") + ".service") not in (
             Path("/proc/self/cgroup").read_text() if Path("/proc/self/cgroup").exists() else ""):
         raise H.HostError("not running inside the launched systemd unit")
-    cfg = H.load_config(["--config-json", json.dumps(rec["host_config"])])
+    conf_path = os.environ.get("P309_HOST_CONFIG") or ""
+    if not conf_path or H.file_sha256(conf_path) != rec.get("host_config_file_sha256"):
+        raise H.HostError("the host configuration file is missing or differs from the one the launch record binds")
+    cfg = H.load_launch_config(conf_path, str(REPO), rec["mode"] != "drill")[0]
+    if H.config_sha256(dict(cfg, p309_repo=rec["host_config"].get("p309_repo"))) != rec.get("host_config_sha256"):
+        raise H.HostError("the host configuration differs from the one the launcher used")
+    props = H.unit_properties()
+    bad = {k: (props or {}).get(k) for k, ok in UNIT_REQUIRED.items() if (props or {}).get(k) not in ok}
+    if props is None or bad:
+        raise H.HostError(f"the unit's effective properties are not the launcher's: {bad if props else 'unreadable'}")
     now = H.provenance(cfg)
-    cont = H.continuity(rec["preflight"]["provenance"], now, cfg)
+    launch_prov = rec["preflight"]["provenance"]
+    if (launch_prov.get("cloud") or {}).get("instance_id_sha256") and not (now.get("cloud") or {}).get(
+            "instance_id_sha256"):
+        raise H.HostError("the launch read the cloud instance id and this baseline could not (C3)")
+    cont = H.continuity(launch_prov, now, cfg)
     if not cont["pass"]:
         raise H.HostError(f"the host changed since the launch: {cont['checks']}")
-    return {"record": rec_path, "unit": rec["unit"], "mode": rec["mode"], "cfg": cfg, "baseline": now,
-            "continuity_since_launch": cont}
+    return {"record": rec_path, "record_bytes": rec_bytes, "unit": rec["unit"], "mode": rec["mode"], "cfg": cfg,
+            "baseline": now, "continuity_since_launch": cont, "unit_properties": props,
+            "host_config_file_sha256": rec["host_config_file_sha256"]}
 
 
-QHOST = {"monitor": None, "file": None}
+QHOST = {"monitor": None, "file": None, "started": None, "qh": None}
+QHOST_INTERVAL = 60.0
 
 
 def _qhost_abort(signum, frame) -> None:
-    """the monitor's signal: record Q-HOST FAIL and the failed summary, then exit; KillMode=control-group stops the
-    rest of the unit (the heavy jobs).  Nothing is retried or resumed (R4 B8)."""
+    """the monitor's signal: SIGKILL this process's own tree at once (C5: the heavy jobs ignore SIGTERM), record
+    Q-HOST FAIL and the failed summary, then exit; KillMode=control-group with KillSignal=SIGKILL stops anything left
+    in the unit.  Nothing is retried or resumed (R4 B8)."""
     try:
+        killed = H.kill_own_descendants()
         xwrite(ATT["dir"] / "QHOST_FAIL.json", json.dumps({"utc": utc(), "signal": signum, "monitor_file": str(
-            QHOST["file"])}, indent=1) + "\n")
-        xwrite(QDIR / "P309_QUALIFICATION.json", json.dumps({
-            "schema": "P309_QUALIFICATION/2", "attempt": ATT["dir"].name, "utc": utc(), "pass": False,
-            "reason": "Q-HOST: the host changed or cell-308 heavy work appeared during the run (OD-R2-5 (i))",
-            "retry_rule": "none (R4 B8; r2 P23)"}, indent=1, sort_keys=True) + "\n")
-        E.log("code/p309_qualify.py", "QUALIFICATION ABORTED BY Q-HOST (the attempt is preserved; no retry)",
+            QHOST["file"]), "descendants_killed": len(killed)}, indent=1) + "\n")
+        reason = "Q-HOST: the host changed or cell-308 heavy work appeared during the run (OD-R2-5 (i))"
+        if ATT["label"] == "host_rerun":
+            xwrite(ATT["dir"] / "QC10_HOST_RERUN.json", json.dumps({
+                "schema": "P309_HOST_RERUN/2", "utc": utc(), "pass": False, "reason": reason}, indent=1) + "\n")
+        else:
+            xwrite(QDIR / "P309_QUALIFICATION.json", json.dumps({
+                "schema": "P309_QUALIFICATION/2", "attempt": ATT["dir"].name, "utc": utc(), "pass": False,
+                "reason": reason, "retry_rule": "none (R4 B8; r2 P23)"}, indent=1, sort_keys=True) + "\n")
+        E.log("code/p309_qualify.py", f"{ATT['label'].upper()} ABORTED BY Q-HOST (the attempt is preserved; no retry)",
               klass="GOVERNANCE", notes="r2 P10")
     finally:
         os._exit(3)
 
 
 def start_qhost_monitor(qh: dict) -> None:
-    xwrite(ATT["dir"] / "QHOST_BASELINE.json", json.dumps({k: qh[k] for k in (
-        "record", "unit", "mode", "baseline", "continuity_since_launch")}, indent=1, sort_keys=True, default=str) + "\n")
-    QHOST["file"] = ATT["dir"] / "QHOST_MONITOR.jsonl"
+    """keep the start evidence in the attempt (C9), then start the monitor; its configuration goes on its standard
+    input, never on its command line"""
+    xwrite(ATT["dir"] / "LAUNCH_RECORD.json", qh["record_bytes"].decode())
+    props = json.dumps(qh["unit_properties"], indent=1, sort_keys=True) + "\n"
+    xwrite(ATT["dir"] / "UNIT_PROPERTIES.json", props)
+    xwrite(ATT["dir"] / "QHOST_BASELINE.json", json.dumps(dict({k: qh[k] for k in (
+        "record", "unit", "mode", "baseline", "continuity_since_launch", "host_config_file_sha256")},
+        launch_record_sha256=hashlib.sha256(qh["record_bytes"]).hexdigest(),
+        unit_properties_sha256=hashlib.sha256(props.encode()).hexdigest(), interval_s=QHOST_INTERVAL,
+        gap_tolerance_s=qh["cfg"]["monitor_gap_tolerance_s"]), indent=1, sort_keys=True, default=str) + "\n")
+    QHOST["file"], QHOST["qh"] = ATT["dir"] / "QHOST_MONITOR.jsonl", qh
     fh = open(os.open(QHOST["file"], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644), "w")
     signal.signal(signal.SIGTERM, _qhost_abort)
+    QHOST["started"] = time.time()
     QHOST["monitor"] = subprocess.Popen(
-        [PY, "-B", str(FNS / "code" / "p309_host.py"), "qhost-monitor", "--config-json", json.dumps(qh["cfg"]),
-         "--baseline-json", json.dumps(qh["baseline"]), "--parent", str(os.getpid()), "--interval", "60"],
-        stdout=fh, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL)
+        [PY, "-B", str(FNS / "code" / "p309_host.py"), "qhost-monitor", "--parent", str(os.getpid()), "--interval",
+         str(QHOST_INTERVAL)], stdout=fh, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, universal_newlines=True)
+    QHOST["monitor"].stdin.write(json.dumps({"cfg": qh["cfg"], "baseline": qh["baseline"]}))
+    QHOST["monitor"].stdin.close()
 
 
 def stop_qhost_monitor() -> dict:
-    """stop the monitor and read its rows: the run passes Q-HOST only if no row failed"""
-    mon = QHOST["monitor"]
+    """stop the monitor and judge Q-HOST: every sample passed, the monitor was alive at the stop and left no gap over
+    the interval plus the tolerance (C4), and a final sample still shows the same host (A15)"""
+    mon, qh = QHOST["monitor"], QHOST["qh"]
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)      # a late monitor signal must not kill the stop: its row still fails
+    alive = mon is not None and mon.poll() is None
+    stopped = time.time()
     if mon is not None:
-        signal.signal(signal.SIGTERM, signal.SIG_DFL)
         mon.terminate()
         try:
             mon.wait(timeout=30)
         except subprocess.TimeoutExpired:
             mon.kill()
     rows = [json.loads(l) for l in QHOST["file"].read_text().splitlines() if l.strip().startswith("{")]
-    return {"pass": bool(rows) and all(r.get("pass") for r in rows), "samples": len(rows),
-            "failed": [r for r in rows if not r.get("pass")][:3]}
+    live = H.monitor_liveness([r.get("t", 0) for r in rows], QHOST["started"], stopped, alive, QHOST_INTERVAL,
+                              qh["cfg"]["monitor_gap_tolerance_s"])
+    final = H.provenance(qh["cfg"])
+    fcont = H.continuity(qh["baseline"], final, qh["cfg"])
+    return {"pass": bool(rows) and all(r.get("pass") for r in rows) and live["pass"] and fcont["pass"],
+            "samples": len(rows), "failed": [r for r in rows if not r.get("pass")][:3], "liveness": live,
+            "final_sample": {"provenance": final, "continuity": fcont}}
 
 
 def items_table(m: Path, freeze: str, workers: int) -> dict:
@@ -484,15 +538,31 @@ def run_item(k: str, fn, freeze: str) -> dict:
 
 def host_rerun(workers: int) -> int:
     """rev. 2c A14 / delta D7: QC10 re-run on the owner-named host, before the grant commit.  Evidence goes to
-    qualification/host_rerun/<host id>/ (exclusive), which the grant window admits (rev. 2c A8 as amended)."""
-    freeze = D.recorded_freeze()
-    base = QDIR / "host_rerun"
-    base.mkdir(parents=True, exist_ok=True)
-    ATT["dir"] = base / D.G.host_id()[:16]
+    qualification/host_rerun/<host id>/ (exclusive), which the grant window admits (rev. 2c A8 as amended).
+    r2 (delta review C7): only through the launcher's host-rerun mode, under the exclusion gate and Q-HOST; every
+    refusal comes before the attempt directory and the HOST RERUN START line."""
+    try:
+        freeze = D.recorded_freeze()
+    except D.Refusal as exc:
+        print(f"HOST RERUN REFUSED: {exc}")
+        return 2
+    target = QDIR / "host_rerun" / D.G.host_id()[:16]
+    if target.exists():
+        print("HOST RERUN REFUSED: this host's re-run already exists (no retry; it is preserved)")
+        return 2
+    try:
+        qh = qhost_preflight(("host-rerun",))                 # r2 C7: before the attempt directory and the start line
+    except (H.HostError, OSError, ValueError, KeyError) as exc:
+        print(f"HOST RERUN REFUSED: Q-HOST: {exc}")
+        return 2
+    ATT["label"] = "host_rerun"
+    (QDIR / "host_rerun").mkdir(parents=True, exist_ok=True)
+    ATT["dir"] = target
     os.mkdir(ATT["dir"])                                      # exclusive per host id
     E.log("code/p309_qualify.py --host-rerun", f"{HOST_START} {D.G.host_id()[:16]} (rev. 2c A14 / delta D7)",
           klass="NONTARGET_DECOY", drifts=[["1/2", "37/72"]], notes="QC10 host re-run; the declared a2_h5 decoy")
     (ATT["dir"] / "evidence").mkdir()
+    start_qhost_monitor(qh)                                   # r2 C7: continuous Q-HOST sampling (<= 60 s)
     a = decoy_stage1a("QC08_HOST", workers)
     d = decoy_stage1a("QC10_HOST", workers)
     x = json.loads(a["out"].read_text()) if a["out"].exists() else {}
@@ -500,10 +570,13 @@ def host_rerun(workers: int) -> int:
     q08 = json.loads(git_show(f"{QDIR.relative_to(REPO)}/attempt_1/QC08_DECOY_STAGE1A.json") or "{}")
     same = lambda u, v: (sorted(c["sha256"] for c in u.get("certificates", [])) ==  # noqa: E731
                          sorted(c["sha256"] for c in v.get("certificates", [])) and u.get("verdicts") == v.get("verdicts"))
-    res = {"schema": "P309_HOST_RERUN/1", "freeze_commit": freeze, "utc": utc(), "host_id_sha256": D.G.host_id(),
+    qhost = stop_qhost_monitor()
+    xwrite(ATT["dir"] / "QHOST_SUMMARY.json", json.dumps(qhost, indent=1, sort_keys=True, default=str) + "\n")
+    res = {"schema": "P309_HOST_RERUN/2", "freeze_commit": freeze, "utc": utc(), "host_id_sha256": D.G.host_id(),
            "runtime": {"python": platform.python_version(), "platform": f"{sys.platform} {platform.machine()}"},
-           "runs": [a["run"], d["run"]], "pass": a["run"]["rc"] == 0 and d["run"]["rc"] == 0 and same(x, y)
-           and same(x, q08) and bool(x.get("certificates"))}
+           "runs": [a["run"], d["run"]], "qhost": {"unit": qh["unit"], "mode": qh["mode"], "pass": qhost["pass"]},
+           "pass": a["run"]["rc"] == 0 and d["run"]["rc"] == 0 and same(x, y)
+           and same(x, q08) and bool(x.get("certificates")) and qhost["pass"]}
     xwrite(ATT["dir"] / "QC10_HOST_RERUN.json", json.dumps(res, indent=1, sort_keys=True, default=str) + "\n")
     print(f"[{'PASS' if res['pass'] else 'FAIL'}] QC10 host re-run on {D.G.host_id()[:16]}")
     return 0 if res["pass"] else 1
@@ -540,7 +613,7 @@ def main() -> int:
         print("QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved)")
         return 2
     try:
-        qh = qhost_preflight()                                # r2 P10: before the attempt directory and RUN START
+        qh = qhost_preflight(("official", "drill"))         # r2 P10: before the attempt directory and RUN START
     except (H.HostError, OSError, ValueError, KeyError) as exc:
         print(f"QUALIFICATION REFUSED: Q-HOST: {exc}")
         return 2

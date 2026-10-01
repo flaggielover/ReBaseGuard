@@ -288,11 +288,30 @@ def check_bindings(m: dict, repo: Path = REPO) -> dict:
             bad.append(("commit", rel))
     if bad:
         raise Refusal("PIN_MISMATCH", f"{len(bad)} pins: {bad[:3]}")
-    rt = m["runtime"]
-    import platform
-    if (platform.python_version(), platform.python_implementation()) != (rt["python"], rt["implementation"]):
-        raise Refusal("RUNTIME", "interpreter differs from the frozen runtime")
+    rt, now = m["runtime"], runtime_identity()
+    if not now["interpreter_sha256"] or any(now[k] != rt.get(k) for k in RUNTIME_KEYS):
+        raise Refusal("RUNTIME", "the interpreter, its binary or glibc differs from the frozen runtime")
     return {"pins": len(pins), "manifest_sha256": m["_sha256"]}
+
+
+RUNTIME_KEYS = ("python", "implementation", "glibc", "interpreter_sha256")
+
+
+def runtime_identity() -> dict:
+    """the runtime facts the freeze manifest pins and check_bindings compares (r2 delta review C14; P15): the python
+    version and implementation, glibc, and the sha256 of the real interpreter binary"""
+    import platform
+    try:
+        glibc = os.confstr("CS_GNU_LIBC_VERSION")
+    except (AttributeError, ValueError, OSError):
+        glibc = None
+    try:
+        with open(os.path.realpath(sys.executable), "rb") as fh:
+            digest = hashlib.sha256(fh.read()).hexdigest()
+    except OSError:
+        digest = None
+    return {"python": platform.python_version(), "implementation": platform.python_implementation(), "glibc": glibc,
+            "interpreter_sha256": digest}
 
 
 def check_flags() -> None:

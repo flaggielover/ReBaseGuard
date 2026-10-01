@@ -59,8 +59,14 @@ T12 (r2 addendum 2, F1) no ref in either production namespace, anywhere: both r1
    both tokens are in the scanner's production_tokens
 T13 (r2 review P6(f)) the production read path is pinned: the call closure of recorded_freeze, check_grant, walk_chain
    and check_not_evaluated (driver functions, and guard functions and classes reached through G.<name>) equals config
-   production_read_path_pins, name for name and AST sha256 for AST sha256 (CPython 3.11); the pin tool never refreshes
-   them
+   production_read_path_pins, name for name and AST sha256 for AST sha256 (CPython 3.11); so do the module-level
+   constants that closure reads, directly or through another constant (production_read_path_constant_pins; delta
+   review A10); the pin tool never refreshes them
+T14 (r2 delta review C6; P10) the runner's Q-HOST order: in p309_qualify.py main() and host_rerun(), the qhost_preflight
+   call (with the modes each needs) and every refusal return come before the exclusive os.mkdir of the attempt
+   directory; the start line (RUN_START / HOST_START) is logged right after that mkdir; the Q-HOST monitor starts
+   before any item, mirror or decoy work, and is stopped before the summary; nothing returns between the mkdir and
+   the final return
 """
 from __future__ import annotations
 
@@ -95,6 +101,8 @@ SITES = ("_arm_marker", "_persist_pending")
 T11_REPORT_ONLY = {("tests/test_p309_guard.py", "<module>")}     # the guard tests' report line records git_head only
 T11_BASE_FUNCS = {("tests/test_p309_exactly_once.py", "sandbox_base"), ("verify/scoped_sandbox.py", "sandbox_base_commit")}
 T13_START = ("recorded_freeze", "check_grant", "walk_chain", "check_not_evaluated")
+T14_FUNCS = {"main": (("official", "drill"), "RUN_START", {"run_item", "mirror", "items_table"}),
+             "host_rerun": (("host-rerun",), "HOST_START", {"decoy_stage1a"})}
 SITE_CALLERS = {"run_execute", "after_marker", "run_seal_only"}
 
 
@@ -553,7 +561,8 @@ def t11(root: Path) -> dict:
     return {k: v for k, v in d.items()}
 
 
-def t12(root: Path) -> dict:
+def t12(root: Path, allow: dict = None) -> dict:
+    allow = allow if allow is not None else ALLOW
     dc = _consts(ast.parse((root / "code" / "p309_driver.py").read_text()))
     gt = ast.parse((root / "code" / "p309_guard.py").read_text())
     gc = _consts(gt)
@@ -564,7 +573,7 @@ def t12(root: Path) -> dict:
     tc = _func(gt, "TestContext.__init__")
     tc_names = {n.id for n in ast.walk(tc) if isinstance(n, ast.Name)} if tc else set()
     qq = _func(ast.parse((root / "code" / "p309_qualify.py").read_text()), "qc13")
-    toks = set(ALLOW["production_tokens"])
+    toks = set(allow["production_tokens"])
     return {"two_distinct_namespaces": bool(r1) and bool(r2) and r1 != r2
             and r1.endswith("-r1/") and r2.endswith("-r2/"),
             "both_start_with_prior_marker_pattern_0": bool(pfx) and r1.startswith(pfx) and r2.startswith(pfx),
@@ -580,37 +589,114 @@ def t12(root: Path) -> dict:
             "production_tokens_hold_both": bool(r1) and bool(r2) and r1.rstrip("/") in toks and r2.rstrip("/") in toks}
 
 
-def production_read_closure(root: Path) -> dict:
-    """name -> AST sha256 for the T13 call closure (driver functions; guard functions/classes reached as G.<name>)"""
+def _module_assigns(tree) -> dict:
+    """module-level NAME -> its (Ann)Assign node"""
+    out = {}
+    for n in tree.body:
+        targets = n.targets if isinstance(n, ast.Assign) else [n.target] if isinstance(n, ast.AnnAssign) else []
+        for t in targets:
+            for x in ast.walk(t):
+                if isinstance(x, ast.Name):
+                    out[x.id] = n
+    return out
+
+
+def production_read_nodes(root: Path) -> tuple:
+    """({key: node} of the T13 call closure, {key: node} of the module constants it reads, directly or through other
+    constants); keys are "<file>::<name>" """
     dt = ast.parse((root / "code" / "p309_driver.py").read_text())
     gt = ast.parse((root / "code" / "p309_guard.py").read_text())
     dtop = {n.name: n for n in dt.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
     gtop = {n.name: n for n in gt.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
-    seen, stack = {}, [("code/p309_driver.py", n) for n in T13_START]
+    dcon, gcon = _module_assigns(dt), _module_assigns(gt)
+    seen, consts, stack = {}, {}, [("code/p309_driver.py", n) for n in T13_START]
     while stack:
         f, name = stack.pop()
-        table = dtop if f == "code/p309_driver.py" else gtop
+        table, ctab = (dtop, dcon) if f == "code/p309_driver.py" else (gtop, gcon)
         key = f"{f}::{name}"
-        if key in seen or name not in table:
+        if key in seen or key in consts:
             continue
-        node = table[name]
-        seen[key] = hashlib.sha256(ast.dump(node).encode()).hexdigest()
+        if name in table:
+            node = seen[key] = table[name]
+        elif name in ctab:
+            node = consts[key] = ctab[name]
+        else:
+            continue
         for n in ast.walk(node):
-            if isinstance(n, ast.Name) and n.id in table:
+            if isinstance(n, ast.Name) and (n.id in table or n.id in ctab):
                 stack.append((f, n.id))
             elif f == "code/p309_driver.py" and isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) \
-                    and n.value.id == "G" and n.attr in gtop:
+                    and n.value.id == "G" and (n.attr in gtop or n.attr in gcon):
                 stack.append(("code/p309_guard.py", n.attr))
-    return seen
+    return seen, consts
 
 
-def t13(root: Path) -> dict:
-    now = production_read_closure(root)
-    pins = {f"{e['file']}::{e['name']}": e["ast_sha256"] for e in ALLOW.get("production_read_path_pins", {}).get(
+def production_read_closure(root: Path) -> dict:
+    """name -> AST sha256 for the T13 call closure (driver functions; guard functions/classes reached as G.<name>)"""
+    return {k: hashlib.sha256(ast.dump(v).encode()).hexdigest() for k, v in production_read_nodes(root)[0].items()}
+
+
+def production_read_constants(root: Path) -> dict:
+    """name -> AST sha256 of the module constants the T13 closure reads (A10)"""
+    return {k: hashlib.sha256(ast.dump(v).encode()).hexdigest() for k, v in production_read_nodes(root)[1].items()}
+
+
+def t13(root: Path, allow: dict = None) -> dict:
+    allow = allow if allow is not None else ALLOW
+    now, cnow = production_read_closure(root), production_read_constants(root)
+    pins = {f"{e['file']}::{e['name']}": e["ast_sha256"] for e in allow.get("production_read_path_pins", {}).get(
         "entries", [])}
+    cpins = {f"{e['file']}::{e['name']}": e["ast_sha256"] for e in allow.get(
+        "production_read_path_constant_pins", {}).get("entries", [])}
     return {"closure_nonempty": bool(now), "same_members": set(now) == set(pins),
             "same_hashes": bool(pins) and all(now.get(k) == v for k, v in pins.items()),
-            "changed": sorted(k for k in set(now) | set(pins) if now.get(k) != pins.get(k))[:10]}
+            "constants_nonempty": bool(cnow), "same_constant_members": set(cnow) == set(cpins),
+            "same_constant_hashes": bool(cpins) and all(cnow.get(k) == v for k, v in cpins.items()),
+            "changed": sorted(k for k in set(now) | set(pins) | set(cnow) | set(cpins)
+                              if {**now, **cnow}.get(k) != {**pins, **cpins}.get(k))[:10]}
+
+
+def _stmt_index(fn, pred) -> list:
+    """indices of fn's top-level statements containing a node for which pred holds"""
+    return [i for i, st in enumerate(fn.body) if any(pred(n) for n in ast.walk(st))]
+
+
+def _is_call(n, name: str) -> bool:
+    return isinstance(n, ast.Call) and ((isinstance(n.func, ast.Name) and n.func.id == name) or (
+        isinstance(n.func, ast.Attribute) and n.func.attr == name))
+
+
+def t14(root: Path) -> dict:
+    tree = ast.parse((root / "code" / "p309_qualify.py").read_text())
+    out = {}
+    for name, (modes, start, work) in T14_FUNCS.items():
+        fn = _func(tree, name)
+        if fn is None:
+            out[name] = {"defined": False}
+            continue
+        pre = [n for n in ast.walk(fn) if _is_call(n, "qhost_preflight")]
+        i_q = _stmt_index(fn, lambda n: _is_call(n, "qhost_preflight"))
+        i_m = _stmt_index(fn, lambda n: _is_call(n, "mkdir") and isinstance(n.func, ast.Attribute) and isinstance(
+            n.func.value, ast.Name) and n.func.value.id == "os" and n.args and "ATT" in ast.unparse(n.args[0]))
+        i_l = _stmt_index(fn, lambda n: _is_call(n, "log") and start in ast.unparse(n))
+        i_s = _stmt_index(fn, lambda n: _is_call(n, "start_qhost_monitor"))
+        i_x = _stmt_index(fn, lambda n: _is_call(n, "stop_qhost_monitor"))
+        i_w = _stmt_index(fn, lambda n: any(_is_call(n, w) for w in work))
+        i_r = _stmt_index(fn, lambda n: isinstance(n, ast.Return))
+        d = {"defined": True,
+             "one_preflight_with_modes": len(pre) == 1 and len(i_q) == 1 and ast.unparse(pre[0].args[0]) == repr(modes)
+             if pre and pre[0].args else False,
+             "one_attempt_mkdir": len(i_m) == 1, "one_start_log": len(i_l) == 1}
+        if all(d.values()):
+            m = i_m[0]
+            d.update({"preflight_before_mkdir": i_q[0] < m,
+                      "start_logged_right_after_mkdir": i_l[0] == m + 1,
+                      "refusal_returns_before_mkdir": all(i < m for i in i_r if i != len(fn.body) - 1),
+                      "final_statement_returns": isinstance(fn.body[-1], ast.Return),
+                      "monitor_starts_before_work": len(i_s) == 1 and bool(i_w) and i_l[0] < i_s[0] < min(i_w),
+                      "monitor_stopped_after_work": len(i_x) == 1 and bool(i_w) and i_x[0] > max(i_w)})
+        out[name] = d
+    return out
 
 
 def run(root: Path = FNS) -> dict:
@@ -694,8 +780,9 @@ def run(root: Path = FNS) -> dict:
     d12 = t12(root)
     R["T12_both_production_namespaces_forbidden"] = {"pass": all(d12.values()), "detail": d12}
     d13 = t13(root)
-    R["T13_production_read_path_pinned"] = {"pass": d13["closure_nonempty"] and d13["same_members"]
-                                            and d13["same_hashes"], "detail": d13}
+    R["T13_production_read_path_pinned"] = {"pass": all(v for k, v in d13.items() if k != "changed"), "detail": d13}
+    d14 = t14(root)
+    R["T14_qhost_refusals_before_the_attempt"] = {"pass": all(all(v.values()) for v in d14.values()), "detail": d14}
     return R
 
 

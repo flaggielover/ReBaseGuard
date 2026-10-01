@@ -29,8 +29,11 @@ nothing is saved on the worker. For example, read it through the session's GitHu
 **The command.** Run it on the worker's system Python:
 
 ```text
-python3 - audit --config-json '{"p309_roots": ["<planned P309 root path>"], "foreign_roots": ["<cell-308 checkout path, as given by the owner or the cell-308 operator>"], "foreign_patterns": ["cell[_-]?308"]}'
+python3 - audit --config-json '{"p309_roots": ["<planned P309 root path>"], "foreign_roots": ["<cell-308 checkout path, as given by the owner or the cell-308 operator>"], "foreign_patterns": ["cell[_-]?308"], "foreign_heavy_patterns": ["<cell-308 heavy-job command patterns, from the cell-308 operator>"]}'
 ```
+
+The rows of the audit carry each tagged process's uid. Together with the cell-308 operator, they establish the
+`foreign_uids` for §3.1. The audit itself does not need them: without them, it reports what it can see.
 
 **What the audit records:**
 * **Identities:** hostname, machine-id and instance id, each as sha256 only.
@@ -42,8 +45,8 @@ python3 - audit --config-json '{"p309_roots": ["<planned P309 root path>"], "for
   opener with 1 s timeouts.
 * **/proc visibility:** hidepid, and whether foreign processes are visible.
 * **ReBaseGuard processes:** counts by tag; for each, pid, uid, CPU fraction and command-line sha256 only.
-* **The cell-308 checkout:** only a `stat()` of its top directory, recorded as a hash, and whether this user could
-  read it.
+* **The cell-308 checkout:** only a `stat()` of its top directory, recorded as a hash, whether it is world-readable
+  (a boolean; delta review A9), and whether this user could read it.
 
 **Return.** The JSON goes on standard output. The session returns it to the coordinator, who commits it as
 `evidence/host/AUDIT_<utc>.json` in the r2 branch.
@@ -75,9 +78,9 @@ Every item below changes the host and needs consent:
 | volume / quota | at least 40 GB free on the P309 roots | mutating if new storage |
 | clone | `git clone --single-branch --branch claude/p5y-k5-cell309-p309-r2 <repository URL>` in the P309 user's home; full history; no alternates; credential kept outside the repository config | P309 files only |
 | interpreter | CPython 3.11.15 built or installed under the P309 user's home (the system Python untouched); record path, sha256 and glibc | P309 files only |
-| launch privilege | a sudo or polkit rule letting the P309 user start only `systemd-run` units named `p309-r2-*` (and `systemctl list-units`) | mutating, privileged |
+| launch privilege | a **polkit** rule letting the P309 user start (and reset, if failed) only transient system units named `p309-r2-*`. The launcher calls `systemd-run` directly, so a sudo rule is never used. `systemctl list-units` and `systemctl show` are read-only and need no rule | mutating, privileged |
 | durability holds | automatic reboot off and upgrades held for each window | mutating; host-wide; the cell-308 operator must agree |
-| host config | `~p309/p309_host_config.json` (not in the repository): §3.1 | P309 files only |
+| host config | `~p309/p309_host_config.json` (not in the repository; readable by the P309 user, not world-writable): §3.1. The launch record binds its sha256, and the run refuses if its bytes change before the runner reads it (`P309_HOST_CONFIG`) | P309 files only |
 
 ### 3.1 The host configuration (every key is required unless marked; unknown keys are refused)
 
@@ -87,10 +90,13 @@ Every item below changes the host and needs consent:
  "foreign_roots": ["<the cell-308 checkout path(s) given by the owner or the cell-308 operator>"],
  "foreign_patterns": ["cell[_-]?308"],
  "foreign_heavy_patterns": ["<command patterns of cell-308 heavy jobs, from the cell-308 operator>"],
+ "foreign_uids": [1000],
  "load_baseline": 0.0,
  "load_margin": 0.5,
  "heavy_cpu_fraction": 0.05,
  "monitor_heavy_cpu_fraction": 0.5,
+ "monitor_aggregate_cpu_fraction": 1.0,
+ "monitor_gap_tolerance_s": 30,
  "ram_floor_gb": 8,
  "disk_floor_gb": 40,
  "min_cpus": 4,
@@ -114,8 +120,22 @@ Every item below changes the host and needs consent:
 * **`heavy_cpu_fraction`** is the start gate's strict threshold: any cell-308 process above it, or newly
   appeared, blocks the start. **`monitor_heavy_cpu_fraction`** is the in-run Q-HOST threshold (heavy work only;
   OD-R2-5 (i)).
-* **`foreign_heavy_patterns`** are the cell-308 job command patterns. They are matched in memory only and never
-  recorded.
+* **`foreign_heavy_patterns`** are the cell-308 job command patterns. They are matched in memory only. Every record
+  holds them as sha256 only: the launch record, the attempt's copy of it, and the unit properties. The monitor receives
+  its configuration on standard input, never on its command line (delta review C9).
+* **`foreign_uids`** (the `1000` above is only an example; the real value is the cell-308 campaign's uid or uids,
+  established from the 8a audit's rows with the cell-308 operator) must be non-empty, and must not hold the P309 user's uid: the gate refuses otherwise (delta
+  review C2). Under the separate P309 user, a cell-308 process's working directory cannot be read, so it is
+  recognised by its uid, its command line, or as **unattributable**:
+  * an unattributable process is one of another non-root user whose working directory cannot be read;
+  * it counts as foreign at the gate and in the monitor.
+
+  If cell 308 runs as root, its uid 0 must be listed. Every root process then counts as foreign. Kernel threads do
+  not count.
+* **`monitor_aggregate_cpu_fraction`**: the in-run monitor also fails when foreign and unattributable processes
+  together use more than this many cores (A8).
+* **`monitor_gap_tolerance_s`**: Q-HOST fails when any gap between the monitor's start, its samples and its stop
+  exceeds the interval (60 s) plus this tolerance, or when the monitor is dead at the stop (C4).
 * **`memory_max`** must leave cell 308 its working memory. It is agreed under OD-R2-4.
 * **`p309_repo`** and **`require_empty_scratch`** are set by the launcher itself.
 
@@ -141,15 +161,18 @@ Both must pass. Preserve their JSON in `evidence/host/`.
 P309_SCRATCH_ROOT=<fresh dir> P309_FOREIGN_ROOTS=<cell-308 paths> python3.11 -B code/p309_launch.py --mode drill --host-config ~/p309_host_config.json
 ```
 
+The launcher refuses at once if the unit user is root, owns a foreign root, or is a configured cell-308 uid (A16).
+
 **What the launcher does.** It refuses unless all of these pass:
 * the scratch root;
 * the durability preflight;
 * the exclusion gate (60 s sample);
 * the isolation check;
-* no loaded `p309-r2-*` unit.
+* no loaded `p309-r2-*` unit (a failing `systemctl` is a blocker).
 
-It then writes `launch_<utc>.json` exclusively and starts **one** transient unit `p309-r2-drill-<utc>`:
-* `Restart=no`, `KillMode=control-group`;
+It then writes `launch_<utc>.json` exclusively (§8) and starts **one** transient unit `p309-r2-drill-<utc>`:
+* `Restart=no`, `KillMode=control-group`, `KillSignal=SIGKILL`, `SendSIGKILL=yes`, `TimeoutStopSec=10s` (the heavy
+  jobs ignore SIGTERM; delta review C5);
 * MemoryMax, OOMScoreAdjust, low CPU/IO weight;
 * ProtectSystem=strict, PrivateTmp, NoNewPrivileges;
 * InaccessiblePaths for the foreign roots.
@@ -159,16 +182,22 @@ It never retries.
 **What happens inside the unit:**
 * the drill clones the committed branch under the scratch root;
 * it builds F' and FR';
-* it runs the clone's runner `main()`, which passes Q-HOST because the record names this unit and the host is
-  unchanged;
-* then the controls run.
+* it runs the clone's runner `main()`. That passes Q-HOST because the record names this unit, the configuration
+  file's bytes match the record, the unit's effective properties (`systemctl show`) are the launcher's, and the host
+  is unchanged;
+* then the host functions run (including `tests/test_p309_host_controls.py`, whose cross-uid case needs root and is
+  recorded as not applicable under the P309 user), and then the controls.
 
 **The runner's Q-HOST monitor:**
 * samples every ≤ 60 s for continuity (boot, machine-id, hostname, instance, interpreter, glibc, suspend);
 * also samples cell-308 or other ReBaseGuard heavy activity outside the unit's cgroup;
-* on any failure it records QHOST FAIL, the attempt ends, and the unit's remaining processes are stopped by
-  `KillMode=control-group`;
-* there is no retry, and the drill is reported as FAIL.
+* on any failure it signals the runner. The runner SIGKILLs its own process tree at once, records QHOST FAIL and
+  exits 3;
+* the drill then stops at once: no witness, host function or control runs after it. It reports FAIL and exits, and
+  the unit's KillMode=control-group with SIGKILL stops anything left;
+* at the end, Q-HOST also requires the monitor to have been alive at the stop with no gap over the limit, and a final
+  sample to show the same host;
+* there is no retry.
 
 **Watching:** `journalctl -u p309-r2-drill-<utc> -f` (read-only).
 
@@ -203,4 +232,46 @@ Each of these needs its owner decision first:
 * the freeze **on the worker** (step 10: single writer, clocks synchronised, the frozen tree ids equal to those
   reviewed and drilled), after OD-R2-0;
 * the single official qualification through `code/p309_launch.py --mode official`;
-* any grant (never part of this package).
+* QC10's host re-run on an owner-named execution host, only through `code/p309_launch.py --mode host-rerun` (exclusion
+  gate and Q-HOST; delta review C7);
+* any grant (never part of this package). On a host shared with another campaign, `execute` is not gated by these
+  bytes. It may run there only after the reviewed amendment that `governance/P309_R2_AMENDMENTS.md` §C requires.
+
+## 8. The launch record (`<P309_SCRATCH_ROOT>/launch_<utc>.json`, schema `P309_R2_LAUNCH/2`)
+
+**How it is written.** The launcher writes it exclusively (`open(..., "x")`): one record per launch, never
+overwritten. It is written before any unit starts, and also when the launch is blocked. It is **redacted** (delta
+review C9): foreign roots, `foreign_patterns` and `foreign_heavy_patterns` appear only as sha256.
+
+| field | content |
+|---|---|
+| `schema`, `utc`, `mode` | `P309_R2_LAUNCH/2`; the write time; `drill`, `official` or `host-rerun` |
+| `unit` | `p309-r2-drill-<utc>`, `p309-r2-qualify-<utc>` or `p309-r2-hostrerun-<utc>`; the mode fixes the name |
+| `host_config` | the validated configuration as the launcher used it (`p309_repo` and `require_empty_scratch` set by the launcher), redacted |
+| `host_config_sha256` | the sha256 of that configuration before redaction (canonical JSON) |
+| `host_config_file`, `host_config_file_sha256` | the configuration file's path and the sha256 of its bytes |
+| `launch_settings` | the six unit settings (`unit_user`, `unit_group`, `memory_max`, `oom_score_adjust`, `cpu_weight`, `io_weight`) |
+| `scratch_root` | the validated `P309_SCRATCH_ROOT`; it must be empty for `official` and `host-rerun` |
+| `preflight` | the full `durability_preflight` document, including `provenance`, the Q-HOST launch baseline |
+| `gate` | the full `exclusion_gate` document (60 s sample; processes as pid, uid, tag, CPU fraction and cmdline sha256 only) |
+| `isolation` | the full `isolation` document (foreign roots as a stat hash, world-readability and readability only) |
+| `p309_units_loaded` | the loaded `p309-r2-*` units; must be `[]`; `null` if `systemctl` is absent or failed |
+| `argv` | the `systemd-run` argv with every property and environment variable, foreign roots redacted |
+| `blockers` | the failed sections; empty means the unit was started |
+
+**How the runner uses it.** The runner's Q-HOST preflight reads this record through `P309_LAUNCH_RECORD`. Before any
+attempt directory or start line exists, it refuses unless all of these hold:
+* the record and the run's scratch root lie under `scratch_root`;
+* `blockers` is empty, and `mode` is the one the invocation needs (`official` or `drill` for the run, `host-rerun`
+  for the host re-run);
+* `mode` fits the repository;
+* the process runs in `unit`, and that unit's effective properties are the launcher's;
+* the file named by `P309_HOST_CONFIG` has `host_config_file_sha256`, and gives `host_config_sha256`;
+* the instance id, if the launch read one, is read again;
+* continuity holds against `preflight.provenance`.
+
+**Evidence.**
+* The official run and the host re-run copy the record into their attempt (`LAUNCH_RECORD.json`), together with the
+  unit's effective properties (`UNIT_PROPERTIES.json`). Their sha256 values are in `QHOST_BASELINE.json`.
+* The worker-tier drill embeds the record and the unit properties in `DRILL_REPORT.json`.
+* The record is never edited.

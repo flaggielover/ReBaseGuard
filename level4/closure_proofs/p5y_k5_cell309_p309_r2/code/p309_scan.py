@@ -74,7 +74,7 @@ FORMAL_KINDS = {"MARKER_MUTATION", "MARKER_ALIAS", "MARKER_REBIND", "GRANT_WRITE
                 "MARKER_TOKEN", "REF_FILE_WRITE"}
 PROCESS_KINDS = {"PROCESS_FORBIDDEN", "PROCESS_SHELL", "PROCESS_UNLISTED", "PROCESS_ALIAS", "RUNNER_ALIAS",
                  "DYNAMIC_IMPORT", "DYNAMIC_EXEC", "GIT_OPTION_FORBIDDEN", "GIT_CALL_OPAQUE", "GIT_WRITE_UNLISTED",
-                 "GITDIR_WRITE", "IMPORT_UNLISTED", "INTROSPECTION", "ENV_UNLISTED"}
+                 "GITDIR_WRITE", "IMPORT_UNLISTED", "INTROSPECTION", "ENV_UNLISTED", "SIGNAL_UNLISTED", "SIGNAL_ALIAS"}
 
 
 def _atoms(node) -> set:
@@ -405,6 +405,10 @@ OS_PROC_PREFIX = ("exec", "spawn", "posix_spawn")
 SUBPROCESS_RUN = {"run", "Popen", "call", "check_call", "check_output"}
 SUBPROCESS_DATA = {"DEVNULL", "PIPE", "STDOUT", "CalledProcessError", "TimeoutExpired", "CompletedProcess",
                    "SubprocessError"}
+# r2 delta review A7: sending a signal is allowed only in a reviewed function with the permit 'signal' (a self-signal,
+# os.kill(os.getpid(), ...), excepted); the signal-sending names may not be imported or bound as values
+SIGNAL_FUNCS = {"os": {"kill", "killpg"}, "posix": {"kill", "killpg"}, "signal": {"pthread_kill", "pidfd_send_signal"}}
+SIGNAL_METHODS = {"send_signal", "terminate", "kill"}
 GITDIR_NAMES = {"git_dir", "git_dir_of", "_git_dir", "gitdir", "GIT_DIR", "common_dir", "_common_dir"}
 GITDIR_OPTS = {"--git-dir", "--git-common-dir", "--absolute-git-dir", "--git-path"}
 REF_LAST = {"packed-refs", "HEAD", "ORIG_HEAD", "FETCH_HEAD", "MERGE_HEAD", "config"}
@@ -883,6 +887,22 @@ def _argv_info(n: ast.Call, fc: FileCtx, root: Path, argv, runner=None) -> dict:
     return {"kind": "argv", "opaque": f"program {ast.unparse(elts[0])[:40]} is not git or python"}
 
 
+def _signal_send(n: ast.Call, fc) -> str | None:
+    """A7: a call that sends a signal (os.kill, os.killpg, signal.pthread_kill, signal.pidfd_send_signal, or a
+    .send_signal/.terminate/.kill method call), or None; os.kill(os.getpid(), ...) is a self-signal and not counted"""
+    f = n.func
+    if not isinstance(f, ast.Attribute):
+        return None
+    if isinstance(f.value, ast.Name) and fc.mod_alias.get(f.value.id) in SIGNAL_FUNCS:
+        mod = fc.mod_alias[f.value.id]
+        if f.attr not in SIGNAL_FUNCS[mod]:
+            return None
+        if f.attr == "kill" and n.args and ast.unparse(n.args[0]) == "os.getpid()":
+            return None
+        return f"{mod}.{f.attr}"
+    return f".{f.attr}()" if f.attr in SIGNAL_METHODS else None
+
+
 def reviewed(rel: str, owner, permit: str, tree=None) -> bool:
     if owner is None or (tree is not None and not _unique_owner(tree, owner)):
         return False
@@ -913,12 +933,17 @@ def process_rules(tree, rel: str, root: Path, recurse=None) -> list:
             if m0 in ("subprocess", "pty", "importlib", "builtins") or (m0 in ("os", "posix") and any(
                     x == "*" or x in OS_PROC or x.startswith(OS_PROC_PREFIX) for x in names)):
                 rec(n, "PROCESS_ALIAS", f"from {n.module} import {sorted(names)}")
+        if isinstance(n, ast.ImportFrom) and n.module in SIGNAL_FUNCS and (
+                {a.name for a in n.names} & (SIGNAL_FUNCS[n.module] | {"*"})):
+            rec(n, "SIGNAL_ALIAS", f"from {n.module} import {sorted(a.name for a in n.names)}")
         if isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and id(n) not in call_funcs:
             mod = fc.mod_alias.get(n.value.id)
             if (mod == "subprocess" and n.attr not in SUBPROCESS_DATA) or (
                     mod in ("os", "posix") and (n.attr in OS_PROC or n.attr.startswith(OS_PROC_PREFIX)
                                                  or n.attr == "__dict__")) or (mod == "pty" and n.attr == "spawn"):
                 rec(n, "PROCESS_ALIAS", f"{mod}.{n.attr} used as a value")
+            if mod in SIGNAL_FUNCS and n.attr in SIGNAL_FUNCS[mod]:
+                rec(n, "SIGNAL_ALIAS", f"{mod}.{n.attr} used as a value")
         if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load) and id(n) not in attr_values and \
                 fc.mod_alias.get(n.id) in ("subprocess", "pty"):
             rec(n, "PROCESS_ALIAS", f"the {fc.mod_alias[n.id]} module used as a value")
@@ -928,6 +953,9 @@ def process_rules(tree, rel: str, root: Path, recurse=None) -> list:
             rec(n, "RUNNER_ALIAS", f"the git runner {ast.unparse(n)} used as a value")
         if not isinstance(n, ast.Call):
             continue
+        sig = _signal_send(n, fc)
+        if sig is not None and not (site or reviewed(rel, o, "signal", tree)):
+            rec(n, "SIGNAL_UNLISTED", f"{(o or ('<module>',))[0]}: {sig}")
         c = _callee(n)
         if isinstance(n.func, ast.Name) and c in ("getattr", "setattr", "vars", "delattr", "hasattr") and n.args and \
                 isinstance(n.args[0], ast.Name) and fc.mod_alias.get(n.args[0].id) in PROC_MODULES:

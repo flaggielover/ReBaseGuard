@@ -198,6 +198,22 @@ R2_REVIEWS = {
 }
 
 
+OD_R2_6_ANSWER = "governance/OWNER_OD_R2_6_ANSWER.json"   # written only from the owner's own OD-R2-6 answer
+
+
+def proposed_execution_host() -> dict:
+    """r2 delta review C8: the frozen proposal names an execution host only if the owner has answered OD-R2-6 (a
+    governance file holding that answer); otherwise it names none.  It never defaults to the freeze host."""
+    p = FNS / OD_R2_6_ANSWER
+    if p.exists():
+        a = json.loads(p.read_text())
+        return {"named": True, "source": NS + OD_R2_6_ANSWER, "source_sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
+                "description": a["description"], "host_id_sha256": a.get("host_id_sha256"),
+                "shared_host": bool(a.get("shared_host"))}
+    return {"named": False, "description": "no execution host is proposed: owner decision OD-R2-6 was not answered "
+                                           "when this freeze was made; the owner names the host in the grant"}
+
+
 def git(*a) -> str:
     return subprocess.run(["git", "-C", str(REPO), *a], capture_output=True, text=True, check=True).stdout.strip()
 
@@ -346,8 +362,11 @@ def build() -> dict:
                                          "ledger/CHECKPOINT_PUSHES.jsonl", "handoff/", "qualification/host_rerun/"],
                         "freeze_record": NS + "ledger/FREEZE_RECORD.json",
                         "nothing_between_grant_and_execute": True},
-        "qualification_rule": "one complete run (qualification/attempt_1, O_EXCL); no retry, no resumption (A27); "
-                              "gates Q01-Q17, Q-U2, Q-D5",
+        "qualification_rule": "one complete run (qualification/attempt_1, O_EXCL), started only through "
+                              "code/p309_launch.py --mode official; no retry, no resumption (A27); gates Q01-Q17, "
+                              "Q-U2, Q-D5 and Q-HOST (r2: the exclusion gate, isolation and durability preflight at "
+                              "the launch; the Q-HOST preflight before the attempt; the in-run monitor, its liveness "
+                              "and a final same-host sample)",
         "driver": {"path": NS + "code/p309_driver.py", "sha256": hashlib.sha256(driver).hexdigest()},
         "u2": {"incident_review_finding": "U2_FINDING: NOT_TRIGGERED_WORDING_DISCREPANCY",
                "u2_check_verdict": "U2_CP_ESTABLISHED",
@@ -358,16 +377,18 @@ def build() -> dict:
                                   "motivation are NOT independent (MEDIUM-HIGH, upper end)",
         "disclosed_liabilities": DISCLOSED_LIABILITIES + R2_DISCLOSED_LIABILITIES,
         "efficacy": "UNKNOWN BY DESIGN; no decoy output is used to predict Gamma309 or SRK's efficacy at 309",
-        "proposed_execution_host": {"description": "this isolated cloud environment (rev. 2c A14)",
-                                    "host_id_sha256": G.host_id()},
+        "proposed_execution_host": proposed_execution_host(),
         "post_grant_derivations": {
             "cell_interval": "derived by execute itself from the pinned cells.json (the canonical sum form), after "
                              "check_grant; the grant's value must equal it (rev. 2c A20); the proposal tool reads it "
                              "after the qualification review, ledgered (C4). Disclosed departure: FE-9's pre-freeze "
                              "in-memory equality check parsed it, no value displayed (delta-2 E3)",
             "drift_hull_Ew": "srk_certify.cell_blocks(cell_interval)[0]: the outward 2^-10 dyadic hull",
-            "execution_host": "the host the owner names in the grant; if it is not the proposed host, QC10's host "
-                              "re-run is repeated there before execute",
+            "execution_host": "the host the owner names in the grant; unless it is the host of the qualification "
+                              "attempt, QC10's host re-run is repeated there before execute, only through "
+                              "code/p309_launch.py --mode host-rerun (exclusion gate and Q-HOST); on a host shared with "
+                              "another campaign, execute itself is not gated by these bytes, so it may run there only "
+                              "after a reviewed amendment (P309_R2_AMENDMENTS, the execute gating rule)",
             "not_after_utc": "the grant's expiry, set by the owner: at least 14 days after execute starts (rev. 2c "
                              "A21, checked before the marker); a run longer than the horizon turns the per-call expiry "
                              "check into EXECUTION_INDETERMINATE or a silent SRK loss (delta-2 E7)"},

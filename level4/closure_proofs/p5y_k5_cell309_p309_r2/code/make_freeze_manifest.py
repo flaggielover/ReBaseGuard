@@ -99,11 +99,28 @@ def build() -> dict:
             "built_utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "built_at_head": git("rev-parse", "HEAD").strip(),
             "candidate_manifest": pin(CANDIDATE),
-            "runtime": {"python": platform.python_version(), "implementation": platform.python_implementation(),
-                        "platform": f"{sys.platform} {platform.machine()}", "host_id_sha256": G.host_id(),
-                        "stdlib_only": True, "workers_max": 4},
+            "runtime": dict(runtime_identity(), platform=f"{sys.platform} {platform.machine()}",
+                            host_id_sha256=G.host_id(), stdlib_only=True, workers_max=4),
             "verifier_settings": {"taylor_order_N": 8, "max_depth": 24, "procs": 1},
             "code_pins": code_pins, "data_pins": data}
+
+
+def runtime_identity() -> dict:
+    """the runtime the driver's check_bindings compares (r2 delta review C14; P15): the python version and
+    implementation, glibc, and the sha256 of the real interpreter binary.  The same computation as
+    p309_driver.runtime_identity (tests/test_p309_host_controls.py checks that both agree)."""
+    import os
+    try:
+        glibc = os.confstr("CS_GNU_LIBC_VERSION")
+    except (AttributeError, ValueError, OSError):
+        glibc = None
+    try:
+        with open(os.path.realpath(sys.executable), "rb") as fh:
+            digest = hashlib.sha256(fh.read()).hexdigest()
+    except OSError:
+        digest = None
+    return {"python": platform.python_version(), "implementation": platform.python_implementation(), "glibc": glibc,
+            "interpreter_sha256": digest}
 
 
 if __name__ == "__main__":

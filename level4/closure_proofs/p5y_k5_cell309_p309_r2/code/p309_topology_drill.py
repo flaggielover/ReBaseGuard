@@ -7,8 +7,9 @@ Development evidence, never qualification evidence.  The runner gains no drill m
 that are later frozen, from a clone of the committed branch.
 
 1. A scratch clone of the P309 repository's committed branch under <P309_SCRATCH_ROOT>/drill_<utc>/clone.  The
-   drill refuses unless all of these hold: the clone lies under the drill root; its git common dir differs from the P309
-   repository's; it has no remote, no push URL and no remote.pushDefault.
+   drill refuses unless all of these hold: the P309 namespace's working tree is clean (the drill imports the host
+   package from it; A4); the clone lies under the drill root; its git common dir differs from the P309 repository's;
+   it has no remote, no push URL and no remote.pushDefault.
 2. In the clone only:
    * the unmodified generators and the placeholder check make a synthetic freeze F';
    * its record-only child FR' records F' (ledger/FREEZE_RECORD.json);
@@ -24,14 +25,20 @@ that are later frozen, from a clone of the committed branch.
 5. Items:
    * cloud tier: every item except QC06, QC08, QC09 and QC10, each in its own subprocess through the runner's
      items_table() and run_item() (F3);
-   * worker tier: the runner's main() through the launch unit (P14).
+   * worker tier: the runner's main() through the launch unit (P14).  If Q-HOST aborts the runner (exit 3, or
+     QHOST_FAIL.json in the attempt), the runner has already SIGKILLed its own tree and the drill stops at once: no
+     witness, host function or control runs after it (review C5).  The report embeds the (redacted) launch record and
+     the unit's effective properties.
    After each runner call, the changes it left (against the clone's HEAD at the call) must lie in qualification/ and
    the execution and exposure ledgers (F5).
 6. Host functions (F3): the clone's p309_host.py provenance (twice, then continuity) and preflight, and the
-   clone's tests/test_p309_host.py (the host package's and launcher's decision tests).  The preflight is
-   expected to FAIL on the cloud tier and to PASS on the worker tier.  The r1-tree check runs as well.
+   clone's tests/test_p309_host.py (the host package's and launcher's decision tests), tests/test_p309_host_controls.py
+   (the P9-P11 controls on the real /proc, the launcher and the runner's Q-HOST refusals; review C11) and
+   tests/test_p309_static_controls.py (QC12 T11-T14 negative controls; review C10).  The preflight is expected to FAIL
+   on the cloud tier and to PASS on the worker tier.  The r1-tree check runs as well.
 7. Controls, each of which must fail as stated:
-   * R2-M01a: the r1 base (HEAD) with the pre- and postconditions removed; QC11 fails with FREEZE_RECORD refusals;
+   * R2-M01a: the r1 base (HEAD) with the pre- and postconditions removed; QC11 fails with the uncaught refusal
+     line `p309_driver.Refusal: FREEZE_RECORD` (A2);
    * R2-M01b: the r1 base (HEAD) with the conditions kept; the harness raises "QC11 harness" (fail loud);
    * a planted second freeze-record commit: recorded_freeze refuses (FREEZE_RECORD);
    * the TEST-only prior ref refs/p5y-k5-cell309-TEST-ONLY-prior/x: check_not_evaluated refuses (CONSUMED).  No ref
@@ -45,6 +52,9 @@ that are later frozen, from a clone of the committed branch.
      qualification output file is copied;
    * one GOVERNANCE row in the official FNS2 ledger.
    The drill root is then deleted (unless --keep).
+
+The ledger verdict also requires completeness (A3): one RUN START row, and rows from every script the items and host
+functions must log.
 
 Exit 0 iff every step, witness and control holds.  NEW Γ309 TARGET EVALUATIONS = 0 by construction: nothing here
 reads a target input or evaluates a quarantined cell.
@@ -85,7 +95,10 @@ GIT_ENV = {"LC_ALL": "C", "GIT_PAGER": "cat", "GIT_TERMINAL_PROMPT": "0", "GIT_C
            "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_OPTIONAL_LOCKS": "0", "PATH": "/usr/bin:/bin",
            "GIT_AUTHOR_NAME": "p309-r2-drill", "GIT_AUTHOR_EMAIL": "p309-r2-drill@invalid",
            "GIT_COMMITTER_NAME": "p309-r2-drill", "GIT_COMMITTER_EMAIL": "p309-r2-drill@invalid"}
-INHERIT = ("P309_LAUNCH_RECORD", "INVOCATION_ID", "P309_FOREIGN_ROOTS", "LC_ALL", "PATH", "HOME")
+INHERIT = ("P309_LAUNCH_RECORD", "P309_HOST_CONFIG", "INVOCATION_ID", "P309_FOREIGN_ROOTS", "LC_ALL", "PATH", "HOME")
+LEDGER_REQUIRED = ("code/p309_qualify.py", "code/p309_static_check.py", "code/p309_rehearse.py",
+                   "tests/test_p309_exactly_once.py", "tests/test_p309_guard.py", "verify/run_verify_all_scoped.py",
+                   "tests/test_p309_host.py", "tests/test_p309_host_controls.py", "tests/test_p309_static_controls.py")
 
 # the python -c programs run in the clone (literal: the scanner parses and checks them)
 ITEM_CODE = """
@@ -249,6 +262,8 @@ def run_items(clone: Path, scratch: Path, tier: str) -> dict:
         s = json.loads(summary.read_text()) if summary.exists() else {}
         out["main"] = {"rc": r["rc"], "wall_s": r["wall_s"], "pass": bool(s.get("pass")), "gates": s.get("gates"),
                        "head_unchanged": git(clone, "rev-parse", "HEAD") == head, "confined": confined(left)}
+        if r["rc"] == 3 or (clone / NS_REL / "qualification" / "attempt_1" / "QHOST_FAIL.json").exists():
+            raise DrillError("Q-HOST aborted the runner; the drill stops at once (review C5): " + json.dumps(out["main"]))
         return out
     for k in CLOUD_ITEMS:
         head = git(clone, "rev-parse", "HEAD")
@@ -294,7 +309,8 @@ def controls(clone: Path, scratch: Path, drill_root: Path, topo: dict) -> dict:
     rb = run_py([sys.executable, "-B", str(tests / "drill_mutant_M01b.py")], clone, scratch, timeout=4 * 3600)
     pb.unlink()
     ta, tb = ra["stdout"] + ra["stderr"], rb["stdout"] + rb["stderr"]
-    c["R2_M01a"] = {"rc": ra["rc"], "caught": ra["rc"] != 0 and "FREEZE_RECORD" in ta, "tail": ta[-400:]}
+    c["R2_M01a"] = {"rc": ra["rc"], "caught": ra["rc"] != 0 and "\np309_driver.Refusal: FREEZE_RECORD: " in ta,
+                    "tail": ta[-400:]}
     c["R2_M01b"] = {"rc": rb["rc"], "caught": rb["rc"] != 0 and "QC11 harness" in tb, "tail": tb[-400:]}
     tip = git(clone, "rev-parse", "HEAD")
     record_bytes = (clone / RECORD_REL).read_bytes()
@@ -331,19 +347,29 @@ def host_functions(clone: Path, scratch: Path, tier: str) -> dict:
     a = run_py([sys.executable, "-B", str(code / "p309_host.py"), "provenance"], clone, scratch)
     b = run_py([sys.executable, "-B", str(code / "p309_host.py"), "provenance"], clone, scratch)
     pcfg = {"p309_repo": str(clone), "p309_roots": [str(clone)]}
-    if tier == "worker":                       # the worker's real host configuration, as the launcher recorded it
+    if tier == "worker":                       # the worker's real host configuration file, as the launch record binds it
         rec = json.loads(Path(os.environ["P309_LAUNCH_RECORD"]).read_text())
-        pcfg = dict(rec["host_config"], p309_repo=str(clone), require_empty_scratch=False)
+        if H.file_sha256(os.environ["P309_HOST_CONFIG"]) != rec["host_config_file_sha256"]:
+            raise DrillError("the host configuration file differs from the one the launch record binds")
+        pcfg = H.load_launch_config(os.environ["P309_HOST_CONFIG"], str(clone), False)[0]
     pf = run_py([sys.executable, "-B", str(code / "p309_host.py"), "preflight", "--config-json", json.dumps(pcfg)],
                 clone, scratch)
     ht = run_py([sys.executable, "-I", "-S", "-B", str(clone / NS_REL / "tests" / "test_p309_host.py")], clone, scratch)
+    hc = run_py([sys.executable, "-I", "-S", "-B", str(clone / NS_REL / "tests" / "test_p309_host_controls.py")], clone,
+                scratch)
+    sc = run_py([sys.executable, "-I", "-S", "-B", str(clone / NS_REL / "tests" / "test_p309_static_controls.py")], clone,
+                scratch)
     cfg = H.load_config([])
     cont = H.continuity(json.loads(a["stdout"]), json.loads(b["stdout"]), cfg) if a["rc"] == 0 and b["rc"] == 0 else {
         "pass": False}
     return {"provenance_rc": [a["rc"], b["rc"]], "continuity_pass": cont["pass"], "preflight_rc": pf["rc"],
             "preflight_as_expected": (pf["rc"] != 0) if tier == "cloud" else (pf["rc"] == 0),
             "r1_tree_unchanged": git(clone, "rev-parse", f"HEAD:{R1_REL}") == R1_TREE,
-            "host_package_tests_rc": ht["rc"], "host_package_tests_pass_lines": ht["stdout"].count("[PASS]")}
+            "host_package_tests_rc": ht["rc"], "host_package_tests_pass_lines": ht["stdout"].count("[PASS]"),
+            "host_controls_rc": hc["rc"], "host_controls_pass_lines": hc["stdout"].count("[PASS]"),
+            "host_controls_tail": "" if hc["rc"] == 0 else (hc["stdout"] + hc["stderr"])[-600:],
+            "static_controls_rc": sc["rc"], "static_controls_pass_lines": sc["stdout"].count("[PASS]"),
+            "static_controls_tail": "" if sc["rc"] == 0 else (sc["stdout"] + sc["stderr"])[-600:]}
 
 
 def meets_band(d) -> bool:
@@ -372,12 +398,20 @@ def main() -> int:
         print(__doc__)
         return 2
     scratch_root = Path(H.scratch_root(dict(os.environ), str(REPO), {"foreign_roots": []}))
+    dirty = H.git_read(str(REPO), "status", "--porcelain", "--untracked-files=all", "--", NS_REL)
+    if dirty is None or dirty:
+        print(json.dumps({"pass": False, "refused": "the P309 namespace's working tree is not clean (A4)"}))
+        return 2
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     drill_root = scratch_root / f"drill_{stamp}"
     drill_root.mkdir()                                            # exclusive
     clone, scratch = drill_root / "clone", drill_root / "scratch"
     (scratch / "tmp").mkdir(parents=True)
     rep = {"schema": "P309_R2_DRILL/1", "tier": tier, "utc_start": H.utc(), "drill_root": str(drill_root)}
+    if tier == "worker":                        # the start evidence, embedded (the launch record is redacted; C9)
+        rep["launch_record"] = json.loads(Path(os.environ.get("P309_LAUNCH_RECORD") or "/nonexistent").read_text()) \
+            if Path(os.environ.get("P309_LAUNCH_RECORD") or "/nonexistent").is_file() else None
+        rep["unit_properties"] = H.unit_properties()
     before = p309_state()
     rep["p309_before"] = before
     ok = False
@@ -409,9 +443,15 @@ def main() -> int:
         ctl_ok = all((v["caught"] if isinstance(v, dict) else v) for v in rep["controls"].values())
         host_ok = all(rep["host"]["provenance_rc"][i] == 0 for i in (0, 1)) and rep["host"]["continuity_pass"] and \
             rep["host"]["preflight_as_expected"] and rep["host"]["r1_tree_unchanged"] and \
-            rep["host"]["host_package_tests_rc"] == 0
+            rep["host"]["host_package_tests_rc"] == 0 and rep["host"]["host_controls_rc"] == 0 and \
+            rep["host"]["static_controls_rc"] == 0
+        scripts = {r.get("script", "").split(" ")[0] for r in zt}
+        rep["ledger"]["completeness"] = {
+            "run_start_rows": sum(1 for r in zt if " RUN START " in " " + r.get("purpose", "") + " "),
+            "missing_scripts": [x for x in LEDGER_REQUIRED if x not in scripts]}
         led_ok = not any(rep["ledger"]["counters"].values()) and not rep["ledger"]["cells_touched"] and \
-            not rep["ledger"]["band_hits"]
+            not rep["ledger"]["band_hits"] and rep["ledger"]["completeness"]["run_start_rows"] == 1 and \
+            not rep["ledger"]["completeness"]["missing_scripts"]
         rep["verdicts"] = {"items": items_ok, "witness": wit_ok, "controls": ctl_ok, "host": host_ok, "ledger": led_ok}
         ok = all(rep["verdicts"].values())
     except (DrillError, OSError, ValueError, KeyError, subprocess.TimeoutExpired) as exc:

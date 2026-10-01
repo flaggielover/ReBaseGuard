@@ -52,7 +52,11 @@ IMMUTABLE = ["governance/OWNER_INSTRUCTIONS_R2_VERBATIM.md", "governance/BRIEF_R
              "governance/BRIEF_R2_PLAN_FOLLOWUP_1.md", "governance/REVIEW_R2_PLAN_FOLLOWUP_1.md",
              "governance/REVIEW_R2_PLAN_FOLLOWUP_1_EXEC_LEDGER.jsonl", "governance/BRIEF_R2_VERIFIER_AUTHOR_1.md",
              "verify/R2_VERIFIER_CHANGES_REPORT.md", "verify/R2_VERIFIER_EXEC_LEDGER.jsonl",
-             "governance/OWNER_INSTRUCTIONS_R2_MSG4_VERBATIM.md"]
+             "governance/OWNER_INSTRUCTIONS_R2_MSG4_VERBATIM.md",
+             # r2 delta review A5: the delta brief, the review with its ledger, and every review's sha256 record
+             "governance/BRIEF_R2_DELTA_REVIEW.md", "governance/REVIEW_R2_DELTA.md",
+             "governance/REVIEW_R2_DELTA_EXEC_LEDGER.jsonl", "governance/REVIEW_R2_DELTA.sha256",
+             "governance/REVIEW_R2_PLAN.sha256", "governance/REVIEW_R2_PLAN_FOLLOWUP_1.sha256"]
 # r2's byte copies of r1's immutable governance records (step 3a): unchanged in r2 AND equal to r1's blob.  r1's
 # config/FORMAL_QUARANTINE_P309.json is not here: r2's copy carries the relocation map; r1's original is covered by A7
 IMMUTABLE_COPIES = ["governance/OWNER_DECISIONS_P309_VERBATIM.md", "governance/OWNER_RULINGS_2_P309_VERBATIM.md",

@@ -2,8 +2,9 @@
 
   python3 tests/test_p309_host.py      -> evidence/host/HOST_PACKAGE_TESTS.json; exit 0 iff every case passes
 
-Pure decisions only: gate_checks, monitor_verdict, continuity, scratch_root and the launcher's unit_name are given
-synthetic observations.  Nothing is sampled from /proc, no process is started or signalled, no file outside the
+Pure decisions only: gate_checks, classify, monitor_verdict, monitor_liveness, continuity, the redaction, scratch_root and
+the launcher's unit_name, unit-user check and argv redaction are given synthetic observations (delta review C2-C4, C9,
+A8, A16 cases added).  The real-/proc, process and signal controls are in tests/test_p309_host_controls.py.  Nothing is sampled from /proc, no process is started or signalled, no file outside the
 evidence directory is written, and no host setting is read beyond what scratch_root checks on its own directories.
 """
 from __future__ import annotations
@@ -21,7 +22,8 @@ import p309_env as E  # noqa: E402
 import p309_host as H  # noqa: E402
 import p309_launch as L  # noqa: E402
 
-CFG = H.load_config([])
+CFG = dict(H.load_config([]), foreign_uids=[4242])
+OWN = 999999                                   # a synthetic uid for this process in the pure gate decisions
 R = {}
 
 
@@ -44,7 +46,7 @@ GOOD = dict(acc=ACC, rows=[], loads=(0.1, 0.1), mem_gb=15.0, disk={"/x": 100.0},
 
 def gate(**kw):
     a = dict(GOOD, **kw)
-    return H.gate_checks(a["acc"], a["rows"], a["loads"], a["mem_gb"], a["disk"], a["cfg"])
+    return H.gate_checks(a["acc"], a["rows"], a["loads"], a["mem_gb"], a["disk"], a["cfg"], a.get("own", OWN))
 
 
 # ---- the exclusion gate (start; strict)
@@ -64,6 +66,27 @@ t("G11_load_above_baseline_blocks", not gate(loads=(3.0, 0.1))["load_at_baseline
 t("G12_low_ram_blocks", not gate(mem_gb=1.0)["ram_available"])
 t("G13_low_disk_blocks", not gate(disk={"/x": 10.0})["disk_available"])
 t("G14_no_roots_blocks", not gate(disk={})["disk_available"])
+t("G15_no_foreign_uids_blocks", not gate(cfg=dict(CFG, foreign_uids=[]))["foreign_uids_configured"])
+t("G16_own_uid_listed_as_foreign_blocks", not gate(own=4242)["foreign_uids_configured"])
+t("G17_unattributable_new_process_blocks_start", not gate(rows=[row("unattributable", None)])[
+    "no_foreign_campaign_process_active"])
+t("G18_unattributable_light_cpu_blocks_start", not gate(rows=[row("unattributable", 0.06)])[
+    "no_foreign_campaign_process_active"])
+
+# ---- classification (C2): a configured uid, an unreadable cwd of another non-root user, kernel threads
+
+
+def rec(uid, cmd="python3 job.py", cwd="", ok=True):
+    return {"uid": uid, "cmd": cmd, "cwd": cwd, "cwd_ok": ok}
+
+
+t("K01_configured_foreign_uid_is_foreign", H.classify(rec(4242), CFG, OWN) == "foreign")
+t("K02_other_user_unreadable_cwd_is_unattributable", H.classify(rec(5000, ok=False), CFG, OWN) == "unattributable")
+t("K03_root_unreadable_cwd_untagged", H.classify(rec(0, ok=False), CFG, OWN) is None)
+t("K04_own_uid_unreadable_cwd_untagged", H.classify(rec(OWN, ok=False), CFG, OWN) is None)
+t("K05_kernel_thread_untagged_even_if_uid_listed", H.classify(rec(4242, cmd=""), CFG, OWN) is None)
+t("K06_pattern_is_foreign", H.classify(rec(5000, cmd="python3 /x/TEST-foreign-job/run.py"), dict(
+    CFG, foreign_patterns=["TEST-foreign-job"]), OWN) == "foreign")
 
 # ---- Q-HOST continuity
 base = prov()
@@ -76,6 +99,10 @@ t("C05_imds_timeout_same_boot_passes_unverified", c5["pass"] and c5["instance_un
 t("C06_imds_timeout_after_reboot_fails", not H.continuity(base, prov(boot="b2", inst=None), CFG)["pass"])
 t("C07_suspend_over_tolerance_fails", not H.continuity(base, prov(sus=CFG["suspend_tolerance_s"] + 1), CFG)["pass"])
 t("C08_runtime_change_fails", not H.continuity(base, dict(prov(), glibc="glibc 2.40"), CFG)["pass"])
+c9 = H.continuity(prov(inst=None), prov(), CFG)
+t("C09_base_without_id_sample_with_id_passes_unverified", c9["pass"] and c9["instance_unverified"], c9)
+t("C10_base_without_id_after_reboot_fails", not H.continuity(prov(inst=None), prov(boot="b2"), CFG)["pass"])
+t("C11_both_ids_present_is_verified", not H.continuity(base, prov(), CFG)["instance_unverified"])
 
 # ---- Q-HOST monitor sample (in-run; heavy work only, OD-R2-5 option (i))
 ok_c = {"pass": True}
@@ -87,6 +114,26 @@ t("M05_other_rebaseguard_heavy_fails", not H.monitor_verdict(ok_c, [row("other-r
 t("M06_continuity_failure_fails", not H.monitor_verdict({"pass": False}, [], CFG)[0])
 t("M07_thresholds_distinct", CFG["monitor_heavy_cpu_fraction"] > CFG["heavy_cpu_fraction"],
   [CFG["heavy_cpu_fraction"], CFG["monitor_heavy_cpu_fraction"]])
+t("M08_unattributable_heavy_fails", not H.monitor_verdict(ok_c, [row("unattributable", 0.9)], CFG)[0])
+t("M09_aggregate_foreign_fails", not H.monitor_verdict(ok_c, [row("foreign", 0.4, pid=i) for i in (1, 2, 3)], CFG)[0])
+t("M10_aggregate_below_limit_passes", H.monitor_verdict(ok_c, [row("foreign", 0.4, pid=i) for i in (1, 2)], CFG)[0])
+
+# ---- Q-HOST monitor liveness (C4): interval 60 s, tolerance 30 s
+lv = lambda times, stop=200.0, alive=True: H.monitor_liveness(times, 0.0, stop, alive, 60.0, 30.0)["pass"]  # noqa: E731
+t("V01_regular_samples_pass", lv([30.0, 90.0, 150.0]))
+t("V02_monitor_dead_at_stop_fails", not lv([30.0, 90.0, 150.0], alive=False))
+t("V03_no_sample_fails", not lv([], stop=60.0))
+t("V04_gap_between_samples_fails", not lv([30.0, 200.0], stop=210.0))
+t("V05_gap_before_stop_fails", not lv([30.0, 90.0], stop=200.0))
+t("V06_samples_out_of_order_fail", not lv([90.0, 30.0], stop=100.0))
+
+# ---- redaction (C9)
+FR = "/srv/foreign-TEST-root"
+rc = H.redacted_config(dict(CFG, foreign_roots=[FR], foreign_heavy_patterns=["TEST-heavy-job"]))
+t("R01_redacted_config_holds_no_foreign_text", FR not in json.dumps(rc) and "TEST-heavy-job" not in json.dumps(rc)
+  and "cell" not in json.dumps(rc["foreign_patterns"]), rc["foreign_roots"])
+t("R02_config_sha256_binds_foreign_roots", H.config_sha256(dict(CFG, foreign_roots=[FR])) != H.config_sha256(
+    dict(CFG, foreign_roots=[FR + "2"])))
 
 # ---- P309_SCRATCH_ROOT (P7)
 with tempfile.TemporaryDirectory() as td:
@@ -118,6 +165,14 @@ try:
     t("L03_bad_stamp_refused", False)
 except H.HostError:
     t("L03_bad_stamp_refused", True)
+t("L05_host_rerun_name", L.unit_name("host-rerun", "20261001T000000Z") == "p309-r2-hostrerun-20261001T000000Z")
+ra = L.redact_argv(["--property=InaccessiblePaths=-" + FR, "--setenv=P309_FOREIGN_ROOTS=" + FR], {"foreign_roots": [FR]})
+t("L06_unit_argv_redacted", not any(FR in a for a in ra), ra)
+try:
+    L.unit_user_check({"unit_user": "root"}, {"foreign_roots": [], "foreign_uids": []})
+    t("L07_root_unit_user_refused", False)
+except H.HostError:
+    t("L07_root_unit_user_refused", True)
 try:
     H.load_config(["--config-json", json.dumps({"no_such_key": 1})])
     R["L04_unknown_config_key_refused"] = {"pass": False, "got": None}
