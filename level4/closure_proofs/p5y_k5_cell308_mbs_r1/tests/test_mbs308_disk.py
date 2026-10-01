@@ -39,6 +39,16 @@ SU_OFF = {"AutomaticallyInstallMacOSUpdates": "0", "AutomaticDownload": "1", "Cr
 PS_QUIET = "    1     0   0.4 /sbin/launchd\n  300     1   1.2 /usr/libexec/somed\n"
 
 
+def _big_memory() -> int:
+    """Free memory far above the driver's FREE_MEM_MIN_BYTES, whatever value the driver under test carries (the
+    provisional one before the apply step of protocol section 11.2, R-FREE's output after it)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_mbs308_derive_disk", T.code_dir() / "mbs308_derive.py")
+    dv = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(dv)                     # the exact reader of the driver's TEXT (never imports the driver)
+    return max(8 * GIB, 2 * dv.driver_constants((T.code_dir() / "mbs308_driver.py").read_text())["FREE_MEM_MIN_BYTES"])
+
+
 def _vm(free_bytes: int) -> str:
     pages = free_bytes // 16384
     return ("Mach Virtual Memory Statistics: (page size of 16384 bytes)\n"
@@ -253,7 +263,7 @@ def t_driver_disk_gate_fails_closed():
 
 
 def _planted(free) -> dict:
-    return {"host": dict(GOOD_HOST, free=free), "su": SU_OFF, "vm_stat": _vm(8 * GIB), "ps": PS_QUIET}
+    return {"host": dict(GOOD_HOST, free=free), "su": SU_OFF, "vm_stat": _vm(_big_memory()), "ps": PS_QUIET}
 
 
 def _journal(sbx) -> dict | None:
@@ -734,7 +744,8 @@ def t_verifier_host_report_read_only():
     src = (T.code_dir() / "mbs308_qualify.py").read_text()
     cmds, writers = [], []
     for fn in _ast.parse(src).body:                 # the report's own code: its command vectors and any write call
-        if not (isinstance(fn, _ast.FunctionDef) and fn.name in ("host_report", "_clamshell", "_pmset_values")):
+        if not (isinstance(fn, _ast.FunctionDef) and fn.name in ("host_report", "_clamshell", "_pmset_values",
+                                                                 "_pmset_sched")):
             continue
         for node in _ast.walk(fn):
             if isinstance(node, _ast.List) and node.elts and isinstance(node.elts[0], _ast.Constant) and \
@@ -745,7 +756,8 @@ def t_verifier_host_report_read_only():
                 if name in ("write", "write_text", "write_bytes", "open", "unlink", "rename", "replace", "mkdir",
                             "chmod", "system", "Popen", "run"):
                     writers.append(name)
-    queries_only = sorted(c[:2] for c in cmds) == [["/usr/bin/pmset", "-g"], ["/usr/sbin/ioreg", "-r"]]
+    queries_only = sorted(cmds) == [["/usr/bin/pmset", "-g"], ["/usr/bin/pmset", "-g", "sched"],
+                                    ["/usr/sbin/ioreg", "-r", "-k", "AppleClamshellState", "-d", "1"]]
     r2 = subprocess.run([T.PY, "-I", "-S", "-B", str(q), "--host-report", "--dev", "--out", str(s["tmp"] / "x.json")],
                         capture_output=True, text=True, env=T.GENV, cwd=str(s["root"]), stdin=subprocess.DEVNULL,
                         timeout=120)

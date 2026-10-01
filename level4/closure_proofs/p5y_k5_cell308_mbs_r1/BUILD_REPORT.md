@@ -1273,3 +1273,551 @@ not open and did not act on (every PENDING_USER_DECISION case is unchanged excep
 per-job, progress, CPU, memory, host or science figure; I repeat none of it and no value or edit here depends on it. No
 commit subject of MB r1 was displayed (no `git log` was run). The ratification's evidence Q (MB r1's pre-grant
 qualification decoy file size 1.6 MB, not an observation of the consumed run) is used in 16.4.
+
+
+## 17. The decision-dependent cases, section 11.2 option (a), and the grant's owner records (non-holder builder6, research brief 54 at 5e425c27, with the coordinator's addition 54-A and owner supplement 2; NOT frozen)
+
+**Scope.** Brief 54 (its recorded file, sha256 b0f2838c…, verified before anything else), the coordinator's addition
+54-A (the second ratifier's readings, research ca66e367) and the user's owner supplement 2 (research 74f386a5),
+target-free, on successor 555f4cbf (builder5's commit on builder4's framework). Three parts: (A) the qualification
+cases that depended on the user's decisions, built under the recorded owner decisions MBS-6 (i), MBS-7 (i), MBS-8 (i);
+(B) the user's section-11.2 ruling, option (a), with the ratifier's readings and the supplement-2 fail-closed
+semantics; (C) the grant's binding of ALL the complete owner records (three), and the final-preflight mapping. The
+work was interrupted once by a session usage limit and resumed on the same uncommitted bytes (17.10 says exactly what
+was in before the interruption). Nothing
+here freezes, measures officially, qualifies, authorises or grants anything. **New cell-308 target evaluations: 0.** No
+cell 305-309 was evaluated, no drift in [6/5, 13/5] or its mirror was computed, cell 309 was not touched. The only
+science run is decoy cover cell 297, block 0, at the development ladder (ledgered NONTARGET_DRIFT_VALIDATION). **The
+STOP POINTS were kept: no full-length decoy, no designated measurement, no dress rehearsal and no apply step was run in
+the worktree.** No authorization, grant, marker, pending result, seal or freeze manifest exists in the worktree; nothing
+was written under `evidence_prefreeze/`; no system setting was changed; **no operational number was changed by hand**
+(the five provisional rule constants and every cap are the committed values; the one number this build CHOSE is the
+RSS sampler's configured interval, 0.5 s to 0.25 s, a recorded-field setting the ratifier and the owner left to the
+builder and to the review: 17.4). No git write: every edit is left in the worktree for the coordinator.
+
+**Read.** Brief 54 in full; this report's sections 1-5, 7, 8 and 10-16 (sections 6 and 9 NOT opened: a `grep '^#'` of
+the headings only); the protocol draft's sections 8, 10 and 11 in full and the head of section 1;
+`config/MBS308_QUALIFICATION_CASES.json`; `code/mbs308_qualify.py`, `mbs308_rrules.py`, `mbs308_repin.py`,
+`mbs308_launch.py`, `mbs308_manifest.py` in full; `code/mbs308_driver.py`, `mbs308_host.py`, `mbs308_state.py`,
+`mbs308_scratch.py` in the parts this section names; `tests/test_mbs308_qualify.py`, `mbs308_testlib.py`,
+`mbs308_resume_decoy.py`, `test_mbs308_decoy.py`, `mbs308_child.py`, `mbs308_synth.py`, the mutant runner. The user's
+rulings, every digest verified: `ledger/USER_RULING_MBS308_OWNER_DECISIONS.txt` (5c2394ba, sha256 34eb1d41…) sections
+2-4, 10, 11, 13 and 14; `ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_1.txt` (8fc2b038, sha256 3f7d477b…) parts I and II;
+`ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_2.txt` (74f386a5, sha256 4ba4a666…, from the file and from the git blob) in
+full. The second ratifier's `governance/CONSTANTS_RATIFICATION_MBS308_READINGS_R1.md` (ca66e367, sha256 b638e1b3…,
+verified): "Rulings at a glance", items 2, 4, 5 and 6 and the final table.
+`reviews/REVIEW_SEQUENCING_DETERMINATION_MBS308.md` sections 1.2 and 2(a);
+`reviews/REVIEW_OWNER_DECISION_CONFORMANCE_MBS308.md` sections 1.2 and 1.3;
+`governance/USER_DECISION_BRIEF_308_SUCCESSOR.md` lines 28-37 (the wording of the MBS-6 options);
+`code/c308_quarantine.py`'s `log_event` and the ledger's last two lines (format). MB r1's frozen implementation
+(read-only, in MB r1's worktree): `code/mb308_qualify.py` in full, the decoy branch of `code/mb308_driver.py`, the loader
+functions of `code/mb308_pinned.py`, the ladders / jobs / run_job of `code/mb308_stage1.py`, `tests/test_mb308_guard.py`
+in full and the entry functions of `test_mb308_twosided.py`, `_a0.py`, `_tptb.py`, protocol sections 3.2, 9 and 14, and
+the KEY STRUCTURE (names and types only; no value printed) of the committed `qualification/` records with the pass flags
+of `MB308_QUALIFICATION.json`. **Not opened:** any MBS-2 file (REVIEW_EXECUTION_INTERRUPTION*,
+audit/EXECUTION_INTERRUPTION_*, REVIEW_SUCCESSOR_GOVERNANCE_308*, INCIDENT_INDEPENDENCE_REVIEW_MB308* and _MBS308*
+including T6, COORDINATOR_EXPOSURE_DISCLOSURE*, USER_TEXTS_SUCCESSOR_308.md, governance/SUCCESSOR_GOVERNANCE_308.md,
+history/), anything under MB r1's `review`, `adjudication`, `postexec` or `evidence` directories, any other session's or
+agent's scratchpad, anything under `/Users/suzhe/.claude/`. No `git log` was run on any branch.
+
+### 17.1 Built
+
+| file | sha256 (prefix) | role |
+|---|---|---|
+| `code/mbs308_driver.py` | `e56d02d29042` | `S1_OWNER_RECORDS` (three records), `check_s1_ruling`, `s1_index_sha256`; the failed-decoy record of `main()`'s decoy branch (V16); comments on the five rule constants; `HELPER_SHA256` re-pinned for the state helper. No carried function, no cap, no rule constant changed |
+| `code/mbs308_state.py` | `3793e0b111e8` | `RssSampler` only: configured interval 0.25 s; `max_spacing_ns` recorded (pinned helper) |
+| `code/mbs308_rrules.py` | `54d13db2add7` | `r_mem`: the series parameters (cap, poll, `official`), F-6 as corrected, the re-run's step-5 bound, step 6's three cases; `sampler_reasons`; `cap_events`; the three fail-closed status names. No rule number changed |
+| `code/mbs308_derive.py` | `821b481316ec` | NEW: the derivation tool, the adapters shared with the official qualification, `form_reasons` (canonical forms), `stop_statuses`, the exact comparison, the exact reader of a driver's constants |
+| `code/mbs308_measure.py` | `28bcb581756b` | NEW: the designated pre-freeze measurement tool (B1) and the measurement functions the official qualification shares; the designation-rule proposal |
+| `code/mbs308_repin.py` | `2cd8bb5cc4f9` | the `apply` subcommand (dry-run by default); canonical outputs only |
+| `code/mbs308_manifest.py` | `033af87e5e48` | `s1_owner_records` bound and checked in git |
+| `code/mbs308_qualify.py` | `202c2744a126` | the thirteen decision-dependent cases, Q12 on fixed caps, the section-4 values check, R_RULES_OFFICIAL, the fail-closed statuses (cases and aggregator), the planted R-rule controls, owner section 14, the qualified-worktree interlock |
+| `config/MBS308_QUALIFICATION_CASES.json` | `4948f7bc89b2` | revision r4: every case BUILT with `decided_by`; the three owner records and the ratifier's readings named; `owner_decisions`; `official_decoys`; ledger agents |
+| `protocol/MBS308_PROTOCOL_DRAFT.md` | `e29d1076ed92` | the owner decisions; S1's three-record table; section 8 (caps, rule-output table, 8.3); section 10 (MBS-6); section 11 (cases BUILT; 11.2 the ruling chain, the rulings as implemented, the designation-rule proposal; 11.3 the readings) |
+| `DRIVER_DIFF.md` | `421e3d50af3e` | regenerated by the validated generator (23 hunks) |
+| `tests/test_mbs308_cases.py` | `923986079a18` | NEW suite QS-CASES (25 tests) |
+| `tests/mbs308_decoy_payload.py` | `7fbcb6d9dcec` | NEW: the synthetic launchd payload (never the driver) |
+| `tests/test_mbs308_state.py` | `faa519212831` | the three-record grant test (26 planted controls); the failed-decoy record test; value-agnostic start-gate and allow-list tests; the sampler fields |
+| `tests/test_mbs308_qualify.py` | `eef716031884` | PENDING mechanism on planted cases; QC13-S with three planted owner records; the sparse sandbox |
+| `tests/test_mbs308_static.py` | `b016b228c88d` | the allow-list test conditional on the table's status |
+| `tests/test_mbs308_disk.py` | `d66d85b6ee7d` | value-agnostic planted free memory; the host report's scheduled power events |
+| `tests/test_mbs308_decoy.py` | `cd4605897d25` | `t_science_cases_dev` |
+| `tests/mbs308_testlib.py` | `554965ceee6c` | the owner-record helpers and `grant_chain(ruling=...)` |
+| `tests/test_mbs308_mutants.py` | `28f895aad7bc` | 245 declared mutants (MB01-MB109 are this build's; M51 re-expressed) |
+| `BUILD_REPORT.md` | (this file) | section 17 |
+
+One helper changed: `code/mbs308_state.py` (`RssSampler` only: the configured interval 0.25 s and the recorded field
+`max_spacing_ns`; no lifecycle function touched), so its entry of `HELPER_SHA256` was re-pinned with builder5's tool
+(`mbs308_repin.py helpers --write`); guard, host and launch are unchanged. The driver changed in LIFECYCLE / IDENTITY
+hunks only: the S1 check and its three rows, comments, and `main()`'s decoy branch, which now writes the run's record
+also when the decoy FAILS (V16 below). `DRIVER_DIFF.md` was regenerated by builder5's validated generator: 23 hunks;
+no hunk touches a carried definition; the two hunks without a committed counterpart were given their class by
+`--classes` (hunk 9, the two new S1 functions: IDENTITY, the class the committed file gives the S1 check in
+`check_grant`; hunk 11, the tail of `check_grant` merged with the persistence helpers: IDENTITY + LIFECYCLE). The class
+names are the builder's proposal for the reviewer. Before the coordinator's commit `mbs308_repin.py check` refuses in
+the worktree (`HUNK_WITHOUT_CLASS`: those two hunks have no committed counterpart yet) and `disk::t_repin_driver_diff`
+fails there for the same reason; both pass on the committed bytes (17.7 ran every suite in a committed sandbox clone).
+
+### 17.2 Part A: the decision-dependent cases
+
+**A1 (MBS-6 (i)).** Protocol section 10: an INDETERMINATE-class outcome of MB-S is final for route MB on cell 308; no
+further route-MB cell-308 evaluation is authorized after it (the decision brief's option (i) wording and the owner
+record's); the earlier S7 sentence (a further successor through a further governance process) is replaced, there and in
+the outcome table; the reach of MBS-7's "do not reopen the changed-science branch" is stated with owner supplement 1,
+section 9. QC13-S: the configuration names the three owner records by path, commit and sha256 (`USER_FREEZE_DECISION`:
+the original record: S16(c), MBS-6 / 7 / 8; `USER_OWNER_SUPPLEMENT_1`: the section-11.2 ruling and the S1 supplement;
+`USER_OWNER_SUPPLEMENT_2`: the fail-closed semantics) and the second ratifier's readings
+(`CONSTANTS_RATIFICATION_READINGS_R1`, presence and sha256: no verdict line is read). An
+altered record (another sha256), a record missing at its commit, a record not named and a record off the research
+branch each fail closed (planted controls through the same check, on the real research branch in the base store and end
+to end in the sparse sandbox). `IMPLEMENTATION_REVIEW_ACCEPTED` is still un-named, so QC13-S still fails closed today.
+
+**A2 (MBS-7 (i)): the science family, carried.** QC01, QC02, QC03, QC04, QC05, QC06, QC07, QC08, Q1_theory, QC09-SCI
+and MBR1_REPRO (full form) are BUILT, each with `decided_by` = the owner record. MB r1's verifier functions are carried
+in `code/mbs308_qualify.py` (`qc02_eval`, the QC03 criterion, `qc04_eval` with its views, comparison and planted-leaf
+control, the serial / ladder / E4 / Monte-Carlo children, Q1, and Q12: `_decoy_jobs`, `lpt_makespan`, `_host_verdict`,
+`_q12_core`, the fixture, `_synthetic_host`, `_synthetic_decoy`, the controls). MB r1's qualification TEST MODULES are
+not copied: `load_mbr1_test` executes `tests/test_mb308_twosided.py`, `_a0.py`, `_tptb.py` and `_guard.py` from MB r1's
+COMMITTED bytes at MB r1's paths (sha256 and blob at 21e99cf0, checked at HEAD) through MB r1's own pinned loader, as the
+driver executes the science modules. MB r1's committed official r3 records, the Monte-Carlo module, the E4 controls, the
+A0 evaluator, the five A0 certificates and both copies of the theorem are external pins of the manifest (Q8-S).
+**QS-RESUME-DECOY** was already built by builder5; its definition is the MBS-7 (i) one (it compares a complete decoy
+cell of the frozen driver, uninterrupted against killed and resumed, with the job set read from the run: under MBS-7
+(i) that set is MB r1's RLR / C2b / C1b ladder); confirmed, unchanged.
+
+**Deviations from MB r1's code (each required by the successor architecture or by the brief; nothing else differs):**
+
+| # | MB r1 | MB-S | reason |
+|---|---|---|---|
+| V1 | QC02 / QC03 decoys are child processes of the verifier | each is a transient LaunchAgent bootstrapped by the launcher's own `launch` (detachment proved), waited for by its recorded identity, booted out | R-MEM step 1 and RC6: the real driver's `decoy` under the launchd launcher |
+| V2 | decoy 316 runs at 1 worker | at WORKERS 5 | R-MEM step 1 ("WORKERS 5"); brief A2 |
+| V3 | decoy 297, decoy 316, the serial child, the two ladder children and E4 are spawned together | the prepared-host readings first, then decoy 297, then decoy 316, each ALONE and before every other heavy phase (the verifier's gated heavy phases); then the serial, ladder and E4 children together; then the Monte Carlo | the successor verifier runs heavy phases one at a time behind the disk gate (builder5); the official configuration is the execution's (5 workers alone on the host: R-MEM step 5's memory model and R-EXCL-PCT's "official-decoy worker reading (about 99)"); the readings need the idle prepared host. **For the reviewer: the texts do not state this order word for word, and it changes the concurrency under which Q12's walls are measured (MB r1 measured its walls with every child running)** |
+| V4 | decoys run with the driver's caps | the same; the memory cap and poll are the frozen driver's (no measurement configuration) | owner supplement 1, section 3 |
+| V5 | QC02 / QC03 pass on MB r1's criterion | MB r1's criterion AND the official configuration (launched, detached and finished as a launchd job; WORKERS; frozen ladder; the planned blocks) | brief A2 |
+| V6 | Q12 reads `D.EVAL_CAP_S`, `D.RUNG_CPU_CAP_S`, `mb308_host` | the same values read from the driver's TEXT and the successor's host module, passed in | the verifier does not import the driver for cases that need only text (builder4's rule) |
+| V7 | Q12's record carries `eval_cap_required_s` | not recorded (the threshold is compared, never stated) | brief A3: Q12 never derives, proposes or prints a candidate cap |
+| V8 | Q12: caps and timing provenance | plus the run configuration (the launchd launcher, WORKERS, frozen ladder), failing closed, with three planted controls beside MB r1's fourteen | RC6 |
+| V9 | the in-process cases import the test modules from the namespace's `tests/` | executed from MB r1's pinned bytes; the guard test's name `mb308_guard` is bound to the successor's guard while it loads | the successor copies no science-side file; the guard differs in the marker line only (QC09-S) |
+| V10 | Q1: the namespace's own copy of THEOREM_MB against the research file | MB r1's NSF copy at MB r1's path (the successor has no copy), also checked at HEAD, the research file's presence folded into the case | MBS-7 (i): the theorem is MB r1's |
+| V11 | the comparison views call `D.jsonable` | a local projection that drops `_`-prefixed keys (identical on JSON data) | the evaluation is importable without the driver (planted-record tests, mutants) |
+| V12 | `--dev` runs every selected case | the decoy cases compute only on decoy 297 block 0 at the dev ladder (the children take `--_dev`; the ladder child uses block 0's own pointwise drift); QC01 is never run in dev; QC05, QC06, QC07, QC09-SCI are loader checks (pinned bytes, entry signature) | brief: the only science a test may run |
+| V13 | MB r1's QC09 sandbox arming and QC10 flows | not carried here | QC09-S (builder4) and QS-STATE / QS-CRASH cover the successor's own lifecycle |
+| V14 | (none) | official and review runs EXECUTE science only in the campaign's qualified worktree (17.5) | a sandbox must never be able to launch the real driver |
+| V15 | (none) | MBR1_REPRO, R_RULES_OFFICIAL, the section-4 values check | RC2; section 11.2; brief A3 |
+| V16 | a decoy that fails leaves no record (MB r1 and the successor up to 555f4cbf: the exception leaves `main()` before `--out` is written) | `main()`'s decoy branch writes the run's record also when `decoy()` raises: `decoy_failed` (the exception's class name), no stage 1, and the same lifecycle fields (watchdog events and peak, sampler, driver peak RSS, run configuration, host provenance); the exception is then re-raised unchanged (same exit behaviour) | owner supplement 2, sections 1 and 6: a memory-watchdog event must be "mechanically detectable" and "the failed qualification evidence" preserved. Before this change a watchdog kill broke the pool, the decoy raised and NO record existed: neither `STEP1_RERUN_REQUIRED` nor the official fail-closed status could ever have fired on a real event. Recorded fields only; no carried function changed. **For the reviewer: a driver change in the decoy branch** |
+
+QC02 / QC03's records carry, per run, every R-MEM input (each job's `ru_maxrss`, the watchdog's peak and events, the
+driver's own peak RSS, builder5's RSS sampler with its largest observed spacing, the run configuration) and the host provenance Q12 needs (K / S / L,
+power at every sample, thermal level and ThermalEvent entries); no carried (text-identical) science function was
+changed (static RC1 / MBS-9 tests pass). The compact rule inputs of both runs and the qualification's own prepared-host
+readings are written to `qualification/MBS308_RRULES_OFFICIAL_INPUTS.json`.
+
+**MBR1_REPRO, full form.** The successor's official QC02 / QC03 / QC04 records against MB r1's committed official r3
+records (pinned): each decoy record's identity (cell, blocks) and every certified part (Stage 1: every block, job,
+certificate digest, verification and pointwise record; every Stage-2 decoy bundle), the serial block-0 jobs and both
+ladder records, with exactly the timing keys and `cpu_cap` stripped at every depth; each comparison must be non-vacuous
+and detect a planted one-leaf mutation. Not compared: provenance (host, lifecycle, driver sha256, utc, walls, the
+cpu-caps record) and `stage1.workers` (V2). No extra run: the comparison inputs are the official records themselves.
+
+**A3 (MBS-8 (i)).** `Q12_caps` = MB r1's Q12 on the FIXED caps: EVAL_CAP_S >= ceil(1.5 x projection) and every per-job
+cap >= 2 x the official maximum wall of its kind and rung (MB r1 protocol 3.2: the 11-block, 9-job longest-first
+projection at WORKERS, C2b with its verification seconds once more), MB r1 r3's host-provenance fail-closed conditions
+(re-assessed raw readings, the stored assessment never trusted, the interval covering the walls) and its fourteen
+planted controls through the successor's own decision function, plus three for the launcher, WORKERS and the ladder.
+`section4_values` checks mechanically that the driver carries exactly the user's section-4 values (EVAL_CAP 28 800 s,
+started once per attempt in `after_marker` and counted on CLOCK_UPTIME_RAW and no other clock; RLR 1800 / 4200 / 8700 s;
+C2b 1800 / 1800 / 2700 s; every C1b and VER cap 1800 s; PRE_CAP 1800 s; WORKERS 5); the configuration's values are
+checked against the owner record's own lines; nine planted mismatches (driver text, state text, configuration) each
+fail it, and with it the Q12 case.
+
+### 17.3 Part C: the grant binds every complete owner record (three); the final preflight
+
+**C1.** The driver names the three records in fixed order (`S1_OWNER_RECORDS`: record, research path, research commit,
+byte length, sha256: `original` 5c2394ba 17 291 bytes 34eb1d41…; `supplement_1` 8fc2b038 18 797 bytes 3f7d477b…;
+`supplement_2` 74f386a5 12 941 bytes 4ba4a666…). Supplement 2 itself says "two-owner-record grant binding" in its
+section 9 and "both complete owner records and supplements" in its section 12; the coordinator's instruction is the
+three records, which satisfies both wordings; that is what is built (for the reviewer). `check_s1_ruling` (called by
+`check_grant`) requires `user_ruling_s1` to be exactly `{"records": [original, supplement_1, supplement_2],
+"index_sha256", "reaffirms_c4": true}`, each record exactly `{"record", "path", "commit", "bytes",
+"sha256", "verbatim"}` with the COMPLETE verbatim text, and refuses unless (a) each text re-hashes to the digest and
+length its entry states, (b) each entry equals the driver's row, in order, and (c) the index digest (sha256 of the
+canonical JSON of the rows) matches. No other key is admitted (no room for a paraphrase). The manifest writer records
+`s1_owner_records` and refuses unless git holds those bytes at those commits; Q8-S compares; the protocol's section 1
+states the table. The three texts are valid UTF-8 and round-trip through JSON byte for byte. Planted controls (26),
+through the real `check_grant` at `execute` in a sandbox, each refused with nothing consumed: one byte changed in each
+of the three texts (with the entry's digest left as it was, and again with the entry made self-consistent), each record
+missing in turn (including the two-record index that was complete before supplement 2), each record alone, the records
+reversed, rotated and with the supplements swapped, supplement 1 twice in place of supplement 2, a fourth record, a
+section-only excerpt of the original (section 5, and sections 5-6: exactly the ranges R2 and R3 of the conformance
+review, checked by their lengths and digests) and an excerpt of supplement 2, the old single-text field, a paraphrase
+key in the field and in a record, `reaffirms_c4` false, a wrong index digest, no ruling. The three complete records
+are accepted and the run seals. The test library's synthetic grants carry the three real records (read from the base
+store at their commits; the grant around them is a sandbox stand-in).
+
+**C2.** Owner decisions section 14 lists seventeen items. `OWNER_SECTION14` (verifier), the host report's
+`owner_section14` field and protocol section 8.3 map each, in the record's order and wording, to what covers it:
+fifteen are existing gates or mechanisms of the driver (named; a test checks that every name exists in the code);
+"required lid/sleep state" and "restart hazards controlled" are READ-ONLY recorded readings plus an operator line,
+because no accepted text makes them a gate (protocol 8.1 already says the lid is a user action). The lid, the sleep
+timers and `autorestart` were already read by builder5's `--host-report`; ADDED: the scheduled power events
+(`pmset -g sched`, by type only: a scheduled restart / shutdown / sleep is reported as a hazard). "Git configuration
+safety" is mapped to `check_seal_preconditions`, `check_clean`, `check_not_evaluated` and the driver's fixed git
+environment; no accepted text names a further git setting, so nothing was added there (for the reviewer).
+
+### 17.4 Part B: section 11.2 option (a), with the second ratifier's readings and owner supplement 2
+
+* **B1, the designated measurement tool** (`code/mbs308_measure.py designate`; built and tested on planted readings and
+  a synthetic launchd payload; NOT run). The prepared-host readings (10, at least 30 s apart: the rule's own numbers;
+  AC; the driver's own `free_memory_bytes`, executed from its text; wired-down pages; every process the rules can use
+  with its executable path and %cpu text), then the planned decoys one at a time through `run_decoy`, the function the
+  official qualification uses for QC02 / QC03. Compact evidence: the commit, the driver sha256, the platform readings,
+  the boot UUID, the host provenance of the whole measurement and of each run, every rule input, the sha256 of the full
+  decoy outputs (kept under `--work`). It refuses outside the qualified worktree, off the committed bytes, with a
+  campaign ref, on battery, with thermal level not 0 at the start, with a platform mismatch, without the sleep
+  channels, on short disk, and when designated evidence already exists (`ALREADY_DESIGNATED`); it marks the evidence
+  invalid (written under `--work` only) on a reading not on AC, a run whose host provenance is not CLEAN, a
+  ThermalEvent entry in a run, a host that is not prepared (basename and path class reported; no threshold raised; no
+  decoy launched), a run outside the official configuration, a sampler record that is not a valid step-6 input, a
+  failed decoy, and any memory-watchdog event (`STEP1_RERUN_REQUIRED`: the tool stops, launches nothing more, and
+  records the rule's one re-run cap and its step-5 bound; no cap-override facility exists anywhere).
+* **B2, the derivation tool** (`code/mbs308_derive.py derive`) applies the existing rule functions and writes the five
+  canonical outputs, each checked to be in the canonical form the rule text fixes (`form_reasons`), with every built-in
+  check recorded. Its status is `OK`, or it stops with no output at all: `STEP1_RERUN_REQUIRED`,
+  `MEM_POLL_S_NONCANONICAL_BRANCH` (`stop_before_freeze` true; the raw evidence and the branch in `poll`), or
+  `NOT_DERIVED`. **The apply step** (`code/mbs308_repin.py apply`, dry-run by default) writes A into the driver's five
+  constants and the protocol's rule-output table and regenerates DRIVER_DIFF.md; it refuses a derivation that is not
+  designated, not OK (a stop status is named as it is), with a failing check, with an output not in its canonical form
+  (MEM_POLL_S is only ever written as `2.0` or `0.5`), not reproduced from the committed evidence, or for other driver
+  bytes; every other top-level statement of the driver is checked identical. `mbs308_rrules.r_mem` gained three keyword
+  parameters (the cap and the poll the measured runs must have been made with, defaults = step 1's 3 GiB and 2 s; and
+  `official`, the series); no rule text and no rule number changed.
+* **B3, R_RULES_OFFICIAL**: BUILT (17.1; protocol 11.2): B == A == the frozen driver's constants, exactly, for each of
+  the five; set equality for EXCL_ALLOW; no tolerance. `REQUIRED_FILES` holds the two evidence files, so Q8-S (and
+  therefore any qualification) fails until the designated evidence and its derivation are committed.
+
+**The rulings of 54-A (second ratifier, research ca66e367) and of owner supplement 2 (research 74f386a5), as built.**
+
+| ruling | where | behaviour | status / reason |
+|---|---|---|---|
+| READING-6 corrected: the bound binds the OBSERVED spacing | `rrules.sampler_reasons` (used by `r_mem` step 6, by `measure.run_reasons` for each run of either series, and by the derivation's checks) | the largest observed spacing of any run must be ≤ 0.5 s (exactly 0.5 s is within) and must be stated; otherwise invalid input: no g, no MEM_POLL_S, R-MEM not OK | `SAMPLER_OBSERVED_SPACING_ABOVE_0.5_S`, `SAMPLER_OBSERVED_SPACING_UNRECORDED` |
+| READING-7 confirmed; supplement 2 §4 | `state.RssSampler.sample` | first-observation semantics NOT changed | none |
+| F-6 corrected; supplement 2 §6 | `rrules.r_mem` | an event run is cured only by a VALID re-run of it at the doubled provisional cap; a clean duplicate of the cell cures nothing; until then no rule is applied | `RERUN_REQUIRED` (never OK / INCOMPLETE_INPUT) |
+| designated series, supplement 2 §§2, 7 | `measure.measure`, `derive.derivation` | an event at the provisional 3 GiB: stop and report the rule's one re-run cap (6 GiB) and whether it is within the step-5 bound from the valid runs' P and D; no re-run limit, no further doubling (a second event names the same 6 GiB), nothing inferred; NO cap-override facility | `STEP1_RERUN_REQUIRED`; `rerun_step5_bound.within` false carries "STOP AND REPORT BEFORE FREEZE"; no valid run: `defined` false with the owner's open point named |
+| official series, supplement 2 §1 | `rrules.r_mem(official=True)`, `qualify.decoy_failure` (QC02 / QC03), `qualify.r_rules_official`, `qualify.aggregate` | ANY memory-watchdog event in an official decoy fails the cases and the qualification closed; no re-run exists (a run claiming to be one is invalid), no doubled cap, no cure by a clean duplicate; the later official decoys and MB r1's children are not launched; the aggregator lifts the status to the qualification record (`fail_closed_statuses`) and a case carrying it can never pass | `QUALIFICATION_MEMORY_WATCHDOG_UNDER_FROZEN_CAP` |
+| MEM_POLL_S, supplement 2 §§2, 3; readings item 6 | `rrules.r_mem` step 6, `derive.canonical`, `derive.derivation`, `repin.poll_literal`, `qualify.r_rules_official` | canonical only on case (i) (the re-checked value, unchanged) and case (ii) (the clip to exactly 0.5 s); on case (iii) no value is produced anywhere: the exact quotient is reported as `unrounded_quotient_not_an_output` with g, MEM_CAP, the re-checked value and the branch; the derivation stops before the freeze; the apply step can write only `2.0` or `0.5`; in the official series B's MEM_POLL_S is None and no comparison value is made | `MEM_POLL_S_NONCANONICAL_BRANCH` |
+| canonical forms, readings item 6 | `derive.form_reasons` (derivation, apply step, R_RULES_OFFICIAL's B) | MEM_CAP: int, multiple of 256 MiB, ≥ 1 GiB; MEM_POLL_S: "2" or "1/2"; FREE_MEM_MIN: int, multiple of 256 MiB, ≥ 2 GiB; EXCL_CPU_PCT: 25, 35, 40, 45 or 50; EXCL_ALLOW: sorted distinct basenames | `<OUTPUT>_NOT_CANONICAL` |
+| EXCL_ALLOW, supplement 2 §8 | `derive.compare` | set equality of exact strings, A, B and the driver; no tolerance, subset, union, intersection or sticky list | (comparison) |
+
+**The sampler's configured interval: 0.25 s (the builder's choice; dev evidence only; for the independent review).**
+On a fixed-rate schedule the spacing of two readings is the interval plus the scheduling jitter and the `ps` latency,
+so a configured 0.5 s can never satisfy the bound: every observation at 0.5 s was above it (builder5: 0.505, 0.51 and
+0.555 s; this build's dev decoy under a concurrent agent's load: 0.871 s). Evidence for 0.25 s, all DEV or synthetic,
+on a host other agents were loading at the time (worse than a prepared host):
+* a synthetic probe (five CPU-bound child processes that also allocate; the real `RssSampler` watching them; no
+  science), 300 s windows: set 0.25 s gave a largest spacing of 0.278 s (load average 13) and 0.320 s (load 15.7);
+  set 0.125 s gave 0.290 s (load 28); set 0.1 s gave 0.727 s (load 18.7): a shorter interval does not help once the
+  host stalls a `ps`, and costs more (one `ps -A` is about 20 ms). 45 s windows: set 0.5 s gave 0.509 s, 0.25 s gave
+  0.267 s, 0.2 s gave 0.212 s, 0.1 s gave 0.113 s;
+* the driver's real decoy branch with the synthetic evaluator (`state::t_decoy_records_rmem_inputs`, final bytes):
+  41 samples, no failed read, largest spacing 0.261 s;
+* the dev decoy (decoy 297, block 0, dev ladder, 2 workers; `decoy::t_qs_resume_decoy_dev`, final bytes):
+  501 samples, no failed read, largest spacing 0.263 s, and a highest growth
+  rate g = 95.6 MiB/s, against 61.9 MiB/s (builder5) and 74.2 MiB/s (this build) for
+  the same dev decoy with the sampler set to 0.5 s.
+
+No official-configuration run exists (5 workers, the frozen ladder): the choice rests on the figures above only.
+The largest spacing is recorded as `max_spacing_ns` (integer nanoseconds, rounded up; the largest difference of the
+time stamps of two consecutive successful readings: a failed reading leaves the gap open) and the rule functions check
+that integer. **Two things the reviewer should weigh, neither softened here:** (1) the time stamp of a reading is
+taken immediately before its `ps` call, as it always was, so the spacing is that of the time stamps the growth rate is
+computed over; (2) **g depends on the configured interval**: a shorter interval reads a fresh worker earlier in its
+rise and divides by a shorter time, so the highest growth rate is larger (figures above), which moves step 6 towards
+the otherwise-branch. The ratifier lists the set interval among "inputs the text does not fix"; the owner allows a
+shorter interval "provided this does not alter the scientific rule beyond implementing the already-accepted
+observed-spacing requirement". Whether 0.25 s meets that proviso is the review's.
+
+**The designation rule: a PROPOSAL, flagged (protocol 11.2, step 1; the tool's docstring).** The ratifier ruled that
+whether a decoy with an invalid sampler record may be measured again "must be fixed in the designation of the
+pre-freeze series before the runs"; no accepted text fixes it. Proposed and implemented fail-closed: the unit is the
+whole series of one invocation; an invalid invocation designates nothing, its record is kept under `--work` as
+`INVALID_<n>_<utc>_…`, never overwritten, and listed in every later record; a later invocation measures the WHOLE
+series again (never one decoy into an existing series, never a selection among runs); once designated evidence exists
+the tool refuses (`ALREADY_DESIGNATED`); a memory-watchdog event is not a re-measurement case; no limit on invalid
+series is set (no text sets one). **This is the builder's proposal, not accepted text: the owner or the review must
+accept, change or reject it before any designated run.**
+
+**READING-15 (builder6; protocol 11.3; for the reviewer).** The driver's watchdog record holds two kinds of entry: a
+kill of a worker above the cap, and the release of an already-broken pool (`broken_pool_worker_killed`). Only the
+first is read as a "memory-watchdog event" (`rrules.cap_events`); a run with only the second is an invalid input (a
+failed decoy) but not an event run: no re-run at a doubled cap is called for, and the official fail-closed status is
+not raised by it (the failed decoy fails the qualification anyway). An entry of an unknown kind counts as an event.
+
+**B4. Is exact canonical-output agreement between two independent measurement series well-defined? (Analysis only:
+nothing below is softened, resolved or worked around in the code. The second ratifier's canonical forms are taken as
+given and do not replace this analysis.)**
+
+Common to all five: the two series are taken at different times (the designated one before the freeze, the official
+one at the qualification), each from ONE run of decoy 297 and ONE of decoy 316 and one series of readings. The rule
+text says "≥ 10 readings"; both tools take exactly 10 (the rule's minimum; the ratifier notes the text does not fix
+the number), since a longer series changes every maximum and every set below. The two series differ by construction
+in the cap and the poll the decoys run with (3 GiB and 2 s against the frozen values), as the ratifier notes.
+
+1. **MEM_CAP_BYTES.** Rule: "P = max over every job of every valid official decoy of max(`job_maxrss_bytes` [ru_maxrss
+   of the job's fresh worker], `worker_peak_rss_bytes` [watchdog ps])"; "s = max over each (kind, rung) that appears in
+   two or more valid runs of (largest peak / smallest peak)"; "MEM_CAP = roundup_256MiB(max(k × P, 1 GiB)), k = max(3,
+   2s)". Agreement is well-defined (equality of integers). It depends on host variation through: (i) P, a maximum of
+   measured peak RSS values, which differs from run to run; (ii) the 256 MiB rounding boundary: while k × P stays at or
+   below the 1 GiB floor both series give 1 GiB, above it two series agree only if both k × P fall in the same 256 MiB
+   step, and a change of P by δ moves k × P by at least 3δ; (iii) s, a ratio of two measured peaks, which enters k once
+   it exceeds 3/2; (iv) the watchdog's ps peak is sampled at MEM_POLL_S, and the official decoys run with the frozen
+   MEM_POLL_S, which may differ from the 2 s of the designated runs; (v) in the official series the frozen cap is the
+   kill line: a peak above it cannot be recorded as a larger P, it is an event and fails the qualification closed
+   (supplement 2, section 1). At dev scale (decoy 297 block 0, dev ladder) the per-job peaks were 39-88 MiB in every
+   run, far below the floor; the frozen-ladder kinds (RLR d6 / d8, C2b N40 / N80, C1b d8-12) are unmeasured.
+2. **MEM_POLL_S.** Rule: "g = the highest RSS growth rate seen by a ≤ 0.5 s qualification sampler. Require g ×
+   MEM_POLL_S ≤ 0.1 × MEM_CAP; otherwise MEM_POLL_S = max(0.5 s, 0.1 × MEM_CAP / g)." As ruled, an output exists only
+   on two branches. With c = 0.1 × MEM_CAP: **designated series** (the re-checked value is step 1's 2 s): A = 2 iff
+   g_A ≤ c / 2; A = 1/2 iff g_A ≥ 2c; and for c / 2 < g_A < 2c the derivation STOPS BEFORE FREEZE
+   (`MEM_POLL_S_NONCANONICAL_BRANCH`). **Official series** (the re-checked value is the frozen one): if A = 1/2, B is
+   1/2 whatever g_B is (the re-check holds for g_B ≤ 2c, and above that the quotient is below 0.5 s and the rule clips):
+   agreement does not depend on the host. If A = 2, B = 2 iff g_B ≤ c / 2; for c / 2 < g_B < 2c the qualification
+   FAILS CLOSED (non-canonical branch); for g_B ≥ 2c, B = 1/2 ≠ A and the comparison fails. So exact agreement is
+   well-defined whenever both sides are on a canonical branch, and it depends on run-to-run variation only when A = 2,
+   through one inequality on g_B, an extreme-value statistic (the maximum over thousands of finite differences of RSS).
+   **What the dev evidence says about the designated series (not softened): with MEM_CAP at the 1 GiB floor, c / 2 =
+   51.2 MiB/s and 2c = 204.8 MiB/s. The dev decoys of this campaign (decoy 297 block 0, dev ladder, 2 workers) gave
+   g = 61.9 MiB/s (builder5, 16.6) and 74.2 MiB/s (this build) with the sampler set to 0.5 s, and the figure reported
+   above with it set to 0.25 s: on dev figures the designated derivation lands in the STOP band or on the clip, not on
+   "unchanged 2 s". The official ladder's g is unmeasured.** If the designated measurement reaches the stop band the
+   campaign stops before the freeze as the owner ruled; this build does nothing to avoid it.
+3. **FREE_MEM_MIN_BYTES.** Rule: "FREE_MEM_MIN = max(2 GiB, roundup_256MiB(MEM_CAP + (WORKERS − 1) × P + D))".
+   Well-defined (equality of integers). It inherits every dependence of MEM_CAP and adds D (the driver's own peak RSS)
+   and 4 × P, with the same 256 MiB boundary above the 2 GiB floor (at dev scale the sum is about 1.4 GiB: floor). Its
+   attainability clause ("At least 3 consecutive readings must reach FREE_MEM_MIN") is a check, not part of the value,
+   but it must hold in BOTH series and depends on the host's free memory at ten instants.
+4. **EXCL_CPU_PCT.** Rule: "EXCL_CPU_PCT = 25. There is exactly one exception. If the hosting app that runs the
+   launcher, which cannot be quit, exceeds 25 in any prepared-state reading, then EXCL_CPU_PCT = min(50, roundup_5(1.25
+   × its maximum reading))." Well-defined (an integer in {25, 35, 40, 45, 50}). It depends on the hosting app's
+   MAXIMUM instantaneous %cpu over ten readings: one reading at 25.1 instead of 24.9 moves the output from 25 to 35;
+   above 25 the two series agree only if both maxima fall in the same bin (25 < max ≤ 28 gives 35, 28 < max ≤ 32
+   gives 40, 32 < max ≤ 36 gives 45, above 36 gives 50). The hosting app is the application that runs the agent
+   driving the measurement, so it is active by construction. Both series must also identify the same hosting app
+   (READING-12).
+5. **EXCL_ALLOW (owner supplement 2, section 8).** Rule: "The frozen list = the current 39 names ∪ the basename … of
+   every process that meets both conditions: (a) it exceeds EXCL_CPU_PCT in any prepared-state qualification reading
+   (≥ 10, 30 s apart) or in this ratification's H3 readings; (b) its executable path lies under `/System/`,
+   `/usr/libexec/`, `/usr/sbin/`, `/sbin/` or `/Library/Apple/`", never an excluded class.
+   **Is exact equality between an independent designated series and an independent qualification series
+   well-defined? Yes.** Each series gives one set: a union of three parts, each fixed by the text: the 39 names (the
+   same in both); the H3 daemons whose ratified reading exceeds that series' EXCL_CPU_PCT (a function of item 4 only:
+   at 25 all four names; at 35, 40, 45 or 50 only `spotlightknowledged.updater` and `BackgroundShortcutRunner`, whose
+   readings 70.3 and 52.2 exceed every possible threshold); and the basenames (`comm.rsplit('/')[-1]`, exact strings,
+   no normalisation) of the processes of THAT series' readings that meet (a) and (b). Equality of two such sets is the
+   ordinary equality of sets; the rule supplies every semantic the comparison needs, and the ratifier's item 6 says
+   the same. It is implemented exactly (A, B and the driver's constant, as sets of exact strings) and tested (one name
+   more, one name fewer, a superset, a subset, a duplicate, the driver differing: each fails).
+   **What in the rule makes the outcome depend on run-to-run host variation.** Condition (a) is an existential over
+   ten instantaneous `ps` %cpu readings of EVERY process on a SIP-protected OS path. Two series give the same set iff
+   the SIP-path basenames outside the 39 and outside the H3 part that are seen above the threshold at one of the ten
+   instants are the same in both, and both have the same EXCL_CPU_PCT. OS daemons (indexing, sync, analysis, update)
+   run in bursts the operator can neither quit nor provoke; they are admitted by (b), so they do not make the host
+   "not prepared". One such daemon above the threshold at one instant of one series and at no instant of the other
+   breaks equality. The dependence is asymmetric in its effect: a name the designated series adds is frozen into the
+   driver's list, and the official series then agrees only if that same daemon exceeds the threshold again within its
+   own ten readings; the gate's own tolerance of the daemon (it is in the frozen list) plays no part in B, because B is
+   the rule applied to the official readings over the 39 names, never over the frozen list (that would be the sticky
+   list the owner excludes).
+   **Is there a genuine ambiguity or an undefined comparison? None was found in the comparison itself.** Two inputs of
+   it are not fixed by the text and are fixed by the tools, for the review: the number of readings (exactly 10 in both
+   series) and the identification of the hosting app (READING-12). The smallest exact question the analysis leaves,
+   which is one of consequence and not of definition: *when both series satisfy the rule and differ only because an
+   OS daemon admitted by (b) was above the threshold in a reading of one series and in no reading of the other, the
+   exact comparison fails the qualification; is that failure the intended outcome?* Owner supplement 2, section 8
+   already answers that the comparison is not weakened; so no STOP BEFORE FREEZE follows from this analysis, and none
+   was implemented. It is stated so that the owner knows the exposure before the designated measurement.
+
+In short: agreement is DEFINED for all five. MEM_POLL_S and (through the watchdog) MEM_CAP now have ruled fail-closed
+branches; EXCL_ALLOW is governed by run-to-run host variation with no margin whenever any OS daemon outside the 39
+names is busy in one series only; the other three are boundary-sensitive (the 256 MiB steps, the 25 % threshold and
+the bins of the hosting app's maximum).
+
+### 17.5 A safety interlock: real science executes only in the qualified worktree
+
+With the science cases built, an official or review run that passed its preconditions inside a test sandbox (for
+instance under a mutant of a precondition) would have launched the real driver's full decoys. `science_phase` therefore
+executes (official decoys, MB r1's children, the rehearsal, the in-process cases) only when the driver's own
+`check_identity` holds (the qualified worktree, git dir and branch); elsewhere those cases fail closed
+(`NOT_THE_QUALIFIED_WORKTREE`) and a plain review only re-evaluates committed records. `mbs308_measure.designate`
+(both forms) refuses outside the qualified worktree and branch in the same way. Tests: a child process in a sparse
+sandbox with every executing function replaced by a recorder (none is called); the measuring function replaced by a
+recorder in a mini repository (not called). No test invokes the measurement CLI or an official verifier run on the real
+worktree. A reviewer's `--review --heavy` re-run of the official decoys is therefore possible only in the qualified
+worktree (for the reviewer: say if another arrangement is wanted).
+
+### 17.6 The apply step changes five constants: existing tests and one mutant made independent of the provisional values
+
+The official qualification runs the suites and the matrix on the FROZEN bytes, i.e. after the apply step. Four
+existing tests and one mutant assumed the provisional values and would have failed there:
+`state::t_decoy_records_rmem_inputs` (3 GiB and the default step-1 check), `state::t_gc10_start_gates` and the disk
+suite's planted free memory (8 GiB fixed), `state::t_gc10_ratified_allow_list` and `static::t_r3_ratified_rules_applied`
+(the four ratified daemons, exactly), and M51 (its fragment was the literal text of the list). They now read the
+constants the driver under test carries; the two allow-list tests assert the provisional item-16 list while the
+protocol's table says PROVISIONAL and, after the apply step, what R-ALLOW guarantees whatever the measurements (the 39
+names, and the two ratified daemons whose H3 readings exceed every possible threshold); M51 mutates the gate's use of
+the list, with the same meaning and target. **Sandbox rehearsal (synthetic; not the apply step in the worktree):** in a
+`--shared` clone of my base store with this worktree's namespace committed, PLANTED designated evidence gave planted
+canonical outputs chosen to move everything (MEM_CAP 1 GiB, MEM_POLL_S 1/2 by the clip, FREE_MEM_MIN unchanged at its
+floor, EXCL_CPU_PCT 40, 41 names: `cloudd` and `modelcatalogd` dropped, their H3 readings no longer above the
+threshold);
+`apply --write` changed exactly the driver's constants, the protocol table and DRIVER_DIFF.md, and `check` was clean;
+the suites were then run from the sandbox's own tests on the applied bytes:
+static 10 / 10; launch 12 / 12; qualify 23 / 23; disk 17 / 17; cases 25 / 25; state 52 / 52; crash 50 / 50; the full mutant matrix 245 / 245 killed (110 unmutated targets pass; per-mutant `error` fields: none). A second `apply --write` was a no-op.
+
+### 17.7 Tests and mutants (final bytes; my own `--no-local` base store; sandboxes only; on AC throughout)
+
+All runs below are on the FINAL code bytes, in a committed sandbox clone (`git clone --shared` of my own `--bare
+--no-local` base store; branch checked out at 555f4cbf, this worktree's namespace copied over it and committed there as
+`7bd6d6d507c3`; the real repository was never written), because `repin check` and `disk::t_repin_driver_diff` need the
+two new DRIVER_DIFF hunks committed (17.1). The worktree differs from that sandbox commit only in this report's
+section 17 (the results below were filled in afterwards); `static` and `qualify`, the only suites that read the
+report (the leak scan), were then run again on the filled report: see the last row. The host was on AC power at the
+start of every phase (10 readings). No timing-sensitive test failed, so no test was re-run.
+
+| suite | result | seconds |
+|---|---|---|
+| `static` (QS-STATIC) | 10 / 10 | 5 |
+| `launch` (QS-LAUNCH; synthetic payloads under launchd, test labels) | 12 / 12 | 14 |
+| `qualify` (QS-QUALIFY) | 23 / 23 | 23 |
+| `disk` (QS-DISK) | 17 / 17 | 118 |
+| `cases` (QS-CASES, new) | 25 / 25 | 113 |
+| `state` (QS-STATE) | 52 / 52 | 416 |
+| `crash` (QS-CRASH) | 50 / 50 | 750 |
+| `decoy` (dev forms: decoy 297, block 0, dev ladder, 2 workers) | 4 / 4 | 874 |
+| mutant matrix | 245 / 245 killed; 110 unmutated target tests pass; survivors none; not run none | 3719 |
+| `static`, `qualify` again on the filled report (sandbox commit on top of the one above; run once more after this row was written) | 10 / 10 and 23 / 23, both times | |
+
+**Every per-mutant result was read for an `error` field:** none of the 245 carries one, every mutant's target
+run ended with a written, parsed result whose boolean `ok` is false (rc 1: a failed assertion, never an exception or a
+missing result), and none of the 110 unmutated target runs carries one. The suites' own result files
+were read the same way (no `error` field).
+
+**Tests for this build's parts** (suite `cases` unless said): A1 `t_protocol_owner_decisions_text`,
+`t_qc13s_owner_records_fail_closed`, `qualify::t_integration_sparse_sandbox`; A2 `t_science_case_summaries`,
+`t_mbr1_carried_modules_and_pins`, `t_qc04_determinism_planted`, `t_mbr1_repro_planted`,
+`t_official_science_only_in_the_qualified_worktree`, `decoy::t_science_cases_dev`; A3
+`t_q12_decision_and_planted_controls` (MB r1's fourteen controls and three more), `t_q12_never_states_a_candidate_cap`,
+`t_section4_values_and_planted_mismatches`; B1 `t_measure_readings_and_hosting_app`, `t_measure_run_validity`,
+`t_measure_synthetic_payload_under_launchd`, `t_measure_refuses_and_invalidates`; B2 `t_driver_constants_exact`,
+`t_derive_adapters_and_planned_runs`, `t_derivation_outputs_and_checks`, `t_apply_literals_and_constants`,
+`t_apply_step_in_a_sandbox`, `t_protocol_table_is_the_drivers_constants`; B3 `t_compare_is_exact_no_tolerance`,
+`t_r_rules_official_exact_agreement` (23 rows); the rule functions `qualify::t_rrules_planted_controls` (50 planted
+controls); C1 `state::t_grant_binds_every_owner_record` (26 planted controls), `t_owner_records_named_and_bound`; C2
+`t_final_preflight_owner_section14`; the failed-decoy record `state::t_decoy_failure_record_on_watchdog_event` (the
+driver's real decoy branch, a real watchdog kill of a synthetic job); the sampler fields
+`state::t_decoy_records_rmem_inputs`.
+
+**Mutants of this build: MB01-MB109** (each a planted failure of one check, killed by its target's assertion): the grant
+index (MB01-MB07, MB109: a record's text not re-hashed, other bytes, the index digest, fewer records, paraphrase keys,
+`reaffirms_c4`, supplement 2 dropped); the manifest (MB08); Q12 and section 4 (MB09-MB20); the carried cases
+(MB21-MB36, MB100, MB101); the derivation and its adapters (MB37-MB47, MB86-MB92); R_RULES_OFFICIAL and the aggregator
+(MB48-MB56, MB96-MB99); the apply step (MB57-MB63, MB75, MB93-MB95); the measurement tool (MB64-MB71, MB102-MB105);
+the qualified-worktree interlock (MB72); the final preflight (MB73, MB74); the rulings in the rule functions
+(MB76-MB85: observed spacing not enforced or not required, a clean duplicate cures an event run, the official series
+re-runs, the non-canonical branch gives a value or does not stop, a broken-pool release counted as an event, the
+re-run bound with the undoubled cap, a silent clip); the driver's failed-decoy record (MB106); the sampler (MB107,
+MB108).
+
+### 17.8 What remains PENDING, and points for the reviewer (none decided here)
+
+1. **Never executed by me (by the brief's rules), so unproven end to end:** the official forms of QC01 (cell 305's
+   committed record), QC05, QC06, QC07 (formal part and the E4 child) and QC09-SCI; the real driver's `decoy` under
+   launchd; a full-ladder decoy; QC02 / QC03 / QC04 / QC08 / MBR1_REPRO / Q12 / R_RULES_OFFICIAL on real official
+   records; the designated measurement; the apply step in the worktree. Their code is covered by planted records, the
+   synthetic launchd payload, the dev forms on decoy 297 block 0 and static signature checks of the carried modules.
+   A dress rehearsal by the coordinator is the first real execution.
+2. **The sampler's configured interval, 0.25 s** (17.4): the builder's choice on dev evidence; g depends on it; for
+   the independent review before the freeze (owner supplement 2, section 5).
+3. **The designation rule is a PROPOSAL** (17.4; protocol 11.2 step 1): to be accepted, changed or rejected before
+   any designated run.
+4. **MEM_POLL_S on dev figures** (17.4, B4 item 2): the dev decoys' g lies in the band where the designated
+   derivation stops with `MEM_POLL_S_NONCANONICAL_BRANCH`, or on the clip. Nothing was done to avoid it.
+5. **EXCL_ALLOW** (17.4, B4 item 5): exact set equality is defined and implemented; its exposure to OS daemons'
+   bursts is stated for the owner.
+6. **Still the owner's, reported and not resolved:** which P and D stand in the step-5 bound of the re-run when no
+   other valid run exists (`OPEN_RERUN_BOUND`; the tools report `defined: false`). And the means of a 6 GiB re-run:
+   no cap-override facility exists; on `STEP1_RERUN_REQUIRED` the campaign stops and reports.
+7. **V16**: the driver's failed-decoy record (a change in `main()`'s decoy branch; recorded fields only).
+8. **READING-11 to READING-15** (protocol 11.3): W_idle = the largest wired-down reading; the hosting app from the
+   process ancestry; a "thermal event" is a ThermalEvent power-log entry (the thermal-pressure level gates only the
+   start); which processes a reading keeps (a rejected process makes the series not prepared); a memory-watchdog
+   event is a kill at the cap, not the release of a broken pool. And exactly ten readings in both series.
+9. **V3**: the official decoys one at a time against MB r1's concurrency.
+10. **Three records in the grant** (17.3): supplement 2's own wording says "two-owner-record" (section 9) and "both
+    complete owner records and supplements" (section 12); three are bound.
+11. The class names of the two new DRIVER_DIFF hunks (17.1); `repin check` and `disk::t_repin_driver_diff` pass only
+    on the committed bytes.
+12. "Git configuration safety" (17.3): mapped to existing gates only.
+13. Any platform re-pin must precede the designated measurement: afterwards the frozen driver must equal the measured
+    driver with exactly the five outputs applied (R_RULES_OFFICIAL checks it).
+14. builder5's open point 16.9 item 1 (`busy_processes` fails open on a failed `ps`) is untouched.
+15. The leak scan (QC12-S) covers `evidence_prefreeze/*.json` without a timing exemption; it was exercised on planted
+    evidence only.
+16. **The freeze writer does not itself read the derivation's status.** "STOP BEFORE FREEZE" is enforced by the tools
+    in three places: the derivation's status and `stop_before_freeze`, the apply step's refusal (so the reviewed step
+    can never write outputs from a stopped derivation), and, after a freeze made against the stop, Q8-S /
+    R_RULES_OFFICIAL failing the qualification. `mbs308_manifest.py --freeze` was not given a check of its own (no
+    instruction; it would change builder4's writer and its tests): for the reviewer.
+17. **Not repaired here, by instruction:** the findings of the review that returned DELTA_REJECTED on cc723527 +
+    555f4cbf (two QC13-S records expecting a status name where the named file's line 2 differs; the scratch cleanup
+    that can delete a base store borrowed from another root). Another builder repairs them on top of this delta.
+
+### 17.9 Integrity, ledger, exposure
+
+* **New cell-308 target evaluations: 0.** Every state-changing run used the synthetic evaluator, the synthetic launchd
+  payloads or planted records, in sandboxes cloned `--shared` from builder6's own `git clone --bare --no-local` base
+  store. The only science: decoy cover cell 297, block 0, development ladder (before the interruption `decoy::t_science_cases_dev` (ledgered 13:51:25Z); on the final bytes the dev decoy suite's four tests once, in sandboxes (ledgered 16:54:11Z and 18:42:30Z)). Its decoy values stay in
+  builder6's scratch and are never juxtaposed with any tail-cell number. Cells 305-309, any drift in the band or its
+  mirror, and cell 309's campaign were not touched. QC01's rehearsal was never run.
+* Real repository: no git write of mine anywhere; `git for-each-ref refs/p5y-k5-cell308-mbs-r1/` is empty; the worktree's HEAD is still 555f4cbf; no `evidence_prefreeze/`, no `qualification/` and no freeze manifest exists in the worktree. Outside the worktree and my scratch I wrote only: my ledger lines, appended to the research worktree's ledger file (uncommitted, for the coordinator), and a local `git fetch` of the repository's branches into my own scratch base store (needed for owner supplement 2's commit).
+* Launchd: transient LaunchAgents with SYNTHETIC payloads only, under the test prefix
+  `org.rebaseguard.mbs308.test.` (the launch suite's own labels, and `…test.decoy297.<utc>` / `…test.decoy316.<utc>` of
+  the cases suite); each was booted out by the code under test and its plist removed; `launchctl list` shows no
+  rebaseguard job and no plist is left. The real driver was never launched by launchd.
+* Ledger (agent `builder6`, `c308_quarantine.log_event`, target_evaluations 0 on every line, no LEAK_FLAG):
+  2026-10-01T13:51:25Z INFRASTRUCTURE; 2026-10-01T13:51:25Z SYNTHETIC_VALIDATION; 2026-10-01T13:51:25Z NONTARGET_DRIFT_VALIDATION; 2026-10-01T14:06:24Z SYNTHETIC_VALIDATION; 2026-10-01T14:58:35Z SYNTHETIC_VALIDATION; 2026-10-01T16:54:11Z INFRASTRUCTURE; 2026-10-01T16:54:11Z SYNTHETIC_VALIDATION; 2026-10-01T16:54:11Z NONTARGET_DRIFT_VALIDATION; 2026-10-01T18:42:30Z NONTARGET_DRIFT_VALIDATION. The 14:58:35Z line announced a final run that the session usage limit cut before it started (no run corresponds to it); the 18:42:30Z line says so and names the four dev decoy tests of the final run.
+
+**Exposure statement (builder6).** I read no MB r1 run record, review, adjudication, postexec or evidence file, and
+ran no `git log` on any branch of the real repository (only `git log -1 --format=%H` on my own sandbox commits). After
+the interruption my context was rebuilt from a summary of my own earlier work in this session and the same memory
+index; the coordinator's two later messages (54-A and the resume message) and owner supplement 2 carry no MB r1 run
+observation beyond the outcome label. What my context holds about MB r1 that did not come from an allowed file: my session began with the
+user's auto-loaded memory index (I opened none of its files; it is not a source). **It does carry MB r1 run
+observations, qualitatively:** the outcome label of MB r1's one execution (consumed once, INDETERMINATE, never rerun),
+with the successor's pre-freeze status and that owner decisions are recorded; a lesson line that lid-close sleep and
+fanless thermal slowdown inflate wall times and contaminate runtime gates; and successor-lesson lines (never move
+`packed-refs.lock` aside; timing kills are not kills; positive-evidence liveness). It carries no per-job, progress,
+CPU, memory, host or science figure of the consumed run. From allowed files I also read MB r1 protocol section 14 (the
+pre-grant r2 qualification failure: sleep times and a slowdown figure of a QUALIFICATION run, not of the consumed
+execution) and section 3.2 (pre-freeze decoy walls). None of it is used: every cap is the user's section-4 value, every
+rule number is the ratification's, every other value is planted or measured here on decoy 297 block 0, and no
+threshold, timeout or tolerance was chosen from it. The one number chosen in this build, the sampler's configured
+interval, rests on the dev and synthetic figures of 17.4 only.
+
+### 17.10 What of 54-A was already in before the interruption (asked by the coordinator and by owner supplement 2, section 9)
+
+The session was cut by a usage limit while the 54-A rework was under way. The 54-A message HAD reached me and I had
+read the ratifier file's named parts. State of the uncommitted bytes at the interruption, item by item:
+
+| 54-A item | before the interruption | completed after the resume |
+|---|---|---|
+| 3. validity by series (designated 3 GiB / 2 s; official = the frozen values) | IN: `r_mem(measurement_cap_bytes, measurement_poll_s)` and its callers, built before 54-A arrived | the `official` parameter (no re-run in the official series) |
+| 2. F-6 corrected | IN in `rrules.r_mem` only (cured only by a valid re-run chain; `RERUN_REQUIRED` before any other status; the re-run's step-5 bound) | planted controls, mutants, the derivation and measurement statuses |
+| 1. READING-6 corrected | PARTLY: `r_mem` checked `max_spacing_ns`; `RssSampler.stop()` recorded it (so the helper pin was stale) | the configured interval (0.25 s) and its evidence; `derive.sampler_input`; `measure.run_reasons`; the planted controls; the tests and the synthetic payload; the helper re-pin; DRIVER_DIFF; the protocol; the designation-rule proposal |
+| 4. canonical forms | only `r_mem`'s poll `case` / `canonical` labels | `derive.form_reasons` and its use in the derivation, the apply step and R_RULES_OFFICIAL; `poll_literal` restricted to 2.0 / 0.5; tests on canonical values |
+| 5. owner's open points as fail-closed STOP statuses | only three message constants in `rrules` and the re-run bound report | superseded by owner supplement 2: the three ruled statuses in rrules, derive, measure, qualify, the aggregator; the driver's failed-decoy record that makes an event detectable |
+| 6. READING-3, 7 and 1, 2, 4, 5 confirmed | nothing to change | the protocol states READING-7 as confirmed |
+| configuration: `reviewQ6`, `ratifier2` in the ledger agents; my READING-7..10 renumbered | NOT in | in (READING-11..14, and READING-15 new) |
+
+At the interruption the worktree was therefore in an inconsistent intermediate state (stale helper pin; the planted
+R-rule controls and the cases suite would have failed). Every result in 17.7 is from the final bytes; every run made
+before the last code change is treated as pre-final and is not reported as a result.

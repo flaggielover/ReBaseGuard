@@ -4,12 +4,17 @@ CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854, section "Written rules"; proto
 Built by the non-holder builder4 (research brief 46). Target-free; NOT frozen. Nothing here reads the host, a file, git
 or any record: every input is passed in, and every number of the rules below is the ratification's (none is chosen
 here). The functions compute the rule outputs and record every input; they decide nothing about sequencing. Which
-records feed them in the official qualification (the official decoy runs under the launchd launcher, the prepared-state
-readings) and how the frozen code comes to carry the outputs are the open sequencing question of protocol section 11
-(case R_RULES_OFFICIAL is PENDING_USER_DECISION).
+records feed them is the user's section-11.2 ruling, option (a) (owner supplement 1, part I; protocol section 11.2):
+the designated pre-freeze measurements give the outputs the frozen code carries (code/mbs308_derive.py), and the
+official qualification re-measures and re-applies these same functions (case R_RULES_OFFICIAL). The one parameter that
+ruling adds is the cap / poll the measured runs must have been made with (r_mem's `measurement_cap_bytes`,
+`measurement_poll_s`; non-holder builder6, research brief 54); no rule text and no number changed.
 
 Readings of the rule text that the text leaves open are stated where they are made (READING-1 ... READING-5) and listed
-in protocol section 11; each is a reading, not a new rule.
+in protocol section 11; each is a reading, not a new rule. The second ratifier's rulings on them
+(CONSTANTS_RATIFICATION_MBS308_READINGS_R1, research ca66e367) and the owner's supplement 2 (research 74f386a5:
+`ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_2.txt`) are implemented in r_mem and named in its docstring; the three
+fail-closed statuses they give are the STATUS_* names below.
 
 Arithmetic is exact (fractions.Fraction); a ps %cpu reading is converted from its decimal text, never through a float.
 """
@@ -48,6 +53,25 @@ NEVER_PREFIXES = ("/Applications/", "/Users/", "/opt/", "/usr/local/", "/Library
                   "/bin/")                                                                    # R-ALLOW "Never added"
 AC = "AC Power"                       # prepared state: AC power (R-FREE attainability), as mbs308_host reads it
 RULE_NUMBERS = {k: v for k, v in dict(globals()).items() if k.isupper() and not k.startswith("RATIFICATION")}
+NS_PER_S = 10 ** 9                    # a unit conversion (the sampler records its observed spacing in nanoseconds)
+READINGS_R1_COMMIT = "ca66e367"
+SUPPLEMENT_2_COMMIT = "74f386a54088a210a51bb81587225dae64def637"
+# ---- the three fail-closed statuses (mechanically detectable; none resolves anything, each stops)
+# owner supplement 2, sections 2 and 7 / readings R1, item 5 (a): a DESIGNATED pre-freeze run with a memory-watchdog
+# event is not a valid input; the rule's one re-run (the provisional cap doubled, within the step-5 bound) is the only
+# cure; no further doubling, no re-run limit, nothing inferred. No cap-override facility exists: stop and report.
+STATUS_STEP1_RERUN = "STEP1_RERUN_REQUIRED"
+# owner supplement 2, sections 2 and 3 / readings R1, item 6, case (iii): step 6's otherwise-branch above the 0.5 s
+# floor gives an unrounded quotient for which the accepted text defines no canonical form. Designated series: STOP
+# BEFORE FREEZE. Official series: the qualification FAILS CLOSED. Nothing is rounded; no comparison value is made.
+STATUS_POLL_NONCANONICAL = "MEM_POLL_S_NONCANONICAL_BRANCH"
+# owner supplement 2, sections 1 and 6: ANY memory-watchdog event in an official-qualification decoy under the actual
+# frozen MEM_CAP fails the qualification closed: no doubling, no qualification-only cap, no cure by another clean run.
+STATUS_OFFICIAL_WATCHDOG = "QUALIFICATION_MEMORY_WATCHDOG_UNDER_FROZEN_CAP"
+# the one point the accepted texts still leave to the OWNER (readings R1, item 5 (a) (i)); reported, never resolved
+OPEN_RERUN_BOUND = ("OWNER_OPEN_POINT: which P and D stand in the step-5 bound for a re-run when no other valid run "
+                    "exists (readings R1, item 5 (a))")
+BROKEN_POOL_EVENT = "broken_pool_worker_killed"     # mbs308_state._MemWatch's release of an already-broken pool
 
 _PY = re.compile(r"^[Pp]ython[0-9.]*$")
 
@@ -90,6 +114,37 @@ def _is_int(x) -> bool:
     return isinstance(x, int) and not isinstance(x, bool)
 
 
+def cap_events(events) -> list:
+    """The MEMORY-WATCHDOG EVENTS of a run's watchdog record (READING-15, builder6): every entry except the watchdog's
+    release of an already-broken pool (`event == "broken_pool_worker_killed"`: a kill made because the pool broke, not
+    because a worker passed the cap). Anything else in the list -- a kill at the cap, or an entry this function does
+    not know -- counts as an event (fail closed)."""
+    return [e for e in events or [] if not (isinstance(e, dict) and e.get("event") == BROKEN_POOL_EVENT)]
+
+
+def sampler_reasons(s) -> list:
+    """Why ONE sampler record {interval_s, max_spacing_ns, max_growth_bytes_per_s} is not a valid step-6 input
+    (readings R1, item 2; owner supplement 2, section 5): the bound "<= 0.5 s" binds the OBSERVED spacing of the
+    readings (exactly 0.5 s is within it); a set interval <= 0.5 s is necessary and not sufficient; a record that does
+    not state its largest observed spacing is invalid."""
+    if not isinstance(s, dict):
+        return ["SAMPLER_MISSING"]
+    try:
+        iv, g = F(str(s["interval_s"])), F(str(s["max_growth_bytes_per_s"]))
+    except (KeyError, TypeError, ValueError, ZeroDivisionError):
+        return ["SAMPLER_MISSING"]
+    if iv <= 0 or g < 0:
+        return ["SAMPLER_MALFORMED"]
+    if iv > SAMPLER_MAX_INTERVAL_S:
+        return ["SAMPLER_INTERVAL_ABOVE_0.5_S"]
+    gap = s.get("max_spacing_ns")
+    if not _is_int(gap) or gap <= 0:
+        return ["SAMPLER_OBSERVED_SPACING_UNRECORDED"]
+    if F(gap, NS_PER_S) > SAMPLER_MAX_INTERVAL_S:
+        return ["SAMPLER_OBSERVED_SPACING_ABOVE_0.5_S"]
+    return []
+
+
 # ------------------------------------------------------------------ prepared-state readings (R-FREE, R-EXCL-PCT,
 # R-ALLOW)
 def readings_valid(readings) -> dict:
@@ -112,10 +167,15 @@ def readings_valid(readings) -> dict:
 
 
 # ------------------------------------------------------------------ R-MEM
-def _run_reasons(run: dict) -> list:
+def _run_reasons(run: dict, cap: int = MEASUREMENT_CAP_BYTES, poll=MEASUREMENT_POLL_S, official: bool = False) -> list:
     """R-MEM step 1: an OFFICIAL decoy run (the real driver's decoy under the launchd launcher, frozen ladder, WORKERS
     5, provisional cap 3 GiB or -- for a re-run -- that cap doubled, MEM_POLL_S 2 s) without any memory-watchdog
-    event."""
+    event. `cap` / `poll`: the memory cap and poll the runs must have been made with. The defaults are step 1's own
+    (the designated pre-freeze measurement runs). The user's section-11.2 ruling (owner supplement 1, section 3: "Official
+    qualification decoys use the ACTUAL FROZEN VALUES. Do NOT introduce a separate 3-GiB / 2-second measurement
+    configuration") makes them, for the official qualification's re-measurement, the constants the frozen driver
+    carries: the caller passes those. No number of the rule changes. `official`: the run belongs to the official
+    series, where no re-run exists (owner supplement 2, section 1: no doubling, no qualification-only cap)."""
     r = []
     if run.get("launcher") is not True:
         r.append("NOT_UNDER_LAUNCHD_LAUNCHER")
@@ -123,20 +183,24 @@ def _run_reasons(run: dict) -> list:
         r.append("NOT_THE_FROZEN_LADDER")
     if run.get("workers") != MEASUREMENT_WORKERS:
         r.append("WORKERS_NOT_5")
-    want_cap = MEASUREMENT_CAP_BYTES * (RERUN_CAP_FACTOR if run.get("rerun_of") is not None else 1)
+    if official and run.get("rerun_of") is not None:
+        r.append("RERUN_NOT_PERMITTED_AFTER_THE_FREEZE")
+    want_cap = cap * (RERUN_CAP_FACTOR if run.get("rerun_of") is not None and not official else 1)
     if run.get("mem_cap_bytes") != want_cap:
         r.append("MEASUREMENT_CAP_NOT_AS_RULED")
     try:
-        poll_ok = F(str(run.get("mem_poll_s"))) == MEASUREMENT_POLL_S
+        poll_ok = F(str(run.get("mem_poll_s"))) == F(poll)
     except (TypeError, ValueError, ZeroDivisionError):
         poll_ok = False
     if not poll_ok:
-        r.append("MEM_POLL_S_NOT_2")
+        r.append("MEM_POLL_S_NOT_2" if F(poll) == MEASUREMENT_POLL_S else "MEM_POLL_S_NOT_AS_RULED")
     ev = run.get("watchdog_events")
     if not isinstance(ev, list):
         r.append("WATCHDOG_EVENTS_UNRECORDED")
-    elif ev:
+    elif cap_events(ev):
         r.append("MEMORY_WATCHDOG_EVENT")
+    elif ev:                               # the pool broke for another reason: the run failed, it is not an event run
+        r.append("WORKER_KILLED_AFTER_A_BROKEN_POOL")
     jobs = run.get("jobs")
     if not isinstance(jobs, list) or not jobs or any(
             not isinstance(j, dict) or not _is_int(j.get("job_maxrss_bytes")) or j.get("kind") is None or
@@ -158,40 +222,102 @@ def _job_peak(j: dict) -> int:
     return max(j["job_maxrss_bytes"], w if _is_int(w) else 0)
 
 
-def r_mem(runs: list, *, required_cells, workers: int, mem_poll_s, host: dict, sampler: dict) -> dict:
+def r_mem(runs: list, *, required_cells, workers: int, mem_poll_s, host: dict, sampler: dict,
+          measurement_cap_bytes: int = MEASUREMENT_CAP_BYTES, measurement_poll_s=MEASUREMENT_POLL_S,
+          official: bool = False) -> dict:
     """R-MEM. `runs`: [{id, cell, launcher, ladder, workers, mem_cap_bytes, mem_poll_s, rerun_of, watchdog_events,
     driver_maxrss_bytes, worker_peak_rss_bytes, jobs: [{name, kind, rung, job_maxrss_bytes[, worker_peak_rss_bytes]}]}];
     `required_cells`: the decoy cells of the qualification plan; `workers`, `mem_poll_s`: the driver's WORKERS and
     MEM_POLL_S; `host`: {hw_memsize_bytes, wired_pages, page_size_bytes} of the prepared idle state; `sampler`:
-    {interval_s, max_growth_bytes_per_s} of the <= 0.5 s qualification sampler."""
-    out = {"rule": "R-MEM", "ratification": RATIFICATION_COMMIT, "inputs": {"runs": len(runs or []),
-                                                                            "required_cells": sorted(required_cells)}}
+    {interval_s, max_spacing_ns, max_growth_bytes_per_s} of the <= 0.5 s qualification sampler (its SET interval, the
+    largest spacing OBSERVED between two of its readings, in integer nanoseconds, and the highest growth rate);
+    `measurement_cap_bytes`, `measurement_poll_s`: the cap and poll the runs must have been made with (see
+    _run_reasons; default: step 1's 3 GiB and 2 s); `official`: the series is the official qualification's (after
+    the freeze), not the designated pre-freeze series.
+
+    Readings ruled by the second ratifier (CONSTANTS_RATIFICATION_MBS308_READINGS_R1, research ca66e367; no rule text
+    and no number changed):
+    * item 2 (READING-6, corrected): step 6's "<= 0.5 s" binds the OBSERVED spacing of the sampler's readings; a set
+      interval <= 0.5 s is necessary and not sufficient; exactly 0.5 s is within the bound; a record whose largest
+      observed spacing exceeds it (or does not state it) is an invalid input: no g, no MEM_POLL_S, R-MEM not OK.
+    * item 4 (F-6, corrected): a run with a memory-watchdog event -- an original decoy or a re-run -- is cured ONLY by
+      a VALID re-run of it at the doubled provisional cap (every re-run has that one cap); coverage of its cell by
+      another clean run cures nothing. While any event run has no valid re-run no rule is applied and the status is
+      RERUN_REQUIRED: never OK, never INCOMPLETE_INPUT, never NO_VALID_INPUT.
+    * item 5 (a): "within the step-5 bound" is a condition on the doubled cap, with the valid runs' P and D; which P
+      and D stand in it when no other valid run exists is the OWNER's open point (reported, never resolved here).
+    * item 6: MEM_POLL_S has a canonical form only when the re-check holds (case i: the re-checked value, unchanged)
+      or the otherwise-branch clips to 0.5 s (case ii).
+
+    The owner's supplement 2 (research 74f386a5), on top of those:
+    * section 2 / 3: in case iii (the otherwise-branch above the floor) the function STOPS with status
+      MEM_POLL_S_NONCANONICAL_BRANCH: `poll["MEM_POLL_S"]` is None (no value is produced, nothing is rounded) and the
+      raw evidence and the branch are reported (`poll["unrounded_quotient_not_an_output"]`: the exact value of the
+      rule's own expression, in lowest terms).
+    * sections 1 and 6 (`official=True`): a memory-watchdog event in an official decoy gives the status
+      QUALIFICATION_MEMORY_WATCHDOG_UNDER_FROZEN_CAP; there is no re-run (a run that claims to be one is invalid), no
+      doubled cap and no cure.
+    * section 7: for the designated series nothing but the rule's one re-run exists: no limit, no further doubling."""
+    out = {"rule": "R-MEM", "ratification": RATIFICATION_COMMIT,
+           "inputs": {"runs": len(runs or []), "required_cells": sorted(required_cells),
+                      "measurement_cap_bytes": measurement_cap_bytes, "measurement_poll_s": fstr(measurement_poll_s)}}
     runs = list(runs or [])
-    reruns_of = {r.get("rerun_of") for r in runs if r.get("rerun_of") is not None}
+    by_id = {r.get("id"): r for r in runs}
     invalid, valid = [], []
     for r in runs:
-        why = _run_reasons(r)
+        why = _run_reasons(r, measurement_cap_bytes, measurement_poll_s, official)
         (invalid if why else valid).append((r, why))
     out["invalid_runs"] = [{"id": r.get("id"), "cell": r.get("cell"), "reasons": why} for r, why in invalid]
     out["valid_runs"] = [r.get("id") for r, _ in valid]
     valid_runs = [r for r, _ in valid]
     covered = {r.get("cell") for r in valid_runs}
     missing = sorted(c for c in required_cells if c not in covered)
-    # step 1: a decoy with a watchdog event is re-run with the provisional cap doubled (never used as an input)
-    rerun = []
-    for r, why in invalid:
-        if "MEMORY_WATCHDOG_EVENT" in why and r.get("rerun_of") is None and r.get("id") not in reruns_of:
-            rerun.append({"id": r.get("id"), "cell": r.get("cell"),
-                          "rerun_cap_bytes": MEASUREMENT_CAP_BYTES * RERUN_CAP_FACTOR})
-    out["rerun_required"] = rerun
-    if host is None or not all(_is_int(host.get(k)) for k in ("hw_memsize_bytes", "wired_pages", "page_size_bytes")):
+    # step 1 (F-6 as ruled): an event run is never used as an input and is cured only by a VALID re-run of it at the
+    # doubled provisional cap, directly or through a chain of re-runs (a re-run with an event is itself an event run)
+    cured = set()
+    for v in valid_runs:
+        x, seen = v.get("rerun_of"), set()
+        while x is not None and x not in seen:
+            cured.add(x)
+            seen.add(x)
+            x = (by_id.get(x) or {}).get("rerun_of")
+    event_ids = {r.get("id") for r, why in invalid if "MEMORY_WATCHDOG_EVENT" in why}
+    uncured = [r for r, why in invalid if "MEMORY_WATCHDOG_EVENT" in why and r.get("id") not in cured]
+    rerun_cap = measurement_cap_bytes * RERUN_CAP_FACTOR
+    # the run to re-run next: an uncured event run whose own re-run (if any) is not itself an event run
+    rerun = [{"id": r.get("id"), "cell": r.get("cell"), "rerun_cap_bytes": rerun_cap} for r in uncured
+             if not any(x.get("rerun_of") == r.get("id") and x.get("id") in event_ids for x in runs)]
+    out["rerun_required"] = [] if official else rerun
+    host_ok = host is not None and all(_is_int(host.get(k)) for k in ("hw_memsize_bytes", "wired_pages",
+                                                                       "page_size_bytes"))
+    if uncured and official:               # owner supplement 2, sections 1 and 6: fail closed; nothing cures it
+        out.update({"status": STATUS_OFFICIAL_WATCHDOG, "valid": False, "missing_cells": missing,
+                    "event_runs": [r.get("id") for r in uncured]})
+        return out
+    if uncured:                            # no rule is applied until every event run has a valid re-run
+        bound = {"rerun_cap_bytes": rerun_cap}
+        if valid_runs and host_ok:         # "within the step-5 bound": the doubled cap in MEM_CAP's place
+            p_v = max(max(_job_peak(j) for j in r["jobs"]) for r in valid_runs)
+            p_v = max([p_v] + [r["worker_peak_rss_bytes"] for r in valid_runs
+                               if _is_int(r.get("worker_peak_rss_bytes"))])
+            d_v = max(r["driver_maxrss_bytes"] for r in valid_runs)
+            lhs_v = rerun_cap + (workers - 1) * p_v + d_v
+            rhs_v = host["hw_memsize_bytes"] - host["wired_pages"] * host["page_size_bytes"]
+            bound.update({"defined": True, "P_bytes": p_v, "D_bytes": d_v, "lhs_bytes": lhs_v, "rhs_bytes": rhs_v,
+                          "within": lhs_v <= rhs_v})
+            if lhs_v > rhs_v:
+                bound["stop"] = ("the doubled cap is not within the step-5 bound: the text provides no re-run; "
+                                 "STOP AND REPORT BEFORE FREEZE (owner supplement 2, section 7)")
+        else:
+            bound.update({"defined": False, "within": None, "open_point": OPEN_RERUN_BOUND})
+        out.update({"status": "RERUN_REQUIRED", "valid": False, "missing_cells": missing,
+                    "uncured_event_runs": [r.get("id") for r in uncured], "rerun_step5_bound": bound})
+        return out
+    if not host_ok:
         out.update({"status": "INVALID_INPUT", "valid": False, "reason": "HOST_READINGS_MISSING"})
         return out
     if not valid_runs:
         out.update({"status": "NO_VALID_INPUT", "valid": False, "missing_cells": missing})
-        return out
-    if rerun:                              # every decoy with a watchdog event is re-run before the rule is applied
-        out.update({"status": "RERUN_REQUIRED", "valid": False, "missing_cells": missing})
         return out
     if missing:
         out.update({"status": "INCOMPLETE_INPUT", "valid": False, "missing_cells": missing})
@@ -223,22 +349,28 @@ def r_mem(runs: list, *, required_cells, workers: int, mem_poll_s, host: dict, s
     out.update({"P_bytes": P, "D_bytes": D, "s": fstr(s), "spread_by_kind_rung": spread, "k": fstr(k),
                 "MEM_CAP_BYTES": mem_cap, "feasibility": feas})
     # step 6
-    try:
-        iv, g = F(str(sampler["interval_s"])), F(str(sampler["max_growth_bytes_per_s"]))
-    except (KeyError, TypeError, ValueError, ZeroDivisionError):
-        out.update({"status": "INVALID_INPUT", "valid": False, "reason": "SAMPLER_MISSING"})
+    bad = sampler_reasons(sampler)         # READING-6 as ruled: the OBSERVED spacing binds (exactly 0.5 s is within)
+    if bad:
+        out.update({"status": "INVALID_INPUT", "valid": False, "reason": bad[0],
+                    "sampler_max_spacing_ns": sampler.get("max_spacing_ns") if isinstance(sampler, dict) else None})
         return out
-    if iv <= 0 or iv > SAMPLER_MAX_INTERVAL_S or g < 0:
-        out.update({"status": "INVALID_INPUT", "valid": False, "reason": "SAMPLER_INTERVAL_ABOVE_0.5_S"
-                    if iv > SAMPLER_MAX_INTERVAL_S else "SAMPLER_MALFORMED"})
-        return out
+    iv, g = F(str(sampler["interval_s"])), F(str(sampler["max_growth_bytes_per_s"]))
+    gap = sampler.get("max_spacing_ns")
     poll = F(str(mem_poll_s))
     poll_ok = g * poll <= POLL_FRACTION * mem_cap
     new_poll = poll if poll_ok else max(POLL_MIN_S, POLL_FRACTION * mem_cap / g)
-    out["poll"] = {"g_bytes_per_s": fstr(g), "sampler_interval_s": fstr(iv), "mem_poll_s_in": fstr(poll),
-                   "recheck_ok": poll_ok, "MEM_POLL_S": fstr(new_poll)}
+    case = "i" if poll_ok else ("ii" if new_poll == POLL_MIN_S else "iii")
+    out["poll"] = {"g_bytes_per_s": fstr(g), "sampler_interval_s": fstr(iv), "sampler_max_spacing_ns": gap,
+                   "mem_poll_s_in": fstr(poll), "recheck_ok": poll_ok, "case": case, "canonical": case != "iii",
+                   "MEM_POLL_S": fstr(new_poll) if case != "iii" else None}
+    if case == "iii":                      # owner supplement 2, section 2: nothing rounded, no value produced
+        out["poll"].update({"branch": "step 6, otherwise-branch, 0.1 x MEM_CAP / g above the 0.5 s floor",
+                            "unrounded_quotient_not_an_output": fstr(new_poll)})
     if not feas["ok"]:
         out.update({"status": "FAILS_ON_MEMORY", "valid": False})
+        return out
+    if case == "iii":
+        out.update({"status": STATUS_POLL_NONCANONICAL, "valid": False})
         return out
     out.update({"status": "OK", "valid": True})
     return out

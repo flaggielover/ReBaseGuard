@@ -574,6 +574,102 @@ def t_control_failed():
             "run": r["out"], "rerun": again["out"], "chain": ch["grant"][:8]}
 
 
+def t_grant_binds_every_owner_record():
+    """Brief 54, part C1 (owner supplement 1, section 6; owner supplement 2, section 12): the grant's `user_ruling_s1`
+    must be the index of ALL the user's complete owner records in fixed order (original, supplement 1, supplement 2),
+    each with its research path, commit, byte length, sha256 and complete verbatim text, plus the index digest and
+    reaffirms_c4. The real `check_grant` (through `execute`, in the sandbox) accepts exactly that, and refuses, with
+    nothing consumed: one byte changed in any of the three texts (the entry's digest left as it was, and again with the
+    entry made self-consistent, as a forger would), any one record missing, any one record alone, the two-record index
+    that was complete before supplement 2, the records in another order (reversed, rotated, the supplements swapped), a
+    record twice in place of another, a fourth record, a section-only excerpt of the original (sections 5 and 5-6 by
+    their byte ranges) and an excerpt of supplement 2, the old single-text field, an added paraphrase key (in the field
+    and in a record), reaffirms_c4 not true, a wrong index digest, and no ruling. The texts are read from the base
+    store at their research commits."""
+    import copy
+    good = T.s1_ruling()
+    want = T.s1_owner_records()
+    rows_ok = [(r["record"], r["path"], r["commit"], r["bytes"], r["sha256"]) for r in good["records"]] == \
+        [tuple(w) for w in want] and len(want) == 3 and \
+        [w[0] for w in want] == ["original", "supplement_1", "supplement_2"]
+    if not rows_ok:                                 # the planted controls below index the three records
+        return {"ok": False, "rows_ok": False, "records": [w[0] for w in want]}
+
+    def flip(ur, i, reindex):
+        u = copy.deepcopy(ur)
+        t = u["records"][i]["verbatim"]
+        k = len(t) // 2
+        u["records"][i]["verbatim"] = t[:k] + ("x" if t[k] != "x" else "y") + t[k + 1:]
+        return T.s1_reindex(u) if reindex else u
+
+    def excerpt(lo, hi, i=0):
+        u = copy.deepcopy(good)
+        raw = u["records"][i]["verbatim"].encode()
+        u["records"][i]["verbatim"] = raw[lo:hi].decode()
+        return T.s1_reindex(u)
+
+    def pick(*idx):                                 # the records idx, in that order, as a self-consistent index
+        return T.s1_reindex(dict(copy.deepcopy(good), records=[copy.deepcopy(good["records"][i]) for i in idx]))
+    old_style = {"verbatim": good["records"][0]["verbatim"], "sha256": good["records"][0]["sha256"],
+                 "reaffirms_c4": True}
+    extra_rec = copy.deepcopy(good)
+    extra_rec["records"][1]["summary"] = "planted paraphrase"
+    fourth = copy.deepcopy(good)
+    fourth["records"].append(dict(copy.deepcopy(good["records"][2]), record="supplement_3"))
+    n2 = good["records"][2]["bytes"]
+    planted = {
+        "byte_changed_in_original": flip(good, 0, False),
+        "byte_changed_in_supplement_1": flip(good, 1, False),
+        "byte_changed_in_supplement_2": flip(good, 2, False),
+        "byte_changed_in_original_self_consistent": flip(good, 0, True),
+        "byte_changed_in_supplement_1_self_consistent": flip(good, 1, True),
+        "byte_changed_in_supplement_2_self_consistent": flip(good, 2, True),
+        "original_missing": pick(1, 2),
+        "supplement_1_missing": pick(0, 2),
+        "supplement_2_missing_the_index_before_it": pick(0, 1),
+        "original_alone": pick(0),
+        "supplement_1_alone": pick(1),
+        "supplement_2_alone": pick(2),
+        "records_reversed": pick(2, 1, 0),
+        "records_rotated": pick(1, 2, 0),
+        "supplements_swapped": pick(0, 2, 1),
+        "supplement_1_twice_in_place_of_supplement_2": pick(0, 1, 1),
+        "a_fourth_record": T.s1_reindex(fourth),
+        "section_5_excerpt_only": excerpt(3624, 5006),
+        "sections_5_6_excerpt_only": excerpt(3624, 5736),
+        "supplement_2_excerpt_only": excerpt(0, n2 // 2, 2),
+        "old_single_text_field": old_style,
+        "paraphrase_key_in_field": dict(copy.deepcopy(good), summary="planted paraphrase"),
+        "paraphrase_key_in_record": extra_rec,
+        "reaffirms_c4_false": dict(copy.deepcopy(good), reaffirms_c4=False),
+        "wrong_index_digest": dict(copy.deepcopy(good), index_sha256="0" * 64),
+        "no_ruling": None,
+    }
+    rows = {}
+    for name, ur in planted.items():
+        sb().grant_chain(ruling=ur if ur is not None else False)
+        r = T.child(sb(), "execute")
+        rows[name] = r["out"] == {"rc": 2, "refused": "GRANT_INVALID"} and \
+            "every complete owner record" in (r["detail"] or "") and sb().refs() == {} and \
+            sb().sealed_record() is None
+    # the two excerpts are exactly the ranges R2 (section 5) and R3 (sections 5-6) of the conformance review
+    # (REVIEW_OWNER_DECISION_CONFORMANCE_MBS308 section 1.3: lengths 1382 and 2112 and their sha256)
+    ex5, ex56 = excerpt(3624, 5006)["records"][0], excerpt(3624, 5736)["records"][0]
+    excerpt_is_real = (ex5["bytes"], ex5["sha256"]) == (
+        1382, "a04a0255fe19d5368eb4483a9d560c6ba25ac98c8139fd618c86efd700866e9d") and \
+        (ex56["bytes"], ex56["sha256"]) == (2112, "ff2878dae97ba1df8b6673244d8ae2d4f0bb4626c2059def54b0e6904ecdb56c")
+    ch = sb().grant_chain()                                 # the three complete records: accepted, the run seals
+    r = T.child(sb(), "execute")
+    rec = sb().sealed_record() or {}
+    s1 = (rec.get("grant") or {}).get("user_ruling_s1") or {}
+    accepted = r["out"] == {"rc": 0} and rec.get("status") == "TARGET_EVALUATED" and one_marker(ch) and \
+        s1.get("index_sha256") == good["index_sha256"] and \
+        [x["sha256"] for x in s1.get("records", [])] == [w[4] for w in want]
+    return {"ok": rows_ok and all(rows.values()) and len(rows) == 26 and excerpt_is_real and accepted,
+            "refused": rows, "accepted": accepted, "rows_ok": rows_ok, "excerpt_is_real": excerpt_is_real,
+            "run": r["out"]}
+
+
 def t_execute_refuses_outside_launchd():
     """execute outside the launchd job (the real check, not stubbed) refuses before the marker; nothing consumed."""
     fresh()
@@ -683,11 +779,25 @@ def _gates(vm: str, ps: str) -> dict:
     return T.child(sb(), "host_gates", {"planted": {"host": GOOD_HOST, "su": SU_OFF, "vm_stat": vm, "ps": ps}})["out"]
 
 
+def rule_constants() -> dict:
+    """The five rule constants the driver UNDER TEST carries, read exactly from its text (brief 54): the provisional
+    values before the apply step, the rule outputs after it. The start-gate tests plant their readings relative to
+    these, so they hold for whatever the driver carries."""
+    S()
+    import mbs308_derive as DV
+    return DV.driver_constants(sb().driver.read_text())
+
+
+def big_memory() -> int:
+    return max(8 * 2 ** 30, 2 * rule_constants()["FREE_MEM_MIN_BYTES"])
+
+
 def t_gc10_start_gates():
     """The DRIVER's GC-10 start gates on planted readings: free memory (vm_stat) and host exclusivity (ps); each failing
     reading fails exactly its gate and refuses start; an allow-listed or own-child busy process does not."""
     fresh()
-    big, small = 8 * 2 ** 30, 2 ** 29                       # far from the frozen threshold on either side
+    big, small = big_memory(), 2 ** 29                      # far from the driver's threshold on either side (the
+    #                                                         rule's floor is 2 GiB, so 0.5 GiB is always below it)
     busy_other = PS_QUIET + " 4242     1  90.0 /Applications/Busy.app/Contents/MacOS/Busy\n"
     busy_ui = PS_QUIET + " 4243     1  90.0 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer\n"
     busy_child = PS_QUIET + " 4244 {SELF}  90.0 /usr/bin/python3\n"
@@ -713,20 +823,27 @@ RATIFIED_DAEMONS = {
 
 
 def t_gc10_ratified_allow_list():
-    """R3 (ratification item 16): the DRIVER's exclusivity gate on planted ps readings passes each of the four ratified
-    OS daemons above the threshold, one at a time and all together; the allow-list stays a list of names, so an OS
-    daemon that is not on it still refuses start (host_exclusive)."""
+    """R3 (ratification item 16) and R-ALLOW: the DRIVER's exclusivity gate on planted ps readings passes each OS
+    daemon the allow-list holds beyond the 39 names of the rejected build, above the threshold, one at a time and all
+    together; the allow-list stays a list of names, so an OS daemon that is not on it still refuses start
+    (host_exclusive). Before the apply step those additions are exactly the four ratified daemons (item 16, provisional);
+    after it they are R-ALLOW's output, which by the rule always holds the two ratified daemons whose H3 readings exceed
+    every value EXCL_CPU_PCT can take (spotlightknowledged.updater 70.3, BackgroundShortcutRunner 52.2)."""
     fresh()
-    big = 8 * 2 ** 30
+    big = big_memory()
+    allow = set(rule_constants()["EXCL_ALLOW"])
+    added = sorted(allow & set(RATIFIED_DAEMONS))
     out = {}
-    for i, (name, path) in enumerate(RATIFIED_DAEMONS.items()):
-        out[name] = _gates(_vm(big), PS_QUIET + f" {4300 + i}     1  70.0 {path}\n")
-    out["all_four"] = _gates(_vm(big), PS_QUIET + "".join(f" {4310 + i}     1  52.0 {p}\n"
-                                                          for i, p in enumerate(RATIFIED_DAEMONS.values())))
+    for i, name in enumerate(added):
+        out[name] = _gates(_vm(big), PS_QUIET + f" {4300 + i}     1  70.0 {RATIFIED_DAEMONS[name]}\n")
+    out["all_added"] = _gates(_vm(big), PS_QUIET + "".join(f" {4310 + i}     1  52.0 {RATIFIED_DAEMONS[n]}\n"
+                                                           for i, n in enumerate(added)))
     out["unlisted_os_daemon"] = _gates(_vm(big), PS_QUIET + " 4320     1  70.0 /usr/libexec/notratifiedd\n")
-    ok = all(out[k]["rc"] == 0 and all(out[k]["gates"].values()) for k in (*RATIFIED_DAEMONS, "all_four")) \
+    ok = {"spotlightknowledged.updater", "BackgroundShortcutRunner"} <= set(added) and \
+        all(out[k]["rc"] == 0 and all(out[k]["gates"].values()) for k in (*added, "all_added")) \
         and out["unlisted_os_daemon"] == {"rc": 2, "refused": "HOST_PREFLIGHT", "detail": "HOST_PREFLIGHT: host_exclusive"}
-    return {"ok": ok, "cases": {k: v.get("refused", "PASS") for k, v in out.items()}}
+    return {"ok": ok, "ratified_daemons_on_the_list": added,
+            "cases": {k: v.get("refused", "PASS") for k, v in out.items()}}
 
 
 PIN_OVERRIDE = {"pin_override": {"os_build": "25Z999"}}
@@ -1183,7 +1300,10 @@ def t_decoy_records_rmem_inputs():
     lc = rec.get("lifecycle", {})
     rs, ctx, run_cfg = lc.get("rss_sampler") or {}, lc.get("stage1_context") or {}, lc.get("rmem_run") or {}
     S()
+    from fractions import Fraction as F
     import mbs308_rrules as RR
+    const = rule_constants()                        # the cap and poll the driver under test carries (brief 54)
+    cap, poll = const["MEM_CAP_BYTES"], F(repr(float(F(const["MEM_POLL_S"]))))
     run = {"id": "synthetic", "cell": 297, "launcher": run_cfg.get("launched_by_launchd"),
            "ladder": run_cfg.get("ladder"), "workers": run_cfg.get("workers"),
            "mem_cap_bytes": run_cfg.get("mem_cap_bytes"), "mem_poll_s": run_cfg.get("mem_poll_s"), "rerun_of": None,
@@ -1192,16 +1312,70 @@ def t_decoy_records_rmem_inputs():
            "worker_peak_rss_bytes": (ctx.get("memory_watchdog") or {}).get("worker_peak_rss_bytes"),
            "jobs": [{"name": n, "kind": n.split(".")[0], "rung": int(n.split(".")[2]), "job_maxrss_bytes": v}
                     for n, v in (ctx.get("job_maxrss_bytes") or {}).items()]}
-    reasons = RR._run_reasons(run)
+    reasons = RR._run_reasons(run, cap, poll)
     mib = 1024 * 1024
     ok = r["out"] == {"rc": 0} and rec.get("synthetic") is True and isinstance(lc.get("driver_maxrss_bytes"), int) \
-        and lc["driver_maxrss_bytes"] > 10 * mib and rs.get("interval_s") == "0.5" and rs.get("samples", 0) >= 4 \
+        and lc["driver_maxrss_bytes"] > 10 * mib and rs.get("interval_s") == "0.25" and rs.get("samples", 0) >= 4 \
         and rs.get("failed_reads") == 0 and (rs.get("driver_peak_rss_bytes") or 0) > 10 * mib \
         and (rs.get("worker_peak_rss_bytes") or 0) >= 64 * mib and rs.get("max_growth_bytes_per_s", 0) > 0 \
         and 0 < rs.get("max_spacing_s", 0) < 2.0 and reasons == ["NOT_UNDER_LAUNCHD_LAUNCHER", "WORKERS_NOT_5"] \
-        and run_cfg.get("mem_cap_bytes") == 3 * 1024 ** 3 and len(run["jobs"]) > 0
+        and isinstance(rs.get("max_spacing_ns"), int) and rs["max_spacing_ns"] > 0 \
+        and abs(rs["max_spacing_ns"] / 1e9 - rs["max_spacing_s"]) <= 0.001 \
+        and run_cfg.get("mem_cap_bytes") == cap and len(run["jobs"]) > 0
     return {"ok": ok, "rss_sampler": rs, "driver_maxrss_bytes": lc.get("driver_maxrss_bytes"),
             "rmem_run": run_cfg, "r_mem_step1_reasons": reasons, "jobs": len(run["jobs"])}
+
+
+def t_decoy_failure_record_on_watchdog_event():
+    """Owner supplement 2, sections 1 and 6: a memory-watchdog event in a decoy must be mechanically detectable.
+    main()'s REAL decoy branch (a sandbox child; the synthetic evaluator; each job holds 400 MB under a planted 200 MB
+    cap, as S11 does for `execute`): the watchdog kills the worker, the decoy FAILS -- and the driver still writes the
+    run's record to --out: `decoy_failed`, no stage 1, the watchdog's kill event (rss above the cap, killed), the
+    sampler record with its largest observed spacing, the driver's peak RSS and the run configuration. The failure
+    itself is not swallowed (the child does not report rc 0). Through the rule functions the record is an EVENT run:
+    MEMORY_WATCHDOG_EVENT, never dropped, RERUN_REQUIRED in a designated series and
+    QUALIFICATION_MEMORY_WATCHDOG_UNDER_FROZEN_CAP in an official one. A decoy that does not fail writes no
+    `decoy_failed` (t_decoy_records_rmem_inputs)."""
+    sb()
+    out = sb().tmp / "decoy_main_synth_failed.json"
+    out.unlink(missing_ok=True)
+    r = T.child(sb(), "decoy-main-synth", {"out": str(out), "alloc_mb": 400, "job_sleep": 3, "mem_cap_mb": 200},
+                timeout=600)
+    try:
+        rec = json.loads(out.read_text())
+    except (OSError, ValueError):
+        return {"ok": False, "child": r["out"], "rc": r["rc"], "tail": (r["stdout"] + r["stderr"])[-600:]}
+    S()
+    import mbs308_derive as DV
+    import mbs308_rrules as RR
+    lc = rec.get("lifecycle", {})
+    wd = (lc.get("stage1_context") or {}).get("memory_watchdog") or {}
+    kills = [e for e in RR.cap_events(wd.get("events"))]
+    run = DV.compact_run(rec, "decoy297", exit_code=r["rc"])
+    cap = 200 * 1024 * 1024
+    ri = DV.run_input(run)
+    mem_d = RR.r_mem([ri], required_cells=[297], workers=2, mem_poll_s="2", host=None, sampler=None,
+                     measurement_cap_bytes=cap, measurement_poll_s="0.3")
+    mem_o = RR.r_mem([ri], required_cells=[297], workers=2, mem_poll_s="2", host=None, sampler=None,
+                     measurement_cap_bytes=cap, measurement_poll_s="0.3", official=True)
+    rows = {"failure_not_swallowed": r["out"] != {"rc": 0} and r["rc"] != 0,
+            "record_written_as_failed": isinstance(rec.get("decoy_failed"), str) and bool(rec["decoy_failed"]) and
+            "stage1" not in rec and rec.get("mode") == "decoy" and rec.get("decoy_cell") == 297,
+            "kill_event_recorded": len(kills) >= 1 and all(
+                e.get("killed") is True and e.get("rss_bytes", 0) > e.get("cap_bytes", 0) == cap for e in kills) and
+            wd.get("cap_bytes") == cap,
+            "rmem_fields_kept": isinstance(lc.get("driver_maxrss_bytes"), int) and
+            isinstance((lc.get("rss_sampler") or {}).get("max_spacing_ns"), int) and
+            (lc.get("rmem_run") or {}).get("mem_cap_bytes") == cap and isinstance(rec.get("host"), dict),
+            "compact_run_carries_it": run["decoy_failed"] == rec["decoy_failed"] and
+            "DECOY_FAILED" in DV.plan_reasons(run, {297: None}),
+            "designated_series_rerun_required": mem_d["status"] == "RERUN_REQUIRED" and
+            mem_d["uncured_event_runs"] == ["decoy297"] and
+            mem_d["rerun_required"] == [{"id": "decoy297", "cell": 297, "rerun_cap_bytes": 2 * cap}],
+            "official_series_fails_closed": mem_o["status"] == RR.STATUS_OFFICIAL_WATCHDOG and
+            mem_o["rerun_required"] == [] and mem_o["event_runs"] == ["decoy297"]}
+    return {"ok": all(rows.values()), "rows": rows, "decoy_failed": rec.get("decoy_failed"), "child_rc": r["rc"],
+            "events": kills[:2]}
 
 
 if __name__ == "__main__":

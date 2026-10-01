@@ -114,24 +114,39 @@ def t_aggregator_boolean_pass_and_dev():
 
 
 def t_pending_cases_fail_closed():
-    """Every option-dependent case is DECLARED, returns exactly pass false / PENDING_USER_DECISION / its depends_on,
-    and keeps every gate it belongs to (and the qualification) failing even when every BUILT case passes."""
+    """A DECLARED (option-dependent) case returns exactly pass false / PENDING_USER_DECISION / its depends_on, and
+    keeps every gate it belongs to (and the qualification) failing even when every BUILT case passes. Since brief 54
+    the user's decisions are recorded and no case of the configuration is pending (asserted); the mechanism is
+    exercised with PLANTED pending cases declared on both sides (the verifier's table and a copy of the
+    configuration)."""
     cfg_pending = {c["id"]: c for c in CFG["cases"] if c["status"] == Q.PENDING_STATUS}
-    rows = {}
-    for cid in Q.PENDING_CASES:
-        r = Q.pending(cid)
-        rows[cid] = r["pass"] is False and r["status"] == "PENDING_USER_DECISION" and \
-            r["depends_on"] == list(cfg_pending[cid]["depends_on"]) and bool(r["depends_on"])
-    cases = {c["id"]: ({"pass": True} if c["status"] == "BUILT" else Q.pending(c["id"])) for c in CFG["cases"]}
-    agg = Q.aggregate(cases, CFG, "official")
-    pend_gates = {g for c in cfg_pending.values() for g in c["gates"]}
-    gates_ok = all(agg["gates"][g]["pass"] is False for g in pend_gates) and \
-        all(v["pass"] is True for g, v in agg["gates"].items() if g not in pend_gates)
-    ok = set(cfg_pending) == set(Q.PENDING_CASES) and all(rows.values()) and agg["pass"] is False and gates_ok and \
-        agg["pending_user_decision"] == sorted(Q.PENDING_CASES) and \
-        Q.config_consistency(CFG)["pass"] is True and {"MBS-7", "MBS-8"} <= {d for c in cfg_pending.values()
-                                                                               for d in c["depends_on"]}
-    return {"ok": ok, "pending": len(rows), "gates_blocked": sorted(pend_gates)}
+    none_pending = cfg_pending == {} and dict(Q.PENDING_CASES) == {} and Q.config_consistency(CFG)["pass"] is True
+    planted = {"QC97": ("MBS-97",), "QC98": ("MBS-98", "PLANTED SEQUENCING")}
+    saved = dict(Q.PENDING_CASES)
+    try:
+        Q.PENDING_CASES.update(planted)
+        cfg = json.loads(json.dumps(CFG))
+        cfg["cases"] += [{"id": "QC97", "gates": ["Q3"], "status": Q.PENDING_STATUS, "depends_on": ["MBS-97"]},
+                         {"id": "QC98", "gates": ["Q12", "Q13"], "status": Q.PENDING_STATUS,
+                          "depends_on": ["MBS-98", "PLANTED SEQUENCING"]}]
+        cp = {c["id"]: c for c in cfg["cases"] if c["status"] == Q.PENDING_STATUS}
+        rows = {}
+        for cid in Q.PENDING_CASES:
+            r = Q.pending(cid)
+            rows[cid] = r["pass"] is False and r["status"] == "PENDING_USER_DECISION" and \
+                r["depends_on"] == list(cp[cid]["depends_on"]) and bool(r["depends_on"])
+        cases = {c["id"]: ({"pass": True} if c["status"] == "BUILT" else Q.pending(c["id"])) for c in cfg["cases"]}
+        agg = Q.aggregate(cases, cfg, "official")
+        pend_gates = {g for c in cp.values() for g in c["gates"]}
+        gates_ok = all(agg["gates"][g]["pass"] is False for g in pend_gates) and \
+            all(v["pass"] is True for g, v in agg["gates"].items() if g not in pend_gates)
+        ok = none_pending and set(cp) == set(Q.PENDING_CASES) == set(planted) and all(rows.values()) and \
+            agg["pass"] is False and gates_ok and agg["pending_user_decision"] == sorted(planted) and \
+            Q.config_consistency(cfg)["pass"] is True
+    finally:
+        Q.PENDING_CASES.clear()
+        Q.PENDING_CASES.update(saved)
+    return {"ok": ok, "pending": len(rows), "gates_blocked": sorted(pend_gates), "none_pending_today": none_pending}
 
 
 def t_config_and_protocol_s11():
@@ -569,8 +584,11 @@ def t_qc13s_ledger_and_core():
             "ledger": Q.qc13_core(P, G, {"pass": False}, [okr])["pass"] is False,
             "empty": Q.qc13_core(P, G, LD, [])["pass"] is False}
     cfg_pend = [r["id"] for r in CFG["governance_records"] if not r.get("commit")]
-    return {"ok": all(lc.values()) and all(core.values()) and
-            {"USER_FREEZE_DECISION", "IMPLEMENTATION_REVIEW_ACCEPTED"} <= set(cfg_pend), "ledger": lc, "core": core}
+    named = {r["id"]: r for r in CFG["governance_records"] if r.get("commit")}
+    owner_named = all(named.get(i, {}).get("sha256") for i in ("USER_FREEZE_DECISION", "USER_OWNER_SUPPLEMENT_1",
+                                                               "USER_OWNER_SUPPLEMENT_2"))
+    return {"ok": all(lc.values()) and all(core.values()) and cfg_pend == ["IMPLEMENTATION_REVIEW_ACCEPTED"] and
+            owner_named, "ledger": lc, "core": core, "un_named": cfg_pend}
 
 
 # ------------------------------------------------------------------ the manifest writer and Q8-S
@@ -693,6 +711,10 @@ def t_cli_refusals():
 
 
 # ------------------------------------------------------------------ one sparse sandbox: the production paths
+PLANTED_OWNER = ("# planted user decision (a test stand-in; never a ruling)\n",
+                 "# planted owner supplement (a test stand-in; never a ruling)\n",
+                 "# planted owner supplement 2 (a test stand-in; never a ruling)\n")
+OWNER_IDS = ("USER_FREEZE_DECISION", "USER_OWNER_SUPPLEMENT_1", "USER_OWNER_SUPPLEMENT_2")
 SPARSE_BASE = ("/" + T.NSF_REL + "/code/", "/" + NS_REL + "/", "/" + Q.PATTERNS_PIN[0])
 
 
@@ -713,7 +735,9 @@ def sparse_sandbox(tag: str) -> dict:
     (copied from the code under test and tests / protocol / config), the pattern file and every external pin the
     manifest writer lists. MB r1's recorded state is planted as the test library does. The governance records and the
     ledger of the configuration are replaced by PLANTED ones on a planted branch (no real review is ever read); the
-    implementation-review and freeze-decision records stay un-named (PENDING)."""
+    implementation-review record stays un-named (PENDING); the three owner records are PLANTED ones bound by their
+    sha256 (brief 54; owner supplement 2). Planted designated-measurement files stand in for the section-11.2 evidence the freeze
+    requires (Q8-S lists them; their content is never read here)."""
     tmp = TMP / tag
     if tmp.exists():
         shutil.rmtree(tmp)
@@ -738,18 +762,26 @@ def sparse_sandbox(tag: str) -> dict:
     for f in T.NSS.glob("*.md"):
         shutil.copy2(f, dst / f.name)
     (dst / "protocol/MBS308_FREEZE.json").unlink(missing_ok=True)
+    (dst / "evidence_prefreeze").mkdir(exist_ok=True)
+    for name in ("MBS308_RRULES_DESIGNATED.json", "MBS308_RRULES_DERIVATION.json"):
+        (dst / "evidence_prefreeze" / name).write_text(json.dumps({"planted_by_a_test": True}) + "\n")
     # planted governance records and ledger (a planted branch; plumbing only)
     led = "\n".join(json.dumps({"agent": "builder4", "class": "SYNTHETIC_VALIDATION", "new_target_evaluations": 0,
                                 "target_equivalent_proxies": 0, "target_informed_optimisation": 0,
                                 "purpose": p}) for p in ("planted line", "PLANTED RULING: option B")) + "\n"
     pc = _plumb_commit(root, {"A.md": "# planted\nPLANTED_ACCEPTED\n", "L.jsonl": led, "P.md": "planted\n",
-                              "U.md": "# planted user decision\n"}, "planted governance records")
+                              "U.md": PLANTED_OWNER[0], "V.md": PLANTED_OWNER[1], "W.md": PLANTED_OWNER[2]},
+                       "planted governance records")
     mg(root, "update-ref", "refs/heads/planted-research", pc)
     cfg = json.loads((dst / "config/MBS308_QUALIFICATION_CASES.json").read_text())
     for r in cfg["governance_records"]:
         r["ref"] = "refs/heads/planted-research"
         r.pop("sha256", None)
-        if r["id"] in ("IMPLEMENTATION_REVIEW_ACCEPTED", "USER_FREEZE_DECISION"):
+        if r["id"] == "IMPLEMENTATION_REVIEW_ACCEPTED":
+            continue
+        if r["id"] in OWNER_IDS:                                # planted owner records, bound by sha256
+            i = OWNER_IDS.index(r["id"])
+            r.update({"commit": pc, "path": ("U.md", "V.md", "W.md")[i], "sha256": sha(PLANTED_OWNER[i].encode())})
             continue
         if r["kind"] == "verdict":
             r.update({"commit": pc, "path": "A.md", "verdict": "PLANTED_ACCEPTED"})
@@ -788,31 +820,45 @@ def _dev(sb: dict, only: str, tag: str) -> tuple:
 
 
 def t_integration_sparse_sandbox():
-    """The production paths in one sparse sandbox of the base store: the manifest writer --freeze; the verifier in dev
-    mode runs Q8-S, QC11-S (with MB r1's pinned science bytes), QC09-S, QC12-S (the real pinned pattern file; counts
-    only; no record-token scan), R_RULES_CONTROLS and QC13-S (planted records): every BUILT case passes except QC13-S,
-    which fails closed on exactly the two un-named records and passes once they are named; the dev report never
-    passes; a tampered namespace file fails Q8-S; an official run refuses on its preconditions."""
+    """The production paths in one sparse sandbox of the base store: the manifest writer --freeze (with the owner
+    records and every pin of the carried science cases); the verifier in dev mode runs Q8-S, QC11-S (with MB r1's
+    pinned science bytes), QC09-S, QC12-S (the real pinned pattern file; counts only; no record-token scan),
+    R_RULES_CONTROLS, QC13-S (planted records), Q1_theory (hashes) and the dev forms of QC01 (never run) and QC05 (a
+    loader check: nothing executed): every BUILT case passes except QC13-S, which fails closed on exactly the one
+    un-named record and passes once it is named, and fails again on an ALTERED owner record; the dev report never
+    passes; a tampered namespace file fails Q8-S; an official run refuses on its preconditions. No science is
+    computed (no decoy case is selected)."""
     sb = sparse_sandbox("integration")
-    only = "Q8-S,QC11-S,QC09-S,QC12-S,R_RULES_CONTROLS,QC13-S,QC01,Q12_caps"
+    only = "Q8-S,QC11-S,QC09-S,QC12-S,R_RULES_CONTROLS,QC13-S,QC01,Q1_theory,QC05"
     rc, rep, tail = _dev(sb, only, "dev1")
     c = (rep or {}).get("cases", {})
     first = rep is not None and rc == 0 and rep["dev_mode"] is True and rep["pass"] is False and \
-        all(c.get(k, {}).get("pass") is True for k in ("Q8-S", "QC11-S", "QC09-S", "QC12-S", "R_RULES_CONTROLS")) and \
+        all(c.get(k, {}).get("pass") is True for k in ("Q8-S", "QC11-S", "QC09-S", "QC12-S", "R_RULES_CONTROLS",
+                                                       "Q1_theory")) and \
         c.get("QC13-S", {}).get("pass") is False and \
-        sorted(c["QC13-S"]["pending_records"]) == ["IMPLEMENTATION_REVIEW_ACCEPTED", "USER_FREEZE_DECISION"] and \
-        c.get("QC01", {}).get("status") == "PENDING_USER_DECISION" and c.get("Q12_caps", {}).get("pass") is False
-    # name the two records (the worktree config only; dev mode reads it): QC13-S then passes
+        sorted(c["QC13-S"]["pending_records"]) == ["IMPLEMENTATION_REVIEW_ACCEPTED"] and \
+        c.get("QC01", {}).get("status") == "DEV_FORM" and c.get("QC01", {}).get("pass") is False and \
+        c.get("QC05", {}).get("status") == "DEV_FORM" and c.get("QC05", {}).get("pass") is False and \
+        c.get("QC05", {}).get("dev_checks_ok") is True and rep.get("pending_user_decision") == []
+    # name the record (the worktree config only; dev mode reads it): QC13-S then passes
     cp = sb["dst"] / "config/MBS308_QUALIFICATION_CASES.json"
     cfg = json.loads(cp.read_text())
     for r in cfg["governance_records"]:
         if r["id"] == "IMPLEMENTATION_REVIEW_ACCEPTED":
             r.update({"commit": sb["pc"], "path": "A.md", "verdict": "PLANTED_ACCEPTED"})
-        if r["id"] == "USER_FREEZE_DECISION":
-            r.update({"commit": sb["pc"], "path": "U.md"})
     cp.write_text(json.dumps(cfg, indent=1) + "\n")
     rc2, rep2, _ = _dev(sb, "QC13-S", "dev2")
     second = rep2 is not None and rep2["cases"]["QC13-S"]["pass"] is True and rep2["pass"] is False
+    for r in cfg["governance_records"]:                 # an ALTERED owner record (another sha256): fails closed
+        if r["id"] == "USER_OWNER_SUPPLEMENT_1":
+            r["sha256"] = "0" * 64
+    cp.write_text(json.dumps(cfg, indent=1) + "\n")
+    rc2b, rep2b, _ = _dev(sb, "QC13-S", "dev2b")
+    recs = {x["id"]: x for x in (rep2b or {}).get("cases", {}).get("QC13-S", {}).get("records", [])}
+    second = second and rep2b is not None and rep2b["cases"]["QC13-S"]["pass"] is False and \
+        recs.get("USER_OWNER_SUPPLEMENT_1", {}).get("status") == "SHA_MISMATCH" and \
+        recs.get("USER_FREEZE_DECISION", {}).get("status") == "OK" and \
+        recs.get("USER_OWNER_SUPPLEMENT_2", {}).get("status") == "OK"
     # an official run refuses on its preconditions (the tracked tree is dirty now): nothing runs, nothing is written
     p = subprocess.run([T.PY, "-I", "-S", "-B", str(sb["dst"] / "code/mbs308_qualify.py"), "--work",
                         str(sb["tmp"] / "work_official")], capture_output=True, text=True, env=T.GENV,

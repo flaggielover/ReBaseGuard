@@ -11,7 +11,9 @@ It lists, with sha256 and git blob computed from the bytes AT THAT TIME:
   * EVERY file the verifier or the static suite pins at a named COMMIT (config `commit_pins`), and every governance
     record QC13-S checks (config `governance_records`, blob ids only: nothing of them is read here);
   * the driver sha256, the helper pins, the platform pins, the operational constants as the code carries them, and the
-    guard-geometry field `guard.cell308_cover` that QC12-S exempts.
+    guard-geometry field `guard.cell308_cover` that QC12-S exempts;
+  * every complete owner record the grant must carry (governance S1; the driver's S1_OWNER_RECORDS), each checked
+    against the bytes git holds at its research commit.
 It refuses (writes nothing) when an external file differs from its pin or from its blob at HEAD, or a commit pin
 does not resolve. It writes nothing else.
 
@@ -125,6 +127,21 @@ def record_blobs(repo: Path, records: list) -> dict:
     return out
 
 
+def owner_records(repo: Path, rows) -> list:
+    """Governance S1 (owner supplement 1, section 6): every complete owner record the grant must carry, as the
+    driver names them (S1_OWNER_RECORDS: record, research path, research commit, byte length, sha256), each checked
+    against the bytes git holds at that commit (length and sha256) and listed with its blob id. Refuses when a record
+    does not resolve or differs: a freeze can never name bytes the repository does not hold."""
+    out = []
+    for name, rel, commit, nbytes, digest in rows:
+        b = git(repo, "rev-parse", "-q", "--verify", f"{commit}:{rel}")
+        raw = git_bytes(repo, b) if b else None
+        if raw is None or len(raw) != nbytes or sha(raw) != digest:
+            raise ManifestRefusal(f"owner record {name}: {commit}:{rel} does not resolve or differs from its digest")
+        out.append({"record": name, "path": rel, "commit": commit, "bytes": nbytes, "sha256": digest, "git_blob": b})
+    return out
+
+
 # ------------------------------------------------------------------ the pins (driver + verifier)
 def external_pins(D, QF) -> dict:
     """Every pinned external file at HEAD: key -> (path, pinned sha256 or None, pinned blob id / prefix or None)."""
@@ -168,6 +185,8 @@ def manifest(D, QF, repo: Path = REPO, ns: Path = NS, out: Path = OUT) -> dict:
         "external_files": external_files(repo, external_pins(D, QF)),
         "commit_pinned_files": commit_files(repo, commit_pins(QF)),
         "governance_records": record_blobs(repo, cfg["governance_records"]),
+        # governance S1: every complete owner record the grant's `user_ruling_s1` must carry (check_grant)
+        "s1_owner_records": owner_records(repo, D.S1_OWNER_RECORDS),
         "driver": {"path": D.NS_REL + "/code/mbs308_driver.py",
                    "sha256": sha((ns / "code" / "mbs308_driver.py").read_bytes())},
         "verifier": {"path": D.NS_REL + "/code/mbs308_qualify.py",

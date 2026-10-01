@@ -110,5 +110,59 @@ def t_qs_resume_decoy_dev():
     return {"ok": ok, "record": rec, "rmem_fields": rmem}
 
 
+SCIENCE_DEV_CASES = ("QC01", "QC02", "QC03", "QC04", "QC05", "QC06", "QC07", "QC08", "QC09-SCI", "Q1_theory",
+                     "MBR1_REPRO", "Q12_caps", "R_RULES_OFFICIAL")
+
+
+def t_science_cases_dev():
+    """The decision-dependent science cases in their DEV forms (builder6, brief 54; NONTARGET_DRIFT_VALIDATION): the
+    verifier itself, in --dev mode, in a sandbox of the separate base store. The ONLY science computed lies on decoy
+    cover cell 297, block 0, at the development ladder: the dev decoy (2 workers, run directly), QC04's serial child
+    and its ladder pair at block 0's own pointwise drift, QC08's Monte Carlo at block 0's drift. QC01 is never run in
+    dev; QC05, QC06, QC07 and QC09-SCI are loader checks (pinned bytes and entry signatures; nothing executed);
+    Q1_theory is hashes. Expected: every dev form reports `pass` false (a dev report is never evidence) with
+    `dev_checks_ok` true where a dev run exists: QC02 (block 0 ran), QC03 (stand-in), QC04 (serial == pooled; the
+    ladder pair identical; planted mutations detected), QC08 (the Monte-Carlo checks hold), MBR1_REPRO tiny (RLR d4 and
+    C2B N20 of block 0 equal MB r1's committed QC02 record), Q12_caps (the 17 planted controls and the section-4 values;
+    the dev record cannot feed the cap check: no 316 record), R_RULES_OFFICIAL (the dev record carries every rule
+    input). The dev decoy's record carries the R-MEM inputs and its host provenance; it was NOT launched by launchd."""
+    import shutil
+    tmp = T.SCRATCH / "t_science_dev"
+    s = T.Sandbox(tmp)
+    ns = s.root / T.NS_REL
+    shutil.copytree(T.NSS / "config", ns / "config", dirs_exist_ok=True)
+    out, work = tmp / "dev_report.json", tmp / "work"
+    p = subprocess.run([T.PY, "-I", "-S", "-B", str(ns / "code" / "mbs308_qualify.py"), "--dev", "--work", str(work),
+                        "--only", ",".join(SCIENCE_DEV_CASES), "--out", str(out)], capture_output=True, text=True,
+                       env=dict(T.GENV), cwd=str(s.root), stdin=subprocess.DEVNULL, timeout=3600)
+    try:
+        rep = json.loads(out.read_text())
+    except (OSError, ValueError):
+        return {"ok": False, "rc": p.returncode, "tail": (p.stdout + p.stderr)[-1200:]}
+    c = rep["cases"]
+    never_pass = all(c.get(k, {}).get("pass") is False for k in SCIENCE_DEV_CASES if k != "Q1_theory") and \
+        rep["pass"] is False and rep["dev_mode"] is True
+    dev_ok = {k: c.get(k, {}).get("dev_checks_ok") for k in ("QC02", "QC03", "QC04", "QC05", "QC06", "QC07", "QC08",
+                                                             "QC09-SCI", "MBR1_REPRO", "Q12_caps",
+                                                             "R_RULES_OFFICIAL")}
+    wd = sorted(work.glob("mbs308q*"))[-1]
+    dec = json.loads((wd / "MBS308_QC02_DECOY_297.json").read_text())
+    lc = dec["lifecycle"]
+    record = dec["blocks_run"] == [0] and dec["dev_ladder"] is True and lc["rmem_run"]["launched_by_launchd"] is False \
+        and lc["rmem_run"]["workers"] == 2 and isinstance(lc["driver_maxrss_bytes"], int) and \
+        dec["host"]["assessment"]["status"] in ("CLEAN", "CONTAMINATED", "AMBIGUOUS")
+    q04 = c.get("QC04", {})
+    ok = p.returncode == 0 and never_pass and all(v is True for v in dev_ok.values()) and record and \
+        c.get("Q1_theory", {}).get("pass") is True and c.get("QC01", {}).get("status") == "DEV_FORM" and \
+        q04.get("serial_ok") is True and q04.get("ladder_pair_identical") is True and \
+        c["Q12_caps"]["planted_controls"]["n"] == 17 and c["Q12_caps"].get("missing") == ["QC03"] and \
+        c["MBR1_REPRO"]["rlr_d4"]["equal"] is True and c["MBR1_REPRO"]["c2b_n20"]["equal"] is True
+    return {"ok": ok, "rc": p.returncode, "dev_checks_ok": dev_ok, "never_pass": never_pass, "record": record,
+            "qc04_jobs": sorted(q04.get("serial_vs_pooled", {})), "ladder_jobs": sorted(q04.get("ladder_pair", {})),
+            "mc_rows": (c.get("QC08") or {}).get("n"), "child_exit_codes": rep.get("child_exit_codes"),
+            "host": dec["host"]["assessment"]["status"], "wall_s": rep.get("wall_seconds"),
+            "tail": "" if ok else (p.stdout + p.stderr)[-600:]}
+
+
 if __name__ == "__main__":
     T.cli(globals())

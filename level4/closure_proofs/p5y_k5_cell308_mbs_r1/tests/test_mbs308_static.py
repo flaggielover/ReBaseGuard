@@ -295,13 +295,19 @@ def t_r3_ratified_rules_applied():
     superseded = "the frozen rule is max(3 × the largest official decoy per-job peak RSS, 1 GiB)"
     old = _driver_set(git_show(PRE_R3_BUILD, T.NS_REL + "/code/mbs308_driver.py").decode(), "EXCL_ALLOW")
     new = _driver_set(code("mbs308_driver.py").read_text(), "EXCL_ALLOW")
-    allow_ok = old is not None and len(old) == 39 and not (old & RATIFIED_EXCL_ADDITIONS) and \
-        new == old | RATIFIED_EXCL_ADDITIONS
+    # brief 54 (section 11.2 option (a)): until the apply step the driver carries the PROVISIONAL item-16 list (the 39
+    # names plus the four ratified daemons, exactly); after it EXCL_ALLOW is R-ALLOW's output, which by the rule keeps
+    # the 39 names and holds the two ratified daemons whose H3 readings (70.3, 52.2) exceed every possible EXCL_CPU_PCT
+    # (case R_RULES_OFFICIAL compares the output itself). The protocol's rule-output table says which state this is.
+    provisional = "| PROVISIONAL (pre-freeze build; not a rule output) |" in s8
+    allow_ok = old is not None and len(old) == 39 and not (old & RATIFIED_EXCL_ADDITIONS) and new is not None and (
+        new == old | RATIFIED_EXCL_ADDITIONS if provisional else
+        old | {"spotlightknowledged.updater", "BackgroundShortcutRunner"} <= new)
     timeout_rule = "PRE_CAP_S + 100" in _norm(s7)
     ok = all(verbatim.values()) and _norm(superseded) not in _norm(s8) and timeout_rule and allow_ok
     return {"ok": ok, "verbatim": verbatim, "superseded_absent": _norm(superseded) not in _norm(s8),
             "timeout_rule_in_s7": timeout_rule, "excl_allow": {"old": len(old or ()), "new": len(new or ()),
-                                                              "ok": allow_ok}}
+                                                              "ok": allow_ok, "provisional": provisional}}
 
 
 if __name__ == "__main__":

@@ -74,6 +74,63 @@ def base_store() -> Path:
     return BASE_STORE
 
 
+# ------------------------------------------------------------------ the S1 owner records of the grant (brief 54, C1)
+_OWNER_TEXTS: dict = {}
+
+
+def s1_owner_records() -> tuple:
+    """The S1_OWNER_RECORDS of the driver under test, read from its TEXT (the driver is never imported here):
+    ((record, research path, research commit, byte length, sha256), ...) in the grant's fixed order."""
+    import ast
+    for n in ast.parse((code_dir() / "mbs308_driver.py").read_text()).body:
+        if isinstance(n, ast.Assign) and [getattr(t, "id", None) for t in n.targets] == ["S1_OWNER_RECORDS"]:
+            return ast.literal_eval(n.value)
+    raise RuntimeError("the driver names no S1_OWNER_RECORDS")
+
+
+def owner_record_text(commit: str, path: str) -> str:
+    """The exact committed bytes of one owner record, read from the BASE STORE at its research commit (never from a
+    worktree file). A base store cloned before the record was committed must be rebuilt."""
+    key = (commit, path)
+    if key not in _OWNER_TEXTS:
+        p = subprocess.run(["/usr/bin/git", "-C", str(base_store()), "cat-file", "blob", f"{commit}:{path}"],
+                           capture_output=True, env=GENV, stdin=subprocess.DEVNULL)
+        if p.returncode != 0:
+            raise RuntimeError(f"the base store lacks the owner record {commit[:8]}:{path} (rebuild the base store)")
+        _OWNER_TEXTS[key] = p.stdout.decode("utf-8")
+    return _OWNER_TEXTS[key]
+
+
+def s1_index_sha256(rows) -> str:
+    return sha(json.dumps([list(r) for r in rows], sort_keys=True, separators=(",", ":")).encode())
+
+
+def s1_ruling() -> dict:
+    """The grant field `user_ruling_s1` as the frozen protocol defines it: the index of ALL the complete owner records
+    (original, supplement 1, supplement 2), each with its research path, commit, byte length, sha256 and complete verbatim text, plus
+    the index's own digest and reaffirms_c4. The texts are the user's committed bytes; only the grant around them is a
+    sandbox stand-in."""
+    recs, rows = [], []
+    for name, path, commit, _nbytes, _digest in s1_owner_records():
+        text = owner_record_text(commit, path)
+        raw = text.encode()
+        recs.append({"record": name, "path": path, "commit": commit, "bytes": len(raw), "sha256": sha(raw),
+                     "verbatim": text})
+        rows.append((name, path, commit, len(raw), sha(raw)))
+    return {"records": recs, "index_sha256": s1_index_sha256(rows), "reaffirms_c4": True}
+
+
+def s1_reindex(ur: dict) -> dict:
+    """A planted ruling made SELF-CONSISTENT again (each entry's bytes / sha256 recomputed from its text, the index
+    digest from the entries): what a forger who controls the grant would write."""
+    recs = []
+    for r in ur["records"]:
+        raw = r["verbatim"].encode()
+        recs.append(dict(r, bytes=len(raw), sha256=sha(raw)))
+    rows = [(r["record"], r["path"], r["commit"], r["bytes"], r["sha256"]) for r in recs]
+    return dict(ur, records=recs, index_sha256=s1_index_sha256(rows))
+
+
 class Sandbox:
     def __init__(self, tmp: Path):
         tmp.mkdir(parents=True, exist_ok=True)
@@ -181,13 +238,14 @@ class Sandbox:
         qc = self.commit([NS_REL + "/qualification/MBS308_QUALIFICATION.json"], "sandbox: qualification (synthetic)")
         self.write(NS_REL + "/review/MBS308_QUALIFICATION_REVIEW.md", f"# sandbox review (synthetic)\n{review_line}\n")
         rc = self.commit([NS_REL + "/review/MBS308_QUALIFICATION_REVIEW.md"], "sandbox: review (synthetic)")
-        verb = "SANDBOX: synthetic stand-in for the user's S1 ruling (never a real ruling)"
+        # ruling: True = every complete owner record as the frozen protocol defines the field; a dict = a planted
+        # `user_ruling_s1` (the C1 controls); False / None = no ruling. The grant itself is a sandbox stand-in.
+        ur = s1_ruling() if ruling is True else (ruling if isinstance(ruling, dict) else None)
         grant = {"schema": "rebaseguard.p5y.k5.cell308-mbs-r1.grant.v1", "exactly_once": True, "cell": 308,
                  "route": "MB-S", "closure_only": True, "driver_sha256": driver_sha or self.driver_sha,
                  "freeze_commit": self.freeze, "qualification_commit": qc, "qualification_review_commit": rc,
                  "input_manifest_sha256": sha(self.p(NS_REL + "/protocol/MBS308_FREEZE.json").read_bytes()),
-                 "user_ruling_s1": {"verbatim": verb, "sha256": sha(verb.encode()), "reaffirms_c4": True}
-                 if ruling else None}
+                 "user_ruling_s1": ur}
         self.write(NS_REL + "/authorization/MBS308_GRANT.json", json.dumps(grant))
         gc = self.commit([NS_REL + "/authorization/MBS308_GRANT.json"], "sandbox: grant (synthetic)")
         self.chain = {"qual": qc, "review": rc, "grant": gc}

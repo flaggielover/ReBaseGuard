@@ -178,6 +178,26 @@ CKPT_REF = STATE.CKPT_REF
 PRIOR_MARKERS = (STATE.REF_PREFIX,)
 R6_NAME = "K5_COVERAGE_MAP_R6"
 GRANT_SCHEMA = "rebaseguard.p5y.k5.cell308-mbs-r1.grant.v1"
+# governance S1 (owner supplement 1, section 6; owner supplement 2, section 12): the grant's `user_ruling_s1` is a
+# deterministic index of ALL the user's complete owner records -- the original decisions and both supplements -- in
+# this fixed order, each bound by its exact committed bytes: (record name, research path, research commit, byte
+# length, sha256). check_grant refuses any other bytes (protocol section 1; the freeze manifest records the same
+# values).
+S1_OWNER_RECORDS = (
+    ("original", "level4/closure_proofs/p5y_k5_cell308_research/ledger/USER_RULING_MBS308_OWNER_DECISIONS.txt",
+     "5c2394baac8aef43dcf9b675d323b0a7e2a9ccef", 17291,
+     "34eb1d41b56742fda2ba7fb7b70a46de5e0219ba324aa510437cc6c6d1065ad1"),
+    ("supplement_1",
+     "level4/closure_proofs/p5y_k5_cell308_research/ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_1.txt",
+     "8fc2b03856fa58084f6ba1bef8dea46429a99998", 18797,
+     "3f7d477b24900b64c7e30b3180ae7114fe642753956e31fe185fc6ef129d33d6"),
+    ("supplement_2",
+     "level4/closure_proofs/p5y_k5_cell308_research/ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_2.txt",
+     "74f386a54088a210a51bb81587225dae64def637", 12941,
+     "4ba4a6662828137628902c941439f0af33309bde38410ab0cbba3baba90870b0"),
+)
+S1_RECORD_KEYS = ("record", "path", "commit", "bytes", "sha256", "verbatim")
+S1_RULING_KEYS = ("records", "index_sha256", "reaffirms_c4")
 # GC-8: MB r1's recorded state, asserted EXACTLY (a named, reviewed exception; never a prefix wildcard)
 MBR1_PREFIX = "refs/p5y-k5-cell308-mb-r1/"
 MBR1_MARKER = MBR1_PREFIX + "target-consumed"
@@ -194,9 +214,13 @@ ENV = {"PATH": "/usr/bin:/bin", "HOME": os.environ.get("HOME", "/var/empty"), "G
        "GIT_NO_REPLACE_OBJECTS": "1", "LC_ALL": "C"}
 SCHEMA = STATE.RESULT_SCHEMA
 OUTCOMES = ("CELL308_CLOSED_UNDER_MB", "CELL308_NOT_CLOSED_UNDER_MB", "CELL308_EXECUTION_INDETERMINATE")
-# GC-10 (provisional; set at the freeze by rule R-MEM of CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854; protocol
-# section 8) from the OFFICIAL decoy runs, never from any target run). The provisional 3 GiB is ratified for the
-# pre-freeze build and as the measurement cap of the official decoys only.
+# GC-10: MEM_CAP_BYTES and MEM_POLL_S are set by rule R-MEM of CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854;
+# protocol section 8), never from any target run. Sequencing: the user's section-11.2 ruling, option (a) (protocol
+# section 11.2): the values are the canonical rule outputs of the DESIGNATED pre-freeze measurements, written here only
+# by the reviewed apply step (code/mbs308_repin.py apply), never by hand; the official qualification re-measures with
+# them and case R_RULES_OFFICIAL requires exact agreement. Until that apply step the values are the provisional ones
+# ratified for the pre-freeze build (3 GiB, 2 s: the cap and poll of the designated measurement runs, R-MEM step 1);
+# the protocol's rule-output table (section 8) says which they are.
 MEM_CAP_BYTES = 3 * 1024 ** 3
 MEM_POLL_S = 2.0
 # RC2: the platform the qualification measured; preflight / execute / resume refuse on any mismatch (re-pinned at
@@ -216,7 +240,7 @@ PLATFORM_PINS = {
 HELPER_SHA256 = {
     "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
     "mbs308_host.py": "6650ceebd7297dd4744c6121f9b41617aabbd50211a634df309c53b5945a2a8b",
-    "mbs308_state.py": "e2b6b8e1bb35c2957fca41a5d007e355eddd6e213d66d68995b4d8781895e047",
+    "mbs308_state.py": "3793e0b111e8c7834de356f78d5a78d933c2d817a4514a937f1282f558cf0067",
     "mbs308_launch.py": "1510308a96911278ca157f0305ee122e1a2a9632f1330bfed3ab428c7d6ba5c8",
 }
 PIN.GUARD_SHA256 = HELPER_SHA256["mbs308_guard.py"]
@@ -504,13 +528,13 @@ def check_launched() -> dict:
     return rec
 
 
-# GC-10 host headroom and exclusivity (recorded; each refuses start). Provisional values; each is frozen at the freeze
-# as the output of its rule in CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854; protocol section 8): FREE_MEM_MIN by
-# R-FREE, EXCL_CPU_PCT by R-EXCL-PCT, EXCL_ALLOW by R-ALLOW.
+# GC-10 host headroom and exclusivity (recorded; each refuses start). Each value is the output of its rule in
+# CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854; protocol section 8): FREE_MEM_MIN by R-FREE, EXCL_CPU_PCT by
+# R-EXCL-PCT, EXCL_ALLOW by R-ALLOW; written only by the reviewed apply step, as MEM_CAP_BYTES above (protocol section
+# 11.2). Until then: the provisional values of the pre-freeze build (2 GiB; 25; ratification item 16's list: the
+# current 39 names plus the four Apple OS daemons of its H3 readings, each under a SIP-protected OS path).
 FREE_MEM_MIN_BYTES = 2 * 1024 ** 3
 EXCL_CPU_PCT = 25.0
-# CONSTANTS_RATIFICATION_MBS308 item 16 (provisional; R-ALLOW decides the frozen list at the freeze): the current
-# 39 names plus the four Apple OS daemons of its H3 readings (each under a SIP-protected OS path)
 EXCL_ALLOW = frozenset({"kernel_task", "WindowServer", "launchd", "logd", "mds", "mds_stores", "mdworker",
                         "mdworker_shared", "coreaudiod", "powerd", "hidd", "bluetoothd", "configd", "syslogd",
                         "opendirectoryd", "distnoted", "cfprefsd", "trustd", "securityd", "loginwindow", "Dock",
@@ -848,6 +872,43 @@ def evaluate_target(con: dict, prep: dict) -> dict:
 
 
 # ------------------------------------------------------------------ the grant (derived chain)
+def s1_index_sha256(rows) -> str:
+    """The digest of the index itself: sha256 of the canonical JSON of [[record, path, commit, bytes, sha256], ...] in
+    the index's order (the verbatim texts are bound through their own sha256 entries)."""
+    return sha(json.dumps([list(r) for r in rows], sort_keys=True, separators=(",", ":")).encode())
+
+
+def check_s1_ruling(ur) -> dict:
+    """Governance S1, owner supplement 1 section 6: `user_ruling_s1` must be exactly
+        {"records": [<original>, <supplement_1>, <supplement_2>], "index_sha256": ..., "reaffirms_c4": true}
+    with each record exactly {"record", "path", "commit", "bytes", "sha256", "verbatim"}: the COMPLETE verbatim text of
+    one owner record. Refused unless (a) each text re-hashes to the digest and the byte length its entry states, (b)
+    each entry's name, path, commit, byte length and digest equal S1_OWNER_RECORDS, in that order (so a grant cannot
+    carry other bytes, an excerpt, a paraphrase, fewer records, or the records in another order), and (c) the index
+    digest is the digest of those entries. No other key is admitted anywhere in the field."""
+    bad = Refusal("GRANT_INVALID", "the grant does not carry every complete owner record of the user verbatim "
+                                   "(governance S1; owner supplement 1 section 6)")
+    if not isinstance(ur, dict) or sorted(ur) != sorted(S1_RULING_KEYS) or ur.get("reaffirms_c4") is not True:
+        raise bad
+    recs = ur.get("records")
+    if not isinstance(recs, list) or len(recs) != len(S1_OWNER_RECORDS):
+        raise bad
+    rows = []
+    for got, want in zip(recs, S1_OWNER_RECORDS):
+        if not isinstance(got, dict) or sorted(got) != sorted(S1_RECORD_KEYS) or not isinstance(got["verbatim"], str):
+            raise bad
+        raw = got["verbatim"].encode()
+        if type(got["bytes"]) is not int or len(raw) != got["bytes"] or sha(raw) != got["sha256"]:
+            raise bad                           # (a) the text is not the bytes its own entry names
+        row = (got["record"], got["path"], got["commit"], got["bytes"], got["sha256"])
+        if row != tuple(want):
+            raise bad                           # (b) not the record the frozen protocol / manifest names
+        rows.append(row)
+    if ur.get("index_sha256") != s1_index_sha256(rows):
+        raise bad                               # (c)
+    return {"index_sha256": ur["index_sha256"], "records": [{"record": r[0], "sha256": r[4]} for r in rows]}
+
+
 def check_grant(own_sha: str) -> dict:
     head = git("rev-parse", "HEAD").stdout.strip()
     if not os.path.lexists(REPO / GRANT_REL):
@@ -862,12 +923,10 @@ def check_grant(own_sha: str) -> dict:
     if g.get("schema") != GRANT_SCHEMA or g.get("exactly_once") is not True \
             or g.get("cell") != TARGET_CELL or g.get("route") != "MB-S" or g.get("closure_only") is not True:
         raise Refusal("GRANT_INVALID", "schema / cell / route / scope")
-    # governance S1: the grant carries, verbatim, the user's explicit ruling authorising a second cell-308 target
-    # evaluation and re-affirming the C4 terms (U1-U8), bound by its sha256
-    ur = g.get("user_ruling_s1")
-    if not isinstance(ur, dict) or not isinstance(ur.get("verbatim"), str) or not ur["verbatim"].strip() or \
-            ur.get("sha256") != sha(ur["verbatim"].encode()) or ur.get("reaffirms_c4") is not True:
-        raise Refusal("GRANT_INVALID", "the grant does not carry the user's S1 ruling verbatim (governance S1)")
+    # governance S1: the grant carries, verbatim and complete, every owner record of the user (the original decision
+    # record, owner supplement 1 and owner supplement 2: the ruling authorising a second consumed cell-308 evaluation
+    # and re-affirming the C4 terms U1-U8, and its supplements), each bound by its exact bytes and digest
+    s1 = check_s1_ruling(g.get("user_ruling_s1"))
     if g.get("driver_sha256") != own_sha:
         raise Refusal("GRANT_INVALID", "driver bytes differ from the granted driver")
     fz = freeze_commit()
@@ -889,7 +948,7 @@ def check_grant(own_sha: str) -> dict:
     if g.get("input_manifest_sha256") != sha((REPO / MANIFEST_REL).read_bytes()):
         raise Refusal("GRANT_INVALID", "the grant does not bind the frozen input manifest")
     return {"grant_commit": head, "grant_sha256": sha((REPO / GRANT_REL).read_bytes()), "freeze_commit": fz,
-            "qualification_commit": qual_c, "qualification_review_commit": review_c}
+            "qualification_commit": qual_c, "qualification_review_commit": review_c, "user_ruling_s1": s1}
 
 
 # ------------------------------------------------------------------ persistence, seal and materialization
@@ -1775,8 +1834,15 @@ def main(argv=None) -> int:
             t0 = time.time()
             STATE.CK = ctx = STATE.Ctx(mem_cap_bytes=MEM_CAP_BYTES, mem_poll_s=MEM_POLL_S)
             rss = STATE.RssSampler(os.getpid()).start()     # R-MEM step 6 input (brief 50; recorded fields only)
+            failed = None
             try:
                 out = decoy(a.cell, own_sha, a.workers, a.first_blocks, a.dev_ladder)
+            except BaseException as exc:                    # noqa: BLE001 (recorded below, then re-raised unchanged)
+                # A decoy that FAILS still leaves the R-MEM step-1 record of its run (owner supplement 2, sections 1
+                # and 6: a memory-watchdog event must be mechanically detectable, and the failed evidence is kept).
+                # Recorded fields only (brief 54): no decoy value exists; the failure is re-raised as it was.
+                failed = exc
+                out = {"decoy_cell": a.cell, "decoy_failed": type(exc).__name__, "dev_ladder": a.dev_ladder}
             finally:
                 STATE.CK = None
                 rss_rec = rss.stop()
@@ -1793,6 +1859,13 @@ def main(argv=None) -> int:
             cu = resource.getrusage(resource.RUSAGE_CHILDREN)
             out.update({"mode": "decoy", "driver_sha256": own_sha, "utc": utc(), "wall_seconds": round(time.time() - t0, 1),
                         "cpu_seconds_workers": round(cu.ru_utime + cu.ru_stime, 1)})
+            if failed is not None:
+                try:
+                    if a.out:
+                        Path(a.out).write_text(json.dumps(jsonable(out), indent=1, sort_keys=True) + "\n")
+                    print(f"MBS308 DECOY cell {a.cell}: FAILED ({out['decoy_failed']}); the run's record is kept")
+                finally:
+                    raise failed
             print(f"MBS308 DECOY cell {a.cell}: stage 1 in {out['stage1_wall_seconds']} s")
         elif a.mode == "execute":
             return run_execute(own_sha)

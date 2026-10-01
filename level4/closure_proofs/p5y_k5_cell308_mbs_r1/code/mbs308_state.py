@@ -1136,13 +1136,22 @@ from concurrent.futures import wait as _wait  # noqa: E402
 
 class RssSampler:
     """R-MEM inputs of the DECOY record (research brief 50, task 3; protocol section 8, R-MEM steps 2 and 6): a
-    fixed-rate sampler, one `ps -A -o pid=,ppid=,rss=` reading every INTERVAL_S (0.5 s, the rule's own bound "a <= 0.5
-    s qualification sampler"), of the driver (`root_pid`) and every descendant (its workers). It records the driver's
-    and the workers' peak RSS and the highest RSS growth rate of any one process between two consecutive readings
-    (bytes per second over the readings' actual spacing, with the largest spacing seen). RECORDED FIELDS ONLY: it never
+    fixed-rate sampler, one `ps -A -o pid=,ppid=,rss=` reading every INTERVAL_S, of the driver (`root_pid`) and every
+    descendant (its workers). It records the driver's and the workers' peak RSS and the highest RSS growth rate of any
+    one process between two consecutive readings (bytes per second over the readings' actual spacing, with the largest
+    spacing seen: `max_spacing_ns`, the largest difference between the time stamps of two consecutive SUCCESSFUL
+    readings, in integer nanoseconds rounded up; a failed reading leaves the gap open). RECORDED FIELDS ONLY: it never
     kills or signals anything and never touches the computation; a failed reading is counted, never raised. Used by the
-    driver's `decoy` mode only (never after a marker)."""
-    INTERVAL_S = 0.5
+    driver's `decoy` mode only (never after a marker).
+
+    INTERVAL_S (the SET interval) is 0.25 s (builder6, brief 54-A): the rule's bound "a <= 0.5 s qualification
+    sampler" binds the OBSERVED spacing (second ratifier, readings R1 item 2; owner supplement 2, section 5), which on
+    a fixed-rate schedule always exceeds the set interval by the scheduling jitter and the `ps` latency, so a set
+    interval of 0.5 s can never satisfy it. The value is the builder's choice on dev evidence only (BUILD_REPORT
+    section 17) and is for the independent review before the freeze; a record whose observed spacing exceeds 0.5 s
+    is an invalid R-MEM input whatever the set interval. The growth rate and the first-observation semantics (a
+    process's first reading starts its series: READING-7 as confirmed; owner supplement 2, section 4) are unchanged."""
+    INTERVAL_S = 0.25
 
     def __init__(self, root_pid: int | None = None, interval_s: float = INTERVAL_S):
         self.root, self.interval = os.getpid() if root_pid is None else int(root_pid), float(interval_s)
@@ -1223,8 +1232,10 @@ class RssSampler:
     def stop(self) -> dict:
         self._stop.set()
         self._t.join(timeout=30)
+        gap_ns = int(self.max_gap * 1e9)
+        gap_ns += 1 if gap_ns < self.max_gap * 1e9 else 0      # rounded UP: the bound is checked on this integer
         return {"interval_s": f"{self.interval:g}", "samples": self.samples, "failed_reads": self.failed,
-                "max_spacing_s": round(self.max_gap, 3), "processes_seen": len(self.seen),
+                "max_spacing_s": round(self.max_gap, 3), "max_spacing_ns": gap_ns, "processes_seen": len(self.seen),
                 "driver_peak_rss_bytes": self.driver_peak or None, "worker_peak_rss_bytes": self.worker_peak or None,
                 "max_growth_bytes_per_s": int(self.max_growth)}
 

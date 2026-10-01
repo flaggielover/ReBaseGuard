@@ -1,8 +1,8 @@
 # DRIVER_DIFF: mbs308_driver.py against MB r1's mb308_driver.py (NOT frozen; regenerated from the files)
 
 * Base: `level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_driver.py` at freeze r3 `c46434a3` (byte-identical at `21e99cf0`), sha256 `411252b2a9fa601cc5c1ba34abaf08482cf95a06e2ce7e4d5e5a5bd9e1f56dcb`.
-* New: `code/mbs308_driver.py`, sha256 `66b6cfd68e76f988152c07e8788da03b3ec388f7805c48017383c58eb2ee48c5` (changes with every re-pin; the freeze binds the final bytes).
-* Hunks: 22; by class: IDENTITY 1, IDENTITY + LIFECYCLE 10, LIFECYCLE 11.
+* New: `code/mbs308_driver.py`, sha256 `e56d02d29042b26b46df962dd58dacbdddc2168db7e4f2ba2559d076cc8b097e` (changes with every re-pin; the freeze binds the final bytes).
+* Hunks: 23; by class: IDENTITY 2, IDENTITY + LIFECYCLE 10, LIFECYCLE 11.
 * Classes: **SCIENCE-GLUE identical** = every function in the RC1 list and every function it references is text-identical, so it appears in NO hunk (asserted by `tests/test_mbs308_static.py` t_rc1_science_glue_text_identical and t_mbs9_referenced_module_names; a hunk touching one would be classified `SCIENCE-GLUE (MUST NOT OCCUR)`); **IDENTITY** = the successor's worktree, branch, namespace, refs, grant schema and paths, MB r1's recorded state (GC-8), helper pins, lineage; **LIFECYCLE** = the durable state machine, persistence, checkpoints + resume, supervisor, host contract, platform pins, launcher gate, modes.
 * The carried (text-identical) functions: `Inconsistent`, `IndependentCheckFailed`, `Refusal`, `_eval_cap`, `_ser_block`, `_set_job_cap`, `_worker_init`, `_worker_job`, `admitted_pairs`, `check_bindings`, `check_clean`, `check_cpu_caps`, `check_flags`, `check_governance_state`, `check_helpers`, `check_identity`, `check_result_paths`, `compose_and_consume`, `control`, `controls`, `decide`, `decoy`, `decoy_bundles`, `decoy_cover`, `evaluate_target`, `failure_kind`, `freeze_commit`, `fs`, `git`, `git_blob_id`, `git_dir`, `jsonable`, `load_consumer`, `load_science`, `prepare_target`, `public_stage1`, `r0_order3_variant`, `read_pinned`, `rehearse`, `require_ac`, `sha`, `stage1`, `supply_scaled_variant`, `target_geometry`, `utc`, `verdict_ok`.
 * Science modules are not in this file: they are executed from MB r1's pinned bytes (`SCIENCE_PINS`).
@@ -19,20 +19,21 @@
 | 6 | IDENTITY + LIFECYCLE | `campaign`, `check_mbr1_state`, `check_not_evaluated`, `store` |
 | 7 | IDENTITY + LIFECYCLE | `check_seal_preconditions` |
 | 8 | IDENTITY + LIFECYCLE | `<module-level assignment / statement>`, `busy_processes`, `check_launched`, `check_platform`, `free_memory_bytes`, `host_preflight`, `platform_readings` |
-| 9 | IDENTITY | `check_grant` |
-| 10 | IDENTITY + LIFECYCLE | `persist_emergency`, `persist_pending`, `serialize` |
-| 11 | LIFECYCLE | `seal_blob` |
-| 12 | IDENTITY + LIFECYCLE | `seal_blob` |
-| 13 | IDENTITY + LIFECYCLE | `materialize` |
-| 14 | IDENTITY + LIFECYCLE | `fallback_bytes`, `materialized_ok`, `seal_message` |
-| 15 | LIFECYCLE | `<module-level assignment / statement>`, `_journal`, `after_marker`, `keep_awake`, `persist_and_seal` |
-| 16 | LIFECYCLE | `close_host` |
-| 17 | LIFECYCLE | `pre_marker_common`, `run_execute` |
-| 18 | LIFECYCLE | `pre_marker_common`, `run_execute`, `run_resume` |
-| 19 | IDENTITY + LIFECYCLE | `_pending_seal_materialize`, `_read_verified_spool`, `_seal_control_failed`, `run_close_indeterminate`, `run_recover`, `run_seal_only`, `run_status` |
-| 20 | LIFECYCLE | `main` |
+| 9 | IDENTITY | `check_s1_ruling`, `s1_index_sha256` |
+| 10 | IDENTITY | `check_grant` |
+| 11 | IDENTITY + LIFECYCLE | `check_grant`, `persist_emergency`, `persist_pending`, `serialize` |
+| 12 | LIFECYCLE | `seal_blob` |
+| 13 | IDENTITY + LIFECYCLE | `seal_blob` |
+| 14 | IDENTITY + LIFECYCLE | `materialize` |
+| 15 | IDENTITY + LIFECYCLE | `fallback_bytes`, `materialized_ok`, `seal_message` |
+| 16 | LIFECYCLE | `<module-level assignment / statement>`, `_journal`, `after_marker`, `keep_awake`, `persist_and_seal` |
+| 17 | LIFECYCLE | `close_host` |
+| 18 | LIFECYCLE | `pre_marker_common`, `run_execute` |
+| 19 | LIFECYCLE | `pre_marker_common`, `run_execute`, `run_resume` |
+| 20 | IDENTITY + LIFECYCLE | `_pending_seal_materialize`, `_read_verified_spool`, `_seal_control_failed`, `run_close_indeterminate`, `run_recover`, `run_seal_only`, `run_status` |
 | 21 | LIFECYCLE | `main` |
-| 22 | LIFECYCLE | `<module-level assignment / statement>`, `main` |
+| 22 | LIFECYCLE | `main` |
+| 23 | LIFECYCLE | `<module-level assignment / statement>`, `main` |
 
 ## Full diff, hunk by hunk
 
@@ -245,7 +246,7 @@
 ### Hunk 4: IDENTITY + LIFECYCLE; <module-level assignment / statement>
 
 ```diff
-@@ -83,41 +162,64 @@
+@@ -83,41 +162,88 @@
  DECOY_BUNDLES = (("taylor", 1, "cut"), ("midpoint", -1, "loose"), ("mixed", 1, "cut_both"))
  
  EXEC_DIR_REL = NS_REL + "/evidence/execution"
@@ -275,6 +276,26 @@
 +PRIOR_MARKERS = (STATE.REF_PREFIX,)
  R6_NAME = "K5_COVERAGE_MAP_R6"
 +GRANT_SCHEMA = "rebaseguard.p5y.k5.cell308-mbs-r1.grant.v1"
++# governance S1 (owner supplement 1, section 6; owner supplement 2, section 12): the grant's `user_ruling_s1` is a
++# deterministic index of ALL the user's complete owner records -- the original decisions and both supplements -- in
++# this fixed order, each bound by its exact committed bytes: (record name, research path, research commit, byte
++# length, sha256). check_grant refuses any other bytes (protocol section 1; the freeze manifest records the same
++# values).
++S1_OWNER_RECORDS = (
++    ("original", "level4/closure_proofs/p5y_k5_cell308_research/ledger/USER_RULING_MBS308_OWNER_DECISIONS.txt",
++     "5c2394baac8aef43dcf9b675d323b0a7e2a9ccef", 17291,
++     "34eb1d41b56742fda2ba7fb7b70a46de5e0219ba324aa510437cc6c6d1065ad1"),
++    ("supplement_1",
++     "level4/closure_proofs/p5y_k5_cell308_research/ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_1.txt",
++     "8fc2b03856fa58084f6ba1bef8dea46429a99998", 18797,
++     "3f7d477b24900b64c7e30b3180ae7114fe642753956e31fe185fc6ef129d33d6"),
++    ("supplement_2",
++     "level4/closure_proofs/p5y_k5_cell308_research/ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_2.txt",
++     "74f386a54088a210a51bb81587225dae64def637", 12941,
++     "4ba4a6662828137628902c941439f0af33309bde38410ab0cbba3baba90870b0"),
++)
++S1_RECORD_KEYS = ("record", "path", "commit", "bytes", "sha256", "verbatim")
++S1_RULING_KEYS = ("records", "index_sha256", "reaffirms_c4")
 +# GC-8: MB r1's recorded state, asserted EXACTLY (a named, reviewed exception; never a prefix wildcard)
 +MBR1_PREFIX = "refs/p5y-k5-cell308-mb-r1/"
 +MBR1_MARKER = MBR1_PREFIX + "target-consumed"
@@ -293,9 +314,13 @@
 -SCHEMA = "rebaseguard.p5y.k5.cell308-mb-r1.result.v1"
 +SCHEMA = STATE.RESULT_SCHEMA
  OUTCOMES = ("CELL308_CLOSED_UNDER_MB", "CELL308_NOT_CLOSED_UNDER_MB", "CELL308_EXECUTION_INDETERMINATE")
-+# GC-10 (provisional; set at the freeze by rule R-MEM of CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854; protocol
-+# section 8) from the OFFICIAL decoy runs, never from any target run). The provisional 3 GiB is ratified for the
-+# pre-freeze build and as the measurement cap of the official decoys only.
++# GC-10: MEM_CAP_BYTES and MEM_POLL_S are set by rule R-MEM of CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854;
++# protocol section 8), never from any target run. Sequencing: the user's section-11.2 ruling, option (a) (protocol
++# section 11.2): the values are the canonical rule outputs of the DESIGNATED pre-freeze measurements, written here only
++# by the reviewed apply step (code/mbs308_repin.py apply), never by hand; the official qualification re-measures with
++# them and case R_RULES_OFFICIAL requires exact agreement. Until that apply step the values are the provisional ones
++# ratified for the pre-freeze build (3 GiB, 2 s: the cap and poll of the designated measurement runs, R-MEM step 1);
++# the protocol's rule-output table (section 8) says which they are.
 +MEM_CAP_BYTES = 3 * 1024 ** 3
 +MEM_POLL_S = 2.0
 +# RC2: the platform the qualification measured; preflight / execute / resume refuse on any mismatch (re-pinned at
@@ -322,7 +347,7 @@
 -    "mb308_host.py": "6702a9be56b6e8a530407b8be2794f4d4266445a97d33c2f0601da8754760a8c",
 +    "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
 +    "mbs308_host.py": "6650ceebd7297dd4744c6121f9b41617aabbd50211a634df309c53b5945a2a8b",
-+    "mbs308_state.py": "e2b6b8e1bb35c2957fca41a5d007e355eddd6e213d66d68995b4d8781895e047",
++    "mbs308_state.py": "3793e0b111e8c7834de356f78d5a78d933c2d817a4514a937f1282f558cf0067",
 +    "mbs308_launch.py": "1510308a96911278ca157f0305ee122e1a2a9632f1330bfed3ab428c7d6ba5c8",
  }
 -PIN.GUARD_SHA256 = HELPER_SHA256["mb308_guard.py"]
@@ -335,7 +360,7 @@
 ### Hunk 5: LIFECYCLE; <module-level assignment / statement>
 
 ```diff
-@@ -137,7 +239,13 @@
+@@ -137,7 +263,13 @@
             ("0292d654", "stream INDEP_TUPLE"), ("e042c8d1", "A0 certifier review"),
             ("f42fef40", "incident-independence review"), ("8da57f89", "incident-review conditions"),
             ("58f190dc", "stream VERIFY follow-up"), ("55d3719c", "pre-freeze formal build"),
@@ -355,7 +380,7 @@
 ### Hunk 6: IDENTITY + LIFECYCLE; campaign, check_mbr1_state, check_not_evaluated, store
 
 ```diff
-@@ -239,17 +347,65 @@
+@@ -239,17 +371,65 @@
      return {"worktree": here, "git_dir": gd, "common_dir": cd, "branch": br}
  
  
@@ -433,7 +458,7 @@
 ### Hunk 7: IDENTITY + LIFECYCLE; check_seal_preconditions
 
 ```diff
-@@ -288,16 +444,19 @@
+@@ -288,16 +468,19 @@
      if git("var", "GIT_COMMITTER_IDENT").returncode or git("var", "GIT_AUTHOR_IDENT").returncode:
          raise Refusal("SEAL_PRECONDITION", "no committer/author identity")
      head = git("rev-parse", "HEAD").stdout.strip()
@@ -461,7 +486,7 @@
 ### Hunk 8: IDENTITY + LIFECYCLE; <module-level assignment / statement>, busy_processes, check_launched, check_platform, free_memory_bytes, host_preflight, platform_readings
 
 ```diff
-@@ -309,6 +468,112 @@
+@@ -309,6 +492,112 @@
      if not os.access(parent, os.W_OK | os.X_OK):
          raise Refusal("SEAL_PRECONDITION", "the worktree copy's parent directory is not writable")
      return {"branch_head": head}
@@ -501,13 +526,13 @@
 +    return rec
 +
 +
-+# GC-10 host headroom and exclusivity (recorded; each refuses start). Provisional values; each is frozen at the freeze
-+# as the output of its rule in CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854; protocol section 8): FREE_MEM_MIN by
-+# R-FREE, EXCL_CPU_PCT by R-EXCL-PCT, EXCL_ALLOW by R-ALLOW.
++# GC-10 host headroom and exclusivity (recorded; each refuses start). Each value is the output of its rule in
++# CONSTANTS_RATIFICATION_MBS308 (research 3c2a7854; protocol section 8): FREE_MEM_MIN by R-FREE, EXCL_CPU_PCT by
++# R-EXCL-PCT, EXCL_ALLOW by R-ALLOW; written only by the reviewed apply step, as MEM_CAP_BYTES above (protocol section
++# 11.2). Until then: the provisional values of the pre-freeze build (2 GiB; 25; ratification item 16's list: the
++# current 39 names plus the four Apple OS daemons of its H3 readings, each under a SIP-protected OS path).
 +FREE_MEM_MIN_BYTES = 2 * 1024 ** 3
 +EXCL_CPU_PCT = 25.0
-+# CONSTANTS_RATIFICATION_MBS308 item 16 (provisional; R-ALLOW decides the frozen list at the freeze): the current
-+# 39 names plus the four Apple OS daemons of its H3 readings (each under a SIP-protected OS path)
 +EXCL_ALLOW = frozenset({"kernel_task", "WindowServer", "launchd", "logd", "mds", "mds_stores", "mdworker",
 +                        "mdworker_shared", "coreaudiod", "powerd", "hidd", "bluetoothd", "configd", "syslogd",
 +                        "opendirectoryd", "distnoted", "cfprefsd", "trustd", "securityd", "loginwindow", "Dock",
@@ -576,10 +601,59 @@
  # ------------------------------------------------------------------ bindings and governance state
 ```
 
-### Hunk 9: IDENTITY; check_grant
+### Hunk 9: IDENTITY; check_s1_ruling, s1_index_sha256
 
 ```diff
-@@ -594,9 +859,15 @@
+@@ -583,6 +872,43 @@
+ 
+ 
+ # ------------------------------------------------------------------ the grant (derived chain)
++def s1_index_sha256(rows) -> str:
++    """The digest of the index itself: sha256 of the canonical JSON of [[record, path, commit, bytes, sha256], ...] in
++    the index's order (the verbatim texts are bound through their own sha256 entries)."""
++    return sha(json.dumps([list(r) for r in rows], sort_keys=True, separators=(",", ":")).encode())
++
++
++def check_s1_ruling(ur) -> dict:
++    """Governance S1, owner supplement 1 section 6: `user_ruling_s1` must be exactly
++        {"records": [<original>, <supplement_1>, <supplement_2>], "index_sha256": ..., "reaffirms_c4": true}
++    with each record exactly {"record", "path", "commit", "bytes", "sha256", "verbatim"}: the COMPLETE verbatim text of
++    one owner record. Refused unless (a) each text re-hashes to the digest and the byte length its entry states, (b)
++    each entry's name, path, commit, byte length and digest equal S1_OWNER_RECORDS, in that order (so a grant cannot
++    carry other bytes, an excerpt, a paraphrase, fewer records, or the records in another order), and (c) the index
++    digest is the digest of those entries. No other key is admitted anywhere in the field."""
++    bad = Refusal("GRANT_INVALID", "the grant does not carry every complete owner record of the user verbatim "
++                                   "(governance S1; owner supplement 1 section 6)")
++    if not isinstance(ur, dict) or sorted(ur) != sorted(S1_RULING_KEYS) or ur.get("reaffirms_c4") is not True:
++        raise bad
++    recs = ur.get("records")
++    if not isinstance(recs, list) or len(recs) != len(S1_OWNER_RECORDS):
++        raise bad
++    rows = []
++    for got, want in zip(recs, S1_OWNER_RECORDS):
++        if not isinstance(got, dict) or sorted(got) != sorted(S1_RECORD_KEYS) or not isinstance(got["verbatim"], str):
++            raise bad
++        raw = got["verbatim"].encode()
++        if type(got["bytes"]) is not int or len(raw) != got["bytes"] or sha(raw) != got["sha256"]:
++            raise bad                           # (a) the text is not the bytes its own entry names
++        row = (got["record"], got["path"], got["commit"], got["bytes"], got["sha256"])
++        if row != tuple(want):
++            raise bad                           # (b) not the record the frozen protocol / manifest names
++        rows.append(row)
++    if ur.get("index_sha256") != s1_index_sha256(rows):
++        raise bad                               # (c)
++    return {"index_sha256": ur["index_sha256"], "records": [{"record": r[0], "sha256": r[4]} for r in rows]}
++
++
+ def check_grant(own_sha: str) -> dict:
+     head = git("rev-parse", "HEAD").stdout.strip()
+     if not os.path.lexists(REPO / GRANT_REL):
+```
+
+### Hunk 10: IDENTITY; check_grant
+
+```diff
+@@ -594,9 +920,13 @@
      if git("diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").stdout.split() != [GRANT_REL]:
          raise Refusal("GRANT_INVALID", "the grant commit changes more than the grant")
      g = json.loads((REPO / GRANT_REL).read_bytes())
@@ -588,21 +662,25 @@
 +    if g.get("schema") != GRANT_SCHEMA or g.get("exactly_once") is not True \
 +            or g.get("cell") != TARGET_CELL or g.get("route") != "MB-S" or g.get("closure_only") is not True:
          raise Refusal("GRANT_INVALID", "schema / cell / route / scope")
-+    # governance S1: the grant carries, verbatim, the user's explicit ruling authorising a second cell-308 target
-+    # evaluation and re-affirming the C4 terms (U1-U8), bound by its sha256
-+    ur = g.get("user_ruling_s1")
-+    if not isinstance(ur, dict) or not isinstance(ur.get("verbatim"), str) or not ur["verbatim"].strip() or \
-+            ur.get("sha256") != sha(ur["verbatim"].encode()) or ur.get("reaffirms_c4") is not True:
-+        raise Refusal("GRANT_INVALID", "the grant does not carry the user's S1 ruling verbatim (governance S1)")
++    # governance S1: the grant carries, verbatim and complete, every owner record of the user (the original decision
++    # record, owner supplement 1 and owner supplement 2: the ruling authorising a second consumed cell-308 evaluation
++    # and re-affirming the C4 terms U1-U8, and its supplements), each bound by its exact bytes and digest
++    s1 = check_s1_ruling(g.get("user_ruling_s1"))
      if g.get("driver_sha256") != own_sha:
          raise Refusal("GRANT_INVALID", "driver bytes differ from the granted driver")
      fz = freeze_commit()
 ```
 
-### Hunk 10: IDENTITY + LIFECYCLE; persist_emergency, persist_pending, serialize
+### Hunk 11: IDENTITY + LIFECYCLE; check_grant, persist_emergency, persist_pending, serialize
 
 ```diff
-@@ -623,33 +894,23 @@
+@@ -618,38 +948,28 @@
+     if g.get("input_manifest_sha256") != sha((REPO / MANIFEST_REL).read_bytes()):
+         raise Refusal("GRANT_INVALID", "the grant does not bind the frozen input manifest")
+     return {"grant_commit": head, "grant_sha256": sha((REPO / GRANT_REL).read_bytes()), "freeze_commit": fz,
+-            "qualification_commit": qual_c, "qualification_review_commit": review_c}
++            "qualification_commit": qual_c, "qualification_review_commit": review_c, "user_ruling_s1": s1}
+ 
  
  # ------------------------------------------------------------------ persistence, seal and materialization
  def serialize(obj: dict) -> bytes:
@@ -651,10 +729,10 @@
  def seal_blob(blob: str, message: str) -> str:
 ```
 
-### Hunk 11: LIFECYCLE; seal_blob
+### Hunk 12: LIFECYCLE; seal_blob
 
 ```diff
-@@ -657,7 +918,12 @@
+@@ -657,7 +977,12 @@
      for delay in (0.0, *SEAL_RETRY_DELAYS):
          time.sleep(delay)
          head = git("rev-parse", "HEAD").stdout.strip()
@@ -670,10 +748,10 @@
              msgf.write_text(message)
 ```
 
-### Hunk 12: IDENTITY + LIFECYCLE; seal_blob
+### Hunk 13: IDENTITY + LIFECYCLE; seal_blob
 
 ```diff
-@@ -667,12 +933,13 @@
+@@ -667,12 +992,13 @@
              if any(s.returncode for s in steps) or tree.returncode:
                  last = "index"
                  continue
@@ -691,10 +769,10 @@
              entry = git("ls-tree", cid, "--", RESULT_REL).stdout.split()
 ```
 
-### Hunk 13: IDENTITY + LIFECYCLE; materialize
+### Hunk 14: IDENTITY + LIFECYCLE; materialize
 
 ```diff
-@@ -690,20 +957,19 @@
+@@ -690,20 +1016,19 @@
          raise OSError("the object store returned other bytes")
      fds = [os.open(str(REPO), os.O_RDONLY | os.O_DIRECTORY)]
      try:
@@ -721,10 +799,10 @@
              st = os.fstat(rfd)
 ```
 
-### Hunk 14: IDENTITY + LIFECYCLE; fallback_bytes, materialized_ok, seal_message
+### Hunk 15: IDENTITY + LIFECYCLE; fallback_bytes, materialized_ok, seal_message
 
 ```diff
-@@ -719,19 +985,42 @@
+@@ -719,19 +1044,42 @@
              os.close(fd)
  
  
@@ -772,10 +850,10 @@
                              "mechanical_outcome": "CELL308_EXECUTION_INDETERMINATE"}) + "\n").encode()
 ```
 
-### Hunk 15: LIFECYCLE; <module-level assignment / statement>, _journal, after_marker, keep_awake, persist_and_seal
+### Hunk 16: LIFECYCLE; <module-level assignment / statement>, _journal, after_marker, keep_awake, persist_and_seal
 
 ```diff
-@@ -751,71 +1040,133 @@
+@@ -751,71 +1099,133 @@
      return "TARGET_EVALUATION_FAILED"
  
  
@@ -951,10 +1029,10 @@
  def require_ac() -> str:
 ```
 
-### Hunk 16: LIFECYCLE; close_host
+### Hunk 17: LIFECYCLE; close_host
 
 ```diff
-@@ -827,8 +1178,18 @@
+@@ -827,8 +1237,18 @@
  
  
  def close_host(common: dict) -> None:
@@ -976,10 +1054,10 @@
      try:
 ```
 
-### Hunk 17: LIFECYCLE; pre_marker_common, run_execute
+### Hunk 18: LIFECYCLE; pre_marker_common, run_execute
 
 ```diff
-@@ -859,21 +1220,21 @@
+@@ -859,21 +1279,21 @@
              "kappa_check": sci["kappa_check"]}
  
  
@@ -1011,10 +1089,10 @@
      try:
 ```
 
-### Hunk 18: LIFECYCLE; pre_marker_common, run_execute, run_resume
+### Hunk 19: LIFECYCLE; pre_marker_common, run_execute, run_resume
 
 ```diff
-@@ -884,40 +1245,180 @@
+@@ -884,40 +1304,180 @@
          raise Refusal(exc.code, str(exc))
      except PIN.PinError as exc:
          raise Refusal("PIN_MISMATCH", str(exc))
@@ -1226,10 +1304,10 @@
  def load_consumer():
 ```
 
-### Hunk 19: IDENTITY + LIFECYCLE; _pending_seal_materialize, _read_verified_spool, _seal_control_failed, run_close_indeterminate, run_recover, run_seal_only, run_status
+### Hunk 20: IDENTITY + LIFECYCLE; _pending_seal_materialize, _read_verified_spool, _seal_control_failed, run_close_indeterminate, run_recover, run_seal_only, run_status
 
 ```diff
-@@ -928,73 +1429,191 @@
+@@ -928,73 +1488,191 @@
      return controls(con, sci, k)
  
  
@@ -1484,10 +1562,10 @@
  # ------------------------------------------------------------------ rehearsal and decoy (qualification only)
 ```
 
-### Hunk 20: LIFECYCLE; main
+### Hunk 21: LIFECYCLE; main
 
 ```diff
-@@ -1097,13 +1716,18 @@
+@@ -1097,13 +1775,18 @@
  
  def main(argv=None) -> int:
      ap = argparse.ArgumentParser()
@@ -1509,10 +1587,10 @@
      def wall_cap(*_):
 ```
 
-### Hunk 21: LIFECYCLE; main
+### Hunk 22: LIFECYCLE; main
 
 ```diff
-@@ -1112,25 +1736,31 @@
+@@ -1112,25 +1795,31 @@
      signal.signal(signal.SIGALRM, wall_cap)
      signal.alarm(DECOY_CAP_S if a.mode == "decoy" else PRE_CAP_S)
      try:
@@ -1551,10 +1629,10 @@
                      Path(a.out).write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
 ```
 
-### Hunk 22: LIFECYCLE; <module-level assignment / statement>, main
+### Hunk 23: LIFECYCLE; <module-level assignment / statement>, main
 
 ```diff
-@@ -1139,27 +1769,60 @@
+@@ -1139,27 +1828,74 @@
              if a.workers > 5 or a.workers < 1:
                  raise Refusal("WORKERS", "1..5 workers")
              check_bindings(allow_uncommitted=True)
@@ -1566,8 +1644,15 @@
 -            out = decoy(a.cell, own_sha, a.workers, a.first_blocks, a.dev_ladder)
 +            STATE.CK = ctx = STATE.Ctx(mem_cap_bytes=MEM_CAP_BYTES, mem_poll_s=MEM_POLL_S)
 +            rss = STATE.RssSampler(os.getpid()).start()     # R-MEM step 6 input (brief 50; recorded fields only)
++            failed = None
 +            try:
 +                out = decoy(a.cell, own_sha, a.workers, a.first_blocks, a.dev_ladder)
++            except BaseException as exc:                    # noqa: BLE001 (recorded below, then re-raised unchanged)
++                # A decoy that FAILS still leaves the R-MEM step-1 record of its run (owner supplement 2, sections 1
++                # and 6: a memory-watchdog event must be mechanically detectable, and the failed evidence is kept).
++                # Recorded fields only (brief 54): no decoy value exists; the failure is re-raised as it was.
++                failed = exc
++                out = {"decoy_cell": a.cell, "decoy_failed": type(exc).__name__, "dev_ladder": a.dev_ladder}
 +            finally:
 +                STATE.CK = None
 +                rss_rec = rss.stop()
@@ -1585,6 +1670,13 @@
              out.update({"mode": "decoy", "driver_sha256": own_sha, "utc": utc(), "wall_seconds": round(time.time() - t0, 1),
                          "cpu_seconds_workers": round(cu.ru_utime + cu.ru_stime, 1)})
 -            print(f"MB308 DECOY cell {a.cell}: stage 1 in {out['stage1_wall_seconds']} s")
++            if failed is not None:
++                try:
++                    if a.out:
++                        Path(a.out).write_text(json.dumps(jsonable(out), indent=1, sort_keys=True) + "\n")
++                    print(f"MBS308 DECOY cell {a.cell}: FAILED ({out['decoy_failed']}); the run's record is kept")
++                finally:
++                    raise failed
 +            print(f"MBS308 DECOY cell {a.cell}: stage 1 in {out['stage1_wall_seconds']} s")
          elif a.mode == "execute":
              return run_execute(own_sha)
