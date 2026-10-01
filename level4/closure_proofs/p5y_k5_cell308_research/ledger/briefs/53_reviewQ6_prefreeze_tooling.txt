@@ -1,0 +1,81 @@
+DELTA REVIEW REQUEST (brief 53) — fresh independent reviewer `reviewQ6`: the pre-freeze tooling (recorded before
+sending). Your verdict is not predetermined.
+
+WHO YOU ARE. A FRESH reviewer who is not a holder of any MB r1 run observation, independent of builder4, builder5,
+the coordinator editorR3C1 and every earlier reviewer.
+
+OBJECT. Successor branch p5y-k5-cell308-mbs-r1, worktree /Users/suzhe/ReBaseGuard-c308mbs,
+NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1, two additive commits on top of 216c465f (IMPLEMENTATION_ACCEPTED
+pre-freeze candidate; research reviews 58cfe66b and 2308651e):
+  T1 cc723527f63f4e69bfe36f86680d8fdaf481900e — builder4: the decision-independent qualification framework (briefs 46, 49);
+  T2 555f4cbf89663cb32d2e246c7f37ff527d99a8ff — builder5: liveness robustness repairs (reviewB5's O-1..O-4, K-1), the disk-safety and scratch-lifecycle
+            gate, re-pin tooling, R-MEM input recording, QS-RESUME-DECOY, the host-readiness checklist (brief 50).
+Review `git diff 216c465f 555f4cbf89663cb32d2e246c7f37ff527d99a8ff` (and each commit on its own). The builders' accounts are BUILD_REPORT sections 15
+and 16: claims to check. The briefs are research ledger/briefs/46, 49, 50 (+ 50-N).
+
+SCOPE.
+1. Qualification framework (T1). (a) The aggregator fails loudly on a missing or non-boolean `pass`; a dev report can
+   never be an official PASS; (b) every PENDING_USER_DECISION case fails closed and none was turned into a guessed
+   value; (c) each BUILT case does what protocol section 11 says and has a planted failure that makes it fail; (d)
+   QC12-S: patterns read at run time, neutral planted controls, the committed-record token scan reports counts and
+   file names only — rule on the 22 research-scanner findings the coordinator ledgered for T1 (identity strings, the
+   guard-diff check, the record-token scan by design); (e) QC13-S's governance records, including builder4's open
+   point that the EXECUTION_ACCEPTED token of a40211cc is inferred (check it by a method that reads no MBS-2 file;
+   if you cannot, say so); (f) the R-rule functions against protocol section 8 verbatim, and builder4's
+   READING-1..5 (protocol section 11.3): confirm each, or say it needs the ratifier; (g) the manifest writer is never
+   run against the worktree and Q8-S checks what it should.
+2. Builder5's repairs (T2). (a) O-1: the start-time comparison is independent of the time zone for recorded and
+   current readings; test and mutant; no positive-evidence property lost; (b) O-2, O-3, O-4: repaired or reasoned; (c)
+   K-1: the single-failure cases exist and reviewB5's Y5 / Y6 now die (write and run them yourself).
+3. Disk-safety and scratch-lifecycle gate (T2), against the user's requirements: the three classes; cleanup removes
+   ONLY disposable sandbox state and can NEVER remove committed evidence, JSON reports, reviewer verdicts, ledgers,
+   manifests, refs, active worktrees, active builder or qualification scratch, the target marker, pending-result
+   state, spool or seals; symlink / real-path escapes refused; dry run by default; deletions recorded; the mutant
+   runner cleans per mutant; the verifier and the runner check free space and FAIL CLOSED on insufficient or
+   unreadable space; a probe failure never reads as sufficient (driver gate included). THRESHOLDS: is
+   QUAL_MIN_FREE_BYTES derived from recorded measurements plus an explicit margin (re-measure at least one input
+   yourself)? Is the ratified execution MIN_FREE_DISK (2 GiB) kept, and is any proposed stricter amendment justified
+   (rule on it; a looser value is not acceptable)? Is any decision-dependent portion left PENDING_USER_DECISION?
+   Tests and mutants for each property, killed by assertion.
+4. Re-pin tooling, R-MEM input recording and QS-RESUME-DECOY (T2). (a) The re-pin tool is dry-run by default and
+   mechanical; PLATFORM_PINS not re-pinned now; the DRIVER_DIFF generator reproduces the committed file; (b) R-MEM's D
+   and the ≤ 0.5 s sampler are recorded without changing any carried (text-identical) function and without affecting
+   any computed value (the static RC1 / MBS-9 tests pass); (c) is QS-RESUME-DECOY genuinely decision-independent
+   (same definition under MBS-7 (i) and (ii)), and correct? If not, it must stay PENDING.
+5. Host-readiness checklist (protocol section 8): complete for the items the user listed (automatic macOS updates,
+   automatic restart, AC, sleep prevention and the lid, thermal, disk threshold, memory pressure, boot identity, host
+   identity); each item's check (gate or recorded user action) is real; no system setting is ever changed.
+6. Integrity and scope: no operational number changed except as the brief allows; the builders' exposure statements;
+   the host events (builder4 recorded a lid-closed sleep on battery that broke one crash run, re-run on AC): rule
+   whether any evidence the delta relies on was produced during a sleep, on battery or under low disk.
+
+RE-RUN on the committed bytes of T2 (host on AC, lid open; check `pmset -g batt` and `df -h /Users/suzhe` first):
+static, launch, state, crash, qualify and builder5's new suites; the full mutant matrix (per-mutant cleanup should now
+keep the scratch small: record the peak); your own mutants. Report counts.
+
+ABSOLUTE RULES. No cell-308 target evaluation, direct or indirect; nothing may evaluate Γ(5,308; ·), cells 305-309 or
+any drift in [6/5, 13/5] or its mirror (the dev decoy on cell 297 block 0 is the only science any test may run;
+ledger it as NONTARGET_DRIFT_VALIDATION); cell 309 out of scope; no authorization, grant, marker, pending result,
+seal, freeze manifest in the worktree or official qualification run; no system-setting change. MBS-2 reading
+restrictions (no REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*, REVIEW_SUCCESSOR_GOVERNANCE_308*,
+INCIDENT_INDEPENDENCE_REVIEW_MBS308* incl. T6, COORDINATOR_EXPOSURE_DISCLOSURE*, nothing under
+p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/, no BUILD_REPORT sections 6 and 9, not
+governance/SUCCESSOR_GOVERNANCE_308.md, no other session's or agent's scratchpad, nothing under /Users/suzhe/.claude/);
+disclose any MB r1 run observation already in your context. Sandboxes on your OWN --no-local base store; no real
+ref; NO git writes. Launch tests: synthetic payload, booted out, no plist left. Ledger via code/c308_quarantine.log_event
+(agent='reviewQ6', target_evaluations=0). Delete your sandboxes after each heavy run; keep the JSON reports.
+
+OUTPUT. Write /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_PREFREEZE_TOOLING_MBS308.md:
+line 1 the title; line 2 EXACTLY one of DELTA_ACCEPTED or DELTA_REJECTED (once); sections 1-6, each ruled MET / NOT
+MET. DELTA_ACCEPTED only if every section is independently found satisfied (a reasoned no-change the builder asked you
+to rule on counts as satisfied only if you accept its reasoning). State whether the build at T2 is IMPLEMENTATION_
+ACCEPTED as a pre-freeze candidate with its decision-independent qualification tooling, and list exactly what remains
+before any freeze, separating what needs the user's decisions (S1, S16(c), MBS-6, MBS-7, MBS-8) from what does not. (For orientation only, not part of your object: the user has since recorded owner decisions,
+research ledger/USER_RULING_MBS308_OWNER_DECISIONS.txt and _SUPPLEMENT_1.txt; another builder is implementing what
+depends on them on top of T2; you review T1 + T2 as committed.)
+Final message: the verdict line and a 12-line summary.
+
+LOW-TRAFFIC MODE (owner instruction). Keep your context and tool-call count small: batch commands, send long output to
+files in your own scratch and read back short summaries (counts, failures), never tail or re-read large logs, poll
+long runs at bounded intervals, build ONE base store and reuse it, delete sandboxes after each heavy run (keep JSON
+reports). This does not reduce what you must verify.
