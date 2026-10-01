@@ -307,3 +307,123 @@ Every execution of this work is ledgered in `ledger/ZERO_TARGET_LEDGER.jsonl` th
 test execution, the harness start and end, the sandbox smoke test, the sanity run, the scan and the governance
 reads. Every line has 0 target evaluations and declares only decoy or TEST-band drifts. No git write was made in this
 repository.
+
+## P309-r2: the verifier author's changes (gate step 3; `governance/BRIEF_R2_VERIFIER_AUTHOR_1.md`)
+
+This section is appended for r2. The r1 text above is unchanged and describes r1's variant (`9d9f8cec…`). At step 3a
+(`e07e3ee8`) the six verifier-side files were copied byte for byte from r1's freeze F (`4c754a73`). The changes below
+were made by the verifier author in FNS2 only. The full account (diff summary, re-pin list, controls, and every read,
+run and write) is `verify/R2_VERIFIER_CHANGES_REPORT.md`, and the per-command ledger is
+`verify/R2_VERIFIER_EXEC_LEDGER.jsonl`.
+
+**Where the runs happened.** Every test, control and regeneration ran in a scratch clone of the r2 branch, under the
+author's scratchpad, with its remote removed and no ref in either production namespace. The reason: the tests and the
+harness ledger every execution through `code/p309_env.py`, which writes `<FNS>/ledger/ZERO_TARGET_LEDGER.jsonl`. FNS2
+has no `ledger/` before step 4 (its genesis line is the coordinator's), and this step may write only the six files and
+its two outputs. The clone's bytes of the six files were checked equal to FNS2's before each run.
+
+### V1: literals (`governance/R2_LITERAL_DISPOSITION.json`; OD-R2-1 option (b), provisional)
+
+| file | line (r1) | r1 | r2 | disposition |
+|---|---|---|---|---|
+| variant | 163 | `refs/p5y-k5-cell309-p309-r1/target-consumed` | `refs/p5y-k5-cell309-p309-r2/target-consumed` | owner |
+| variant | 170 | `_FNS_REL = …/p5y_k5_cell309_p309_r1/` | `…/p5y_k5_cell309_p309_r2/` (grant, manifest and result paths) | rename |
+| variant | 175 | `campaign: p5y_k5_cell309_p309_r1` | `p5y_k5_cell309_p309_r2` | binding |
+| tests | 791, 815 | production-shaped `campaign` (N10, N11) | `p5y_k5_cell309_p309_r2` | binding |
+
+Kept unchanged: every schema-format name (`P309_GRANT/1`, `P309_TEST_GRANT/1`, …), the verifier history commit
+`6522db10` in this README, and the variant's research-namespace reads.
+
+### V2: both production namespaces forbidden (addendum 2, F1)
+
+* **Variant.** `PRIOR_PRODUCTION_REF_NAMESPACE = 'refs/p5y-k5-cell309-p309-r1/'` and
+  `FORBIDDEN_REF_NAMESPACES = (PRIOR_PRODUCTION_REF_NAMESPACE, PRODUCTION_REF_NAMESPACE)`. `_validated_sandbox` (the
+  `TestContext` refusal) loops over that tuple, so a sandbox with a ref under either namespace is refused.
+* **Sandbox helper.** `_FORBIDDEN_REF_PREFIX = (_FORBIDDEN_REF_PREFIX_R1, _FORBIDDEN_REF_PREFIX_R2)`. `_assert_ref`, used
+  by every ref-moving method, refuses either. The new `assert_no_production_refs()` checks both, at construction and on
+  leaving the context.
+* Each literal is the value of its own module-level constant because the scanner accepts a production-token literal
+  only as the `Constant` value of a reviewed `token_definitions` home. A tuple of literals would be a `MARKER_TOKEN`
+  finding.
+* **Static check:** `TestR2Verifier.test_V2_both_namespaces_forbidden`. No test or control creates a ref in either
+  namespace. The TEST-only prior-marker name was not needed, so `_ALLOWED_REF_PREFIXES` is unchanged.
+
+### V3: the sandbox base rule (P6(b), P6(e))
+
+* `sandbox_base_commit()` reads this repository's HEAD history for `<FNS>/ledger/FREEZE_RECORD.json`. The path is
+  derived from the helper's own location, so r1's record at r1's path is not this namespace's record.
+  * No commit touches it: the base is HEAD (development).
+  * Exactly one commit touches it, that commit touches only the record, and its only parent equals the record's
+    `freeze_commit` (40-hex): the base is F (post-freeze).
+  * Any other shape raises `FreezeRecordError`. That is loud, and never a refusal.
+* It is implemented in `verify/` only, with nothing imported from `code/` or `tests/`.
+* **Pre- and postconditions.**
+  * The base's history must hold 0 record commits.
+  * A new sandbox holds 0, checked again by `build_valid` and on leaving the context. A flow that builds records
+    deliberately declares them with `Sandbox(tag, expect_freeze_records=n)`.
+* **History walk.** Commits "touching" the record are found with `git rev-list <rev> -- <record>`, git's default
+  history simplification for a path, as `git log -- <path>`.
+  * The scanner's option allowlist does not include `--full-history`.
+  * In a linear history the two are the same.
+* **Static check (P6(e)):** `TestR2Verifier.test_V3_base_rule_static`. Every git `HEAD` operand in this author's four
+  Python files is accounted for by owner and by the repository it names. The only read of the real repository's HEAD
+  that is used as a sandbox base is in `sandbox_base_commit`.
+* **Shapes:** `TestR2Verifier.test_V3_base_rule_shapes`, with a TEST-named record path inside a sandbox: development,
+  F′/FR′, a checkpoint commit after FR′, and nine malformed shapes.
+
+### V4: `P309_SCRATCH_ROOT` (P7)
+
+* `scratch_sandbox_base()` returns `<P309_SCRATCH_ROOT>/fc2_sandbox_verifier`. It raises `ScratchRootError`, with no
+  fallback, if the root is:
+  * unset or empty;
+  * not absolute;
+  * different from its own realpath;
+  * not an existing directory;
+  * inside the repository;
+  * overlapping (equal to, containing or inside) any entry of `P309_FOREIGN_ROOTS`, which is optional,
+    `os.pathsep`-separated, and must contain only absolute entries.
+* `Sandbox.__init__` calls it first, on every construction.
+* The hard-coded session path (r1 `SANDBOX_BASE`) is gone. So are the session id in the ledger purpose string and the
+  scratchpad path in a ledger note.
+* **Controls:** `TestR2Verifier.test_V4_scratch_root_refusals` (18 negative cases and 2 positive),
+  `test_V4_no_session_path_in_code`, and constructor-level controls in the report.
+
+### V5: `VERIFY_RESULTS_SCOPED.json`
+
+**Regenerated** (the recommended option) for r2's variant bytes. It ran with the unchanged harness (`45902e30…`) as
+`run_verify_all_scoped.py --jobs 3 --unit-tests`: decoy-only and FC2 admission only, in the scratch clone in this
+cloud session, with `P309_SCRATCH_ROOT` a fresh scratchpad directory.
+
+* **Wall time:** 594.7 s, from 2026-10-01T12:36:58Z to 12:46:53Z (I1 493.0 s; unit tests 101.1 s).
+* **New file sha256:** `404e3c3cb3323865fee80e6c91573506df1c4db83e1c6968487357f0a4c2cafe`.
+* **Against r1's file** (`bad3ffa7…`, at F), over all 2369 certificate entries (103 genuine, 2266 mutants):
+  * verdicts, expectation rules, expectation flags and identity-to-committed flags are all identical;
+  * 41 entries differ in bytes, only by the declared namespace substitution (`…_p309_r1` → `…_p309_r2`), in the grant
+    path inside "no grant" refusal reasons;
+  * the summaries are identical: the same counts, and `differences` lists that are equal as multisets. Their order
+    follows worker completion.
+* **No finding.**
+
+### Identities and counts (sha256)
+
+| file | r1 (F) | r2 |
+|---|---|---|
+| `verify/srk_verify_indep_scoped.py` (variant; `verifier_id` = `sha256:` + this) | `9d9f8cec52cfd49ab146a45c44e03fde493614f81551af584317ab7d3545498f` | `e82d68121ecd0003c61ed304d57e65f8ef7cda1aa9aad1c1ea08b8c01336aebf` |
+| `verify/scoped_sandbox.py` | `58d15e632511af18c3ce4397a22ea8722a094f423ff468c67274ceefcdf21159` | `5fff1ba8c671af77d04dfcad3ef6d8f993db8d50ea46e995214d07fd218fd0d2` |
+| `tests/test_verify_scoped.py` | `1483d6c2f5c9d8d3a469915fe6ab85d0cb27f3abdfcac53b168ff6754a64a10c` | `94db67d47ea30f2cfdbdd4a1ecc0ff039f775f887f155dca57887334e06c7ad3` |
+| `verify/run_verify_all_scoped.py` | `45902e30cb59db718c2a133fa321e30ee183a3fa18781c3698a11ce7f48b90d8` | unchanged |
+
+**Test counts.** 42 = 21 ported self-tests + 16 FC2 tests (D1, N01–N13, P1, P2) + 5 r2 tests (`TestR2Verifier`):
+
+| run | topology | tests | result |
+|---|---|---|---|
+| A: after V1, V2 and V4, **before V3** | development | 40 | OK (99.1 s) |
+| B: **after V3** | development | 42 | OK (101.2 s) |
+| V5 harness `--unit-tests` | development | 42 | OK (101.1 s) |
+| C: after V3 | post-freeze (synthetic F′, record-only FR′, then a checkpoint commit; sandboxes based on F′) | 42 | OK (103.1 s) |
+
+**Independence (r2).**
+* No producer, guard, driver or overnight code was opened. Neither was the coordinator's `sandbox_base()` or
+  `p309_driver.recorded_freeze`: V3 was implemented from the brief's statement of their semantics.
+* For V7 and for the scanner's rules, the author read parts of `code/p309_scan.py` and all of `code/p309_scan_pins.py`.
+  Their hash functions were imported read-only in the scratch clone.

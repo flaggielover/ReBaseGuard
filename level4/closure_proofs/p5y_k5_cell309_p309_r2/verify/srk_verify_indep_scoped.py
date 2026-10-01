@@ -160,19 +160,21 @@ class Refusal(Exception):
 # FC2 band-scoped admission (FNS/fc2/FC2_SPEC_R2.md sections 1-4).  FAIL CLOSED.  Parsing, git metadata (read-only git
 # commands only), hashes and exact rational comparisons: nothing below evaluates any kernel, weight or candidate
 # quantity.  There is no embedded grant, no default admission and no test-only path into the production context.
-PRODUCTION_MARKER = "refs/p5y-k5-cell309-p309-r1/target-consumed"  # q309: literal-ok (FC2_SPEC_R2 s.2.1/s.7: inert marker name, read-only use)
+PRODUCTION_MARKER = "refs/p5y-k5-cell309-p309-r2/target-consumed"  # q309: literal-ok (FC2_SPEC_R2 s.2.1/s.7: inert marker name, read-only use; r2: OD-R2-1 option (b), provisional)
 PRODUCTION_REF_NAMESPACE = PRODUCTION_MARKER[:PRODUCTION_MARKER.rindex('/') + 1]
+PRIOR_PRODUCTION_REF_NAMESPACE = 'refs/p5y-k5-cell309-p309-r1/'  # q309: literal-ok (r1's production ref namespace; used ONLY to refuse a sandbox that holds such a ref; addendum 2 F1)
+FORBIDDEN_REF_NAMESPACES = (PRIOR_PRODUCTION_REF_NAMESPACE, PRODUCTION_REF_NAMESPACE)   # both, always (r2 V2; F1)
 TEST_MARKER = 'refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_MARKER'
 TEST_REF_NAMESPACE = 'refs/p309-test/'
 ADMIT, REFUSE = 'ADMIT', 'REFUSE'
 _MODES = ('official', 'review')
 _PROD_CELL = 309  # q309: literal-ok (FC2 production grant cell identifier, compared at admission; not an evaluation)
-_FNS_REL = 'level4/closure_proofs/p5y_k5_cell309_p309_r1/'
+_FNS_REL = 'level4/closure_proofs/p5y_k5_cell309_p309_r2/'
 _PROD_FIELDS = types.MappingProxyType({
     'kind': 'production',
     'grant_path': _FNS_REL + 'authorization/P309_GRANT.json',
     'schema': 'P309_GRANT/1',
-    'campaign': 'p5y_k5_cell309_p309_r1',
+    'campaign': 'p5y_k5_cell309_p309_r2',
     'cell': _PROD_CELL,
     'geometry': ('5', '1/2'),
     'marker_ref': PRODUCTION_MARKER,
@@ -264,8 +266,9 @@ def _validated_sandbox(sandbox_root):
         raise _NotAdmitted('the sandbox is the implementing file\'s repository')
     if _common_dir(top) == _common_dir(own):
         raise _NotAdmitted('the sandbox shares the implementing repository\'s git common dir (a worktree of it)')
-    if _git_ok(top, 'sandbox refs', 'for-each-ref', '--format=%(refname)', PRODUCTION_REF_NAMESPACE).strip():
-        raise _NotAdmitted('the sandbox has a ref in the production ref namespace')
+    for ns in FORBIDDEN_REF_NAMESPACES:                                     # r1's and r2's namespace (r2 V2; F1)
+        if _git_ok(top, 'sandbox refs', 'for-each-ref', '--format=%(refname)', ns).strip():
+            raise _NotAdmitted('the sandbox has a ref in a production ref namespace (%s)' % ns)
     return top
 
 
@@ -291,7 +294,8 @@ PRODUCTION = _ProductionContext()
 
 class TestContext(object):
     """Test context (spec section 2.2).  Everything but sandbox_root is fixed in code (_TEST_FIELDS).  The constructor
-    raises TestContextRefused if the sandbox is this repository, a worktree of it, or has a production-namespace ref."""
+    raises TestContextRefused if the sandbox is this repository, a worktree of it, or has a ref in either production
+    namespace (r1's or r2's)."""
     __slots__ = ('sandbox_root',)
 
     def __init__(self, sandbox_root):

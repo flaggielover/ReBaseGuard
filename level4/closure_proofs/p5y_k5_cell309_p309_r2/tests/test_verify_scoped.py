@@ -13,8 +13,14 @@ verify_cert before evaluation; a tripwire on the variant's `prepare` fails the r
 geometry) or a non-admitted TEST-band certificate ever reaches evaluation.  No production marker and no production grant
 exist at any point.  Every test execution is ledgered through code/p309_env.py.
 
-Run:  python3 tests/test_verify_scoped.py
+Part 3 (P309-r2, gate step 3; brief governance/BRIEF_R2_VERIFIER_AUTHOR_1.md): V2, both production ref namespaces
+refused (static check plus the guards); V3, the sandbox base rule (static check plus every record shape, built with a
+TEST-named record path inside a sandbox); V4, P309_SCRATCH_ROOT (a negative control for each refusal case, and a
+positive control).
+
+Run:  P309_SCRATCH_ROOT=<an absolute directory outside the repository> python3 tests/test_verify_scoped.py
 """
+import ast
 import copy
 import glob
 import json
@@ -22,7 +28,9 @@ import math
 import os
 import random
 import re
+import shutil
 import sys
+import tempfile
 import unittest
 from fractions import Fraction as Fr
 
@@ -72,7 +80,7 @@ class _Ledgered(unittest.TestCase):
 
     def setUp(self):
         E.log('tests/test_verify_scoped.py::%s' % self.id().split('.', 1)[-1],
-              'FC2 verifier-variant test execution (session_01RiV5bfPm5GJ4GcvoBrCC3p)',
+              'FC2 verifier-variant test execution',
               klass=self.LEDGER_CLASS, drifts=self.LEDGER_DRIFTS, notes=self.LEDGER_NOTES)
 
 
@@ -595,7 +603,7 @@ REAL_IV_5 = {'geometry': {'h': '5', 'k': '1/2'}, 'lo': '5/4', 'hi': '41/32'}  # 
 class TestFC2Scoped(_Ledgered):
     LEDGER_CLASS = 'SYNTHETIC'
     LEDGER_DRIFTS = []
-    LEDGER_NOTES = ('FC2 admission test: sandbox under scratchpad/fc2_sandbox_verifier; REAL-band items dry only '
+    LEDGER_NOTES = ('FC2 admission test: sandbox under <P309_SCRATCH_ROOT>/fc2_sandbox_verifier; REAL-band items dry only '
                     '(admission_decision / parse-time refusal); no production marker or grant anywhere')
 
     def setUp(self):
@@ -638,10 +646,11 @@ class TestFC2Scoped(_Ledgered):
         self.assertFalse(os.path.exists(os.path.join(own, gp)))
         rc0 = SB.subprocess.run(['git', '-C', own, 'cat-file', '-e', 'HEAD:' + gp], capture_output=True)
         self.assertNotEqual(rc0.returncode, 0)
-        self.assertEqual(SB._git(own, 'for-each-ref', '--format=%(refname)', V.PRODUCTION_REF_NAMESPACE).strip(), '')
+        for ns in V.FORBIDDEN_REF_NAMESPACES:                                    # r1's and r2's namespace (r2 V2)
+            self.assertEqual(SB._git(own, 'for-each-ref', '--format=%(refname)', ns).strip(), '')
         if sb is not None:
-            self.assertEqual(SB._git(sb.root, 'for-each-ref', '--format=%(refname)',
-                                     V.PRODUCTION_REF_NAMESPACE).strip(), '')
+            for ns in V.FORBIDDEN_REF_NAMESPACES:
+                self.assertEqual(SB._git(sb.root, 'for-each-ref', '--format=%(refname)', ns).strip(), '')
             rc = SB.subprocess.run(['git', '-C', sb.root, 'cat-file', '-e', 'HEAD:' + gp], capture_output=True)
             self.assertNotEqual(rc.returncode, 0)
 
@@ -788,7 +797,7 @@ class TestFC2Scoped(_Ledgered):
     def test_N10_production_cannot_be_synthesized(self):
         with SB.Sandbox('n10') as sb:
             prod_shaped = {
-                'schema': 'P309_GRANT/1', 'campaign': 'p5y_k5_cell309_p309_r1',
+                'schema': 'P309_GRANT/1', 'campaign': 'p5y_k5_cell309_p309_r2',
                 'cell': 309,  # q309: literal-ok (production-SHAPED content at the TEST path; must be refused)
                 'geometry': {'h': '5', 'k': '1/2'}, 'cell_interval': ['1/3', '20/51'],
                 'drift_hull_Ew': ['341/1024', '201/512']}
@@ -799,7 +808,7 @@ class TestFC2Scoped(_Ledgered):
             self.refused(V.admission_decision(REAL_DESC_5, ctx=ctx), 'production context')  # (b)
             with self.assertRaises(V.TestContextRefused):                                  # (c) this repository
                 V.TestContext(SB.own_repo())
-            fake = os.path.join(SB.SANDBOX_BASE, 'n10-fake-worktree-%s' % os.getpid())     # (c) a worktree of it
+            fake = os.path.join(sb.sandbox_base, 'n10-fake-worktree-%s' % os.getpid())     # (c) a worktree of it
             os.makedirs(fake, exist_ok=True)
             try:
                 with open(os.path.join(fake, '.git'), 'w') as fh:
@@ -812,7 +821,7 @@ class TestFC2Scoped(_Ledgered):
 
     def test_N11_synthetic_marker_not_production(self):
         with SB.Sandbox('n11') as sb:
-            prod_shaped = {'schema': 'P309_GRANT/1', 'campaign': 'p5y_k5_cell309_p309_r1',
+            prod_shaped = {'schema': 'P309_GRANT/1', 'campaign': 'p5y_k5_cell309_p309_r2',
                            'cell': 309,  # q309: literal-ok (production-SHAPED content at the TEST path; must be refused)
                            'geometry': {'h': '5', 'k': '1/2'}}
             fc, gc, _ = self.valid(sb, grant_over=prod_shaped)
@@ -927,6 +936,282 @@ class TestFC2Scoped(_Ledgered):
             finally:
                 _ALLOW_TEST_EVAL[0] = False
             self.no_production_artifacts(sb)
+
+
+# ======================================================================================================================
+# Part 3: P309-r2 verifier-side changes (gate step 3; governance/BRIEF_R2_VERIFIER_AUTHOR_1.md)
+_R1_NAMESPACE = 'refs/p5y-k5-cell309-p309-r1/'  # q309: literal-ok (expected value for the V2 static check; compared only, never a ref operand)
+_R2_NAMESPACE = 'refs/p5y-k5-cell309-p309-r2/'  # q309: literal-ok (expected value for the V2 static check; compared only, never a ref operand)
+_MY_FILES = ('verify/srk_verify_indep_scoped.py', 'verify/scoped_sandbox.py', 'verify/run_verify_all_scoped.py',
+             'tests/test_verify_scoped.py')
+
+
+def _tree_of(path):
+    with open(path) as fh:
+        return ast.parse(fh.read())
+
+
+def _assigned(tree, name):
+    """the value of the unique module-level assignment `name = ...` (None if absent or not unique)"""
+    vals = [st.value for st in tree.body if isinstance(st, ast.Assign) and len(st.targets) == 1
+            and isinstance(st.targets[0], ast.Name) and st.targets[0].id == name]
+    return vals[0] if len(vals) == 1 else None
+
+
+def _def(tree, qual):
+    """the unique module-level function, class, or class member `qual` ('f', 'C' or 'C.f'); None otherwise"""
+    node, body = None, tree.body
+    for part in qual.split('.'):
+        hits = [n for n in body if isinstance(n, (ast.FunctionDef, ast.ClassDef)) and n.name == part]
+        if len(hits) != 1:
+            return None
+        node, body = hits[0], hits[0].body
+    return node
+
+
+def _loads(node):
+    return {n.id for n in ast.walk(node) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+
+
+def _callees(node):
+    return {ast.unparse(n.func) for n in ast.walk(node) if isinstance(n, ast.Call)}
+
+
+def _owners(tree):
+    """id(node) -> qualified name of its outermost enclosing function ('f' or 'C.f'), for every node inside one"""
+    out = {}
+    for st in tree.body:
+        members = [(st.name, st)] if isinstance(st, ast.FunctionDef) else (
+            [('%s.%s' % (st.name, m.name), m) for m in st.body if isinstance(m, ast.FunctionDef)]
+            if isinstance(st, ast.ClassDef) else [])
+        for qual, fn in members:
+            for n in ast.walk(fn):
+                out[id(n)] = qual
+    return out
+
+
+class TestR2Verifier(_Ledgered):
+    LEDGER_CLASS = 'SYNTHETIC'
+    LEDGER_DRIFTS = []
+    LEDGER_NOTES = ('P309-r2 verifier-side checks (V2 namespaces, V3 base rule, V4 scratch root): static checks, guard '
+                    'calls and sandboxes only; nothing evaluated; no ref in either production namespace')
+
+    # -- V2 ------------------------------------------------------------------------------------------------------------
+    def test_V2_both_namespaces_forbidden(self):
+        both = {_R1_NAMESPACE, _R2_NAMESPACE}
+        # (1) the variant's TestContext refusal (_validated_sandbox) iterates over a tuple holding both namespaces
+        vt = _tree_of(V._OWN_PATH)
+        prior, marker = _assigned(vt, 'PRIOR_PRODUCTION_REF_NAMESPACE'), _assigned(vt, 'PRODUCTION_MARKER')
+        self.assertTrue(isinstance(prior, ast.Constant) and prior.value == _R1_NAMESPACE)
+        self.assertTrue(isinstance(marker, ast.Constant) and marker.value.startswith(_R2_NAMESPACE)
+                        and '/' not in marker.value[len(_R2_NAMESPACE):])
+        self.assertEqual(ast.unparse(_assigned(vt, 'FORBIDDEN_REF_NAMESPACES')),
+                         '(PRIOR_PRODUCTION_REF_NAMESPACE, PRODUCTION_REF_NAMESPACE)')
+        self.assertEqual(set(V.FORBIDDEN_REF_NAMESPACES), both)
+        self.assertEqual(V.PRODUCTION_REF_NAMESPACE, _R2_NAMESPACE)                   # OD-R2-1 (b), provisional
+        vs = _def(vt, '_validated_sandbox')
+        loops = [n for n in ast.walk(vs) if isinstance(n, ast.For) and ast.unparse(n.iter) == 'FORBIDDEN_REF_NAMESPACES']
+        self.assertEqual(len(loops), 1)
+        lister = [c for c in ast.walk(loops[0]) if isinstance(c, ast.Call)
+                  and any(isinstance(a, ast.Constant) and a.value == 'for-each-ref' for a in c.args)]
+        self.assertTrue(lister and all(ast.unparse(c.args[-1]) == ast.unparse(loops[0].target) for c in lister))
+        self.assertNotIn('PRODUCTION_REF_NAMESPACE', _loads(vs))                        # never one namespace alone
+        self.assertIn('_validated_sandbox', _callees(_def(vt, 'TestContext.__init__')))
+        # (2) the sandbox helper: _FORBIDDEN_REF_PREFIX is a tuple of both, used by every guard
+        st = _tree_of(SB.__file__)
+        self.assertEqual(ast.unparse(_assigned(st, '_FORBIDDEN_REF_PREFIX')),
+                         '(_FORBIDDEN_REF_PREFIX_R1, _FORBIDDEN_REF_PREFIX_R2)')
+        self.assertEqual((_assigned(st, '_FORBIDDEN_REF_PREFIX_R1').value, _assigned(st, '_FORBIDDEN_REF_PREFIX_R2').value),
+                         (_R1_NAMESPACE, _R2_NAMESPACE))
+        self.assertEqual(set(SB._FORBIDDEN_REF_PREFIX), both)
+        self.assertIn('_FORBIDDEN_REF_PREFIX', _loads(_def(st, 'Sandbox._assert_ref')))
+        self.assertIn('_FORBIDDEN_REF_PREFIX', _loads(_def(st, 'Sandbox.assert_no_production_refs')))
+        for meth in ('update_ref', 'delete_ref', 'reset_hard_index'):                    # every ref-moving method
+            self.assertIn('self._assert_ref', _callees(_def(st, 'Sandbox.' + meth)))
+        for meth in ('__init__', '__exit__'):
+            self.assertIn('self.assert_no_production_refs', _callees(_def(st, 'Sandbox.' + meth)))
+        # (3) the guard refuses a ref name in either namespace; it raises before any git call, so no ref is created
+        for ns in sorted(both):
+            with self.assertRaises(RuntimeError):
+                SB.Sandbox._assert_ref(ns + 'TEST_ONLY_probe')
+        SB.Sandbox._assert_ref(SB.TEST_MARKER)                                           # positive control
+
+    # -- V3 ------------------------------------------------------------------------------------------------------------
+    def test_V3_base_rule_static(self):
+        """P6(e): the sandbox branch starts at sandbox_base_commit()'s result, and no other read of the real
+        repository's HEAD is used as a sandbox base in verify/ or in this file"""
+        fns = os.path.dirname(os.path.dirname(os.path.realpath(V._OWN_PATH)))
+        st = _tree_of(SB.__file__)
+        init = _def(st, 'Sandbox.__init__')
+        self.assertEqual([a.arg for a in init.args.args], ['self', 'tag', 'expect_freeze_records'])  # no base parameter
+        sets = [ast.unparse(c) for c in ast.walk(init) if isinstance(c, ast.Call)
+                and ast.unparse(c.func) == 'self.update_ref']
+        self.assertEqual(sets, ["self.update_ref('refs/heads/fc2-sandbox', self.base_commit)"])
+        binds = [n for n in ast.walk(init) if isinstance(n, ast.Assign)
+                 and any('self.base_commit' in ast.unparse(t) for t in n.targets)]
+        self.assertEqual(len(binds), 1)
+        self.assertEqual(ast.unparse(binds[0].value.func), 'sandbox_base_commit')
+        # every git revision operand naming HEAD in this author's Python files: its owner, and the repository it names
+        head_rx = re.compile(r'HEAD([~^:@{.].*)?$')
+        in_sandbox = {'self.root', 'sb.root'}
+        allowed = {
+            ('verify/scoped_sandbox.py', 'sandbox_base_commit'): {'repo'},              # the rule: the one base read
+            ('verify/scoped_sandbox.py', 'Sandbox.__init__'): in_sandbox,               # the sandbox's own HEAD
+            ('verify/scoped_sandbox.py', 'Sandbox.head'): in_sandbox,
+            ('verify/scoped_sandbox.py', 'Sandbox.reset_hard_index'): in_sandbox,
+            ('verify/scoped_sandbox.py', 'Sandbox.freeze_record_commits'): in_sandbox,
+            ('verify/srk_verify_indep_scoped.py', '_admission'): {'repo'},              # admission reads of the
+                                                                                        # repository under admission
+            ('tests/test_verify_scoped.py', 'TestFC2Scoped.fresh'): in_sandbox,
+            ('tests/test_verify_scoped.py', 'TestFC2Scoped.no_production_artifacts'): {'own', 'sb.root'},  # absence
+            ('tests/test_verify_scoped.py', 'TestFC2Scoped.test_N13_fail_closed'): in_sandbox,
+        }
+        seen = set()
+        for rel in _MY_FILES:
+            tree = _tree_of(os.path.join(fns, rel))
+            own = _owners(tree)
+            parent = {id(ch): p for p in ast.walk(tree) for ch in ast.iter_child_nodes(p)}
+            for n in ast.walk(tree):
+                if not (isinstance(n, ast.Constant) and isinstance(n.value, str) and head_rx.match(n.value)):
+                    continue
+                if isinstance(parent.get(id(n)), ast.Compare):                         # compared, not an operand
+                    continue
+                key = (rel, own.get(id(n)))
+                self.assertIn(key, allowed, (rel, n.lineno, n.value))
+                seen.add(key)
+                call = parent.get(id(n))
+                while call is not None and not isinstance(call, ast.Call):
+                    call = parent.get(id(call))
+                self.assertIsNotNone(call, (rel, n.lineno))
+                repo = call.args[0] if call.args else None
+                if isinstance(repo, ast.List) and len(repo.elts) > 2 and ast.unparse(repo.elts[1]) == "'-C'":
+                    repo = repo.elts[2]                                                 # ['git', '-C', <repo>, ...]
+                self.assertIn(ast.unparse(repo) if repo is not None else None, allowed[key],
+                              (rel, n.lineno, ast.unparse(call)[:100]))
+        self.assertIn(('verify/scoped_sandbox.py', 'sandbox_base_commit'), seen)
+        # sandbox_base_commit() is called by Sandbox.__init__, and otherwise only on sandboxes by the shape test
+        for rel in _MY_FILES:
+            tree = _tree_of(os.path.join(fns, rel))
+            own = _owners(tree)
+            for c in ast.walk(tree):
+                if isinstance(c, ast.Call) and ast.unparse(c.func) in ('sandbox_base_commit', 'SB.sandbox_base_commit'):
+                    where = (rel, own.get(id(c)))
+                    if where != ('verify/scoped_sandbox.py', 'Sandbox.__init__'):
+                        self.assertEqual(where, ('tests/test_verify_scoped.py',
+                                                 'TestR2Verifier.test_V3_base_rule_shapes'))
+                        self.assertEqual(ast.unparse(c.args[0]), 'sb.root')
+        # the variant builds no sandbox (it does not import the helper)
+        vt = _tree_of(V._OWN_PATH)
+        imported = {a.name for n in ast.walk(vt) if isinstance(n, ast.Import) for a in n.names}
+        imported |= {n.module for n in ast.walk(vt) if isinstance(n, ast.ImportFrom)}
+        self.assertNotIn('scoped_sandbox', imported)
+
+    def test_V3_base_rule_shapes(self):
+        """the base rule on every record shape, built with a TEST-named record path inside a sandbox (no production
+        name is used); a malformed record raises FreezeRecordError, never a refusal"""
+        rec = 'TEST_ONLY/FREEZE_RECORD.json'
+
+        def body(commit):
+            return json.dumps({'freeze_commit': commit}, sort_keys=True) + '\n'
+        with SB.Sandbox('v3') as sb:
+            self.assertEqual(sb.base, sb.base_commit)                     # the sandbox starts at the rule's base
+            self.assertIn(sb.base_mode, ('development', 'post-freeze'))
+            self.assertEqual(sb.freeze_record_commits(), [])              # P6(b): 0 record commits in the sandbox
+            with self.assertRaises(SB.FreezeRecordError):                 # the postcondition detects a mismatch
+                sb.check_freeze_records(1)
+            b0 = sb.head()
+            self.assertEqual(SB.sandbox_base_commit(sb.root, rec), (b0, 'development'))
+            fp = sb.commit({'TEST_ONLY/synthetic_freeze.txt': 'F-prime\n'}, 'TEST_ONLY synthetic F-prime')
+            frp = sb.commit({rec: body(fp)}, 'TEST_ONLY record-only child FR-prime')
+            self.assertEqual(SB.sandbox_base_commit(sb.root, rec), (fp, 'post-freeze'))
+            sb.commit({'TEST_ONLY/checkpoint.txt': 'after FR-prime\n'}, 'TEST_ONLY checkpoint-style commit')
+            self.assertEqual(SB.sandbox_base_commit(sb.root, rec), (fp, 'post-freeze'))
+            side = sb.commit({'TEST_ONLY/side.txt': 'side\n'}, 'TEST_ONLY side branch', parents=[fp])
+            bad = {
+                'freeze_commit is not the only parent': sb.commit({rec: body(b0)}, 'TEST_ONLY', parents=[fp]),
+                'the record commit touches another path': sb.commit({rec: body(fp), 'TEST_ONLY/other.txt': 'o\n'},
+                                                                    'TEST_ONLY', parents=[fp]),
+                'a second commit changes the record': sb.commit({rec: body(fp) + '\n'}, 'TEST_ONLY', parents=[frp]),
+                'a second commit removes the record': sb.commit({rec: None}, 'TEST_ONLY', parents=[frp]),
+                'the record is not JSON': sb.commit({rec: 'not json\n'}, 'TEST_ONLY', parents=[fp]),
+                'the record is a JSON array': sb.commit({rec: json.dumps([fp]) + '\n'}, 'TEST_ONLY', parents=[fp]),
+                'freeze_commit is missing': sb.commit({rec: json.dumps({'commit': fp}) + '\n'}, 'TEST_ONLY',
+                                                      parents=[fp]),
+                'freeze_commit is not 40-hex': sb.commit({rec: body('F-prime')}, 'TEST_ONLY', parents=[fp]),
+                'the record commit is a merge': sb.commit({rec: body(fp)}, 'TEST_ONLY', parents=[fp, side]),
+            }
+            for label, tip in sorted(bad.items()):
+                with self.subTest(label):
+                    sb.reset_hard_index(tip)
+                    with self.assertRaises(SB.FreezeRecordError) as cm:
+                        SB.sandbox_base_commit(sb.root, rec)
+                    self.assertNotIsInstance(cm.exception, (V.Refusal, V.TestContextRefused))
+            sb.reset_hard_index(frp)
+            self.assertEqual(SB.sandbox_base_commit(sb.root, rec), (fp, 'post-freeze'))
+            sb.reset_hard_index(sb.base)
+
+    # -- V4 ------------------------------------------------------------------------------------------------------------
+    def test_V4_scratch_root_refusals(self):
+        """a negative control for each refusal case of P309_SCRATCH_ROOT / P309_FOREIGN_ROOTS, and positive controls"""
+        good = SB.scratch_sandbox_base()                     # this run's own P309_SCRATCH_ROOT (raises if invalid)
+        ctl = tempfile.mkdtemp(prefix='v4-controls-', dir=os.path.dirname(good))
+        try:
+            sub = os.path.join(ctl, 'sub')
+            os.mkdir(sub)
+            a_file = os.path.join(ctl, 'a_file')
+            with open(a_file, 'w') as fh:
+                fh.write('not a directory\n')
+            link = os.path.join(ctl, 'link_to_sub')
+            os.symlink(sub, link)
+            repo = SB.own_repo()
+            S, F = SB.SCRATCH_ENV, SB.FOREIGN_ENV
+            nowhere = '/nonexistent-p309-v4-control'
+            cases = [
+                ('unset', {}, 'unset or empty'),
+                ('empty', {S: ''}, 'unset or empty'),
+                ('relative', {S: 'relative/scratch'}, 'is not absolute'),
+                ('trailing separator', {S: sub + os.sep}, 'differs from its realpath'),
+                ('dot-dot component', {S: os.path.join(sub, os.pardir, 'sub')}, 'differs from its realpath'),
+                ('symlink', {S: link}, 'differs from its realpath'),
+                ('missing', {S: os.path.join(ctl, 'missing')}, 'is not an existing directory'),
+                ('a file', {S: a_file}, 'is not an existing directory'),
+                ('the repository itself', {S: repo}, 'lies inside the repository'),
+                ('inside the repository', {S: os.path.join(repo, 'level4')}, 'lies inside the repository'),
+                ('equal to a foreign root', {S: sub, F: sub}, 'overlaps'),
+                ('inside a foreign root', {S: sub, F: ctl}, 'overlaps'),
+                ('contains a foreign root', {S: ctl, F: os.path.join(sub, 'deeper')}, 'overlaps'),
+                ('foreign root reached through a symlink', {S: sub, F: link}, 'overlaps'),
+                ('second foreign entry overlaps', {S: sub, F: os.pathsep.join([nowhere, ctl])}, 'overlaps'),
+                ('foreign entry relative', {S: sub, F: 'relative/foreign'}, 'is not absolute'),
+                ('foreign variable empty', {S: sub, F: ''}, 'is not absolute'),
+                ('foreign list with an empty entry', {S: sub, F: nowhere + os.pathsep}, 'is not absolute'),
+            ]
+            for label, env, why in cases:
+                with self.subTest(label):
+                    with self.assertRaisesRegex(SB.ScratchRootError, re.escape(why)):
+                        SB.scratch_sandbox_base(environ=env)
+            self.assertEqual(SB.scratch_sandbox_base(environ={S: sub}), os.path.join(sub, SB.SANDBOX_DIRNAME))
+            self.assertEqual(SB.scratch_sandbox_base(environ={S: sub, F: os.pathsep.join([nowhere, os.path.join(
+                ctl, 'other')])}), os.path.join(sub, SB.SANDBOX_DIRNAME))
+        finally:
+            shutil.rmtree(ctl)
+        # the constructor takes its directory from scratch_sandbox_base() first, and there is no fixed path
+        st = _tree_of(SB.__file__)
+        self.assertEqual(ast.unparse(_def(st, 'Sandbox.__init__').body[0]), 'self.sandbox_base = scratch_sandbox_base()')
+        self.assertIsNone(_assigned(st, 'SANDBOX_BASE'))
+
+    def test_V4_no_session_path_in_code(self):
+        """no hard-coded session or scratchpad path in the string constants of this author's Python files"""
+        fns = os.path.dirname(os.path.dirname(os.path.realpath(V._OWN_PATH)))
+        bad = ('/tmp/', 'scratchpad', 'claude-0', 'session_01')
+        me = 'TestR2Verifier.test_V4_no_session_path_in_code'
+        for rel in _MY_FILES:
+            tree = _tree_of(os.path.join(fns, rel))
+            own = _owners(tree)
+            hits = [(rel, n.lineno, n.value[:60]) for n in ast.walk(tree)
+                    if isinstance(n, ast.Constant) and isinstance(n.value, str) and own.get(id(n)) != me
+                    and any(b in n.value for b in bad)]
+            self.assertEqual(hits, [])
 
 
 if __name__ == '__main__':
