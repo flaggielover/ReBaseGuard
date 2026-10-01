@@ -68,6 +68,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 52-N | 52_reviewS1T_NOTES.txt | practical notes appended to brief 52 as sent (memory index not a source; shell quirks; committed bytes only; MB r1 worktree read-only) | Agent (same prompt) | see ledger | no |
 | 53 | 53_reviewQ6_prefreeze_tooling.txt | fresh independent reviewQ6: builder4's framework cc723527 + builder5's tooling 555f4cbf (liveness repairs, disk / scratch gate, re-pin, R-MEM inputs, QS-RESUME-DECOY, host checklist); low-traffic notes inside | Agent | see ledger | no (tail-figure scan: 0 hits) |
 | 54 | 54_builder6_decisions_optionA_grant.txt | non-holder builder6 on 555f4cbf: decision-dependent cases (MBS-6/7/8 (i)), section 11.2 option (a) tools and R_RULES_OFFICIAL exact comparison (with the per-output analysis duty), the grant's two-record owner binding, host-preflight coverage | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 53/54-N | 53_54_SENT_NOTES.txt | how briefs 53 and 54 were sent (recorded file + sha256 check + practical notes) | Agent | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.

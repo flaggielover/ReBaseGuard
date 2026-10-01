@@ -1,0 +1,21 @@
+HOW BRIEFS 53 AND 54 WERE SENT (recorded after sending; 2026-10-01).
+
+Both agents were started with a short prompt that (1) names the agent, (2) tells it to `cat` the recorded brief file
+and verify its sha256 before anything else (53: 67bbd5d017f00f5e3b7111d79085eeed882d389c201ae82daba6590bb65a2cdd;
+54: b0f2838c8faaafda8d37a3e6e6b29aba24a6c7bd8ca0a6a5f4a9aaffe39e3491; both recorded at research commit 5e425c27) and to
+stop if it differs, and (3) appends practical notes. The brief text itself was therefore delivered byte-identical to
+the record (low-traffic mode; no re-typed copy).
+
+Practical notes appended for reviewQ6 (brief 53): interpreter and suite invocations; MBS308_SCRATCH / MBS308_BASE_STORE;
+own scratch and one local `--no-local` base store; never run inside the successor worktree (builder6 is editing it):
+read committed bytes of 555f4cbf only; re-run once and report both results if a timing-sensitive test fails under
+shared CPU; skip BUILD_REPORT section 6, governance/SUCCESSOR_GOVERNANCE_308.md and ledger/USER_TEXTS_SUCCESSOR_308.md;
+no `git log` on the MB r1 branch; builder5's five notes for the reviewer listed for a ruling ((a) busy_processes fails
+open on a failed ps, (b) READING-6 sampler spacing 0.555 s, (c) QUAL_MIN_FREE_BYTES not in the manifest constants,
+(d) pre-gate scratch roots have no lifecycle record, (e) the host report is not a gate); memory index not a source;
+shell quirks; AC check; low-traffic rules.
+
+Practical notes appended for builder6 (brief 54): only agent editing the worktree; reviewQ6 runs concurrently on its
+own sandboxes; suite invocations and base store as above; a suggested working order (A1, A3, C1, C2, B2, B3, B4, B5,
+B1, A2), notes kept in its scratch, partial completion reported honestly with unfinished parts PENDING; read exactly
+the owner-text sections the brief names.
