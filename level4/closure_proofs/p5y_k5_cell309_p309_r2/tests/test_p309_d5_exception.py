@@ -28,13 +28,14 @@ from pathlib import Path
 
 FNS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(FNS / "code"))
+import p309_env as E  # noqa: E402  (r2 P7: scratch_dir)
 import p309_driver as D  # noqa: E402
 import p309_scan as S  # noqa: E402
 import p309_static_check as SC  # noqa: E402
 
 G = D.G
 DRIVER = "code/p309_driver.py"
-SCRATCH = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/d5_controls")
+SCRATCH = E.scratch_dir("d5_controls")   # r2 P7: under P309_SCRATCH_ROOT (validated; no fallback)
 
 
 def copy_tree() -> Path:

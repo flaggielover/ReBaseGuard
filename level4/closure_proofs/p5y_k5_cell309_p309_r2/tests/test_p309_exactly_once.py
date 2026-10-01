@@ -25,11 +25,12 @@ from pathlib import Path
 
 FNS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(FNS / "code"))
+import p309_env as E  # noqa: E402  (r2 P7: scratch_dir)
 import p309_driver as D  # noqa: E402
 
 G = D.G
 REPO = D.REPO
-SCRATCH = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/qc11_sandboxes")
+SCRATCH = E.scratch_dir("qc11_sandboxes")   # r2 P7: under P309_SCRATCH_ROOT (validated; no fallback)
 SB_BRANCH = "refs/heads/p309-test-sandbox"
 NS = D.NS_REL
 OWN_SHA = D.sha(Path(D.__file__).read_bytes())

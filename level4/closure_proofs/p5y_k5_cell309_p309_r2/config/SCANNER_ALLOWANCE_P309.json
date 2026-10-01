@@ -1219,6 +1219,7 @@
     "p309_driver",
     "p309_env",
     "p309_guard",
+    "p309_host",
     "p309_rehearse",
     "p309_scan",
     "pathlib",
@@ -1239,7 +1240,8 @@
     "sys",
     "tempfile",
     "time",
-    "types"
+    "types",
+    "urllib.request"
    ],
    "tests": [
     "__future__",
@@ -1325,7 +1327,13 @@
     "ast_sha256": "5ede1f0f961e49901f41b5563809233753e749e0a3fc0d3dd28f831130e934b3",
     "reason": "the verifier author's batch runner: a worker pool over the variant's own functions; no program is started"
    }
-  ]
+  ],
+  "r2_additions": {
+   "code": {
+    "p309_host": "r2 R2-I4/R2-I6: the read-only host package (provenance, Q-HOST continuity, exclusion gate, isolation, durability preflight, P309_SCRATCH_ROOT validation); imported by p309_env.scratch_dir (lazily), the launcher, the runner's Q-HOST and the drill",
+    "urllib.request": "r2 p309_host.imds only: AWS IMDSv2 read-only metadata at the link-local address 169.254.169.254 through a proxy-free opener, 1 s timeouts; the instance id is recorded only as sha256"
+   }
+  }
  },
  "backstop_pins": [
   {

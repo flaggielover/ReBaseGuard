@@ -29,7 +29,7 @@ import p309_env as E  # noqa: E402
 import p309_guard as G  # noqa: E402
 
 REPO = E.REPO
-SCRATCH = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/fc2_sandbox_coordinator")
+SCRATCH = E.scratch_dir("fc2_sandbox_coordinator")   # r2 P7: under P309_SCRATCH_ROOT (validated; no fallback)
 SB_BRANCH = "refs/heads/p309-test-sandbox"
 H3_CELL_FILES = [E.RNS / "evidence" / "srk_decoys_cell" / f"cell_h3_k1_2_C1_3_20_51_S{j}.json" for j in range(4)]
 REAL_ITEM = ("7/5", "3/2")     # q309: literal-ok (a REAL-band interval presented to the admission check only; dry)

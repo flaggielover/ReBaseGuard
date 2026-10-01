@@ -42,3 +42,15 @@ def evidence_dir(sub: str) -> Path:
     d = base / sub
     d.mkdir(parents=True, exist_ok=True)
     return d
+
+
+def scratch_dir(sub: str) -> Path:
+    """r2 (review condition P7): every scratch path lives under P309_SCRATCH_ROOT, validated by p309_host.scratch_root
+    (absolute, resolved, an existing directory, outside the repository and every P309_FOREIGN_ROOTS path).  A violation
+    raises; there is no fallback path.  p309_host is imported here, not at module level, so the production driver does
+    not load it unless a scratch directory is asked for."""
+    import p309_host as H
+    root = H.scratch_root(dict(os.environ), str(REPO), {"foreign_roots": []})
+    d = Path(root) / sub
+    d.mkdir(parents=True, exist_ok=True)
+    return d
