@@ -1,0 +1,69 @@
+REPAIR REQUEST (brief 56) — FRESH non-holder builder `builder7`: the bounded repairs required by the PRESERVED
+rejection of the pre-freeze tooling (reviewQ6, DELTA_REJECTED, research 82d59cc2). Recorded before sending.
+Target-free; pre-freeze; nothing here freezes, measures, qualifies, authorizes or grants anything.
+
+WHO YOU ARE. A FRESH builder who is not a holder of any MB r1 run observation, independent of the coordinator
+(editorR3C1, exposed; the T6 ruling's M4 keeps it out of implementation roles), of builders 3-6 and of every reviewer.
+
+OBJECT. Successor branch p5y-k5-cell308-mbs-r1, worktree /Users/suzhe/ReBaseGuard-c308mbs,
+NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1, HEAD 78a172cfc8d94f05f23a027f8decf4f9150e4c96 (builder6's commit on 555f4cbf). The rejection you
+repair: research /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_PREFREEZE_TOOLING_MBS308.md
+(read sections 1 (e), 3, 7 and 8 in full; the rest as needed). It stays as it is: you do not edit, answer or replace it.
+Also read: research ledger/QC13S_RECORD_CHECK_T2.md (the verifier's own status for each governance record),
+governance/CONSTANTS_RATIFICATION_MBS308_READINGS_R1.md ("Rulings at a glance" and its READING-1/2/4/5 notes),
+BUILD_REPORT sections 15-17 (NOT 6 or 9), protocol draft sections 8, 8.1, 8.2, 11.
+
+REPAIRS (only these; each with a planted test that fails without it and a mutant killed by assertion).
+R1 (F-1). QC13-S: the records GOVERNANCE_ACCEPTED (research 00a432df) and ROUTE_ACCEPTED (research 87d0b2b9) expect a
+   status name where the named file's line 2 is the delta review's own token `DELTA_ACCEPTED` (see
+   QC13S_RECORD_CHECK_T2.md). Correct the expected token to what line 2 is, keeping the record's id and its meaning in
+   a note. Do not open the MBS-2 files yourself: the coordinator re-runs `check_record` on your final bytes for every
+   record and reports statuses.
+R2 (F-2, G-3). Make protocol 8.2's "a store still borrowed is kept" true: a base store with a live borrower (in the
+   same root or in another root) is never deleted — record each borrower where the store lives, or refuse what cannot
+   be protected; state the rule exactly in 8.2; tests for the in-root and the cross-root case.
+R3 (F-3). The deletions log is opened (or the record written) before the first deletion: no unrecorded deletion.
+R4 (G-4). Tests in which the disk reading falls after the start, for the verifier's per-phase gate and for the runner.
+R5 (F-5). A case naming no gate is not ignored by the aggregate / config consistency check.
+R6 (ruling (a)). `mbs308_driver.busy_processes` fails CLOSED on a failed `ps` reading (host_exclusive is not true on
+   no reading). Same class, named by the reviewer: the start gate `no_other_campaign_job` must not read a recorded
+   live driver as STALE when `ps` fails (UNKNOWN is never DEAD: the gate refuses). No number changes.
+R7 (F-7, ruling (e)). The host report: an unreadable reading is not RECORDED; READY needs a positive reading.
+F-4. The re-pin generator's SCIENCE-GLUE refusal must be able to fire for a function-body change (or the vacuous
+   claim is removed from the text and the report says which).
+Coverage gaps G-1, G-2, G-5 to G-11: a test for each (the code is right; add the test and its mutant). For G-10 use
+   the ratifier's confirmations (READING-2, READING-3; D is the driver's own peak; the step-5 sum).
+Housekeeping the review lists: every build agent of this campaign in the configuration's ledger agents list
+   (builder6, builder7, reviewQ6, ratifier2 and the next reviewer's name `reviewF8`).
+If builder6 already did one of these, verify it and say so; do not redo it. Touch nothing else: no operational number,
+no science function, no rule text, no owner-ruled semantics (owner records: research ledger/USER_RULING_MBS308_*.txt,
+for orientation only).
+
+RE-RUN on your FINAL bytes: static, launch, state, crash, qualify, disk, cases and the full mutant matrix (per-mutant
+cleanup); report counts; read every per-mutant result for an `error` field (a kill must be the assertion). Re-measure
+P_max and B for QUAL_MIN_FREE_BYTES on the final bytes and say whether the 7 GiB derivation still holds (no hand edit
+of the number: if the formula's output changes, report it).
+
+REPORT. BUILD_REPORT section 18 (each repair: what, test, mutant; what builder6 had already done; counts; your
+exposure statement); a 20-line final message. No git writes: the coordinator commits.
+
+ABSOLUTE RULES. No cell-308 target evaluation, direct or indirect; nothing may evaluate Γ(5,308; ·), cells 305-309 or
+any drift in [6/5, 13/5] or its mirror (the dev decoy on cell 297 block 0 is the only science any test may run;
+ledger it NONTARGET_DRIFT_VALIDATION); cell 309 out of scope; no authorization, grant, marker, pending result, seal,
+freeze manifest in the worktree, designated measurement, official qualification run or system-setting change. MBS-2
+reading restrictions: do NOT open reviews/REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*,
+reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*, reviews/INCIDENT_INDEPENDENCE_REVIEW_MB308*.md and *_MBS308*,
+ledger/COORDINATOR_EXPOSURE_DISCLOSURE*, ledger/USER_TEXTS_SUCCESSOR_308.md, research governance/SUCCESSOR_GOVERNANCE_308.md,
+history/, anything under p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/, successor BUILD_REPORT
+sections 6 and 9, any other scratchpad, anything under /Users/suzhe/.claude/; no `git log` on the MB r1 branch.
+Disclose any MB r1 run observation already in your context (a host-supplied memory index is not a source). Sandboxes
+on your OWN --no-local base store (build once, reuse); no real ref; launch tests synthetic payload, booted out, no
+plist left. Ledger via the research namespace's code/c308_quarantine.log_event (agent='builder7', target_evaluations=0).
+
+LOW-TRAFFIC MODE (owner instruction). Batch commands; long output to files in your scratch
+(/private/tmp/claude-501/-Users-suzhe-ReBaseGuard/fb722654-cd8d-472d-928c-34a116f8b315/scratchpad/builder7); read back
+short summaries; never tail or re-read large logs; bounded polling; delete sandboxes after heavy runs. Check
+`pmset -g batt` shows AC Power before heavy runs. Interpreter /Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14
+(-I -S -B); suites `tests/test_mbs308_<suite>.py [t ...] --out <json>`; MBS308_SCRATCH / MBS308_BASE_STORE select
+scratch and base store. In this shell `find` is `bfs`; in zsh write "${VAR}:path" in git revspecs; never put backticks
+inside an unquoted heredoc. You are the only agent editing the worktree until you report.
