@@ -302,8 +302,48 @@ class Helper:
             self.p.wait()
 
 
+# ------------------------------------------------------------------ the scratch lifecycle (brief 50)
+def infra_scratch():
+    """The namespace's OWN code/mbs308_scratch.py (never a mutated copy), loaded under a private module name: the
+    lifecycle records it writes are what the mutant runner's and the verifier's cleanup rely on."""
+    import importlib.util
+    name = "_mbs308_scratch_infra"
+    if name in sys.modules:
+        return sys.modules[name]
+    spec = importlib.util.spec_from_file_location(name, NSS / "code" / "mbs308_scratch.py")
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def lifecycle_begin(purpose: str):
+    """Record this process as a user of SCRATCH (ACTIVE). Best effort: without a record the root stays ACTIVE (never
+    cleaned), which is the safe side."""
+    try:
+        return infra_scratch().begin(SCRATCH, purpose)
+    except Exception:                                                   # noqa: BLE001
+        return None
+
+
+def lifecycle_finish(record) -> None:
+    if record is not None:
+        try:
+            infra_scratch().finish(record)
+        except Exception:                                               # noqa: BLE001
+            pass
+
+
 # ------------------------------------------------------------------ the runner
 def run_tests(module_globals: dict, names: list | None = None, out_path: str | None = None) -> int:
+    rec = lifecycle_begin(f"tests {Path(str(module_globals.get('__file__'))).name}")
+    try:
+        return _run_tests(module_globals, names, out_path)
+    finally:
+        lifecycle_finish(rec)
+
+
+def _run_tests(module_globals: dict, names: list | None = None, out_path: str | None = None) -> int:
     tests = {k: v for k, v in module_globals.items() if k.startswith("t_") and callable(v)}
     sel = names or list(tests)
     res = {}

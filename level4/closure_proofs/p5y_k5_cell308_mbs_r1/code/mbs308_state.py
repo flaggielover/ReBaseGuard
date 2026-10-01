@@ -670,63 +670,119 @@ class Locked(StateError):
     pass
 
 
+def lock_read(store: Store, name: str) -> bytes | None:
+    """Read a lock record (the recover lock or one of its set-aside names) with O_NOFOLLOW: a regular file owned by this
+    user, or None. Unlike spool_read, ANY link count is accepted (O-3): a lock is only an identity record, and it can
+    carry a second name for a moment -- between Lock.acquire's link of its staged record and the unlink of the staged
+    name (O-2), or between a LOCK_RACE put-back and the unlink of the set-aside name -- so a crash inside either window
+    must not wedge every later acquire."""
+    try:
+        fd = os.open(store.spool() / name, os.O_RDONLY | os.O_NOFOLLOW)
+    except (FileNotFoundError, OSError):
+        return None
+    try:
+        st = os.fstat(fd)
+        if not stat.S_ISREG(st.st_mode) or st.st_uid != os.getuid():
+            return None
+        chunks = []
+        while chunk := os.read(fd, 1 << 20):
+            chunks.append(chunk)
+        return b"".join(chunks)
+    finally:
+        os.close(fd)
+
+
 class Lock:
     """O_EXCL lockfile in the spool holding the owner's identity. A stale lock (its recorded identity is positively
     DEAD, HOST.identity_state; a failed `ps` or boot-UUID reading is UNKNOWN and keeps the lock held; no recorded
     identity: no process) is reported, moved aside after re-reading it, and replaced; the journal CAS is the second line
-    of defence."""
+    of defence.
+
+    O-2 (REVIEW_OPTIONB_LIVENESS_MBS308, reviewB5): the lock name never exists without its complete record. The record
+    is written and fsync'd under a private STAGED name first and then LINKED to the lock name (link(2) fails when the
+    name exists: the O_EXCL semantics), so no concurrent acquirer can read an empty or partial lock and break it as
+    "no recorded identity". O-3: a LOCK_RACE put-back restores the other breaker's lock under the lock name and then
+    removes the set-aside name, so the lock keeps exactly one name and its owner can release it; lock_read accepts a
+    second name left by a crash inside either window."""
 
     def __init__(self, store: Store, name: str = LOCKFILE):
         self.store, self.name, self.held, self.stale_broken = store, name, False, None
 
-    def acquire(self) -> dict:
-        d = self.store.spool(create=True)
-        me = HOST.identity()
-        data = canon({"identity": me, "utc": utc()})
-        for _ in range(4):
-            try:
-                fd = os.open(d / self.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
-            except FileExistsError:
-                holder_raw = self.store.spool_read(self.name)
-                if holder_raw is None:                     # it vanished meanwhile: try again
-                    continue
-                try:
-                    holder = json.loads(holder_raw).get("identity")
-                except (ValueError, AttributeError):
-                    holder = None
-                if _not_dead(holder, None, None):          # liveness delta: alive unless positively DEAD
-                    raise Locked("LOCKED", "another recover / resume holds the lock")
-                aside = f"{self.name}.rejected-stale-lock-{datetime.datetime.now(datetime.timezone.utc):%Y%m%dT%H%M%S}-" \
-                        f"{secrets.token_hex(3)}"
-                dfd = os.open(d, os.O_RDONLY | os.O_DIRECTORY)
-                try:
-                    os.rename(self.name, aside, src_dir_fd=dfd, dst_dir_fd=dfd)
-                except FileNotFoundError:                  # another breaker moved it first: try again
-                    continue
-                finally:
-                    os.close(dfd)
-                if self.store.spool_read(aside) != holder_raw:
-                    try:                                   # we moved ANOTHER breaker's fresh lock: put it back
-                        os.link(d / aside, d / self.name)
-                    except OSError:
-                        pass
-                    raise Locked("LOCK_RACE", "the lock changed while it was being broken")
-                self.stale_broken = aside
-                continue
+    def _stage(self, d: Path, data: bytes) -> str:
+        staged = f"{self.name}.staged-{os.getpid()}-{secrets.token_hex(3)}"
+        dfd = os.open(d, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            fd = os.open(staged, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=dfd)
             try:
                 _write_all(fd, data)
                 fsync_file(fd)
             finally:
                 os.close(fd)
-            self.held = True
-            return {"identity": me, "stale_lock_broken": self.stale_broken}
-        raise Locked("LOCK_RACE", "the lock could not be taken")
+        finally:
+            os.close(dfd)
+        return staged
+
+    @staticmethod
+    def _unlink_fsync(d: Path, name: str) -> None:
+        dfd = os.open(d, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            try:
+                os.unlink(name, dir_fd=dfd)
+            except FileNotFoundError:
+                pass
+            fsync_dir(dfd)
+        finally:
+            os.close(dfd)
+
+    def acquire(self) -> dict:
+        d = self.store.spool(create=True)
+        me = HOST.identity()
+        data = canon({"identity": me, "utc": utc()})
+        staged = self._stage(d, data)                      # O-2: the complete record exists before the lock name
+        try:
+            for _ in range(4):
+                try:
+                    os.link(d / staged, d / self.name, follow_symlinks=False)
+                except FileExistsError:
+                    holder_raw = lock_read(self.store, self.name)
+                    if holder_raw is None:                 # it vanished meanwhile: try again
+                        continue
+                    try:
+                        holder = json.loads(holder_raw).get("identity")
+                    except (ValueError, AttributeError):
+                        holder = None
+                    if _not_dead(holder, None, None):          # liveness delta: alive unless positively DEAD
+                        raise Locked("LOCKED", "another recover / resume holds the lock")
+                    aside = f"{self.name}.rejected-stale-lock-" \
+                            f"{datetime.datetime.now(datetime.timezone.utc):%Y%m%dT%H%M%S}-{secrets.token_hex(3)}"
+                    dfd = os.open(d, os.O_RDONLY | os.O_DIRECTORY)
+                    try:
+                        os.rename(self.name, aside, src_dir_fd=dfd, dst_dir_fd=dfd)
+                    except FileNotFoundError:              # another breaker moved it first: try again
+                        continue
+                    finally:
+                        os.close(dfd)
+                    if lock_read(self.store, aside) != holder_raw:
+                        try:                               # we moved ANOTHER breaker's fresh lock: put it back
+                            os.link(d / aside, d / self.name, follow_symlinks=False)
+                        except OSError:
+                            pass
+                        else:                              # O-3: one name again (the set-aside name goes)
+                            self._unlink_fsync(d, aside)
+                        raise Locked("LOCK_RACE", "the lock changed while it was being broken")
+                    self.stale_broken = aside
+                    continue
+                self.held = True
+                return {"identity": me, "stale_lock_broken": self.stale_broken}
+            raise Locked("LOCK_RACE", "the lock could not be taken")
+        finally:
+            self._unlink_fsync(d, staged)                  # a taken lock keeps its one name
 
     def release(self) -> None:
         if not self.held:
             return
         d = self.store.spool()
-        raw = self.store.spool_read(self.name)
+        raw = lock_read(self.store, self.name)
         try:
             ident = json.loads(raw or b"{}").get("identity", {})
         except ValueError:
@@ -847,7 +903,7 @@ def git_lock_info(st: Store, boot_uuid: str | None = None, exclude_pid: int | No
     if isinstance(prec, dict) and _not_dead(prec.get("identity"), boot_uuid, exclude_pid):
         live.append("pidfile")
     try:
-        holder = json.loads(st.spool_read(LOCKFILE) or b"{}").get("identity")
+        holder = json.loads(lock_read(st, LOCKFILE) or b"{}").get("identity")         # O-3: any link count
     except (ValueError, AttributeError, StateError):
         holder = None
     if _not_dead(holder, boot_uuid, exclude_pid):
@@ -1076,6 +1132,101 @@ def classify(camp: Campaign, *, platform: dict, boot_uuid: str | None = None, no
 from concurrent.futures import ALL_COMPLETED, Future  # noqa: E402
 from concurrent.futures import ProcessPoolExecutor as _PPE  # noqa: E402
 from concurrent.futures import wait as _wait  # noqa: E402
+
+
+class RssSampler:
+    """R-MEM inputs of the DECOY record (research brief 50, task 3; protocol section 8, R-MEM steps 2 and 6): a
+    fixed-rate sampler, one `ps -A -o pid=,ppid=,rss=` reading every INTERVAL_S (0.5 s, the rule's own bound "a <= 0.5
+    s qualification sampler"), of the driver (`root_pid`) and every descendant (its workers). It records the driver's
+    and the workers' peak RSS and the highest RSS growth rate of any one process between two consecutive readings
+    (bytes per second over the readings' actual spacing, with the largest spacing seen). RECORDED FIELDS ONLY: it never
+    kills or signals anything and never touches the computation; a failed reading is counted, never raised. Used by the
+    driver's `decoy` mode only (never after a marker)."""
+    INTERVAL_S = 0.5
+
+    def __init__(self, root_pid: int | None = None, interval_s: float = INTERVAL_S):
+        self.root, self.interval = os.getpid() if root_pid is None else int(root_pid), float(interval_s)
+        self.samples = self.failed = 0
+        self.driver_peak = self.worker_peak = 0
+        self.max_growth, self.max_gap = 0.0, 0.0
+        self.seen: set = set()
+        self._prev: dict = {}
+        self._last_t = None
+        self._stop = threading.Event()
+        self._t = threading.Thread(target=self._loop, name="mbs308-rss-sampler", daemon=True)
+
+    @staticmethod
+    def _read() -> dict | None:
+        try:
+            p = subprocess.run(["/bin/ps", "-A", "-o", "pid=,ppid=,rss="], capture_output=True, text=True,
+                               env={"PATH": "/usr/bin:/bin", "LC_ALL": "C"}, stdin=subprocess.DEVNULL, timeout=10)
+        except (OSError, subprocess.SubprocessError):
+            return None
+        if p.returncode != 0:
+            return None
+        out = {}
+        for ln in p.stdout.splitlines():
+            parts = ln.split()
+            if len(parts) == 3 and all(x.isdigit() for x in parts):
+                out[int(parts[0])] = (int(parts[1]), int(parts[2]) * 1024)
+        return out or None
+
+    def _tree(self, snap: dict) -> set:
+        kids: dict = {}
+        for pid, (ppid, _rss) in snap.items():
+            kids.setdefault(ppid, []).append(pid)
+        tree, todo = set(), [self.root]
+        while todo:
+            q = todo.pop()
+            if q in tree or q not in snap:
+                continue
+            tree.add(q)
+            todo += kids.get(q, [])
+        return tree
+
+    def sample(self, snap: dict | None, t: float) -> None:
+        if snap is None:
+            self.failed += 1
+            return
+        if self._last_t is not None:
+            self.max_gap = max(self.max_gap, t - self._last_t)
+        self._last_t = t
+        cur = {}
+        for pid in self._tree(snap):
+            rss = snap[pid][1]
+            cur[pid] = (rss, t)
+            self.seen.add(pid)
+            if pid == self.root:
+                self.driver_peak = max(self.driver_peak, rss)
+            else:
+                self.worker_peak = max(self.worker_peak, rss)
+            if pid in self._prev:
+                r0, t0 = self._prev[pid]
+                if t > t0 and rss > r0:
+                    self.max_growth = max(self.max_growth, (rss - r0) / (t - t0))
+        self._prev = cur
+        self.samples += 1
+
+    def _loop(self) -> None:
+        t0 = time.monotonic()
+        i = 0
+        while not self._stop.is_set():
+            t = time.monotonic()
+            self.sample(self._read(), t)
+            i += 1
+            self._stop.wait(max(0.0, t0 + i * self.interval - time.monotonic()))
+
+    def start(self) -> "RssSampler":
+        self._t.start()
+        return self
+
+    def stop(self) -> dict:
+        self._stop.set()
+        self._t.join(timeout=30)
+        return {"interval_s": f"{self.interval:g}", "samples": self.samples, "failed_reads": self.failed,
+                "max_spacing_s": round(self.max_gap, 3), "processes_seen": len(self.seen),
+                "driver_peak_rss_bytes": self.driver_peak or None, "worker_peak_rss_bytes": self.worker_peak or None,
+                "max_growth_bytes_per_s": int(self.max_growth)}
 
 
 class Ctx:

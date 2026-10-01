@@ -29,6 +29,8 @@
    "what": "tests/test_mbs308_launch.py (launchd integration with the SYNTHETIC payload; all booted out)", "pass_if": "every test passes; counts recorded"},
   {"id": "QS-QUALIFY", "gates": ["Q12"], "status": "BUILT", "depends_on": [],
    "what": "tests/test_mbs308_qualify.py: this verifier's own planted controls (aggregator, every BUILT case pass and planted failure, PENDING cases fail closed, the R-rule functions)", "pass_if": "every test passes; counts recorded"},
+  {"id": "QS-DISK", "gates": ["Q12"], "status": "BUILT", "depends_on": [],
+   "what": "tests/test_mbs308_disk.py (builder5, brief 50): the disk-safety and scratch-lifecycle gate (free-space probes fail closed; the verifier, the mutant runner and the driver's execute / resume preflight refuse on insufficient or unreadable disk before irreversible work; cleanup removes only disposable sandbox state of FINISHED roots and never active scratch, evidence, refs, the marker, pending, spool or seals), the re-pin tooling and the read-only host report", "pass_if": "every test passes; counts recorded"},
   {"id": "QS-MUTANTS", "gates": ["Q12"], "status": "BUILT", "depends_on": [],
    "what": "tests/test_mbs308_mutants.py: the full mutant matrix", "pass_if": "the unmutated code passes every target test; the matrix holds exactly the declared mutants; every mutant is KILLED BY ASSERTION (its target test returns a failure without an error, a timeout or an invalid mutant)"},
   {"id": "QC09-S", "gates": ["Q9", "Q12"], "status": "BUILT", "depends_on": [],
@@ -69,8 +71,8 @@
    "what": "the theorem text binding (MB r1's Q1 re-targeted)", "why_pending": "option (ii) changes the theorem"},
   {"id": "MBR1_REPRO", "gates": ["Q3"], "status": "PENDING_USER_DECISION", "depends_on": ["MBS-7"],
    "what": "RC2: MB r1's official r3 non-target decoy / ladder jobs re-run with the successor code, EXACT equality (timing keys stripped) with MB r1's committed QC02 / QC03 / QC04 records", "why_pending": "the determinism argument applies only under option (i)"},
-  {"id": "QS-RESUME-DECOY", "gates": ["Q3"], "status": "PENDING_USER_DECISION", "depends_on": ["MBS-7"],
-   "what": "MBS-9 (ii): a complete decoy cell (297, frozen ladder) uninterrupted vs SIGKILLed after k checkpoints and resumed; every certified leaf byte-identical", "why_pending": "science computation on decoys; the job set changes under option (ii)"}
+  {"id": "QS-RESUME-DECOY", "gates": ["Q3"], "status": "BUILT", "depends_on": [],
+   "what": "MBS-9 (ii): a complete decoy cell (297, every block, the frozen ladder, WORKERS) uninterrupted (the driver's production decoy mode) vs SIGKILLed after k = n // 2 durable checkpoints and resumed from the verified checkpoints (n = the uninterrupted run's Stage-1 jobs); every certified leaf of the decoy output (Stage 1 and every Stage-2 decoy bundle included) byte-identical, timing keys stripped", "input": "tests/mbs308_resume_decoy.py --form official (a sandbox of the separate base store under --work; decoy cover cell 297 only); its evidence is produced only at the official qualification; --dev runs the dev form (297 block 0, dev ladder, 2 workers), never evidence", "pass_if": "the SIGKILL came after exactly k checkpoints; the resume served k and computed n - k >= 1 with no rejected checkpoint; the certified trees are equal as canonical bytes; the value-free record says pass", "why_decision_independent": "builder5 (brief 50; BUILD_REPORT section 16.6): the case compares a decoy run of the FROZEN driver with the same run interrupted and resumed; the job set, n, k and the output keys are read from the runs, never hard-coded, so the case is the same under MBS-7 (i) and (ii) (under (ii) it covers the added members' jobs automatically); only its result depends on the frozen code, and it is produced only by the official run of that code", "why_non_target": "decoy cover cell 297 below the band; the guard stays DECOY"}
  ],
  "not_carried": {
   "QC10": "MB r1's exactly-once flows of MB r1's driver: replaced by QS-STATE and QS-CRASH (the successor's own lifecycle)"
@@ -81,6 +83,7 @@
   "QS-CRASH": "tests/test_mbs308_crash.py",
   "QS-LAUNCH": "tests/test_mbs308_launch.py",
   "QS-QUALIFY": "tests/test_mbs308_qualify.py",
+  "QS-DISK": "tests/test_mbs308_disk.py",
   "QS-MUTANTS": "tests/test_mbs308_mutants.py"
  },
  "commit_pins": [
@@ -105,7 +108,8 @@
   {"id": "USER_FREEZE_DECISION", "commit": null, "path": null, "ref": "refs/heads/p5y-k5-cell308-research", "kind": "presence", "source": "S16(c), MBS-6, MBS-7, MBS-8: the user's recorded freeze decision; fails closed while it is absent"}
  ],
  "ledger": {"ref": "refs/heads/p5y-k5-cell308-research", "path": "level4/closure_proofs/p5y_k5_cell308_research/ledger/TARGET_INTEGRITY_LEDGER.jsonl",
-            "agents": ["builder2", "builder3", "builder4", "editorR3C1", "ratifierMBS", "mbs308_qualification"]},
+            "agents": ["builder2", "builder3", "builder4", "builder5", "editorR3C1", "ratifierMBS",
+                       "mbs308_qualification"]},
  "r_allow_h3_readings": {"source": "CONSTANTS_RATIFICATION_MBS308.md at 3c2a7854, section Evidence, H3 (readings above 25 %, with the locations as the ratification states them)",
   "readings": [
    {"name": "spotlightknowledged.updater", "pcpu": "70.3", "path": "/usr/libexec"},
@@ -114,5 +118,5 @@
    {"name": "BackgroundShortcutRunner", "pcpu": "52.2", "path": "/System/…/WorkflowKit.framework/XPCServices"},
    {"name": "modelcatalogd", "pcpu": "27.7", "path": "/System/…/ModelCatalogRuntime.framework"}
   ]},
- "revision": "r1 (builder4, brief 49): integrated onto successor 216c465f; + the governance record LIVENESS_DELTA_ACCEPTED (research 2308651e)"
+ "revision": "r2 (builder5, brief 50): + QS-DISK (the disk-safety and scratch-lifecycle gate); QS-RESUME-DECOY BUILT (decision-independent, BUILD_REPORT section 16.6); builder5 in the ledger agents. r1 (builder4, brief 49): integrated onto successor 216c465f; + the governance record LIVENESS_DELTA_ACCEPTED (research 2308651e)"
 }

@@ -3,7 +3,8 @@
 
     mbs308_child.py <sandbox root> <action> <spec json>
 
-actions: execute | resume | recover | seal-only | close-indeterminate | status | classify | decoy-ckpt
+actions: execute | resume | recover | seal-only | close-indeterminate | status | classify | decoy-ckpt |
+decoy-main-synth
 spec: fault {point: {"at": k, "how": "exit"|"kill"}}, boot_uuid (the classifier's boot UUID input, a simulated
 reboot), mbr1_git_dir, control_pass, mem_cap_mb, eval_cap_s, skip_not_evaluated, decoy {...}, ps_fail_pids (`ps`
 readings fail for these pids: a planted reading failure, N-3).
@@ -69,6 +70,13 @@ def main() -> int:
         return 0
     if action == "decoy-ckpt":
         return decoy_ckpt(D, STATE, root, spec, own)
+    if action == "decoy-main-synth":               # brief 50 task 3: main()'s REAL decoy branch, synthetic evaluator
+        SY.install(D, spec)
+        D.decoy = lambda k, own_sha, workers, first_blocks, dev_ladder: SY.synth_decoy(D, k, own_sha, workers)
+        STATE.test_hooks_present = lambda: []      # this harness plants no fault (FAULT stays None); its own
+        rc = D.main(["decoy", "--cell", "297", "--workers", "2", "--out", spec["out"]])    # MBS308_TEST* vars are knobs
+        print(json.dumps({"rc": rc}))
+        return 0
     inj = SY.install(D, spec)
     if spec.get("skip_not_evaluated"):
         D.check_not_evaluated = lambda: {"stale_intent_journal": None}
@@ -99,10 +107,15 @@ def main() -> int:
 
 
 def decoy_ckpt(D, STATE, root: Path, spec: dict, own: str) -> int:
-    """The dev decoy through the checkpoint path (test hook only): cell 297, first block, dev ladder, 2 workers;
-    checkpoints go to a sandbox-only ref; a fault may kill it after k checkpoints; a second call resumes from the
-    verified checkpoints. Writes the decoy output to spec["out"]."""
+    """A decoy through the checkpoint path (test hook only): by default the dev form (cell 297, first block, dev ladder,
+    2 workers); spec["decoy"] may name cell, workers, first_blocks (null = every block) and dev_ladder (QS-RESUME-DECOY's
+    official form: 297, every block, the frozen ladder, WORKERS). Checkpoints go to a sandbox-only ref; a fault may kill
+    it after k checkpoints; a second call resumes from the verified checkpoints. Writes the decoy output to
+    spec["decoy"]["out"]."""
     d = spec["decoy"]
+    cell, workers = int(d.get("cell", 297)), int(d.get("workers", 2))
+    first_blocks = d.get("first_blocks", 1)
+    dev_ladder = bool(d.get("dev_ladder", True))
     st = D.store()
     ck = STATE.Checkpointer(st, None, "DECOY-NOT-A-GRANT", own, ref="refs/mbs308-test-decoy/ckpt",
                             attempt=2 if d.get("resume") else 1, attempt_seq=0, platform=D.platform_readings())
@@ -111,7 +124,7 @@ def decoy_ckpt(D, STATE, root: Path, spec: dict, own: str) -> int:
     STATE.CK = ctx = STATE.Ctx(checkpointer=ck, verified=good, mem_cap_bytes=D.MEM_CAP_BYTES, mem_poll_s=D.MEM_POLL_S)
     D.check_bindings(allow_uncommitted=True)
     try:
-        out = D.decoy(297, own, 2, 1, True)
+        out = D.decoy(cell, own, workers, None if first_blocks is None else int(first_blocks), dev_ladder)
     finally:
         STATE.CK = None
     out["lifecycle"] = {"stage1_context": ctx.summary(), "resumed_from": len(good), "rejected": bad}

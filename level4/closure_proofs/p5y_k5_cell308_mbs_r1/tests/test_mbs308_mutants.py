@@ -297,6 +297,189 @@ MUTANTS = {
     'MQ34': ('mbs308_manifest.py', '    if a.freeze == bool(a.out):',
             '    if False:', 'qualify::t_cli_refusals',
             'manifest writer: runs without --freeze or --out'),
+    # ---- builder5 (research brief 50): liveness robustness O-1..O-4 / K-1 (M58-M66), the disk-safety and
+    # scratch-lifecycle gate (MD01-MD26), the re-pin tooling (MR01-MR04), R-MEM decoy fields (MM01-MM03),
+    # QS-RESUME-DECOY (MQ35-MQ36)
+    'M58': ('mbs308_host.py',
+            '    if cur_boot is None:\n        return "UNKNOWN"\n    if ident.get("boot_uuid") and',
+            '    if cur_boot is None:\n        return "DEAD"\n    if ident.get("boot_uuid") and',
+            'launch::t_identity_state_positive_evidence', 'K-1 (Y5): a failed boot-UUID read alone reads DEAD'),
+    'M59': ('mbs308_host.py',
+            '    if cur_boot is None:\n        return "UNKNOWN"\n    if ident.get("boot_uuid") and',
+            '    if ident.get("boot_uuid") and',
+            'launch::t_identity_state_positive_evidence', 'K-1 (Y5, variant): the failed boot-UUID read is compared, so a recorded boot UUID reads DEAD'),
+    'M60': ('mbs308_host.py',
+            '    if cs is None:\n        return "UNKNOWN"',
+            '    if cs is None:\n        return "DEAD"',
+            'launch::t_identity_state_positive_evidence', 'K-1 (Y6): a failed command read alone reads DEAD'),
+    'M61': ('mbs308_host.py',
+            '    cs = process_command_sha256(ident["pid"])\n    if cs is None:\n        return "UNKNOWN"\n',
+            '    cs = process_command_sha256(ident["pid"])\n',
+            'launch::t_identity_state_positive_evidence', 'K-1 (Y6, variant): the failed command read is compared, so a recorded command reads DEAD'),
+    'M62': ('mbs308_host.py',
+            'env=dict(ENV, TZ=PS_TZ)',
+            'env=dict(ENV)',
+            'launch::t_identity_state_time_zone_independent', 'O-1 undone: the start time follows the time zone, so a zone change reads a live process DEAD'),
+    'M63': ('mbs308_host.py',
+            '    if _ARGV_UNREADABLE.match(t):                  # O-4: "(name)" is a failed reading, never a command\n        return None\n',
+            '',
+            'launch::t_identity_command_unreadable_unknown', 'O-4 undone: an unreadable argv "(name)" is hashed as a command, so a live process reads DEAD'),
+    'M64': ('mbs308_state.py',
+            '                try:\n                    os.link(d / staged, d / self.name, follow_symlinks=False)\n                except FileExistsError:',
+            '                try:\n                    fd = os.open(d / self.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)\n                    try:\n                        _write_all(fd, data)\n                        fsync_file(fd)\n                    finally:\n                        os.close(fd)\n                except FileExistsError:',
+            'state::t_lock_record_complete_before_name', 'O-2 undone: the lock name is created empty and written afterwards (breakable in between)'),
+    'M65': ('mbs308_state.py',
+            '                        else:                              # O-3: one name again (the set-aside name goes)\n                            self._unlink_fsync(d, aside)\n',
+            '',
+            'state::t_lock_race_put_back_one_name', 'O-3 undone: the LOCK_RACE put-back leaves the lock with two names'),
+    'M66': ('mbs308_state.py',
+            '        if not stat.S_ISREG(st.st_mode) or st.st_uid != os.getuid():\n            return None\n        chunks = []',
+            '        if not stat.S_ISREG(st.st_mode) or st.st_uid != os.getuid() or st.st_nlink != 1:\n            return None\n        chunks = []',
+            'state::t_lock_second_name_not_wedged', 'O-3 undone: a lock with a second name is unreadable, so every later acquire is wedged'),
+    'MD01': ('mbs308_host.py',
+            '"free_disk_ge_2GiB": isinstance(free, int) and free >= MIN_FREE_DISK,',
+            '"free_disk_ge_2GiB": free is None or free >= MIN_FREE_DISK,',
+            'disk::t_driver_disk_gate_fails_closed', "the driver's disk gate reads a failed probe as enough space"),
+    'MD02': ('mbs308_host.py',
+            '    except OSError:\n        return None\n    return st.f_bavail * st.f_frsize',
+            '    except OSError:\n        return 1 << 62\n    return st.f_bavail * st.f_frsize',
+            'disk::t_driver_disk_gate_fails_closed', "the driver's disk probe reports plenty when statvfs fails"),
+    'MD03': ('mbs308_host.py',
+            '"free_disk_ge_2GiB": isinstance(free, int) and free >= MIN_FREE_DISK,',
+            '"free_disk_ge_2GiB": free is None or free >= MIN_FREE_DISK,',
+            'disk::t_execute_resume_refuse_on_disk', "execute / resume start on a failed disk probe (the driver's gate fails open)"),
+    'MD04': ('mbs308_scratch.py',
+            '        real = st.f_bavail * st.f_frsize\n    except (OSError, ValueError, TypeError):\n        return None',
+            '        real = st.f_bavail * st.f_frsize\n    except (OSError, ValueError, TypeError):\n        return 1 << 62',
+            'disk::t_free_probe_fails_closed', 'the scratch probe reports plenty when statvfs fails'),
+    'MD05': ('mbs308_scratch.py',
+            '"ok": isinstance(got, int) and not isinstance(got, bool) and got >= int(need)}',
+            '"ok": got is None or got >= int(need)}',
+            'disk::t_free_probe_fails_closed', 'check_free reads an unreadable probe as enough space'),
+    'MD06': ('mbs308_scratch.py',
+            '        return None if planted is None else min(real, planted)',
+            '        return None if planted is None else planted',
+            'disk::t_free_probe_fails_closed', 'a planted reading can RAISE the free space'),
+    'MD07': ('mbs308_scratch.py',
+            '        if st != "DEAD":\n            reasons.append(f"OWNER_NOT_DEAD',
+            '        if st == "ALIVE":\n            reasons.append(f"OWNER_NOT_DEAD',
+            'disk::t_lifecycle_classes', 'an owner whose liveness is UNKNOWN counts as dead'),
+    'MD08': ('mbs308_scratch.py',
+            '    if n == 0:\n        reasons.append("NO_LIFECYCLE_RECORD")\n',
+            '',
+            'disk::t_lifecycle_classes', 'a root with an empty record directory counts as FINISHED'),
+    'MD09': ('mbs308_scratch.py',
+            '        if rec["state"] != FINISHED:\n',
+            '        if False:\n',
+            'disk::t_lifecycle_classes', 'an ACTIVE record of a dead process counts as finished'),
+    'MD10': ('mbs308_scratch.py',
+            '        if not execute:\n            gone.add(unit)\n            continue\n',
+            '        if False:\n            continue\n',
+            'disk::t_cleanup_only_disposable', 'cleanup deletes in dry-run'),
+    'MD11': ('mbs308_scratch.py',
+            '    if d.name != "sbx" or g.is_symlink() or not g.is_dir():\n        return False',
+            '    if d.name != "sbx":\n        return False\n    if not g.is_dir():\n        return True',
+            'disk::t_cleanup_only_disposable', 'any directory named sbx is a sandbox (a report inside it is deleted)'),
+    'MD12': ('mbs308_scratch.py',
+            '"bare = true" in cfg and ',
+            '',
+            'disk::t_cleanup_only_disposable', 'a non-bare *.git directory counts as a disposable base store'),
+    'MD13': ('mbs308_scratch.py',
+            'if o.name != "objects" or not _bare_store(o.parent) or any(',
+            'if o.name != "objects" or any(',
+            'disk::t_cleanup_only_disposable', 'a clone borrowing from a non-bare repository counts as a disposable sandbox'),
+    'MD14': ('mbs308_scratch.py',
+            '    if root_class(gov)["class"] != FINISHED:\n        return "ROOT_ACTIVE"\n',
+            '',
+            'disk::t_cleanup_refuses_active_scratch', 'cleanup deletes sandboxes of an ACTIVE root'),
+    'MD15': ('mbs308_scratch.py',
+            '    for a in [unit.parent, *unit.parent.parents]:',
+            '    for a in [root]:',
+            'disk::t_cleanup_refuses_active_scratch', "the outermost root governs, so a nested ACTIVE root's sandbox is deleted"),
+    'MD16': ('mbs308_scratch.py',
+            '            if p.is_symlink():\n                continue\n',
+            '',
+            'disk::t_cleanup_symlinks_and_escape', 'symlinked directories are listed as units'),
+    'MD17': ('mbs308_scratch.py',
+            '    if unit.is_symlink() or real != str(unit.absolute()):\n        return "SYMLINK_OR_ALIAS"\n',
+            '',
+            'disk::t_cleanup_symlinks_and_escape', 'a unit reached through a symlink is not refused as such'),
+    'MD18': ('mbs308_scratch.py',
+            '    if not _under(real, rroot) or real == rroot:\n        return "LEAVES_ROOT"\n',
+            '',
+            'disk::t_cleanup_symlinks_and_escape', 'a unit outside the root is not refused as such'),
+    'MD19': ('mbs308_scratch.py',
+            '    if hit:\n        raise ScratchRefusal("ROOT_PROTECTED"',
+            '    if False:\n        raise ScratchRefusal("ROOT_PROTECTED"',
+            'disk::t_cleanup_never_touches_repository', 'a root that is or contains the repository (refs, marker, pending, spool, seals) is accepted'),
+    'MD20': ('mbs308_scratch.py',
+            '    if any(_under(real, x) or _under(x, real) for x in protected):\n        return "PROTECTED"\n',
+            '',
+            'disk::t_cleanup_never_touches_repository', 'a unit under a protected path is not refused'),
+    'MD21': ('mbs308_scratch.py',
+            '    paths = [ln[len("worktree "):] for ln in p.stdout.splitlines() if ln.startswith("worktree ")]',
+            '    paths = []',
+            'disk::t_cleanup_never_touches_repository', "the repository's worktrees are not protected"),
+    'MD22': ('mbs308_scratch.py',
+            '    if not passes("start"):\n        out["not_run"] = names\n        return out\n',
+            '    passes("start")\n',
+            'disk::t_run_gated_phases', 'heavy phases start although the start check failed'),
+    'MD23': ('mbs308_scratch.py',
+            '        if not passes(name):\n            out["not_run"] = names[i:]\n            return out\n',
+            '',
+            'disk::t_run_gated_phases', 'no disk check before each heavy phase'),
+    'MD24': ('mbs308_scratch.py',
+            '        if verified(r):\n            out["cleanups"][name] = clean(name, r)',
+            '        out["cleanups"][name] = clean(name, r)',
+            'disk::t_run_gated_phases', 'a phase is cleaned before its result is verified'),
+    'MD25': ('mbs308_scratch.py',
+            '        ok = isinstance(c, dict) and c.get("pass") is True',
+            '        ok = bool(c)',
+            'disk::t_run_gated_phases', 'a failing or malformed check reads as a pass'),
+    'MD27': ('mbs308_scratch.py',
+            'SAFETY_FACTOR = 2                          # the written margin',
+            'SAFETY_FACTOR = 1                          # the written margin',
+            'disk::t_thresholds_derived', 'the qualification threshold drops the written safety margin'),
+    'MD26': ('mbs308_qualify.py',
+            '    if not disk0["pass"]:',
+            '    if False:',
+            'disk::t_verifier_disk_gate', 'the verifier starts on insufficient or unreadable disk'),
+    'MR01': ('mbs308_repin.py',
+            '    if write and st["stale"]:',
+            '    if st["stale"]:',
+            'disk::t_repin_helpers_and_platform', 'the helper re-pin writes in dry-run'),
+    'MR02': ('mbs308_repin.py',
+            '    if write and st["differs"]:',
+            '    if st["differs"]:',
+            'disk::t_repin_helpers_and_platform', 'PLATFORM_PINS are rewritten without --write-platform'),
+    'MR03': ('mbs308_repin.py',
+            '    if regen.encode() != head_md:',
+            '    if False:',
+            'disk::t_repin_driver_diff', 'the DRIVER_DIFF.md generator is used without reproducing the committed file'),
+    'MR04': ('mbs308_repin.py',
+            '    if write and out["stale"]:',
+            '    if out["stale"]:',
+            'disk::t_repin_driver_diff', 'the DRIVER_DIFF.md generator writes in dry-run'),
+    'MM01': ('mbs308_driver.py',
+            '"driver_maxrss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,',
+            '"driver_maxrss_bytes": None,',
+            'state::t_decoy_records_rmem_inputs', "the decoy record lacks R-MEM's D (the driver's own peak RSS)"),
+    'MM02': ('mbs308_state.py',
+            '        self._prev = cur\n        self.samples += 1',
+            '        self.samples += 1',
+            'state::t_decoy_records_rmem_inputs', 'the RSS sampler never measures a growth rate'),
+    'MM03': ('mbs308_state.py',
+            '            todo += kids.get(q, [])',
+            '            pass',
+            'state::t_decoy_records_rmem_inputs', 'the RSS sampler never sees the workers'),
+    'MQ35': ('mbs308_qualify.py',
+            '    out["pass"] = record["pass"] is True and record.get("form") == "official" and \\\n',
+            '    out["pass"] = record["pass"] is True and \\\n',
+            'qualify::t_qs_resume_decoy_summary', 'a dev-form QS-RESUME-DECOY record counts as official evidence'),
+    'MQ36': ('mbs308_qualify.py',
+            '        record.get("target_evaluations") == 0 and (rc is None or rc == 0)\n    out["rc"] = rc',
+            '        (rc is None or rc == 0)\n    out["rc"] = rc',
+            'qualify::t_qs_resume_decoy_summary', 'a QS-RESUME-DECOY record without target_evaluations 0 passes'),
 }
 
 
@@ -328,21 +511,104 @@ def make_code(tag: str, mutant: tuple | None) -> Path:
     return d
 
 
+def result_verified(out: Path, test: str) -> bool:
+    """The target's result file was written and parses, and carries the test's boolean `ok` (brief 50: only then is
+    the phase's sandbox deleted)."""
+    try:
+        r = json.loads(out.read_text())["results"][test]
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+    return isinstance(r, dict) and isinstance(r.get("ok"), bool)
+
+
 def run_target(target: str, code: Path, tag: str) -> dict:
     mod, test = target.split("::")
     out = TMP / tag / "result.json"
-    env = dict(T.GENV, MBS308_TEST_CODE_DIR=str(code), MBS308_SCRATCH=str(TMP / tag / "scratch"),
+    scratch = TMP / tag / "scratch"
+    env = dict(T.GENV, MBS308_TEST_CODE_DIR=str(code), MBS308_SCRATCH=str(scratch),
                MBS308_BASE_STORE=str(T.BASE_STORE))            # the runner's own base store, never another default
-    (TMP / tag / "scratch").mkdir(parents=True, exist_ok=True)
+    scratch.mkdir(parents=True, exist_ok=True)
+    out.unlink(missing_ok=True)
+    SCR = T.infra_scratch()
+    mine = SCR.begin(scratch, f"mutant runner phase {tag} {target}")    # the root stays ACTIVE while the phase runs
     t0 = time.time()
-    p = subprocess.run([T.PY, "-I", "-S", "-B", str(TESTS / f"test_mbs308_{mod}.py"), test, "--out", str(out)],
-                       capture_output=True, text=True, env=env, stdin=subprocess.DEVNULL, timeout=900)
+    try:
+        p = subprocess.run([T.PY, "-I", "-S", "-B", str(TESTS / f"test_mbs308_{mod}.py"), test, "--out", str(out)],
+                           capture_output=True, text=True, env=env, stdin=subprocess.DEVNULL, timeout=900)
+        rc, so, se = p.returncode, p.stdout, p.stderr
+    except subprocess.TimeoutExpired as exc:
+        rc, so, se = None, str(exc.stdout or "")[-400:], "TIMEOUT"
+    finally:
+        SCR.finish(mine)
     try:
         r = json.loads(out.read_text())["results"][test]
     except (OSError, ValueError, KeyError):
-        r = {"ok": False, "error": "no result", "stdout": p.stdout[-400:], "stderr": p.stderr[-400:]}
-    return {"test_passed": bool(r.get("ok")), "rc": p.returncode, "seconds": round(time.time() - t0, 1),
-            "error": r.get("error")}
+        r = {"ok": False, "error": "no result", "stdout": so[-400:], "stderr": se[-400:]}
+    res = {"test_passed": bool(r.get("ok")), "rc": rc, "seconds": round(time.time() - t0, 1), "error": r.get("error")}
+    return res | {"result_verified": result_verified(out, test)}
+
+
+def clean_phase(tag: str) -> dict:
+    """Brief 50 (1 c): once a phase's result file is written and verified, its sandboxes are DELETED through the
+    scratch-lifecycle gate (only disposable units of a FINISHED root; every deletion recorded), so the matrix never
+    accumulates sandboxes."""
+    SCR = T.infra_scratch()
+    try:
+        rep = SCR.cleanup(TMP / tag / "scratch", execute=True, repo=T.REPO)
+    except SCR.ScratchRefusal as e:
+        return {"refused": e.code}
+    return {"deleted": len(rep["deleted"]), "bytes_deleted": rep["bytes_deleted"], "refused": rep["refused"]}
+
+
+def disk_ok(phase: str) -> dict:
+    """Brief 50 (1 c): free space on the scratch volume before the matrix starts and before every target run
+    (QUAL_MIN_FREE_BYTES); a failed or unreadable probe fails closed."""
+    SCR = T.infra_scratch()
+    return SCR.check_free([(TMP, SCR.QUAL_MIN_FREE_BYTES)], phase)
+
+
+def run_matrix(sel: dict) -> dict:
+    """The unmutated targets, then every mutant, as heavy phases under the scratch module's gate (run_gated): the disk
+    check before the start and before every phase (a failure STOPS the matrix: nothing more runs, the refusal is
+    recorded, the report fails); each phase's sandboxes are deleted once its result is verified."""
+    SCR = T.infra_scratch()
+    targets = sorted({v[3] for v in sel.values()})
+    phases = [(f"UNMUTATED {t}", ("UNMUTATED", t, None)) for t in targets] + [(mid, (mid, m[3], m)) for mid, m in
+                                                                             sel.items()]
+    made: dict = {}
+
+    def run(name, payload):
+        tag, target, m = payload
+        try:
+            if tag not in made:
+                made[tag] = make_code(tag, m)
+            r = run_target(target, made[tag], tag)
+        except Exception as exc:                                        # noqa: BLE001 (an invalid mutant survives)
+            r = {"error": f"INVALID MUTANT {type(exc).__name__}: {exc}", "test_passed": True,
+                 "result_verified": False}
+        if tag == "UNMUTATED":
+            print(f"{'PASS' if r.get('test_passed') and not r.get('error') else 'FAIL'} unmutated {target} "
+                  f"({r.get('seconds')} s)", flush=True)
+        else:
+            print(f"{'KILLED' if not r['test_passed'] else 'SURVIVED'} {tag} {m[4]} -> {target} "
+                  f"({r.get('seconds')} s)", flush=True)
+        return r
+    g = SCR.run_gated(phases, gate=disk_ok, run=run, verified=lambda r: r.get("result_verified") is True,
+                      clean=lambda name, r: clean_phase(name.split()[0]))
+    unmutated = {t: g["results"][f"UNMUTATED {t}"] for t in targets if f"UNMUTATED {t}" in g["results"]}
+    matrix = {}
+    for mid, m in sel.items():
+        if mid in g["results"]:
+            r = g["results"][mid]
+            matrix[mid] = {"file": m[0], "breaks": m[4], "target": m[3], "killed": not r["test_passed"], **r}
+    if g["refusal"]:
+        print(f"DISK REFUSED before {g['refusal']['phase']}: not run {len(g['not_run'])} phase(s)", flush=True)
+    return {"unmutated_all_pass": len(unmutated) == len(targets) and
+            all(v.get("test_passed") and not v.get("error") for v in unmutated.values()),
+            "unmutated": unmutated, "matrix": matrix, "killed": sum(1 for v in matrix.values() if v["killed"]),
+            "total": len(matrix), "survivors": [k for k, v in matrix.items() if not v["killed"]],
+            "not_run": [n for n in g["not_run"]], "disk_refusal": g["refusal"], "disk_checks": g["checks"],
+            "cleanups": g["cleanups"], "disk_threshold_bytes": SCR.QUAL_MIN_FREE_BYTES}
 
 
 def main() -> int:
@@ -355,31 +621,15 @@ def main() -> int:
         out_path = args[args.index("--out") + 1]
     sel = {k: v for k, v in MUTANTS.items() if only is None or k in only}
     TMP.mkdir(parents=True, exist_ok=True)
-    # 1. the unmutated code (re-pinned identically) must PASS every target test
-    base_code = make_code("UNMUTATED", None)
-    unmutated = {}
-    for target in sorted({v[3] for v in sel.values()}):
-        unmutated[target] = run_target(target, base_code, "UNMUTATED")
-        print(f"{'PASS' if unmutated[target]['test_passed'] else 'FAIL'} unmutated {target} "
-              f"({unmutated[target]['seconds']} s)", flush=True)
-    # 2. every mutant must make its target test FAIL
-    matrix = {}
-    for mid, m in sel.items():
-        try:
-            code = make_code(mid, m)
-            r = run_target(m[3], code, mid)
-            killed = not r["test_passed"]
-        except Exception as exc:                                        # noqa: BLE001 (an invalid mutant survives)
-            r, killed = {"error": f"INVALID MUTANT {type(exc).__name__}: {exc}"}, False
-        matrix[mid] = {"file": m[0], "breaks": m[4], "target": m[3], "killed": killed, **r}
-        print(f"{'KILLED' if killed else 'SURVIVED'} {mid} {m[4]} -> {m[3]} ({r.get('seconds')} s)", flush=True)
-    rep = {"unmutated_all_pass": all(v["test_passed"] for v in unmutated.values()), "unmutated": unmutated,
-           "matrix": matrix, "killed": sum(1 for v in matrix.values() if v["killed"]), "total": len(matrix),
-           "survivors": [k for k, v in matrix.items() if not v["killed"]]}
+    meter = T.infra_scratch().TreeMeter(TMP, 5.0).start()               # the peak scratch of this run (recorded)
+    rep = run_matrix(sel)
+    rep["scratch_meter"] = meter.stop()
     if out_path:
         Path(out_path).write_text(json.dumps(rep, indent=1, sort_keys=True) + "\n")
-    print(json.dumps({k: rep[k] for k in ("unmutated_all_pass", "killed", "total", "survivors")}))
-    return 0 if rep["unmutated_all_pass"] and not rep["survivors"] else 1
+    print(json.dumps({k: rep[k] for k in ("unmutated_all_pass", "killed", "total", "survivors", "not_run")} |
+                     {"disk_refusal": bool(rep["disk_refusal"]), "peak_scratch_bytes": rep["scratch_meter"]["peak_bytes"]}))
+    return 0 if rep["unmutated_all_pass"] and not rep["survivors"] and not rep["not_run"] and \
+        not rep["disk_refusal"] else 1
 
 
 if __name__ == "__main__":

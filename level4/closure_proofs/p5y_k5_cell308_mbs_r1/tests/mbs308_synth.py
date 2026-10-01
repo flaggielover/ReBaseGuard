@@ -79,6 +79,19 @@ def synth_rlr_block(S1, IND7, cp, rl, kappa):
     return {"status": "CERTIFIED", "n": len(cert), "x_min": min(F(r["x"]) for r in cert)}
 
 
+def synth_decoy(D, k: int, own_sha: str, workers: int) -> dict:
+    """A synthetic stand-in for the driver's decoy() (brief 50, task 3: the decoy branch of main() with the synthetic
+    evaluator): MB r1's unchanged stage1 in decoy mode over the fake job keys through the checkpointing pool. No
+    science, no drift, no cell geometry."""
+    blocks = [{"index": i, "tile": (F(i, 7), F(i + 1, 7)), "hull": (F(i, 7), F(i + 1, 7)), "b": F(i, 7)}
+              for i in range(N_BLOCKS)]
+    sci = {"S1": None, "IND7": None, "cp": None, "indep": None, "kappa": (F(1), F(1))}
+    t0 = time.time()
+    st1 = D.stage1("decoy", blocks, "", own_sha, sci, LADDER, [], workers, None, allow_uncommitted=True)
+    return {"decoy_cell": k, "synthetic": True, "stage1": D.jsonable(D.public_stage1(st1)),
+            "stage1_wall_seconds": round(time.time() - t0, 1)}
+
+
 def install(D, spec: dict) -> dict:
     """Patch the loaded sandbox driver: stubs for the consumer / science / controls / prepare, the synthetic job path,
     the launcher and host gates (their own tests cover them), and return {"evaluator", "prepare"}."""
@@ -95,7 +108,11 @@ def install(D, spec: dict) -> dict:
                                      "_ca": {"_A": {"A0": F(1), "A1": F(1), "A2": F(1)}}, "_bundle": None}
     if not spec.get("real_launch_check"):
         D.check_launched = lambda: {"pass": True, "stub": "launchd integration is test_mbs308_launch"}
-    D.host_preflight = lambda launched: {"pass": True, "stub": "gates are unit-tested"}
+    if spec.get("host_texts") is not None:           # brief 50: the REAL start gates on planted readings (disk, ...)
+        real_host_preflight, planted = D.host_preflight, spec["host_texts"]
+        D.host_preflight = lambda launched: real_host_preflight(launched, texts=planted)
+    else:
+        D.host_preflight = lambda launched: {"pass": True, "stub": "gates are unit-tested"}
     if spec.get("mem_cap_mb"):
         D.MEM_CAP_BYTES = int(spec["mem_cap_mb"]) * 1024 * 1024
         D.MEM_POLL_S = 0.3

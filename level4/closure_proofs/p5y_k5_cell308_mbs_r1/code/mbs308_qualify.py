@@ -53,6 +53,7 @@ NS = HERE.parents[1]
 REPO = HERE.parents[4]
 sys.path.insert(0, str(CODE))
 import mbs308_rrules as RR  # noqa: E402
+import mbs308_scratch as SCR  # noqa: E402
 
 CP = "level4/closure_proofs/"
 NS_REL = CP + "p5y_k5_cell308_mbs_r1"
@@ -81,17 +82,20 @@ PRE_GRANT_CLASSES = frozenset({"HISTORICAL_READ", "HISTORICAL_RECONSTRUCTION", "
                                "INFRASTRUCTURE", "SYNTHETIC_VALIDATION", "NONTARGET_DRIFT_VALIDATION",
                                "NONTARGET_REAL_VALIDATION", "THEORY", "REVIEW"})
 PENDING_STATUS = "PENDING_USER_DECISION"
-SUITE_CASES = ("QS-STATIC", "QS-STATE", "QS-CRASH", "QS-LAUNCH", "QS-QUALIFY")
-BUILT_CASES = SUITE_CASES + ("QS-MUTANTS", "QC09-S", "QC11-S", "QC12-S", "QC13-S", "Q8-S", "R_RULES_CONTROLS")
+SUITE_CASES = ("QS-STATIC", "QS-STATE", "QS-CRASH", "QS-LAUNCH", "QS-QUALIFY", "QS-DISK")
+BUILT_CASES = SUITE_CASES + ("QS-MUTANTS", "QC09-S", "QC11-S", "QC12-S", "QC13-S", "Q8-S", "R_RULES_CONTROLS",
+                             "QS-RESUME-DECOY")
+RESUME_DECOY_RUNNER = "tests/mbs308_resume_decoy.py"        # QS-RESUME-DECOY's case runner (brief 50)
 SEQ = "SEQUENCING (protocol section 11)"
 PENDING_CASES = {       # case -> the decisions it depends on (config/MBS308_QUALIFICATION_CASES.json says why)
     "QC01": ("MBS-7",), "QC02": ("MBS-7", "MBS-8"), "QC03": ("MBS-7", "MBS-8"), "QC04": ("MBS-7",),
     "QC05": ("MBS-7",), "QC06": ("MBS-7",), "QC07": ("MBS-7",), "QC08": ("MBS-7", "MBS-8"), "Q1_theory": ("MBS-7",),
-    "QC09-SCI": ("MBS-7",), "MBR1_REPRO": ("MBS-7",), "QS-RESUME-DECOY": ("MBS-7",),
+    "QC09-SCI": ("MBS-7",), "MBR1_REPRO": ("MBS-7",),
     "Q12_caps": ("MBS-8", SEQ), "R_RULES_OFFICIAL": ("MBS-8", SEQ)}
 REQUIRED_FILES = ("code/mbs308_driver.py", "code/mbs308_guard.py", "code/mbs308_host.py", "code/mbs308_state.py",
                   "code/mbs308_launch.py", "code/mbs308_qualify.py", "code/mbs308_manifest.py",
-                  "code/mbs308_rrules.py", "config/MBS308_QUALIFICATION_CASES.json", "GUARD_DIFF.md",
+                  "code/mbs308_rrules.py", "code/mbs308_scratch.py", "code/mbs308_repin.py",
+                  "config/MBS308_QUALIFICATION_CASES.json", "GUARD_DIFF.md",
                   "DRIVER_DIFF.md")
 
 
@@ -290,6 +294,105 @@ def host_readiness() -> dict:
     return out
 
 
+HOST_REPORT_STATUSES = ("READY", "NOT_READY", "USER_ACTION", "RECORDED", "UNKNOWN")
+
+
+def _clamshell(text: str | None = None):
+    """The lid: True closed, False open, None unreadable (`ioreg -r -k AppleClamshellState -d 1`, read-only)."""
+    import re as _re
+    if text is None:
+        text = driver().HOST._run(["/usr/sbin/ioreg", "-r", "-k", "AppleClamshellState", "-d", "1"])
+    m = _re.search(r'"AppleClamshellState" = (Yes|No)', text or "")
+    return None if m is None else m.group(1) == "Yes"
+
+
+def _pmset_values(text: str | None = None) -> dict:
+    """`pmset -g` settings of interest (read-only): autorestart, sleep, displaysleep, disksleep, lowpowermode."""
+    import re as _re
+    if text is None:
+        text = driver().HOST._run(["/usr/bin/pmset", "-g"])
+    out = {}
+    for k in ("autorestart", "sleep", "displaysleep", "disksleep", "lowpowermode"):
+        m = _re.search(r"^\s*" + k + r"\s+(\d+)", text or "", _re.M)
+        out[k] = int(m.group(1)) if m else None
+    return out
+
+
+def host_report(work: Path | None = None) -> dict:
+    """Protocol section 8.1: the host-readiness checklist, READ-ONLY (every reading is a query: pmset -g, ioreg -r,
+    defaults read, sysctl, vm_stat, ps, notifyutil -g, sw_vers, uname, statvfs; NO system setting is ever changed).
+    Each item says how it is checked (an existing gate, a new gate, or a recorded user action) and its status."""
+    D = driver()
+    H = D.HOST
+    items = []
+
+    def item(key: str, how: str, status: str, reading, note: str = "") -> None:
+        items.append({"item": key, "checked_by": how, "status": status if status in HOST_REPORT_STATUSES else
+                      "UNKNOWN", "reading": reading, "note": note})
+    su = H.software_update_settings()
+    item("automatic_os_installation_disabled", "existing gate: preflight no_automatic_os_install (DR2 c)",
+         "READY" if not su["auto_install_enabled"] else "USER_ACTION", su,
+         "disabling automatic macOS and critical-update installation is the user's action; the campaign never "
+         "changes it")
+    pm = _pmset_values()
+    item("automatic_restart", "recorded (no gate): a restart is a reboot, detected by the boot UUID and resumable",
+         "RECORDED", {"autorestart": pm["autorestart"]}, "automatic restarts by an OS update are excluded by the "
+         "previous item")
+    power = H.power_source()
+    item("ac_power", "existing gates: require_ac and preflight ac_power; AC at every sample (sleep channels)",
+         "READY" if power == H.AC else ("NOT_READY" if power else "UNKNOWN"), power)
+    lid = _clamshell()
+    item("sleep_prevention_and_lid", "existing: supervised caffeinate -i -m -s (execute / resume); the sleep channels "
+         "K / S / L detect any sleep (qualification runtimes need a CLEAN assessment); the lid is a user action",
+         "READY" if lid is False else ("USER_ACTION" if lid else "UNKNOWN"),
+         {"lid_closed": lid, "sleep_min": pm["sleep"], "displaysleep_min": pm["displaysleep"],
+          "disksleep_min": pm["disksleep"], "sleep_channels_available": H.kern_times() is not None and
+          H.log_events(0, 0) is not None},
+         "caffeinate cannot stop lid-close (clamshell) sleep: keep the lid open, on AC, for the whole run")
+    tl = H.thermal_level()
+    item("thermal_level_0", "existing gate: preflight thermal_pressure_0", "READY" if tl == 0 else
+         ("NOT_READY" if tl is not None else "UNKNOWN"), tl)
+    lpm = H.lowpowermode()
+    item("lowpowermode_0", "existing gate: preflight lowpowermode_0", "READY" if lpm == 0 else
+         ("NOT_READY" if lpm is not None else "UNKNOWN"), lpm)
+    free_repo = H.free_disk_bytes(REPO)
+    item("disk_execution", f"existing gate: preflight free_disk_ge_2GiB (MIN_FREE_DISK {H.MIN_FREE_DISK} bytes, "
+         "ratification item 23)", "READY" if isinstance(free_repo, int) and free_repo >= H.MIN_FREE_DISK else
+         "NOT_READY", free_repo, "a failed probe is NOT_READY (fail closed)")
+    qc = SCR.check_free([(work or REPO, SCR.QUAL_MIN_FREE_BYTES), (REPO, H.MIN_FREE_DISK)], "host report")
+    item("disk_qualification", f"new gate (brief 50): QUAL_MIN_FREE_BYTES {SCR.QUAL_MIN_FREE_BYTES} bytes before the "
+         "verifier's start and each heavy phase, and before the mutant runner's start and each target run",
+         "READY" if qc["pass"] else "NOT_READY", [r["free_bytes"] for r in qc["readings"]])
+    mp = H.memory_pressure_level()
+    fm = D.free_memory_bytes()
+    item("memory_pressure_normal", "existing gate: preflight memory_pressure_normal (item 24)",
+         "READY" if mp == H.MEMORY_PRESSURE_NORMAL else ("NOT_READY" if mp is not None else "UNKNOWN"), mp)
+    item("free_memory", f"existing gate: free_memory_ge_min (FREE_MEM_MIN_BYTES {D.FREE_MEM_MIN_BYTES}, provisional; "
+         "R-FREE and its attainability at the qualification)", "READY" if isinstance(fm, int) and
+         fm >= D.FREE_MEM_MIN_BYTES else ("NOT_READY" if fm is not None else "UNKNOWN"), fm)
+    boot = H.boot_session_uuid()
+    item("boot_identity", "existing gate: preflight boot_uuid_recorded; the journal and every identity carry it (a "
+         "reboot is CONSUMED_INTERRUPTED)", "READY" if boot else "UNKNOWN", bool(boot))
+    try:
+        D.check_platform()
+        plat, bad = "READY", []
+    except D.Refusal as e:
+        plat, bad = "NOT_READY", str(e)
+    item("host_identity_platform_pins", "existing check: check_platform at preflight, execute, every resume and every "
+         "computing mode (RC2 / DR2); re-pinned at the freeze from the qualification host (code/mbs308_repin.py "
+         "platform --write-platform)", plat, bad)
+    busy = D.busy_processes()
+    item("host_exclusive", f"existing gate: host_exclusive (EXCL_CPU_PCT {D.EXCL_CPU_PCT}, EXCL_ALLOW; R-EXCL-PCT / "
+         "R-ALLOW at the freeze)", "READY" if not busy else "USER_ACTION", [b["comm"] for b in busy],
+         "quit the listed apps (a user action); a process is never allow-listed by hand")
+    _rec, pst = D.STATE.read_pidfile(D.store())
+    item("no_other_campaign_job", "existing gate: preflight no_other_campaign_job", "READY" if pst != "LIVE" else
+         "NOT_READY", pst)
+    return {"schema": "rebaseguard.p5y.k5.cell308-mbs-r1.host-report.v1", "read_only": True,
+            "changes_made": False, "utc": utc(), "items": items,
+            "ready": all(i["status"] in ("READY", "RECORDED") for i in items)}
+
+
 def gather_facts(mode: str) -> dict:
     D = driver()
     facts = {"freeze_commit": D.freeze_commit(), "head": git("rev-parse", "HEAD"),
@@ -395,6 +498,57 @@ def run_mutants(rel: str, out: Path, env: dict, work: Path, ns: Path = NS) -> di
         rep = None
     return mutant_summary(rep, declared_mutants(ns / rel), rc) | {
         "suite": rel, "record": out.name, "record_sha256": sha(out.read_bytes()) if out.exists() else None}
+
+
+def resume_decoy_summary(record, rc: int | None) -> dict:
+    """QS-RESUME-DECOY (MBS-9 ii): PASS iff the case runner's value-free record says pass (a SIGKILL after k durable
+    checkpoints, k served and n - k >= 1 computed at the resume, no rejected checkpoint, every certified leaf of the
+    decoy output byte-identical to the uninterrupted run's) and (when known) its exit code is 0. Official form only
+    counts as the official case (a dev-form record never passes an official or review run)."""
+    if not isinstance(record, dict) or not isinstance(record.get("pass"), bool):
+        return {"pass": False, "reason": "NO_RECORD", "rc": rc}
+    keys = ("form", "jobs_uninterrupted", "k", "served", "computed", "checkpoints_after_kill", "certified_leaves",
+            "stage1_leaves", "stage2_leaves", "stage1_equal", "stage2_equal", "all_certified_equal",
+            "rejected_checkpoints", "reason", "error")
+    out = {k: record.get(k) for k in keys if k in record}
+    out["pass"] = record["pass"] is True and record.get("form") == "official" and \
+        record.get("target_evaluations") == 0 and (rc is None or rc == 0)
+    out["rc"] = rc
+    return out
+
+
+def run_resume_decoy(form: str, out: Path, env: dict, work: Path, ns: Path = NS) -> dict:
+    with open(work / (out.stem + ".log"), "wb") as fh:
+        rc = subprocess.run([PY, *FLAGS, str(ns / RESUME_DECOY_RUNNER), "--form", form, "--out", str(out)],
+                            stdout=fh, stderr=subprocess.STDOUT, env=env, stdin=subprocess.DEVNULL,
+                            cwd=str(REPO)).returncode
+    try:
+        rec = json.loads(out.read_text())
+    except (OSError, ValueError):
+        rec = None
+    s = resume_decoy_summary(rec, rc)                        # a dev-form record never passes (never evidence)
+    return s | {"runner": RESUME_DECOY_RUNNER, "form_run": form, "record": out.name,
+                "record_sha256": sha(out.read_bytes()) if out.exists() else None}
+
+
+# ------------------------------------------------------------------ the disk gate (brief 50)
+def disk_check(work: Path, phase: str) -> dict:
+    """Free space before the start and before each heavy phase: QUAL_MIN_FREE_BYTES on the --work volume (sandboxes,
+    base store) and the ratified MIN_FREE_DISK on the repository volume (the records); a failed probe fails closed."""
+    return SCR.check_free([(work, SCR.QUAL_MIN_FREE_BYTES), (REPO, SCR.HOST.MIN_FREE_DISK)], phase)
+
+
+def clean_suite_scratch(env: dict) -> dict:
+    """After a heavy phase whose report was written and verified: delete the disposable sandboxes of the suites'
+    scratch root (lifecycle gate; every deletion recorded)."""
+    root = Path(env["MBS308_SCRATCH"])
+    if not root.is_dir():
+        return {"deleted": 0}
+    try:
+        r = SCR.cleanup(root, execute=True)
+    except SCR.ScratchRefusal as e:
+        return {"refused": e.code}
+    return {"deleted": len(r["deleted"]), "bytes_deleted": r["bytes_deleted"], "refused": r["refused"]}
 
 
 # ------------------------------------------------------------------ QC09-S: the guard (one-line diff)
@@ -1351,7 +1505,22 @@ def main(argv=None) -> int:  # noqa: C901
     ap.add_argument("--work", help="base directory OUTSIDE the repository for sandboxes, the base store and records")
     ap.add_argument("--records", help="review / dev without --heavy: directory of the committed suite records")
     ap.add_argument("--record-scan", action="store_true", help="dev only: run QC12-S's committed-record token scan")
+    ap.add_argument("--host-report", action="store_true",
+                    help="READ-ONLY host-readiness checklist (protocol section 8.1); prints it (and writes --out)")
     a = ap.parse_args(argv)
+    if a.host_report:                                            # read-only; no other mode, nothing changed
+        if a.dev or a.review or a.only or a.heavy or a.records or a.record_scan:
+            print("QUALIFY REFUSED: --host-report takes only --work / --out")
+            return 2
+        if a.out and Path(a.out).resolve().is_relative_to(REPO.resolve()):
+            print("QUALIFY REFUSED: --out must lie outside the repository")
+            return 2
+        r = host_report(Path(a.work).resolve() if a.work else None)
+        text = json.dumps(r, indent=1, sort_keys=True, default=str)
+        if a.out:
+            Path(a.out).write_text(text + "\n")
+        print(text)
+        return 0
     mode = "dev" if a.dev else ("review" if a.review else "official")
     if a.dev and a.review:
         print("QUALIFY REFUSED: --dev and --review exclude each other")
@@ -1372,6 +1541,11 @@ def main(argv=None) -> int:  # noqa: C901
         if opt and Path(opt).resolve().is_relative_to(REPO.resolve()):
             print("QUALIFY REFUSED: --work / --out / --records must lie outside the repository")
             return 2
+    work_base = Path(a.work).resolve()
+    disk0 = disk_check(work_base, "verifier start")          # brief 50: before any other work, in every mode
+    if not disk0["pass"]:
+        print(f"QUALIFY REFUSED: DISK {json.dumps(disk0['readings'], default=str)}")
+        return 2
     t0, started = time.time(), utc()
     cfg = load_config()
     host0 = None
@@ -1384,8 +1558,9 @@ def main(argv=None) -> int:  # noqa: C901
         host0 = {"keep_awake": D.HOST.keep_awake(), "start": D.HOST.snapshot(), "sampler": D.HOST.Sampler().start()}
     ids = [c["id"] for c in cfg["cases"]]
     sel = ids if mode != "dev" else [i for i in (a.only or "").split(",") if i in ids]
-    Path(a.work).mkdir(parents=True, exist_ok=True)
-    work = Path(tempfile.mkdtemp(prefix="mbs308q", dir=a.work))
+    work_base.mkdir(parents=True, exist_ok=True)
+    work = Path(tempfile.mkdtemp(prefix="mbs308q", dir=work_base)).resolve()
+    life = SCR.begin(work, f"mbs308_qualify {mode}")          # the verifier's own scratch record (brief 50)
     odir = QDIR if mode == "official" else work
     odir.mkdir(exist_ok=True)
     env = suite_env(work)
@@ -1405,21 +1580,39 @@ def main(argv=None) -> int:  # noqa: C901
         cases["QC13-S"] = qc13(pre, cfg)
     heavy = mode == "official" or a.heavy
     rdir = Path(a.records).resolve() if a.records else QDIR
-    for cid in SUITE_CASES + ("QS-MUTANTS",):
+    phases = []
+    for cid in SUITE_CASES + ("QS-MUTANTS", "QS-RESUME-DECOY"):
         if cid not in sel:
             continue
+        if heavy or (cid == "QS-RESUME-DECOY" and mode == "dev"):
+            phases.append((cid, cid))
+            continue
+        try:                                         # re-summarise the committed record (read only)
+            rep = json.loads((rdir / record_name(cid)).read_text())
+        except (OSError, ValueError):
+            rep = None
+        if cid == "QS-RESUME-DECOY":
+            cases[cid] = resume_decoy_summary(rep, None) | {"record": record_name(cid), "recomputed": False}
+            continue
         rel = cfg["suites"][cid]
-        if heavy:
+        cases[cid] = (mutant_summary(rep, declared_mutants(NS / rel), None) if cid == "QS-MUTANTS"
+                      else suite_summary(rep, None)) | {"suite": rel, "record": record_name(cid), "recomputed": False}
+
+    def run_phase(cid, _payload):                    # one heavy phase; the suites' own lifecycle records govern
+        mine = SCR.begin(Path(env["MBS308_SCRATCH"]), f"mbs308_qualify phase {cid}")
+        try:
             out = odir / record_name(cid)
-            cases[cid] = (run_mutants if cid == "QS-MUTANTS" else run_suite)(rel, out, env, work)
-        else:                                        # re-summarise the committed record (read only)
-            try:
-                rep = json.loads((rdir / record_name(cid)).read_text())
-            except (OSError, ValueError):
-                rep = None
-            cases[cid] = (mutant_summary(rep, declared_mutants(NS / rel), None) if cid == "QS-MUTANTS"
-                          else suite_summary(rep, None)) | {"suite": rel, "record": record_name(cid),
-                                                            "recomputed": False}
+            if cid == "QS-RESUME-DECOY":
+                return run_resume_decoy("dev" if mode == "dev" else "official", out, env, work)
+            return (run_mutants if cid == "QS-MUTANTS" else run_suite)(cfg["suites"][cid], out, env, work)
+        finally:
+            SCR.finish(mine)
+    gated = SCR.run_gated(phases, gate=lambda name: disk_check(work, name), run=run_phase,
+                          verified=lambda r: isinstance(r, dict) and r.get("record_sha256") is not None,
+                          clean=lambda name, r: clean_suite_scratch(env))
+    cases.update(gated["results"])
+    for cid in gated["not_run"]:                     # the disk gate refused: fails closed, never runs
+        cases[cid] = {"pass": False, "status": "DISK_REFUSED", "refused_before": gated["refusal"]["phase"]}
     if "QC12-S" in sel:                              # last: the suite records under qualification/ are scanned too
         cases["QC12-S"] = qc12_leak(mode in ("official", "review") or a.record_scan)
     agg = aggregate(cases, cfg, mode)
@@ -1442,9 +1635,13 @@ def main(argv=None) -> int:  # noqa: C901
                            "and launchd payload), QC09-S, R-rule planted controls"},
                   {"agent": "mbs308_qualification", "class": "INFRASTRUCTURE",
                    "what": "QC11-S static, QC12-S leak scans (counts only), QC13-S governance, Q8-S manifest"}],
-              "target_evaluations": 0, "host": host}
+              "target_evaluations": 0, "host": host,
+              "disk": {"threshold_bytes": SCR.QUAL_MIN_FREE_BYTES, "repository_threshold_bytes": SCR.HOST.MIN_FREE_DISK,
+                       "start": disk0, "checks": gated["checks"], "cleanups": gated["cleanups"],
+                       "refusal": gated["refusal"]}}
     out = Path(a.out) if a.out else odir / QUAL_NAME
     out.write_text(json.dumps(report, indent=1, sort_keys=True, default=str) + "\n")
+    SCR.finish(life)
     tag = lambda v: "PENDING" if v.get("status") == PENDING_STATUS else ("P" if v.get("pass") is True else "F")  # noqa
     print(f"QUALIFICATION {'PASS' if agg['pass'] else ('DEV' if mode == 'dev' else 'FAIL')}: " +
           " ".join(f"{k}={tag(v) if isinstance(v, dict) else '?'}" for k, v in sorted(cases.items())))

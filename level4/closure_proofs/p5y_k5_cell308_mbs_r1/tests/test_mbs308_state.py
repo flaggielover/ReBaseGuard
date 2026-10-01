@@ -1000,5 +1000,209 @@ def t_enc_dec_lossless():
     return {"ok": ok and refuses, "roundtrip": ok, "refuses_unknown": refuses}
 
 
+# ====================================================================== O-2 / O-3 (REVIEW_OPTIONB_LIVENESS_MBS308)
+def _lock_files() -> dict:
+    sp = sb().spool()
+    names = sorted(os.listdir(sp)) if sp.is_dir() else []
+    return {"asides": [n for n in names if n.startswith("recover.lock.rejected-stale-lock")],
+            "staged": [n for n in names if n.startswith("recover.lock.staged-")],
+            "lock": (sp / "recover.lock").read_bytes() if (sp / "recover.lock").exists() else None}
+
+
+def _lock_state(Sm, st) -> str:
+    raw = Sm.lock_read(st, "recover.lock")
+    if raw is None:
+        return "absent"
+    try:
+        return "complete" if isinstance(json.loads(raw).get("identity"), dict) else "incomplete"
+    except (ValueError, AttributeError):
+        return "incomplete"
+
+
+def t_lock_record_complete_before_name():
+    """O-2: a concurrent acquirer can never see the recover lock's name without its complete identity record. Every
+    write of acquirer A is intercepted (the module's own _write_all); at each one the lock NAME is observed, and the
+    first time it exists while A is still writing, a second acquirer B runs right there. Required: the name is never
+    seen empty or partial, exactly one of A and B holds the lock, no lock was broken as stale (no set-aside file), no
+    staged record is left, and the lock holds the holder's record. (Before the repair: A's O_EXCL name is empty during
+    its write, B breaks it as "no recorded identity" and BOTH hold the lock.)"""
+    fresh()
+    Sm = S()
+    st = store()
+    st.spool(create=True)
+    a, b = Sm.Lock(st), Sm.Lock(st)
+    seen, res, flag = [], {}, {"in_b": False, "b_ran": False}
+    real = Sm._write_all
+
+    def intercepted(fd, data):
+        if not flag["in_b"]:
+            state = _lock_state(Sm, st)
+            seen.append(state)
+            if state != "absent" and not flag["b_ran"]:
+                flag["in_b"] = flag["b_ran"] = True
+                try:
+                    b.acquire()
+                    res["B"] = "TAKEN"
+                except Sm.Locked as e:
+                    res["B"] = e.code
+                finally:
+                    flag["in_b"] = False
+        real(fd, data)
+    Sm._write_all = intercepted
+    try:
+        try:
+            a.acquire()
+            res["A"] = "TAKEN"
+        except Sm.Locked as e:
+            res["A"] = e.code
+    finally:
+        Sm._write_all = real
+    if not flag["b_ran"]:                     # the name never existed during A's writes: B comes after A
+        try:
+            b.acquire()
+            res["B"] = "TAKEN"
+        except Sm.Locked as e:
+            res["B"] = e.code
+    files = _lock_files()
+    holders = [lk for lk in (a, b) if lk.held]
+    holder_ok = len(holders) == 1 and files["lock"] is not None and \
+        json.loads(files["lock"])["identity"]["pid"] == os.getpid()
+    for lk in (a, b):
+        lk.release()
+    return {"ok": "incomplete" not in seen and sorted(res.values()) == ["LOCKED", "TAKEN"] and
+            files["asides"] == [] and files["staged"] == [] and holder_ok and _lock_files()["lock"] is None,
+            "observed_during_writes": seen, "results": res, "holders": len(holders),
+            "asides": len(files["asides"]), "staged_left": len(files["staged"])}
+
+
+def t_lock_race_put_back_one_name():
+    """O-3: the LOCK_RACE put-back leaves the lock with ONE name. A stale lock (a dead holder) is being broken by A;
+    between A's read and A's rename, B breaks the same stale lock and takes the lock (planted by intercepting A's
+    rename). A moves B's fresh lock aside, sees it changed, puts it back and refuses LOCK_RACE. Required: the lock holds
+    B's bytes with link count 1, A's set-aside name is gone (only B's set-aside copy of the stale lock remains, byte for
+    byte), B's release removes the lock, and a later acquire takes it. (Before the repair: two links, B cannot release,
+    every later acquire refuses LOCK_RACE.)"""
+    fresh()
+    Sm = S()
+    st = store()
+    sp = st.spool(create=True)
+    stale = Sm.canon({"identity": dead_identity(), "utc": Sm.utc()})
+    (sp / "recover.lock").write_bytes(stale)
+    a, b = Sm.Lock(st), Sm.Lock(st)
+    real_rename, flag, res = os.rename, {"done": False}, {}
+
+    def intercepted(src, dst, *args, **kw):
+        if not flag["done"] and str(src) == "recover.lock" and str(dst).startswith("recover.lock.rejected-stale"):
+            flag["done"] = True
+            b.acquire()                            # B breaks the same stale lock and takes it first
+            res["B"] = "TAKEN"
+        return real_rename(src, dst, *args, **kw)
+    os.rename = intercepted
+    try:
+        try:
+            a.acquire()
+            res["A"] = "TAKEN"
+        except Sm.Locked as e:
+            res["A"] = e.code
+    finally:
+        os.rename = real_rename
+    files = _lock_files()
+    lock = sp / "recover.lock"
+    b_bytes = files["lock"]
+    nlink = os.stat(lock).st_nlink if lock.exists() else None
+    aside_bytes = [(sp / n).read_bytes() for n in files["asides"]]
+    b_record = b_bytes is not None and json.loads(b_bytes)["identity"]["pid"] == os.getpid()
+    b.release()
+    released = not lock.exists()
+    c = Sm.Lock(st)
+    try:
+        c.acquire()
+        later = "TAKEN"
+    except Sm.Locked as e:
+        later = e.code
+    c.release()
+    return {"ok": res == {"B": "TAKEN", "A": "LOCK_RACE"} and b_record and nlink == 1 and aside_bytes == [stale]
+            and released and later == "TAKEN" and files["staged"] == [],
+            "results": res, "link_count_after_put_back": nlink, "asides": len(aside_bytes),
+            "released_by_b": released, "later_acquire": later}
+
+
+def t_lock_second_name_not_wedged():
+    """O-3 (crash windows): a lock that carries a second name (a crash between Lock.acquire's link and the unlink of
+    its staged record, or inside a put-back) is still READ: a dead holder's two-name lock is broken (moved aside once)
+    and the lock taken; a live holder's two-name lock is refused LOCKED (never broken, never LOCK_RACE)."""
+    fresh()
+    Sm = S()
+    st = store()
+    sp = st.spool(create=True)
+    out = {}
+    for case in ("dead_holder", "live_holder"):
+        for n in os.listdir(sp):
+            if n.startswith("recover.lock"):
+                os.unlink(sp / n)
+        h = T.Helper(60) if case == "live_holder" else None
+        try:
+            ident = host().identity(h.p.pid) if h is not None else dead_identity()
+            raw = Sm.canon({"identity": ident, "utc": Sm.utc()})
+            (sp / "recover.lock.staged-424242-abcdef").write_bytes(raw)
+            os.link(sp / "recover.lock.staged-424242-abcdef", sp / "recover.lock")      # two names, as a crash leaves
+            lk = Sm.Lock(st)
+            try:
+                lk.acquire()
+                out[case] = "TAKEN"
+            except Sm.Locked as e:
+                out[case] = e.code
+            out[case + "_asides"] = len(_lock_files()["asides"])
+            out[case + "_lock_intact"] = (sp / "recover.lock").exists() and \
+                (sp / "recover.lock").read_bytes() == raw
+            lk.release()
+        finally:
+            if h is not None:
+                h.kill()
+    return {"ok": out["dead_holder"] == "TAKEN" and out["dead_holder_asides"] == 1 and
+            out["live_holder"] == "LOCKED" and out["live_holder_asides"] == 0 and out["live_holder_lock_intact"],
+            "cases": out}
+
+
+# ====================================================================== R-MEM inputs of the decoy record (brief 50, task 3)
+def t_decoy_records_rmem_inputs():
+    """main()'s REAL decoy branch (a sandbox child; the synthetic evaluator stands in for decoy(): MB r1's unchanged
+    stage1 over fake job keys, each job holding 64 MB for 1 s) records R-MEM's inputs: D = the driver's own peak RSS
+    (ru_maxrss of RUSAGE_SELF), the fixed-rate 0.5 s sampler (samples, no failed read, the driver's and the workers'
+    peak RSS, the highest growth rate, the largest spacing) and the run's configuration (R-MEM step 1). The record is
+    complete for R-MEM step 1's field checks: the only reasons named are this synthetic run's own, WORKERS 2 and no
+    launchd launcher."""
+    sb()
+    out = sb().tmp / "decoy_main_synth.json"
+    out.unlink(missing_ok=True)
+    r = T.child(sb(), "decoy-main-synth", {"out": str(out), "alloc_mb": 64, "job_sleep": 1.0}, timeout=600)
+    try:
+        rec = json.loads(out.read_text())
+    except (OSError, ValueError):
+        return {"ok": False, "child": r["out"], "tail": (r["stdout"] + r["stderr"])[-600:]}
+    lc = rec.get("lifecycle", {})
+    rs, ctx, run_cfg = lc.get("rss_sampler") or {}, lc.get("stage1_context") or {}, lc.get("rmem_run") or {}
+    S()
+    import mbs308_rrules as RR
+    run = {"id": "synthetic", "cell": 297, "launcher": run_cfg.get("launched_by_launchd"),
+           "ladder": run_cfg.get("ladder"), "workers": run_cfg.get("workers"),
+           "mem_cap_bytes": run_cfg.get("mem_cap_bytes"), "mem_poll_s": run_cfg.get("mem_poll_s"), "rerun_of": None,
+           "watchdog_events": (ctx.get("memory_watchdog") or {}).get("events"),
+           "driver_maxrss_bytes": lc.get("driver_maxrss_bytes"),
+           "worker_peak_rss_bytes": (ctx.get("memory_watchdog") or {}).get("worker_peak_rss_bytes"),
+           "jobs": [{"name": n, "kind": n.split(".")[0], "rung": int(n.split(".")[2]), "job_maxrss_bytes": v}
+                    for n, v in (ctx.get("job_maxrss_bytes") or {}).items()]}
+    reasons = RR._run_reasons(run)
+    mib = 1024 * 1024
+    ok = r["out"] == {"rc": 0} and rec.get("synthetic") is True and isinstance(lc.get("driver_maxrss_bytes"), int) \
+        and lc["driver_maxrss_bytes"] > 10 * mib and rs.get("interval_s") == "0.5" and rs.get("samples", 0) >= 4 \
+        and rs.get("failed_reads") == 0 and (rs.get("driver_peak_rss_bytes") or 0) > 10 * mib \
+        and (rs.get("worker_peak_rss_bytes") or 0) >= 64 * mib and rs.get("max_growth_bytes_per_s", 0) > 0 \
+        and 0 < rs.get("max_spacing_s", 0) < 2.0 and reasons == ["NOT_UNDER_LAUNCHD_LAUNCHER", "WORKERS_NOT_5"] \
+        and run_cfg.get("mem_cap_bytes") == 3 * 1024 ** 3 and len(run["jobs"]) > 0
+    return {"ok": ok, "rss_sampler": rs, "driver_maxrss_bytes": lc.get("driver_maxrss_bytes"),
+            "rmem_run": run_cfg, "r_mem_step1_reasons": reasons, "jobs": len(run["jobs"])}
+
+
 if __name__ == "__main__":
     T.cli(globals())

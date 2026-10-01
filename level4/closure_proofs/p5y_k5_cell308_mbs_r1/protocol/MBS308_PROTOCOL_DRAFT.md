@@ -145,6 +145,20 @@ close-indeterminate). The two other users of the stricter all-fields-match test 
 pidfile's LIVE / STALE reading (the preflight's other-job gate) and `check_not_evaluated`'s stale pre-marker intent
 takeover (before the marker; the marker CAS decides).
 
+**Robustness of the readings and of the lock (REVIEW_OPTIONB_LIVENESS_MBS308 findings O-1 to O-4 and K-1; builder5,
+brief 50; no number changed).** (O-1) The start time is read with `TZ=UTC0` in the environment of `ps -o lstart=` (a
+fixed POSIX zone, no tz database), for the recorded identity and for every later reading alike, so a change of the
+system time zone during a run can no longer read a live recorded process as DEAD. (O-4) A command reading of the form
+`(name)` (what `ps -o command=` prints, with exit 0, for an argument vector it cannot read, 0-1 s from exec or exit) is
+a failed reading: never recorded, never compared, UNKNOWN (never evidence of death); a zombie's `<defunct>` stays a
+reading. (O-2) The recover lock's name never exists without its complete identity record: the record is written and
+fsync'd under a private staged name and then linked to the lock name (`link(2)` fails when the name exists, the
+O_EXCL semantics), so no acquirer can read an empty or partial lock and break it as "no recorded identity". (O-3) A
+LOCK_RACE put-back restores the other breaker's lock under the lock name and then removes the set-aside name, so the
+lock keeps one name and its owner can release it; the lock reader accepts a second name (a crash inside either
+two-name window), so such a crash can no longer wedge every later acquire. (K-1) The tests plant each reading failure
+alone (the boot-UUID read; the command read) and require UNKNOWN.
+
 **Stale git lockfiles (repair R1 iii; correction C-1; note N-3).** Every classification also lists the campaign's git
 lockfiles (`refs/p5y-k5-cell308-mbs-r1/*.lock` and the branch lock: what a reset inside one of the campaign's own ref
 writes leaves). They are **stale** only when every recorded campaign process (the O_EXCL recover lock's holder, the
@@ -360,6 +374,90 @@ The sixteen other ratified items stand as built (ratification table). The ref-wr
 reuses MB r1's frozen `SEAL_RETRY_DELAYS` = 0.5, 1, 2, 4 s (review item 33; source (a), MB r1's driver; completion
 only; no new number).
 
+### 8.1 Host-readiness checklist (builder5, brief 50; what must be true before the official qualification and before any execution)
+
+Nothing here changes a system setting: the campaign only reads. A READ-ONLY report of every item is
+`code/mbs308_qualify.py --host-report [--work DIR] [--out FILE]` (queries only: `pmset -g`, `ioreg -r`, `defaults read`,
+`sysctl`, `vm_stat`, `ps`, `notifyutil -g`, `sw_vers`, `uname`, statvfs); each item carries its status (READY,
+NOT_READY, USER_ACTION, RECORDED, UNKNOWN) and how it is checked.
+
+| item | before the official qualification | before `execute` / every `resume` | how it is checked |
+|---|---|---|---|
+| automatic macOS / critical-update installation disabled | required (the platform pins are taken from this host) | required (the no-update window runs from the marker to the deadline) | existing gate `no_automatic_os_install` (DR2 c; `AutomaticallyInstallMacOSUpdates` and `CriticalUpdateInstall` must be 0, a missing key is enabled); **disabling them is the user's action**, the campaign never changes it |
+| automatic restart behaviour | recorded | recorded | `pmset -g` `autorestart` (recorded, no gate): any restart is a reboot, detected by the boot UUID and classified CONSUMED_INTERRUPTED (resumable, budgeted); an update-triggered restart is excluded by the item above |
+| AC power | required | required | existing gates `require_ac` / `ac_power`; every sample of the sleep channels records the power source (a non-AC reading makes a qualification runtime CONTAMINATED) |
+| sleep prevention and the lid | required: lid open, on AC, for the whole run | required: lid open, on AC | existing: the supervised `caffeinate -i -m -s -w <pid>` (execute / resume; the official verifier's own `keep_awake`, `caffeinate -i -m -s`, for its whole run); **caffeinate cannot stop lid-close (clamshell) sleep: keeping the lid open is a user action**; the sleep channels K / S / L detect any sleep (Q12 needs CLEAN); `--host-report` reads the lid (`AppleClamshellState`) and the sleep timers |
+| thermal level | 0 at the start | 0 at the start | existing gate `thermal_pressure_0` (recorded after the marker, never gating) |
+| low-power mode | 0 | 0 | existing gate `lowpowermode_0` |
+| disk | `QUAL_MIN_FREE_BYTES` on the `--work` volume and the ratified 2 GiB on the repository volume, before the verifier's start and before every heavy phase; the mutant runner before its start and before every target run | the ratified `MIN_FREE_DISK` 2 GiB on the repository volume (ratification item 23; section 8.2 checks it against measurements) | new gate (section 8.2) for the qualification; existing gate `free_disk_ge_2GiB` for the execution; a failed probe fails closed in both |
+| memory pressure and free memory | normal (level 1); R-FREE's attainability readings (>= 10, 30 s apart, prepared host) | normal; free memory >= FREE_MEM_MIN | existing gates `memory_pressure_normal`, `free_memory_ge_min`; R-FREE attainability is recorded by the official qualification (R_RULES_OFFICIAL, pending) |
+| boot identity | recorded | recorded | existing gate `boot_uuid_recorded`; every identity and the journal carry it |
+| host identity (platform pins) | the qualification host is the pinned host: PLATFORM_PINS are re-pinned at the freeze from its readings (`code/mbs308_repin.py platform --write-platform`, the pinned interpreter) | the readings must equal the pins | existing `check_platform` at preflight, execute, every resume and every computing mode (RC2 / DR2); a mismatch after the marker is terminal (close-indeterminate) |
+| host exclusivity | the operator's apps quit; the prepared-state readings of R-EXCL-PCT / R-ALLOW | no process above EXCL_CPU_PCT outside the allow-list | existing gate `host_exclusive`; quitting apps is a user action |
+| no other campaign job | none | none | existing gate `no_other_campaign_job` (pidfile LIVE) |
+| no concurrent sandbox-heavy work | no other agent's suites or matrices on the host during the official run | none from the marker to the seal (the ENOSPC incident's cause) | a recorded user / coordinator action (the start gates cannot see a disk consumer that starts later) |
+
+### 8.2 Disk safety and the scratch lifecycle (builder5, brief 50; after the ENOSPC incident of 2026-09-30)
+
+**Free space, fail closed.** Every free-space probe is `statvfs` (f_bavail × f_frsize) of the volume; a failed or
+unreadable probe is never "enough space". Gates: (i) the driver's own `free_disk_ge_2GiB` (execute, every resume;
+`free_disk_bytes` returns None on a failed probe and the gate requires an integer >= MIN_FREE_DISK: it already failed
+closed, now tested at the gate and end to end at execute and resume); (ii) the qualification verifier, before its start
+(in every mode, before its preconditions and before any record is written) and before every heavy phase (each suite,
+the mutant matrix, QS-RESUME-DECOY): QUAL_MIN_FREE_BYTES on the `--work` volume and MIN_FREE_DISK on the repository
+volume; (iii) the mutant runner, before its start and before every target run: QUAL_MIN_FREE_BYTES on its scratch
+volume. A refusal before the start writes nothing; a refusal before a phase stops every later heavy phase, which fail
+closed (`DISK_REFUSED`, or `not_run` in the matrix report). A test may plant a reading (`MBS308_TEST_DISK_FREE`) that
+can only lower the real one or fail it.
+
+**The scratch lifecycle (`code/mbs308_scratch.py`).** Every process that uses a scratch root records itself in
+`<root>/.mbs308-lifecycle/` (its identity, ACTIVE, then FINISHED): the test library for every suite process, the
+verifier (its work directory, and each heavy phase), the mutant runner (each phase). Classes: **ACTIVE** (any root
+without a valid record, or with a record not FINISHED, or whose owner is not positively dead by
+`mbs308_host.identity_state`; UNKNOWN is never dead; a FINISHED record of the calling process itself counts as
+finished), **FINISHED** (completed runs' evidence: reports, JSON, logs, probes, verdicts; kept), **DISPOSABLE** (only
+sandbox clones, i.e. `sbx` directories whose `.git` borrows objects from a bare base store alone, and bare base stores,
+inside a FINISHED root; the nearest recorded root governs). Cleanup (dry-run by default) removes only disposable units
+(clones before the store they borrow from; a store still borrowed is kept), re-verifies each just before deleting it,
+records every deletion value-free (`<root>/.mbs308-deletions.jsonl`), and never removes a file, a unit of an ACTIVE
+root, a symlink or anything reached through one, anything whose real path leaves the root, or anything that is, lies
+under or contains a protected path: every worktree of the repository and its common dir (every ref, the target marker,
+the pending-result ref, the journal and checkpoint refs, the spool, every seal and committed file), the campaign's
+qualified worktree / git dir / common dir and MB r1's git dir as the driver names them, and `~/Library/Logs/ReBaseGuard`.
+The mutant runner deletes each phase's sandboxes once its result file is written and verified, so a matrix holds at
+most one sandbox at a time; the verifier does the same after each heavy phase. Roots made before this gate carry no
+record and are ACTIVE: the tool never cleans them (their owner deletes them by hand).
+
+**Thresholds (derived; inputs measured target-free on this host, 2026-09-30, by builder5; peak allocated bytes of the
+scratch tree sampled every 2 s).**
+
+| input | measured | source |
+|---|---|---|
+| one sandbox (a `--shared` clone checked out at 21e99cf0, 9185 files, and its `.git`) | 0.835 GiB | QS-STATIC peak; the runner's per-phase deletions |
+| the base store (`git clone --bare --no-local` of the repository; grows with the repository) | 0.448 GiB (458.4 MiB) | allocated size of builder5's store |
+| heaviest phase: QS-DISK (its own sandbox, and a nested verifier with its own base store and a full sandbox) | 2.119 GiB | QS-DISK peak |
+| QS-STATE / QS-CRASH / QS-STATIC / QS-RESUME-DECOY (dev form) / one mutant phase | 0.844 / 0.850 / 0.835 / 0.835 / 0.836 GiB | peaks (one sandbox each) |
+| QS-QUALIFY / QS-LAUNCH | 0.007 / 0.001 GiB | peaks |
+| the full mutant matrix with per-mutant cleanup | at most one sandbox at a time (its peak: BUILD_REPORT section 16.8) | the runner's own meter |
+| a synthetic sealed run (18 checkpoints, journal, pending, seal): git-dir growth / spool | 0.27-0.29 MB / 33-37 KB | two sandbox runs (uninterrupted; crash + resume) |
+| real-science scale: dev decoy 297 block 0, 4 checkpoint blobs / its Stage-1 record | 39 KB / 54 KB | the dev decoy's sandbox |
+| MB r1's full 5-block decoy record | 1.6 MB | ratification evidence Q |
+| macOS swap growth | 1 GiB swapfile steps | ratification item 23 |
+
+* **QUAL_MIN_FREE_BYTES = roundup_GiB(2 × (P_max + B) + 1 GiB) = 7 GiB**, with P_max = 2.119 GiB (the heaviest heavy
+  phase), B = 0.448 GiB (the verifier's base store, which persists across its phases) and the swap step of item 23.
+  Written margin: the factor 2 covers the base store's growth with the repository, run-to-run variation of the test
+  artifacts, the records a phase writes and other host activity between the check and the phase's end; the swap step
+  is item 23's. The check is repeated before every heavy phase, so the margin never has to cover more than one phase.
+* **MIN_FREE_DISK (execution, ratified 2 GiB, item 23): consistent with the measurements; no amendment proposed.** The
+  execution writes only MB-scale artifacts: a synthetic sealed run grows the git dir by < 0.3 MB; at real scale the
+  checkpoints are about 0.73 × the Stage-1 record (39 KB vs 54 KB on the dev decoy) and a whole decoy record is 1.6 MB,
+  so four attempts with the result, the pending blob and the seal stay below about 15 MB, and below 150 MB even for a
+  record ten times a decoy's. 2 GiB = one swapfile step + > 6 × that generous bound. What 2 GiB cannot cover is OTHER
+  processes filling the volume during the evaluation (the ENOSPC incident's cause): that is a host-discipline item (no
+  sandbox-heavy work on the host from the marker to the seal; section 8.1), not a reason for a larger number; a ref or
+  spool write that fails anyway takes the recorded fail-closed paths of section 5.
+
 ## 9. Pre-marker checks (MB r1's, re-targeted) and GC-8
 
 Interpreter flags `-I -S -B`; identity (worktree, git dir, common dir, branch); **MB r1's recorded state exactly**
@@ -405,11 +503,16 @@ launcher (RC6)**, plus:
   `NSF/qualification/MB308_QC02_DECOY_297.json`, `MB308_QC03_DECOY_316_B3.json`, `MB308_QC04_*.json`. A mismatch is a
   STOP. Tiny form run tonight: block 0 of 297 at the dev ladder; the RLR d4 (192 leaves) and C2B N20 (43 leaves) job
   records equal MB r1's committed QC02 block-0 records exactly.
-* **QS-RESUME-DECOY (MBS-9 ii; designed, run tonight only in the dev form).** A complete decoy cell (297, all blocks,
-  the frozen ladder: RLR, C2B, C1B; VER occurs only in the dev ladder) run uninterrupted and run interrupted by SIGKILL
-  after k checkpoints then resumed; every certified leaf of Stage 1 and of every Stage-2 decoy bundle must be
-  byte-identical. Dev form tonight: 297 block 0 dev ladder (RLR, C1B, C2B, VER), killed after 2 checkpoints, resumed
-  (2 served, 2 computed): Stage 1 (643 leaves) and 5 Stage-2 bundles (883 leaves) identical.
+* **QS-RESUME-DECOY (MBS-9 ii; BUILT by builder5, brief 50; evidence only at the official qualification).** A
+  complete decoy cell (297, all blocks, the frozen ladder: RLR, C2B, C1B; VER occurs only in the dev ladder; WORKERS)
+  run uninterrupted (the driver's production `decoy` mode) and run through the checkpoint path, interrupted by SIGKILL
+  after k = n // 2 durable checkpoints (n = the uninterrupted run's Stage-1 jobs) then resumed from the verified
+  checkpoints; every certified leaf of the decoy output (Stage 1 and every Stage-2 decoy bundle included; timing keys
+  stripped) must be byte-identical, the resume must serve k and compute n - k >= 1 with no rejected checkpoint. Case
+  runner `tests/mbs308_resume_decoy.py` (value-free record); `--dev` runs the dev form (297 block 0, dev ladder, 2
+  workers; never evidence). The job set, n, k and the output keys are read from the runs, so the case is the same under
+  either option of MBS-7 (BUILD_REPORT section 16.6). Earlier dev form: 297 block 0 dev ladder, killed after 2
+  checkpoints, resumed (2 served, 2 computed): Stage 1 (643 leaves) and 5 Stage-2 bundles (883 leaves) identical.
 * **MBS-12 carry-overs**: C-A recomputes from committed inputs; `rehearse --cell 305` yields reproduction values and
   equality booleans only, tripwires armed (not run tonight: the builder does not evaluate 305–309); no decoy nearer the
   band than 297 / 316 (asserted); the successor's leak scanner (to be written for QC12) builds its planted strings at run
@@ -440,6 +543,7 @@ no qualification can pass until it is built after the user's decisions.
 | `QS-CRASH` | Q12 | BUILT | none | tests/test_mbs308_crash.py |
 | `QS-LAUNCH` | Q12 | BUILT | none | tests/test_mbs308_launch.py (synthetic launchd payload) |
 | `QS-QUALIFY` | Q12 | BUILT | none | tests/test_mbs308_qualify.py: this verifier's own planted controls |
+| `QS-DISK` | Q12 | BUILT | none | tests/test_mbs308_disk.py: the disk-safety and scratch-lifecycle gate (section 8.2), the re-pin tooling, the read-only host report (section 8.1); builder5 |
 | `QS-MUTANTS` | Q12 | BUILT | none | the full mutant matrix; every mutant killed BY ASSERTION |
 | `QC09-S` | Q9, Q12 | BUILT | none | the guard, adapted to the one-line guard diff (refusals; arming in a throw-away repository) |
 | `QC09-SCI` | Q9 | PENDING_USER_DECISION | MBS-7 | MB r1's in-process QC09 through every pinned science code path |
@@ -460,7 +564,7 @@ no qualification can pass until it is built after the user's decisions.
 | `QC08` | Q6 | PENDING_USER_DECISION | MBS-7, MBS-8 | independent Monte Carlo on QC02's record |
 | `Q1_theory` | Q1 | PENDING_USER_DECISION | MBS-7 | the theorem text binding |
 | `MBR1_REPRO` | Q3 | PENDING_USER_DECISION | MBS-7 | RC2: MB r1's official non-target decoy / ladder jobs, exact equality |
-| `QS-RESUME-DECOY` | Q3 | PENDING_USER_DECISION | MBS-7 | MBS-9 (ii): a complete decoy cell, uninterrupted vs killed and resumed |
+| `QS-RESUME-DECOY` | Q3 | BUILT | none | MBS-9 (ii): a complete decoy cell, uninterrupted vs killed after k = n // 2 checkpoints and resumed (tests/mbs308_resume_decoy.py; official form at the official qualification only; builder5) |
 
 MB r1's QC10 (MB r1's own exactly-once flows) is not carried: QS-STATE and QS-CRASH test the successor's lifecycle.
 
@@ -489,8 +593,11 @@ still reads official runtimes. Options the builder sees (none is taken here):
 Whichever is chosen, the official decoy runs compute with the real science on decoy cells 297 / 316, so they and their
 measurement records are declared here (R_RULES_OFFICIAL, Q12_caps) and not built. A fact for whoever builds them: the
 driver's decoy record carries each job's `ru_maxrss` (`job_maxrss_bytes`) and the watchdog's peak for the run
-(`worker_peak_rss_bytes`), but not the driver's own peak RSS (R-MEM's D) and no ≤ 0.5 s growth-rate sampler (step 6);
-those inputs must come from the measurement harness or a recorded driver field.
+(`worker_peak_rss_bytes`), and (builder5, brief 50, task 3; recorded fields of `main()`'s decoy branch only, no
+carried function changed) the driver's own peak RSS `lifecycle.driver_maxrss_bytes` (ru_maxrss of RUSAGE_SELF: R-MEM's
+D), the fixed-rate 0.5 s RSS sampler `lifecycle.rss_sampler` (samples, failed reads, largest spacing, the driver's and
+the workers' peak RSS, `max_growth_bytes_per_s`: R-MEM step 6's g) and the run's configuration `lifecycle.rmem_run`
+(workers, ladder, mem_cap_bytes, mem_poll_s, first_blocks, launched_by_launchd: R-MEM step 1).
 
 ### 11.3 Readings of the rule text (made by the rule functions; for the ratifier or a reviewer to confirm)
 
@@ -506,6 +613,10 @@ those inputs must come from the measurement harness or a recorded driver field.
 * READING-5: "any Python interpreter" is a basename `python`, `pythonN` or `pythonN.M`, or any path inside a
   `Python.framework`. The ratification's H3 locations are given as directories, some abbreviated with "…"; condition
   (b) is tested on the location as stated (its prefix).
+* READING-6 (builder5): the decoy record's RSS sampler runs on a fixed-rate 0.5 s schedule (the rule's own bound);
+  the spacing between two readings can exceed 0.5 s by the scheduling jitter and the `ps` latency (largest seen: 0.51 s
+  in the synthetic test, 0.555 s in the dev decoy). The record carries both `interval_s` ("0.5") and `max_spacing_s`; whether "a <= 0.5 s sampler" binds the
+  nominal interval or the observed spacing is for the ratifier or a reviewer (no other interval was chosen here).
 * A decoy re-run after a watchdog event (step 1) runs with the provisional cap doubled; the functions report which
   runs must be re-run, never use the invalid run's peaks, and apply no rule until every such run has been re-run.
   Whether the doubled cap is "within the step-5 bound" needs the valid runs' P and D and is left to the official case.

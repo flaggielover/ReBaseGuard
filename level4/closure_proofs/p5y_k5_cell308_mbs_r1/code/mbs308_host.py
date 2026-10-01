@@ -348,9 +348,32 @@ def software_update_settings(texts: dict | None = None) -> dict:
 
 
 # ------------------------------------------------------------------ process identity (pid, start time, command sha)
+# O-1 (REVIEW_OPTIONB_LIVENESS_MBS308, reviewB5): `ps -o lstart=` prints LOCAL time -- the zone of its environment's
+# TZ, else the system zone -- so a change of the system time zone would change the reading of a live process and make
+# identity_state read it DEAD. Every start-time reading (the recorded one and every later one) is therefore taken with
+# TZ fixed to the POSIX zone "UTC0" in the environment of `ps` (no tz database, no DST): the same instant always
+# prints the same string, whatever the system zone or the caller's TZ.
+PS_TZ = "UTC0"
+# O-4: `ps -o command=` prints an argument vector it cannot read (a process 0-1 s from exec or exit) as "(name)" with
+# exit 0: a FAILED reading that looks successful. Such a reading is treated as a failed read (None): never recorded,
+# never compared (N-2), so it is UNKNOWN and never evidence of death.
+_ARGV_UNREADABLE = re.compile(r"^\(.*\)$", re.S)
+
+
+def _run_ps(args: list, timeout: int = 60) -> str | None:
+    """_run with the time zone of `ps` fixed (O-1)."""
+    try:
+        p = subprocess.run(args, capture_output=True, text=True, env=dict(ENV, TZ=PS_TZ), stdin=subprocess.DEVNULL,
+                           timeout=timeout)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return p.stdout if p.returncode == 0 else None
+
+
 def process_start(pid: int, text: str | None = None) -> str | None:
-    """The process start time as `ps -o lstart=` prints it (one-second resolution); None if no such process."""
-    text = _run([PS, "-p", str(int(pid)), "-o", "lstart="]) if text is None else text
+    """The process start time as `ps -o lstart=` prints it in UTC (O-1; one-second resolution); None if no such
+    process or the reading failed."""
+    text = _run_ps([PS, "-p", str(int(pid)), "-o", "lstart="]) if text is None else text
     t = " ".join((text or "").split())
     return t or None
 
@@ -358,6 +381,8 @@ def process_start(pid: int, text: str | None = None) -> str | None:
 def process_command_sha256(pid: int, text: str | None = None) -> str | None:
     text = _run([PS, "-ww", "-p", str(int(pid)), "-o", "command="]) if text is None else text
     t = (text or "").strip()
+    if _ARGV_UNREADABLE.match(t):                  # O-4: "(name)" is a failed reading, never a command
+        return None
     return hashlib.sha256(t.encode()).hexdigest() if t else None
 
 

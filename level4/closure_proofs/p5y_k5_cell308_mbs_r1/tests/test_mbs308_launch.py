@@ -362,7 +362,9 @@ def t_identity_state_positive_evidence():
     """N-2 (REVIEW_IMPLEMENTATION_MBS308_DELTA): identity_state never reads DEAD from a field that was never recorded
     (an identity recorded while `ps` or the boot-UUID read failed): a live process whose record lacks the start time,
     the command sha256 or the boot UUID is UNKNOWN (never booted out, never counted dead), and DEAD once its pid is
-    gone. A complete record of a live process is ALIVE, a failing `ps` makes it UNKNOWN, a reused pid is DEAD."""
+    gone. A complete record of a live process is ALIVE, a failing `ps` makes it UNKNOWN, a reused pid is DEAD.
+    K-1 (REVIEW_OPTIONB_LIVENESS_MBS308, builder5): each reading failing ALONE is UNKNOWN, never DEAD -- a failed
+    boot-UUID read alone (every other reading works) and a failed command read alone (the start-time read works)."""
     H, L, S = mods()
     h = T.Helper(60)
     try:
@@ -377,15 +379,100 @@ def t_identity_state_positive_evidence():
             ps_failed = H.identity_state(full)
         finally:
             H.process_start = real
+        real_boot = H.boot_session_uuid                               # K-1 (a): the boot-UUID read alone fails
+        H.boot_session_uuid = lambda text=None: None
+        try:
+            boot_failed = H.identity_state(full)
+        finally:
+            H.boot_session_uuid = real_boot
+        real_cmd = H.process_command_sha256                           # K-1 (b): the command read alone fails
+        H.process_command_sha256 = lambda pid, text=None: None
+        try:
+            cmd_failed = H.identity_state(full)
+            cmd_failed_start_read = H.process_start(h.p.pid) == full["start_time"]     # the start read still works
+        finally:
+            H.process_command_sha256 = real_cmd
     finally:
         h.kill()
     dead = {k: H.identity_state(v) for k, v in partial.items()}
     complete = all(full.get(k) for k in ("pid", "start_time", "boot_uuid", "command_sha256"))
     return {"ok": complete and all(v == "UNKNOWN" for v in alive.values()) and alive_full == "ALIVE"
-            and reused == "DEAD" and ps_failed == "UNKNOWN" and all(v == "DEAD" for v in dead.values())
+            and reused == "DEAD" and ps_failed == "UNKNOWN" and boot_failed == "UNKNOWN" and cmd_failed == "UNKNOWN"
+            and cmd_failed_start_read and all(v == "DEAD" for v in dead.values())
             and H.identity_state(full) == "DEAD",
             "partial_alive": alive, "full_alive": alive_full, "reused": reused, "ps_failed": ps_failed,
-            "partial_dead": dead}
+            "boot_read_failed_alone": boot_failed, "command_read_failed_alone": cmd_failed, "partial_dead": dead}
+
+
+def t_identity_state_time_zone_independent():
+    """O-1 (REVIEW_OPTIONB_LIVENESS_MBS308, reviewB5): the start-time reading does not depend on the time zone. A live
+    helper's identity is RECORDED under one planted zone and CHECKED under another; the zone is planted through the
+    environment of the reading (mbs308_host.ENV, the environment `ps` otherwise inherits its zone from, like a change
+    of the system zone). Control (non-vacuous): a raw `ps -o lstart=` under the two planted zones prints two different
+    strings for the same live process. With the repair the recorded and the current reading are equal and the live
+    process stays ALIVE (and identity_alive True); DEAD only once the pid is gone."""
+    H, L, S = mods()
+    zones = ("JST-9", "EST5EDT")
+    h = T.Helper(60)
+    saved = H.ENV.get("TZ")
+    try:
+        raw = {}
+        for z in zones:
+            H.ENV["TZ"] = z
+            raw[z] = H._run([H.PS, "-p", str(h.p.pid), "-o", "lstart="])
+        H.ENV["TZ"] = zones[0]
+        rec = H.identity(h.p.pid)                                   # recorded under zone 1
+        H.ENV["TZ"] = zones[1]                                      # the system zone changes during the run
+        st_changed = H.identity_state(rec)
+        alive_changed = H.identity_alive(rec)
+        start_changed = H.process_start(h.p.pid)
+    finally:
+        if saved is None:
+            H.ENV.pop("TZ", None)
+        else:
+            H.ENV["TZ"] = saved
+        h.kill()
+    control = bool(raw[zones[0]]) and bool(raw[zones[1]]) and raw[zones[0]] != raw[zones[1]]
+    after = H.identity_state(rec)
+    return {"ok": control and all(rec.get(k) for k in ("start_time", "boot_uuid", "command_sha256"))
+            and start_changed == rec["start_time"] and st_changed == "ALIVE" and alive_changed is True
+            and after == "DEAD", "control_raw_readings_differ": control, "state_after_zone_change": st_changed,
+            "identity_alive_after_zone_change": alive_changed, "state_after_exit": after}
+
+
+def t_identity_command_unreadable_unknown():
+    """O-4 (REVIEW_OPTIONB_LIVENESS_MBS308): `ps -o command=` prints an unreadable argument vector as "(name)" with
+    exit 0. That output is a FAILED reading: process_command_sha256 returns None for it, so a live recorded process
+    whose command reads "(name)" is UNKNOWN (never DEAD), and an identity recorded at such a moment carries no command
+    field (never compared). A real command, one merely containing parentheses, and a zombie's "<defunct>" are
+    readings as before."""
+    H, L, S = mods()
+    unreadable = [H.process_command_sha256(1, text=t) for t in ("(sleep)\n", "(python3.14)", "()")]
+    readable = [H.process_command_sha256(1, text=t) for t in ("/bin/sleep 60\n",
+                                                               "/usr/libexec/UserEventAgent (System)\n", "<defunct>\n")]
+    h = T.Helper(60)
+    real_run = H._run
+
+    def planted(args, timeout=60):                                  # the command read prints "(sleep)", exit 0
+        if "command=" in args:
+            return "(sleep)\n"
+        return real_run(args, timeout)
+    try:
+        full = H.identity(h.p.pid)
+        H._run = planted
+        try:
+            live_state = H.identity_state(full)
+            recorded_now = H.identity(h.p.pid)
+        finally:
+            H._run = real_run
+        after_state = H.identity_state(full)
+    finally:
+        h.kill()
+    return {"ok": all(u is None for u in unreadable) and all(isinstance(r, str) and len(r) == 64 for r in readable)
+            and after_state == "ALIVE" and live_state == "UNKNOWN" and recorded_now.get("command_sha256") is None
+            and H.identity_state(full) == "DEAD",
+            "unreadable_is_none": [u is None for u in unreadable], "live_state_with_unreadable_argv": live_state,
+            "recorded_command_field": recorded_now.get("command_sha256")}
 
 
 def t_preflight_timeout_rule():

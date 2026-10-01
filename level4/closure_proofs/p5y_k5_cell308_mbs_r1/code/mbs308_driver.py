@@ -215,8 +215,8 @@ PLATFORM_PINS = {
 # helper modules of this campaign, pinned by sha256 (the grant binds this driver's own sha256). Re-pinned at freeze.
 HELPER_SHA256 = {
     "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
-    "mbs308_host.py": "26ac9538071ee1803b900c96390fbbba12f1ca6841ca7cf3cbb7d9533763d08d",
-    "mbs308_state.py": "81788fa82e897538d94b1e27ac6af606cecc0359c8521c107549f9dff8b3cd3b",
+    "mbs308_host.py": "6650ceebd7297dd4744c6121f9b41617aabbd50211a634df309c53b5945a2a8b",
+    "mbs308_state.py": "e2b6b8e1bb35c2957fca41a5d007e355eddd6e213d66d68995b4d8781895e047",
     "mbs308_launch.py": "1510308a96911278ca157f0305ee122e1a2a9632f1330bfed3ab428c7d6ba5c8",
 }
 PIN.GUARD_SHA256 = HELPER_SHA256["mbs308_guard.py"]
@@ -1774,11 +1774,21 @@ def main(argv=None) -> int:
             h0, smp = HOST.snapshot(), HOST.Sampler().start()
             t0 = time.time()
             STATE.CK = ctx = STATE.Ctx(mem_cap_bytes=MEM_CAP_BYTES, mem_poll_s=MEM_POLL_S)
+            rss = STATE.RssSampler(os.getpid()).start()     # R-MEM step 6 input (brief 50; recorded fields only)
             try:
                 out = decoy(a.cell, own_sha, a.workers, a.first_blocks, a.dev_ladder)
             finally:
                 STATE.CK = None
-            out["lifecycle"] = {"stage1_context": ctx.summary()}
+                rss_rec = rss.stop()
+            # R-MEM's inputs of this run (protocol section 8; brief 50 task 3): D = the driver's own peak RSS
+            # (ru_maxrss of RUSAGE_SELF, bytes on macOS), the <= 0.5 s sampler's growth rate and peaks, and the run's
+            # configuration as R-MEM step 1 names it. Recorded only: nothing here changes a computed value.
+            out["lifecycle"] = {"stage1_context": ctx.summary(), "rss_sampler": rss_rec,
+                                "driver_maxrss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+                                "rmem_run": {"workers": a.workers, "ladder": "dev" if a.dev_ladder else "frozen",
+                                             "mem_cap_bytes": MEM_CAP_BYTES, "mem_poll_s": MEM_POLL_S,
+                                             "first_blocks": a.first_blocks,
+                                             "launched_by_launchd": HOST.launched_by_launchd()["pass"]}}
             out["host"] = HOST.provenance(h0, smp.stop(), HOST.snapshot())
             cu = resource.getrusage(resource.RUSAGE_CHILDREN)
             out.update({"mode": "decoy", "driver_sha256": own_sha, "utc": utc(), "wall_seconds": round(time.time() - t0, 1),

@@ -93,5 +93,22 @@ def t_mbr1_repro_tiny():
             "c2b_n20_equal": strip(ca) == strip(cq), "c2b_n20_leaves": leaves(strip(ca)), "geometry_equal": geo}
 
 
+def t_qs_resume_decoy_dev():
+    """QS-RESUME-DECOY, DEV form (builder5, brief 50; NONTARGET_DRIFT_VALIDATION): the verifier's own case runner
+    (tests/mbs308_resume_decoy.py, the code the official form runs) on decoy 297 block 0 at the dev ladder, 2 workers:
+    the uninterrupted production decoy, the checkpoint path SIGKILLed after k = n // 2 durable checkpoints, the resume
+    from the verified checkpoints; every certified leaf equal. Also shows the R-MEM fields of the production decoy
+    record (brief 50 task 3) on real (decoy) science."""
+    import mbs308_resume_decoy as R
+    rec = R.run_case("dev")
+    A = json.loads((T.SCRATCH / "t_resume_decoy_dev" / "A_uninterrupted.json").read_text())
+    lc = A.get("lifecycle", {})
+    rmem = {"driver_maxrss_bytes": lc.get("driver_maxrss_bytes"), "rss_sampler": lc.get("rss_sampler"),
+            "rmem_run": lc.get("rmem_run")}
+    ok = rec.get("pass") is True and rec.get("form") == "dev" and rec.get("k") == rec.get("served") and \
+        isinstance(lc.get("driver_maxrss_bytes"), int) and (lc.get("rss_sampler") or {}).get("samples", 0) > 0
+    return {"ok": ok, "record": rec, "rmem_fields": rmem}
+
+
 if __name__ == "__main__":
     T.cli(globals())

@@ -269,6 +269,24 @@ def t_qs_mutant_summary():
     return {"ok": ok, "declared": len(declared)}
 
 
+def t_qs_resume_decoy_summary():
+    """QS-RESUME-DECOY (builder5, brief 50): the verifier's summary of the case runner's value-free record passes only
+    for an OFFICIAL-form record that says pass, with target_evaluations 0 and exit code 0 (or none known); a dev-form
+    record, a failing record, a record without target_evaluations 0, a non-zero exit code, a non-boolean `pass` and no
+    record never pass. The case is BUILT (no longer PENDING) and its runner exists; QS-DISK is a configured suite."""
+    good = {"pass": True, "form": "official", "target_evaluations": 0, "k": 3, "served": 3, "computed": 4}
+    s = Q.resume_decoy_summary
+    ok = s(good, 0)["pass"] is True and s(good, None)["pass"] is True and \
+        s(dict(good, form="dev"), 0)["pass"] is False and s(dict(good, **{"pass": False}), 0)["pass"] is False and \
+        s(dict(good, target_evaluations=1), 0)["pass"] is False and \
+        s({k: v for k, v in good.items() if k != "target_evaluations"}, 0)["pass"] is False and \
+        s(good, 1)["pass"] is False and s(None, 0)["pass"] is False and s({"pass": "yes"}, 0)["pass"] is False and \
+        "QS-RESUME-DECOY" in Q.BUILT_CASES and "QS-RESUME-DECOY" not in Q.PENDING_CASES and \
+        (T.NSS / Q.RESUME_DECOY_RUNNER).is_file() and "QS-DISK" in Q.SUITE_CASES and \
+        CFG["suites"].get("QS-DISK") == "tests/test_mbs308_disk.py"
+    return {"ok": ok}
+
+
 # the matrix at integration (brief 49): builder2's / builder3's M01-M57 and builder4's MQ01-MQ34 (later additions allowed)
 EXPECTED_MUTANTS = [f"M{i:02d}" for i in range(1, 58)] + [f"MQ{i:02d}" for i in range(1, 35)]
 

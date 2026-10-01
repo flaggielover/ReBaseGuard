@@ -1,7 +1,7 @@
 # DRIVER_DIFF: mbs308_driver.py against MB r1's mb308_driver.py (NOT frozen; regenerated from the files)
 
 * Base: `level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_driver.py` at freeze r3 `c46434a3` (byte-identical at `21e99cf0`), sha256 `411252b2a9fa601cc5c1ba34abaf08482cf95a06e2ce7e4d5e5a5bd9e1f56dcb`.
-* New: `code/mbs308_driver.py`, sha256 `a75bafd3d94d1d97f379ebcbd291ed71d44d628a4f47f4d6c1fd9d857495b26d` (changes with every re-pin; the freeze binds the final bytes).
+* New: `code/mbs308_driver.py`, sha256 `66b6cfd68e76f988152c07e8788da03b3ec388f7805c48017383c58eb2ee48c5` (changes with every re-pin; the freeze binds the final bytes).
 * Hunks: 22; by class: IDENTITY 1, IDENTITY + LIFECYCLE 10, LIFECYCLE 11.
 * Classes: **SCIENCE-GLUE identical** = every function in the RC1 list and every function it references is text-identical, so it appears in NO hunk (asserted by `tests/test_mbs308_static.py` t_rc1_science_glue_text_identical and t_mbs9_referenced_module_names; a hunk touching one would be classified `SCIENCE-GLUE (MUST NOT OCCUR)`); **IDENTITY** = the successor's worktree, branch, namespace, refs, grant schema and paths, MB r1's recorded state (GC-8), helper pins, lineage; **LIFECYCLE** = the durable state machine, persistence, checkpoints + resume, supervisor, host contract, platform pins, launcher gate, modes.
 * The carried (text-identical) functions: `Inconsistent`, `IndependentCheckFailed`, `Refusal`, `_eval_cap`, `_ser_block`, `_set_job_cap`, `_worker_init`, `_worker_job`, `admitted_pairs`, `check_bindings`, `check_clean`, `check_cpu_caps`, `check_flags`, `check_governance_state`, `check_helpers`, `check_identity`, `check_result_paths`, `compose_and_consume`, `control`, `controls`, `decide`, `decoy`, `decoy_bundles`, `decoy_cover`, `evaluate_target`, `failure_kind`, `freeze_commit`, `fs`, `git`, `git_blob_id`, `git_dir`, `jsonable`, `load_consumer`, `load_science`, `prepare_target`, `public_stage1`, `r0_order3_variant`, `read_pinned`, `rehearse`, `require_ac`, `sha`, `stage1`, `supply_scaled_variant`, `target_geometry`, `utc`, `verdict_ok`.
@@ -321,8 +321,8 @@
 -    "mb308_consumer.py": "c233bdb6235cd8a44bcf187be7d6686a4684f8619bed21ade9130432c5c09188",
 -    "mb308_host.py": "6702a9be56b6e8a530407b8be2794f4d4266445a97d33c2f0601da8754760a8c",
 +    "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
-+    "mbs308_host.py": "26ac9538071ee1803b900c96390fbbba12f1ca6841ca7cf3cbb7d9533763d08d",
-+    "mbs308_state.py": "81788fa82e897538d94b1e27ac6af606cecc0359c8521c107549f9dff8b3cd3b",
++    "mbs308_host.py": "6650ceebd7297dd4744c6121f9b41617aabbd50211a634df309c53b5945a2a8b",
++    "mbs308_state.py": "e2b6b8e1bb35c2957fca41a5d007e355eddd6e213d66d68995b4d8781895e047",
 +    "mbs308_launch.py": "1510308a96911278ca157f0305ee122e1a2a9632f1330bfed3ab428c7d6ba5c8",
  }
 -PIN.GUARD_SHA256 = HELPER_SHA256["mb308_guard.py"]
@@ -1554,7 +1554,7 @@
 ### Hunk 22: LIFECYCLE; <module-level assignment / statement>, main
 
 ```diff
-@@ -1139,27 +1769,50 @@
+@@ -1139,27 +1769,60 @@
              if a.workers > 5 or a.workers < 1:
                  raise Refusal("WORKERS", "1..5 workers")
              check_bindings(allow_uncommitted=True)
@@ -1565,11 +1565,21 @@
              t0 = time.time()
 -            out = decoy(a.cell, own_sha, a.workers, a.first_blocks, a.dev_ladder)
 +            STATE.CK = ctx = STATE.Ctx(mem_cap_bytes=MEM_CAP_BYTES, mem_poll_s=MEM_POLL_S)
++            rss = STATE.RssSampler(os.getpid()).start()     # R-MEM step 6 input (brief 50; recorded fields only)
 +            try:
 +                out = decoy(a.cell, own_sha, a.workers, a.first_blocks, a.dev_ladder)
 +            finally:
 +                STATE.CK = None
-+            out["lifecycle"] = {"stage1_context": ctx.summary()}
++                rss_rec = rss.stop()
++            # R-MEM's inputs of this run (protocol section 8; brief 50 task 3): D = the driver's own peak RSS
++            # (ru_maxrss of RUSAGE_SELF, bytes on macOS), the <= 0.5 s sampler's growth rate and peaks, and the run's
++            # configuration as R-MEM step 1 names it. Recorded only: nothing here changes a computed value.
++            out["lifecycle"] = {"stage1_context": ctx.summary(), "rss_sampler": rss_rec,
++                                "driver_maxrss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
++                                "rmem_run": {"workers": a.workers, "ladder": "dev" if a.dev_ladder else "frozen",
++                                             "mem_cap_bytes": MEM_CAP_BYTES, "mem_poll_s": MEM_POLL_S,
++                                             "first_blocks": a.first_blocks,
++                                             "launched_by_launchd": HOST.launched_by_launchd()["pass"]}}
              out["host"] = HOST.provenance(h0, smp.stop(), HOST.snapshot())
              cu = resource.getrusage(resource.RUSAGE_CHILDREN)
              out.update({"mode": "decoy", "driver_sha256": own_sha, "utc": utc(), "wall_seconds": round(time.time() - t0, 1),
