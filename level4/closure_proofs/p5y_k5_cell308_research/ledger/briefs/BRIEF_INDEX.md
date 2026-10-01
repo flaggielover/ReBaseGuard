@@ -73,6 +73,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 54-A | 54A_builder6_ratifier_addition.txt | addition to brief 54 sent to builder6: implement Part B against ratifier2's rulings; owner's open points fail closed, unresolved | SendMessage | see ledger | no |
 | 54-B | 54B_builder6_resume_supplement2.txt | builder6 resumed after the usage-limit stop: owner supplement 2 semantics, three-record grant binding, final-byte re-runs; coordinator's read-only snapshot of its uncommitted work | SendMessage | see ledger | no |
 | 56 | 56_builder7_reviewQ6_repairs.txt | FRESH non-holder builder7 on 78a172cf: the bounded repairs of the preserved DELTA_REJECTED 82d59cc2 (R1-R7, F-4, tests for G-1, G-2, G-5..G-11, ledger agents list) | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 56-A | 56A_builder7_followup.txt | follow-up to builder7: R7 second half (host report embedded; operator-action record named), science-phase disk-gate test, D read as late as possible (new bounded defect, flagged), QC12-S JSON-escape scan | SendMessage | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
