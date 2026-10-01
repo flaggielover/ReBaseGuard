@@ -1,0 +1,56 @@
+RATIFICATION REQUEST (brief 55) — fresh non-holder ratifier `ratifier2`: rule on open READINGS of the ratified R-rule
+text (R-MEM, R-FREE, R-EXCL-PCT, R-ALLOW). Recorded before sending. Read-only. Your rulings are not predetermined.
+
+WHO YOU ARE. A FRESH ratifier who is not a holder of any MB r1 run observation, independent of the coordinator
+(editorR3C1, exposed; the T6 ruling's M4 keeps it out of every role touching operational numbers), of every builder
+and reviewer, and of the first ratifier. You do NOT set or change any number and you do NOT amend the rules: you say
+how the accepted rule text is to be READ where a function had to choose a reading.
+
+SOURCES (research namespace /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research):
+governance/CONSTANTS_RATIFICATION_MBS308.md (the rules: section "Written rules", verbatim authority);
+reviews/REVIEW_PREFREEZE_TOOLING_MBS308.md (reviewQ6, DELTA_REJECTED: its section 1 (f), section 7 rulings (b),
+findings F-6, G-10, and READING-7); reviews/REVIEW_SEQUENCING_DETERMINATION_MBS308.md sections 1.2 and 2 (a);
+ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_1.txt Part I (the user's section-11.2 ruling: option (a); read sections 1-4
+in full). Successor bytes at commit 555f4cbf (use `git -C /Users/suzhe/ReBaseGuard show 555f4cbf:<path>`; another
+agent is editing the worktree): level4/closure_proofs/p5y_k5_cell308_mbs_r1/protocol/MBS308_PROTOCOL_DRAFT.md sections
+8 and 11.3 (READING-1..6), code/mbs308_rrules.py, BUILD_REPORT.md section 16 (builder5: task 3 and READING-6) and
+section 15 (builder4: READING-1..5).
+
+RULE ON EACH (CONFIRMED as the function reads it / CORRECTED: state the reading the functions must implement / NOT
+DECIDABLE FROM THE TEXT: state exactly what the text leaves open, and who must decide):
+1. READING-3 (R-MEM step 3): a (kind, rung)'s peak in one run is the largest step-2 job peak of that kind and rung in
+   that run; s compares those per-run peaks across the valid runs in which the (kind, rung) appears.
+2. READING-6 (R-MEM step 6): "a <= 0.5 s qualification sampler" — nominal interval 0.5 s versus observed spacing
+   (builder5 saw 0.555 s, reviewQ6 0.51 s under load). Is a record whose largest observed spacing exceeds 0.5 s a valid
+   step-6 input? If not, what does the rule require (invalid input and fail closed, or something the text states)?
+3. READING-7 (reviewQ6): the sampler measures growth only for a process it has already seen, so a fresh worker's rise
+   before its first reading is not counted in g. Does step 6's "highest RSS growth rate seen by" the sampler cover
+   this as written, or must the first reading count as growth from zero (or from process start)?
+4. F-6 (R-MEM step 1): a decoy with a watchdog event "is not a valid input. It is re-run with the provisional cap
+   doubled". The function drops an invalid run when a clean duplicate covers its cell. Is that a correct reading?
+5. Step 1 under the user's option (a): the designated PRE-FREEZE runs use the provisional cap (3 GiB) and MEM_POLL_S
+   2 s; the OFFICIAL qualification decoys run with the ACTUAL FROZEN VALUES and no separate measurement configuration
+   exists. State what step 1's "re-run with the provisional cap doubled, within the step-5 bound" then means (a) for a
+   designated pre-freeze run and (b) for an official qualification run with a watchdog event, strictly from the rule
+   text and the user's ruling; if the two cannot both be honoured, say so exactly (the user's ruling says: stop before
+   the freeze and report the incompatibility; do not resolve it yourself).
+6. For each of the five outputs (MEM_CAP_BYTES, MEM_POLL_S, FREE_MEM_MIN_BYTES, EXCL_CPU_PCT, EXCL_ALLOW): what is the
+   rule's FINAL CANONICAL OUTPUT (type, unit, rounding, ordering) as the text defines it, so that "A == B" between two
+   measurement series is unambiguous? Where the text does not fix a canonical form, say so. Do not introduce a
+   tolerance and do not say whether exact agreement is desirable: only what the text defines.
+Also confirm or correct reviewQ6's confirmations of READING-1, 2, 4, 5 in one line each.
+
+ABSOLUTE RULES. Read-only (reading and text search; no computation of any campaign quantity; no git writes; write only
+your one output file). No cell-308 target evaluation; nothing about any cell-308 outcome; cell 309 out of scope. Do NOT
+open: reviews/REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*, reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*,
+reviews/INCIDENT_INDEPENDENCE_REVIEW_MB308*.md and *_MBS308*, ledger/COORDINATOR_EXPOSURE_DISCLOSURE*,
+ledger/USER_TEXTS_SUCCESSOR_308.md, governance/SUCCESSOR_GOVERNANCE_308.md, history/, anything under
+p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/, successor BUILD_REPORT sections 6 and 9, any other
+scratchpad, anything under /Users/suzhe/.claude/. No `git log` on the MB r1 branch. Disclose any MB r1 run observation
+already in your context (a host-supplied memory index is not a source).
+
+OUTPUT. governance/CONSTANTS_RATIFICATION_MBS308_READINGS_R1.md (research namespace): line 1 the title; line 2 EXACTLY
+READINGS_RULED; then items 1-6 and the READING-1/2/4/5 lines, each with its ruling and the rule text quoted. Scan with
+code/c308_quarantine.py `_TAIL_RE` (must be 0); one ledger line via log_event (klass='REVIEW', agent='ratifier2',
+target_evaluations=0). LOW-TRAFFIC MODE: batch commands, few tool calls, no large re-reads. Final message: sha256 of
+your file and a 10-line summary.
