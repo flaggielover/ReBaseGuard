@@ -1321,7 +1321,7 @@ def materialize(ctx: ExecContext, blob: str) -> None:
 
 
 def seal_message(status: str) -> str:
-    return (f"p309 formal r1 — SEAL of the one cell-309 P309 evaluation ({status})\n\nCommitted by "  # q309: literal-ok (commit message text)
+    return (f"p309 formal r2 — SEAL of the one cell-309 P309 evaluation ({status})\n\nCommitted by "  # q309: literal-ok (commit message text)
             f"{NS_REL}/code/p309_driver.py from the in-memory bytes (object store + pending ref), not from a worktree "
             "file; the result was not inspected before this commit.\n")
 

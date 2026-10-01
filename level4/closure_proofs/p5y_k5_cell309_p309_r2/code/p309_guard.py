@@ -39,6 +39,8 @@ TEST_GEOMETRY = (F(3), F(1, 2))
 PRODUCTION_MARKER = "refs/p5y-k5-cell309-p309-r2/target-consumed"  # q309: literal-ok (inert marker NAME; read-only use)
 PENDING_REF = "refs/p5y-k5-cell309-p309-r2/pending-result"  # q309: literal-ok (inert pending-ref NAME; read-only here)
 _PROD_NAMESPACE = "refs/p5y-k5-cell309-p309-r2/"  # q309: literal-ok (ref namespace, read-only use)
+_PRIOR_NAMESPACE = "refs/p5y-k5-cell309-p309-r1/"  # q309: literal-ok (r1's ref namespace: refused, never written)
+_FORBIDDEN_NAMESPACES = (_PROD_NAMESPACE, _PRIOR_NAMESPACE)   # both campaigns' namespaces (r2 addendum 2, F1)
 _FNS_REL = "level4/closure_proofs/p5y_k5_cell309_p309_r2/"
 _PROD_GRANT_PATH = _FNS_REL + "authorization/P309_GRANT.json"
 _PROD_MANIFEST_PATH = _FNS_REL + "freeze/P309_FREEZE_MANIFEST.json"
@@ -170,9 +172,9 @@ class TestContext:
             raise ValueError("TestContext refused: the sandbox is this repository")
         if _common_dir(sb) == _common_dir(own):
             raise ValueError("TestContext refused: the sandbox is a worktree of this repository")
-        prod_refs = _git(sb, "for-each-ref", "--format=%(refname)", _PROD_NAMESPACE).split()
+        prod_refs = _git(sb, "for-each-ref", "--format=%(refname)", _PROD_NAMESPACE, _PRIOR_NAMESPACE).split()
         if prod_refs:
-            raise ValueError("TestContext refused: the sandbox holds a production-namespace ref")
+            raise ValueError("TestContext refused: the sandbox holds a production-namespace ref (r1 or r2)")
         object.__setattr__(self, "_repo", sb)
 
     @property

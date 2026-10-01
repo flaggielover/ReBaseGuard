@@ -76,7 +76,7 @@ def main(dry: bool) -> int:
     else:
         chk("4_zero_remote_only_commits", True, "ref absent: nothing to lose")
         chk("5_no_force_required", True, "ref absent: creation")
-        base = "eb9a9c22b093f938e1bf13e0b30512608c58c370"          # research HEAD the formal branch starts from
+        base = "c902fe2fe33003ac7e4e61f29c10c81682fc940c"          # r1's final head: r2's base (r2 addendum 1, P2)
     # 6/7 new commits: namespace-only paths, no forbidden artifact
     new = git("rev-list", head, f"^{base}").split()
     paths = set(git("diff", "--name-only", base, head).split()) if new else set()
@@ -107,6 +107,9 @@ def main(dry: bool) -> int:
     research_changed = git("diff", "--name-only", "eb9a9c22b093f938e1bf13e0b30512608c58c370", head, "--",
                            "level4/closure_proofs/p5y_k5_cell309_research_r1/")
     chk("7c_research_namespace_unchanged", not research_changed, f"changed={research_changed.split()[:3]}")
+    # r2 addendum 1, P2: r1's namespace is never mutated (its tree at r1's final head)
+    r1_tree = git("rev-parse", f"{head}:level4/closure_proofs/p5y_k5_cell309_p309_r1")
+    chk("7d_r1_namespace_unchanged", r1_tree == "ecd1c359ef0c3e0c9911b014b884376a10f6ed5b", r1_tree)
     chk("7b_quarantine_static_scan", verdict == "PASS", verdict)
     # 3/8 dry run: exactly one ref, explicit refspec, no tags, no force
     spec = f"refs/heads/{BRANCH}:refs/heads/{BRANCH}"
@@ -137,7 +140,7 @@ def main(dry: bool) -> int:
     _log(rec)
     ledger_rel = str(LEDGER.relative_to(REPO))
     git("add", ledger_rel)
-    git("commit", "-q", "-m", f"p309 formal r1 — ledger: checkpoint push record ({head[:8]}; committed "
+    git("commit", "-q", "-m", f"p309-r2 — ledger: checkpoint push record ({head[:8]}; committed "
         "before the push, travels with it)\n\n"
         "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n"
         "Claude-Session: https://claude.ai/code/session_01RiV5bfPm5GJ4GcvoBrCC3p")

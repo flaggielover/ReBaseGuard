@@ -149,9 +149,9 @@ def run() -> dict:
     refs = [r for s in sbs for r in X.refs(s)]
     own = subprocess.run(["git", "-C", str(D.REPO), "for-each-ref", "--format=%(refname)"], capture_output=True,
                          text=True).stdout.split()
-    t("Z1_no_production_namespace_ref_in_any_sandbox", not [r for r in refs if r.startswith(G._PROD_NAMESPACE)], refs)
+    t("Z1_no_production_namespace_ref_in_any_sandbox", not [r for r in refs if r.startswith(G._FORBIDDEN_NAMESPACES)], refs)
     t("Z2_no_marker_namespace_ref_in_this_repository",
-      not [r for r in own if r.startswith((G._PROD_NAMESPACE, G._TEST_NAMESPACE))])
+      not [r for r in own if r.startswith((*G._FORBIDDEN_NAMESPACES, G._TEST_NAMESPACE))])
     return R
 
 

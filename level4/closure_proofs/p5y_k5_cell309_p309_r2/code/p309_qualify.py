@@ -265,9 +265,12 @@ def qc13(freeze: str) -> dict:
           "frozen_dirs_unchanged_since_freeze": frozen_now == frozen_then,
           "r5_blob_unchanged": git("rev-parse", "HEAD:level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/"
                                             "K5_COVERAGE_MAP_R5.json") == "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
-          "no_exactly_once_ref": not [r for r in refs if r.startswith(D.G._PROD_NAMESPACE)],
+          "no_exactly_once_ref": not [r for r in refs if r.startswith(D.G._FORBIDDEN_NAMESPACES)],
           "research_namespace_unchanged": not git("diff", "--name-only", "eb9a9c22b093f938e1bf13e0b30512608c58c370",
                                                 "HEAD", "--", D.RNS_REL),
+          # r2 addendum 1, P2: r1's namespace is never mutated (its tree at r1's final head c902fe2f)
+          "r1_namespace_unchanged": git("rev-parse", "HEAD:level4/closure_proofs/p5y_k5_cell309_p309_r1")
+          == "ecd1c359ef0c3e0c9911b014b884376a10f6ed5b",
           "qualification_after_freeze": subprocess.run(["git", "-C", str(REPO), "merge-base", "--is-ancestor", freeze,
                                                         "HEAD"]).returncode == 0}
     ok["no_r6"] = not any("COVERAGE_MAP_R6" in p.upper()

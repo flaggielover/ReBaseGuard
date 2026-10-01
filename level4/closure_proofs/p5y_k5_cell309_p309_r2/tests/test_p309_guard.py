@@ -53,7 +53,7 @@ def sh(repo: Path, *args, env=None, input_=None) -> str:
 
 def forbid_production_refs(sb: Path) -> None:
     refs = sh(sb, "for-each-ref", "--format=%(refname)").split()
-    assert not [r for r in refs if r.startswith(G._PROD_NAMESPACE)], "a production-namespace ref exists"
+    assert not [r for r in refs if r.startswith(G._FORBIDDEN_NAMESPACES)], "a production-namespace ref exists"
 
 
 def new_sandbox(name: str) -> Path:
@@ -377,13 +377,13 @@ def run() -> dict:
         if (p / ".git").exists() or (p / "HEAD").exists():
             try:
                 refs = sh(p, "for-each-ref", "--format=%(refname)").split()
-                bad += [r for r in refs if r.startswith(G._PROD_NAMESPACE)]
+                bad += [r for r in refs if r.startswith(G._FORBIDDEN_NAMESPACES)]
                 if sh(p, "log", "--all", "--format=%H", "--", G._PROD_GRANT_PATH).strip():
                     bad.append(f"{p.name}: production grant path in history")
             except RuntimeError:
                 pass
     own_refs = sh(REPO, "for-each-ref", "--format=%(refname)").split()
-    bad += [r for r in own_refs if r.startswith(G._PROD_NAMESPACE)]
+    bad += [r for r in own_refs if r.startswith(G._FORBIDDEN_NAMESPACES)]
     t("Z_no_production_marker_or_grant_anywhere", not bad, bad)
     return R
 

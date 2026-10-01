@@ -4,13 +4,15 @@
 
 A1 every formal ZERO_TARGET_LEDGER line has zero target counters and touched no quarantined cell
 A2 no ledgered drift (point or interval) meets the band [6/5, 13/5] or its mirror (geometry-blind)
-A3 immutable governance files are byte-identical to their first committed versions (owner decisions and rulings
-   verbatim, the formal quarantine, the preserved independent reviews and their ledgers)
+A3 immutable governance files are byte-identical to their first committed versions: r2's own preserved records (the
+   owner's 2026-10-01 instructions verbatim, r2's reviews and their ledgers, briefs, the verifier author's report)
+   and r2's byte copies of r1's governance records, each also equal to r1's blob; r1's own records, including its
+   reviews, are inherited at r1's paths and covered by A7's r1-tree check (r2 addendum 1, P2)
 A4 the formal static scan passes (code/p309_scan.py; planted controls fire)
 A5 the research producer files are byte-identical to the lock commit and the fingerprint equals the lock fingerprint
 A6 r5 blob unchanged; no coverage map r6 anywhere in the tree
-A7 since the formal base (research HEAD eb9a9c22) every changed path lies in the formal namespace, and the research
-   namespace is unchanged
+A7 since r2's base (c902fe2f, r1's final head) every changed path lies in r2's namespace; r1's namespace tree is
+   exactly ecd1c359 (r1 never mutated); the research namespace is unchanged since eb9a9c22 (r2 addendum 1, P2)
 A8 no non-ordinary ref (no exactly-once marker, no pending ref, no production-namespace ref) and no campaign tag
 A9 the band-scoped verifier variant imports no producer or C1b module
 A10 the research verifier-probe envelope audit (committed evidence) reports no in-band evaluated probe, and every
@@ -34,43 +36,30 @@ RNS = FNS.parent / "p5y_k5_cell309_research_r1"
 NS_PREFIX = "level4/closure_proofs/p5y_k5_cell309_p309_r2/"
 RNS_PREFIX = "level4/closure_proofs/p5y_k5_cell309_research_r1/"
 BRANCH = "claude/p5y-k5-cell309-p309-r2"  # q309: literal-ok (branch name, not a cell reference)
-BASE = "eb9a9c22b093f938e1bf13e0b30512608c58c370"
+BASE = "eb9a9c22b093f938e1bf13e0b30512608c58c370"          # research HEAD: the research-unchanged check (A7) and tags (A8)
+R2_BASE = "c902fe2fe33003ac7e4e61f29c10c81682fc940c"       # r1's final head: r2's base for the namespace-only check (A7)
+R1_PREFIX = "level4/closure_proofs/p5y_k5_cell309_p309_r1"  # inherited r1 records: read-only, never written
+R1_TREE = "ecd1c359ef0c3e0c9911b014b884376a10f6ed5b"      # r1's namespace tree at its final head
 LOCK_COMMIT = "2a03e838498ab8a8c1c61b9a142ba45adb941592"
 LOCK_FP = "377057bef1d1f21be4db38488235596c0e4134bb75ffdced08e667e6c48cc8db"
 PRODUCER = ["impl/srk_kernel.py", "impl/srk_float.py", "impl/srk_envelope.py", "impl/srk_certify.py"]
 R5_PATH = "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json"
 R5_BLOB = "f978eeb6b41188eabaf3c6d590c9178d711f1ce6"
 BAND = (F(6, 5), F(13, 5))   # q309: literal-ok (the quarantine band definition, used only to classify)
-IMMUTABLE = ["governance/OWNER_DECISIONS_P309_VERBATIM.md", "governance/OWNER_RULINGS_2_P309_VERBATIM.md",
-             "config/FORMAL_QUARANTINE_P309.json", "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309.md",
-             "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309_EXEC_LEDGER.jsonl", "reviews/REVIEW_U2_CHECK_P309.md",
-             "reviews/REVIEW_U2_CHECK_P309_EXEC_LEDGER.jsonl", "governance/U2_CORRECTED_PROPOSITION.md",
-             "fc2/FC2_SPEC.md",
-             # R4 NB11: every committed brief and review, their ledgers, the owner's D5 decision, the FC2 spec rev. 2
-             # and its erratum, the incident record
-             "governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md", "governance/D5_OWNER_RATIFICATION_REQUEST_P309.md",
-             "governance/INCIDENT_P309F_01_FC2_REV1_INSTRUCTION.md", "governance/briefs_recovered/AGENT_BRIEFS_TRANSCRIPT.jsonl",
-             "reviews/BRIEF_INCIDENT_INDEPENDENCE_P309.md", "reviews/BRIEF_U2_CHECK_P309.md",
-             "reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR.md", "reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR_FOLLOWUP_1.md",
-             "reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR_FOLLOWUP_2.md", "reviews/BRIEF_DELTA_INCIDENT_P309.md",
-             "reviews/BRIEF_PREFREEZE_R4_P309.md", "reviews/REVIEW_DELTA_INCIDENT_P309.md",
-             "reviews/REVIEW_DELTA_INCIDENT_P309_EXEC_LEDGER.jsonl", "reviews/REVIEW_PREFREEZE_R4_P309.md",
-             "reviews/REVIEW_PREFREEZE_R4_P309_EXEC_LEDGER.jsonl", "fc2/FC2_SPEC_R2.md",
-             # R4 follow-up: its review, ledger extract and mutant suite; the brief; the report to the owner
-             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309.md", "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309_EXEC_LEDGER.jsonl",
-             "reviews/R4_FOLLOWUP_D5_MUTANTS.py.txt", "reviews/BRIEF_PREFREEZE_R4_FOLLOWUP_P309.md",
-             # R4 follow-up 2: its review, ledger extract and mutant suites; the delta-3 review and its ledger
-             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309.md",
-             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309_EXEC_LEDGER.jsonl", "reviews/R4_FOLLOWUP2_MUTANTS.py.txt",
-             "reviews/REVIEW_DELTA3_INCIDENT_P309.md", "reviews/REVIEW_DELTA3_INCIDENT_P309_EXEC_LEDGER.jsonl",
-             # R4 follow-up 3 and the delta-4 review, each with its ledger extract
-             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309.md",
-             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309_EXEC_LEDGER.jsonl",
-             "reviews/REVIEW_DELTA4_INCIDENT_P309.md", "reviews/REVIEW_DELTA4_INCIDENT_P309_EXEC_LEDGER.jsonl",
-             # R4 follow-up 4 and the delta-5 review, each with its ledger extract
-             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_4_P309.md",
-             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_4_P309_EXEC_LEDGER.jsonl",
-             "reviews/REVIEW_DELTA5_INCIDENT_P309.md", "reviews/REVIEW_DELTA5_INCIDENT_P309_EXEC_LEDGER.jsonl"]
+# r2's own preserved records (unchanged since their first r2 commit)
+IMMUTABLE = ["governance/OWNER_INSTRUCTIONS_R2_VERBATIM.md", "governance/BRIEF_R2_PLAN_REVIEW.md",
+             "governance/REVIEW_R2_PLAN.md", "governance/REVIEW_R2_PLAN_EXEC_LEDGER.jsonl",
+             "governance/BRIEF_R2_PLAN_FOLLOWUP_1.md", "governance/REVIEW_R2_PLAN_FOLLOWUP_1.md",
+             "governance/REVIEW_R2_PLAN_FOLLOWUP_1_EXEC_LEDGER.jsonl", "governance/BRIEF_R2_VERIFIER_AUTHOR_1.md",
+             "verify/R2_VERIFIER_CHANGES_REPORT.md", "verify/R2_VERIFIER_EXEC_LEDGER.jsonl"]
+# r2's byte copies of r1's immutable governance records (step 3a): unchanged in r2 AND equal to r1's blob.  r1's
+# config/FORMAL_QUARANTINE_P309.json is not here: r2's copy carries the relocation map; r1's original is covered by A7
+IMMUTABLE_COPIES = ["governance/OWNER_DECISIONS_P309_VERBATIM.md", "governance/OWNER_RULINGS_2_P309_VERBATIM.md",
+                    "governance/U2_CORRECTED_PROPOSITION.md", "fc2/FC2_SPEC.md", "fc2/FC2_SPEC_R2.md",
+                    "governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md",
+                    "governance/D5_OWNER_RATIFICATION_REQUEST_P309.md",
+                    "governance/INCIDENT_P309F_01_FC2_REV1_INSTRUCTION.md",
+                    "governance/briefs_recovered/AGENT_BRIEFS_TRANSCRIPT.jsonl"]
 # the append-only documents (FC2_SPEC_R2_ERRATUM_1, ERRATA_FORMAL, P309_REV2C_AMENDMENTS, D5_SITE_BACKSTOP_REPORT, the
 # qualification-review brief with its addenda) are not "unchanged since
 # their first commit"; after the freeze they are fixed like every frozen-directory file (QC13, check_grant)
@@ -103,13 +92,14 @@ def run(label: str) -> tuple:
     detail["ledger_lines"] = len(rows)
     detail["band_hits"] = hits[:5]
     imm = {}
-    for rel in IMMUTABLE:
+    for rel in IMMUTABLE + IMMUTABLE_COPIES:
         first = git("log", "--diff-filter=A", "--format=%H", "--", NS_PREFIX + rel).split()
         first = first[-1] if first else None
         now = git("rev-parse", f"HEAD:{NS_PREFIX}{rel}")
         then = git("rev-parse", f"{first}:{NS_PREFIX}{rel}") if first else None
         wt = hashlib.sha1(b"blob %d\0" % len((FNS / rel).read_bytes()) + (FNS / rel).read_bytes()).hexdigest()
-        imm[rel] = {"first_commit": first, "unchanged": now == then == wt}
+        r1 = git("rev-parse", f"{R2_BASE}:{R1_PREFIX}/{rel}") if rel in IMMUTABLE_COPIES else now
+        imm[rel] = {"first_commit": first, "unchanged": now == then == wt == r1}
     res["A3_immutable_governance"] = all(v["unchanged"] for v in imm.values())
     detail["immutable"] = imm
     sc = subprocess.run([sys.executable, str(FNS / "code" / "p309_scan.py")], capture_output=True, text=True)
@@ -128,10 +118,12 @@ def run(label: str) -> tuple:
     tree = git("ls-tree", "-r", "HEAD", "--name-only").splitlines()
     res["A6_r5_unchanged_no_r6"] = (git("rev-parse", f"HEAD:{R5_PATH}") == R5_BLOB
                                     and not any(re.search(r"COVERAGE_MAP_R6", p, re.I) for p in tree))
-    changed = git("diff", "--name-only", BASE, "HEAD").splitlines()
+    changed = git("diff", "--name-only", R2_BASE, "HEAD").splitlines()
     outside = [p for p in changed if not p.startswith(NS_PREFIX)]
     research_changed = git("diff", "--name-only", BASE, "HEAD", "--", RNS_PREFIX).splitlines()
-    res["A7_formal_namespace_only_research_unchanged"] = not outside and not research_changed
+    r1_tree = git("rev-parse", f"HEAD:{R1_PREFIX}")
+    res["A7_formal_namespace_only_research_unchanged"] = not outside and not research_changed and r1_tree == R1_TREE
+    detail["r1_tree"] = r1_tree
     detail["outside"] = outside[:5]
     refs = git("for-each-ref", "--format=%(refname)").splitlines()
     odd = [r for r in refs if not re.match(r"^refs/(heads|remotes|tags)/|^refs/stash$", r)]

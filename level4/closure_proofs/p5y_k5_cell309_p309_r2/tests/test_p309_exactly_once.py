@@ -945,10 +945,10 @@ if __name__ == "__main__":
     leaked = []
     for p in sorted(SCRATCH.iterdir()):
         try:
-            leaked += [r for r in sh(p, "for-each-ref", "--format=%(refname)").split() if r.startswith(G._PROD_NAMESPACE)]
+            leaked += [r for r in sh(p, "for-each-ref", "--format=%(refname)").split() if r.startswith(G._FORBIDDEN_NAMESPACES)]
         except RuntimeError:
             pass
-    leaked += [r for r in sh(REPO, "for-each-ref", "--format=%(refname)").split() if r.startswith(G._PROD_NAMESPACE)]
+    leaked += [r for r in sh(REPO, "for-each-ref", "--format=%(refname)").split() if r.startswith(G._FORBIDDEN_NAMESPACES)]
     res["Z_no_production_ref_anywhere"] = {"pass": not leaked, "got": leaked}
     ok = all(v.get("pass") for v in res.values())
     out = {"utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "flows": len(res),

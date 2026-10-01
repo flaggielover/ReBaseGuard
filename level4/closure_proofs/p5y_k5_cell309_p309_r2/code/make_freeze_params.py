@@ -162,19 +162,39 @@ DISCLOSED_LIABILITIES = [
     "before the freeze record is development (the pre-freeze dry runs); a departure from E6's letter (delta-3 G5; "
     "formal erratum FE-11)",
 ]
-REVIEWS = {
-    "incident_independence": (NS + "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309.md", "## 10. Conditions"),
-    "u2_check": (NS + "reviews/REVIEW_U2_CHECK_P309.md", "## 8. Conditions"),
-    "delta_incident_independence": (NS + "reviews/REVIEW_DELTA_INCIDENT_P309.md", "## 7. Conditions"),
-    "prefreeze_r4": (NS + "reviews/REVIEW_PREFREEZE_R4_P309.md", "## 7. Conditions"),
-    "prefreeze_r4_followup": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309.md", "## Conditions"),
-    "delta2_incident_independence": (NS + "reviews/REVIEW_DELTA2_INCIDENT_P309.md", "## Conditions"),
-    "prefreeze_r4_followup_2": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309.md", "## Conditions"),
-    "delta3_incident_independence": (NS + "reviews/REVIEW_DELTA3_INCIDENT_P309.md", "## Conditions"),
-    "prefreeze_r4_followup_3": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309.md", "## Conditions"),
-    "delta4_incident_independence": (NS + "reviews/REVIEW_DELTA4_INCIDENT_P309.md", "## Conditions"),
-    "prefreeze_r4_followup_4": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_4_P309.md", "## Conditions"),
-    "delta5_incident_independence": (NS + "reviews/REVIEW_DELTA5_INCIDENT_P309.md", "## Conditions"),
+# r2 (successor campaign p5y_k5_cell309_p309_r2): disclosures added for r2; r1's list above is inherited verbatim
+R2_DISCLOSED_LIABILITIES = [
+    "r1's single official qualification FAILED (QC11: the harness based its sandboxes on the post-freeze HEAD; the "
+    "host container rebooted during QC_D5); r1 stopped at its failure boundary with no Q, no review and no grant; "
+    "r2 is a successor, not a retry (owner, 2026-10-01); r1's records are inherited unchanged",
+    "r2 changes infrastructure only (relocation, P309_SCRATCH_ROOT, the QC11 sandbox base rule, Q-HOST, the host "
+    "package, the topology drill); the scientific object is inherited byte for byte (plan R2; addenda 1-2; the "
+    "delta review's equivalence proof P8)",
+    "r1-era events listed for owner acknowledgement under OD-R2-0 (addendum 2, F6): FE-1..FE-11, P309F-01, the "
+    "unreviewed placeholder allowlist entries (D3), the 22:41:12Z reboot, the postmortem reviewer's cell-307 hashing "
+    "disclosure, briefs issued by message only",
+    "OD-R2-1 implemented provisionally as option (b) (the r2 ref names) before the owner's decision (addendum 2, F7)",
+]
+# r2 (addendum 1, P2): r1's reviews are INHERITED and read at r1's own, unchanged paths (r1's namespace tree is
+# checked equal to ecd1c359 by QC13, the self-audit and the checkpoint tool); r2's own reviews are listed in R2_REVIEWS
+R1NS = "level4/closure_proofs/p5y_k5_cell309_p309_r1/"   # inherited r1 records only (read, never written)
+INHERITED_REVIEWS = {
+    "incident_independence": (R1NS + "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309.md", "## 10. Conditions"),
+    "u2_check": (R1NS + "reviews/REVIEW_U2_CHECK_P309.md", "## 8. Conditions"),
+    "delta_incident_independence": (R1NS + "reviews/REVIEW_DELTA_INCIDENT_P309.md", "## 7. Conditions"),
+    "prefreeze_r4": (R1NS + "reviews/REVIEW_PREFREEZE_R4_P309.md", "## 7. Conditions"),
+    "prefreeze_r4_followup": (R1NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309.md", "## Conditions"),
+    "delta2_incident_independence": (R1NS + "reviews/REVIEW_DELTA2_INCIDENT_P309.md", "## Conditions"),
+    "prefreeze_r4_followup_2": (R1NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309.md", "## Conditions"),
+    "delta3_incident_independence": (R1NS + "reviews/REVIEW_DELTA3_INCIDENT_P309.md", "## Conditions"),
+    "prefreeze_r4_followup_3": (R1NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309.md", "## Conditions"),
+    "delta4_incident_independence": (R1NS + "reviews/REVIEW_DELTA4_INCIDENT_P309.md", "## Conditions"),
+    "prefreeze_r4_followup_4": (R1NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_4_P309.md", "## Conditions"),
+    "delta5_incident_independence": (R1NS + "reviews/REVIEW_DELTA5_INCIDENT_P309.md", "## Conditions"),
+}
+R2_REVIEWS = {
+    "r2_plan": (NS + "governance/REVIEW_R2_PLAN.md", "## Conditions"),
+    "r2_plan_followup_1": (NS + "governance/REVIEW_R2_PLAN_FOLLOWUP_1.md", "## Conditions"),
 }
 
 
@@ -201,14 +221,14 @@ def section(text: str, heading: str | None) -> str | None:
 def build() -> dict:
     docs = {k: {"path": v, "git_blob": blob(v)} for k, v in DOCS.items()}
     reviews = {}
-    for k, (rel, head) in REVIEWS.items():
+    for k, (rel, head) in {**INHERITED_REVIEWS, **R2_REVIEWS}.items():
         p = REPO / rel
         if not p.exists():
             raise SystemExit(f"review missing at the freeze: {rel}")
         t = p.read_text()
         lines = t.splitlines()
         reviews[k] = {"path": rel, "git_blob": blob(rel), "verdict_lines_verbatim": lines[1:3],
-                      "conditions_verbatim": section(t, head)}
+                      "conditions_verbatim": section(t, head), "inherited_from_r1": k in INHERITED_REVIEWS}
     u2 = (REPO / DOCS["u2_corrected_proposition_r2"]).read_text()
     quote = "\n".join(l[2:] if l.startswith("> ") else l[1:] for l in u2.splitlines() if l.startswith(">"))
     driver = (FNS / "code" / "p309_driver.py").read_bytes()
@@ -336,7 +356,7 @@ def build() -> dict:
                "withdrawn_wording": "P309 uses no P3-derived quantity (withdrawn as false)"},
         "independence_statement": "temporal and parametric independence only (incident review C1); route choice and "
                                   "motivation are NOT independent (MEDIUM-HIGH, upper end)",
-        "disclosed_liabilities": DISCLOSED_LIABILITIES,
+        "disclosed_liabilities": DISCLOSED_LIABILITIES + R2_DISCLOSED_LIABILITIES,
         "efficacy": "UNKNOWN BY DESIGN; no decoy output is used to predict Gamma309 or SRK's efficacy at 309",
         "proposed_execution_host": {"description": "this isolated cloud environment (rev. 2c A14)",
                                     "host_id_sha256": G.host_id()},

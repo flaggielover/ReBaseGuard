@@ -69,6 +69,7 @@
  "amendment_rule": "adding a file or a site requires a reviewed amendment of this file before the freeze",
  "production_tokens": [
   "refs/p5y-k5-cell309-p309-r2",
+  "refs/p5y-k5-cell309-p309-r1",
   "target-consumed",
   "pending-result"
  ],
@@ -189,9 +190,34 @@
  "ref_mutation_rule": "owner D5: a git call with a ref-moving verb is allowed only inside an exactly-once site or a function listed here by file, qualified name, AST sha256 and reason; entries are added only by review, and code/p309_scan_pins.py refreshes the hashes of listed entries before the freeze only (never the exactly-once sites)",
  "token_definitions": [
   {
+   "file": "code/p309_guard.py",
+   "constant": "_PRIOR_NAMESPACE",
+   "reason": "r2 addendum 2, F1 / P18: r1's production ref namespace, kept forbidden; used ONLY to refuse (TestContext) and in the leak checks through _FORBIDDEN_NAMESPACES; never a ref operand of a mutating verb"
+  },
+  {
    "file": "verify/scoped_sandbox.py",
-   "constant": "_FORBIDDEN_REF_PREFIX",
-   "reason": "the verifier author's sandbox helper: the production ref namespace, used ONLY to refuse any such ref in a sandbox (module-level constant)"
+   "constant": "_FORBIDDEN_REF_PREFIX_R1",
+   "reason": "the verifier author's sandbox helper: r1's production ref namespace, used ONLY to refuse any such ref in a sandbox (module-level constant; r2 V2)"
+  },
+  {
+   "file": "verify/scoped_sandbox.py",
+   "constant": "_FORBIDDEN_REF_PREFIX_R2",
+   "reason": "the verifier author's sandbox helper: r2's production ref namespace, used ONLY to refuse any such ref in a sandbox (module-level constant; r2 V2)"
+  },
+  {
+   "file": "verify/srk_verify_indep_scoped.py",
+   "constant": "PRIOR_PRODUCTION_REF_NAMESPACE",
+   "reason": "the verifier author's variant: r1's production ref namespace, used ONLY to refuse a sandbox that holds such a ref (r2 V2; addendum 2, F1)"
+  },
+  {
+   "file": "tests/test_verify_scoped.py",
+   "constant": "_R1_NAMESPACE",
+   "reason": "the verifier author's V2 static test: the expected r1 namespace value, compared only, never a ref operand"
+  },
+  {
+   "file": "tests/test_verify_scoped.py",
+   "constant": "_R2_NAMESPACE",
+   "reason": "the verifier author's V2 static test: the expected r2 namespace value, compared only, never a ref operand"
   }
  ],
  "process_policy": {
