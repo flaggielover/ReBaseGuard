@@ -69,6 +69,17 @@ ALLOW = [
      "rev. 2b text on decisions the owner has since taken (OWNER_DECISIONS_P309_VERBATIM); rev. 2c governs"),
     ("protocol_prep/P309_FORMAL_PACKAGE.md", r"owner (decides|to decide)",
      "rev. 2b text on decisions the owner has since taken; rev. 2c governs"),
+    # r2 (review P16: every allowed hit is listed in the output for the pre-freeze reviewer to confirm)
+    ("code/p309_topology_drill.py", r"placeholder", "r2: names the placeholder check (code/p309_placeholder_check.py) "
+                                                   "that the topology drill runs in its clone before F'"),
+    ("governance/R2_PLAN_ADDENDUM_1.md", r"placeholder", "r2: P16's rule text about this check's allowlist (not an "
+                                                        "open decision)"),
+    ("governance/R2_PLAN_ADDENDUM_2.md", r"placeholder", "r2: F6's disclosure of r1's unreviewed placeholder allowlist "
+                                                        "entries (not an open decision)"),
+    ("governance/REVIEW_R2_PLAN.md", r"placeholder", "r2: the plan reviewer's condition P16 about this check's "
+                                                    "allowlist (preserved review text)"),
+    ("governance/REVIEW_R2_PLAN_FOLLOWUP_1.md", r"placeholder", "r2: the reviewer's F6 list item about r1's placeholder "
+                                                              "allowlist entries (preserved review text)"),
 ]
 
 
