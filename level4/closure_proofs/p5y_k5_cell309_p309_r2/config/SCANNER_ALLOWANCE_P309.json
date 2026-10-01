@@ -1064,7 +1064,7 @@
    {
     "file": "code/p309_launch.py",
     "function": "main",
-    "ast_sha256": "6f6657bd66d5a6765d7e1df7900d3bb0500fd0e43d5e8c302da233e2de515882",
+    "ast_sha256": "e90eab771f55e92fad9a0abd246d9b83922d65e1b8e81dd0e41c5460523b75a4",
     "permits": [
      "process"
     ],
@@ -1119,7 +1119,7 @@
    {
     "file": "code/p309_host.py",
     "function": "qhost_monitor",
-    "ast_sha256": "eaeeb5c405db91a69713a4cdeea45269ec761988b398e3e86bc5292dd7b06ab7",
+    "ast_sha256": "c8dd8b6244dc4f684092378d809ba49513fd35af5e434308627c683578ad491d",
     "permits": [
      "signal",
      "proc_read"
@@ -1129,7 +1129,7 @@
    {
     "file": "code/p309_host.py",
     "function": "kill_own_descendants",
-    "ast_sha256": "c478e9891f637d4663614940bdab241c0b5a633ab0b5e88cb9b221f71e349c53",
+    "ast_sha256": "1cf09cf46185b48fe71e114b0d47ad595186c3bd8e25d7b844de4aa8576c88b0",
     "permits": [
      "signal",
      "proc_read"
@@ -1193,7 +1193,7 @@
    {
     "file": "code/p309_host.py",
     "function": "_children_map",
-    "ast_sha256": "0af8bd2f3f9933d0f3d1415569b422e1afef5ca3d7a70a7ceb59515ab4be5f2d",
+    "ast_sha256": "a93ee9e6575488f683013360449005464306f7836d5f1f943065ea689780c298",
     "permits": [
      "proc_read"
     ],
@@ -1256,11 +1256,11 @@
    {
     "file": "tests/test_p309_host_controls.py",
     "function": "case_k01",
-    "ast_sha256": "50dd467a98dafb3316b9d065b625286041b1bba1b90535fe2f779f5348f35343",
+    "ast_sha256": "3a1d5579ec3efa48fb50956e50697e1894d816ca7f4328e6077a6ff60410d767",
     "permits": [
      "process"
     ],
-    "reason": "r2 delta review C5: runs the literal TREE program with this environment plus P309_TEST_CODE; TREE builds a TEST process tree and calls kill_own_descendants on it"
+    "reason": "r2 delta review C5 / follow-up FU2: runs the literal TREE program with this environment plus P309_TEST_CODE, P309_TEST_LEAF and P309_TEST_FORKER (the literal LEAF and FORKER programs); TREE builds a TEST tree, two of whose members keep starting TEST children during the call, and calls kill_own_descendants on it; an outside TEST process (outside()) must stay untouched; every process carries a random TEST token"
    },
    {
     "file": "verify/srk_verify_indep_scoped.py",
@@ -1270,6 +1270,79 @@
      "signal"
     ],
     "reason": "r2 delta review A7 (registration only; the verifier variant is unchanged): pool.terminate() of the verifier's own multiprocessing pool, on its own worker processes"
+   },
+   {
+    "file": "tests/test_p309_host_controls.py",
+    "function": "case_a01",
+    "ast_sha256": "f1f3dd4d275d339aa0958e09ca63c83d05b5912b4e625971fd60a5717beebacd",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 follow-up FU2 (b): runs the literal ABORT program with this environment plus P309_TEST_CODE, P309_TEST_DIR (a TEST directory under P309_SCRATCH_ROOT), P309_TEST_LEAF and P309_TEST_FORKER; ABORT installs the runner's own _qhost_abort with the attempt and the ledger pointed at that TEST directory (label host_rerun: nothing is written in qualification/), starts a real monitor with a failing baseline, and must exit 3 after killing its TEST tree"
+   },
+   {
+    "file": "tests/test_p309_host_controls.py",
+    "function": "live_with",
+    "ast_sha256": "d125146c6248e2f48fa578dac70aee4f8023d3f986f2fda5e214de46dceead58",
+    "permits": [
+     "proc_read"
+    ],
+    "reason": "r2 follow-up FU2: reads /proc/<pid>/cmdline and stat to find live processes carrying a TEST token (read-only)"
+   },
+   {
+    "file": "tests/test_p309_host_controls.py",
+    "function": "in_unit",
+    "ast_sha256": "751f5b48accbd70929a9f758d4a1fec4446e6ab29c385a3b800dfada9677c586",
+    "permits": [
+     "proc_read"
+    ],
+    "reason": "r2 delta review C11: reads /proc/self/cgroup (read-only)"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "_start_time",
+    "ast_sha256": "07c9ee6b27de816be427d4ee9d92e1795bfa7cf8122f161f23eb3219c40504ab",
+    "permits": [
+     "proc_read"
+    ],
+    "reason": "r2 follow-up V7: /proc/<pid>/stat start time, so that kill_own_descendants never signals a reused pid"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "exclusion_gate",
+    "ast_sha256": "9dde2bdbafe678f2f1ccc8f04cde79da680d2c069d7fb966298ca13881dc1b98",
+    "permits": [
+     "proc_read"
+    ],
+    "reason": "r2 follow-up V6 (register): the gate reads /proc through proc_access, processes and mem_available_gb, and the load average"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "durability_preflight",
+    "ast_sha256": "89d9d2d6b0d8092cc77e33afb438500ff4123280652261a5fa59778c6af2917e",
+    "permits": [
+     "proc_read"
+    ],
+    "reason": "r2 follow-up V6 (register): reads /proc/1/comm and, through provenance, /proc clocks and ids"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "qhost_preflight",
+    "ast_sha256": "fa14832aa6917ca589c588ff050a1c1ba0a2cf8c3452a68d691f47f4d96852be",
+    "permits": [
+     "proc_read"
+    ],
+    "reason": "r2 follow-up V6 (register): reads /proc/self/cgroup and, through p309_host, the unit properties and provenance"
+   },
+   {
+    "file": "tests/test_p309_host_controls.py",
+    "function": "kill_token",
+    "ast_sha256": "db88dd823424070d99e0a91d07f26c3e27243796a535ef1ec801c77903102162",
+    "permits": [
+     "proc_read",
+     "signal"
+    ],
+    "reason": "r2 follow-up FU2: cleanup after a failed K01/A01 run; SIGKILLs only live processes whose argv carries the run's random TEST token (only processes the test itself started carry it)"
    }
   ],
   "git_forbidden_options_note": "global options before the verb are allowlisted (git_global_options_*; anything else, e.g. -c, --git-dir, --work-tree, --exec-path, --namespace, is a finding); after the verb the listed options (program execution, output files, templates, prefixes, remotes) are findings",
@@ -1404,7 +1477,8 @@
   "env_keys": [
    "GIT_INDEX_FILE"
   ],
-  "env_rule": "R4F2-C1(d): outside a reviewed runner, env / env_extra of a process or runner call is None, a fixed module-level environment, dict(<fixed>) or a dict literal (optionally **<fixed>) whose literal keys are in env_keys, or a local bound only to such values; os.environ mutation is a finding"
+  "env_rule": "R4F2-C1(d): outside a reviewed runner, env / env_extra of a process or runner call is None, a fixed module-level environment, dict(<fixed>) or a dict literal (optionally **<fixed>) whose literal keys are in env_keys, or a local bound only to such values; os.environ mutation is a finding",
+  "proc_read_note": "r2 follow-up V6: the permit 'proc_read' is a REGISTER of the functions that read /proc, kept for review; the scanner does not enforce it (no finding kind depends on it). Every listed entry is AST-pinned like the others, so a change to one shows as a stale pin until it is re-reviewed."
  },
  "t7_exemptions_rule": "R4 follow-up F1(c): a test file listed here (module AST sha256, the exempted QC12 T7 rules, a reason) is exempt from exactly those rules; any change to the file's AST voids the exemption; entries are added only by review, and code/p309_scan_pins.py refreshes the hashes of listed entries before the freeze only",
  "t7_exemptions": [

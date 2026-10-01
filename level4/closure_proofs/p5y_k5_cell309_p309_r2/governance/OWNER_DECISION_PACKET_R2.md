@@ -10,8 +10,10 @@ inferred from any instruction.** Every option is set out with its consequences.
 * the r2 delta review (`REVIEW_R2_DELTA.md`, conditions C1–C15) and `P309_R2_AMENDMENTS.md`;
 * `OWNER_INSTRUCTIONS_R2_VERBATIM.md` and `OWNER_INSTRUCTIONS_R2_MSG4_VERBATIM.md`.
 
-**Revision.** This revision applies the delta review's condition C1 (a)–(d). The first version was committed at
-`61731123` and is preserved in git history.
+**Revisions.**
+* The second revision applied the delta review's condition C1 (a)–(d).
+* This third revision applies the follow-up review's condition FU1 (`REVIEW_R2_DELTA_FOLLOWUP_1.md`) and its advisory V8.
+* Earlier versions are preserved in git history: the first at `61731123`, the second at `4e6a6901`.
 
 **State when written:**
 * HOST_SUITABILITY_PENDING;
@@ -184,8 +186,13 @@ qualification. Each starts with cell 308 idle (exclusion gate). If cell 308 need
 * `KillSignal=SIGKILL`, `SendSIGKILL=yes` and `TimeoutStopSec=10s`: a stopped P309 unit dies at once;
 * `ProtectSystem=strict`, `PrivateTmp`, `NoNewPrivileges`, and `InaccessiblePaths=` for each cell-308 root.
 
-The values are in the host configuration (`R2_AWS_SESSION_INSTRUCTIONS.md` §3.1). They are recorded in the launch
-record, and the runner checks them against `systemctl show` of its own unit.
+The values are in the host configuration (`R2_AWS_SESSION_INSTRUCTIONS.md` §3.1). The launcher sets all of them in its
+`systemd-run` command, and the launch record keeps that command, redacted. What the runner checks (follow-up FU1 (a)):
+* it **refuses** unless six properties of its own unit, read with `systemctl show`, have the launcher's values:
+  `Restart`, `KillMode`, `KillSignal`, `NoNewPrivileges`, `PrivateTmp` and `ProtectSystem`;
+* it does **not check** the others: `MemoryMax`, `OOMScoreAdjust`, `CPUWeight`, `IOWeight`, `SendSIGKILL`,
+  `TimeoutStopSec` and `InaccessiblePaths`. They are recorded in the attempt's `UNIT_PROPERTIES.json` (inaccessible
+  paths as sha256) for review.
 
 **The cell-308 identification data** (delta review C2). Two items come from the cell-308 operator:
 * the cell-308 campaign's uid or uids (`foreign_uids`);
@@ -212,7 +219,9 @@ materially affect host resources". Message 3 §8: do not interrupt cell 308; wai
 **The options:**
 * **(i)** A cell-308 heavy start during an r2 run makes Q-HOST record FAIL. The single attempt ends (P23) and no retry
   is possible. This matches §3 and §8 as written; it is what the code implements now. **Risk:** a third party can
-  consume r2's only attempt, so windows must be agreed with the cell-308 operator.
+  consume r2's only attempt. Because of the unattributable rule below, that third party need not be cell 308. So the
+  windows must be agreed **for the whole host**, with every non-root workload on it, not only with the cell-308
+  operator (follow-up FU1 (b)).
 * **(ii)** r2 continues at idle priority (lowest CPU and IO weight, OOM preference) while cell 308 runs heavy work.
   **This conflicts with the owner's existing strict-isolation instruction (message 3 §3) unless the owner amends
   it.** It would also need a code change and a re-review.
@@ -228,8 +237,13 @@ materially affect host resources". Message 3 §8: do not interrupt cell 308; wai
 | P309's own unit | excluded | excluded |
 
 The thresholds are the host configuration's `heavy_cpu_fraction`, `monitor_heavy_cpu_fraction` and
-`monitor_aggregate_cpu_fraction`. Option (i) consumes r2's attempt exactly when the right-hand column fires. Changing
-the values is a host-configuration change, recorded in the launch record.
+`monitor_aggregate_cpu_fraction`. Changing the values is a host-configuration change, recorded in the launch record.
+
+**When option (i) ends the attempt** (follow-up FU1 (b)). Any one of these ends it:
+* the right-hand column fires;
+* a continuity break: another boot, machine-id, hostname or instance, another interpreter or glibc, or a suspend;
+* the monitor dies before the stop, or leaves a gap over the interval plus `monitor_gap_tolerance_s` (60 s + 45 s);
+* the final sample at the stop shows another host.
 
 **What the P309 user can see** (delta review C1 (b), C2). P309 runs as a separate Unix user (P12). It cannot read
 another user's process working directory, so it recognises a cell-308 process only by:
@@ -238,12 +252,24 @@ another user's process working directory, so it recognises a cell-308 process on
 * or as **unattributable**: a process of another non-root user whose working directory cannot be read. It counts as
   foreign.
 
+**What "unattributable" covers** (follow-up FU1 (b)). It covers **every** non-root uid other than the P309 user's
+whose working directory P309 cannot read, not only cell 308's. That includes:
+* service accounts;
+* other users' login sessions;
+* the P309 session's own access user, if that is not the P309 user.
+
+Under option (i), any such process using more than 0.5 of a core, or all of them together using more than 1.0 core,
+ends the single attempt. `R2_AWS_SESSION_INSTRUCTIONS.md` §4.1 gives the procedure that keeps this in hand: run every
+P309 process as the P309 user, record the gate's rows, and agree the window with every workload they show.
+
 If cell 308 runs as root, its uid 0 must be listed, and every root process then counts as foreign. The cell-308
-operator must therefore supply the uids and job patterns. Without them, detection depends on the command line alone.
+operator must therefore supply the uids and job patterns. Without them, detection depends on the command line and on
+the unattributable rule alone.
 
 **How fast a run stops** (delta review C1 (b), C5):
-* **Detection** takes up to one sampling interval: 60 s, plus up to 20 s of sampling. A newly started cell-308 process
-  is judged one sample later, so detection can take up to about 140 s after it starts.
+* **Detection** takes up to about 80–90 s after a process starts (follow-up V8). A sample takes about 20 s plus the
+  cloud-metadata reads, and samples start every 60 s. A process that starts just after a sample's first snapshot is
+  judged at the next sample.
 * **Termination after detection** is immediate. The runner SIGKILLs its own process tree, which ignores SIGTERM, and
   records Q-HOST FAIL. The unit's `KillSignal=SIGKILL` stops anything left. In the worker-tier drill, the drill stops
   at once as well.

@@ -5,12 +5,16 @@ Starts ONE detached, fail-closed run in a transient systemd system unit, and nev
   python3 -B code/p309_launch.py --mode {drill|official|host-rerun} --host-config HOST.json [--print-only]
 
 Before anything starts it requires all of these, in order, refusing on the first that fails:
-  0. the unit user is not root, does not own a foreign root, and is not a configured cell-308 uid (A16);
+  0. the unit user is not root, does not own a foreign root, and is not a configured cell-308 uid (A16); no foreign
+     root contains whitespace, a quote or a backslash (follow-up V2: such a path could not be passed to systemd-run
+     or redacted reliably);
   1. P309_SCRATCH_ROOT is valid (P7); for an official run or a host re-run it must be empty;
   2. the durability preflight passes (owner message 1, section 5.B; P15);
   3. the cross-campaign exclusion gate passes (owner message 3, item 4; P9);
   4. the isolation check passes (owner message 3, items 2 and 5);
-  5. no unit named p309-r2-* is loaded (no stale or concurrent P309 run); a failing systemctl is a blocker (A16).
+  5. no unit named p309-r2-* is loaded (no stale or concurrent P309 run); a failing systemctl is a blocker (A16);
+  6. the launcher itself runs as the unit user, since the gate and the isolation check are evaluated as the
+     launcher's user (follow-up V4; a blocker, recorded like the others).
 
 The unit:
 * Its name is p309-r2-drill-<utc>, p309-r2-qualify-<utc> or p309-r2-hostrerun-<utc>, fixed by the mode. A drill can
@@ -93,6 +97,8 @@ def unit_user_check(launch: dict, cfg: dict) -> None:
         raise H.HostError("the unit user is root")
     if uid in (cfg.get("foreign_uids") or []):
         raise H.HostError("the unit user is a configured cell-308 uid")
+    if any(re.search(r"[\s'\"\\]", f) for f in cfg["foreign_roots"]):
+        raise H.HostError("a foreign root contains whitespace, a quote or a backslash")
     for f in cfg["foreign_roots"]:
         try:
             if os.stat(f).st_uid == uid:
@@ -167,6 +173,8 @@ def main() -> int:
     blockers = [k for k in ("preflight", "gate", "isolation") if not record[k]["pass"]]
     if units is None or units:
         blockers.append("p309_units_loaded" if units else "systemctl_unavailable")
+    if os.getuid() != pwd.getpwnam(launch["unit_user"]).pw_uid:
+        blockers.append("launcher_not_unit_user")
     record["blockers"] = blockers
     with open(out, "x") as fh:                    # exclusive: a launch record is never overwritten
         fh.write(json.dumps(record, indent=1, sort_keys=True, default=str) + "\n")

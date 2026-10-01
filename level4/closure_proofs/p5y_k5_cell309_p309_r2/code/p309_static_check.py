@@ -65,8 +65,8 @@ T13 (r2 review P6(f)) the production read path is pinned: the call closure of re
 T14 (r2 delta review C6; P10) the runner's Q-HOST order: in p309_qualify.py main() and host_rerun(), the qhost_preflight
    call (with the modes each needs) and every refusal return come before the exclusive os.mkdir of the attempt
    directory; the start line (RUN_START / HOST_START) is logged right after that mkdir; the Q-HOST monitor starts
-   before any item, mirror or decoy work, and is stopped before the summary; nothing returns between the mkdir and
-   the final return
+   before any item, mirror or decoy work, and is stopped before the summary; nothing returns, raises or exits
+   (sys.exit, os._exit, exit) between the mkdir and the final return (follow-up V1)
 """
 from __future__ import annotations
 
@@ -683,6 +683,8 @@ def t14(root: Path) -> dict:
         i_x = _stmt_index(fn, lambda n: _is_call(n, "stop_qhost_monitor"))
         i_w = _stmt_index(fn, lambda n: any(_is_call(n, w) for w in work))
         i_r = _stmt_index(fn, lambda n: isinstance(n, ast.Return))
+        i_x2 = _stmt_index(fn, lambda n: isinstance(n, ast.Raise) or (isinstance(n, ast.Call) and ast.unparse(n.func) in (
+            "sys.exit", "os._exit", "exit", "quit", "os.abort")))
         d = {"defined": True,
              "one_preflight_with_modes": len(pre) == 1 and len(i_q) == 1 and ast.unparse(pre[0].args[0]) == repr(modes)
              if pre and pre[0].args else False,
@@ -692,6 +694,7 @@ def t14(root: Path) -> dict:
             d.update({"preflight_before_mkdir": i_q[0] < m,
                       "start_logged_right_after_mkdir": i_l[0] == m + 1,
                       "refusal_returns_before_mkdir": all(i < m for i in i_r if i != len(fn.body) - 1),
+                      "no_raise_or_exit_after_mkdir": all(i < m for i in i_x2),
                       "final_statement_returns": isinstance(fn.body[-1], ast.Return),
                       "monitor_starts_before_work": len(i_s) == 1 and bool(i_w) and i_l[0] < i_s[0] < min(i_w),
                       "monitor_stopped_after_work": len(i_x) == 1 and bool(i_w) and i_x[0] > max(i_w)})

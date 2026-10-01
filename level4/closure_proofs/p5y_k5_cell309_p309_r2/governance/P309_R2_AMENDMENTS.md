@@ -146,3 +146,29 @@ and the driver's `check_bindings` compares both.
 control fires both new kinds.
 
 **Committed host controls** (C11): `tests/test_p309_host_controls.py`.
+
+## G. Corrections after the follow-up review (appended 2026-10-01; `REVIEW_R2_DELTA_FOLLOWUP_1.md` FU1, FU3)
+
+**G1. §D and §E: where the list of governance additions lives (FU3).** As first written, §D rule 2 forbade any
+modification of a governance file between D and F, while §E was to be appended to at the freeze step. Those two
+rules contradicted each other. They are made consistent as follows, and this section supersedes §E:
+1. **The list is a separate file.** The list of reviewed governance additions after D is kept in a separate file,
+   `governance/R2_GOVERNANCE_ADDITIONS_AFTER_D.json`, added at the freeze step. Because it is added, rule 2 allows
+   it. It is the one added path that rule 2 does not require to list itself.
+   * Every other path printed by `git diff --name-only --diff-filter=A D F -- FNS2/governance` must be in it, with
+     its sha256 and the review that read it.
+   * It names D and F by their commit ids.
+2. **This file is not changed between D and F.** §E stays as written: an empty list, superseded by G1.1.
+3. **No governance file is modified between D and F.** Anything that must be recorded in that interval goes into a
+   new file and is listed under G1.1. `git diff --name-status --diff-filter=MDRTCUX D F -- FNS2/governance` must print
+   nothing (rule 2 unchanged).
+
+**G2. §F: what the runner checks of its unit (FU1 (a)).** §F's phrase "the runner's Q-HOST preflight checks the
+unit's effective properties" means exactly this: it refuses unless `Restart`, `KillMode`, `KillSignal`,
+`NoNewPrivileges`, `PrivateTmp` and `ProtectSystem` have the launcher's values. `MemoryMax`, `OOMScoreAdjust`,
+`CPUWeight`, `IOWeight`, `SendSIGKILL`, `TimeoutStopSec` and `InaccessiblePaths` are set by the launcher's command and
+recorded in the attempt's `UNIT_PROPERTIES.json`, but not checked.
+
+**G3. §F: whom "unattributable" covers (FU1 (b)).** It covers every non-root uid other than the P309 user's whose
+working directory P309 cannot read, not only cell 308's: service accounts, other login sessions, and any access user
+other than the P309 user. The operating procedure is in `R2_AWS_SESSION_INSTRUCTIONS.md` §4.1.

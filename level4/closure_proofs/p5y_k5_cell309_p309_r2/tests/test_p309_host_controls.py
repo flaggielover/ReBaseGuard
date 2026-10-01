@@ -19,13 +19,22 @@ signal is the one the case S01 expects: the real Q-HOST monitor's SIGTERM to thi
   root; a drill record for a repository outside it; not inside the unit.  Each is refused by qhost_preflight, called
   in a child process with its own environment (this process's environment is never changed), and creates nothing in
   qualification/.
-* N01-N04 (P11, A16) the launcher's refusals: an unknown mode; missing launch settings; root as the unit user; and
-  --print-only blocked (no systemd here, or the drill's own unit loaded on the worker), with the record written under
-  the TEST scratch root and redacted (C9: the TEST foreign root appears only as its sha256).
+* N01-N05 (P11, A16; follow-up V2, V4) the launcher's refusals: an unknown mode; missing launch settings; root as
+  the unit user; --print-only blocked (no systemd here, or the drill's own unit loaded on the worker), with the record
+  written under the TEST scratch root and redacted (C9: the TEST foreign root appears only as its sha256), and the
+  launcher_not_unit_user blocker when the launcher's uid is not the unit user's; a foreign root with whitespace.
 * S01 (P10) the monitor FAIL -> SIGTERM path: a real monitor whose baseline names another boot signals this process,
   its parent, exactly once, writes one failed row and exits 1.
-* K01 (C5) kill_own_descendants: a TEST tree three deep, every process ignoring SIGTERM, is dead at once; the caller
-  survives.
+* K01 (C5; follow-up FU2) kill_own_descendants: a TEST tree three deep plus two descendants that keep starting
+  children during the call, every process ignoring SIGTERM, is dead at once; the caller survives, and a TEST process
+  outside the caller's tree is untouched.
+* A01 (C5; follow-up FU2 (b)) the runner's abort end to end, in a child process: the runner's own _qhost_abort is
+  installed with the attempt pointed at a TEST directory and the host_rerun label (nothing is written in
+  qualification/); a real monitor with a failing baseline signals it; the abort kills a SIGTERM-ignoring TEST tree
+  that keeps starting children, writes QHOST_FAIL.json and the failed result, logs its own row, and exits 3.  A TEST
+  process outside the child's tree is untouched.  The abort's row goes to the namespace ledger (a test may not
+  redirect the guard's ledger: QC12 T7), so this control first logs a row saying that the next row comes from this
+  TEST control and that no host re-run ran.
 * B01-B03 (C14) the manifest generator's runtime equals the driver's runtime_identity; check_bindings accepts it and
   refuses another glibc or another interpreter binary.
 """
@@ -48,27 +57,83 @@ import p309_host as H  # noqa: E402
 CODE = FNS / "code"
 R = {}
 BUSY = "import sys\nwhile True:\n    pass\n"                       # a TEST busy loop (no cell, no repository)
+LEAF = "import signal, time\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\ntime.sleep(600)\n"
 TREE = """
 import json, os, signal, subprocess, sys, time
 sys.path.insert(0, os.environ["P309_TEST_CODE"])
 import p309_host as H
+TOKEN = sys.argv[1]
 signal.signal(signal.SIGTERM, signal.SIG_IGN)
 LEAF = "import signal, time\\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\\ntime.sleep(600)\\n"
-MID = ("import signal, subprocess, sys, time\\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\\n"
-       "c = subprocess.Popen([sys.executable, '-c', 'import signal, time\\\\nsignal.signal(signal.SIGTERM, "
-       "signal.SIG_IGN)\\\\ntime.sleep(600)\\\\n'])\\nprint(c.pid, flush=True)\\ntime.sleep(600)\\n")
-m = subprocess.Popen([sys.executable, "-c", MID], stdout=subprocess.PIPE, text=True)
-leaf2 = subprocess.Popen([sys.executable, "-c", LEAF])
+FORKER = '''
+import signal, subprocess, sys, time
+signal.signal(signal.SIGTERM, signal.SIG_IGN)
+LEAF = "import signal, time\\\\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\\\\ntime.sleep(600)\\\\n"
+for _ in range(40):
+    subprocess.Popen([sys.executable, "-S", "-c", LEAF, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    time.sleep(0.005)
+time.sleep(600)
+'''
+MID = '''
+import signal, subprocess, sys, time
+signal.signal(signal.SIGTERM, signal.SIG_IGN)
+LEAF = "import signal, time\\\\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\\\\ntime.sleep(600)\\\\n"
+c = subprocess.Popen([sys.executable, "-S", "-c", LEAF, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+print(c.pid, flush=True)
+time.sleep(600)
+'''
+m = subprocess.Popen([sys.executable, "-S", "-c", MID, TOKEN], stdout=subprocess.PIPE, text=True)
+leaf2 = subprocess.Popen([sys.executable, "-S", "-c", LEAF, TOKEN], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+forkers = [subprocess.Popen([sys.executable, "-S", "-c", FORKER, TOKEN], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) for _ in range(2)]
 leaf1 = int(m.stdout.readline())
-time.sleep(0.5)
-tree = [m.pid, leaf1, leaf2.pid]
+time.sleep(0.15)
 killed = H.kill_own_descendants()
 time.sleep(0.5)
-def dead(pid):
+def state(pid):
     st = H.read("/proc/%d/stat" % pid)
-    return st is None or st.rsplit(")", 1)[-1].split()[0] in ("Z", "X")
-print("TREE_RESULT " + json.dumps({"tree": tree, "killed": sorted(killed), "all_dead": all(dead(p) for p in tree),
-                                   "caller_alive": not dead(os.getpid())}))
+    return None if st is None else st.rsplit(")", 1)[-1].split()[0]
+live = []
+for p in os.listdir("/proc"):
+    if p.isdigit() and int(p) != os.getpid() and TOKEN in (H.read("/proc/%s/cmdline" % p) or "").split(chr(0)):
+        if state(int(p)) not in (None, "Z", "X"):
+            live.append(int(p))
+print("TREE_RESULT " + json.dumps({"killed": len(killed), "named_in_killed": all(x in killed for x in [m.pid, leaf1, leaf2.pid]
+                                   + [f.pid for f in forkers]), "live_with_token": live,
+                                   "caller_alive": state(os.getpid()) not in ("Z", "X")}))
+"""
+ABORT = """
+import json, os, signal, subprocess, sys, time
+from pathlib import Path
+sys.path[:0] = [os.environ["P309_TEST_CODE"]]
+import p309_qualify as QQ
+T = Path(os.environ["P309_TEST_DIR"])
+QQ.ATT["dir"], QQ.ATT["label"] = T / "attempt", "host_rerun"
+QQ.ATT["dir"].mkdir()
+QQ.QHOST["file"] = T / "QHOST_MONITOR.jsonl"
+signal.signal(signal.SIGTERM, QQ._qhost_abort)
+LEAF = "import signal, time\\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\\ntime.sleep(600)\\n"
+FORKER = '''
+import signal, subprocess, sys, time
+signal.signal(signal.SIGTERM, signal.SIG_IGN)
+LEAF = "import signal, time\\\\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\\\\ntime.sleep(600)\\\\n"
+for _ in range(40):
+    subprocess.Popen([sys.executable, "-S", "-c", LEAF, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    time.sleep(0.005)
+time.sleep(600)
+'''
+forkers = [subprocess.Popen([sys.executable, "-S", "-c", FORKER, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) for _ in range(2)]
+leaf = subprocess.Popen([sys.executable, "-S", "-c", LEAF, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+cfg = dict(QQ.H.load_config([]), foreign_uids=[4242])
+base = dict(QQ.H.provenance(cfg, with_imds=False), boot_id="TEST-another-boot")
+with open(str(QQ.QHOST["file"]), "w") as fh:
+    mon = subprocess.Popen([sys.executable, "-B", os.environ["P309_TEST_CODE"] + "/p309_host.py", "qhost-monitor",
+                            "--parent", str(os.getpid()), "--interval", "2"], stdin=subprocess.PIPE, stdout=fh,
+                           stderr=subprocess.STDOUT, universal_newlines=True)
+    mon.stdin.write(json.dumps({"cfg": cfg, "baseline": base}))
+    mon.stdin.close()
+time.sleep(120)
+print("ABORT_NOT_REACHED")
+sys.exit(9)
 """
 Q_CODE = """
 import json, os, sys
@@ -234,6 +299,10 @@ def case_n() -> None:
     t("N04b_record_redacted", bool(body) and str(froot) not in body and H.sha(str(froot)) in body,
       {"record": recs, "sha_present": H.sha(str(froot)) in body})
     t("N04c_record_binds_the_config_file", rec.get("host_config_file_sha256") == H.file_sha256(str(sr / "host.json")))
+    t("N04d_launcher_not_unit_user_is_a_blocker", "launcher_not_unit_user" in (rec.get("blockers") or []),
+      rec.get("blockers"))                      # this test never runs as the unit user it names ("nobody")
+    r5 = launcher("drill", dict(conf, foreign_roots=[str(froot) + " x"]), sr)
+    t("N05_foreign_root_with_whitespace_refused", r5["rc"] == 2 and "whitespace" in r5["out"], r5["out"][-200:])
 
 
 # --------------------------------------------------------------------------------------- S01 (P10)
@@ -264,17 +333,99 @@ def case_s01() -> None:
         signal.signal(signal.SIGTERM, old)
 
 
-# --------------------------------------------------------------------------------------- K01 (C5)
+# --------------------------------------------------------------------------------------- K01 (C5; FU2)
+def outside(token: str):
+    """one TEST process outside the tree under test, started by this process"""
+    return subprocess.Popen([sys.executable, "-S", "-c", LEAF, token], stdin=subprocess.DEVNULL)
+
+
+def live_with(token: str) -> list:
+    out = []
+    for p in os.listdir("/proc"):
+        if p.isdigit() and token in (H.read("/proc/%s/cmdline" % p) or "").split("\0"):
+            st = (H.read("/proc/%s/stat" % p) or "").rsplit(")", 1)[-1].split()
+            if st and st[0] not in ("Z", "X"):
+                out.append(int(p))
+    return out
+
+
+def kill_token(token: str) -> list:
+    """SIGKILL the live TEST processes that carry this run's random token: only processes this test started carry it"""
+    out = []
+    for pid in live_with(token):
+        try:
+            os.kill(pid, signal.SIGKILL)
+            out.append(pid)
+        except OSError:
+            pass
+    return out
+
+
 def case_k01() -> None:
-    env = dict(os.environ, P309_TEST_CODE=str(CODE))
-    p = subprocess.run([sys.executable, "-c", TREE], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE, universal_newlines=True, timeout=120, env=env)
-    res = {}
-    for line in p.stdout.splitlines():
-        if line.startswith("TREE_RESULT "):
-            res = json.loads(line[len("TREE_RESULT "):])
-    t("K01_sigterm_ignoring_tree_killed_at_once", p.returncode == 0 and res.get("all_dead") and res.get(
-        "caller_alive") and set(res.get("tree", [])) <= set(res.get("killed", [])), res or p.stderr[-400:])
+    nonce = os.urandom(6).hex()
+    tree_tok, out_tok = "TEST-K01-tree-" + nonce, "TEST-K01-outside-" + nonce
+    o = outside(out_tok)
+    try:
+        env = dict(os.environ, P309_TEST_CODE=str(CODE))
+        p = subprocess.run([sys.executable, "-c", TREE, tree_tok], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, universal_newlines=True, timeout=180, env=env)
+        res = {}
+        for line in p.stdout.splitlines():
+            if line.startswith("TREE_RESULT "):
+                res = json.loads(line[len("TREE_RESULT "):])
+        t("K01_sigterm_ignoring_forking_tree_killed_at_once", p.returncode == 0 and res.get("named_in_killed") and
+          res.get("live_with_token") == [] and res.get("caller_alive") and res.get("killed", 0) >= 5,
+          res or p.stderr[-400:])
+        t("K01b_outside_process_untouched", o.poll() is None and live_with(out_tok) == [o.pid])
+        t("K01c_no_tree_process_left", live_with(tree_tok) == [], live_with(tree_tok))
+    finally:
+        stop(o)
+        kill_token(tree_tok)                    # only on a failure is anything left to kill
+
+
+# --------------------------------------------------------------------------------------- A01 (C5; FU2 (b))
+def case_a01() -> None:
+    nonce = os.urandom(6).hex()
+    tree_tok, out_tok = "TEST-A01-tree-" + nonce, "TEST-A01-outside-" + nonce
+    d = scratch("A01_" + nonce)
+    d.mkdir(parents=True)
+    qdir = FNS / "qualification"
+    before = sorted(x.name for x in qdir.iterdir()) if qdir.exists() else None
+    ledger = FNS / "ledger" / "ZERO_TARGET_LEDGER.jsonl"
+    E.log("tests/test_p309_host_controls.py", "A01 (C5, follow-up FU2 (b)): the NEXT row, 'HOST_RERUN ABORTED BY "
+          "Q-HOST', is written by the runner's own _qhost_abort inside this TEST control's child process; no host "
+          "re-run ran and nothing is written in qualification/", klass="GOVERNANCE", notes="TEST control; attempt "
+          "pointed at a TEST directory; token " + nonce)
+    led_before = ledger.read_bytes() if ledger.exists() else b""
+    o = outside(out_tok)
+    try:
+        env = dict(os.environ, P309_TEST_CODE=str(CODE), P309_TEST_DIR=str(d))
+        p = subprocess.run([sys.executable, "-B", "-c", ABORT, tree_tok], stdin=subprocess.DEVNULL,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, timeout=300, env=env)
+        time.sleep(0.5)
+        fail = json.loads((d / "attempt" / "QHOST_FAIL.json").read_text()) if (d / "attempt" / "QHOST_FAIL.json").exists() else {}
+        res = json.loads((d / "attempt" / "QC10_HOST_RERUN.json").read_text()) if (
+            d / "attempt" / "QC10_HOST_RERUN.json").exists() else {}
+        led_after = ledger.read_bytes() if ledger.exists() else b""
+        rows = [json.loads(x) for x in led_after[len(led_before):].decode().splitlines() if x.strip()] if \
+            led_after.startswith(led_before) else None
+        mon = [json.loads(x) for x in (d / "QHOST_MONITOR.jsonl").read_text().splitlines() if x.startswith("{")] if (
+            d / "QHOST_MONITOR.jsonl").exists() else []
+        t("A01a_abort_exits_3", p.returncode == 3 and "ABORT_NOT_REACHED" not in p.stdout,
+          {"rc": p.returncode, "tail": (p.stdout + p.stderr)[-300:]})
+        t("A01b_abort_records_fail_and_result", fail.get("signal") == signal.SIGTERM and
+          fail.get("descendants_killed", 0) >= 3 and res.get("pass") is False and len(mon) == 1 and
+          mon[0]["pass"] is False, {"fail": fail, "result": res, "monitor_rows": len(mon)})
+        t("A01c_abort_logs_exactly_its_own_row", rows is not None and len(rows) == 1 and rows[0]["purpose"].startswith(
+            "HOST_RERUN ABORTED BY Q-HOST") and rows[0]["script"] == "code/p309_qualify.py" and
+          rows[0]["new_target_evaluations"] == 0, rows)
+        t("A01d_tree_dead_outside_untouched", live_with(tree_tok) == [] and o.poll() is None and
+          live_with(out_tok) == [o.pid], {"tree_live": live_with(tree_tok)})
+        after = sorted(x.name for x in qdir.iterdir()) if qdir.exists() else None
+        t("A01e_nothing_in_qualification", before == after, after)
+    finally:
+        stop(o)
+        kill_token(tree_tok)                    # only on a failure is anything left to kill
 
 
 # --------------------------------------------------------------------------------------- B (C14)
@@ -300,7 +451,7 @@ if __name__ == "__main__":
           "runner's Q-HOST refusals, the launcher's refusals, the monitor's SIGTERM path, kill_own_descendants, "
           "the C14 runtime binding", klass="GOVERNANCE", notes="TEST processes only, each killed and reaped; no "
           "other process signalled; no cell value")
-    for case in (case_p01, case_p02, case_q, case_n, case_s01, case_k01, case_b):
+    for case in (case_p01, case_p02, case_q, case_n, case_s01, case_k01, case_a01, case_b):
         try:
             case()
         except Exception as exc:  # noqa: BLE001 - a crashed case is a recorded FAIL

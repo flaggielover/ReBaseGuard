@@ -55,7 +55,7 @@ BURSTABLE = re.compile(r"^(t2|t3|t3a|t4g)\.")
 DEFAULTS = {"p309_repo": None, "p309_roots": [], "foreign_roots": [], "foreign_patterns": [r"cell[_-]?308"],
             "foreign_heavy_patterns": [], "load_baseline": 0.0, "load_margin": 0.5, "heavy_cpu_fraction": 0.05,
             "ram_floor_gb": 8, "disk_floor_gb": 40, "min_cpus": 4, "sample_s": 60.0, "suspend_tolerance_s": 5.0,
-            "monitor_heavy_cpu_fraction": 0.5, "monitor_aggregate_cpu_fraction": 1.0, "monitor_gap_tolerance_s": 30.0,
+            "monitor_heavy_cpu_fraction": 0.5, "monitor_aggregate_cpu_fraction": 1.0, "monitor_gap_tolerance_s": 45.0,
             "foreign_uids": [],
             "python_version": "3.11.15", "interpreter": None, "glibc": None,
             "branch": "refs/heads/claude/p5y-k5-cell309-p309-r2",  # q309: literal-ok (branch name, not a cell reference)
@@ -663,7 +663,7 @@ def qhost_monitor(cfg, baseline, parent, interval):
         cont = continuity(baseline, now, cfg)
         rows = processes(cfg, min(20.0, interval / 2))
         ok, busy, other = monitor_verdict(cont, rows, cfg)
-        sys.stdout.write(json.dumps({"utc": utc(), "t": round(time.time(), 3), "pass": ok, "continuity": cont["checks"], "instance_unverified": cont["instance_unverified"], "foreign_active_pids":
+        sys.stdout.write(json.dumps({"utc": utc(), "t": round(t0, 3), "pass": ok, "continuity": cont["checks"], "instance_unverified": cont["instance_unverified"], "foreign_active_pids":
                                      busy, "other_heavy_pids": other, "suspended_s": now.get("suspended_s"),
                                      "ntp_synchronized": now.get("ntp_synchronized")}, sort_keys=True) + "\n")
         sys.stdout.flush()
@@ -674,42 +674,57 @@ def qhost_monitor(cfg, baseline, parent, interval):
 
 
 def _children_map():
+    """parent pid -> [(child pid, start time)] from /proc (the start time is /proc/<pid>/stat field 22)"""
     kids = {}
     for p in os.listdir("/proc"):
         if p.isdigit():
             st = (read("/proc/%s/stat" % p) or "").rsplit(")", 1)[-1].split()
-            if len(st) > 1:
-                kids.setdefault(int(st[1]), []).append(int(p))
+            if len(st) > 19:
+                kids.setdefault(int(st[1]), []).append((int(p), st[19]))
     return kids
 
 
+def _start_time(pid):
+    st = (read("/proc/%d/stat" % pid) or "").rsplit(")", 1)[-1].split()
+    return st[19] if len(st) > 19 else None
+
+
 def kill_own_descendants():
-    """review C5: stop the calling process's own descendants at once, whatever signals they ignore.  First SIGSTOP the
-    whole tree (repeated until no new descendant appears, so none can fork away), then SIGKILL every stopped pid.
-    It never signals the caller itself or any process outside its tree.  Returns the pids signalled."""
+    """review C5 (follow-up FU2, V7): stop the calling process's own descendants at once, whatever signals they ignore.
+    Each round walks the WHOLE tree below the caller again, through descendants already stopped, and SIGSTOPs every
+    descendant not yet seen; a stopped process cannot fork, so the rounds end when a full walk finds nothing new.
+    Then every stopped pid is SIGKILLed, but only if its start time is still the one recorded when it was found (a
+    reused pid is never signalled).  It never signals the caller itself or any process outside its tree.  Returns the
+    pids signalled."""
     import signal as _signal
-    me, seen = os.getpid(), []
-    for _ in range(20):
-        kids, stack, new = _children_map(), [os.getpid()], []
+    me, seen = os.getpid(), {}
+    for _ in range(1000):
+        kids, stack, new = _children_map(), [me], []
         while stack:
-            for c in kids.get(stack.pop(), []):
-                if c != me and c not in seen and c not in new:
+            for c, t in kids.get(stack.pop(), []):
+                if c == me:
+                    continue
+                stack.append(c)                     # descend through every descendant, seen or not
+                if c not in seen:
+                    seen[c] = t
                     new.append(c)
-                    stack.append(c)
         for c in new:
             try:
                 os.kill(c, _signal.SIGSTOP)
             except OSError:
                 pass
-        seen += new
         if not new:
             break
-    for c in seen:
+    killed = []
+    for c, t in seen.items():
+        if _start_time(c) != t:                      # gone, or the pid was reused: never signal another process
+            continue
         try:
             os.kill(c, _signal.SIGKILL)
+            killed.append(c)
         except OSError:
             pass
-    return seen
+    return killed
 
 
 UNIT_RE = re.compile(r"/(p309-r2-(?:drill|qualify|hostrerun)-\d{8}T\d{6}Z)\.service$")

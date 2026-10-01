@@ -1,0 +1,199 @@
+{
+ "schema": "P309_R2_REPIN_LIST_SUPPLEMENT/1",
+ "supplements": "governance/R2_REPIN_LIST.json (51 rows) and R2_REPIN_LIST_SUPPLEMENT_1.json (48 rows), both unchanged",
+ "round": "repair round 2, after the follow-up review (FU2; advisories V1, V6, V7)",
+ "hash": "sha256 of ast.dump(<node>), CPython 3.11.15",
+ "compared": {
+  "before": "bbfc24f0:level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json (the commit the follow-up review read)",
+  "after": "level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json at the commit that adds this file",
+  "r1_at_F": "4c754a73767903a5ad5dddff725f1e173a0a6876:level4/closure_proofs/p5y_k5_cell309_p309_r1/config/SCANNER_ALLOWANCE_P309.json"
+ },
+ "unchanged_lists": {
+  "exactly_once_sites": true,
+  "backstop_pins": true,
+  "production_read_path_pins": true,
+  "production_tokens": true,
+  "planted_control_files": true,
+  "mutating_git_verbs": true,
+  "production_ref_namespace": true
+ },
+ "import_allowlist_additions": {
+  "code": [],
+  "tests": [],
+  "verify": []
+ },
+ "rows": [
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "_children_map",
+   "reviewed_bbfc24f0": "0af8bd2f3f9933d0f3d1415569b422e1afef5ca3d7a70a7ceb59515ab4be5f2d",
+   "now": "a93ee9e6575488f683013360449005464306f7836d5f1f943065ea689780c298",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 addendum 1 P4 / delta review A13: a /proc-reading function of the host package (read-only): /proc/<pid>/stat parent pids (for kill_own_descendants)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "_start_time",
+   "reviewed_bbfc24f0": null,
+   "now": "07c9ee6b27de816be427d4ee9d92e1795bfa7cf8122f161f23eb3219c40504ab",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 follow-up V7: /proc/<pid>/stat start time, so that kill_own_descendants never signals a reused pid"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "durability_preflight",
+   "reviewed_bbfc24f0": null,
+   "now": "89d9d2d6b0d8092cc77e33afb438500ff4123280652261a5fa59778c6af2917e",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 follow-up V6 (register): reads /proc/1/comm and, through provenance, /proc clocks and ids"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "exclusion_gate",
+   "reviewed_bbfc24f0": null,
+   "now": "9dde2bdbafe678f2f1ccc8f04cde79da680d2c069d7fb966298ca13881dc1b98",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 follow-up V6 (register): the gate reads /proc through proc_access, processes and mem_available_gb, and the load average"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "kill_own_descendants",
+   "reviewed_bbfc24f0": "c478e9891f637d4663614940bdab241c0b5a633ab0b5e88cb9b221f71e349c53",
+   "now": "1cf09cf46185b48fe71e114b0d47ad595186c3bd8e25d7b844de4aa8576c88b0",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "signal",
+    "proc_read"
+   ],
+   "reason_now": "r2 delta review C5: SIGSTOP then SIGKILL of the calling process's own descendants only (the /proc ppid tree below os.getpid(), never the caller or any other process); the runner calls it on a Q-HOST abort"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "qhost_monitor",
+   "reviewed_bbfc24f0": "eaeeb5c405db91a69713a4cdeea45269ec761988b398e3e86bc5292dd7b06ab7",
+   "now": "c8dd8b6244dc4f684092378d809ba49513fd35af5e434308627c683578ad491d",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "signal",
+    "proc_read"
+   ],
+   "reason_now": "r2 Q-HOST (P10): the one signal of the host package's monitor, os.kill(parent, SIGTERM) to its own parent (the P309 runner) on a failed sample, after which it returns; samples /proc through processes() and provenance()"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_launch.py",
+   "name": "main",
+   "reviewed_bbfc24f0": "6f6657bd66d5a6765d7e1df7900d3bb0500fd0e43d5e8c302da233e2de515882",
+   "now": "e90eab771f55e92fad9a0abd246d9b83922d65e1b8e81dd0e41c5460523b75a4",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 launcher: after the scratch-root, preflight, gate, isolation and loaded-unit checks pass and the launch record is written exclusively, runs ONE systemd-run argv built by unit_argv (unit name fixed by the mode; Restart=no; the hermetic environment) and never retries; no parameter (argv is read from sys.argv)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_qualify.py",
+   "name": "qhost_preflight",
+   "reviewed_bbfc24f0": null,
+   "now": "fa14832aa6917ca589c588ff050a1c1ba0a2cf8c3452a68d691f47f4d96852be",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 follow-up V6 (register): reads /proc/self/cgroup and, through p309_host, the unit properties and provenance"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "case_a01",
+   "reviewed_bbfc24f0": null,
+   "now": "f1f3dd4d275d339aa0958e09ca63c83d05b5912b4e625971fd60a5717beebacd",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 follow-up FU2 (b): runs the literal ABORT program with this environment plus P309_TEST_CODE, P309_TEST_DIR (a TEST directory under P309_SCRATCH_ROOT), P309_TEST_LEAF and P309_TEST_FORKER; ABORT installs the runner's own _qhost_abort with the attempt and the ledger pointed at that TEST directory (label host_rerun: nothing is written in qualification/), starts a real monitor with a failing baseline, and must exit 3 after killing its TEST tree"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "case_k01",
+   "reviewed_bbfc24f0": "50dd467a98dafb3316b9d065b625286041b1bba1b90535fe2f779f5348f35343",
+   "now": "3a1d5579ec3efa48fb50956e50697e1894d816ca7f4328e6077a6ff60410d767",
+   "r1_at_F": null,
+   "kind": "re-pinned (and permits/reason)",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 delta review C5 / follow-up FU2: runs the literal TREE program with this environment plus P309_TEST_CODE, P309_TEST_LEAF and P309_TEST_FORKER (the literal LEAF and FORKER programs); TREE builds a TEST tree, two of whose members keep starting TEST children during the call, and calls kill_own_descendants on it; an outside TEST process (outside()) must stay untouched; every process carries a random TEST token"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "in_unit",
+   "reviewed_bbfc24f0": null,
+   "now": "751f5b48accbd70929a9f758d4a1fec4446e6ab29c385a3b800dfada9677c586",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 delta review C11: reads /proc/self/cgroup (read-only)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "kill_token",
+   "reviewed_bbfc24f0": null,
+   "now": "db88dd823424070d99e0a91d07f26c3e27243796a535ef1ec801c77903102162",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read",
+    "signal"
+   ],
+   "reason_now": "r2 follow-up FU2: cleanup after a failed K01/A01 run; SIGKILLs only live processes whose argv carries the run's random TEST token (only processes the test itself started carry it)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "live_with",
+   "reviewed_bbfc24f0": null,
+   "now": "d125146c6248e2f48fa578dac70aee4f8023d3f986f2fda5e214de46dceead58",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 follow-up FU2: reads /proc/<pid>/cmdline and stat to find live processes carrying a TEST token (read-only)"
+  }
+ ]
+}

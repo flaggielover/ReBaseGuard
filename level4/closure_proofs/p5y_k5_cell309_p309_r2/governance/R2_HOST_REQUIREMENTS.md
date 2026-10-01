@@ -37,7 +37,7 @@ model is **shared host, exclusive heavy compute**:
 | glibc | pinned to the value recorded at the audit | `glibc_pinned` |
 | runtime binding | the freeze manifest pins the python version, glibc and the interpreter binary's sha256; the driver refuses any difference (delta review C14) | `check_bindings` (driver) |
 | launch privilege | a polkit rule for the P309 user's `p309-r2-*` transient system units (the code never uses sudo) | the launcher's start |
-| unit stop | `KillSignal=SIGKILL`, `SendSIGKILL=yes`, `TimeoutStopSec=10s` (the heavy jobs ignore SIGTERM; C5) | the runner's `qhost_preflight` (`systemctl show`) |
+| unit stop | `KillSignal=SIGKILL`, `SendSIGKILL=yes`, `TimeoutStopSec=10s` (the heavy jobs ignore SIGTERM; C5) | the launcher sets all three; the runner's `qhost_preflight` refuses unless `KillSignal` (with `Restart`, `KillMode`, `NoNewPrivileges`, `PrivateTmp`, `ProtectSystem`) has the launcher's value. `SendSIGKILL` and `TimeoutStopSec` are recorded, not checked (follow-up FU1 (a)) |
 | git | ≥ 2.32 | audit `tools.git` |
 | durability | no automatic reboot; upgrades held; no pending reboot | `no_automatic_reboot`, `upgrades_held`, `no_pending_reboot` |
 | cloud | instance metadata readable; no scheduled maintenance; not spot | `cloud_metadata_available`, `no_scheduled_maintenance`, `not_spot` |
@@ -98,7 +98,8 @@ recognised only by one of these:
 * **its uid:** `foreign_uids`. It is required: the gate fails while it is empty or holds the P309 user's uid;
 * **its command line:** `foreign_patterns` and `foreign_heavy_patterns`;
 * **as unattributable:** a process of another non-root user whose working directory cannot be read. It counts as
-  foreign.
+  foreign. It covers every such user: service accounts, other login sessions, and any access user other than the
+  P309 user. The windows are therefore agreed for the whole host (`R2_AWS_SESSION_INSTRUCTIONS.md` §4.1).
 
 If cell 308 runs as root, uid 0 must be listed, and then every root process counts as foreign. Kernel threads never
 count.
@@ -109,7 +110,7 @@ count.
 |---|---|---|
 | one foreign or unattributable process | blocks above 0.05 of a core, on a heavy pattern, or if it appeared during the 60 s sample | fails above 0.5 of a core, or on a heavy pattern; a newly seen process is judged one sample later |
 | all of them together | the load must be at most baseline + 0.5 | fails above 1.0 core |
-| the monitor itself | — | fails if it is dead at the stop, or any gap exceeds 60 s + 30 s |
+| the monitor itself | — | fails if it is dead at the stop, or any gap exceeds 60 s + 45 s |
 | the host | the durability preflight | fails on any continuity break (boot, machine-id, hostname, instance, interpreter, glibc, suspend); a final sample is taken at the stop |
 
 **Termination.** On a monitor failure, the runner SIGKILLs its own process tree at once and records Q-HOST FAIL. The

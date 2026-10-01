@@ -66,6 +66,15 @@ MUTANTS = [
      'qhost_preflight(("host-rerun", "official"))'),
     ("T14e_host_rerun_without_preflight", "T14", "code/p309_qualify.py",
      '        qh = qhost_preflight(("host-rerun",))', '        qh = {"cfg": {}}'),
+    # follow-up V1: a raise or an exit between the attempt and the final return is a refusal after the attempt
+    ("T14f_main_raise_after_the_attempt", "T14", "code/p309_qualify.py", MAIN_MON,
+     "    if not qh:\n        raise SystemExit(2)\n" + MAIN_MON),
+    ("T14g_main_sys_exit_after_the_attempt", "T14", "code/p309_qualify.py", MAIN_MON,
+     "    if not qh:\n        sys.exit(2)\n" + MAIN_MON),
+    ("T14h_host_rerun_os_exit_after_the_attempt", "T14", "code/p309_qualify.py",
+     "    start_qhost_monitor(qh)                                   # r2 C7: continuous Q-HOST sampling (<= 60 s)\n",
+     "    if not qh:\n        os._exit(2)\n"
+     "    start_qhost_monitor(qh)                                   # r2 C7: continuous Q-HOST sampling (<= 60 s)\n"),
 ]
 
 
