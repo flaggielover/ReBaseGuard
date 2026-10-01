@@ -1,0 +1,388 @@
+CELL-308 MB-S — OWNER SUPPLEMENT 2:
+R-MEM QUALIFICATION WATCHDOG SEMANTICS,
+MEM_POLL_S NON-CANONICAL BRANCH,
+AND RESUME AUTHORIZATION
+
+Resume from the exact current successor state after the usage-limit
+interruption.
+
+Preserve all existing committed records, including:
+
+    owner decisions:                 5c2394ba
+    owner supplement 1:              8fc2b038
+    Builder5 successor:              555f4cbf
+    framework/Builder5 rejection:    82d59cc2
+    R-rule ratifier:                 ca66e367
+    network/placement audit:         fb1a3c55
+
+Before modifying the interrupted builder work, inspect its uncommitted state
+and preserve/reconcile useful edits rather than blindly restarting or
+discarding them.
+
+Nothing in this supplement authorizes a target evaluation.
+
+NEW MB-S CELL-308 TARGET EVALUATIONS remain 0.
+
+======================================================================
+1. OFFICIAL-QUALIFICATION MEMORY-WATCHDOG EVENT
+======================================================================
+
+I resolve the conflict prospectively as follows.
+
+For the DESIGNATED PRE-FREEZE measurement/derivation stage, preserve the
+already-ratified R-MEM rule:
+
+    if the provisional 3-GiB run has a memory-watchdog event,
+    it is not a valid input and the rule calls for the specified
+    6-GiB re-run, subject to the already-ratified step-5 memory bound.
+
+Do not change that pre-freeze rule.
+
+However, once the canonical R-rule outputs have been derived and the SINGLE
+MB-S freeze has been created, the role of official qualification is
+validation of the frozen operational object, not re-derivation by changing
+that object.
+
+Therefore:
+
+    if ANY official-qualification decoy triggers the memory watchdog
+    while running under the ACTUAL FROZEN MEM_CAP,
+
+the official qualification shall:
+
+    FAIL CLOSED.
+
+Use a distinct mechanically detectable status such as:
+
+    QUALIFICATION_MEMORY_WATCHDOG_UNDER_FROZEN_CAP
+
+or the nearest existing reviewed naming convention.
+
+That official qualification attempt is NOT cured by doubling MEM_CAP.
+
+Do NOT run the official decoy at 2x the frozen MEM_CAP.
+
+Do NOT mutate MEM_CAP after freeze.
+
+Do NOT create a qualification-only memory cap.
+
+Do NOT treat another clean run for the same cell as curing the event.
+
+Do NOT proceed to grant or target execution after this failure.
+
+Preserve the failed qualification evidence and stop before target.
+
+This is an explicit MB-S sequencing resolution of the conflict between the
+historical R-MEM derivation re-run rule and the single-freeze option-(a)
+qualification semantics.
+
+The distinction is:
+
+    PRE-FREEZE DESIGNATED MEASUREMENT:
+        derives the operational constant;
+        the already-ratified provisional-cap re-run rule remains applicable.
+
+    POST-FREEZE OFFICIAL QUALIFICATION:
+        validates the frozen operational constant;
+        a watchdog event under that frozen constant is a qualification
+        failure and cannot change the constant.
+
+No new tolerance is introduced.
+
+======================================================================
+2. MEM_POLL_S NON-CANONICAL BRANCH
+======================================================================
+
+I also resolve the MEM_POLL_S canonicalization issue prospectively.
+
+For THIS MB-S campaign, the only acceptable MEM_POLL_S outcomes are branches
+for which the already-accepted text defines a canonical value without adding
+a new owner-created rounding rule.
+
+Thus the campaign may continue only when the designated pre-freeze
+measurement reaches an already-canonical branch, including:
+
+    (a) the step-6 re-check passes and MEM_POLL_S remains the already
+        canonical unchanged value; or
+
+    (b) the accepted rule clips MEM_POLL_S to exactly 0.5 seconds.
+
+If the designated measurement instead reaches the branch in which the rule
+produces an unrounded quotient from a raw growth rate and the accepted text
+provides no canonical rounding representation:
+
+    STOP BEFORE FREEZE.
+
+Use a distinct fail-closed status such as:
+
+    MEM_POLL_S_NONCANONICAL_BRANCH
+
+or the nearest existing reviewed naming convention.
+
+In that state:
+
+    do NOT round the quotient;
+    do NOT choose a decimal precision;
+    do NOT quantize it to timer resolution;
+    do NOT infer a canonical representation;
+    do NOT create a tolerance;
+    do NOT freeze;
+    do NOT qualify;
+    do NOT grant;
+    do NOT evaluate Cell 308.
+
+Report the raw evidence and the exact rule branch reached.
+
+A future owner amendment could define canonicalization if necessary, but
+this supplement does NOT make that amendment.
+
+======================================================================
+3. OFFICIAL-QUALIFICATION COMPARISON FOR MEM_POLL_S
+======================================================================
+
+If the designated pre-freeze measurement reaches an accepted canonical
+MEM_POLL_S branch and the value is frozen, the official qualification must
+apply the same frozen rule semantics to its independent measurements.
+
+If the official qualification reaches a branch that does not yield a
+canonical output comparable under the accepted exact-A==B semantics:
+
+    QUALIFICATION FAILS CLOSED.
+
+Do not manufacture a comparison value.
+
+Do not modify the frozen MEM_POLL_S.
+
+Do not proceed to grant or target.
+
+If both sides produce canonical outputs, compare them according to owner
+supplement 1:
+
+    exact equality of FINAL CANONICAL RULE OUTPUTS,
+
+not equality of raw host observations.
+
+======================================================================
+4. GROWTH-SAMPLER FIRST-OBSERVATION SEMANTICS
+======================================================================
+
+Do NOT amend the growth sampler in this campaign merely to count the
+unobserved first portion of a newly appearing worker's rise.
+
+The fresh ratifier has confirmed that the current sampler behaviour matches
+the currently accepted text.
+
+Therefore preserve that semantics for MB-S.
+
+This is not a claim that the alternative design is scientifically inferior.
+It is a scope/governance decision to avoid changing an accepted measurement
+definition immediately before freeze without a demonstrated necessity.
+
+Any alternative first-observation treatment belongs to separately governed
+future work.
+
+======================================================================
+5. SAMPLER SPACING
+======================================================================
+
+Preserve the ratifier's correction:
+
+    the <= 0.5 s requirement applies to OBSERVED SAMPLE SPACING,
+    not merely the configured interval.
+
+A record whose observed spacing violates the accepted bound is invalid.
+
+The builder may choose a shorter configured interval prospectively so that
+valid observed spacing can satisfy <= 0.5 s, provided this does not alter
+the scientific rule beyond implementing the already-accepted observed-spacing
+requirement.
+
+This implementation must be independently reviewed before freeze.
+
+======================================================================
+6. EVENT-RUN SEMANTICS
+======================================================================
+
+Preserve the ratifier's reading:
+
+    a run containing a watchdog event is invalid and is cured only by the
+    specific valid re-run permitted by the applicable accepted rule.
+
+A separate clean run covering the same cell does not erase or retroactively
+validate the event run.
+
+For official qualification after freeze, Section 1 of this supplement
+controls instead:
+
+    watchdog under frozen MEM_CAP
+    -> qualification FAIL CLOSED
+    -> no cap doubling
+    -> no target.
+
+======================================================================
+7. NO NEW RE-RUN POLICY
+======================================================================
+
+Do not invent a general re-run limit.
+
+Do not invent repeated doubling.
+
+Do not infer that a second watchdog authorizes 12 GiB or any further cap.
+
+For designated pre-freeze derivation, follow only the re-run explicitly
+provided by the accepted R-MEM text.
+
+If the specified 6-GiB re-run cannot satisfy the accepted step-5 host-memory
+bound:
+
+    STOP AND REPORT BEFORE FREEZE.
+
+Do not weaken the bound to continue.
+
+======================================================================
+8. EXCL_ALLOW REMAINS UNRESOLVED UNTIL ANALYSIS
+======================================================================
+
+This supplement does NOT weaken the exact canonical-output agreement rule
+for EXCL_ALLOW.
+
+Complete the builder's analysis of whether independent designated and
+qualification series can mechanically produce an exact comparable canonical
+EXCL_ALLOW output under the accepted rule.
+
+If exact canonical equality is well-defined and the rule supplies the
+necessary semantics, implement and test it.
+
+If the accepted text leaves a genuine owner-level ambiguity or makes the
+required comparison undefined:
+
+    STOP BEFORE FREEZE
+    and report the smallest exact unresolved question.
+
+Do NOT introduce tolerance, subset semantics, union semantics, intersection
+semantics, or a sticky allowlist without explicit accepted authority.
+
+======================================================================
+9. RESUME THE INTERRUPTED BUILDER
+======================================================================
+
+Now resume the interrupted decision-dependent builder.
+
+First inspect and preserve its uncommitted work.
+
+Determine exactly which ratifier corrections it had incorporated before the
+usage-limit interruption.
+
+Then finish the implementation on final bytes, including:
+
+- decision-dependent qualification cases;
+- §11.2 option-(a) tooling;
+- designated-measurement tooling;
+- mechanical R-rule derivation;
+- canonical A == B qualification checks;
+- the watchdog fail-closed semantics above;
+- MEM_POLL_S non-canonical fail-closed semantics above;
+- observed-spacing enforcement;
+- event-run semantics;
+- complete two-owner-record grant binding;
+- all required negative controls and mutants.
+
+Rerun all affected tests on final bytes.
+
+======================================================================
+10. APPLY THE PRESERVED reviewQ6 REPAIRS
+======================================================================
+
+After the interrupted builder is complete and committed, use a FRESH
+non-holder builder to apply the bounded repairs required by the preserved:
+
+    DELTA_REJECTED
+    82d59cc2
+
+Do not erase or replace the rejection.
+
+Apply only the prospective bounded repairs it requires.
+
+Then rerun all affected suites and mutant matrices on final bytes.
+
+======================================================================
+11. FRESH INDEPENDENT REVIEW
+======================================================================
+
+Obtain one fresh independent review covering together:
+
+- the completed decision-dependent builder;
+- option-(a) implementation;
+- owner supplement 1;
+- this owner supplement 2;
+- Builder5 final bytes;
+- the 82d59cc2 repairs;
+- the ca66e367 ratifier corrections;
+- grant binding;
+- watchdog semantics;
+- MEM_POLL_S semantics;
+- sampler spacing;
+- event-run handling;
+- all affected tests and mutants.
+
+Do not proceed to designated measurements unless the mandatory pre-freeze
+review state is accepted.
+
+======================================================================
+12. CONTINUE AUTONOMOUSLY AFTER ACCEPTANCE
+======================================================================
+
+If the fresh review is accepted and no genuinely new owner ambiguity remains:
+
+    update decision brief
+    -> run MBS-10 reader check
+    -> verify host readiness
+    -> designated pre-freeze measurements
+    -> derive all five canonical R-rule outputs.
+
+If any designated measurement reaches a fail-closed branch defined above:
+
+    STOP BEFORE FREEZE AND REPORT.
+
+Otherwise:
+
+    final pre-freeze review
+    -> SINGLE FREEZE
+    -> official qualification
+    -> independent qualification review
+    -> valid grant binding both complete owner records and supplements
+    -> final host preflight
+    -> exactly ONE new MB-S Cell-308 target evaluation
+    -> frozen crash/recovery/resume machinery
+    -> durable result
+    -> seal
+    -> independent execution review
+    -> mechanical scientific adjudication.
+
+======================================================================
+13. HARD BOUNDARIES
+======================================================================
+
+NEW MB-S CELL-308 TARGET EVALUATIONS = 0
+until a valid grant exists and the frozen target execution begins.
+
+MB r1 remains permanently INDETERMINATE.
+
+Its original consumption remains consumed.
+
+No crash or failure replenishes MB-S authorization.
+
+MBS-6 remains FINAL.
+
+MBS-7 remains unchanged science.
+
+MBS-8 remains the accepted MB-r1-r3 fixed caps.
+
+Do not touch Cell 309.
+
+Do not alter r5 or create r6 merely because MB-S progresses.
+
+Do not infer any Cell-308 scientific result from qualification, decoys,
+resource behaviour, runtime, or host measurements.
+
+Proceed when the session limit resets.
