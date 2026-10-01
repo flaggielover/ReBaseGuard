@@ -1,0 +1,50 @@
+{
+ "schema": "P309_R2_DRILL_INTERRUPTION/1",
+ "written_by": "the coordinator (NOT the drill tool, which never reached its export step)",
+ "attempt": 7,
+ "tier": "cloud",
+ "drill_root": "/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/r2_drill_cloud_7/drill_20261001T222108Z",
+ "code_commit": "e3242cbba651b973566e21e028e94c5ef0eccb16",
+ "started_utc": "2026-10-01T22:21:08Z",
+ "last_progress_log_utc": "2026-10-01T22:38Z (file mtime of the drill's log)",
+ "interruption": "the cloud container was restarted by its environment (new boot id; uptime 0 at 22:47Z); every process was stopped, including the drill during QC_D5. Cause not known to the coordinator; nothing in the drill signals or reboots anything",
+ "items_logged_before_interruption": [
+  "[drill PASS] QC01 (0.9 s)",
+  "[drill PASS] QC02 (1.3 s)",
+  "[drill PASS] QC03 (6.8 s)",
+  "[drill PASS] QC04 (0.2 s)",
+  "[drill PASS] QC05 (0.6 s)",
+  "[drill PASS] QC07 (134.6 s)",
+  "[drill PASS] QC11 (182.6 s)",
+  "[drill PASS] QC12 (10.2 s)",
+  "[drill PASS] QC13 (0.9 s)",
+  "[drill PASS] QC14 (60.0 s)",
+  "[drill PASS] QC15 (9.1 s)",
+  "[drill PASS] QC16 (605.8 s)",
+  "[drill PASS] QC17 (0.1 s)",
+  "[drill PASS] QC_U2 (1.7 s)"
+ ],
+ "item_not_finished": "QC_D5",
+ "topology_in_clone": {
+  "F": "a75d5808a9b70a8ab750a0352765c81c2d7d6d71",
+  "FR": "7ddda9fe9332f4ef4037d9b822f352875c31e4b4",
+  "tip": "8acb6fee67904ef9612d4cebfa1dea0012d90350"
+ },
+ "ledger_rows_exported": {
+  "ZERO_TARGET_LEDGER.jsonl": 104,
+  "EXPOSURE_LEDGER.jsonl": 0
+ },
+ "ledger_rows_sha256": {
+  "ZERO_TARGET_LEDGER.jsonl": "820101db4040f3570d7763f103275eb1ef987fdc40dab1194d5bf98d7bf44bdf",
+  "EXPOSURE_LEDGER.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "ledger_counters": {
+  "new_target_evaluations": 0,
+  "target_equivalent_proxies": 0,
+  "target_informed_optimisation": 0
+ },
+ "cells_touched": 0,
+ "p309_repository": "clean after the restart (git status empty; HEAD e3242cbb = remote); the drill writes to it only at its end, which it never reached (F2 holds)",
+ "verdict": "INCOMPLETE (no verdict); development evidence only; superseded by the next attempt on the same bytes; preserved, not erased",
+ "statement": "no target input read; no quarantined cell evaluated; NEW Γ309 TARGET EVALUATIONS = 0"
+}
