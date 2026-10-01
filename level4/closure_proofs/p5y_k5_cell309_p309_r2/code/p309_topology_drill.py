@@ -27,7 +27,8 @@ that are later frozen, from a clone of the committed branch.
    * worker tier: the runner's main() through the launch unit (P14).
    After each runner call, the changes it left (against the clone's HEAD at the call) must lie in qualification/ and
    the execution and exposure ledgers (F5).
-6. Host functions (F3): the clone's p309_host.py provenance (twice, then continuity) and preflight.  The preflight is
+6. Host functions (F3): the clone's p309_host.py provenance (twice, then continuity) and preflight, and the
+   clone's tests/test_p309_host.py (the host package's and launcher's decision tests).  The preflight is
    expected to FAIL on the cloud tier and to PASS on the worker tier.  The r1-tree check runs as well.
 7. Controls, each of which must fail as stated:
    * R2-M01a: the r1 base (HEAD) with the pre- and postconditions removed; QC11 fails with FREEZE_RECORD refusals;
@@ -329,14 +330,20 @@ def host_functions(clone: Path, scratch: Path, tier: str) -> dict:
     code = clone / NS_REL / "code"
     a = run_py([sys.executable, "-B", str(code / "p309_host.py"), "provenance"], clone, scratch)
     b = run_py([sys.executable, "-B", str(code / "p309_host.py"), "provenance"], clone, scratch)
-    pf = run_py([sys.executable, "-B", str(code / "p309_host.py"), "preflight", "--config-json", json.dumps(
-        {"p309_repo": str(clone), "p309_roots": [str(clone)]})], clone, scratch)
+    pcfg = {"p309_repo": str(clone), "p309_roots": [str(clone)]}
+    if tier == "worker":                       # the worker's real host configuration, as the launcher recorded it
+        rec = json.loads(Path(os.environ["P309_LAUNCH_RECORD"]).read_text())
+        pcfg = dict(rec["host_config"], p309_repo=str(clone), require_empty_scratch=False)
+    pf = run_py([sys.executable, "-B", str(code / "p309_host.py"), "preflight", "--config-json", json.dumps(pcfg)],
+                clone, scratch)
+    ht = run_py([sys.executable, "-I", "-S", "-B", str(clone / NS_REL / "tests" / "test_p309_host.py")], clone, scratch)
     cfg = H.load_config([])
     cont = H.continuity(json.loads(a["stdout"]), json.loads(b["stdout"]), cfg) if a["rc"] == 0 and b["rc"] == 0 else {
         "pass": False}
     return {"provenance_rc": [a["rc"], b["rc"]], "continuity_pass": cont["pass"], "preflight_rc": pf["rc"],
             "preflight_as_expected": (pf["rc"] != 0) if tier == "cloud" else (pf["rc"] == 0),
-            "r1_tree_unchanged": git(clone, "rev-parse", f"HEAD:{R1_REL}") == R1_TREE}
+            "r1_tree_unchanged": git(clone, "rev-parse", f"HEAD:{R1_REL}") == R1_TREE,
+            "host_package_tests_rc": ht["rc"], "host_package_tests_pass_lines": ht["stdout"].count("[PASS]")}
 
 
 def meets_band(d) -> bool:
@@ -401,7 +408,8 @@ def main() -> int:
             "qc11_sandbox_one_record" in rep["witness_after_items"]
         ctl_ok = all((v["caught"] if isinstance(v, dict) else v) for v in rep["controls"].values())
         host_ok = all(rep["host"]["provenance_rc"][i] == 0 for i in (0, 1)) and rep["host"]["continuity_pass"] and \
-            rep["host"]["preflight_as_expected"] and rep["host"]["r1_tree_unchanged"]
+            rep["host"]["preflight_as_expected"] and rep["host"]["r1_tree_unchanged"] and \
+            rep["host"]["host_package_tests_rc"] == 0
         led_ok = not any(rep["ledger"]["counters"].values()) and not rep["ledger"]["cells_touched"] and \
             not rep["ledger"]["band_hits"]
         rep["verdicts"] = {"items": items_ok, "witness": wit_ok, "controls": ctl_ok, "host": host_ok, "ledger": led_ok}

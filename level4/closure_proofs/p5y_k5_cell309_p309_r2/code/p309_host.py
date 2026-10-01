@@ -48,6 +48,7 @@ BURSTABLE = re.compile(r"^(t2|t3|t3a|t4g)\.")
 DEFAULTS = {"p309_repo": None, "p309_roots": [], "foreign_roots": [], "foreign_patterns": [r"cell[_-]?308"],
             "foreign_heavy_patterns": [], "load_baseline": 0.0, "load_margin": 0.5, "heavy_cpu_fraction": 0.05,
             "ram_floor_gb": 8, "disk_floor_gb": 40, "min_cpus": 4, "sample_s": 60.0, "suspend_tolerance_s": 5.0,
+            "monitor_heavy_cpu_fraction": 0.5,
             "python_version": "3.11.15", "interpreter": None, "glibc": None,
             "branch": "refs/heads/claude/p5y-k5-cell309-p309-r2",  # q309: literal-ok (branch name, not a cell reference)
             "require_empty_scratch": False}
@@ -239,13 +240,17 @@ def continuity(base, now, cfg):
         "same_machine_id": bool(base.get("machine_id_sha256")) and base.get("machine_id_sha256") == now.get(
             "machine_id_sha256"),
         "same_hostname": base.get("hostname_sha256") == now.get("hostname_sha256"),
-        "same_instance": bc.get("instance_id_sha256") == nc.get("instance_id_sha256"),
+        "same_instance": bc.get("instance_id_sha256") == nc.get("instance_id_sha256") or (
+            not nc.get("instance_id_sha256") and bool(base.get("boot_id")) and base.get("boot_id") == now.get("boot_id")
+            and base.get("machine_id_sha256") == now.get("machine_id_sha256")
+            and base.get("hostname_sha256") == now.get("hostname_sha256")),
         "same_interpreter": base.get("python") == now.get("python"),
         "same_glibc": base.get("glibc") == now.get("glibc"),
         "no_suspend": base.get("suspended_s") is not None and now.get("suspended_s") is not None
         and now["suspended_s"] - base["suspended_s"] <= tol,
     }
-    return {"checks": checks, "pass": all(checks.values())}
+    return {"checks": checks, "pass": all(checks.values()),
+            "instance_unverified": bool(bc.get("instance_id_sha256")) and not nc.get("instance_id_sha256")}
 
 
 # ------------------------------------------------------------------------------------------------- processes
@@ -355,17 +360,14 @@ def free_gb(roots):
 
 
 # ----------------------------------------------------------------------------------------------- the gate
-def exclusion_gate(cfg):
-    """Owner message 3, item 4: refuse heavy compute unless the shared host is free of the cell-308 campaign's work
-    and of stale work."""
-    acc = proc_access()
-    sample = float(cfg["sample_s"])
-    rows = processes(cfg, sample) if acc["readable"] else []
+def gate_checks(acc, rows, loads, mem_gb, disk, cfg):
+    """the exclusion gate's decision, from observations only (pure; tested in tests/test_p309_host.py).  At the start a
+    foreign (cell-308) process is active if it uses more than heavy_cpu_fraction, matches a heavy pattern, or appeared
+    during the sample (no CPU fraction yet): the strict reading of "no cell-308 worker or process is active"."""
     heavy = float(cfg["heavy_cpu_fraction"])
-    l1, l5, _ = os.getloadavg()
+    l1, l5 = loads
     lim = float(cfg["load_baseline"]) + float(cfg["load_margin"])
-    disk = free_gb(cfg["p309_roots"])
-    checks = {
+    return {
         "proc_readable": acc["readable"],
         "proc_not_hidepid": acc["hidepid"] is False,
         "foreign_processes_visible": acc["foreign_visible"] > 0,
@@ -375,9 +377,21 @@ def exclusion_gate(cfg):
             r["cpu_fraction"] or 0) > heavy],
         "no_stale_p309_worker": not [r for r in rows if r["tag"] == "p309" and r["heavy_pattern"]],
         "load_at_baseline": l1 <= lim and l5 <= lim,
-        "ram_available": mem_available_gb() >= float(cfg["ram_floor_gb"]),
+        "ram_available": mem_gb >= float(cfg["ram_floor_gb"]),
         "disk_available": bool(disk) and all(v is not None and v >= float(cfg["disk_floor_gb"]) for v in disk.values()),
     }
+
+
+def exclusion_gate(cfg):
+    """Owner message 3, item 4: refuse heavy compute unless the shared host is free of the cell-308 campaign's work
+    and of stale work."""
+    acc = proc_access()
+    sample = float(cfg["sample_s"])
+    rows = processes(cfg, sample) if acc["readable"] else []
+    l1, l5, _ = os.getloadavg()
+    lim = float(cfg["load_baseline"]) + float(cfg["load_margin"])
+    disk = free_gb(cfg["p309_roots"])
+    checks = gate_checks(acc, rows, (l1, l5), mem_available_gb(), disk, cfg)
     counts = {}
     for r in rows:
         counts[r["tag"]] = counts.get(r["tag"], 0) + 1
@@ -547,6 +561,17 @@ def audit(cfg):
 
 
 # --------------------------------------------------------------------------------------------- Q-HOST monitor
+def monitor_verdict(cont, rows, cfg):
+    """one Q-HOST sample's decision (pure; tested in tests/test_p309_host.py): continuity holds, and no foreign
+    (cell-308) or other ReBaseGuard process outside this unit does heavy work -- a heavy-job pattern, or a CPU fraction
+    above monitor_heavy_cpu_fraction.  A process first seen in this sample (no CPU fraction yet) is judged at the
+    next sample.  Returns (ok, foreign pids, other pids)."""
+    heavy = float(cfg["monitor_heavy_cpu_fraction"])
+    busy = [r["pid"] for r in rows if r["tag"] == "foreign" and ((r["cpu_fraction"] or 0) > heavy or r["heavy_pattern"])]
+    other = [r["pid"] for r in rows if r["tag"] == "other-rebaseguard" and (r["cpu_fraction"] or 0) > heavy]
+    return cont["pass"] and not busy and not other, busy, other
+
+
 def qhost_monitor(cfg, baseline, parent, interval):
     """Q-HOST (P10): sample every <= `interval` s (at most 60) until the parent exits.  Each sample is one JSON row on
     standard output (the runner points it into the attempt): continuity against the baseline, and whether the
@@ -556,7 +581,6 @@ def qhost_monitor(cfg, baseline, parent, interval):
     rest.  It writes nothing else and signals no process but its own parent."""
     import signal as _signal
     interval = min(float(interval), 60.0)
-    heavy = float(cfg["heavy_cpu_fraction"])
     while True:
         if os.getppid() != parent:
             return 0
@@ -564,11 +588,8 @@ def qhost_monitor(cfg, baseline, parent, interval):
         now = provenance(cfg)
         cont = continuity(baseline, now, cfg)
         rows = processes(cfg, min(20.0, interval / 2))
-        busy = [r["pid"] for r in rows if r["tag"] == "foreign" and (
-            r["cpu_fraction"] is None or r["cpu_fraction"] > heavy or r["heavy_pattern"])]
-        other = [r["pid"] for r in rows if r["tag"] == "other-rebaseguard" and (r["cpu_fraction"] or 0) > heavy]
-        ok = cont["pass"] and not busy and not other
-        sys.stdout.write(json.dumps({"utc": utc(), "pass": ok, "continuity": cont["checks"], "foreign_active_pids":
+        ok, busy, other = monitor_verdict(cont, rows, cfg)
+        sys.stdout.write(json.dumps({"utc": utc(), "pass": ok, "continuity": cont["checks"], "instance_unverified": cont["instance_unverified"], "foreign_active_pids":
                                      busy, "other_heavy_pids": other, "suspended_s": now.get("suspended_s"),
                                      "ntp_synchronized": now.get("ntp_synchronized")}, sort_keys=True) + "\n")
         sys.stdout.flush()

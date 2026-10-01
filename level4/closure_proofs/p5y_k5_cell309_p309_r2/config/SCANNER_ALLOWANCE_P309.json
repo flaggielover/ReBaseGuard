@@ -195,7 +195,7 @@
   {
    "file": "code/p309_topology_drill.py",
    "function": "main",
-   "ast_sha256": "134e3e7bc214f56e7ce1d46fc7920bd37ecbe15485c59610a44a08fd777cf577",
+   "ast_sha256": "a34def7bbc3ccfe8adddc23a40d67a799b0fa67e0c48a842a72c283f12711deb",
    "reason": "r2 topology drill: `git clone --single-branch --branch <r2 branch>` of the P309 repository into the drill root and `git remote remove origin` in that clone; nothing in the P309 repository moves (checked before/after)"
   },
   {
@@ -1393,6 +1393,8 @@
     "p309_driver",
     "p309_env",
     "p309_guard",
+    "p309_host",
+    "p309_launch",
     "p309_postexec",
     "p309_rehearse",
     "p309_scan",
@@ -1469,6 +1471,10 @@
     "urllib.request": "r2 p309_host.imds only: AWS IMDSv2 read-only metadata at the link-local address 169.254.169.254 through a proxy-free opener, 1 s timeouts; the instance id is recorded only as sha256",
     "urllib": "r2: the package of urllib.request (p309_host.imds only)",
     "p309_qualify": "r2: imported ONLY inside the topology drill's literal `python -c` programs, which run in the drill clone (the runner's items_table/run_item); the drill process itself never imports it (addendum 2, F2)"
+   },
+   "tests": {
+    "p309_host": "r2: tests/test_p309_host.py tests the host package's pure decisions (gate_checks, monitor_verdict, continuity, scratch_root)",
+    "p309_launch": "r2: tests/test_p309_host.py tests the launcher's unit_name rule only (nothing is launched)"
    }
   }
  },

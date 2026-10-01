@@ -1,0 +1,206 @@
+# P309-r2: instructions for a future AWS-side P309 session (gate step 8)
+
+**Status when written: HOST_SUITABILITY_PENDING.** The AWS worker has not been audited. Nothing here has run there.
+
+These steps cover the shared AWS ReBaseGuard worker that cell 308 uses (owner message 3). They complete
+`R2_BOOTSTRAP.md` and `R2_HOST_REQUIREMENTS.md` and do not replace them. **No step may start before the owner has
+answered OD-R2-3 (the access path) and, for 8c onward, OD-R2-4 (consent to host changes).**
+
+## 0. Who runs this, and what never happens
+
+**Who:** a separate P309 session, with its own access path and its own P309-only credential (OD-R2-3). Never cell
+308's session, terminal, user or credential.
+
+**What never happens, at any step:**
+* any read, `git` command, checkout, clean, reset or write inside cell 308's checkout, worktree, evidence or refs;
+* any signal, kill, pause, renice or ionice of any process the P309 session did not start;
+* any `systemctl` action on a unit not named `p309-r2-*`;
+* any reboot, upgrade, package install or configuration change on the host without OD-R2-4 consent;
+* any target evaluation, production-namespace ref, grant, marker or pending-result ref, and no freeze or official
+  qualification without the later owner decisions;
+* any bulk data through the owner's own machine.
+
+## 1. Step 8a: read-only audit (no clone, no user, no install)
+
+**Getting the file.** Fetch the reviewed `code/p309_host.py` blob through the P309 session from GitHub (branch
+`claude/p5y-k5-cell309-p309-r2`, at the commit the owner names). Keep it **in memory or on standard input only**;
+nothing is saved on the worker. For example, read it through the session's GitHub tool and pipe it into Python.
+
+**The command.** Run it on the worker's system Python:
+
+```text
+python3 - audit --config-json '{"p309_roots": ["<planned P309 root path>"], "foreign_roots": ["<cell-308 checkout path, as given by the owner or the cell-308 operator>"], "foreign_patterns": ["cell[_-]?308"]}'
+```
+
+**What the audit records:**
+* **Identities:** hostname, machine-id and instance id, each as sha256 only.
+* **Hardware:** CPU model and count, RAM, disk free on the planned roots.
+* **OS and runtime:** OS, kernel, glibc, Python, git version.
+* **Durability:** boots (journal count, uptime), OOM events (30 days), automatic upgrade and reboot settings, pending
+  reboot, container detection, systemd.
+* **AWS:** IMDSv2 instance type, life cycle, scheduled maintenance and spot action. The request uses a proxy-free
+  opener with 1 s timeouts.
+* **/proc visibility:** hidepid, and whether foreign processes are visible.
+* **ReBaseGuard processes:** counts by tag; for each, pid, uid, CPU fraction and command-line sha256 only.
+* **The cell-308 checkout:** only a `stat()` of its top directory, recorded as a hash, and whether this user could
+  read it.
+
+**Return.** The JSON goes on standard output. The session returns it to the coordinator, who commits it as
+`evidence/host/AUDIT_<utc>.json` in the r2 branch.
+
+## 2. Step 8b: verdict (no host change)
+
+Apply `R2_HOST_REQUIREMENTS.md` §4 to the audit:
+
+| verdict | when |
+|---|---|
+| HOST_SUITABLE pending bootstrap | every §2 item is met, or can be met by a listed bootstrap item |
+| HOST_NOT_SUITABLE | an item cannot be met without an unconsented change |
+| HOST_SUITABILITY_PENDING | anything is unknown |
+
+Report to the owner and the cell-308 operator:
+* the measured CPU, RAM and disk;
+* every proposed host change (§3), each marked read-only or mutating;
+* the windows needed, about 9 h each, for the worker drill and the official run.
+
+**STOP** until OD-R2-3 and OD-R2-4 are answered.
+
+## 3. Step 8c: bootstrap (only the items consented under OD-R2-4)
+
+Every item below changes the host and needs consent:
+
+| item | change | notes |
+|---|---|---|
+| P309 Unix user | create a user, e.g. `p309`, with no supplementary group that can read cell 308's checkout | mutating |
+| volume / quota | at least 40 GB free on the P309 roots | mutating if new storage |
+| clone | `git clone --single-branch --branch claude/p5y-k5-cell309-p309-r2 <repository URL>` in the P309 user's home; full history; no alternates; credential kept outside the repository config | P309 files only |
+| interpreter | CPython 3.11.15 built or installed under the P309 user's home (the system Python untouched); record path, sha256 and glibc | P309 files only |
+| launch privilege | a sudo or polkit rule letting the P309 user start only `systemd-run` units named `p309-r2-*` (and `systemctl list-units`) | mutating, privileged |
+| durability holds | automatic reboot off and upgrades held for each window | mutating; host-wide; the cell-308 operator must agree |
+| host config | `~p309/p309_host_config.json` (not in the repository): §3.1 | P309 files only |
+
+### 3.1 The host configuration (every key is required unless marked; unknown keys are refused)
+
+```json
+{
+ "p309_roots": ["/home/p309/ReBaseGuard", "/p309vol/scratch"],
+ "foreign_roots": ["<the cell-308 checkout path(s) given by the owner or the cell-308 operator>"],
+ "foreign_patterns": ["cell[_-]?308"],
+ "foreign_heavy_patterns": ["<command patterns of cell-308 heavy jobs, from the cell-308 operator>"],
+ "load_baseline": 0.0,
+ "load_margin": 0.5,
+ "heavy_cpu_fraction": 0.05,
+ "monitor_heavy_cpu_fraction": 0.5,
+ "ram_floor_gb": 8,
+ "disk_floor_gb": 40,
+ "min_cpus": 4,
+ "sample_s": 60,
+ "suspend_tolerance_s": 5,
+ "python_version": "3.11.15",
+ "interpreter": "/home/p309/opt/python3.11.15/bin/python3.11",
+ "glibc": "<the value the 8a audit recorded, e.g. glibc 2.35>",
+ "branch": "refs/heads/claude/p5y-k5-cell309-p309-r2",
+ "unit_user": "p309",
+ "unit_group": "p309",
+ "memory_max": "12G",
+ "oom_score_adjust": 500,
+ "cpu_weight": 20,
+ "io_weight": 20
+}
+```
+
+* **`load_baseline`** is the host's idle 1-minute and 5-minute load, measured together with the cell-308 operator
+  (P9).
+* **`heavy_cpu_fraction`** is the start gate's strict threshold: any cell-308 process above it, or newly
+  appeared, blocks the start. **`monitor_heavy_cpu_fraction`** is the in-run Q-HOST threshold (heavy work only;
+  OD-R2-5 (i)).
+* **`foreign_heavy_patterns`** are the cell-308 job command patterns. They are matched in memory only and never
+  recorded.
+* **`memory_max`** must leave cell 308 its working memory. It is agreed under OD-R2-4.
+* **`p309_repo`** and **`require_empty_scratch`** are set by the launcher itself.
+
+After bootstrap, run read-only as the P309 user from the clone:
+
+```text
+python3.11 -B code/p309_host.py isolation --config ~/p309_host_config.json
+python3.11 -B code/p309_host.py preflight --config ~/p309_host_config.json
+```
+
+Both must pass. Preserve their JSON in `evidence/host/`.
+
+## 4. Step 8d: worker-tier drill (P14), the burn-in
+
+**Preconditions:**
+* the exclusion gate shows cell 308 idle at the start of the agreed window;
+* `P309_SCRATCH_ROOT` is a fresh, empty directory on the P309 volume;
+* `P309_FOREIGN_ROOTS` lists cell 308's checkout path(s).
+
+**The command:**
+
+```text
+P309_SCRATCH_ROOT=<fresh dir> P309_FOREIGN_ROOTS=<cell-308 paths> python3.11 -B code/p309_launch.py --mode drill --host-config ~/p309_host_config.json
+```
+
+**What the launcher does.** It refuses unless all of these pass:
+* the scratch root;
+* the durability preflight;
+* the exclusion gate (60 s sample);
+* the isolation check;
+* no loaded `p309-r2-*` unit.
+
+It then writes `launch_<utc>.json` exclusively and starts **one** transient unit `p309-r2-drill-<utc>`:
+* `Restart=no`, `KillMode=control-group`;
+* MemoryMax, OOMScoreAdjust, low CPU/IO weight;
+* ProtectSystem=strict, PrivateTmp, NoNewPrivileges;
+* InaccessiblePaths for the foreign roots.
+
+It never retries.
+
+**What happens inside the unit:**
+* the drill clones the committed branch under the scratch root;
+* it builds F' and FR';
+* it runs the clone's runner `main()`, which passes Q-HOST because the record names this unit and the host is
+  unchanged;
+* then the controls run.
+
+**The runner's Q-HOST monitor:**
+* samples every ≤ 60 s for continuity (boot, machine-id, hostname, instance, interpreter, glibc, suspend);
+* also samples cell-308 or other ReBaseGuard heavy activity outside the unit's cgroup;
+* on any failure it records QHOST FAIL, the attempt ends, and the unit's remaining processes are stopped by
+  `KillMode=control-group`;
+* there is no retry, and the drill is reported as FAIL.
+
+**Watching:** `journalctl -u p309-r2-drill-<utc> -f` (read-only).
+
+**Expected:** about 6 h of wall time. QC08, QC09 and QC10 run here; they are skipped on the cloud tier.
+
+## 5. Evidence export (bulk data stays on AWS or GitHub)
+
+The drill writes `evidence/drill/<utc>/`: its ledger rows in full, with sha256, the report, controls and witnesses.
+It also writes one GOVERNANCE row in the P309 clone's ledger.
+
+The P309 session then:
+* commits those paths only;
+* checks the commit is namespace-only (`code/checkpoint_push_p309.py --dry`);
+* pushes the r2 branch with `code/checkpoint_push_p309.py`, one explicit refspec and no force.
+
+Nothing large passes through the owner's machine, and decoy outputs are not committed.
+
+## 6. Cleanup (P309-only; never cell 308)
+
+* **The drill root:** the drill deletes its own root by its literal path unless `--keep` was given. A kept root is
+  deleted by the P309 user with its literal path, after checking that the path lies under `P309_SCRATCH_ROOT` and is
+  named `drill_<utc>`.
+* **Units:** `systemctl list-units --all 'p309-r2-*'` (read-only). A failed P309 unit is cleared only with
+  `systemctl reset-failed p309-r2-<...>`, exactly that unit, under the consented privilege.
+* **Scratch roots:** they are removed only by literal path and only after their evidence is committed.
+* **Cell 308:** nothing of cell 308 is ever cleaned, listed recursively or touched.
+
+## 7. What remains owner-gated after 8d
+
+Each of these needs its owner decision first:
+* the pre-freeze follow-up review (gate step 9);
+* the freeze **on the worker** (step 10: single writer, clocks synchronised, the frozen tree ids equal to those
+  reviewed and drilled), after OD-R2-0;
+* the single official qualification through `code/p309_launch.py --mode official`;
+* any grant (never part of this package).
