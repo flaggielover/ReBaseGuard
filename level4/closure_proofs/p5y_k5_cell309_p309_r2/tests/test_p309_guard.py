@@ -339,7 +339,7 @@ def run() -> dict:
     cx, _, _ = scenario("n8b", grant=lambda fc, ms: grant_dict(fc, ms, runtime={"python": "0.0.0"}))
     t("N8b_wrong_runtime", *why(dec(H3, *EW, cx), "runtime mismatch"))
     # N10 / N11: production authorization cannot be synthesized from test artifacts; synthetic marker substitution
-    prod_shaped = lambda fc, ms: grant_dict(fc, ms, schema="P309_GRANT/1", campaign="p5y_k5_cell309_p309_r1",  # noqa: E731
+    prod_shaped = lambda fc, ms: grant_dict(fc, ms, schema="P309_GRANT/1", campaign="p5y_k5_cell309_p309_r2",  # noqa: E731
                                             cell=G._PROD_CELL, geometry={"h": "5", "k": "1/2"},
                                             marker_ref=G.TEST_MARKER)
     cx, _, sbx = scenario("n10", grant=prod_shaped)

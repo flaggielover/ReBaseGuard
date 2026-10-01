@@ -1,4 +1,4 @@
-"""Band-scoped producer-side guard for P309 (FC2(a); spec fc2/FC2_SPEC_R2.md; formal campaign p5y_k5_cell309_p309_r1).
+"""Band-scoped producer-side guard for P309 (FC2(a); spec fc2/FC2_SPEC_R2.md; formal campaign p5y_k5_cell309_p309_r2).
 
 Written by the coordinator (producer side).  The independent verifier variant implements the same admission rules
 separately, from the spec only; neither reads the other.
@@ -36,10 +36,10 @@ TEST_BAND = ((F(341, 1024), F(201, 512)), (F(-201, 512), F(-341, 1024)))   # hul
 TEST_GEOMETRY = (F(3), F(1, 2))
 
 # ---- spec section 2.1: production context (hard-coded; the only occurrence of the marker literal) ---------------
-PRODUCTION_MARKER = "refs/p5y-k5-cell309-p309-r1/target-consumed"  # q309: literal-ok (inert marker NAME; read-only use)
-PENDING_REF = "refs/p5y-k5-cell309-p309-r1/pending-result"  # q309: literal-ok (inert pending-ref NAME; read-only here)
-_PROD_NAMESPACE = "refs/p5y-k5-cell309-p309-r1/"  # q309: literal-ok (ref namespace, read-only use)
-_FNS_REL = "level4/closure_proofs/p5y_k5_cell309_p309_r1/"
+PRODUCTION_MARKER = "refs/p5y-k5-cell309-p309-r2/target-consumed"  # q309: literal-ok (inert marker NAME; read-only use)
+PENDING_REF = "refs/p5y-k5-cell309-p309-r2/pending-result"  # q309: literal-ok (inert pending-ref NAME; read-only here)
+_PROD_NAMESPACE = "refs/p5y-k5-cell309-p309-r2/"  # q309: literal-ok (ref namespace, read-only use)
+_FNS_REL = "level4/closure_proofs/p5y_k5_cell309_p309_r2/"
 _PROD_GRANT_PATH = _FNS_REL + "authorization/P309_GRANT.json"
 _PROD_MANIFEST_PATH = _FNS_REL + "freeze/P309_FREEZE_MANIFEST.json"
 _PROD_CELL = 309  # q309: literal-ok (the grant's cell field must equal this; comparison only)
@@ -123,7 +123,7 @@ def outward_hull(lo: F, hi: F, bits: int = 10) -> tuple:
 class _Production:
     kind = "PRODUCTION"
     schema = "P309_GRANT/1"
-    campaign = "p5y_k5_cell309_p309_r1"
+    campaign = "p5y_k5_cell309_p309_r2"
     cell = _PROD_CELL
     geometry = REAL_GEOMETRY
     band = REAL_BAND

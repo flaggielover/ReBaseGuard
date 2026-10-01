@@ -1,4 +1,4 @@
-"""Environment for every formal-campaign run (p5y_k5_cell309_p309_r1).
+"""Environment for every formal-campaign run (p5y_k5_cell309_p309_r2).
 
 * puts the research campaign's pinned modules (impl/, verify/, code/) on sys.path, READ-ONLY;
 * redirects every q309_guard ledger to THIS namespace's ledgers, so no formal run ever writes a research file

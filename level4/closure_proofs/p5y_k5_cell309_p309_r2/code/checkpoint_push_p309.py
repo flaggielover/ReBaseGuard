@@ -19,8 +19,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-BRANCH = "claude/p5y-k5-cell309-p309-r1"  # q309: literal-ok (branch name, not a cell reference)
-NS_PREFIX = "level4/closure_proofs/p5y_k5_cell309_p309_r1/"
+BRANCH = "claude/p5y-k5-cell309-p309-r2"  # q309: literal-ok (branch name, not a cell reference)
+NS_PREFIX = "level4/closure_proofs/p5y_k5_cell309_p309_r2/"
 REPO = Path(__file__).resolve().parents[4]
 LEDGER = Path(__file__).resolve().parents[1] / "ledger" / "CHECKPOINT_PUSHES.jsonl"
 FORBIDDEN_PATH = re.compile(r"(^|/)(authorization|postexec|adjudication|protocol)/|GRANT|SEAL|target[-_]consumed|"

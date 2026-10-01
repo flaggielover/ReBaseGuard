@@ -31,9 +31,9 @@ from pathlib import Path
 FNS = Path(__file__).resolve().parents[1]
 REPO = FNS.parents[2]
 RNS = FNS.parent / "p5y_k5_cell309_research_r1"
-NS_PREFIX = "level4/closure_proofs/p5y_k5_cell309_p309_r1/"
+NS_PREFIX = "level4/closure_proofs/p5y_k5_cell309_p309_r2/"
 RNS_PREFIX = "level4/closure_proofs/p5y_k5_cell309_research_r1/"
-BRANCH = "claude/p5y-k5-cell309-p309-r1"  # q309: literal-ok (branch name, not a cell reference)
+BRANCH = "claude/p5y-k5-cell309-p309-r2"  # q309: literal-ok (branch name, not a cell reference)
 BASE = "eb9a9c22b093f938e1bf13e0b30512608c58c370"
 LOCK_COMMIT = "2a03e838498ab8a8c1c61b9a142ba45adb941592"
 LOCK_FP = "377057bef1d1f21be4db38488235596c0e4134bb75ffdced08e667e6c48cc8db"

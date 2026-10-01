@@ -1,4 +1,4 @@
-"""Independent reconstruction of the research state at eb9a9c22 (formal campaign p5y_k5_cell309_p309_r1, step 0)."""
+"""Independent reconstruction of the research state at eb9a9c22 (formal campaign p5y_k5_cell309_p309_r2, step 0)."""
 import hashlib, json, subprocess, sys
 REPO = "/home/user/ReBaseGuard"
 RS = "eb9a9c22b093f938e1bf13e0b30512608c58c370"

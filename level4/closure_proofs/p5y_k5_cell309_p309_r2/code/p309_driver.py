@@ -45,7 +45,7 @@ import p309_env as E  # noqa: E402  (puts the research impl/verify/code on sys.p
 import p309_guard as G  # noqa: E402
 
 CP = "level4/closure_proofs/"
-NS_REL = CP + "p5y_k5_cell309_p309_r1"
+NS_REL = CP + "p5y_k5_cell309_p309_r2"
 RNS_REL = CP + "p5y_k5_cell309_research_r1"
 TARGET_CELL = 309  # q309: literal-ok (the single target of the granted execute mode; checked against the grant)
 GEOMETRY = {"h": "5/1", "k": "1/2"}   # the adapter's and the certificates' exact string form
@@ -90,7 +90,7 @@ REPO_CONFIG_ALLOWED = (r"core\.(repositoryformatversion|filemode|bare|logallrefu
                        r"symlinks|sparsecheckout|sparsecheckoutcone)", r"remote\.[^.\s]+\.(url|fetch|pushurl)",
                        r"branch\.[^.\s]+\.(remote|merge|rebase)", r"gc\.auto", r"user\.(name|email)",
                        r"extensions\.(worktreeconfig|objectformat)")
-SCHEMA = "rebaseguard.p5y.k5.cell309-p309-r1.result.v1"  # q309: literal-ok (result schema name)
+SCHEMA = "rebaseguard.p5y.k5.cell309-p309-r2.result.v1"  # q309: literal-ok (result schema name)
 DECOY_STAGE1A = {   # declared (research SRK_DECOY_DECLARATION_A2 cell family); the h3 cell is the FC2 TEST band
     "a2_h5": {"h": "5/1", "k": "1/2", "cell": ["1/2", "37/72"]},
 }

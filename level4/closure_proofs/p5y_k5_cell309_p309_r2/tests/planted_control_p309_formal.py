@@ -25,7 +25,7 @@ PRODUCTION_MARKER = G.PRODUCTION_MARKER      # MARKER_ALIAS (another binding of 
 G.PRODUCTION_MARKER = G.TEST_MARKER          # MARKER_REBIND
 subprocess.run(["git", "update-ref", G.PRODUCTION_MARKER, "HEAD"])                      # MARKER_MUTATION
 Path(G._PROD_GRANT_PATH).write_text("{}")                                                # GRANT_WRITE
-TOKEN = "refs/p5y-k5-cell309-p309-r1" + "/elsewhere"                                        # MARKER_TOKEN
+TOKEN = "refs/p5y-k5-cell309-p309-r2" + "/elsewhere"                                        # MARKER_TOKEN
 open(".git/refs/heads/planted", "w")                                                     # REF_FILE_WRITE
 os.system("git status")                                                                  # PROCESS_FORBIDDEN
 subprocess.run("git status", shell=True)                                                 # PROCESS_SHELL

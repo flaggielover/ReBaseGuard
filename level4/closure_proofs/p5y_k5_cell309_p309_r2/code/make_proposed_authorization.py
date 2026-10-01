@@ -76,7 +76,7 @@ def main() -> int:
     wb, _ = S.cell_blocks(lo, hi)
     fp = json.loads((FNS / "freeze" / "P309_FREEZE.json").read_text())
     grant = {
-        "schema": "P309_GRANT/1", "campaign": "p5y_k5_cell309_p309_r1", "cell": D.TARGET_CELL, "detector": "CUSUM",
+        "schema": "P309_GRANT/1", "campaign": "p5y_k5_cell309_p309_r2", "cell": D.TARGET_CELL, "detector": "CUSUM",
         "m": 5, "route": "P309 package 1", "closure_only": True,
         "closure_criterion": "Gamma < 0, exact and strict (protocol rev. 2b section 4.6)",
         "adoption": "NOT AUTHORIZED", "floor_change": "NOT AUTHORIZED", "r6": "NOT AUTHORIZED",

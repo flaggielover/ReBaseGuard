@@ -26,7 +26,7 @@ sys.path.insert(0, str(FNS / "code"))
 import p309_guard as G  # noqa: E402
 
 CP = "level4/closure_proofs/"
-NS_REL = CP + "p5y_k5_cell309_p309_r1/"
+NS_REL = CP + "p5y_k5_cell309_p309_r2/"
 RNS_REL = CP + "p5y_k5_cell309_research_r1/"
 CANDIDATE = RNS_REL + "protocol_prep/P309_CANDIDATE_FREEZE_MANIFEST.json"
 OUT_REL = NS_REL + "freeze/P309_FREEZE_MANIFEST.json"

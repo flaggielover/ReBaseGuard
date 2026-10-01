@@ -1,4 +1,4 @@
-"""Firewalled structure reader for pinned consumer code and data (formal campaign p5y_k5_cell309_p309_r1; U2 dependency graph).
+"""Firewalled structure reader for pinned consumer code and data (formal campaign p5y_k5_cell309_p309_r2; U2 dependency graph).
 
   python3 code/code_skeleton.py py   <file.py> [function ...]   -> code skeleton of the named top-level functions (all if none)
   python3 code/code_skeleton.py json <file.json>                -> JSON key paths with value TYPES only

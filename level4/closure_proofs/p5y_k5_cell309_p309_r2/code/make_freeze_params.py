@@ -23,7 +23,7 @@ REPO = FNS.parents[2]
 sys.path.insert(0, str(FNS / "code"))
 import p309_guard as G  # noqa: E402
 
-NS = "level4/closure_proofs/p5y_k5_cell309_p309_r1/"
+NS = "level4/closure_proofs/p5y_k5_cell309_p309_r2/"
 RNS = "level4/closure_proofs/p5y_k5_cell309_research_r1/"
 OUT = FNS / "freeze" / "P309_FREEZE.json"
 DOCS = {
@@ -215,7 +215,7 @@ def build() -> dict:
     allowance = json.loads((FNS / "config" / "SCANNER_ALLOWANCE_P309.json").read_text())
     return {
         "schema": "P309_FREEZE/1",
-        "campaign": "p5y_k5_cell309_p309_r1",
+        "campaign": "p5y_k5_cell309_p309_r2",
         "cell": 309,  # q309: literal-ok (the frozen target cell of the closure-only campaign)
         "detector": "CUSUM", "m": 5,
         "route": "P309 package 1: frozen K5-B direct clause; S = (A0_I1, min(A1_I1, A1_RLR), min(A2_I1, A2_RLR)); the "

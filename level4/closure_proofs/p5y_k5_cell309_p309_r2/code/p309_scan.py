@@ -1,4 +1,4 @@
-"""Static quarantine scan of the formal namespace (p5y_k5_cell309_p309_r1).  Exit 0 iff PASS.
+"""Static quarantine scan of the formal namespace (p5y_k5_cell309_p309_r2).  Exit 0 iff PASS.
 
   python3 code/p309_scan.py
 

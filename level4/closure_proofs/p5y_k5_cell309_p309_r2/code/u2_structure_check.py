@@ -1,4 +1,4 @@
-"""Mechanical evidence for the U2 corrected proposition (owner rulings 2, 2026-09-30; formal campaign p5y_k5_cell309_p309_r1).
+"""Mechanical evidence for the U2 corrected proposition (owner rulings 2, 2026-09-30; formal campaign p5y_k5_cell309_p309_r2).
 
   python3 code/u2_structure_check.py      -> evidence/u2/U2_STRUCTURE_CHECK_V2.json; exit 0 iff every check passes
 
@@ -337,7 +337,7 @@ def _scan_module(rel: str, refusal_lists=()) -> dict:
 
 
 C1B_LOAD_ORDER = ("c1b_gauss", "c1b_kernel", "c1b_float", "c1b_pw", "c1b_prov", "c1b_certpw")
-GUARD_MODULES = {"q309_guard": RNS + "code/q309_guard.py", "p309_guard": "level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_guard.py"}
+GUARD_MODULES = {"q309_guard": RNS + "code/q309_guard.py", "p309_guard": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_guard.py"}
 GUARD_ALLOWED_IMPORTS = {"q309_guard", "__future__", "ast", "datetime", "fractions", "hashlib", "importlib", "json", "os",
                          "pathlib", "platform", "re", "socket", "subprocess", "sys"}
 
@@ -432,9 +432,9 @@ def u3_branch_selection() -> dict:
 
 
 # ------------------------------------------------------------------ U4: the drivers and the FC2 components
-DRIVER = {"p309_driver": "level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_driver.py",
-          "p309_rehearse": "level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_rehearse.py"}
-VARIANT = "level4/closure_proofs/p5y_k5_cell309_p309_r1/verify/srk_verify_indep_scoped.py"
+DRIVER = {"p309_driver": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_driver.py",
+          "p309_rehearse": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_rehearse.py"}
+VARIANT = "level4/closure_proofs/p5y_k5_cell309_p309_r2/verify/srk_verify_indep_scoped.py"
 FORBIDDEN_CONSUMER_CALLS = {"main", "compose", "requirement", "classify", "critical_ratio", "atom_constant_requirement",
                             "adopted_state", "tail_enclosures", "order3_inputs"}
 STAGE1_FUNCS = {"stage1a", "job_stage1a", "stage1b", "job_stage1b", "run_jobs", "_spawn_job", "stage1a_jobs",
