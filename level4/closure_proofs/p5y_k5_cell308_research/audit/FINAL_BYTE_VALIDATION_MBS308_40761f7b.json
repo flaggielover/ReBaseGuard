@@ -1,0 +1,127 @@
+{
+  "schema": "cell308.premeasurement.final-byte-validation-summary",
+  "candidate": "40761f7b3633d47a964b96879839ef449f08334b",
+  "recorded_at_utc": "2026-10-02T16:03:15.406727+00:00",
+  "verdict": "VALIDATION_REJECTED",
+  "stage_results": [
+    {
+      "stage": "static",
+      "counts": {
+        "n": 10,
+        "passed": 10,
+        "failed": []
+      },
+      "returncode": 0,
+      "valid_ac_window": true,
+      "error_rows": null,
+      "unmutated_errors": null,
+      "source_sha256": "219a5638e16894e3ac729dfb8693697a0e8dd53da6de581214da914ce233667b"
+    },
+    {
+      "stage": "launch",
+      "counts": {
+        "n": 13,
+        "passed": 13,
+        "failed": []
+      },
+      "returncode": 0,
+      "valid_ac_window": true,
+      "error_rows": null,
+      "unmutated_errors": null,
+      "source_sha256": "67bf74e55cc71f8bbb3c8c1d4ab451d80b2e0514f9d4013d4d6fa3c1e3a954a6"
+    },
+    {
+      "stage": "state",
+      "counts": {
+        "n": 56,
+        "passed": 56,
+        "failed": []
+      },
+      "returncode": 0,
+      "valid_ac_window": true,
+      "error_rows": null,
+      "unmutated_errors": null,
+      "source_sha256": "670900655ce5865e47bc3b9d9ca3117deffd7917ae5afd2821a27da255876397"
+    },
+    {
+      "stage": "crash",
+      "counts": {
+        "n": 50,
+        "passed": 50,
+        "failed": []
+      },
+      "returncode": 0,
+      "valid_ac_window": true,
+      "error_rows": null,
+      "unmutated_errors": null,
+      "source_sha256": "97d497dd4ed4f2df25e2971538cc9025ea36fd4d96ba6dd2745ecc072cc86edd"
+    },
+    {
+      "stage": "qualify",
+      "counts": {
+        "n": 29,
+        "passed": 29,
+        "failed": []
+      },
+      "returncode": 0,
+      "valid_ac_window": true,
+      "error_rows": null,
+      "unmutated_errors": null,
+      "source_sha256": "76cf25775d3d7a6043fb95ccfc9de50f7e1214ebf5579ac86ada835fd71b4bbc"
+    },
+    {
+      "stage": "disk",
+      "counts": {
+        "n": 30,
+        "passed": 30,
+        "failed": []
+      },
+      "returncode": 0,
+      "valid_ac_window": true,
+      "error_rows": null,
+      "unmutated_errors": null,
+      "source_sha256": "976e0b193294b859528f4470680888838d4685f86c8c7f8d102ddf9df2265943"
+    },
+    {
+      "stage": "cases",
+      "counts": {
+        "n": 29,
+        "passed": 29,
+        "failed": []
+      },
+      "returncode": 0,
+      "valid_ac_window": true,
+      "error_rows": null,
+      "unmutated_errors": null,
+      "source_sha256": "907714fa0c5667b3850a8d0e708240d6b12281d4c15db76b802e40a105e0bac4"
+    },
+    {
+      "stage": "mutants",
+      "counts": {
+        "total": 297,
+        "killed": 294,
+        "survivors": [
+          "MB104",
+          "MQ44",
+          "MQ50"
+        ],
+        "unmutated_all_pass": true,
+        "not_run": [],
+        "disk_refusal": null
+      },
+      "returncode": 1,
+      "valid_ac_window": true,
+      "error_rows": {
+        "MB104": "INVALID MUTANT RuntimeError: MB104: the fragment occurs 0 times in mbs308_measure.py"
+      },
+      "unmutated_errors": {},
+      "source_sha256": "c83d90c6f0e64f08c40175aa711aec8bf5c122dac89cf5daa0589252bd11a48b"
+    }
+  ],
+  "source_directory": "/private/tmp/codex-cell308-builder8-final-40761f7b/reports",
+  "no_target_execution": true,
+  "new_target_evaluations": 0,
+  "dev_decoy_science_suite": "NOT_RUN",
+  "operational_gate": "STOP_BEFORE_MEASUREMENT",
+  "remarks": "The original failure is preserved; MB104 invalid fragment; MQ44/MQ50 surviving mutants. Scoped mechanics acceptance does not meet full validation completion."
+}
