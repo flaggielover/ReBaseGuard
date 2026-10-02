@@ -12,3 +12,4 @@ the agent that runs it, which cannot be metered per operation from here).
 | 2026-10-01T16:03Z | builder6 resumed (brief 54 + 54-A + 54-B) | Mac | LOCAL_HOST_BOUND | own base store reused; sandboxes deleted per run | 0 | worktree edits; JSON reports in builder6 scratch | no |
 | 2026-10-01T18:45Z | builder6 final-byte runs done; T3 committed 78a172cf; builder7 (brief 56) started | Mac | LOCAL_HOST_BOUND | builder6 scratch 0.85 GB kept (base store + JSON reports) | 0 | BUILD_REPORT s17; JSON reports | no |
 | 2026-10-02T03:27Z | builder7 done; T4 committed d4734231; reviewF8 (brief 57) started | Mac | LOCAL_HOST_BOUND / REVIEW_ONLY | builder7 scratch: reports only (base store and clones deleted) | 0 | BUILD_REPORT s18; JSON reports | no |
+| 2026-10-02T07:05Z | builder8 (brief 58: D-1..D-5) started on d4734231 | Mac | LOCAL_HOST_BOUND | own base store; sandboxes deleted per run | 0 | worktree edits; JSON reports | no |

@@ -75,6 +75,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 56 | 56_builder7_reviewQ6_repairs.txt | FRESH non-holder builder7 on 78a172cf: the bounded repairs of the preserved DELTA_REJECTED 82d59cc2 (R1-R7, F-4, tests for G-1, G-2, G-5..G-11, ledger agents list) | Agent | see ledger | no (tail-figure scan: 0 hits) |
 | 56-A | 56A_builder7_followup.txt | follow-up to builder7: R7 second half (host report embedded; operator-action record named), science-phase disk-gate test, D read as late as possible (new bounded defect, flagged), QC12-S JSON-escape scan | SendMessage | see ledger | no |
 | 57 | 57_reviewF8_premeasurement_implementation.txt | fresh independent reviewF8: ONE combined review of the pre-measurement implementation at d4734231 (82d59cc2 repairs, decision-dependent cases, option (a), ratifier readings, supplement 2 semantics, designation-rule proposal, B4 analysis, three-record grant binding, final-byte state) | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 58 | 58_builder8_reviewF8_repairs.txt | FRESH non-holder builder8 on d4734231: the bounded repairs D-1..D-5 of the preserved IMPLEMENTATION_REJECTED 18cace37 (designation refusal after an event series; named ledger exception; positive peaks; hosting-app comparison; QS-RESUME-DECOY watchdog status) + the review's before-the-freeze riders | Agent | see ledger | no (tail-figure scan: 0 hits) |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
