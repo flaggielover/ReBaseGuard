@@ -64,6 +64,17 @@ def fresh(name: str) -> Path:
     return d
 
 
+def t_designation_history_does_not_dirty_namespace_preflight():
+    """D-1 regression: the durable history created by the first official designation is allowed runtime state.
+    Any other successor-namespace edit still fails the clean-worktree predicate; this control performs no launch or
+    measurement and therefore cannot evaluate a target cell."""
+    h = MEAS.SERIES_HISTORY_REL
+    return {"ok": MEAS.namespace_status_clean(f"?? {h}\n") and
+            MEAS.namespace_status_clean(f" M {h}\n") and
+            not MEAS.namespace_status_clean(f"?? {h}.tampered\n") and
+            not MEAS.namespace_status_clean(f" M {T.NS_REL}/code/mbs308_measure.py\n")}
+
+
 def base_names() -> list:
     if "base" not in _S:
         _S["base"] = DV.base_names_of(CFG, T.base_store())

@@ -85,6 +85,7 @@ NS_REL = DV.NS_REL
 DRIVER = "mbs308_driver.py"
 MBS_REF_PREFIX = "refs/p5y-k5-cell308-mbs-r1/"
 SERIES_HISTORY_NAME = "MBS308_SERIES_HISTORY.jsonl"
+SERIES_HISTORY_REL = NS_REL + "/ledger/" + SERIES_HISTORY_NAME
 READINGS_N = RR.READINGS_MIN               # ">= 10 readings"
 READINGS_SPACING_S = RR.READING_SPACING_S  # "30 s apart"
 DECOY_LABEL = "decoy"
@@ -155,6 +156,19 @@ def history_has_watchdog(ns: Path = NS) -> bool:
 
 def history_has_designated(ns: Path = NS) -> bool:
     return any(not row.get("dev") and row.get("status") == "DESIGNATED" for row in series_history(ns))
+
+
+def namespace_status_clean(status: str) -> bool:
+    """The append-only campaign history is intentional runtime state, not a source edit.
+
+    All other successor-namespace paths must remain clean.  Porcelain may report the history as either an untracked
+    file or (after a future operational snapshot) a modification, so compare the path after the status columns.
+    """
+    for line in (status or "").splitlines():
+        path = line[3:].split(" -> ", 1)[-1] if len(line) >= 3 else ""
+        if path != SERIES_HISTORY_REL:
+            return False
+    return True
 
 
 def utc() -> str:
@@ -408,7 +422,7 @@ def preflight(ns: Path, repo: Path, work: Path) -> dict:
     import mbs308_repin as RP
     import mbs308_scratch as SCR
     out = {"commit": git(repo, "rev-parse", "HEAD"),
-           "namespace_clean": git(repo, "status", "--porcelain", "--untracked-files=all", "--", NS_REL) == "" and
+           "namespace_clean": namespace_status_clean(git(repo, "status", "--porcelain", "--untracked-files=all", "--", NS_REL)) and
            bool(git(repo, "rev-parse", "HEAD")),
            "tracked_clean": git(repo, "status", "--porcelain", "--untracked-files=no") == "",
            "no_campaign_refs": git(repo, "for-each-ref", "--format=%(refname)", MBS_REF_PREFIX) == "",
