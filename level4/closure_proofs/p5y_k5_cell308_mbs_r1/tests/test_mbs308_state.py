@@ -437,11 +437,16 @@ def _binding_case(variant: str) -> dict:
     c = counts()
     good = [n for n in before if n != name]
     rec = sb().sealed_record()
+    lifecycle = rec.get("lifecycle") if isinstance(rec, dict) else None
+    stage1 = lifecycle.get("stage1_context") if isinstance(lifecycle, dict) else None
+    rejected = lifecycle.get("checkpoints_rejected") if isinstance(lifecycle, dict) else None
+    served = stage1.get("served") if isinstance(stage1, dict) else None
+    certified = T.certified_bytes(rec) == base if isinstance(rec, dict) else False
     return {"ok": r["out"] == {"rc": 0} and status() == "SEALED" and sealed_ok() and c.get(name) == c0.get(name, 0) + 1
-            and all(c.get(n) == 1 for n in good) and rec["lifecycle"]["checkpoints_rejected"] == [name]
-            and sorted(rec["lifecycle"]["stage1_context"]["served"]) == sorted(good)
-            and T.certified_bytes(rec) == base and one_marker(ch),
-            "variant": variant, "rejected": rec["lifecycle"]["checkpoints_rejected"]}
+            and all(c.get(n) == 1 for n in good) and rejected == [name]
+            and isinstance(served, list) and sorted(served) == sorted(good)
+            and certified and one_marker(ch),
+            "variant": variant, "rejected": rejected}
 
 
 def t_ckpt_wrong_grant():
