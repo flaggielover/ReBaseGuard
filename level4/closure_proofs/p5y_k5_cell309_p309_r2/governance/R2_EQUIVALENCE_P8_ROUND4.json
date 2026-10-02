@@ -1,0 +1,523 @@
+{
+ "schema": "P309_R2_EQUIVALENCE_P8/1",
+ "round": "repair round 3, after the second follow-up review (SF1-SF2)",
+ "head": "86706ca3f015bddfde6ae229d9462bba45f3e161",
+ "source_a_d": "synthetic F' 2d8849c9 of drill attempt evidence/drill/20261002T025624Z (kept clone) vs r1's F 4c754a73",
+ "source_b_c": "HEAD 86706ca3f015bddfde6ae229d9462bba45f3e161 vs r1's F (git show)",
+ "P8a": {
+  "outside_namespace_pins_r1": 73,
+  "outside_namespace_pins_r2": 73,
+  "outside_equal": true,
+  "outside_diff": [],
+  "runtime_keys_r1": [
+   "host_id_sha256",
+   "implementation",
+   "platform",
+   "python",
+   "stdlib_only",
+   "workers_max"
+  ],
+  "runtime_keys_r2": [
+   "glibc",
+   "host_id_sha256",
+   "implementation",
+   "interpreter_sha256",
+   "platform",
+   "python",
+   "stdlib_only",
+   "workers_max"
+  ]
+ },
+ "P8b": {
+  "unchanged": 12,
+  "relocation_only_reverse_equal": [
+   "code/code_skeleton.py",
+   "code/make_proposed_authorization.py",
+   "code/u2_structure_check.py",
+   "config/FORMAL_QUARANTINE_P309.json",
+   "start_state/verify_start_state.py"
+  ],
+  "changed_beyond_map": [
+   "code/checkpoint_push_p309.py",
+   "code/make_freeze_manifest.py",
+   "code/make_freeze_params.py",
+   "code/p309_driver.py",
+   "code/p309_env.py",
+   "code/p309_guard.py",
+   "code/p309_placeholder_check.py",
+   "code/p309_qualify.py",
+   "code/p309_scan.py",
+   "code/p309_self_audit.py",
+   "code/p309_static_check.py",
+   "config/SCANNER_ALLOWANCE_P309.json",
+   "tests/planted_control_p309_formal.py",
+   "tests/test_p309_d5_exception.py",
+   "tests/test_p309_exactly_once.py",
+   "tests/test_p309_guard.py",
+   "tests/test_p309_site_backstop.py",
+   "tests/test_verify_scoped.py",
+   "verify/README_VERIFY_SCOPED.md",
+   "verify/VERIFY_RESULTS_SCOPED.json",
+   "verify/scoped_sandbox.py",
+   "verify/srk_verify_indep_scoped.py"
+  ],
+  "new": [
+   "code/p309_host.py",
+   "code/p309_launch.py",
+   "code/p309_topology_drill.py",
+   "tests/test_p309_host.py",
+   "tests/test_p309_host_controls.py",
+   "tests/test_p309_static_controls.py",
+   "verify/R2_VERIFIER_CHANGES_REPORT.md",
+   "verify/R2_VERIFIER_CHANGES_REPORT.sha256",
+   "verify/R2_VERIFIER_EXEC_LEDGER.jsonl"
+  ]
+ },
+ "P8b_moves_since_round_3": {
+  "newly_beyond_map": [],
+  "no_longer_relocation_only": [],
+  "newly_new": []
+ },
+ "P8c": {
+  "occurrences": [
+   [
+    "code/checkpoint_push_p309.py",
+    111,
+    "p5y_k5_cell309_p309_r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "code/make_freeze_params.py",
+    180,
+    "p5y_k5_cell309_p309_r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "code/p309_guard.py",
+    42,
+    "p5y-k5-cell309-p309-r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "code/p309_qualify.py",
+    298,
+    "p5y_k5_cell309_p309_r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "code/p309_self_audit.py",
+    41,
+    "p5y_k5_cell309_p309_r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "code/p309_topology_drill.py",
+    87,
+    "p5y_k5_cell309_p309_r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "config/SCANNER_ALLOWANCE_P309.json",
+    72,
+    "p5y-k5-cell309-p309-r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "config/SCANNER_ALLOWANCE_P309.json",
+    1912,
+    "p5y_k5_cell309_p309_r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "fc2/FC2_SPEC.md",
+    8,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC.md",
+    27,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC_R2.md",
+    52,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC_R2.md",
+    54,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC_R2.md",
+    57,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC_R2.md",
+    58,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC_R2.md",
+    59,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC_R2.md",
+    60,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC_R2.md",
+    81,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC_R2.md",
+    197,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "fc2/FC2_SPEC_R2.md",
+    205,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "tests/planted_control_p309_formal.py",
+    29,
+    "p5y-k5-cell309-p309-r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "tests/test_verify_scoped.py",
+    943,
+    "p5y-k5-cell309-p309-r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "verify/R2_VERIFIER_CHANGES_REPORT.md",
+    14,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/R2_VERIFIER_CHANGES_REPORT.md",
+    70,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/R2_VERIFIER_CHANGES_REPORT.md",
+    71,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/R2_VERIFIER_CHANGES_REPORT.md",
+    72,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/R2_VERIFIER_CHANGES_REPORT.md",
+    73,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/R2_VERIFIER_CHANGES_REPORT.md",
+    87,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/R2_VERIFIER_CHANGES_REPORT.md",
+    349,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/README_VERIFY_SCOPED.md",
+    329,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/README_VERIFY_SCOPED.md",
+    330,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/README_VERIFY_SCOPED.md",
+    331,
+    "p5y_k5_cell309_p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/README_VERIFY_SCOPED.md",
+    339,
+    "p5y-k5-cell309-p309-r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/README_VERIFY_SCOPED.md",
+    401,
+    "p309_r1",
+    "inherited text (keep)"
+   ],
+   [
+    "verify/scoped_sandbox.py",
+    51,
+    "p5y-k5-cell309-p309-r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ],
+   [
+    "verify/srk_verify_indep_scoped.py",
+    165,
+    "p5y-k5-cell309-p309-r1",
+    "deliberate r2 reference: r1 namespace kept forbidden / r1 inherited records / r1-tree check"
+   ]
+  ],
+  "count": 35,
+  "new_since_round_3": []
+ },
+ "P8d": {
+  "differences": 44,
+  "classified": [
+   [
+    ".campaign",
+    "differs",
+    "P3 binding (OD-R2-1b)"
+   ],
+   [
+    ".disclosed_liabilities",
+    "differs",
+    "R2_DISCLOSED_LIABILITIES appended; r1 list verbatim"
+   ],
+   [
+    ".documents.amendments_rev2c.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.briefs_recovered.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.d5_ratification_request.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.d5_site_backstop_report.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.errata_formal.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.fc2_spec_r2.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.fc2_spec_r2_erratum_1.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.formal_quarantine.git_blob",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.formal_quarantine.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.incident_p309f_01.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.no_placeholder_statement.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.owner_d5_ratification_verbatim.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.owner_decisions_verbatim.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.owner_rulings_2_verbatim.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.scanner_allowance.git_blob",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.scanner_allowance.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".documents.u2_corrected_proposition_r2.path",
+    "differs",
+    "relocated document path (blob change only where noted)"
+   ],
+   [
+    ".driver.path",
+    "differs",
+    "relocated driver path; sha256 (relocation map + seal message label + the C14 runtime binding)"
+   ],
+   [
+    ".driver.sha256",
+    "differs",
+    "relocated driver path; sha256 (relocation map + seal message label + the C14 runtime binding)"
+   ],
+   [
+    ".exactly_once.marker",
+    "differs",
+    "OD-R2-1(b)/OD-R2-2 provisional marker name"
+   ],
+   [
+    ".exactly_once.pending_ref",
+    "differs",
+    "OD-R2-1(b)/OD-R2-2 provisional pending name"
+   ],
+   [
+    ".exactly_once.result_path",
+    "differs",
+    "P3 binding (result path)"
+   ],
+   [
+    ".grant_rules.freeze_record",
+    "differs",
+    "relocated freeze-record path"
+   ],
+   [
+    ".post_grant_derivations.execution_host",
+    "differs",
+    "r2 delta review C7/C8: the host re-run only through the launcher's host-rerun mode; the shared-host execute rule (P309_R2_AMENDMENTS C)"
+   ],
+   [
+    ".proposed_execution_host.description",
+    "differs",
+    "r2 delta review C8: a host is named only from the owner's OD-R2-6 answer; otherwise none"
+   ],
+   [
+    ".proposed_execution_host.host_id_sha256",
+    "only_r1",
+    "r2 delta review C8: a host is named only from the owner's OD-R2-6 answer; otherwise none"
+   ],
+   [
+    ".proposed_execution_host.named",
+    "only_r2",
+    "r2 delta review C8: a host is named only from the owner's OD-R2-6 answer; otherwise none"
+   ],
+   [
+    ".qualification_rule",
+    "differs",
+    "r2 delta review C8: the rule names Q-HOST and the launcher (official mode)"
+   ],
+   [
+    ".reviews.delta2_incident_independence.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.delta3_incident_independence.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.delta4_incident_independence.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.delta5_incident_independence.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.delta_incident_independence.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.incident_independence.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.prefreeze_r4.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.prefreeze_r4_followup.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.prefreeze_r4_followup_2.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.prefreeze_r4_followup_3.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.prefreeze_r4_followup_4.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.r2_plan",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.r2_plan_followup_1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ],
+   [
+    ".reviews.u2_check.inherited_from_r1",
+    "only_r2",
+    "inherited r1 reviews (inherited_from_r1) and r2's own reviews"
+   ]
+  ],
+  "unexpected": []
+ }
+}
