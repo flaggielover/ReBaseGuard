@@ -497,6 +497,10 @@ def evidence_reasons(ev) -> list:
         r.append("INVALID_REASONS_RECORDED")
     if ev.get("target_evaluations") != 0:
         r.append("TARGET_EVALUATIONS_NOT_ZERO")
+    if any((not row.get("dev")) and (row.get("status") == "STEP1_RERUN_REQUIRED" or
+           "STEP1_RERUN_REQUIRED" in (row.get("invalid_reasons") or []))
+           for row in (ev.get("series_history") or []) if isinstance(row, dict)):
+        r.append("PRIOR_SERIES_MEMORY_WATCHDOG_EVENT")
     for k in ("commit", "driver_sha256", "runs", "readings", "hw_memsize_bytes", "hosting_app"):
         if ev.get(k) in (None, "", []):
             r.append(f"MISSING_{k.upper()}")

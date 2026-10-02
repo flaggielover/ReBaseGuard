@@ -115,7 +115,10 @@
  ],
  "ledger": {"ref": "refs/heads/p5y-k5-cell308-research", "path": "level4/closure_proofs/p5y_k5_cell308_research/ledger/TARGET_INTEGRITY_LEDGER.jsonl",
             "agents": ["builder2", "builder3", "builder4", "builder5", "builder6", "builder7", "reviewQ6", "reviewF8", "ratifier2",
-                       "editorR3C1", "ratifierMBS", "mbs308_qualification"]},
+                       "editorR3C1", "ratifierMBS", "mbs308_qualification"],
+            "exceptions": [{"line": 418, "sha256": "54869df9eb7c1e538fd5fdff11fe702847ce861e8b82b3d24dd7988525de8d4e",
+                            "agent": "editorR3C1", "class": "INCIDENT", "new_target_evaluations": 0,
+                            "target_equivalent_proxies": 0, "target_informed_optimisation": 0, "LEAK_FLAG": false}]},
  "r_allow_h3_readings": {"source": "CONSTANTS_RATIFICATION_MBS308.md at 3c2a7854, section Evidence, H3 (readings above 25 %, with the locations as the ratification states them)",
   "readings": [
    {"name": "spotlightknowledged.updater", "pcpu": "70.3", "path": "/usr/libexec"},

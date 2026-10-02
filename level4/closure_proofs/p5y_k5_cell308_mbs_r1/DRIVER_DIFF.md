@@ -1,7 +1,7 @@
 # DRIVER_DIFF: mbs308_driver.py against MB r1's mb308_driver.py (NOT frozen; regenerated from the files)
 
 * Base: `level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_driver.py` at freeze r3 `c46434a3` (byte-identical at `21e99cf0`), sha256 `411252b2a9fa601cc5c1ba34abaf08482cf95a06e2ce7e4d5e5a5bd9e1f56dcb`.
-* New: `code/mbs308_driver.py`, sha256 `febf742746d699815765408b6e91861b1ba8a69d0565e68963cc50a8a7b11148` (changes with every re-pin; the freeze binds the final bytes).
+* New: `code/mbs308_driver.py`, sha256 `117624e9477f6b315f1c9a63920d10e79a0f8819aafad5d0eeff50adf71beab1` (changes with every re-pin; the freeze binds the final bytes).
 * Hunks: 23; by class: IDENTITY 2, IDENTITY + LIFECYCLE 10, LIFECYCLE 11.
 * Classes: **SCIENCE-GLUE identical** = every function in the RC1 list and every function it references is text-identical, so it appears in NO hunk (asserted by `tests/test_mbs308_static.py` t_rc1_science_glue_text_identical and t_mbs9_referenced_module_names; a hunk touching one would be classified `SCIENCE-GLUE (MUST NOT OCCUR)`); **IDENTITY** = the successor's worktree, branch, namespace, refs, grant schema and paths, MB r1's recorded state (GC-8), helper pins, lineage; **LIFECYCLE** = the durable state machine, persistence, checkpoints + resume, supervisor, host contract, platform pins, launcher gate, modes.
 * The carried (text-identical) functions: `Inconsistent`, `IndependentCheckFailed`, `Refusal`, `_eval_cap`, `_ser_block`, `_set_job_cap`, `_worker_init`, `_worker_job`, `admitted_pairs`, `check_bindings`, `check_clean`, `check_cpu_caps`, `check_flags`, `check_governance_state`, `check_helpers`, `check_identity`, `check_result_paths`, `compose_and_consume`, `control`, `controls`, `decide`, `decoy`, `decoy_bundles`, `decoy_cover`, `evaluate_target`, `failure_kind`, `freeze_commit`, `fs`, `git`, `git_blob_id`, `git_dir`, `jsonable`, `load_consumer`, `load_science`, `prepare_target`, `public_stage1`, `r0_order3_variant`, `read_pinned`, `rehearse`, `require_ac`, `sha`, `stage1`, `supply_scaled_variant`, `target_geometry`, `utc`, `verdict_ok`.
@@ -612,7 +612,7 @@
 ### Hunk 9: IDENTITY; check_s1_ruling, s1_index_sha256
 
 ```diff
-@@ -583,6 +880,43 @@
+@@ -583,6 +880,46 @@
  
  
  # ------------------------------------------------------------------ the grant (derived chain)
@@ -641,7 +641,10 @@
 +    for got, want in zip(recs, S1_OWNER_RECORDS):
 +        if not isinstance(got, dict) or sorted(got) != sorted(S1_RECORD_KEYS) or not isinstance(got["verbatim"], str):
 +            raise bad
-+        raw = got["verbatim"].encode()
++        try:
++            raw = got["verbatim"].encode("utf-8")
++        except UnicodeEncodeError as exc:
++            raise bad from exc
 +        if type(got["bytes"]) is not int or len(raw) != got["bytes"] or sha(raw) != got["sha256"]:
 +            raise bad                           # (a) the text is not the bytes its own entry names
 +        row = (got["record"], got["path"], got["commit"], got["bytes"], got["sha256"])
@@ -661,7 +664,7 @@
 ### Hunk 10: IDENTITY; check_grant
 
 ```diff
-@@ -594,9 +928,13 @@
+@@ -594,9 +931,13 @@
      if git("diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").stdout.split() != [GRANT_REL]:
          raise Refusal("GRANT_INVALID", "the grant commit changes more than the grant")
      g = json.loads((REPO / GRANT_REL).read_bytes())
@@ -682,7 +685,7 @@
 ### Hunk 11: IDENTITY + LIFECYCLE; check_grant, persist_emergency, persist_pending, serialize
 
 ```diff
-@@ -618,38 +956,28 @@
+@@ -618,38 +959,28 @@
      if g.get("input_manifest_sha256") != sha((REPO / MANIFEST_REL).read_bytes()):
          raise Refusal("GRANT_INVALID", "the grant does not bind the frozen input manifest")
      return {"grant_commit": head, "grant_sha256": sha((REPO / GRANT_REL).read_bytes()), "freeze_commit": fz,
@@ -740,7 +743,7 @@
 ### Hunk 12: LIFECYCLE; seal_blob
 
 ```diff
-@@ -657,7 +985,12 @@
+@@ -657,7 +988,12 @@
      for delay in (0.0, *SEAL_RETRY_DELAYS):
          time.sleep(delay)
          head = git("rev-parse", "HEAD").stdout.strip()
@@ -759,7 +762,7 @@
 ### Hunk 13: IDENTITY + LIFECYCLE; seal_blob
 
 ```diff
-@@ -667,12 +1000,13 @@
+@@ -667,12 +1003,13 @@
              if any(s.returncode for s in steps) or tree.returncode:
                  last = "index"
                  continue
@@ -780,7 +783,7 @@
 ### Hunk 14: IDENTITY + LIFECYCLE; materialize
 
 ```diff
-@@ -690,20 +1024,19 @@
+@@ -690,20 +1027,19 @@
          raise OSError("the object store returned other bytes")
      fds = [os.open(str(REPO), os.O_RDONLY | os.O_DIRECTORY)]
      try:
@@ -810,7 +813,7 @@
 ### Hunk 15: IDENTITY + LIFECYCLE; fallback_bytes, materialized_ok, seal_message
 
 ```diff
-@@ -719,19 +1052,42 @@
+@@ -719,19 +1055,42 @@
              os.close(fd)
  
  
@@ -861,7 +864,7 @@
 ### Hunk 16: LIFECYCLE; <module-level assignment / statement>, _journal, after_marker, keep_awake, persist_and_seal
 
 ```diff
-@@ -751,71 +1107,133 @@
+@@ -751,71 +1110,133 @@
      return "TARGET_EVALUATION_FAILED"
  
  
@@ -1040,7 +1043,7 @@
 ### Hunk 17: LIFECYCLE; close_host
 
 ```diff
-@@ -827,8 +1245,18 @@
+@@ -827,8 +1248,18 @@
  
  
  def close_host(common: dict) -> None:
@@ -1065,7 +1068,7 @@
 ### Hunk 18: LIFECYCLE; pre_marker_common, run_execute
 
 ```diff
-@@ -859,21 +1287,21 @@
+@@ -859,21 +1290,21 @@
              "kappa_check": sci["kappa_check"]}
  
  
@@ -1100,7 +1103,7 @@
 ### Hunk 19: LIFECYCLE; pre_marker_common, run_execute, run_resume
 
 ```diff
-@@ -884,40 +1312,180 @@
+@@ -884,40 +1315,180 @@
          raise Refusal(exc.code, str(exc))
      except PIN.PinError as exc:
          raise Refusal("PIN_MISMATCH", str(exc))
@@ -1315,7 +1318,7 @@
 ### Hunk 20: IDENTITY + LIFECYCLE; _pending_seal_materialize, _read_verified_spool, _seal_control_failed, run_close_indeterminate, run_recover, run_seal_only, run_status
 
 ```diff
-@@ -928,73 +1496,191 @@
+@@ -928,73 +1499,191 @@
      return controls(con, sci, k)
  
  
@@ -1573,7 +1576,7 @@
 ### Hunk 21: LIFECYCLE; main
 
 ```diff
-@@ -1097,13 +1783,18 @@
+@@ -1097,13 +1786,18 @@
  
  def main(argv=None) -> int:
      ap = argparse.ArgumentParser()
@@ -1598,7 +1601,7 @@
 ### Hunk 22: LIFECYCLE; main
 
 ```diff
-@@ -1112,25 +1803,31 @@
+@@ -1112,25 +1806,31 @@
      signal.signal(signal.SIGALRM, wall_cap)
      signal.alarm(DECOY_CAP_S if a.mode == "decoy" else PRE_CAP_S)
      try:
@@ -1640,7 +1643,7 @@
 ### Hunk 23: LIFECYCLE; <module-level assignment / statement>, main
 
 ```diff
-@@ -1139,27 +1836,77 @@
+@@ -1139,27 +1839,77 @@
              if a.workers > 5 or a.workers < 1:
                  raise Refusal("WORKERS", "1..5 workers")
              check_bindings(allow_uncommitted=True)

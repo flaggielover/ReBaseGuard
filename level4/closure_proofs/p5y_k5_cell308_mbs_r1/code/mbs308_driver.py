@@ -905,7 +905,10 @@ def check_s1_ruling(ur) -> dict:
     for got, want in zip(recs, S1_OWNER_RECORDS):
         if not isinstance(got, dict) or sorted(got) != sorted(S1_RECORD_KEYS) or not isinstance(got["verbatim"], str):
             raise bad
-        raw = got["verbatim"].encode()
+        try:
+            raw = got["verbatim"].encode("utf-8")
+        except UnicodeEncodeError as exc:
+            raise bad from exc
         if type(got["bytes"]) is not int or len(raw) != got["bytes"] or sha(raw) != got["sha256"]:
             raise bad                           # (a) the text is not the bytes its own entry names
         row = (got["record"], got["path"], got["commit"], got["bytes"], got["sha256"])

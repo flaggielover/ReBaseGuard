@@ -810,9 +810,12 @@ readings (research `governance/CONSTANTS_RATIFICATION_MBS308_READINGS_R1.md`, co
    made with that `--work`. (iii) A later invocation measures the whole series again: a single decoy is never
    re-measured into an existing series, and no run is ever selected among several. (iv) Once a series is designated
    (the evidence file exists under `evidence_prefreeze/`) the tool refuses to run again (`ALREADY_DESIGNATED`): no
-   best-of-N, no replacement. (v) A memory-watchdog event is not a re-measurement case: (ii) applies to its record
-   and the rule's own re-run (above) is the only cure the texts provide. (vi) No limit on the number of invalid series
-   is set, because no accepted text sets one; every one is recorded.
+   best-of-N, no replacement. The series history is also appended at a fixed namespace ledger path before launch and
+   after completion (or interruption), independent of `--work`; it is the authoritative list across invocations and
+   work directories. A prior `STEP1_RERUN_REQUIRED` entry refuses any later designation before measurement, and the
+   derivation refuses evidence whose history contains such an event. (v) A memory-watchdog event is not a
+   re-measurement case: (ii) applies to its record and the rule's own re-run (above) is the only cure the texts provide.
+   (vi) No limit on the number of invalid series is set, because no accepted text sets one; every one is recorded.
 2. **Derivation** (`code/mbs308_derive.py derive`): the EXISTING rule functions (`code/mbs308_rrules.py`; no rule text
    and no rule number changed) applied mechanically to the designated evidence give the canonical outputs **A**:
    `MEM_CAP_BYTES` (int), `MEM_POLL_S` (2, or 1/2 when the rule clips: the canonical branches only),

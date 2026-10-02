@@ -95,6 +95,9 @@ TIMING_KEYS = frozenset({"seconds", "wall_seconds", "cpu_seconds"})     # MB r1'
 PRE_GRANT_CLASSES = frozenset({"HISTORICAL_READ", "HISTORICAL_RECONSTRUCTION", "PRUNING_FROM_COMMITTED",
                                "INFRASTRUCTURE", "SYNTHETIC_VALIDATION", "NONTARGET_DRIFT_VALIDATION",
                                "NONTARGET_REAL_VALIDATION", "THEORY", "REVIEW"})
+LEDGER_EXCEPTIONS = ({"line": 418, "sha256": "54869df9eb7c1e538fd5fdff11fe702847ce861e8b82b3d24dd7988525de8d4e",
+                      "agent": "editorR3C1", "class": "INCIDENT", "new_target_evaluations": 0,
+                      "target_equivalent_proxies": 0, "target_informed_optimisation": 0, "LEAK_FLAG": False},)
 PENDING_STATUS = "PENDING_USER_DECISION"
 SUITE_CASES = ("QS-STATIC", "QS-STATE", "QS-CRASH", "QS-LAUNCH", "QS-QUALIFY", "QS-DISK", "QS-CASES")
 BUILT_CASES = SUITE_CASES + ("QS-MUTANTS", "QC09-S", "QC11-S", "QC12-S", "QC13-S", "Q8-S", "R_RULES_CONTROLS",
@@ -688,6 +691,9 @@ def resume_decoy_summary(record, rc: int | None) -> dict:
     out["pass"] = record["pass"] is True and record.get("form") == "official" and \
         record.get("target_evaluations") == 0 and (rc is None or rc == 0)
     out["rc"] = rc
+    if record.get("fail_closed_statuses"):
+        out["fail_closed_statuses"] = list(record["fail_closed_statuses"])
+        out["status"] = record.get("status")
     return out
 
 
@@ -1122,6 +1128,10 @@ def tail_hits(rel: str, text: str, rx, post_dirs: tuple, ns_rel: str = NS_REL) -
     except ValueError:
         return n, 0
     full = len(rx.findall(json.dumps(obj, sort_keys=True)))        # the record as decoded (escapes resolved)
+    # A byte-level and decoded scan must describe the same file before any timing exemption is admissible.  This
+    # fails closed on escaped/duplicated keys instead of allowing raw and decoded counts to cancel.
+    if n != full:
+        return max(n, full), 0
     parts = Path(rel).relative_to(ns_rel).parts if rel.startswith(ns_rel + "/") else ()
     if not parts or parts[0] not in post_dirs:
         return max(n, full), 0                                     # no exemption outside the post-freeze directories
@@ -1332,7 +1342,7 @@ def check_record(rec: dict, *, show, is_ancestor) -> dict:
     return out
 
 
-def ledger_check(text: str | None, agents) -> dict:
+def ledger_check(text: str | None, agents, exceptions=LEDGER_EXCEPTIONS) -> dict:
     """The successor build agents' research-ledger lines: pre-grant classes only, 0 target evaluations / proxies /
     target-informed optimisation, no LEAK_FLAG. Counts only."""
     if text is None:
@@ -1349,6 +1359,14 @@ def ledger_check(text: str | None, agents) -> dict:
         if r.get("agent") not in agents:
             continue
         rows[r["agent"]] = rows.get(r["agent"], 0) + 1
+        exception = next((x for x in exceptions if x.get("line") == i and x.get("sha256") == sha(ln.encode()) and
+                          r.get("agent") == x.get("agent") and r.get("class") == x.get("class") and
+                          r.get("new_target_evaluations") == x.get("new_target_evaluations") and
+                          r.get("target_equivalent_proxies") == x.get("target_equivalent_proxies") and
+                          r.get("target_informed_optimisation") == x.get("target_informed_optimisation", 0) and
+                          ("LEAK_FLAG" not in r or r.get("LEAK_FLAG") is False)), None)
+        if exception is not None:
+            continue
         if r.get("class") not in PRE_GRANT_CLASSES or r.get("new_target_evaluations") != 0 or \
                 r.get("target_equivalent_proxies") != 0 or r.get("target_informed_optimisation", 0) != 0 or \
                 r.get("LEAK_FLAG"):
@@ -1366,7 +1384,8 @@ def qc13(pre: dict, cfg: dict, repo: Path = None) -> dict:
         gov = {"pass": False, "refusal": exc.code}
     led_cfg = cfg["ledger"]
     raw = git_show_bytes(led_cfg["ref"], led_cfg["path"], repo=repo)
-    led = ledger_check(None if raw is None else raw.decode(errors="replace"), set(led_cfg["agents"]))
+    led = ledger_check(None if raw is None else raw.decode(errors="replace"), set(led_cfg["agents"]),
+                       led_cfg.get("exceptions", LEDGER_EXCEPTIONS))
     show = lambda c, p: git_show_bytes(c, p, repo=repo)  # noqa: E731
     anc = lambda c, ref: git_rc("merge-base", "--is-ancestor", c, ref, repo=repo) == 0  # noqa: E731
     recs = [check_record(r, show=show, is_ancestor=anc) for r in cfg["governance_records"]]
@@ -2639,6 +2658,9 @@ def r_rules_official(*, evidence, evidence_sha256, derivation, official: dict | 
     out["official_run_reasons"] = {str(r.get("id")): MEAS.run_reasons(r, plan, cap=C["MEM_CAP_BYTES"], poll=run_poll)
                                    for r in runs}
     out["official_reading_reasons"] = MEAS.reading_reasons(official.get("readings"))
+    designated_paths = (evidence.get("hosting_app") or {}).get("paths")
+    official_paths = (official.get("hosting_app") or {}).get("paths")
+    out["hosting_app_paths_equal"] = isinstance(designated_paths, list) and official_paths == designated_paths
     # the embedded read-only host report of the official run (a recorded field: its STRUCTURE is checked, its statuses
     # are not judged); the designated evidence's own is checked by mbs308_derive.evidence_reasons (A above)
     out["official_host_report_reasons"] = DV.host_report_reasons(official.get("host_report"))
@@ -2665,6 +2687,7 @@ def r_rules_official(*, evidence, evidence_sha256, derivation, official: dict | 
         out["frozen_driver_is_measured_driver_with_the_five_outputs_applied"] and
         len(runs) == len(plan) and not any(out["official_run_reasons"].values()) and
         not out["official_reading_reasons"] and not out["official_host_report_reasons"] and
+        out["hosting_app_paths_equal"] and
         out["B"]["form_reasons"] == [] and
         b_checks["all_hold"] is True and cmp_["all_equal"] is True)
     out["status"] = closed[0] if closed else ("EXACT_AGREEMENT" if out["pass"] else "NOT_IN_AGREEMENT")

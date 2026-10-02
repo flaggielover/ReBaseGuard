@@ -1641,6 +1641,44 @@ branches; EXCL_ALLOW is governed by run-to-run host variation with no margin whe
 names is busy in one series only; the other three are boundary-sensitive (the 256 MiB steps, the 25 % threshold and
 the bins of the hosting app's maximum).
 
+## 19. Bounded repairs D-1–D-5 and riders (builder8, brief 58; NOT frozen)
+
+### 19.a Scope and implementation
+
+This section is additive; sections 1–18 remain byte-identical. In the successor namespace only, D-1 records every
+measurement series in `ledger/MBS308_SERIES_HISTORY.jsonl` at a fixed namespace path. Records receive unique series IDs,
+are appended with `O_APPEND`, and are fsynced; malformed history is a fail-closed refusal. A `started` record is durable
+before preflight/measurement and a matching `finished` record is written on completion or interruption. Designation and
+derivation refuse a prior non-development `STEP1_RERUN_REQUIRED`, regardless of `--work`, and designation state is read
+from this history as well as the evidence path. D-2 admits only the named line-418 exception, bound to its exact digest,
+agent/class and zero counts; an omitted `LEAK_FLAG` is accepted as the explicitly named historical shape, while any
+other incident, changed byte, leak flag or nonzero count fails. D-3 preserves existing missing/malformed reason names
+and adds named nonpositive reasons for job, driver and watchdog peaks; the ratio calculation no longer filters values
+with `min(v) > 0`. D-4 requires exact designated/official hosting-app path-list equality in `R_RULES_OFFICIAL`. D-5
+propagates `QUALIFICATION_MEMORY_WATCHDOG_UNDER_FROZEN_CAP` from a failed resumed decoy record, and resolves runner
+constants from the sandbox code directory so mutant and resumed records cannot raise `KeyError`.
+
+The O8-1 decoded QC scan now refuses exemption when raw and decoded counts differ. O8-3 converts a lone-surrogate
+owner record into `GRANT_INVALID`. The protocol's section 11.2 designation text names the fixed history, interruption,
+watchdog stop, and no-remeasurement behavior. The ledger agent list and text points T-1–T-3 are retained as scope
+items for the next review.
+
+### 19.b Tests and mutants
+
+Planted checks cover history corruption/durability and cross-`--work` watchdog refusal, the exact ledger exception and
+its changed-line/second-incident/leak/nonzero-count mutants, all positive-peak checks, hosting-path mismatch, resumed
+failed-decoy status, raw/decoded QC mismatch, and Unicode `GRANT_INVALID`. Existing suites were rerun after the repair;
+the focused adapter and static suites passed. The full final-byte suite and mutant matrix remain a coordinator-run
+obligation on a committed sandbox snapshot; no designated measurement, official qualification, freeze, apply, grant,
+or target evaluation was run here.
+
+### 19.c Exposure and invariants
+
+No MB r1 observation was supplied to this builder. No Cell-308/305–309 evaluation, drift measurement, freeze,
+qualification, authorization, grant, marker, or system setting was touched. The research ledger was not edited. The
+implementation remains pre-freeze and target-free; the next independent review must inspect the final bytes and rerun
+the complete matrix before any operational step.
+
 ### 17.5 A safety interlock: real science executes only in the qualified worktree
 
 With the science cases built, an official or review run that passed its preconditions inside a test sandbox (for

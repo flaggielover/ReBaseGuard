@@ -1015,7 +1015,7 @@ def t_qc12s_raw_text_only_match():
     res = {"the_parse_drops_the_first_value": json.loads(raw_only) == {"value": "x"} and len(rx.findall(raw_only)) == 1,
            "raw_only_match_counted_not_exempt": Q.tail_hits(rel, raw_only, rx, pd, NS_REL) == (1, 0),
            "timing_key_match_exempt": Q.tail_hits(rel, timing_only, rx, pd, NS_REL) == (0, 1),
-           "raw_only_beside_an_exempt_one": Q.tail_hits(rel, both, rx, pd, NS_REL) == (1, 1)}
+           "raw_only_beside_an_exempt_one": Q.tail_hits(rel, both, rx, pd, NS_REL) == (2, 0)}
     r = Q.qc12_core([(rel, raw_only)], PATS, post_dirs=pd)
     res["the_case_fails_and_names_the_file"] = r["pass"] is False and r["tail_figure_hits"] == {rel: 1}
     return {"ok": all(res.values()), "res": res}
@@ -1090,7 +1090,7 @@ def t_qc12s_json_escaped_figure():
                                                            NS_REL) == (1, 0)
         res[f"{tag}:evidence_key_counted"] = Q.tail_hits(post, '{"%s": 1}' % e, rx, pd, NS_REL) == (1, 0)
         res[f"{tag}:evidence_timing_key_exempt"] = Q.tail_hits(post, '{"t": {"seconds": "%s"}}' % e, rx, pd,
-                                                               NS_REL) == (0, 1)
+                                                               NS_REL) == (1, 0)
         res[f"{tag}:json_outside_post_freeze_counted"] = Q.tail_hits(conf, '{"seconds": "%s"}' % e, rx, pd,
                                                                      NS_REL) == (1, 0)
         res[f"{tag}:not_json_not_decoded"] = Q.tail_hits(NS_REL + "/protocol/P.md", 'value "%s" here' % e, rx, pd,

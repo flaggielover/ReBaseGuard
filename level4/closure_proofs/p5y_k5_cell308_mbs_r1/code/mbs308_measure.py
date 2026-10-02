@@ -60,6 +60,7 @@ from __future__ import annotations
 import argparse
 import ast
 import datetime
+import errno
 import hashlib
 import json
 import os
@@ -67,6 +68,7 @@ import re
 import subprocess
 import sys
 import time
+import uuid
 from fractions import Fraction as F
 from pathlib import Path
 
@@ -82,6 +84,7 @@ import mbs308_rrules as RR  # noqa: E402
 NS_REL = DV.NS_REL
 DRIVER = "mbs308_driver.py"
 MBS_REF_PREFIX = "refs/p5y-k5-cell308-mbs-r1/"
+SERIES_HISTORY_NAME = "MBS308_SERIES_HISTORY.jsonl"
 READINGS_N = RR.READINGS_MIN               # ">= 10 readings"
 READINGS_SPACING_S = RR.READING_SPACING_S  # "30 s apart"
 DECOY_LABEL = "decoy"
@@ -101,6 +104,57 @@ class MeasureRefusal(Exception):
 
 def sha(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
+
+
+def series_history_path(ns: Path = NS) -> Path:
+    """The campaign history is fixed by the namespace, never selected by --work."""
+    return Path(ns) / "ledger" / SERIES_HISTORY_NAME
+
+
+def series_history(ns: Path = NS) -> list:
+    p = series_history_path(ns)
+    if not p.is_file():
+        return []
+    out = []
+    for n, line in enumerate(p.read_bytes().splitlines(), 1):
+        try:
+            row = json.loads(line.decode("utf-8"))
+        except (UnicodeDecodeError, ValueError) as exc:
+            raise MeasureRefusal("SERIES_HISTORY_CORRUPT", f"line {n}: {exc}") from exc
+        if isinstance(row, dict):
+            out.append(row)
+        else:
+            raise MeasureRefusal("SERIES_HISTORY_CORRUPT", f"line {n} is not an object")
+    return out
+
+
+def append_series_history(ns: Path, record: dict) -> None:
+    p = series_history_path(ns)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    payload = (json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+    fd = os.open(p, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+    try:
+        view = memoryview(payload)
+        while view:
+            try:
+                n = os.write(fd, view)
+            except InterruptedError:
+                continue
+            if n <= 0:
+                raise OSError(errno.EIO, "short series-history write")
+            view = view[n:]
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
+def history_has_watchdog(ns: Path = NS) -> bool:
+    return any(not row.get("dev") and (row.get("status") == RR.STATUS_STEP1_RERUN or
+               RR.STATUS_STEP1_RERUN in (row.get("invalid_reasons") or [])) for row in series_history(ns))
+
+
+def history_has_designated(ns: Path = NS) -> bool:
+    return any(not row.get("dev") and row.get("status") == "DESIGNATED" for row in series_history(ns))
 
 
 def utc() -> str:
@@ -505,6 +559,7 @@ def measure(*, ns: Path, repo: Path, work: Path, L, plan: dict, workers: int, de
             "DESIGNATED PRE-FREEZE R-RULE MEASUREMENT (owner supplement 1, part I, section 1)",
             "status": status, "invalid_reasons": invalid, "host_not_prepared": unprepared, "step1_rerun": step1,
             "prior_invalid_series": prior,
+            "series_history": [dict(x) for x in series_history(ns) if not x.get("dev")],
             "commit": (pre or {}).get("commit"), "driver_sha256": sha((code / DRIVER).read_bytes()),
             "tool_sha256": sha(HERE.read_bytes()), "rules_sha256": sha((code / "mbs308_rrules.py").read_bytes()),
             "launcher_sha256": sha((code / "mbs308_launch.py").read_bytes()),
@@ -529,9 +584,14 @@ def designate(work: Path, *, dev: bool = False, ns: Path = NS, repo: Path = REPO
     if ident:                                 # either form launches the REAL driver: the qualified worktree only
         return 2, {"refused": ident, "nothing_run": True}
     designated = (out_dir or ns / "evidence_prefreeze") / DV.EVIDENCE_NAME
-    if not dev and os.path.lexists(designated):       # the proposed designation rule: one designated series, no best-of-N
+    if not dev and (os.path.lexists(designated) or history_has_designated(ns)):
         return 2, {"refused": ["ALREADY_DESIGNATED"], "nothing_run": True}
+    if not dev and history_has_watchdog(ns):
+        return 2, {"refused": [RR.STATUS_STEP1_RERUN], "nothing_run": True,
+                    "reason": "a prior series recorded a memory-watchdog event"}
     work.mkdir(parents=True, exist_ok=True)
+    series_id = uuid.uuid4().hex
+    append_series_history(ns, {"event": "started", "series_id": series_id, "dev": dev, "utc": utc(), "work": str(work)})
     pre = preflight(ns, repo, work)
     if pre["refusals"] and not dev:
         return 2, {"refused": pre["refusals"], "nothing_run": True}
@@ -540,9 +600,14 @@ def designate(work: Path, *, dev: bool = False, ns: Path = NS, repo: Path = REPO
     cfg = json.loads((ns / "config" / "MBS308_QUALIFICATION_CASES.json").read_text())
     const = DV.driver_constants((ns / "code" / DRIVER).read_text())
     plan = dict(DEV_PLAN) if dev else DV.plan_of(cfg)
-    ev = measure(ns=ns, repo=repo, work=work, L=L, plan=plan, workers=DEV_WORKERS if dev else const["WORKERS"],
-                 dev=dev, base_names=DV.base_names_of(cfg, repo), h3_readings=cfg["r_allow_h3_readings"]["readings"],
-                 pre=pre, host_report=host_report_of(ns, work, repo))
+    try:
+        ev = measure(ns=ns, repo=repo, work=work, L=L, plan=plan, workers=DEV_WORKERS if dev else const["WORKERS"],
+                     dev=dev, base_names=DV.base_names_of(cfg, repo), h3_readings=cfg["r_allow_h3_readings"]["readings"],
+                     pre=pre, host_report=host_report_of(ns, work, repo))
+    except BaseException as exc:
+        append_series_history(ns, {"event": "finished", "series_id": series_id, "dev": dev, "status": "INTERRUPTED",
+                                   "invalid_reasons": [f"INTERRUPTED:{type(exc).__name__}"], "utc": utc()})
+        raise
     text = json.dumps(ev, indent=1, sort_keys=True) + "\n"
     if ev["designated"]:
         dst = designated
@@ -553,6 +618,10 @@ def designate(work: Path, *, dev: bool = False, ns: Path = NS, repo: Path = REPO
         if not dev and os.path.lexists(dst):
             raise MeasureRefusal("INVALID_RECORD_EXISTS", dst.name)
     dst.write_text(text)
+    append_series_history(ns, {"event": "finished", "series_id": series_id, "dev": dev,
+                               "status": ("DESIGNATED" if ev["designated"] else ev.get("status")),
+                               "invalid_reasons": list(ev.get("invalid_reasons") or []),
+                               "sha256": sha(text.encode()), "utc": utc()})
     return (0 if ev["designated"] else (0 if dev else 3)), {
         "designated": ev["designated"], "status": ev["status"], "invalid_reasons": ev["invalid_reasons"],
         "host_not_prepared": ev["host_not_prepared"], "step1_rerun": ev["step1_rerun"],

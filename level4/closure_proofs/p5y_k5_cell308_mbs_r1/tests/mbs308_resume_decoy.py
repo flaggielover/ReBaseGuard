@@ -33,6 +33,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import mbs308_testlib as T  # noqa: E402
+import mbs308_rrules as RR  # noqa: E402
 
 TIMING = {"seconds", "wall_seconds", "cpu_seconds", "cpu_cap"}
 PROVENANCE = {"lifecycle", "host", "mode", "driver_sha256", "utc", "wall_seconds", "cpu_seconds_workers",
@@ -50,9 +51,9 @@ def _int_literal(n):
     raise ValueError("not an int literal")
 
 
-def driver_constant(name: str) -> int:
+def driver_constant(name: str, code: Path | None = None) -> int:
     """A module-level int literal of the driver under test, read from its text (the driver is not imported here)."""
-    src = (T.code_dir() / "mbs308_driver.py").read_text()
+    src = ((code or T.code_dir()) / "mbs308_driver.py").read_text()
     found = [n for n in ast.parse(src).body if isinstance(n, ast.Assign) and
              [getattr(t, "id", None) for t in n.targets] == [name]]
     if len(found) != 1:
@@ -60,9 +61,9 @@ def driver_constant(name: str) -> int:
     return _int_literal(found[0].value)
 
 
-def forms() -> dict:
+def forms(code: Path | None = None) -> dict:
     return {"official": {"cell": 297, "first_blocks": None, "dev_ladder": False,
-                         "workers": int(driver_constant("WORKERS")), "timeout": int(driver_constant("DECOY_CAP_S"))},
+                         "workers": int(driver_constant("WORKERS", code)), "timeout": int(driver_constant("DECOY_CAP_S", code))},
             "dev": {"cell": 297, "first_blocks": 1, "dev_ladder": True, "workers": 2, "timeout": 1800}}
 
 
@@ -90,8 +91,20 @@ def canon(o) -> bytes:
     return json.dumps(o, sort_keys=True, separators=(",", ":")).encode()
 
 
+def _watchdog_status(record: dict | None) -> str | None:
+    if not isinstance(record, dict) or record.get("decoy_failed") is None:
+        return None
+    wd = (((record.get("lifecycle") or {}).get("stage1_context") or {}).get("memory_watchdog") or {})
+    events = wd.get("events")
+    if isinstance(events, list) and RR.cap_events(events):
+        return RR.STATUS_OFFICIAL_WATCHDOG
+    return None
+
+
 def run_case(form: str) -> dict:
-    f = forms()[form]
+    # Resolve constants from the sandbox copy under test.  This remains correct for mutant runs where
+    # MBS308_TEST_CODE_DIR points at a temporary tree, and avoids importing the source checkout's driver.
+    f = forms(T.code_dir())[form]
     if f["cell"] != 297:
         raise RuntimeError("QS-RESUME-DECOY runs on decoy cover cell 297 only")
     tmp = T.SCRATCH / f"t_resume_decoy_{form}"
@@ -109,8 +122,21 @@ def run_case(form: str) -> dict:
     rec = {"form": form, "cell": f["cell"], "workers": f["workers"], "first_blocks": f["first_blocks"],
            "ladder": "dev" if f["dev_ladder"] else "frozen", "A_rc": p.returncode}
     if p.returncode != 0:
+        if a_out.is_file():
+            try:
+                failed = json.loads(a_out.read_text())
+            except (OSError, ValueError):
+                failed = {}
+            if _watchdog_status(failed):
+                return rec | {"pass": False, "status": RR.STATUS_OFFICIAL_WATCHDOG,
+                               "fail_closed_statuses": [RR.STATUS_OFFICIAL_WATCHDOG],
+                               "reason": "UNINTERRUPTED_RUN_FAILED", "A_tail": p.stdout[-300:] + p.stderr[-300:]}
         return rec | {"pass": False, "reason": "UNINTERRUPTED_RUN_FAILED", "A_tail": p.stdout[-300:] + p.stderr[-300:]}
     A = json.loads(a_out.read_text())
+    if not isinstance(A, dict) or not isinstance(A.get("lifecycle"), dict) or not isinstance(
+            (A.get("lifecycle") or {}).get("stage1_context"), dict) or \
+            not isinstance((A.get("lifecycle") or {}).get("stage1_context", {}).get("jobs_computed"), int):
+        return rec | {"pass": False, "reason": "UNINTERRUPTED_RUN_FAILED", "A_tail": p.stdout[-300:] + p.stderr[-300:]}
     n = A["lifecycle"]["stage1_context"]["jobs_computed"]
     k = max(1, n // 2)
     T.g(sb.root, "update-ref", "-d", CKPT_REF, check=False)
@@ -124,8 +150,24 @@ def run_case(form: str) -> dict:
     try:
         B = json.loads((tmp / "B2_resumed.json").read_text())
     except (OSError, ValueError):
+        failed = None
+        try:
+            failed = json.loads((tmp / "B2_resumed.json").read_text())
+        except (OSError, ValueError):
+            pass
+        status = _watchdog_status(failed)
+        if status:
+            return rec | {"pass": False, "status": status, "fail_closed_statuses": [status],
+                          "reason": "RESUMED_RUN_FAILED", "B1_signal": b1["signal"], "B2": b2["out"]}
         return rec | {"pass": False, "reason": "RESUMED_RUN_FAILED", "B1_signal": b1["signal"], "B2": b2["out"],
                       "B2_tail": (b2["stdout"] + b2["stderr"])[-400:]}
+    status = _watchdog_status(B)
+    if status:
+        return rec | {"pass": False, "status": status, "fail_closed_statuses": [status],
+                      "reason": "RESUMED_RUN_FAILED", "B1_signal": b1["signal"]}
+    if not isinstance(B, dict) or not isinstance(B.get("lifecycle"), dict) or not isinstance(
+            (B.get("lifecycle") or {}).get("stage1_context"), dict):
+        return rec | {"pass": False, "reason": "RESUMED_RUN_FAILED", "B1_signal": b1["signal"]}
     ca, cb = certified(A), certified(B)
     ctx = B["lifecycle"]["stage1_context"]
     s1_eq = ca.get("stage1") == cb.get("stage1")

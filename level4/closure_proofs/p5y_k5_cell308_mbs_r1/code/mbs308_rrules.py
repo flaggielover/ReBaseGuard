@@ -203,14 +203,20 @@ def _run_reasons(run: dict, cap: int = MEASUREMENT_CAP_BYTES, poll=MEASUREMENT_P
         r.append("WORKER_KILLED_AFTER_A_BROKEN_POOL")
     jobs = run.get("jobs")
     if not isinstance(jobs, list) or not jobs or any(
-            not isinstance(j, dict) or not _is_int(j.get("job_maxrss_bytes")) or j.get("kind") is None or
-            j.get("rung") is None for j in jobs):
+            not isinstance(j, dict) or not _is_int(j.get("job_maxrss_bytes")) or
+            j.get("kind") is None or j.get("rung") is None for j in jobs):
         r.append("JOB_PEAKS_UNRECORDED")
+    elif any(j.get("job_maxrss_bytes") <= 0 for j in jobs):
+        r.append("JOB_PEAK_NONPOSITIVE")
     if not _is_int(run.get("driver_maxrss_bytes")):
         r.append("DRIVER_PEAK_UNRECORDED")
+    elif run["driver_maxrss_bytes"] <= 0:
+        r.append("DRIVER_PEAK_NONPOSITIVE")
     wp = run.get("worker_peak_rss_bytes")
     if wp is not None and not _is_int(wp):
         r.append("WORKER_PEAK_MALFORMED")
+    elif wp is not None and wp <= 0:
+        r.append("WORKER_PEAK_NONPOSITIVE")
     return r
 
 
@@ -336,8 +342,11 @@ def r_mem(runs: list, *, required_cells, workers: int, mem_poll_s, host: dict, s
             rp[key] = max(rp.get(key, 0), _job_peak(j))
         for key, v in rp.items():
             per.setdefault(key, []).append(v)
-    spread = {f"{k}:{n}": fstr(F(max(v), min(v))) for (k, n), v in sorted(per.items()) if len(v) >= 2 and min(v) > 0}
-    s = max([F(max(v), min(v)) for v in per.values() if len(v) >= 2 and min(v) > 0], default=F(1))
+    # Every accepted run peak is validated as a positive integer above.  Do not silently discard a malformed value
+    # here: retaining the direct min/max expression makes the positivity invariant auditable and keeps mutants that
+    # reintroduce a skip from surviving.
+    spread = {f"{k}:{n}": fstr(F(max(v), min(v))) for (k, n), v in sorted(per.items()) if len(v) >= 2}
+    s = max([F(max(v), min(v)) for v in per.values() if len(v) >= 2], default=F(1))
     # step 4
     k = max(F(K_MIN), K_SPREAD_FACTOR * s)
     mem_cap = roundup_256mib(max(k * P, MEM_FLOOR_BYTES))
