@@ -19,10 +19,16 @@ signal is the one the case S01 expects: the real Q-HOST monitor's SIGTERM to thi
   root; a drill record for a repository outside it; not inside the unit.  Each is refused by qhost_preflight, called
   in a child process with its own environment (this process's environment is never changed), and creates nothing in
   qualification/.
-* N01-N05 (P11, A16; follow-up V2, V4) the launcher's refusals: an unknown mode; missing launch settings; root as
+* N01-N06 (P11, A16; follow-up V2, V4, W3) the launcher's refusals: an unknown mode; missing launch settings; root as
   the unit user; --print-only blocked (no systemd here, or the drill's own unit loaded on the worker), with the record
   written under the TEST scratch root and redacted (C9: the TEST foreign root appears only as its sha256), and the
-  launcher_not_unit_user blocker when the launcher's uid is not the unit user's; a foreign root with whitespace.
+  launcher_not_unit_user blocker when the launcher's uid is not the unit user's; a foreign root with whitespace, or
+  with "$", ";", ":" or "(" (only [A-Za-z0-9._/+@,=~-] is accepted).
+* U01-U03 (follow-up W6; worker tier only) the in-unit refusals of qhost_preflight, reached from inside the launched
+  unit with altered copies under the launch's scratch root: a host configuration file whose bytes differ (U01); a
+  launch record whose configuration hash differs (U02); a launch record whose baseline names another boot (U03).  The
+  unit-property and instance-id branches cannot be forced from inside a correct unit and are exercised nowhere.  On the
+  cloud tier, where no unit exists, the case records "not applicable".
 * S01 (P10) the monitor FAIL -> SIGTERM path: a real monitor whose baseline names another boot signals this process,
   its parent, exactly once, writes one failed row and exits 1.
 * K01 (C5; follow-up FU2) kill_own_descendants: a TEST tree three deep plus two descendants that keep starting
@@ -116,10 +122,9 @@ FORKER = '''
 import signal, subprocess, sys, time
 signal.signal(signal.SIGTERM, signal.SIG_IGN)
 LEAF = "import signal, time\\\\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\\\\ntime.sleep(600)\\\\n"
-for _ in range(40):
+while True:                                   # follow-up W7: still forking when the abort comes
     subprocess.Popen([sys.executable, "-S", "-c", LEAF, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    time.sleep(0.005)
-time.sleep(600)
+    time.sleep(0.05)
 '''
 forkers = [subprocess.Popen([sys.executable, "-S", "-c", FORKER, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) for _ in range(2)]
 leaf = subprocess.Popen([sys.executable, "-S", "-c", LEAF, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -261,6 +266,32 @@ def case_q() -> None:
     t("Q07_refusals_created_nothing_in_qualification", before == after, after)
 
 
+# ------------------------------------------------------------------------- U (follow-up W6; worker tier only)
+def case_u() -> None:
+    rec_path, conf_path = os.environ.get("P309_LAUNCH_RECORD"), os.environ.get("P309_HOST_CONFIG")
+    if not (os.environ.get("INVOCATION_ID") and rec_path and conf_path and in_unit()):
+        t("U00_in_unit_refusals_not_applicable_outside_a_unit", True, {"in_unit": in_unit()})
+        return
+    d = scratch("U_records")
+    d.mkdir(parents=True, exist_ok=True)
+    rec = json.loads(Path(rec_path).read_text())
+    conf_copy = d / "host_config_altered.json"
+    conf_copy.write_text(Path(conf_path).read_text() + "\n")          # same content, other bytes
+    rec_hash = d / "record_config_hash.json"
+    rec_hash.write_text(json.dumps(dict(rec, host_config_sha256="0" * 64)))
+    rec_boot = d / "record_other_boot.json"
+    prov = dict(rec["preflight"]["provenance"], boot_id="TEST-another-boot")
+    rec_boot.write_text(json.dumps(dict(rec, preflight=dict(rec["preflight"], provenance=prov))))
+    for name, record, conf, want in (("U01_altered_config_file_refused", rec_path, str(conf_copy), "configuration file"),
+                                     ("U02_altered_config_hash_refused", str(rec_hash), conf_path, "configuration differs"),
+                                     ("U03_other_boot_refused", str(rec_boot), conf_path, "host changed")):
+        env = dict(os.environ, P309_TEST_CODE=str(CODE), P309_LAUNCH_RECORD=record, P309_HOST_CONFIG=conf)
+        p = subprocess.run([sys.executable, "-B", "-c", Q_CODE], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, universal_newlines=True, timeout=300, env=env)
+        res = next((json.loads(x[len("Q_RESULT "):]) for x in p.stdout.splitlines() if x.startswith("Q_RESULT ")), {})
+        t(name, p.returncode == 0 and want in (res.get("refused") or ""), res or p.stderr[-300:])
+
+
 # --------------------------------------------------------------------------------------- N (P11, A16)
 def launcher(mode: str, conf: dict, sr: Path, *extra) -> dict:
     path = sr / "host.json"
@@ -302,7 +333,10 @@ def case_n() -> None:
     t("N04d_launcher_not_unit_user_is_a_blocker", "launcher_not_unit_user" in (rec.get("blockers") or []),
       rec.get("blockers"))                      # this test never runs as the unit user it names ("nobody")
     r5 = launcher("drill", dict(conf, foreign_roots=[str(froot) + " x"]), sr)
-    t("N05_foreign_root_with_whitespace_refused", r5["rc"] == 2 and "whitespace" in r5["out"], r5["out"][-200:])
+    t("N05_foreign_root_with_whitespace_refused", r5["rc"] == 2 and "characters" in r5["out"], r5["out"][-200:])
+    r6 = [launcher("drill", dict(conf, foreign_roots=[str(froot) + ch + "x"]), sr) for ch in ("$", ";", ":", "(")]
+    t("N06_foreign_root_with_shell_or_separator_character_refused", all(
+        r["rc"] == 2 and "characters" in r["out"] for r in r6), [r["out"][-80:] for r in r6])
 
 
 # --------------------------------------------------------------------------------------- S01 (P10)
@@ -325,8 +359,10 @@ def case_s01() -> None:
                 stop(m)
                 rc = None
         time.sleep(0.2)
-        rows = [json.loads(x) for x in out.read_text().splitlines() if x.startswith("{")]
+        events = [json.loads(x) for x in out.read_text().splitlines() if x.startswith("{")]
+        rows = [r for r in events if r.get("kind") == "sample"]
         t("S01_monitor_fail_sends_one_sigterm_to_its_parent", rc == 1 and got == [signal.SIGTERM] and len(rows) == 1
+          and [r.get("kind") for r in events] == ["sample_start", "sample"] and events[0]["m"] <= rows[0]["m"]
           and rows[0]["pass"] is False and rows[0]["continuity"]["same_boot"] is False, {"rc": rc, "signals": got,
                                                                                         "rows": len(rows)})
     finally:
@@ -409,7 +445,8 @@ def case_a01() -> None:
         led_after = ledger.read_bytes() if ledger.exists() else b""
         rows = [json.loads(x) for x in led_after[len(led_before):].decode().splitlines() if x.strip()] if \
             led_after.startswith(led_before) else None
-        mon = [json.loads(x) for x in (d / "QHOST_MONITOR.jsonl").read_text().splitlines() if x.startswith("{")] if (
+        mon = [json.loads(x) for x in (d / "QHOST_MONITOR.jsonl").read_text().splitlines() if
+               x.startswith("{") and json.loads(x).get("kind") == "sample"] if (
             d / "QHOST_MONITOR.jsonl").exists() else []
         t("A01a_abort_exits_3", p.returncode == 3 and "ABORT_NOT_REACHED" not in p.stdout,
           {"rc": p.returncode, "tail": (p.stdout + p.stderr)[-300:]})
@@ -451,7 +488,7 @@ if __name__ == "__main__":
           "runner's Q-HOST refusals, the launcher's refusals, the monitor's SIGTERM path, kill_own_descendants, "
           "the C14 runtime binding", klass="GOVERNANCE", notes="TEST processes only, each killed and reaped; no "
           "other process signalled; no cell value")
-    for case in (case_p01, case_p02, case_q, case_n, case_s01, case_k01, case_a01, case_b):
+    for case in (case_p01, case_p02, case_q, case_u, case_n, case_s01, case_k01, case_a01, case_b):
         try:
             case()
         except Exception as exc:  # noqa: BLE001 - a crashed case is a recorded FAIL

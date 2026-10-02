@@ -110,7 +110,7 @@ count.
 |---|---|---|
 | one foreign or unattributable process | blocks above 0.05 of a core, on a heavy pattern, or if it appeared during the 60 s sample | fails above 0.5 of a core, or on a heavy pattern; a newly seen process is judged one sample later |
 | all of them together | the load must be at most baseline + 0.5 | fails above 1.0 core |
-| the monitor itself | — | fails if it is dead at the stop, or any gap exceeds 60 s + 45 s |
+| the monitor itself | — | fails if it is dead at the stop, or any gap between the runner's start, the monitor's events (a start-of-sample row and a result row per sample) and the stop exceeds 60 s + 45 s on the monotonic clock. Every gap is then at most 60 s while samples stay under 60 s (the code allows about 47 s); only a sample hanging over 105 s fails (follow-up SF1) |
 | the host | the durability preflight | fails on any continuity break (boot, machine-id, hostname, instance, interpreter, glibc, suspend); a final sample is taken at the stop |
 
 **Termination.** On a monitor failure, the runner SIGKILLs its own process tree at once and records Q-HOST FAIL. The

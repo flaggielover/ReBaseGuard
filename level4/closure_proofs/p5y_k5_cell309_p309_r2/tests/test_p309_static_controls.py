@@ -71,6 +71,13 @@ MUTANTS = [
      "    if not qh:\n        raise SystemExit(2)\n" + MAIN_MON),
     ("T14g_main_sys_exit_after_the_attempt", "T14", "code/p309_qualify.py", MAIN_MON,
      "    if not qh:\n        sys.exit(2)\n" + MAIN_MON),
+    # follow-up W5: an assert, an aliased exit and a self-signal are refusals after the attempt too
+    ("T14i_main_assert_after_the_attempt", "T14", "code/p309_qualify.py", MAIN_MON,
+     "    assert qh, 'no Q-HOST'\n" + MAIN_MON),
+    ("T14j_main_aliased_exit_after_the_attempt", "T14", "code/p309_qualify.py", MAIN_MON,
+     "    from sys import exit as _leave\n    if not qh:\n        _leave(2)\n" + MAIN_MON),
+    ("T14k_main_self_signal_after_the_attempt", "T14", "code/p309_qualify.py", MAIN_MON,
+     "    if not qh:\n        os.kill(os.getpid(), 9)\n" + MAIN_MON),
     ("T14h_host_rerun_os_exit_after_the_attempt", "T14", "code/p309_qualify.py",
      "    start_qhost_monitor(qh)                                   # r2 C7: continuous Q-HOST sampling (<= 60 s)\n",
      "    if not qh:\n        os._exit(2)\n"

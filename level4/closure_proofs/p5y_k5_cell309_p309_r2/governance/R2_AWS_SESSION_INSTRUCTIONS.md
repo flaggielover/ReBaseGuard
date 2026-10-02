@@ -3,8 +3,8 @@
 **Status when written: HOST_SUITABILITY_PENDING.** The AWS worker has not been audited. Nothing here has run there.
 
 These steps cover the shared AWS ReBaseGuard worker that cell 308 uses (owner message 3). They complete
-`R2_BOOTSTRAP.md` and `R2_HOST_REQUIREMENTS.md` and do not replace them. They were revised after the follow-up review
-(`REVIEW_R2_DELTA_FOLLOWUP_1.md`, FU1 and FU4). **No step may start before the owner has
+`R2_BOOTSTRAP.md` and `R2_HOST_REQUIREMENTS.md` and do not replace them. They were revised after the follow-up reviews
+(`REVIEW_R2_DELTA_FOLLOWUP_1.md`, FU1 and FU4; `REVIEW_R2_DELTA_FOLLOWUP_2.md`, SF1, SF2, W7 and W8). **No step may start before the owner has
 answered OD-R2-3 (the access path) and, for 8c onward, OD-R2-4 (consent to host changes).**
 
 ## 0. Who runs this, and what never happens
@@ -135,20 +135,34 @@ Every item below changes the host and needs consent:
   not count.
 * **`monitor_aggregate_cpu_fraction`**: the in-run monitor also fails when foreign and unattributable processes
   together use more than this many cores (A8).
-* **`monitor_gap_tolerance_s`**: Q-HOST fails when any gap between the monitor's start, its samples and its stop
-  exceeds the interval (60 s) plus this tolerance, or when the monitor is dead at the stop (C4). Each sample is timed at
-  its start. A sample lasts about 20 s plus the metadata reads, so the default of 45 s leaves a margin (follow-up V5).
+* **`monitor_gap_tolerance_s`**: Q-HOST fails when the monitor is dead at the stop (C4), or when any gap exceeds the
+  interval (60 s) plus this tolerance. The gaps are measured between the runner's start, every monitor event and the
+  runner's stop, on the monotonic clock. Each sample writes two events: a start-of-sample row and a result row (follow-up
+  SF1). So with samples of at most 60 s, every gap is at most the longer of the sample's duration and the interval: at
+  most 60 s, whatever the moment of the stop. The code allows a sample of about 47 s at worst (a 20 s process sample,
+  a 20 s `timedatectl` timeout, the metadata reads), so the default of 45 s leaves a margin of 45 s over 60 s. A sample
+  that hangs for more than 105 s fails Q-HOST. The control `MV01`–`MV05` in `tests/test_p309_host.py` drives the
+  committed monitor loop on a virtual clock to show this.
 * **`memory_max`** must leave cell 308 its working memory. It is agreed under OD-R2-4.
 * **`p309_repo`** and **`require_empty_scratch`** are set by the launcher itself.
 
-After bootstrap, run read-only as the P309 user from the clone:
+After bootstrap, run the launcher's `--print-only` as the P309 user from the clone, with a fresh scratch directory
+used for nothing else (follow-up SF2). It reads the §3.1 file as the launch does (`load_launch_config`). It runs the
+durability preflight, the exclusion gate and the isolation check, writes one redacted record into that directory,
+and starts nothing:
 
 ```text
-python3.11 -B code/p309_host.py isolation --config ~/p309_host_config.json
-python3.11 -B code/p309_host.py preflight --config ~/p309_host_config.json
+mkdir <a fresh check directory on the P309 volume>
+P309_SCRATCH_ROOT=<that directory> P309_FOREIGN_ROOTS=<cell-308 paths> python3.11 -B code/p309_launch.py --mode drill --host-config ~/p309_host_config.json --print-only
 ```
 
-Both must pass. Preserve their JSON in `evidence/host/`.
+It must report no blocker. Preserve the record (`launch_<utc>.json`) in `evidence/host/`. That directory is never
+reused as the scratch root of a real launch, which must start empty for an official run or a host re-run.
+
+`code/p309_host.py isolation|preflight|gate --config FILE` reads a host configuration **without** the six launch
+settings: it refuses unknown keys, and the launch settings count as unknown there. To run those subcommands alone,
+give them a copy of the §3.1 file without those six keys, plus
+`--config-json '{"p309_repo": "<the clone path>"}'` for `isolation`.
 
 ## 4. Step 8d: worker-tier drill (P14), the burn-in
 
@@ -212,21 +226,41 @@ can end a run. Before every heavy window (the 8d drill, the official run, a host
 1. **Run everything as the P309 user.** Every process the P309 session starts during a window runs as the P309 user,
    whose own processes are never classified. That includes shells, editors and `journalctl`. Nothing runs under
    another account.
-2. **Record the gate as the P309 user.** After 8c, run read-only
-   `python3.11 -B code/p309_host.py gate --config ~/p309_host_config.json` and preserve its JSON in `evidence/host/`.
-   Its rows show the uid of every `unattributable` and `foreign` process, with its CPU fraction, and nothing else.
+2. **Record the gate as the P309 user.** After 8c, and again shortly before each window, run the `--print-only`
+   check of §3 in a fresh check directory, and preserve its record in `evidence/host/`. The record's
+   `gate.processes` rows show the uid of every `unattributable` and `foreign` process, with its CPU fraction, and
+   nothing else. One sample cannot show work that starts later, so also list, read-only, what is scheduled
+   (follow-up W8):
+   * `systemctl list-timers --all --no-pager`;
+   * `ls -l /etc/cron.d /etc/crontab /etc/cron.hourly /etc/cron.daily`.
+
+   Per-user crontabs (`/var/spool/cron`) are not readable by the P309 user. Ask the host's administrator for the
+   non-root accounts that have one.
 3. **Agree the window for the whole host.**
    * Identify each non-root uid in those rows: cell 308's (which belongs in `foreign_uids`), a service account, or
      another user.
+   * Identify the timers and cron jobs that would run under a non-root account during the window.
    * Agree the window with every workload they show, not only with the cell-308 operator.
    * Record the agreement in the window's evidence.
-4. **Read the launch record before an official launch.** Check `gate.processes`:
-   * the uids must be the ones agreed in step 3;
-   * no unattributable or foreign process may be active.
+4. **Check just before the official launch** (follow-up SF2).
+   * Run the `--print-only` check once more, as `--mode official`, in a **separate** fresh check directory, and read
+     its record's `gate.processes`:
+     * the uids must be the ones agreed in step 3;
+     * no unattributable or foreign process may be active.
+   * Only then launch the official run, with **another** scratch root that is empty. The check directory is never the
+     run's scratch root.
 
-   If either fails, do not launch. The launcher refuses an active one anyway.
+   If either check fails, do not launch. The launcher's own gate refuses an active process anyway.
 
 **Expected:** about 6 h of wall time. QC08, QC09 and QC10 run here; they are skipped on the cloud tier.
+
+**What 8d does and does not show** (follow-up W7). The drill's report must state these points:
+* The in-unit refusal controls U01–U03 run here, and only here: an altered configuration file, an altered
+  configuration hash, and another boot.
+* Two refusal branches are exercised nowhere: the unit-property branch and the instance-id branch. Neither can be
+  forced from inside a correct unit.
+* Two stop paths remain unexercised: the unit's `KillMode=control-group`/SIGKILL backstop after a runner abort, and
+  the drill's own stop on exit status 3. That is because a passing drill never aborts.
 
 ## 5. Evidence export (bulk data stays on AWS or GitHub)
 

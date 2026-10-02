@@ -1100,7 +1100,7 @@
    {
     "file": "code/p309_qualify.py",
     "function": "start_qhost_monitor",
-    "ast_sha256": "879fb02c8e8768fe1acd099f07bac42dd03c3521ed9f0aa2c0b97f8cb8326703",
+    "ast_sha256": "890465b2c180a2fb901edd4214da6d8e4899557d7aff051376ed723d777693ff",
     "permits": [
      "process"
     ],
@@ -1119,22 +1119,21 @@
    {
     "file": "code/p309_host.py",
     "function": "qhost_monitor",
-    "ast_sha256": "c8dd8b6244dc4f684092378d809ba49513fd35af5e434308627c683578ad491d",
+    "ast_sha256": "1b10727d87bca4ef54e949a65591996d0a3325ed1a1a3d173337f76b768c7554",
     "permits": [
-     "signal",
      "proc_read"
     ],
-    "reason": "r2 Q-HOST (P10): the one signal of the host package's monitor, os.kill(parent, SIGTERM) to its own parent (the P309 runner) on a failed sample, after which it returns; samples /proc through processes() and provenance()"
+    "reason": "r2 Q-HOST (P10; follow-up SF1): the monitor loop. It samples /proc through its MonitorIO, writes a start-of-sample row and a result row per sample with monotonic times, and on a failed sample calls io.signal_parent once and returns; it sends no signal itself"
    },
    {
     "file": "code/p309_host.py",
     "function": "kill_own_descendants",
-    "ast_sha256": "1cf09cf46185b48fe71e114b0d47ad595186c3bd8e25d7b844de4aa8576c88b0",
+    "ast_sha256": "7417e7f30cacb3c5e12733aa9e1ada7172fc502977974271e6c599ec75e8dfc9",
     "permits": [
-     "signal",
-     "proc_read"
+     "proc_read",
+     "signal"
     ],
-    "reason": "r2 delta review C5: SIGSTOP then SIGKILL of the calling process's own descendants only (the /proc ppid tree below os.getpid(), never the caller or any other process); the runner calls it on a Q-HOST abort"
+    "reason": "r2 delta review C5 (follow-up FU2, V7, W1): SIGSTOP then SIGKILL of the calling process's own descendants only (the /proc ppid tree below os.getpid(), walked again until nothing new appears and every descendant seen is stopped; every signal only to a pid whose start time is still the one recorded); the runner calls it on a Q-HOST abort"
    },
    {
     "file": "code/p309_host.py",
@@ -1211,7 +1210,7 @@
    {
     "file": "code/p309_qualify.py",
     "function": "stop_qhost_monitor",
-    "ast_sha256": "bd5b9e9198486a4b5c7f9bd48b39844a1ad526af58f5aa411f5e62391f165e82",
+    "ast_sha256": "6ea1a37bd030e229290329bc7cc04599cb2ef4ac1d2aee9f8da8744fd7e23be1",
     "permits": [
      "signal"
     ],
@@ -1260,7 +1259,7 @@
     "permits": [
      "process"
     ],
-    "reason": "r2 delta review C5 / follow-up FU2: runs the literal TREE program with this environment plus P309_TEST_CODE, P309_TEST_LEAF and P309_TEST_FORKER (the literal LEAF and FORKER programs); TREE builds a TEST tree, two of whose members keep starting TEST children during the call, and calls kill_own_descendants on it; an outside TEST process (outside()) must stay untouched; every process carries a random TEST token"
+    "reason": "r2 delta review C5 / follow-up FU2: runs the literal TREE program with this environment plus P309_TEST_CODE; TREE builds a TEST tree from its own literal MID, LEAF and FORKER programs (two FORKER descendants keep starting TEST children during the call) and calls kill_own_descendants on it; an outside TEST process (outside()) must stay untouched; every process carries a random TEST token"
    },
    {
     "file": "verify/srk_verify_indep_scoped.py",
@@ -1274,11 +1273,11 @@
    {
     "file": "tests/test_p309_host_controls.py",
     "function": "case_a01",
-    "ast_sha256": "f1f3dd4d275d339aa0958e09ca63c83d05b5912b4e625971fd60a5717beebacd",
+    "ast_sha256": "000341bab681f96f39a0a2871fd690f6adcc58b2fa00f86a6715c78ec1d3c6ae",
     "permits": [
      "process"
     ],
-    "reason": "r2 follow-up FU2 (b): runs the literal ABORT program with this environment plus P309_TEST_CODE, P309_TEST_DIR (a TEST directory under P309_SCRATCH_ROOT), P309_TEST_LEAF and P309_TEST_FORKER; ABORT installs the runner's own _qhost_abort with the attempt and the ledger pointed at that TEST directory (label host_rerun: nothing is written in qualification/), starts a real monitor with a failing baseline, and must exit 3 after killing its TEST tree"
+    "reason": "r2 follow-up FU2 (b), W7: runs the literal ABORT program with this environment plus P309_TEST_CODE and P309_TEST_DIR (a TEST directory under P309_SCRATCH_ROOT); ABORT installs the runner's own _qhost_abort with the attempt pointed at that TEST directory (label host_rerun: nothing is written in qualification/), starts TEST FORKER processes that keep forking until the abort, then a real monitor with a failing baseline; it must exit 3 after killing its TEST tree. The abort's own ledger row goes to the namespace ledger, preceded by this case's explanatory row (QC12 T7 forbids redirecting the ledger)"
    },
    {
     "file": "tests/test_p309_host_controls.py",
@@ -1343,6 +1342,42 @@
      "signal"
     ],
     "reason": "r2 follow-up FU2: cleanup after a failed K01/A01 run; SIGKILLs only live processes whose argv carries the run's random TEST token (only processes the test itself started carry it)"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "MonitorIO.signal_parent",
+    "ast_sha256": "3524269924c5cbd8026b374ad3c6762b61010df7e6197bec6d4d8be3f06ae650",
+    "permits": [
+     "signal"
+    ],
+    "reason": "r2 Q-HOST (P10; follow-up W2): the host package's one signal, os.kill(parent, SIGTERM) to the monitor's own parent (the P309 runner), sent only if os.getppid() is still that parent immediately before"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "MonitorIO.sample",
+    "ast_sha256": "74b9e829a5f234084be164a88495089164a8be159ce5a0ee29c8ffd57cf60d14",
+    "permits": [
+     "proc_read"
+    ],
+    "reason": "r2 Q-HOST (follow-up SF1): one monitor sample, provenance() and processes() (/proc reads)"
+   },
+   {
+    "file": "code/p309_host.py",
+    "function": "_state",
+    "ast_sha256": "d93a8b29a791f130d8e37761fe26c51ed1e8cf76a699a33fa0f5f3ed27d62368",
+    "permits": [
+     "proc_read"
+    ],
+    "reason": "r2 follow-up W1: /proc/<pid>/stat process state, so that kill_own_descendants waits until every SIGSTOP has taken effect"
+   },
+   {
+    "file": "tests/test_p309_host_controls.py",
+    "function": "case_u",
+    "ast_sha256": "1c101bd1a793f56863cf20a6441d0e25e62ff74f6f606e923f73850a4c4dcf22",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 follow-up W6 (worker tier only): inside the launched unit, runs the literal Q_CODE program (qhost_preflight) with this environment and P309_LAUNCH_RECORD / P309_HOST_CONFIG pointed at altered TEST copies under the launch's scratch root; outside a unit it runs nothing"
    }
   ],
   "git_forbidden_options_note": "global options before the verb are allowlisted (git_global_options_*; anything else, e.g. -c, --git-dir, --work-tree, --exec-path, --namespace, is a finding); after the verb the listed options (program execution, output files, templates, prefixes, remotes) are findings",

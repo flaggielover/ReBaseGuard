@@ -2,7 +2,7 @@
 
   python3 tests/test_p309_host.py      -> evidence/host/HOST_PACKAGE_TESTS.json; exit 0 iff every case passes
 
-Pure decisions only: gate_checks, classify, monitor_verdict, monitor_liveness, continuity, the redaction, scratch_root and
+Pure decisions only (the Q-HOST monitor loop runs on a virtual clock through its MonitorIO; follow-up SF1): gate_checks, classify, monitor_verdict, monitor_liveness, continuity, the redaction, scratch_root and
 the launcher's unit_name, unit-user check and argv redaction are given synthetic observations (delta review C2-C4, C9,
 A8, A16 cases added).  The real-/proc, process and signal controls are in tests/test_p309_host_controls.py.  Nothing is sampled from /proc, no process is started or signalled, no file outside the
 evidence directory is written, and no host setting is read beyond what scratch_root checks on its own directories.
@@ -126,6 +126,71 @@ t("V03_no_sample_fails", not lv([], stop=60.0))
 t("V04_gap_between_samples_fails", not lv([30.0, 200.0], stop=210.0))
 t("V05_gap_before_stop_fails", not lv([30.0, 90.0], stop=200.0))
 t("V06_samples_out_of_order_fail", not lv([90.0, 30.0], stop=100.0))
+
+
+# ---- follow-up SF1: the committed qhost_monitor loop on a virtual clock, judged by monitor_liveness at every stop time
+class VirtualIO(H.MonitorIO):
+    """a virtual clock: a sample takes the next duration in `durations`; the parent lives until `horizon`"""
+
+    def __init__(self, durations, horizon, fail_at=None):
+        self.t, self.durations, self.horizon, self.fail_at = 0.0, list(durations), horizon, fail_at
+        self.events, self.signals, self.n = [], [], 0
+
+    def mono(self):
+        return self.t
+
+    def sleep(self, seconds):
+        self.t += seconds
+
+    def sample(self, cfg, interval):
+        self.t += self.durations[self.n % len(self.durations)]
+        self.n += 1
+        now = prov(boot="b2") if self.fail_at is not None and self.n == self.fail_at else prov()
+        return now, []
+
+    def parent_alive(self, parent):
+        return self.t < self.horizon
+
+    def signal_parent(self, parent):
+        self.signals.append(parent)
+
+    def write(self, line):
+        self.events.append(json.loads(line))
+
+
+def worst_gap(durations, scheme="sf1", tol=None):
+    """run the committed loop to 1200 s; then, for every stop time from 100 s to 1100 s (step 0.5 s), apply the
+    runner's rule to the events written before the stop.  Returns (all stops pass, the largest gap seen)."""
+    vio = VirtualIO(durations, 1200.0)
+    H.qhost_monitor(CFG, prov(), 1, 60, io=vio)
+    tol = CFG["monitor_gap_tolerance_s"] if tol is None else tol
+    ok, worst = True, 0.0
+    for k in range(200, 2201):
+        stop = k * 0.5
+        if scheme == "sf1":                             # every event: start-of-sample and result rows (follow-up SF1)
+            times = [e["m"] for e in vio.events if e["m"] <= stop]
+        else:                                           # round 2: one time per sample, taken at its start
+            starts = [e["m"] for e in vio.events if e["kind"] == "sample_start"]
+            ends = [e["m"] for e in vio.events if e["kind"] == "sample"]
+            times = [st for st, en in zip(starts, ends) if en <= stop]
+        lv = H.monitor_liveness(times, 0.0, stop, True, 60.0, tol)
+        ok, worst = ok and lv["pass"], max(worst, lv["max_gap_s"])
+    return ok, worst
+
+
+ok47, gap47 = worst_gap([47.0])
+t("MV01_worst_case_47s_samples_pass_at_every_stop", ok47 and gap47 <= 60.0, {"max_gap_s": gap47})
+okr, gapr = worst_gap([20.0, 47.0, 31.5, 22.0, 46.0, 25.0])
+t("MV02_mixed_sample_durations_pass_at_every_stop", okr and gapr <= 60.0, {"max_gap_s": gapr})
+okold, gapold = worst_gap([47.0], scheme="round2")
+t("MV03_round2_scheme_fails_the_same_run", not okold and gapold > 105.0, {"max_gap_s": gapold})
+okstuck, gapstuck = worst_gap([47.0, 47.0, 120.0])
+t("MV04_a_stuck_120s_sample_fails", not okstuck and gapstuck >= 120.0, {"max_gap_s": gapstuck})
+vfail = VirtualIO([25.0], 1200.0, fail_at=3)
+rcf = H.qhost_monitor(CFG, prov(), 7, 60, io=vfail)
+t("MV05_failed_sample_signals_the_parent_once_and_stops", rcf == 1 and vfail.signals == [7] and
+  [e["kind"] for e in vfail.events] == ["sample_start", "sample"] * 3 and vfail.events[-1]["pass"] is False,
+  {"rc": rcf, "signals": vfail.signals, "events": len(vfail.events)})
 
 # ---- redaction (C9)
 FR = "/srv/foreign-TEST-root"

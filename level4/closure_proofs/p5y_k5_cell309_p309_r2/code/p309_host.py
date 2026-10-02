@@ -10,7 +10,7 @@ Read-only functions for the compute host that P309-r2 may share with the cell-30
   durability_preflight(cfg)      the fail-closed durability gate (owner message 1, section 5.B; P15)
   scratch_root(env, repo, cfg)   P309_SCRATCH_ROOT validation (P7)
   qhost_monitor(...)             Q-HOST sampling during a run (P10); rows on standard output; signals only its parent
-  monitor_liveness(...)          Q-HOST: the monitor lived to the stop and left no gap (review C4)
+  monitor_liveness(...)          Q-HOST: the monitor lived to the stop and left no gap (review C4; follow-up SF1)
   kill_own_descendants()         the runner's abort: SIGKILL its own process tree at once (review C5)
   unit_properties()              `systemctl show` of the calling process's own P309 unit, redacted (review C9)
 
@@ -634,8 +634,11 @@ def monitor_verdict(cont, rows, cfg):
 
 
 def monitor_liveness(times, started, stopped, alive_at_stop, interval, tol):
-    """Q-HOST liveness (pure; review C4): the monitor was alive when the runner stopped it, wrote at least one sample,
-    and no gap between the start, the samples and the stop exceeds the interval plus the tolerance."""
+    """Q-HOST liveness (pure; review C4, follow-up SF1): the monitor was alive when the runner stopped it, and no gap
+    between the start, the monitor's events and the stop exceeds the interval plus the tolerance.  `times` are the
+    monotonic times of ALL the monitor's rows: the start-of-sample row and the result row of every sample.  With both,
+    every gap is at most max(sample duration, interval), whatever the stop's timing; the runner separately requires at
+    least one completed sample."""
     pts = [float(started)] + [float(t) for t in times] + [float(stopped)]
     gaps = [b - a for a, b in zip(pts, pts[1:])]
     limit = float(interval) + float(tol)
@@ -645,32 +648,61 @@ def monitor_liveness(times, started, stopped, alive_at_stop, interval, tol):
             "pass": all(checks.values())}
 
 
-def qhost_monitor(cfg, baseline, parent, interval):
-    """Q-HOST (P10): sample every <= `interval` s (at most 60) until the parent exits.  Each sample is one JSON row on
-    standard output (the runner points it into the attempt): continuity against the baseline, and whether the
-    cell-308 campaign or
-    other ReBaseGuard heavy work is active (excluding this unit's own cgroup).  On a failed sample it signals the parent
-    (SIGTERM) once and stops; the parent stops its own process tree (kill_own_descendants), records Q-HOST FAIL and
-    exits, and the unit's KillMode=control-group with KillSignal=SIGKILL stops anything left.  It writes nothing else
-    and signals no process but its own parent."""
-    import signal as _signal
+class MonitorIO(object):
+    """what qhost_monitor needs from the world (follow-up SF1: a test drives the committed loop with a virtual clock by
+    replacing this object).  The clock is CLOCK_MONOTONIC, which is system-wide on Linux, so the runner and the monitor
+    compare the same clock, and a wall-clock step cannot open a false gap."""
+
+    def mono(self):
+        return time.monotonic()
+
+    def sleep(self, seconds):
+        time.sleep(seconds)
+
+    def sample(self, cfg, interval):
+        return provenance(cfg), processes(cfg, min(20.0, interval / 2))
+
+    def parent_alive(self, parent):
+        return os.getppid() == parent
+
+    def signal_parent(self, parent):
+        """the host package's one signal: SIGTERM to the monitor's own parent, re-checked just before (W2)"""
+        import signal as _signal
+        if os.getppid() == parent:
+            os.kill(parent, _signal.SIGTERM)
+
+    def write(self, line):
+        sys.stdout.write(line)
+        sys.stdout.flush()
+
+
+def qhost_monitor(cfg, baseline, parent, interval, io=None):
+    """Q-HOST (P10): sample every <= `interval` s (at most 60) until the parent exits.  Each sample writes two JSON rows
+    on standard output (the runner points it into the attempt): a start-of-sample row, then the result row with
+    continuity against the baseline and whether the cell-308 campaign or other ReBaseGuard heavy work is active
+    (excluding this unit's own cgroup).  Both rows carry the monotonic time `m` (follow-up SF1).  On a failed sample it
+    signals the parent (SIGTERM) once and stops; the parent stops its own process tree (kill_own_descendants), records
+    Q-HOST FAIL and exits, and the unit's KillMode=control-group with KillSignal=SIGKILL stops anything left.  It writes
+    nothing else and signals no process but its own parent."""
+    io = io or MonitorIO()
     interval = min(float(interval), 60.0)
     while True:
-        if os.getppid() != parent:
+        if not io.parent_alive(parent):
             return 0
-        t0 = time.time()
-        now = provenance(cfg)
+        m0 = io.mono()
+        io.write(json.dumps({"kind": "sample_start", "m": round(m0, 3), "utc": utc()}, sort_keys=True) + "\n")
+        now, rows = io.sample(cfg, interval)
         cont = continuity(baseline, now, cfg)
-        rows = processes(cfg, min(20.0, interval / 2))
         ok, busy, other = monitor_verdict(cont, rows, cfg)
-        sys.stdout.write(json.dumps({"utc": utc(), "t": round(t0, 3), "pass": ok, "continuity": cont["checks"], "instance_unverified": cont["instance_unverified"], "foreign_active_pids":
-                                     busy, "other_heavy_pids": other, "suspended_s": now.get("suspended_s"),
-                                     "ntp_synchronized": now.get("ntp_synchronized")}, sort_keys=True) + "\n")
-        sys.stdout.flush()
+        io.write(json.dumps({"kind": "sample", "m": round(io.mono(), 3), "utc": utc(), "pass": ok,
+                             "continuity": cont["checks"], "instance_unverified": cont["instance_unverified"],
+                             "foreign_active_pids": busy, "other_heavy_pids": other,
+                             "suspended_s": now.get("suspended_s"), "ntp_synchronized": now.get("ntp_synchronized")},
+                            sort_keys=True) + "\n")
         if not ok:
-            os.kill(parent, _signal.SIGTERM)
+            io.signal_parent(parent)
             return 1
-        time.sleep(max(0.0, interval - (time.time() - t0)))
+        io.sleep(max(0.0, interval - (io.mono() - m0)))
 
 
 def _children_map():
@@ -689,16 +721,22 @@ def _start_time(pid):
     return st[19] if len(st) > 19 else None
 
 
+def _state(pid):
+    st = (read("/proc/%d/stat" % pid) or "").rsplit(")", 1)[-1].split()
+    return st[0] if st else None
+
+
 def kill_own_descendants():
-    """review C5 (follow-up FU2, V7): stop the calling process's own descendants at once, whatever signals they ignore.
-    Each round walks the WHOLE tree below the caller again, through descendants already stopped, and SIGSTOPs every
-    descendant not yet seen; a stopped process cannot fork, so the rounds end when a full walk finds nothing new.
-    Then every stopped pid is SIGKILLed, but only if its start time is still the one recorded when it was found (a
-    reused pid is never signalled).  It never signals the caller itself or any process outside its tree.  Returns the
-    pids signalled."""
+    """review C5 (follow-up FU2, V7, W1): stop the calling process's own descendants at once, whatever signals they
+    ignore.  Each round walks the WHOLE tree below the caller again, through descendants already stopped, and SIGSTOPs
+    every descendant not yet seen, after checking that its start time is still the one the walk read.  A round ends
+    only when a full walk finds nothing new AND every descendant seen is stopped (state T or t) or gone: SIGSTOP is
+    delivered asynchronously, so a child linked just before it took effect is still found by the next walk.  Then every
+    stopped pid is SIGKILLed, but only if its start time is still the recorded one (a reused pid is never signalled).
+    It never signals the caller itself or any process outside its tree.  Returns the pids signalled."""
     import signal as _signal
     me, seen = os.getpid(), {}
-    for _ in range(1000):
+    for _ in range(2000):
         kids, stack, new = _children_map(), [me], []
         while stack:
             for c, t in kids.get(stack.pop(), []):
@@ -709,12 +747,17 @@ def kill_own_descendants():
                     seen[c] = t
                     new.append(c)
         for c in new:
+            if _start_time(c) != seen[c]:
+                continue                            # already gone, or the pid was reused: never signal another process
             try:
                 os.kill(c, _signal.SIGSTOP)
             except OSError:
                 pass
-        if not new:
+        settled = all(_start_time(c) != t or _state(c) in ("T", "t", "Z", "X", None) for c, t in seen.items())
+        if not new and settled:
             break
+        if not new:
+            time.sleep(0.005)                       # a SIGSTOP not yet in effect: wait, then walk again
     killed = []
     for c, t in seen.items():
         if _start_time(c) != t:                      # gone, or the pid was reused: never signal another process

@@ -5,9 +5,10 @@ Starts ONE detached, fail-closed run in a transient systemd system unit, and nev
   python3 -B code/p309_launch.py --mode {drill|official|host-rerun} --host-config HOST.json [--print-only]
 
 Before anything starts it requires all of these, in order, refusing on the first that fails:
-  0. the unit user is not root, does not own a foreign root, and is not a configured cell-308 uid (A16); no foreign
-     root contains whitespace, a quote or a backslash (follow-up V2: such a path could not be passed to systemd-run
-     or redacted reliably);
+  0. the unit user is not root, does not own a foreign root, and is not a configured cell-308 uid (A16); every
+     foreign root is an absolute path of the characters [A-Za-z0-9._/+@,=~-] only (follow-up V2, W3: systemd would
+     quote any other character in its property output, which the redaction could then miss, and ":" separates
+     P309_FOREIGN_ROOTS);
   1. P309_SCRATCH_ROOT is valid (P7); for an official run or a host re-run it must be empty;
   2. the durability preflight passes (owner message 1, section 5.B; P15);
   3. the cross-campaign exclusion gate passes (owner message 3, item 4; P9);
@@ -97,8 +98,8 @@ def unit_user_check(launch: dict, cfg: dict) -> None:
         raise H.HostError("the unit user is root")
     if uid in (cfg.get("foreign_uids") or []):
         raise H.HostError("the unit user is a configured cell-308 uid")
-    if any(re.search(r"[\s'\"\\]", f) for f in cfg["foreign_roots"]):
-        raise H.HostError("a foreign root contains whitespace, a quote or a backslash")
+    if not all(re.fullmatch(r"/[A-Za-z0-9._/+@,=~-]*", f) for f in cfg["foreign_roots"]):
+        raise H.HostError("a foreign root is not an absolute path of the characters [A-Za-z0-9._/+@,=~-]")
     for f in cfg["foreign_roots"]:
         try:
             if os.stat(f).st_uid == uid:

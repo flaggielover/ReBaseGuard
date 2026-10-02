@@ -64,7 +64,9 @@ or HOST_SUITABILITY_PENDING.
    * the floors, the interpreter and glibc;
    * the launch settings: `unit_user`, `unit_group`, `memory_max`, `oom_score_adjust`, `cpu_weight`, `io_weight`.
 
-After bootstrap, run `isolation` and `preflight` read-only. Both must pass.
+After bootstrap, run the launcher's `--print-only` check in a fresh check directory (`R2_AWS_SESSION_INSTRUCTIONS.md`
+§3). It runs the preflight, the gate and the isolation check on the host configuration file, and must report no
+blocker. The check directory is never reused as a run's scratch root (follow-up SF2).
 
 ## 8d. Worker-tier drill (P14)
 

@@ -12,8 +12,11 @@ inferred from any instruction.** Every option is set out with its consequences.
 
 **Revisions.**
 * The second revision applied the delta review's condition C1 (a)–(d).
-* This third revision applies the follow-up review's condition FU1 (`REVIEW_R2_DELTA_FOLLOWUP_1.md`) and its advisory V8.
-* Earlier versions are preserved in git history: the first at `61731123`, the second at `4e6a6901`.
+* The third revision applied the follow-up review's condition FU1 (`REVIEW_R2_DELTA_FOLLOWUP_1.md`) and its advisory V8.
+* This fourth revision states the monitor's gap rule as repaired under the second follow-up review's SF1
+  (`REVIEW_R2_DELTA_FOLLOWUP_2.md`).
+* Earlier versions are preserved in git history: the first at `61731123`, the second at `4e6a6901`, the third at
+  `8cb59c0f`.
 
 **State when written:**
 * HOST_SUITABILITY_PENDING;
@@ -242,7 +245,10 @@ The thresholds are the host configuration's `heavy_cpu_fraction`, `monitor_heavy
 **When option (i) ends the attempt** (follow-up FU1 (b)). Any one of these ends it:
 * the right-hand column fires;
 * a continuity break: another boot, machine-id, hostname or instance, another interpreter or glibc, or a suspend;
-* the monitor dies before the stop, or leaves a gap over the interval plus `monitor_gap_tolerance_s` (60 s + 45 s);
+* the monitor dies before the stop, or leaves a gap over the interval plus `monitor_gap_tolerance_s` (60 s + 45 s).
+  Gaps are measured on the monotonic clock between the runner's start, every monitor event (a start-of-sample row and a
+  result row per sample) and the stop. A correct monitor's gaps stay at most 60 s, so only a monitor that dies, or a
+  sample that hangs for more than 105 s, ends the attempt this way (follow-up SF1);
 * the final sample at the stop shows another host.
 
 **What the P309 user can see** (delta review C1 (b), C2). P309 runs as a separate Unix user (P12). It cannot read

@@ -65,8 +65,10 @@ T13 (r2 review P6(f)) the production read path is pinned: the call closure of re
 T14 (r2 delta review C6; P10) the runner's Q-HOST order: in p309_qualify.py main() and host_rerun(), the qhost_preflight
    call (with the modes each needs) and every refusal return come before the exclusive os.mkdir of the attempt
    directory; the start line (RUN_START / HOST_START) is logged right after that mkdir; the Q-HOST monitor starts
-   before any item, mirror or decoy work, and is stopped before the summary; nothing returns, raises or exits
-   (sys.exit, os._exit, exit) between the mkdir and the final return (follow-up V1)
+   before any item, mirror or decoy work, and is stopped before the summary; nothing returns, raises, asserts or
+   exits between the mkdir and the final return (follow-up V1, W5).  "Exits" covers a call of exit, _exit, abort, quit,
+   kill, killpg or raise_signal by any name or attribute, including a name bound by `from ... import ... as ...`
+   anywhere in the file.  The check is syntactic: it does not follow calls into other functions
 """
 from __future__ import annotations
 
@@ -666,8 +668,20 @@ def _is_call(n, name: str) -> bool:
         isinstance(n.func, ast.Attribute) and n.func.attr == name))
 
 
+T14_EXITS = {"exit", "_exit", "abort", "quit", "kill", "killpg", "raise_signal"}
+
+
+def _exit_like(func, exit_names: set) -> bool:
+    """a call target that exits or signals: an attribute or a name in T14_EXITS, or a name bound to one by an alias"""
+    if isinstance(func, ast.Attribute):
+        return func.attr in T14_EXITS
+    return isinstance(func, ast.Name) and (func.id in T14_EXITS or func.id in exit_names)
+
+
 def t14(root: Path) -> dict:
     tree = ast.parse((root / "code" / "p309_qualify.py").read_text())
+    exit_names = {a.asname or a.name for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) for a in n.names
+                  if a.name in T14_EXITS}
     out = {}
     for name, (modes, start, work) in T14_FUNCS.items():
         fn = _func(tree, name)
@@ -683,8 +697,8 @@ def t14(root: Path) -> dict:
         i_x = _stmt_index(fn, lambda n: _is_call(n, "stop_qhost_monitor"))
         i_w = _stmt_index(fn, lambda n: any(_is_call(n, w) for w in work))
         i_r = _stmt_index(fn, lambda n: isinstance(n, ast.Return))
-        i_x2 = _stmt_index(fn, lambda n: isinstance(n, ast.Raise) or (isinstance(n, ast.Call) and ast.unparse(n.func) in (
-            "sys.exit", "os._exit", "exit", "quit", "os.abort")))
+        i_x2 = _stmt_index(fn, lambda n: isinstance(n, (ast.Raise, ast.Assert)) or (
+            isinstance(n, ast.Call) and _exit_like(n.func, exit_names)))
         d = {"defined": True,
              "one_preflight_with_modes": len(pre) == 1 and len(i_q) == 1 and ast.unparse(pre[0].args[0]) == repr(modes)
              if pre and pre[0].args else False,

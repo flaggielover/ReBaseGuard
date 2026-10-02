@@ -172,3 +172,25 @@ recorded in the attempt's `UNIT_PROPERTIES.json`, but not checked.
 **G3. §F: whom "unattributable" covers (FU1 (b)).** It covers every non-root uid other than the P309 user's whose
 working directory P309 cannot read, not only cell 308's: service accounts, other login sessions, and any access user
 other than the P309 user. The operating procedure is in `R2_AWS_SESSION_INSTRUCTIONS.md` §4.1.
+
+## H. Corrections after the second follow-up review (appended 2026-10-02; `REVIEW_R2_DELTA_FOLLOWUP_2.md` SF1, W3, W6)
+
+**H1. The Q-HOST liveness rule (SF1).** §F's "the monitor's liveness and a final sample are checked at the stop"
+is made exact as follows:
+* each sample writes a start-of-sample row and a result row, both carrying a CLOCK_MONOTONIC time;
+* the runner takes its own start and stop times on the same clock;
+* Q-HOST fails if the monitor is dead at the stop, if no sample completed, or if any gap between the start, the
+  events and the stop exceeds the interval plus `monitor_gap_tolerance_s` (60 s + 45 s).
+
+While samples stay under 60 s, every gap is at most 60 s whatever the stop's timing.
+
+**H2. Foreign-root characters (W3).** The launcher refuses a foreign root that is not an absolute path made of the
+characters `[A-Za-z0-9._/+@,=~-]`. That keeps systemd's property output unquoted, so the redaction is exact. It also
+excludes `:`, which separates `P309_FOREIGN_ROOTS`.
+
+**H3. Which `qhost_preflight` refusals are exercised (W6).**
+* The worker-tier drill exercises the configuration-file, configuration-hash and continuity refusals from inside the
+  unit: `tests/test_p309_host_controls.py` U01–U03.
+* The cloud tier exercises the refusals before the unit check: Q01–Q07.
+* The unit-property and instance-id branches are exercised nowhere. They cannot be forced from inside a correct unit,
+  and are left to review.

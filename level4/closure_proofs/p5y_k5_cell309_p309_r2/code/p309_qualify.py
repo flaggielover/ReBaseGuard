@@ -463,7 +463,7 @@ def start_qhost_monitor(qh: dict) -> None:
     QHOST["file"], QHOST["qh"] = ATT["dir"] / "QHOST_MONITOR.jsonl", qh
     fh = open(os.open(QHOST["file"], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644), "w")
     signal.signal(signal.SIGTERM, _qhost_abort)
-    QHOST["started"] = time.time()
+    QHOST["started"] = time.monotonic()                   # follow-up SF1: the monitor's clock (system-wide)
     QHOST["monitor"] = subprocess.Popen(
         [PY, "-B", str(FNS / "code" / "p309_host.py"), "qhost-monitor", "--parent", str(os.getpid()), "--interval",
          str(QHOST_INTERVAL)], stdout=fh, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, universal_newlines=True)
@@ -472,21 +472,23 @@ def start_qhost_monitor(qh: dict) -> None:
 
 
 def stop_qhost_monitor() -> dict:
-    """stop the monitor and judge Q-HOST: every sample passed, the monitor was alive at the stop and left no gap over
-    the interval plus the tolerance (C4), and a final sample still shows the same host (A15)"""
+    """stop the monitor and judge Q-HOST: at least one sample completed and every sample passed, the monitor was alive
+    at the stop and left no gap over the interval plus the tolerance between any two of its events on the monotonic
+    clock (C4; follow-up SF1), and a final sample still shows the same host (A15)"""
     mon, qh = QHOST["monitor"], QHOST["qh"]
     signal.signal(signal.SIGTERM, signal.SIG_IGN)      # a late monitor signal must not kill the stop: its row still fails
     alive = mon is not None and mon.poll() is None
-    stopped = time.time()
+    stopped = time.monotonic()
     if mon is not None:
         mon.terminate()
         try:
             mon.wait(timeout=30)
         except subprocess.TimeoutExpired:
             mon.kill()
-    rows = [json.loads(l) for l in QHOST["file"].read_text().splitlines() if l.strip().startswith("{")]
-    live = H.monitor_liveness([r.get("t", 0) for r in rows], QHOST["started"], stopped, alive, QHOST_INTERVAL,
-                              qh["cfg"]["monitor_gap_tolerance_s"])
+    events = [json.loads(l) for l in QHOST["file"].read_text().splitlines() if l.strip().startswith("{")]
+    rows = [r for r in events if r.get("kind") == "sample"]             # the completed samples
+    live = H.monitor_liveness([r.get("m", 0) for r in events], QHOST["started"], stopped, alive, QHOST_INTERVAL,
+                              qh["cfg"]["monitor_gap_tolerance_s"])   # every event: start-of-sample and result rows
     final = H.provenance(qh["cfg"])
     fcont = H.continuity(qh["baseline"], final, qh["cfg"])
     return {"pass": bool(rows) and all(r.get("pass") for r in rows) and live["pass"] and fcont["pass"],
