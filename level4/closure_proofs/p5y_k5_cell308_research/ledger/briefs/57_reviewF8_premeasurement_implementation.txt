@@ -1,0 +1,104 @@
+COMBINED REVIEW REQUEST (brief 57) — fresh independent reviewer `reviewF8`: the complete pre-measurement
+implementation of the cell-308 successor MB-S. Recorded before sending. Your verdict is not predetermined.
+
+WHO YOU ARE. A FRESH reviewer who is not a holder of any MB r1 run observation, independent of builders 3-7, the
+coordinator editorR3C1 (exposed), ratifier2 and every earlier reviewer.
+
+OBJECT. Successor branch p5y-k5-cell308-mbs-r1, repository /Users/suzhe/ReBaseGuard (worktree
+/Users/suzhe/ReBaseGuard-c308mbs), NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1, commits on top of 216c465f
+(IMPLEMENTATION_ACCEPTED pre-freeze candidate, research reviews 58cfe66b and 2308651e):
+  T1 cc723527 builder4 (qualification framework); T2 555f4cbf builder5 (liveness repairs, disk / scratch gate, re-pin,
+  R-MEM inputs, QS-RESUME-DECOY, host checklist) — T1 + T2 were reviewed by reviewQ6: DELTA_REJECTED (research
+  reviews/REVIEW_PREFREEZE_TOOLING_MBS308.md, 82d59cc2; preserved; read it: its sections 2, 4, 5, 6 were MET and need
+  no second review unless the later commits touched them);
+  T3 78a172cfc8d94f05f23a027f8decf4f9150e4c96 builder6 (decision-dependent cases, section 11.2 option (a), ratifier
+  readings, owner supplement 2 semantics, three-record grant binding);
+  T4 d4734231dd0282d882552aa55964ffc21b9b6b5a builder7 (the bounded repairs of 82d59cc2).
+Review `git diff 555f4cbf d4734231dd0282d882552aa55964ffc21b9b6b5a` in full and each commit on its own. The builders' accounts are BUILD_REPORT sections
+15-18 (claims to check; do NOT read sections 6 or 9). Authorities (research namespace
+/Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research): the owner records
+ledger/USER_RULING_MBS308_OWNER_DECISIONS.txt (5c2394ba), _OWNER_SUPPLEMENT_1.txt (8fc2b038), _OWNER_SUPPLEMENT_2.txt
+(74f386a5), their digests in ledger/USER_OWNER_RECORDS_PROVENANCE.md, and ledger/USER_DIRECTIVE_MBS308_OVERNIGHT.txt
+(sections 2, 5, 9-11, 16); governance/CONSTANTS_RATIFICATION_MBS308.md (the rules) and
+governance/CONSTANTS_RATIFICATION_MBS308_READINGS_R1.md (ratifier2, ca66e367); reviews/REVIEW_SEQUENCING_DETERMINATION_MBS308.md,
+reviews/REVIEW_OWNER_DECISION_CONFORMANCE_MBS308.md; ledger/QC13S_RECORD_CHECK_*.md; briefs 53-56 and their notes.
+
+SCOPE (each section ruled MET / NOT MET; quote file:line for every NOT MET).
+1. The 82d59cc2 repairs (T4): R1-R7, F-4 and the tests for G-1, G-2, G-5..G-11 — each repaired as the rejection asks,
+   each with a test that fails without it and a mutant killed by assertion; your own mutants for R2 (borrowed base
+   store, in-root and cross-root), R3, R6 (`busy_processes` and `no_other_campaign_job` fail closed on a failed
+   reading, UNKNOWN never DEAD) at least. Nothing else changed by T4; no operational number changed.
+2. Decision-dependent cases (T3 Part A): MBS-6 (i) text; every case BUILT matches MB r1's frozen implementation
+   (/Users/suzhe/ReBaseGuard-c308mb/level4/closure_proofs/p5y_k5_cell308_mb_r1/{code,tests,config,protocol}/, read-only)
+   except the listed deviations V1-V16 — rule on each deviation; Q12 is a genuine pass / fail of the FIXED caps (it
+   never derives or prints a candidate cap; the fourteen carried controls + the new ones); the driver carries exactly
+   the owner's section-4 values; no case can pass vacuously (aggregator, missing / non-boolean `pass`, a case naming no
+   gate); QC01's cell-305 rehearsal is not runnable by any test.
+3. Section 11.2 option (a) (owner supplement 1 sections 1-4; check ALL fourteen points of its section 4 that can be
+   checked before any measurement exists, and say which can only be checked on the evidence): the designated
+   measurement tool (official configuration; every R-rule input recorded, including D and the sampler; refusals:
+   battery, sleep, thermal, unprepared host, watchdog event); the derivation tool (the EXISTING rule functions, no rule
+   text change; all five outputs; canonical forms as ratifier2 ruled); the apply step (mechanical, dry-run default,
+   changes nothing but the five constants and the protocol table); R_RULES_OFFICIAL (official decoys at the ACTUAL
+   FROZEN values; re-measures independently; exact B == A == driver per output; set equality for EXCL_ALLOW; no
+   tolerance, subset, union, intersection or sticky list anywhere — search for one); one freeze; no constant can change
+   after the freeze; no target information can enter.
+4. Ratifier2's readings and owner supplement 2: observed sampler spacing <= 0.5 s enforced (rule on the configured
+   interval 0.25 s: does it implement the accepted requirement without altering the rule? builder6 reports that g
+   depends on the interval); first-observation semantics unchanged; event-run semantics; the three distinct statuses
+   (QUALIFICATION_MEMORY_WATCHDOG_UNDER_FROZEN_CAP: fail closed, no doubling, no cure, later decoys not launched;
+   MEM_POLL_S_NONCANONICAL_BRANCH: derivation stops, nothing rounded, official case fails closed;
+   STEP1_RERUN_REQUIRED: stop, no cap-override facility, no invented re-run policy) each reachable by a REAL event (the
+   driver change V16: a failed decoy writes its record — rule on it: does it touch any carried science function or any
+   target-mode path?) and each with a mutant.
+5. The designation-rule PROPOSAL (protocol 11.2 step 1: whole-series unit; an invalid series kept and listed; never one
+   decoy re-measured; ALREADY_DESIGNATED refusal): is it consistent with the accepted rule text, the ratifier's ruling
+   (item 2: "fixed before the runs in the designation") and the owner supplements, or does it need the owner? Rule
+   ACCEPTED_AS_DESIGNATION_RULE / NEEDS_OWNER (say exactly what) / REJECTED (say why).
+6. builder6's B4 analysis: for each of the five outputs, is its statement of when exact agreement is well-defined
+   correct? In particular (a) EXCL_ALLOW: is exact set equality mechanically well-defined under the accepted text (a
+   genuine ambiguity must be stated as the smallest exact question for the owner); (b) MEM_POLL_S: check the arithmetic
+   of the stated stop band from the rule text only. Do not predict any measurement outcome and do not suggest a way
+   around a stop.
+7. Grant binding: `user_ruling_s1` binds the THREE complete owner records in fixed order (original, supplement 1,
+   supplement 2), exact bytes and digests, digests equal to the frozen-to-be protocol / manifest values and to
+   USER_OWNER_RECORDS_PROVENANCE.md; `check_grant` refuses every planted deviation (write your own: a byte changed, a
+   record missing, swapped, an excerpt, a fourth record); QC13-S names all three; no paraphrase of owner authority in
+   any gate. Owner decisions section 14 (final host preflight): every item covered by a gate or a recorded reading
+   (protocol 8.3).
+8. Final-byte state at T4: pins (HELPER_SHA256 match the files; PLATFORM_PINS untouched), generated artifacts
+   (DRIVER_DIFF.md reproduces with the tool; the configuration and the verifier agree), no freeze manifest,
+   evidence_prefreeze/, grant, marker or official record in the tree, no operational constant changed between 216c465f
+   and T4 (list every module-level constant that changed and why), ledger agents complete.
+
+RE-RUN on the committed bytes of T4 (own base store and sandbox checkouts; host on AC — check `pmset -g batt`, and
+`df -h /Users/suzhe`): static, launch, state, crash, qualify, disk, cases, dev decoy; the full mutant matrix (peak
+scratch recorded); your own mutants. Report counts; a kill must be the assertion.
+
+ABSOLUTE RULES. No cell-308 target evaluation, direct or indirect; nothing may evaluate Γ(5,308; ·), cells 305-309 or
+any drift in [6/5, 13/5] or its mirror (the dev decoy on cell 297 block 0 at the dev ladder is the only science any
+test may run; ledger it NONTARGET_DRIFT_VALIDATION); cell 309 out of scope; do NOT run the designated measurement
+tool, a full-length decoy, the apply step in the real worktree, a freeze or an official qualification; no
+authorization, grant, marker, pending result or seal; no system-setting change. MBS-2 reading restrictions: do NOT
+open reviews/REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*, reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*,
+reviews/INCIDENT_INDEPENDENCE_REVIEW_MB308*.md and *_MBS308*, ledger/COORDINATOR_EXPOSURE_DISCLOSURE*,
+ledger/USER_TEXTS_SUCCESSOR_308.md, governance/SUCCESSOR_GOVERNANCE_308.md, history/, anything under
+p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/, successor BUILD_REPORT sections 6 and 9, any other
+scratchpad, anything under /Users/suzhe/.claude/; no `git log` on the MB r1 branch, no commit subjects of 21e99cf0 /
+afa93072. Disclose any MB r1 run observation already in your context (a host-supplied memory index is not a source).
+Sandboxes on your OWN --no-local base store (one, reused); NO git writes in any real repository; launch tests
+synthetic payload, booted out, no plist left. Ledger via code/c308_quarantine.log_event (agent='reviewF8',
+target_evaluations=0).
+
+OUTPUT. reviews/REVIEW_PREMEASUREMENT_IMPLEMENTATION_MBS308.md (research namespace): line 1 the title; line 2 EXACTLY
+one of IMPLEMENTATION_ACCEPTED or IMPLEMENTATION_REJECTED (once); sections 1-8, each MET / NOT MET.
+IMPLEMENTATION_ACCEPTED only if every section is MET (a section-5 ruling NEEDS_OWNER or a section-6 owner question is
+not a NOT MET of the implementation: list it separately under "For the owner"). Then: (i) every bounded defect with
+its repair; (ii) "For the owner": each genuinely owner-level question in its smallest exact form, neutral; (iii) what
+remains before the designated measurements and before the freeze. Final message: the verdict line, the file's sha256
+and a 15-line summary.
+
+LOW-TRAFFIC MODE (owner instruction). Batch commands; long output to files in your scratch
+(/private/tmp/claude-501/-Users-suzhe-ReBaseGuard/fb722654-cd8d-472d-928c-34a116f8b315/scratchpad/reviewF8); read back
+short summaries; never tail or re-read large logs; bounded polling; delete sandboxes after heavy runs, keep JSON
+reports. This does not reduce what you must verify.
