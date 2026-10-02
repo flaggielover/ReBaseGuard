@@ -1100,7 +1100,7 @@
    {
     "file": "code/p309_qualify.py",
     "function": "start_qhost_monitor",
-    "ast_sha256": "890465b2c180a2fb901edd4214da6d8e4899557d7aff051376ed723d777693ff",
+    "ast_sha256": "489721f2de827a5d72959827d61f781bbf2ecec90358ea6ed94c0034fb44cc65",
     "permits": [
      "process"
     ],
@@ -1119,7 +1119,7 @@
    {
     "file": "code/p309_host.py",
     "function": "qhost_monitor",
-    "ast_sha256": "1b10727d87bca4ef54e949a65591996d0a3325ed1a1a3d173337f76b768c7554",
+    "ast_sha256": "6bd1f0311f8f640d339730f6e72d08c8f34c9ca97bb1a9a8df0962bed6a99a02",
     "permits": [
      "proc_read"
     ],
@@ -1128,7 +1128,7 @@
    {
     "file": "code/p309_host.py",
     "function": "kill_own_descendants",
-    "ast_sha256": "7417e7f30cacb3c5e12733aa9e1ada7172fc502977974271e6c599ec75e8dfc9",
+    "ast_sha256": "8738fe91b3ad5fc091f5b62870f8dc6d46f92844c9e03b2e1266945718d17186",
     "permits": [
      "proc_read",
      "signal"
@@ -1210,7 +1210,7 @@
    {
     "file": "code/p309_qualify.py",
     "function": "stop_qhost_monitor",
-    "ast_sha256": "6ea1a37bd030e229290329bc7cc04599cb2ef4ac1d2aee9f8da8744fd7e23be1",
+    "ast_sha256": "d033e684902dc2b368b4de62a9b404b5024668ba683db59471e4d4cc077486c5",
     "permits": [
      "signal"
     ],
@@ -1336,12 +1336,12 @@
    {
     "file": "tests/test_p309_host_controls.py",
     "function": "kill_token",
-    "ast_sha256": "db88dd823424070d99e0a91d07f26c3e27243796a535ef1ec801c77903102162",
+    "ast_sha256": "36c6fa56fad64f9b1f4bc49ab2df22519baa362971ee687875294851d0e7b410",
     "permits": [
      "proc_read",
      "signal"
     ],
-    "reason": "r2 follow-up FU2: cleanup after a failed K01/A01 run; SIGKILLs only live processes whose argv carries the run's random TEST token (only processes the test itself started carry it)"
+    "reason": "r2 follow-up FU2, X4: cleanup after a failed K01/K02/A01 run; SIGKILLs only live processes whose argv carries the run's random TEST token (only processes the test itself started carry it), repeating until none is left"
    },
    {
     "file": "code/p309_host.py",
@@ -1373,11 +1373,29 @@
    {
     "file": "tests/test_p309_host_controls.py",
     "function": "case_u",
-    "ast_sha256": "1c101bd1a793f56863cf20a6441d0e25e62ff74f6f606e923f73850a4c4dcf22",
+    "ast_sha256": "d909f0c2da04cfc8c9e3c584c504a197632f90460764789a2b3be716b0f68f59",
     "permits": [
      "process"
     ],
-    "reason": "r2 follow-up W6 (worker tier only): inside the launched unit, runs the literal Q_CODE program (qhost_preflight) with this environment and P309_LAUNCH_RECORD / P309_HOST_CONFIG pointed at altered TEST copies under the launch's scratch root; outside a unit it runs nothing"
+    "reason": "r2 follow-up W6, X5 (worker tier only): inside the launched unit, runs the literal Q_CODE program (qhost_preflight) with this environment and P309_LAUNCH_RECORD / P309_HOST_CONFIG pointed at TEST copies in a mode-700 directory under the launch's scratch root (the configuration copy holds TEST bytes only; the record copies are of the redacted launch record), removed at the end; outside a unit it runs nothing"
+   },
+   {
+    "file": "tests/test_p309_host_controls.py",
+    "function": "case_k02",
+    "ast_sha256": "8097ebf4e95e59060548378425ccec4afeaad62ab4902413f2c5b9c05fccfcde",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 follow-up X2: runs the literal SLOWTREE program three times with this environment plus P309_TEST_CODE; SLOWTREE starts two TEST SLOWFORKER processes (512 MB resident, starting TEST children with a real fork for at most 30 s) and calls kill_own_descendants on them; every process carries a random TEST token; anything left is killed by kill_token"
+   },
+   {
+    "file": "tests/test_p309_host_controls.py",
+    "function": "case_r01",
+    "ast_sha256": "d943e0f879126e315a17585797e4c62cce5cb3023e74670aea2b35ac32abb65c",
+    "permits": [
+     "process"
+    ],
+    "reason": "r2 follow-up X3: runs the literal RUNSTOP program with this environment plus P309_TEST_CODE and P309_TEST_DIR (a TEST directory under P309_SCRATCH_ROOT); RUNSTOP runs the runner's own start_qhost_monitor / stop_qhost_monitor with a real monitor (interval 4 s; attempt in the TEST directory, label host_rerun: nothing is written in qualification/)"
    }
   ],
   "git_forbidden_options_note": "global options before the verb are allowlisted (git_global_options_*; anything else, e.g. -c, --git-dir, --work-tree, --exec-path, --namespace, is a finding); after the verb the listed options (program execution, output files, templates, prefixes, remotes) are findings",

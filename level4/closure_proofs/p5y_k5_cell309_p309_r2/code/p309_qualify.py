@@ -423,8 +423,8 @@ def qhost_preflight(modes: tuple) -> dict:
             "host_config_file_sha256": rec["host_config_file_sha256"]}
 
 
-QHOST = {"monitor": None, "file": None, "started": None, "qh": None}
 QHOST_INTERVAL = 60.0
+QHOST = {"monitor": None, "file": None, "started": None, "qh": None, "interval": QHOST_INTERVAL}
 
 
 def _qhost_abort(signum, frame) -> None:
@@ -458,7 +458,7 @@ def start_qhost_monitor(qh: dict) -> None:
     xwrite(ATT["dir"] / "QHOST_BASELINE.json", json.dumps(dict({k: qh[k] for k in (
         "record", "unit", "mode", "baseline", "continuity_since_launch", "host_config_file_sha256")},
         launch_record_sha256=hashlib.sha256(qh["record_bytes"]).hexdigest(),
-        unit_properties_sha256=hashlib.sha256(props.encode()).hexdigest(), interval_s=QHOST_INTERVAL,
+        unit_properties_sha256=hashlib.sha256(props.encode()).hexdigest(), interval_s=QHOST["interval"],
         gap_tolerance_s=qh["cfg"]["monitor_gap_tolerance_s"]), indent=1, sort_keys=True, default=str) + "\n")
     QHOST["file"], QHOST["qh"] = ATT["dir"] / "QHOST_MONITOR.jsonl", qh
     fh = open(os.open(QHOST["file"], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644), "w")
@@ -466,7 +466,7 @@ def start_qhost_monitor(qh: dict) -> None:
     QHOST["started"] = time.monotonic()                   # follow-up SF1: the monitor's clock (system-wide)
     QHOST["monitor"] = subprocess.Popen(
         [PY, "-B", str(FNS / "code" / "p309_host.py"), "qhost-monitor", "--parent", str(os.getpid()), "--interval",
-         str(QHOST_INTERVAL)], stdout=fh, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, universal_newlines=True)
+         str(QHOST["interval"])], stdout=fh, stderr=subprocess.STDOUT, stdin=subprocess.PIPE, universal_newlines=True)
     QHOST["monitor"].stdin.write(json.dumps({"cfg": qh["cfg"], "baseline": qh["baseline"]}))
     QHOST["monitor"].stdin.close()
 
@@ -474,26 +474,28 @@ def start_qhost_monitor(qh: dict) -> None:
 def stop_qhost_monitor() -> dict:
     """stop the monitor and judge Q-HOST: at least one sample completed and every sample passed, the monitor was alive
     at the stop and left no gap over the interval plus the tolerance between any two of its events on the monotonic
-    clock (C4; follow-up SF1), and a final sample still shows the same host (A15)"""
+    clock (C4; follow-up SF1), the monitor file is not corrupt (a torn last line is set aside; follow-up X1), and a
+    final sample still shows the same host (A15).  The stop time is taken after the monitor is reaped (X1)."""
     mon, qh = QHOST["monitor"], QHOST["qh"]
     signal.signal(signal.SIGTERM, signal.SIG_IGN)      # a late monitor signal must not kill the stop: its row still fails
     alive = mon is not None and mon.poll() is None
-    stopped = time.monotonic()
     if mon is not None:
         mon.terminate()
         try:
             mon.wait(timeout=30)
         except subprocess.TimeoutExpired:
             mon.kill()
-    events = [json.loads(l) for l in QHOST["file"].read_text().splitlines() if l.strip().startswith("{")]
+            mon.wait()
+    stopped = time.monotonic()                          # follow-up X1: after the monitor is reaped, so every row precedes it
+    events, torn, corrupt = H.parse_monitor_rows(QHOST["file"].read_text())
     rows = [r for r in events if r.get("kind") == "sample"]             # the completed samples
-    live = H.monitor_liveness([r.get("m", 0) for r in events], QHOST["started"], stopped, alive, QHOST_INTERVAL,
+    live = H.monitor_liveness([r.get("m", 0) for r in events], QHOST["started"], stopped, alive, QHOST["interval"],
                               qh["cfg"]["monitor_gap_tolerance_s"])   # every event: start-of-sample and result rows
     final = H.provenance(qh["cfg"])
     fcont = H.continuity(qh["baseline"], final, qh["cfg"])
-    return {"pass": bool(rows) and all(r.get("pass") for r in rows) and live["pass"] and fcont["pass"],
+    return {"pass": bool(rows) and all(r.get("pass") for r in rows) and live["pass"] and fcont["pass"] and not corrupt,
             "samples": len(rows), "failed": [r for r in rows if not r.get("pass")][:3], "liveness": live,
-            "final_sample": {"provenance": final, "continuity": fcont}}
+            "torn_last_line": torn, "corrupt_lines": corrupt, "final_sample": {"provenance": final, "continuity": fcont}}
 
 
 def items_table(m: Path, freeze: str, workers: int) -> dict:

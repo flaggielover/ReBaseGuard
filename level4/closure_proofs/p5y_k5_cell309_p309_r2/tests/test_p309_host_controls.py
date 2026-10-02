@@ -29,6 +29,11 @@ signal is the one the case S01 expects: the real Q-HOST monitor's SIGTERM to thi
   launch record whose configuration hash differs (U02); a launch record whose baseline names another boot (U03).  The
   unit-property and instance-id branches cannot be forced from inside a correct unit and are exercised nowhere.  On the
   cloud tier, where no unit exists, the case records "not applicable".
+* K02 (follow-up X2) slow forks: two 512 MB TEST processes that keep starting children with a real fork; none is
+  left alive, three trials.
+* R01 (follow-up X3) the runner's own start_qhost_monitor / stop_qhost_monitor with a real monitor on the cloud tier
+  (interval 4 s in the child; the attempt is a TEST directory with the host_rerun label): Q-HOST passes with three or
+  more samples, the start-of-sample rows are one interval apart, and nothing is written in qualification/.
 * S01 (P10) the monitor FAIL -> SIGTERM path: a real monitor whose baseline names another boot signals this process,
   its parent, exactly once, writes one failed row and exits 1.
 * K01 (C5; follow-up FU2) kill_own_descendants: a TEST tree three deep plus two descendants that keep starting
@@ -49,6 +54,7 @@ from __future__ import annotations
 import datetime
 import json
 import os
+import shutil
 import signal
 import subprocess
 import sys
@@ -122,9 +128,11 @@ FORKER = '''
 import signal, subprocess, sys, time
 signal.signal(signal.SIGTERM, signal.SIG_IGN)
 LEAF = "import signal, time\\\\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\\\\ntime.sleep(600)\\\\n"
-while True:                                   # follow-up W7: still forking when the abort comes
+deadline = time.time() + 20                   # follow-up W7, X4: forking when the abort comes, but bounded
+while time.time() < deadline:
     subprocess.Popen([sys.executable, "-S", "-c", LEAF, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(0.05)
+time.sleep(600)
 '''
 forkers = [subprocess.Popen([sys.executable, "-S", "-c", FORKER, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) for _ in range(2)]
 leaf = subprocess.Popen([sys.executable, "-S", "-c", LEAF, sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -139,6 +147,67 @@ with open(str(QQ.QHOST["file"]), "w") as fh:
 time.sleep(120)
 print("ABORT_NOT_REACHED")
 sys.exit(9)
+"""
+SLOWTREE = """
+import json, os, signal, subprocess, sys, time
+sys.path.insert(0, os.environ["P309_TEST_CODE"])
+import p309_host as H
+TOKEN = sys.argv[1]
+signal.signal(signal.SIGTERM, signal.SIG_IGN)
+SLOWFORKER = '''
+import signal, subprocess, sys, time
+signal.signal(signal.SIGTERM, signal.SIG_IGN)
+BALLAST = b"1" * (512 * 1024 * 1024)
+LEAF = "import signal, time\\\\nsignal.signal(signal.SIGTERM, signal.SIG_IGN)\\\\ntime.sleep(600)\\\\n"
+deadline = time.time() + 30
+while time.time() < deadline:
+    subprocess.Popen([sys.executable, "-S", "-c", LEAF, sys.argv[1]], stdout=subprocess.DEVNULL,
+                     stderr=subprocess.DEVNULL, preexec_fn=int)
+    time.sleep(0.002)
+time.sleep(600)
+'''
+forkers = [subprocess.Popen([sys.executable, "-S", "-c", SLOWFORKER, TOKEN], stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL) for _ in range(2)]
+def tokened():
+    return [int(p) for p in os.listdir("/proc") if p.isdigit() and int(p) != os.getpid()
+            and TOKEN in (H.read("/proc/%s/cmdline" % p) or "").split(chr(0))]
+t0 = time.time()
+while len(tokened()) < 12 and time.time() - t0 < 20:        # both forkers are starting children
+    time.sleep(0.05)
+killed = H.kill_own_descendants()
+time.sleep(0.5)
+def state(pid):
+    st = H.read("/proc/%d/stat" % pid)
+    return None if st is None else st.rsplit(")", 1)[-1].split()[0]
+live = []
+for p in os.listdir("/proc"):
+    if p.isdigit() and int(p) != os.getpid() and TOKEN in (H.read("/proc/%s/cmdline" % p) or "").split(chr(0)):
+        if state(int(p)) not in (None, "Z", "X"):
+            live.append(int(p))
+print("SLOW_RESULT " + json.dumps({"killed": len(killed), "forkers_killed": all(f.pid in killed for f in forkers),
+                                   "live_with_token": live}))
+"""
+RUNSTOP = """
+import json, os, sys, time
+from pathlib import Path
+sys.path[:0] = [os.environ["P309_TEST_CODE"]]
+import p309_qualify as QQ
+T = Path(os.environ["P309_TEST_DIR"])
+QQ.ATT["dir"], QQ.ATT["label"] = T / "attempt", "host_rerun"
+QQ.ATT["dir"].mkdir()
+QQ.QHOST["interval"] = 4.0
+cfg = dict(QQ.H.load_config([]), foreign_uids=[4242])
+qh = {"record": "TEST", "record_bytes": b"{}", "unit": "TEST", "mode": "TEST", "cfg": cfg,
+      "baseline": QQ.H.provenance(cfg), "continuity_since_launch": {}, "unit_properties": {},
+      "host_config_file_sha256": "0" * 64}
+QQ.start_qhost_monitor(qh)
+time.sleep(17)
+res = QQ.stop_qhost_monitor()
+events = QQ.H.parse_monitor_rows((QQ.ATT["dir"] / "QHOST_MONITOR.jsonl").read_text())[0]
+starts = [e["m"] for e in events if e.get("kind") == "sample_start"]
+print("RS_RESULT " + json.dumps({"pass": res["pass"], "samples": res["samples"], "liveness": res["liveness"],
+                                 "corrupt": res["corrupt_lines"], "starts": starts,
+                                 "cadence": [round(b - a, 3) for a, b in zip(starts, starts[1:])]}))
 """
 Q_CODE = """
 import json, os, sys
@@ -274,9 +343,10 @@ def case_u() -> None:
         return
     d = scratch("U_records")
     d.mkdir(parents=True, exist_ok=True)
-    rec = json.loads(Path(rec_path).read_text())
+    os.chmod(str(d), 0o700)
+    rec = json.loads(Path(rec_path).read_text())                         # the launch record is redacted (C9)
     conf_copy = d / "host_config_altered.json"
-    conf_copy.write_text(Path(conf_path).read_text() + "\n")          # same content, other bytes
+    conf_copy.write_text('{"TEST": "other bytes than the bound configuration file"}\n')  # no host value (X5)
     rec_hash = d / "record_config_hash.json"
     rec_hash.write_text(json.dumps(dict(rec, host_config_sha256="0" * 64)))
     rec_boot = d / "record_other_boot.json"
@@ -290,6 +360,8 @@ def case_u() -> None:
                            stderr=subprocess.PIPE, universal_newlines=True, timeout=300, env=env)
         res = next((json.loads(x[len("Q_RESULT "):]) for x in p.stdout.splitlines() if x.startswith("Q_RESULT ")), {})
         t(name, p.returncode == 0 and want in (res.get("refused") or ""), res or p.stderr[-300:])
+    if d.name == "U_records" and d.parent.name == "host_controls":
+        shutil.rmtree(str(d))                                             # follow-up X5: nothing left behind
 
 
 # --------------------------------------------------------------------------------------- N (P11, A16)
@@ -386,14 +458,20 @@ def live_with(token: str) -> list:
 
 
 def kill_token(token: str) -> list:
-    """SIGKILL the live TEST processes that carry this run's random token: only processes this test started carry it"""
+    """SIGKILL the live TEST processes that carry this run's random token (only processes this test started carry it),
+    repeating until none is left, since a TEST forker may start another during a pass (follow-up X4)"""
     out = []
-    for pid in live_with(token):
-        try:
-            os.kill(pid, signal.SIGKILL)
-            out.append(pid)
-        except OSError:
-            pass
+    for _ in range(50):
+        live = live_with(token)
+        if not live:
+            break
+        for pid in live:
+            try:
+                os.kill(pid, signal.SIGKILL)
+                out.append(pid)
+            except OSError:
+                pass
+        time.sleep(0.05)
     return out
 
 
@@ -417,6 +495,52 @@ def case_k01() -> None:
     finally:
         stop(o)
         kill_token(tree_tok)                    # only on a failure is anything left to kill
+
+
+# ----------------------------------------------------------------------------------- K02 (follow-up X2)
+def case_k02() -> None:
+    """slow forks: two TEST processes of 512 MB resident keep starting children with a real fork (preexec_fn forces
+    fork instead of vfork, so each start copies the page tables); once children exist, kill_own_descendants must leave
+    none alive.  A regression for slow-forking trees only: it does not reproduce the X2 race, which needs a back-to-back
+    os.fork loop (forbidden in this namespace by the scanner); that race was shown in development with the reviewer's
+    harness (R2_DELTA_RESPONSE_4.md)"""
+    results = []
+    for _ in range(3):
+        tok = "TEST-K02-tree-" + os.urandom(6).hex()
+        try:
+            env = dict(os.environ, P309_TEST_CODE=str(CODE))
+            p = subprocess.run([sys.executable, "-c", SLOWTREE, tok], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, universal_newlines=True, timeout=180, env=env)
+            res = next((json.loads(x[len("SLOW_RESULT "):]) for x in p.stdout.splitlines()
+                        if x.startswith("SLOW_RESULT ")), {"stderr": p.stderr[-300:]})
+            res["left_after"] = live_with(tok)
+            results.append(res)
+        finally:
+            kill_token(tok)                     # only on a failure is anything left to kill
+    t("K02_slow_forking_tree_killed", all(r.get("live_with_token") == [] and r.get("forkers_killed") and
+                                          r.get("left_after") == [] for r in results), results)
+
+
+# ----------------------------------------------------------------------------------- R01 (follow-up X3)
+def case_r01() -> None:
+    """the runner's own start_qhost_monitor / stop_qhost_monitor with a real monitor, the interval set to 4 s in the
+    child: Q-HOST passes, the start-of-sample rows are about one interval apart, and nothing is written in
+    qualification/ (the attempt is a TEST directory with the host_rerun label)"""
+    d = scratch("R01_" + os.urandom(6).hex())
+    d.mkdir(parents=True)
+    qdir = FNS / "qualification"
+    before = sorted(x.name for x in qdir.iterdir()) if qdir.exists() else None
+    env = dict(os.environ, P309_TEST_CODE=str(CODE), P309_TEST_DIR=str(d))
+    p = subprocess.run([sys.executable, "-B", "-c", RUNSTOP], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE, universal_newlines=True, timeout=300, env=env)
+    res = next((json.loads(x[len("RS_RESULT "):]) for x in p.stdout.splitlines() if x.startswith("RS_RESULT ")),
+               {"rc": p.returncode, "stderr": p.stderr[-400:]})
+    cad = res.get("cadence") or []
+    t("R01a_runner_start_stop_passes_with_a_real_monitor", p.returncode == 0 and res.get("pass") is True and
+      res.get("samples", 0) >= 3 and res.get("corrupt") == 0, res)
+    t("R01b_samples_start_one_interval_apart", len(cad) >= 2 and all(3.95 <= c <= 4.6 for c in cad), cad)
+    after = sorted(x.name for x in qdir.iterdir()) if qdir.exists() else None
+    t("R01c_nothing_in_qualification", before == after, after)
 
 
 # --------------------------------------------------------------------------------------- A01 (C5; FU2 (b))
@@ -488,7 +612,8 @@ if __name__ == "__main__":
           "runner's Q-HOST refusals, the launcher's refusals, the monitor's SIGTERM path, kill_own_descendants, "
           "the C14 runtime binding", klass="GOVERNANCE", notes="TEST processes only, each killed and reaped; no "
           "other process signalled; no cell value")
-    for case in (case_p01, case_p02, case_q, case_u, case_n, case_s01, case_k01, case_a01, case_b):
+    for case in (case_p01, case_p02, case_q, case_u, case_n, case_s01, case_k01, case_k02, case_r01, case_a01,
+                 case_b):
         try:
             case()
         except Exception as exc:  # noqa: BLE001 - a crashed case is a recorded FAIL

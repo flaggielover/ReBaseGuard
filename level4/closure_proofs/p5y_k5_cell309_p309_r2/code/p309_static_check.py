@@ -66,9 +66,10 @@ T14 (r2 delta review C6; P10) the runner's Q-HOST order: in p309_qualify.py main
    call (with the modes each needs) and every refusal return come before the exclusive os.mkdir of the attempt
    directory; the start line (RUN_START / HOST_START) is logged right after that mkdir; the Q-HOST monitor starts
    before any item, mirror or decoy work, and is stopped before the summary; nothing returns, raises, asserts or
-   exits between the mkdir and the final return (follow-up V1, W5).  "Exits" covers a call of exit, _exit, abort, quit,
-   kill, killpg or raise_signal by any name or attribute, including a name bound by `from ... import ... as ...`
-   anywhere in the file.  The check is syntactic: it does not follow calls into other functions
+   exits between the mkdir and the final return (follow-up V1, W5, X6).  "Exits" covers a call of exit, _exit, abort,
+   quit, kill, killpg or raise_signal by these names, as an attribute of anything, or through a `from ... import ... as
+   ...` alias anywhere in the file.  The check is syntactic.  It does not follow calls into other functions, and it does
+   not see an exit reached through an assignment alias (`x = sys.exit`), getattr, an exec* call, pthread_kill or alarm
 """
 from __future__ import annotations
 

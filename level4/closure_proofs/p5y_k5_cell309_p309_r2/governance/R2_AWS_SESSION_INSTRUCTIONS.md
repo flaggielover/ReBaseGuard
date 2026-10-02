@@ -4,7 +4,11 @@
 
 These steps cover the shared AWS ReBaseGuard worker that cell 308 uses (owner message 3). They complete
 `R2_BOOTSTRAP.md` and `R2_HOST_REQUIREMENTS.md` and do not replace them. They were revised after the follow-up reviews
-(`REVIEW_R2_DELTA_FOLLOWUP_1.md`, FU1 and FU4; `REVIEW_R2_DELTA_FOLLOWUP_2.md`, SF1, SF2, W7 and W8). **No step may start before the owner has
+(`REVIEW_R2_DELTA_FOLLOWUP_1.md`, FU1 and FU4; `REVIEW_R2_DELTA_FOLLOWUP_2.md`, SF1, SF2, W7 and W8;
+`REVIEW_R2_DELTA_FOLLOWUP_3.md`, X7).
+
+**Working directory.** Every `code/...` command in this document runs from the r2 namespace directory of the P309
+clone, `<clone>/level4/closure_proofs/p5y_k5_cell309_p309_r2`, not from the clone's root (follow-up X7). **No step may start before the owner has
 answered OD-R2-3 (the access path) and, for 8c onward, OD-R2-4 (consent to host changes).**
 
 ## 0. Who runs this, and what never happens
@@ -159,6 +163,11 @@ P309_SCRATCH_ROOT=<that directory> P309_FOREIGN_ROOTS=<cell-308 paths> python3.1
 It must report no blocker. Preserve the record (`launch_<utc>.json`) in `evidence/host/`. That directory is never
 reused as the scratch root of a real launch, which must start empty for an official run or a host re-run.
 
+"No blocker" includes the exclusion gate (follow-up X7). The check therefore needs a quiet moment on the host: no
+foreign or unattributable process above 0.05 of a core, and the load at the agreed baseline. Run it at a time agreed
+with the cell-308 operator. A gate blocker at this step says only that the moment was not quiet; it is not a host
+verdict. The record keeps at most 80 process rows (`processes[:80]`), with counts by tag for all of them.
+
 `code/p309_host.py isolation|preflight|gate --config FILE` reads a host configuration **without** the six launch
 settings: it refuses unknown keys, and the launch settings count as unknown there. To run those subcommands alone,
 give them a copy of the §3.1 file without those six keys, plus
@@ -231,11 +240,13 @@ can end a run. Before every heavy window (the 8d drill, the official run, a host
    `gate.processes` rows show the uid of every `unattributable` and `foreign` process, with its CPU fraction, and
    nothing else. One sample cannot show work that starts later, so also list, read-only, what is scheduled
    (follow-up W8):
-   * `systemctl list-timers --all --no-pager`;
-   * `ls -l /etc/cron.d /etc/crontab /etc/cron.hourly /etc/cron.daily`.
+   * `systemctl list-timers --all --no-pager`, then, for each timer's service, the account it runs under:
+     `systemctl show -p User,DynamicUser <service>`;
+   * `cat /etc/crontab /etc/cron.d/*` (read-only): the sixth field of each job line names its account;
+     `ls -l /etc/cron.hourly /etc/cron.daily` (these run as root).
 
    Per-user crontabs (`/var/spool/cron`) are not readable by the P309 user. Ask the host's administrator for the
-   non-root accounts that have one.
+   non-root accounts that have one (follow-up X7).
 3. **Agree the window for the whole host.**
    * Identify each non-root uid in those rows: cell 308's (which belongs in `foreign_uids`), a service account, or
      another user.

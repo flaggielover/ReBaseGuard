@@ -194,3 +194,16 @@ excludes `:`, which separates `P309_FOREIGN_ROOTS`.
 * The cloud tier exercises the refusals before the unit check: Q01–Q07.
 * The unit-property and instance-id branches are exercised nowhere. They cannot be forced from inside a correct unit,
   and are left to review.
+
+## I. Corrections after the third follow-up review (appended 2026-10-02; `REVIEW_R2_DELTA_FOLLOWUP_3.md` X1, X2)
+
+**I1. Q-HOST at the stop (X1).** The rule of §H1 holds, with three changes:
+* the monitor's times are not rounded;
+* the runner takes its stop time only after the monitor has been reaped, so no event can be later than the stop;
+* the monitor file is parsed line by line (`parse_monitor_rows`). A torn last line is set aside; any other line that
+  does not parse fails Q-HOST.
+
+What ends the attempt under OD-R2-5 (i) is listed completely in the packet.
+
+**I2. `kill_own_descendants` (X2).** The walks end only when a walk that began after an observation of every
+descendant seen as stopped or gone finds nothing new.

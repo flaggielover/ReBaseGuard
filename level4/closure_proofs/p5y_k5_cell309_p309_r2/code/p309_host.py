@@ -648,6 +648,26 @@ def monitor_liveness(times, started, stopped, alive_at_stop, interval, tol):
             "pass": all(checks.values())}
 
 
+def parse_monitor_rows(text):
+    """the monitor file's rows (pure; follow-up X1): (events, torn_last_line, corrupt_lines).  A last line that does not
+    parse is a write cut off by the monitor's termination and is set aside; a line that does not parse anywhere else
+    means the file is corrupt, and Q-HOST fails."""
+    lines = [l for l in text.split("\n") if l.strip()]
+    events, corrupt, torn = [], 0, False
+    for i, l in enumerate(lines):
+        try:
+            row = json.loads(l)
+            if not isinstance(row, dict):
+                raise ValueError("not an object")
+            events.append(row)
+        except ValueError:
+            if i == len(lines) - 1 and not text.endswith("\n"):
+                torn = True
+            else:
+                corrupt += 1
+    return events, torn, corrupt
+
+
 class MonitorIO(object):
     """what qhost_monitor needs from the world (follow-up SF1: a test drives the committed loop with a virtual clock by
     replacing this object).  The clock is CLOCK_MONOTONIC, which is system-wide on Linux, so the runner and the monitor
@@ -680,7 +700,7 @@ def qhost_monitor(cfg, baseline, parent, interval, io=None):
     """Q-HOST (P10): sample every <= `interval` s (at most 60) until the parent exits.  Each sample writes two JSON rows
     on standard output (the runner points it into the attempt): a start-of-sample row, then the result row with
     continuity against the baseline and whether the cell-308 campaign or other ReBaseGuard heavy work is active
-    (excluding this unit's own cgroup).  Both rows carry the monotonic time `m` (follow-up SF1).  On a failed sample it
+    (excluding this unit's own cgroup).  Both rows carry the monotonic time `m`, unrounded (follow-up SF1, X1).  On a failed sample it
     signals the parent (SIGTERM) once and stops; the parent stops its own process tree (kill_own_descendants), records
     Q-HOST FAIL and exits, and the unit's KillMode=control-group with KillSignal=SIGKILL stops anything left.  It writes
     nothing else and signals no process but its own parent."""
@@ -690,11 +710,11 @@ def qhost_monitor(cfg, baseline, parent, interval, io=None):
         if not io.parent_alive(parent):
             return 0
         m0 = io.mono()
-        io.write(json.dumps({"kind": "sample_start", "m": round(m0, 3), "utc": utc()}, sort_keys=True) + "\n")
+        io.write(json.dumps({"kind": "sample_start", "m": m0, "utc": utc()}, sort_keys=True) + "\n")
         now, rows = io.sample(cfg, interval)
         cont = continuity(baseline, now, cfg)
         ok, busy, other = monitor_verdict(cont, rows, cfg)
-        io.write(json.dumps({"kind": "sample", "m": round(io.mono(), 3), "utc": utc(), "pass": ok,
+        io.write(json.dumps({"kind": "sample", "m": io.mono(), "utc": utc(), "pass": ok,
                              "continuity": cont["checks"], "instance_unverified": cont["instance_unverified"],
                              "foreign_active_pids": busy, "other_heavy_pids": other,
                              "suspended_s": now.get("suspended_s"), "ntp_synchronized": now.get("ntp_synchronized")},
@@ -729,13 +749,14 @@ def _state(pid):
 def kill_own_descendants():
     """review C5 (follow-up FU2, V7, W1): stop the calling process's own descendants at once, whatever signals they
     ignore.  Each round walks the WHOLE tree below the caller again, through descendants already stopped, and SIGSTOPs
-    every descendant not yet seen, after checking that its start time is still the one the walk read.  A round ends
-    only when a full walk finds nothing new AND every descendant seen is stopped (state T or t) or gone: SIGSTOP is
-    delivered asynchronously, so a child linked just before it took effect is still found by the next walk.  Then every
+    every descendant not yet seen, after checking that its start time is still the one the walk read.  The rounds end
+    only when a walk that BEGAN after an observation of every descendant seen as stopped (state T or t) or gone finds
+    nothing new (follow-up X2): SIGSTOP is delivered asynchronously, and a fork already under way when it arrives can
+    still link a child, so the confirming walk must start after the stops are observed.  Then every
     stopped pid is SIGKILLed, but only if its start time is still the recorded one (a reused pid is never signalled).
     It never signals the caller itself or any process outside its tree.  Returns the pids signalled."""
     import signal as _signal
-    me, seen = os.getpid(), {}
+    me, seen, settled_before = os.getpid(), {}, False
     for _ in range(2000):
         kids, stack, new = _children_map(), [me], []
         while stack:
@@ -753,10 +774,10 @@ def kill_own_descendants():
                 os.kill(c, _signal.SIGSTOP)
             except OSError:
                 pass
-        settled = all(_start_time(c) != t or _state(c) in ("T", "t", "Z", "X", None) for c, t in seen.items())
-        if not new and settled:
+        if not new and settled_before:              # this walk began after every seen pid was observed stopped
             break
-        if not new:
+        settled_before = all(_start_time(c) != t or _state(c) in ("T", "t", "Z", "X", None) for c, t in seen.items())
+        if not settled_before:
             time.sleep(0.005)                       # a SIGSTOP not yet in effect: wait, then walk again
     killed = []
     for c, t in seen.items():

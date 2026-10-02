@@ -1,0 +1,133 @@
+{
+ "schema": "P309_R2_REPIN_LIST_SUPPLEMENT/1",
+ "supplements": "governance/R2_REPIN_LIST.json (51 rows), R2_REPIN_LIST_SUPPLEMENT_1.json (48 rows), R2_REPIN_LIST_SUPPLEMENT_2.json (13 rows) and R2_REPIN_LIST_SUPPLEMENT_3.json (10 rows), all unchanged",
+ "round": "repair round 4, after the third follow-up review (advisories X1-X7)",
+ "hash": "sha256 of ast.dump(<node>), CPython 3.11.15",
+ "compared": {
+  "before": "93ea669a:level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json (the commit the follow-up review read)",
+  "after": "level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json at the commit that adds this file",
+  "r1_at_F": "4c754a73767903a5ad5dddff725f1e173a0a6876:level4/closure_proofs/p5y_k5_cell309_p309_r1/config/SCANNER_ALLOWANCE_P309.json"
+ },
+ "unchanged_lists": {
+  "exactly_once_sites": true,
+  "backstop_pins": true,
+  "production_read_path_pins": true,
+  "production_tokens": true,
+  "planted_control_files": true,
+  "mutating_git_verbs": true,
+  "production_ref_namespace": true
+ },
+ "import_allowlist_additions": {
+  "code": [],
+  "tests": [],
+  "verify": []
+ },
+ "rows": [
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "kill_own_descendants",
+   "reviewed_93ea669a": "7417e7f30cacb3c5e12733aa9e1ada7172fc502977974271e6c599ec75e8dfc9",
+   "now": "8738fe91b3ad5fc091f5b62870f8dc6d46f92844c9e03b2e1266945718d17186",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "proc_read",
+    "signal"
+   ],
+   "reason_now": "r2 delta review C5 (follow-up FU2, V7, W1): SIGSTOP then SIGKILL of the calling process's own descendants only (the /proc ppid tree below os.getpid(), walked again until nothing new appears and every descendant seen is stopped; every signal only to a pid whose start time is still the one recorded); the runner calls it on a Q-HOST abort"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_host.py",
+   "name": "qhost_monitor",
+   "reviewed_93ea669a": "1b10727d87bca4ef54e949a65591996d0a3325ed1a1a3d173337f76b768c7554",
+   "now": "6bd1f0311f8f640d339730f6e72d08c8f34c9ca97bb1a9a8df0962bed6a99a02",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "proc_read"
+   ],
+   "reason_now": "r2 Q-HOST (P10; follow-up SF1): the monitor loop. It samples /proc through its MonitorIO, writes a start-of-sample row and a result row per sample with monotonic times, and on a failed sample calls io.signal_parent once and returns; it sends no signal itself"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_qualify.py",
+   "name": "start_qhost_monitor",
+   "reviewed_93ea669a": "890465b2c180a2fb901edd4214da6d8e4899557d7aff051376ed723d777693ff",
+   "now": "489721f2de827a5d72959827d61f781bbf2ecec90358ea6ed94c0034fb44cc65",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 Q-HOST (P10): starts the p309_host.py qhost-monitor of this frozen tree as a child (python + a literal .py script), its output into the attempt; the monitor signals only this process"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "code/p309_qualify.py",
+   "name": "stop_qhost_monitor",
+   "reviewed_93ea669a": "6ea1a37bd030e229290329bc7cc04599cb2ef4ac1d2aee9f8da8744fd7e23be1",
+   "now": "d033e684902dc2b368b4de62a9b404b5024668ba683db59471e4d4cc077486c5",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "permits_now": [
+    "signal"
+   ],
+   "reason_now": "r2 Q-HOST (P10, C4): terminates (then, after 30 s, kills) its own monitor child only, after noting whether it was still alive"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "case_k02",
+   "reviewed_93ea669a": null,
+   "now": "8097ebf4e95e59060548378425ccec4afeaad62ab4902413f2c5b9c05fccfcde",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 follow-up X2: runs the literal SLOWTREE program three times with this environment plus P309_TEST_CODE; SLOWTREE starts two TEST SLOWFORKER processes (512 MB resident, starting TEST children with a real fork for at most 30 s) and calls kill_own_descendants on them; every process carries a random TEST token; anything left is killed by kill_token"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "case_r01",
+   "reviewed_93ea669a": null,
+   "now": "d943e0f879126e315a17585797e4c62cce5cb3023e74670aea2b35ac32abb65c",
+   "r1_at_F": null,
+   "kind": "new",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 follow-up X3: runs the literal RUNSTOP program with this environment plus P309_TEST_CODE and P309_TEST_DIR (a TEST directory under P309_SCRATCH_ROOT); RUNSTOP runs the runner's own start_qhost_monitor / stop_qhost_monitor with a real monitor (interval 4 s; attempt in the TEST directory, label host_rerun: nothing is written in qualification/)"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "case_u",
+   "reviewed_93ea669a": "1c101bd1a793f56863cf20a6441d0e25e62ff74f6f606e923f73850a4c4dcf22",
+   "now": "d909f0c2da04cfc8c9e3c584c504a197632f90460764789a2b3be716b0f68f59",
+   "r1_at_F": null,
+   "kind": "re-pinned (and permits/reason)",
+   "permits_now": [
+    "process"
+   ],
+   "reason_now": "r2 follow-up W6, X5 (worker tier only): inside the launched unit, runs the literal Q_CODE program (qhost_preflight) with this environment and P309_LAUNCH_RECORD / P309_HOST_CONFIG pointed at TEST copies in a mode-700 directory under the launch's scratch root (the configuration copy holds TEST bytes only; the record copies are of the redacted launch record), removed at the end; outside a unit it runs nothing"
+  },
+  {
+   "list": "process_policy.reviewed_functions",
+   "file": "tests/test_p309_host_controls.py",
+   "name": "kill_token",
+   "reviewed_93ea669a": "db88dd823424070d99e0a91d07f26c3e27243796a535ef1ec801c77903102162",
+   "now": "36c6fa56fad64f9b1f4bc49ab2df22519baa362971ee687875294851d0e7b410",
+   "r1_at_F": null,
+   "kind": "re-pinned (and permits/reason)",
+   "permits_now": [
+    "proc_read",
+    "signal"
+   ],
+   "reason_now": "r2 follow-up FU2, X4: cleanup after a failed K01/K02/A01 run; SIGKILLs only live processes whose argv carries the run's random TEST token (only processes the test itself started carry it), repeating until none is left"
+  }
+ ]
+}
