@@ -407,13 +407,31 @@ def prior_invalid(work: Path) -> list:
     return out
 
 
+def host_report_of(ns: Path, work: Path, repo: Path | None = None) -> dict | None:
+    """The verifier's READ-ONLY host report (protocol section 8.1), taken in a FRESH process of the verifier (this
+    tool never imports the driver) and written under --work; None when it could not be taken. It is embedded in the
+    evidence as a recorded field (mbs308_derive.host_report_reasons checks its structure; its statuses gate nothing)."""
+    out = Path(work) / f"MBS308_HOST_REPORT_{datetime.datetime.now(datetime.timezone.utc):%Y%m%dT%H%M%SZ}.json"
+    env = dict(GENV, HOME=os.environ.get("HOME", "/var/empty"))
+    try:
+        p = subprocess.run([sys.executable, "-I", "-S", "-B", str(Path(ns) / "code" / "mbs308_qualify.py"),
+                            "--host-report", "--work", str(work), "--out", str(out)], capture_output=True, text=True,
+                           env=env, stdin=subprocess.DEVNULL, cwd=str(repo or REPO), timeout=900)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return load_json(out) if p.returncode == 0 else None
+
+
 def measure(*, ns: Path, repo: Path, work: Path, L, plan: dict, workers: int, dev: bool, base_names, h3_readings,
             one_reading=None, program_for=None, env_extra: dict | None = None, label_prefix: str | None = None,
             log_dir: Path | None = None, pre: dict | None = None, n_readings: int = READINGS_N,
-            spacing_s: float = READINGS_SPACING_S, hosting: dict | None = None, sleep=time.sleep) -> dict:
+            spacing_s: float = READINGS_SPACING_S, hosting: dict | None = None, sleep=time.sleep,
+            host_report: dict | None = None) -> dict:
     """The measurement itself (after `preflight`): the readings, then the planned decoys one at a time, then the
     evidence record. `one_reading`, `program_for`, `hosting`, `label_prefix`, `log_dir`, `spacing_s`: test plants (a
-    planted run is never designated: `dev` must be True with any of them)."""
+    planted run is never designated: `dev` must be True with any of them). `host_report`: the verifier's read-only
+    host report taken before the measurement (host_report_of); it is embedded as it is, and evidence without it (or
+    with a malformed one) is not designated."""
     planted = any(x is not None for x in (one_reading, program_for, hosting, env_extra)) or \
         (n_readings, spacing_s) != (READINGS_N, READINGS_SPACING_S)
     if planted and not dev:
@@ -480,6 +498,7 @@ def measure(*, ns: Path, repo: Path, work: Path, L, plan: dict, workers: int, de
         invalid.append("BOOT_UUID_CHANGED_OR_UNREADABLE")
     if dev:
         invalid.append("DEV_FORM_NEVER_DESIGNATED")
+    invalid += DV.host_report_reasons(host_report)
     invalid = sorted(set(invalid))
     return {"schema": DV.EVIDENCE_SCHEMA, "designated": not invalid and status == "MEASURED" and not dev,
             "label": "DEV (never evidence; delete after use)" if dev else
@@ -495,8 +514,8 @@ def measure(*, ns: Path, repo: Path, work: Path, L, plan: dict, workers: int, de
                               "mem_poll_s": RR.fstr(poll), "one_run_at_a_time": True},
             "readings": readings, "runs": [{k: v for k, v in r.items() if k != "raw_path"} for r in runs],
             "raw_outputs_outside_the_repository": {r["id"]: {"sha256": r.get("raw_sha256")} for r in runs},
-            "host": host, "started_utc": t0, "finished_utc": utc(), "target_evaluations": 0,
-            "ledger_class": "NONTARGET_DRIFT_VALIDATION"}
+            "host": host, "host_report": host_report, "started_utc": t0, "finished_utc": utc(),
+            "target_evaluations": 0, "ledger_class": "NONTARGET_DRIFT_VALIDATION"}
 
 
 def designate(work: Path, *, dev: bool = False, ns: Path = NS, repo: Path = REPO, out_dir: Path | None = None) -> tuple:
@@ -523,7 +542,7 @@ def designate(work: Path, *, dev: bool = False, ns: Path = NS, repo: Path = REPO
     plan = dict(DEV_PLAN) if dev else DV.plan_of(cfg)
     ev = measure(ns=ns, repo=repo, work=work, L=L, plan=plan, workers=DEV_WORKERS if dev else const["WORKERS"],
                  dev=dev, base_names=DV.base_names_of(cfg, repo), h3_readings=cfg["r_allow_h3_readings"]["readings"],
-                 pre=pre)
+                 pre=pre, host_report=host_report_of(ns, work, repo))
     text = json.dumps(ev, indent=1, sort_keys=True) + "\n"
     if ev["designated"]:
         dst = designated

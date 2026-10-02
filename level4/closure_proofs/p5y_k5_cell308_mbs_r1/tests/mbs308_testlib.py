@@ -10,6 +10,7 @@ os._exit / SIGKILL it for real; its evaluator is the SYNTHETIC one (tests/mbs308
 """
 from __future__ import annotations
 
+import atexit
 import hashlib
 import json
 import os
@@ -63,15 +64,50 @@ BASE_STORE = Path(os.environ.get("MBS308_BASE_STORE", "/private/tmp/claude-501/-
 def base_store() -> Path:
     """ONE bare `git clone --no-local` of the real repository: a SEPARATE object store. Every sandbox is a
     `--shared` clone of THIS store, never of the real one, so no sandbox write (and no git "freshening" of an object
-    that already exists) can ever touch the real object store."""
+    that already exists) can ever touch the real object store. The calling process is recorded as a BORROWER inside
+    the store before it uses it (borrow_begin; protocol section 8.2)."""
     if not (BASE_STORE / "HEAD").exists():
         subprocess.run(["/usr/bin/git", "clone", "-q", "--bare", "--no-local", str(REPO), str(BASE_STORE)], check=True,
                        env=GENV, capture_output=True)
     if (BASE_STORE / "objects/info/alternates").exists():
         raise RuntimeError("the base store must not borrow objects from the real repository")
+    borrow_begin()
     if g(BASE_STORE, "cat-file", "-t", BASE, check=False) != "commit":
         raise RuntimeError("the base store lacks the base commit")
     return BASE_STORE
+
+
+# ------------------------------------------------------------------ the base store's borrower record (protocol 8.2)
+_BORROW: dict = {}
+
+
+def borrow_begin() -> Path:
+    """Record THIS process, once, as a borrower INSIDE the base store (state ACTIVE), before it clones from it or reads
+    its objects: the scratch-lifecycle gate never deletes a base store with a live or unfinished borrower, in
+    whichever scratch root the borrower's sandboxes lie (reviewQ6 F-2). NOT best effort: a store that cannot record
+    its borrower is not used (the exception propagates and no sandbox is made). The record is marked FINISHED when the
+    process exits normally; a killed process leaves it ACTIVE and the store is then kept until a human deletes it."""
+    if _BORROW.get("pid") != os.getpid():
+        rec = infra_scratch().begin_borrow(BASE_STORE, f"tests {Path(sys.argv[0]).name}")
+        _BORROW.clear()
+        _BORROW.update({"pid": os.getpid(), "record": rec})
+        atexit.register(borrow_finish)
+    return _BORROW["record"]
+
+
+def borrow_clone(clone) -> None:
+    """Name a sandbox clone this process is about to make from the base store, in its borrower record (mandatory, as
+    borrow_begin): the store is kept while that path holds a clone that borrows from it."""
+    infra_scratch().borrow_clone(borrow_begin(), clone)
+
+
+def borrow_finish() -> None:
+    """Mark this process's borrower record FINISHED (at exit). A forked child never finishes its parent's record."""
+    if _BORROW.get("pid") == os.getpid():
+        try:
+            infra_scratch().finish_borrow(_BORROW["record"])
+        except Exception:                                               # noqa: BLE001 (it stays ACTIVE: the safe side)
+            pass
 
 
 # ------------------------------------------------------------------ the S1 owner records of the grant (brief 54, C1)
@@ -137,7 +173,9 @@ class Sandbox:
         root = tmp / "sbx"
         if root.exists():
             shutil.rmtree(root)
-        subprocess.run(["/usr/bin/git", "clone", "-q", "--shared", "--no-checkout", str(base_store()), str(root)],
+        store = base_store()
+        borrow_clone(root)                   # recorded in the store BEFORE the clone exists (protocol section 8.2)
+        subprocess.run(["/usr/bin/git", "clone", "-q", "--shared", "--no-checkout", str(store), str(root)],
                        check=True, env=GENV, capture_output=True)
         self.root = root.resolve()
         self.tmp = tmp

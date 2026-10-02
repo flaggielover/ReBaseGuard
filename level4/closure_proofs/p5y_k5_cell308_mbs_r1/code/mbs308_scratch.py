@@ -6,8 +6,10 @@ mbs308_host.preflight_gates' free_disk_ge_2GiB, ratification item 23). NOT froze
 FREE SPACE. free_bytes(path) is os.statvfs's f_bavail x f_frsize of the volume holding `path`, or None when the
 probe fails. check_free() passes only when EVERY probe returned an integer at or above its threshold: a failed or
 unreadable probe is never "enough space" (fail closed). A test may PLANT a reading through MBS308_TEST_DISK_FREE
-("fail", or an integer number of bytes); a planted reading can only LOWER the real one (min) or fail it, never raise
-it, so it can only make a run refuse (the driver's CLI, which never uses this module, refuses any MBS308_TEST* variable).
+("fail", an integer number of bytes, or "file:<path>": the reading is that file's content, read at EVERY probe, so a
+test can make the reading FALL while a run is under way; an unreadable file is a failed probe); a planted reading can
+only LOWER the real one (min) or fail it, never raise it, so it can only make a run refuse (the driver's CLI, which
+never uses this module, refuses any MBS308_TEST* variable).
 
 THE SCRATCH LIFECYCLE. A scratch ROOT is a directory in which processes create sandboxes. Every process that uses a
 root records itself in <root>/.mbs308-lifecycle/<pid>-<nonce>.json (schema below): its identity (mbs308_host.identity:
@@ -27,7 +29,21 @@ dir -- the refs, the target marker, the pending-result ref, the spool, the seals
 every committed file -- the campaign's qualified worktree, git dir and common dir and MB r1's git dir as the driver
 names them, and ~/Library/Logs/ReBaseGuard), a root that is or contains a protected path, a symlink, or anything whose
 real path leaves the root. Every unit is re-verified just before its deletion; every deletion is recorded, value-free
-(relative path, kind, bytes, utc, who), in <root>/.mbs308-deletions.jsonl and in the returned report.
+(relative path, kind, bytes, utc, who), in <root>/.mbs308-deletions.jsonl and in the returned report. Each record is
+written (and fsync'd) BEFORE its deletion, so the log is opened before the first one: when the log cannot be opened or
+written nothing (more) is deleted (DELETIONS_LOG_UNWRITABLE) and no deletion is ever unrecorded; a record therefore
+says that a deletion was STARTED.
+
+BASE STORES AND THEIR BORROWERS (protocol section 8.2; reviewQ6 F-2 / G-3). A base store is deleted only after
+everything that borrows from it, wherever that lies. Every process that uses a base store first records itself INSIDE
+the store, <store>/mbs308-borrowers/<pid>-<nonce>.json (begin_borrow: its identity, ACTIVE; borrow_clone: the path of
+each sandbox clone it makes from the store; finish_borrow: FINISHED). cleanup() keeps a bare base store unless ALL of
+these hold: (1) it is a disposable unit of a FINISHED root; (2) it has a borrower register holding at least one record
+(a store WITHOUT one cannot be shown to be unborrowed: BASE_STORE_BORROWERS_UNRECORDED, kept); (3) every record of the
+register is valid and FINISHED and its owner is POSITIVELY dead (identity_state DEAD; UNKNOWN is never dead; a FINISHED
+record of the calling process itself counts as finished), else BASE_STORE_IN_USE; (4) no sandbox clone that this pass
+keeps under the cleaned root, and no clone path named in any record of the register (in ANY root), still exists with
+the store in its alternates, else BASE_STORE_IN_USE. All four are checked again just before the deletion.
 
 THRESHOLDS (derived, protocol section 8.2; BUILD_REPORT section 16.4; every input is recorded there).
   QUAL_MIN_FREE_BYTES: the free space the qualification verifier and the mutant runner require on the volume of their
@@ -80,6 +96,9 @@ REPO = HERE.parents[4]
 SCHEMA = "rebaseguard.p5y.k5.cell308-mbs-r1.scratch-lifecycle.v1"
 RECORD_DIR = ".mbs308-lifecycle"
 DELETIONS_LOG = ".mbs308-deletions.jsonl"
+BORROW_DIR = "mbs308-borrowers"            # inside a base store: the register of the processes that borrow from it
+BORROW_SCHEMA = "rebaseguard.p5y.k5.cell308-mbs-r1.base-store-borrower.v1"
+PLANT_FILE_PREFIX = "file:"                # MBS308_TEST_DISK_FREE=file:<path>: the reading is the file's content
 ACTIVE, FINISHED = "ACTIVE", "FINISHED"
 PLANT_ENV = "MBS308_TEST_DISK_FREE"
 GIB = 1024 ** 3
@@ -120,11 +139,18 @@ def utc() -> str:
 
 # ------------------------------------------------------------------ free space (fail closed)
 def planted_reading() -> tuple:
-    """(active, value): a test's planted reading. value None = the probe fails; an int = an upper bound."""
+    """(active, value): a test's planted reading. value None = the probe fails; an int = an upper bound. The form
+    "file:<path>" takes the reading from that file at EVERY probe (a test can lower it while a run is under way: the
+    reading falls after the start); a file that cannot be read is a failed probe."""
     raw = os.environ.get(PLANT_ENV)
     if raw is None:
         return False, None
     raw = raw.strip()
+    if raw.startswith(PLANT_FILE_PREFIX):
+        try:
+            raw = Path(raw[len(PLANT_FILE_PREFIX):]).read_text().strip()
+        except (OSError, ValueError):
+            return True, None
     if raw.isdigit():
         return True, int(raw)
     return True, None                       # "fail" or anything unparseable: the probe fails
@@ -204,10 +230,111 @@ def finish(record: Path) -> None:
     _write_json_atomic(Path(record), rec)
 
 
-def _is_self(owner: dict) -> bool:
-    me = HOST.identity()
+def _is_self(owner: dict, me: dict | None = None) -> bool:
+    me = HOST.identity() if me is None else me
     return isinstance(owner, dict) and all(owner.get(k) == me.get(k) and me.get(k) for k in
                                            ("pid", "start_time", "boot_uuid", "command_sha256"))
+
+
+# ------------------------------------------------------------------ base-store borrowers (protocol section 8.2)
+def begin_borrow(store, purpose: str) -> Path:
+    """Record the calling process as a BORROWER of the base store `store` (state ACTIVE), INSIDE the store, BEFORE it
+    clones from it or reads its objects. Returns the record's path. Any failure raises: a store whose borrower cannot
+    be recorded must not be borrowed from (the caller does not use it)."""
+    store = Path(os.path.realpath(store))
+    d = store / BORROW_DIR
+    if not store.is_dir() or d.is_symlink():
+        raise ScratchRefusal("BORROW_REGISTER", f"{store}: not a directory, or its borrower register is a symlink")
+    d.mkdir(exist_ok=True)
+    os.chmod(d, 0o700)
+    path = d / f"{os.getpid()}-{secrets.token_hex(4)}.json"
+    _write_json_atomic(path, {"schema": BORROW_SCHEMA, "store": str(store), "owner": HOST.identity(),
+                              "purpose": purpose, "state": ACTIVE, "clones": [], "began_utc": utc(),
+                              "finished_utc": None})
+    return path
+
+
+def _own_borrow(record) -> dict:
+    rec = json.loads(Path(record).read_text())
+    if not isinstance(rec.get("owner"), dict) or rec["owner"].get("pid") != os.getpid():
+        raise ScratchRefusal("NOT_OWNER", "only the recording process changes its borrower record")
+    return rec
+
+
+def borrow_clone(record, clone) -> None:
+    """Name, in the calling process's own ACTIVE borrower record, a sandbox clone it is ABOUT to make from the store
+    (the clone's real path): the store is kept while that path holds a clone that borrows from it, in whichever root
+    it lies and whoever cleans."""
+    rec = _own_borrow(record)
+    if rec.get("state") != ACTIVE or not isinstance(rec.get("clones"), list):
+        raise ScratchRefusal("BORROW_NOT_ACTIVE", "a finished borrower record names no new clone")
+    path = os.path.realpath(clone)
+    if path not in rec["clones"]:
+        rec["clones"].append(path)
+        _write_json_atomic(Path(record), rec)
+
+
+def finish_borrow(record) -> None:
+    """Mark the calling process's borrower record FINISHED (it no longer uses the store)."""
+    rec = _own_borrow(record)
+    rec.update({"state": FINISHED, "finished_utc": utc()})
+    _write_json_atomic(Path(record), rec)
+
+
+def store_borrowers(store) -> dict:
+    """The borrower register of a base store (read-only): {"recorded", "records", "reasons", "clones"}. `recorded` is
+    False for a store without a register or with an empty one (it cannot be shown to be unborrowed). `reasons` is
+    empty only when every record is valid and FINISHED and its owner POSITIVELY dead (UNKNOWN is never dead; a FINISHED
+    record of the calling process itself counts as finished). `clones`: every clone path the valid records name."""
+    d = Path(store) / BORROW_DIR
+    out = {"recorded": False, "records": 0, "reasons": [], "clones": []}
+    me = None                                   # this process's identity, read once (a register can hold many records)
+    if d.is_symlink() or not d.is_dir():
+        out["reasons"].append("NO_BORROWER_REGISTER")
+        return out
+    for p in sorted(d.iterdir()):
+        if not p.name.endswith(".json") or p.name.startswith("."):
+            continue
+        out["records"] += 1
+        try:
+            if p.is_symlink():
+                raise ValueError("symlink")
+            rec = json.loads(p.read_text())
+            good = isinstance(rec, dict) and rec.get("schema") == BORROW_SCHEMA and \
+                isinstance(rec.get("owner"), dict) and bool(rec["owner"].get("pid")) and \
+                rec.get("state") in (ACTIVE, FINISHED) and isinstance(rec.get("clones"), list) and \
+                all(isinstance(c, str) and c for c in rec["clones"])
+        except (OSError, ValueError):
+            good, rec = False, None
+        if not good:
+            out["reasons"].append(f"INVALID_BORROWER_RECORD {p.name}")
+            continue
+        out["clones"] += rec["clones"]
+        if rec["state"] == ACTIVE:
+            out["reasons"].append(f"BORROWER_NOT_FINISHED {p.name}")
+            continue
+        me = HOST.identity() if me is None else me
+        if _is_self(rec["owner"], me):
+            continue
+        alive = HOST.identity_state(rec["owner"])
+        if alive != "DEAD":
+            out["reasons"].append(f"BORROWER_NOT_DEAD {p.name} ({alive})")
+    out["recorded"] = out["records"] > 0
+    if not out["recorded"]:
+        out["reasons"].append("NO_BORROWER_RECORD")
+    return out
+
+
+def _borrows_from(clone: Path, store_real: str) -> bool:
+    """Whether a clone at `clone` exists and names the store among its alternates. No such clone: False; an
+    alternates file that exists but cannot be read: True (it cannot be shown not to borrow)."""
+    try:
+        alts = (clone / ".git/objects/info/alternates").read_text().split()
+    except (FileNotFoundError, NotADirectoryError):
+        return False
+    except (OSError, ValueError):
+        return True
+    return any(os.path.realpath(Path(os.path.realpath(a)).parent) == store_real for a in alts)
 
 
 def root_class(root) -> dict:
@@ -377,6 +504,12 @@ def _verify_unit(unit: Path, kind: str, root: Path, protected: list) -> str | No
         return "NO_LIFECYCLE_RECORD"
     if root_class(gov)["class"] != FINISHED:
         return "ROOT_ACTIVE"
+    if kind == "bare_base_store":                   # its borrowers, wherever their sandboxes lie (protocol 8.2)
+        reg = store_borrowers(unit)
+        if not reg["recorded"]:
+            return "BASE_STORE_BORROWERS_UNRECORDED"
+        if reg["reasons"]:
+            return "BASE_STORE_IN_USE"
     return None
 
 
@@ -410,7 +543,31 @@ def cleanup(root, *, execute: bool = False, repo: Path = None, extra_protected=(
     gone: set = set()                       # clones deleted (execute) or found disposable (dry-run) in this pass
 
     def in_use(store: Path) -> bool:
-        return any(b.exists() and b not in gone for b in borrowed.get(os.path.realpath(store), []))
+        """A store still borrowed is kept: by a clone under the root that this pass keeps, or by a clone that a record
+        of the store's own borrower register names, in whichever root it lies."""
+        real = os.path.realpath(store)
+        if any(b.exists() and b not in gone for b in borrowed.get(real, [])):
+            return True
+        going = {str(u) for u in gone}
+        return any(c not in going and _borrows_from(Path(c), real) for c in store_borrowers(store)["clones"])
+
+    def record(ev: dict) -> None:
+        """The deletion's record, written and fsync'd BEFORE the deletion (so the log is opened before the first
+        one). A log that cannot be opened or written stops the pass: nothing (more) is deleted."""
+        try:
+            fd = os.open(root / DELETIONS_LOG, os.O_WRONLY | os.O_CREAT | os.O_APPEND | os.O_NOFOLLOW | os.O_NONBLOCK,
+                         0o600)
+            try:
+                if not stat.S_ISREG(os.fstat(fd).st_mode):
+                    raise OSError("the deletions log is not a regular file")
+                os.write(fd, (json.dumps(ev, sort_keys=True) + "\n").encode())
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+        except OSError as exc:
+            err = ScratchRefusal("DELETIONS_LOG_UNWRITABLE", f"{type(exc).__name__}: nothing (more) is deleted")
+            err.report = rep
+            raise err
     for unit, kind in units:                # sandbox clones first: a base store goes only after its borrowers
         why = _verify_unit(unit, kind, root, protected)
         if why is None and kind == "bare_base_store" and in_use(unit):
@@ -430,17 +587,12 @@ def cleanup(root, *, execute: bool = False, repo: Path = None, extra_protected=(
             rep["refused"].append({"path": rel, "kind": kind, "reason": why})
             continue
         size = tree_bytes(unit)
-        shutil.rmtree(unit)
-        gone.add(unit)
         ev = {"utc": utc(), "path": rel, "kind": kind, "bytes": size, "by": {"pid": os.getpid()}}
+        record(ev)                          # the record first ...
+        shutil.rmtree(unit)                 # ... then the deletion: no deletion is ever unrecorded
+        gone.add(unit)
         rep["deleted"].append(ev)
         rep["bytes_deleted"] += size
-        fd = os.open(root / DELETIONS_LOG, os.O_WRONLY | os.O_CREAT | os.O_APPEND | os.O_NOFOLLOW, 0o600)
-        try:
-            os.write(fd, (json.dumps(ev, sort_keys=True) + "\n").encode())
-            os.fsync(fd)
-        finally:
-            os.close(fd)
     return rep
 
 

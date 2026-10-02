@@ -110,6 +110,23 @@ def dead_identity() -> dict:
     return ident
 
 
+def plant_borrower(store: Path, owner: dict, state: str, clones=(), **extra) -> Path:
+    """A planted record in a base store's borrower register (protocol section 8.2), as the library writes it."""
+    d = Path(store) / SCR().BORROW_DIR
+    d.mkdir(parents=True, exist_ok=True)
+    p = d / f"{owner.get('pid')}-{secrets.token_hex(3)}.json"
+    p.write_text(json.dumps({"schema": SCR().BORROW_SCHEMA, "store": str(store), "owner": owner, "purpose": "planted",
+                             "state": state, "clones": [os.path.realpath(c) for c in clones],
+                             "began_utc": "planted", "finished_utc": None, **extra}))
+    return p
+
+
+def head_readable(clone: Path) -> bool:
+    """A sandbox clone can still read its HEAD commit (its borrowed objects are there)."""
+    return subprocess.run(["/usr/bin/git", "-C", str(clone), "cat-file", "-e", "HEAD^{commit}"], capture_output=True,
+                          env=T.GENV, stdin=subprocess.DEVNULL).returncode == 0
+
+
 def plant_record(root: Path, owner: dict, state: str, **extra) -> Path:
     d = root / SCR().RECORD_DIR
     d.mkdir(parents=True, exist_ok=True)
@@ -160,10 +177,15 @@ def layout(root: Path) -> dict:
     """A scratch root as the suites leave it: a bare base store and a sandbox clone of it (the only DISPOSABLE units),
     next to evidence of completed runs (a JSON report, a log, a ledger, a manifest, a verdict, a probe, a result) and to
     look-alikes that are NOT units: a plain directory named sbx holding a report, a *.git directory that is not bare,
-    and an sbx clone that borrows from a NON-bare repository."""
+    and an sbx clone that borrows from a NON-bare repository. The store carries its borrower register as the test
+    library leaves it after a finished run (one FINISHED record of a dead process, naming the clone); the non-bare
+    look-alike carries the same register, so only its shape keeps it from being a unit."""
     src = tiny_repo(root.parent / (root.name + "_src"))
     store = bare_store(src, root / "work" / "base.git")
-    sandbox_clone(store, root / "work" / "t_x" / "sbx")
+    clone = sandbox_clone(store, root / "work" / "t_x" / "sbx")
+    if "dead" not in _S:
+        _S["dead"] = dead_identity()
+    plant_borrower(store, _S["dead"], "FINISHED", clones=[clone])
     files = {"work/t_x/report.json": '{"n": 1, "passed": 1}\n', "work/t_x/child.out": "log line\n",
              "work/ledger.jsonl": '{"agent": "planted"}\n', "work/MBS308_FREEZE.json": '{"schema": "planted"}\n',
              "work/REVIEW_VERDICT.md": "# planted\nQUALIFICATION_ACCEPTED\n", "work/probe.json": "{}\n",
@@ -176,6 +198,7 @@ def layout(root: Path) -> dict:
         (fake / sub).mkdir(parents=True, exist_ok=True)
     (fake / "HEAD").write_text("ref: refs/heads/main\n")
     (fake / "config").write_text("[core]\n\tbare = false\n")
+    plant_borrower(fake, _S["dead"], "FINISHED")
     sandbox_clone(src, root / "work" / "t_z" / "sbx")          # borrows from a NON-bare repository: not a unit
     return {"units": sorted(["work/base.git", "work/t_x/sbx"]), "kept_dirs": ["work/t_y/sbx", "work/fake.git",
                                                                               "work/t_z/sbx"], "files": sorted(files)}
@@ -397,7 +420,8 @@ def t_cleanup_only_disposable():
     before = tree_hashes(root, skip=[root / u for u in lay["units"]])
     dry = S.cleanup(root, repo=T.REPO)
     after_dry = all((root / u).is_dir() for u in lay["units"]) and dry["deleted"] == [] and \
-        sorted(u["path"] for u in dry["units"] if u["disposable"]) == lay["units"]
+        sorted(u["path"] for u in dry["units"] if u["disposable"]) == lay["units"] and \
+        sorted(u["path"] for u in dry["units"]) == lay["units"]       # no look-alike is even listed as a unit
     ex = S.cleanup(root, execute=True, repo=T.REPO)
     log = [json.loads(x) for x in (root / S.DELETIONS_LOG).read_text().splitlines()]
     kept = tree_hashes(root)
@@ -875,6 +899,765 @@ def t_tree_meter():
     r = m.stop()
     return {"ok": 300000 <= one < 300000 + 64 * 1024 and r["peak_bytes"] >= 2000000 + 300000 and r["samples"] >= 2
             and r["final_bytes"] < r["peak_bytes"], "tree_bytes": one, "meter": r}
+
+
+# ====================================================================== reviewQ6's repairs (builder7, research brief 56)
+def _store_root(base: Path, name: str) -> tuple:
+    """A FINISHED root R1 (dead owner) holding a bare base store and one sandbox clone of it."""
+    root = base / name
+    root.mkdir(parents=True)
+    src = tiny_repo(base / (name + "_src"))
+    store = bare_store(src, root / "work" / "base.git")
+    clone = sandbox_clone(store, root / "work" / "t_x" / "sbx")
+    if "dead" not in _S:
+        _S["dead"] = dead_identity()
+    plant_record(root, _S["dead"], "FINISHED")
+    return root, store, clone
+
+
+def t_base_store_borrowed_in_root_kept():
+    """R2, the in-root rule (reviewQ6 G-3; protocol 8.2 "a store still borrowed is kept"): a base store goes only
+    after every clone under the cleaned root that borrows from it. A FINISHED root holds a store and a clone of it; a
+    NESTED root holds a second clone of the SAME store, which the store's register does not name (so only the in-root
+    rule can protect it). While the nested root is ACTIVE its clone is kept, and so is the store (BASE_STORE_IN_USE,
+    in the dry run and in the execution): the nested clone still reads its HEAD. Control: with the nested root
+    FINISHED both clones go, and the store after them."""
+    S = SCR()
+    base = fresh_dir("inroot")
+    out = {}
+    for case in ("nested_active", "nested_finished"):
+        root, store, c1 = _store_root(base, case)
+        inner = root / "inner"
+        inner.mkdir()
+        c2 = sandbox_clone(store, inner / "t" / "sbx")
+        plant_borrower(store, _S["dead"], "FINISHED", clones=[c1])
+        if case == "nested_active":
+            S.begin(inner, "t")                                    # this process uses the nested root
+        else:
+            plant_record(inner, _S["dead"], "FINISHED")
+        dry = S.cleanup(root, repo=T.REPO)
+        ex = S.cleanup(root, execute=True, repo=T.REPO)
+        why = {u["path"]: u["reason"] for u in dry["units"]}
+        refused = {x["path"]: x["reason"] for x in ex["refused"]}
+        deleted = [d["path"] for d in ex["deleted"]]
+        if case == "nested_active":
+            out[case] = why == {"inner/t/sbx": "ROOT_ACTIVE", "work/t_x/sbx": None,
+                                "work/base.git": "BASE_STORE_IN_USE"} and deleted == ["work/t_x/sbx"] and \
+                refused == {"inner/t/sbx": "ROOT_ACTIVE", "work/base.git": "BASE_STORE_IN_USE"} and \
+                store.is_dir() and c2.is_dir() and head_readable(c2) and not c1.exists()
+        else:
+            out[case] = all(v is None for v in why.values()) and \
+                deleted == ["inner/t/sbx", "work/t_x/sbx", "work/base.git"] and not store.exists()
+    return {"ok": all(out.values()), "cases": out}
+
+
+def t_base_store_borrowed_cross_root_kept():
+    """R2, the cross-root rule (reviewQ6 F-2): a base store in a FINISHED root R1 is never deleted while a borrower
+    elsewhere may live. A sandbox in ANOTHER root R2 borrows the store's objects (R2 is not under R1, so no scan of R1
+    can see it). Cleaning R1 KEEPS the store, and R2's sandbox still reads its HEAD, when: the store has no borrower
+    register, or an empty one (it cannot be shown to be unborrowed: BASE_STORE_BORROWERS_UNRECORDED); its register
+    holds an ACTIVE record of a live process, a FINISHED record of a live process, a FINISHED record of a live process
+    whose `ps` fails (UNKNOWN is never dead), an ACTIVE record of a dead process (it never finished), an invalid
+    record or a symlinked record (BASE_STORE_IN_USE); or every record is FINISHED and dead but one names R2's clone,
+    which still exists and still borrows (BASE_STORE_IN_USE). R1's own clone goes in every case. Control: every
+    record FINISHED and dead and no named clone left: the store is deleted, after R1's clone, and the deletion is
+    recorded."""
+    S = SCR()
+    H = S.HOST
+    base = fresh_dir("crossroot")
+    out, reasons = {}, {}
+    h = T.Helper(300)
+    real_start = H.process_start
+    try:
+        live = H.identity(h.p.pid)
+        dead = dead_identity()
+        other = base / "valid_record_elsewhere.json"
+        cases = {
+            "unrecorded": (lambda st, c2: None, "BASE_STORE_BORROWERS_UNRECORDED"),
+            "empty_register": (lambda st, c2: (st / S.BORROW_DIR).mkdir(), "BASE_STORE_BORROWERS_UNRECORDED"),
+            "live_active": (lambda st, c2: plant_borrower(st, live, "ACTIVE"), "BASE_STORE_IN_USE"),
+            "live_finished": (lambda st, c2: plant_borrower(st, live, "FINISHED"), "BASE_STORE_IN_USE"),
+            "live_ps_failing": (lambda st, c2: plant_borrower(st, live, "FINISHED"), "BASE_STORE_IN_USE"),
+            "dead_active": (lambda st, c2: plant_borrower(st, dead, "ACTIVE"), "BASE_STORE_IN_USE"),
+            "invalid_record": (lambda st, c2: ((st / S.BORROW_DIR).mkdir(),
+                                               (st / S.BORROW_DIR / "1-x.json").write_text("{not json")),
+                               "BASE_STORE_IN_USE"),
+            "symlinked_record": (lambda st, c2: ((st / S.BORROW_DIR).mkdir(),
+                                                 (st / S.BORROW_DIR / "1-x.json").symlink_to(other)),
+                                 "BASE_STORE_IN_USE"),
+            "dead_finished_clone_remains": (lambda st, c2: plant_borrower(st, dead, "FINISHED", clones=[c2]),
+                                            "BASE_STORE_IN_USE"),
+        }
+        for case, (plant, want) in cases.items():
+            root, store, c1 = _store_root(base, case)
+            c2 = sandbox_clone(store, base / (case + "_R2") / "t" / "sbx")
+            plant_record(base / (case + "_R2"), live, "ACTIVE")
+            if case == "symlinked_record":
+                other.write_text(json.dumps({"schema": S.BORROW_SCHEMA, "store": str(store), "owner": dead,
+                                             "purpose": "planted", "state": "FINISHED", "clones": []}))
+            plant(store, c2)
+            if case == "live_ps_failing":
+                H.process_start = lambda pid, text=None: None if int(pid) == h.p.pid else real_start(pid, text)
+            try:
+                dry = S.cleanup(root, repo=T.REPO)
+                ex = S.cleanup(root, execute=True, repo=T.REPO)
+            finally:
+                H.process_start = real_start
+            got = {x["path"]: x["reason"] for x in ex["refused"]}
+            reasons[case] = got.get("work/base.git")
+            out[case] = got == {"work/base.git": want} and [d["path"] for d in ex["deleted"]] == ["work/t_x/sbx"] and \
+                {u["path"]: u["reason"] for u in dry["units"]} == {"work/t_x/sbx": None, "work/base.git": want} and \
+                store.is_dir() and head_readable(c2)
+        # control: nothing borrows any more
+        root, store, c1 = _store_root(base, "free")
+        gone = base / "free_R2" / "t" / "sbx"                          # a recorded clone that no longer exists
+        plant_borrower(store, dead, "FINISHED", clones=[c1, gone])
+        ex = S.cleanup(root, execute=True, repo=T.REPO)
+        log = [json.loads(x)["path"] for x in (root / S.DELETIONS_LOG).read_text().splitlines()]
+        out["control_unborrowed_store_goes"] = [d["path"] for d in ex["deleted"]] == ["work/t_x/sbx", "work/base.git"] \
+            and ex["refused"] == [] and not store.exists() and log == ["work/t_x/sbx", "work/base.git"]
+    finally:
+        H.process_start = real_start
+        h.kill()
+    return {"ok": all(out.values()), "cases": out, "reasons": reasons}
+
+
+def t_borrower_records_and_library():
+    """R2, the records themselves: begin_borrow writes the calling process's ACTIVE record INSIDE the store,
+    borrow_clone names a clone before it is made, finish_borrow marks it FINISHED; only the owner changes its record
+    and a finished record names no new clone; a register that is a symlink is refused. Through cleanup: while this
+    process's record is ACTIVE the store is kept; once FINISHED it is still kept while the clone it named exists in
+    another root; once that clone is gone the store goes. And the TEST LIBRARY does it for every suite process: this
+    process has an ACTIVE record inside the suite's own base store, and the full sandbox the library made is named in
+    it (so that store reads in use)."""
+    S = SCR()
+    base = fresh_dir("borrow")
+    out = {}
+    root, store, c1 = _store_root(base, "R1")
+    shutil.rmtree(c1)
+    rec = S.begin_borrow(store, "planted borrower")
+    j0 = json.loads(rec.read_text())
+    out["record_inside_the_store_active"] = rec.parent == Path(os.path.realpath(store)) / S.BORROW_DIR and \
+        j0["state"] == "ACTIVE" and j0["owner"]["pid"] == os.getpid() and j0["schema"] == S.BORROW_SCHEMA and \
+        j0["clones"] == []
+    c2 = base / "R2" / "t" / "sbx"
+    S.borrow_clone(rec, c2)
+    out["clone_named_before_it_exists"] = not c2.exists() and \
+        json.loads(rec.read_text())["clones"] == [os.path.realpath(c2)]
+    sandbox_clone(store, c2)
+    b = S.store_borrowers(store)
+    out["active_record_reads_in_use"] = b["recorded"] is True and len(b["reasons"]) == 1 and \
+        b["reasons"][0].startswith("BORROWER_NOT_FINISHED") and b["clones"] == [os.path.realpath(c2)]
+    r1 = S.cleanup(root, execute=True, repo=T.REPO)
+    out["kept_while_active"] = r1["deleted"] == [] and store.is_dir() and \
+        [x["reason"] for x in r1["refused"]] == ["BASE_STORE_IN_USE"]
+    S.finish_borrow(rec)
+    out["finished"] = json.loads(rec.read_text())["state"] == "FINISHED" and S.store_borrowers(store)["reasons"] == []
+    r2 = S.cleanup(root, execute=True, repo=T.REPO)
+    out["kept_while_the_named_clone_borrows"] = r2["deleted"] == [] and store.is_dir() and head_readable(c2) and \
+        [x["reason"] for x in r2["refused"]] == ["BASE_STORE_IN_USE"]
+    for call, code in ((lambda: S.borrow_clone(rec, base / "R3" / "sbx"), "BORROW_NOT_ACTIVE"),
+                       (lambda: S.finish_borrow(plant_borrower(store, dead_identity(), "ACTIVE")), "NOT_OWNER")):
+        try:
+            call()
+            out[code] = False
+        except S.ScratchRefusal as e:
+            out[code] = e.code == code
+    for f in (store / S.BORROW_DIR).iterdir():                      # back to the one finished record of this process
+        if f != rec:
+            f.unlink()
+    shutil.rmtree(c2)
+    r3 = S.cleanup(root, execute=True, repo=T.REPO)
+    out["goes_once_nothing_borrows"] = [d["path"] for d in r3["deleted"]] == ["work/base.git"] and not store.exists()
+    linked = bare_store(base / "R1_src", base / "linked.git")
+    (base / "elsewhere").mkdir()
+    (linked / S.BORROW_DIR).symlink_to(base / "elsewhere")
+    try:
+        S.begin_borrow(linked, "t")
+        out["register_symlink_refused"] = False
+    except S.ScratchRefusal as e:
+        out["register_symlink_refused"] = e.code == "BORROW_REGISTER" and list((base / "elsewhere").iterdir()) == []
+    # the test library, BY ITSELF (this test never calls its borrow functions): making a sandbox through it records
+    # this suite process as a borrower inside the suite's own base store and names the sandbox
+    I = T.infra_scratch()
+    full = sb()
+    held = dict(T._BORROW)
+    mine = Path(held["record"]) if held.get("pid") == os.getpid() and held.get("record") else None
+    jm = json.loads(mine.read_text()) if mine is not None and mine.is_file() else {}
+    out["library_records_this_process"] = mine is not None and \
+        mine.parent == Path(os.path.realpath(T.BASE_STORE)) / I.BORROW_DIR and \
+        (jm.get("owner") or {}).get("pid") == os.getpid() and jm.get("state") == "ACTIVE" and \
+        jm.get("schema") == I.BORROW_SCHEMA
+    out["library_names_its_sandboxes"] = os.path.realpath(full.root) in (jm.get("clones") or [])
+    lib = S.store_borrowers(T.BASE_STORE)
+    out["library_store_reads_in_use"] = mine is not None and lib["recorded"] is True and \
+        any(r.startswith("BORROWER_NOT_FINISHED " + mine.name) for r in lib["reasons"])
+    # ... and it is not best effort: a store in which the record cannot be written is not used (no sandbox is made)
+    saved_store = T.BASE_STORE
+    T.BASE_STORE = linked                                           # its register is a symlink
+    T._BORROW.clear()
+    made, code = None, None
+    try:
+        try:
+            T.Sandbox(base / "refused")
+            made = True
+        except Exception as e:                                      # noqa: BLE001 (the refusal is what is tested)
+            made, code = False, getattr(e, "code", type(e).__name__)
+    finally:
+        T.BASE_STORE = saved_store
+        T._BORROW.clear()
+        T._BORROW.update(held)
+    out["library_refuses_a_store_it_cannot_record_in"] = made is False and code == "BORROW_REGISTER" and \
+        not (base / "refused" / "sbx").exists() and list((base / "elsewhere").iterdir()) == []
+    return {"ok": all(out.values()), "cases": out}
+
+
+def t_cleanup_records_before_deleting():
+    """R3 (reviewQ6 F-3): no deletion is ever unrecorded. (a) A deletions log that cannot be opened -- a symlink (the
+    reviewer's probe), a directory -- stops the pass before anything is deleted: DELETIONS_LOG_UNWRITABLE, every unit
+    still there, every byte of the root unchanged, nothing written through the symlink, and the report (nothing
+    deleted) comes with the refusal. (b) Each record is on disk BEFORE its unit goes: at the moment each deletion
+    starts, the log's last line names that unit and the unit still exists. (c) A log that fails at the SECOND record:
+    the first unit is deleted and recorded, the second is neither deleted nor recorded."""
+    S = SCR()
+    base = fresh_dir("logfirst")
+    out = {}
+    for case in ("symlink", "directory"):
+        root = base / case
+        root.mkdir()
+        lay = layout(root)
+        plant_record(root, _S["dead"], "FINISHED")
+        target = base / (case + "_elsewhere.jsonl")
+        if case == "symlink":
+            target.write_text("")
+            (root / S.DELETIONS_LOG).symlink_to(target)
+        else:
+            (root / S.DELETIONS_LOG).mkdir()
+        snap = tree_hashes(root)
+        code, rep = None, None
+        try:
+            S.cleanup(root, execute=True, repo=T.REPO)
+        except S.ScratchRefusal as e:
+            code, rep = e.code, getattr(e, "report", None)
+        out[case] = code == "DELETIONS_LOG_UNWRITABLE" and all((root / u).is_dir() for u in lay["units"]) and \
+            tree_hashes(root) == snap and (case != "symlink" or target.read_text() == "") and \
+            isinstance(rep, dict) and rep["deleted"] == [] and rep["bytes_deleted"] == 0
+    real_rmtree = shutil.rmtree
+
+    def watched(root: Path, seen: list, after=None):
+        def rm(path, *a, **k):
+            log = root / S.DELETIONS_LOG
+            lines = [json.loads(x) for x in log.read_text().splitlines()] if log.is_file() else []
+            rel = str(Path(path).relative_to(root))
+            seen.append({"unit": rel, "recorded_first": bool(lines) and lines[-1]["path"] == rel,
+                         "still_there": Path(path).is_dir()})
+            r = real_rmtree(path, *a, **k)
+            if after is not None:
+                after(rel)
+            return r
+        rm.avoids_symlink_attacks = real_rmtree.avoids_symlink_attacks
+        return rm
+    root = base / "order"
+    root.mkdir()
+    lay = layout(root)
+    plant_record(root, _S["dead"], "FINISHED")
+    seen: list = []
+    shutil.rmtree = watched(root, seen)
+    try:
+        ex = S.cleanup(root, execute=True, repo=T.REPO)
+    finally:
+        shutil.rmtree = real_rmtree
+    out["record_precedes_each_deletion"] = [x["unit"] for x in seen] == ["work/t_x/sbx", "work/base.git"] and \
+        all(x["recorded_first"] and x["still_there"] for x in seen) and \
+        [d["path"] for d in ex["deleted"]] == ["work/t_x/sbx", "work/base.git"]
+    root = base / "second"
+    root.mkdir()
+    lay = layout(root)
+    plant_record(root, _S["dead"], "FINISHED")
+    seen2: list = []
+
+    def break_log(rel):                                             # after the first deletion the log becomes a symlink
+        log = root / S.DELETIONS_LOG
+        if log.is_file() and not log.is_symlink():
+            log.rename(root / "first_records.jsonl")
+            log.symlink_to(base / "second_elsewhere.jsonl")
+    shutil.rmtree = watched(root, seen2, break_log)
+    code, rep = None, None
+    try:
+        S.cleanup(root, execute=True, repo=T.REPO)
+    except S.ScratchRefusal as e:
+        code, rep = e.code, getattr(e, "report", None)
+    finally:
+        shutil.rmtree = real_rmtree
+    kept = [json.loads(x)["path"] for x in (root / "first_records.jsonl").read_text().splitlines()] \
+        if (root / "first_records.jsonl").is_file() else None
+    out["second_record_fails_second_unit_stays"] = code == "DELETIONS_LOG_UNWRITABLE" and \
+        [x["unit"] for x in seen2] == ["work/t_x/sbx"] and kept == ["work/t_x/sbx"] and \
+        (root / "work/base.git").is_dir() and not (root / "work/t_x/sbx").exists() and \
+        not (base / "second_elsewhere.jsonl").exists() and isinstance(rep, dict) and \
+        [d["path"] for d in rep["deleted"]] == ["work/t_x/sbx"]
+    return {"ok": all(out.values()), "cases": out}
+
+
+def t_cleanup_reverifies_before_deleting():
+    """G-5 (reviewQ6): every unit is verified AGAIN just before its deletion. The state changes right after the first
+    verification of a unit found disposable (planted through the module's own _verify_unit: the first call returns,
+    then the change happens): (a) a process starts using the root (an ACTIVE record appears): the sandbox clone is
+    refused ROOT_ACTIVE and stays; (b) a borrower records itself in the base store: the store is refused
+    BASE_STORE_IN_USE and stays. In both, the unit was verified exactly twice and nothing was deleted after the
+    change."""
+    S = SCR()
+    base = fresh_dir("reverify")
+    out = {}
+    real = S._verify_unit
+    for case, kind in (("root_becomes_active", "sandbox_clone"), ("store_gets_a_borrower", "bare_base_store")):
+        root, store, clone = _store_root(base, case)
+        plant_borrower(store, _S["dead"], "FINISHED", clones=[clone])
+        target = clone if kind == "sandbox_clone" else store
+        calls: dict = {}
+
+        def planted(unit, k, r, prot, _target=target, _case=case, _root=root, _store=store, _calls=calls):
+            why = real(unit, k, r, prot)
+            _calls[str(unit)] = _calls.get(str(unit), 0) + 1
+            if unit == _target and _calls[str(unit)] == 1 and why is None:
+                if _case == "root_becomes_active":
+                    S.begin(_root, "a process that starts using the root after the listing")
+                else:
+                    S.begin_borrow(_store, "a borrower that appears after the listing")
+            return why
+        S._verify_unit = planted
+        try:
+            ex = S.cleanup(root, execute=True, repo=T.REPO)
+        finally:
+            S._verify_unit = real
+        refused = {x["path"]: x["reason"] for x in ex["refused"]}
+        rel = str(target.relative_to(root))
+        want = "ROOT_ACTIVE" if case == "root_becomes_active" else "BASE_STORE_IN_USE"
+        after = [d["path"] for d in ex["deleted"]]
+        out[case] = target.is_dir() and refused.get(rel) == want and calls.get(str(target)) == 2 and \
+            rel not in after and (after == [] if case == "root_becomes_active" else after == ["work/t_x/sbx"])
+    return {"ok": all(out.values()), "cases": out}
+
+
+def t_planted_reading_from_a_file():
+    """The test facility of R4: MBS308_TEST_DISK_FREE=file:<path> takes the planted reading from that file at EVERY
+    probe, so a test can make the reading fall while a run is under way. Like the plain form it can only LOWER the
+    real reading or fail it: a value above the real one leaves the real one; an unparseable or empty file, a missing
+    file and an unreadable path are FAILED probes (never "no plant")."""
+    S = SCR()
+    d = fresh_dir("plantfile")
+    f = d / "reading"
+    real_statvfs, saved = os.statvfs, os.environ.get(S.PLANT_ENV)
+
+    class Fake:
+        f_bavail, f_frsize = 1000, 4096
+
+    out = {}
+    try:
+        os.statvfs = lambda p: Fake()
+        os.environ[S.PLANT_ENV] = "file:" + str(f)
+        f.write_text(str(10 ** 15) + "\n")
+        out["cannot_raise"] = S.free_bytes(d) == 4096000 and S.check_free([(d, 4096000)], "t")["pass"] is True
+        f.write_text("5000\n")
+        out["lowers"] = S.free_bytes(d) == 5000
+        f.write_text("7")
+        out["read_at_every_probe"] = S.free_bytes(d) == 7 and S.check_free([(d, 4096000)], "t")["pass"] is False
+        for tag, text in (("garbage", "garbage"), ("empty", ""), ("negative", "-5")):
+            f.write_text(text)
+            c = S.check_free([(d, 1)], "t")
+            out[f"{tag}_is_a_failed_probe"] = S.free_bytes(d) is None and c["pass"] is False and c["planted"] is True
+        f.unlink()
+        out["missing_file_is_a_failed_probe"] = S.planted_reading() == (True, None) and S.free_bytes(d) is None
+        os.environ[S.PLANT_ENV] = "file:" + str(d)                  # a directory: unreadable
+        out["unreadable_is_a_failed_probe"] = S.planted_reading() == (True, None) and \
+            S.check_free([(d, 1)], "t")["pass"] is False
+        os.environ.pop(S.PLANT_ENV)
+        out["no_plant"] = S.planted_reading() == (False, None) and S.free_bytes(d) == 4096000
+    finally:
+        os.statvfs = real_statvfs
+        if saved is None:
+            os.environ.pop(S.PLANT_ENV, None)
+        else:
+            os.environ[S.PLANT_ENV] = saved
+    return {"ok": all(out.values()), "cases": out}
+
+
+def _fall_when(proc, plant: Path, started, timeout: int) -> bool:
+    """Lower the planted reading (to 1 byte) as soon as `started()` holds, while `proc` runs; True if it fell while
+    the process was still running."""
+    t0, fell = time.time(), False
+    while proc.poll() is None:
+        if not fell and started():
+            plant.write_text("1\n")
+            fell = True
+        if time.time() - t0 > timeout:
+            proc.kill()
+            break
+        time.sleep(0.05)
+    proc.wait()
+    return fell
+
+
+def t_verifier_phase_gate_reading_falls():
+    """R4 (reviewQ6 G-4), the verifier's OWN per-phase gate: the free-space reading FALLS after the start. A dev
+    --heavy run of QS-STATIC and QS-LAUNCH in a sparse sandbox, its reading planted through a file that drops to one
+    byte once QS-STATIC has begun (its log exists): the start check and the check before QS-STATIC pass and QS-STATIC
+    runs and passes; the check before QS-LAUNCH fails, so QS-LAUNCH never runs (no log, no record) and its case FAILS
+    CLOSED (`pass` false, DISK_REFUSED, refused before QS-LAUNCH); the report names the refusal."""
+    sys.path.insert(0, str(T.NSS / "tests"))
+    import test_mbs308_qualify as TQ
+    s = TQ.sparse_sandbox("disk_falls")
+    work, out = s["tmp"] / "work", s["tmp"] / "dev_heavy.json"
+    plant = s["tmp"] / "planted_free"
+    plant.write_text(str(1 << 60) + "\n")                           # above any real reading: the real one governs
+    with open(s["tmp"] / "verifier.log", "wb") as fh:
+        proc = subprocess.Popen([T.PY, "-I", "-S", "-B", str(s["dst"] / "code/mbs308_qualify.py"), "--dev", "--heavy",
+                                 "--work", str(work), "--only", "QS-STATIC,QS-LAUNCH", "--out", str(out)],
+                                stdout=fh, stderr=subprocess.STDOUT, cwd=str(s["root"]), stdin=subprocess.DEVNULL,
+                                env=dict(T.GENV, MBS308_TEST_DISK_FREE="file:" + str(plant)))
+        fell = _fall_when(proc, plant, lambda: bool(list(work.glob("mbs308q*/MBS308_QS_STATIC.log"))), 1800)
+    try:
+        rep = json.loads(out.read_text())
+    except (OSError, ValueError):
+        return {"ok": False, "fell": fell, "tail": (s["tmp"] / "verifier.log").read_text(errors="replace")[-800:]}
+    d, cases = rep.get("disk", {}), rep.get("cases", {})
+    checks = [(c.get("phase"), c.get("pass")) for c in d.get("checks", [])]
+    launch_ran = bool(list(work.glob("mbs308q*/MBS308_QS_LAUNCH*")))
+    ok = fell and proc.returncode == 0 and (d.get("start") or {}).get("pass") is True and \
+        checks == [("start", True), ("QS-STATIC", True), ("QS-LAUNCH", False)] and \
+        (cases.get("QS-STATIC") or {}).get("pass") is True and (cases["QS-STATIC"].get("n") or 0) > 0 and \
+        cases.get("QS-LAUNCH") == {"pass": False, "status": "DISK_REFUSED", "refused_before": "QS-LAUNCH"} and \
+        (d.get("refusal") or {}).get("phase") == "QS-LAUNCH" and not launch_ran and rep.get("pass") is False
+    shutil.rmtree(s["tmp"], ignore_errors=True)
+    return {"ok": ok, "fell_while_running": fell, "checks": checks, "launch_case": cases.get("QS-LAUNCH"),
+            "launch_ran": launch_ran}
+
+
+def t_mutant_runner_reading_falls():
+    """R4 (reviewQ6 G-4), the mutant runner's per-phase check: the reading FALLS after the start. The REAL runner
+    (--only M11: the unmutated target, then M11), its reading planted through a file that drops to one byte once the
+    first phase has begun (its code copy exists): the start check and the first check pass and the unmutated target
+    runs, passes and is cleaned; the check before M11 fails: M11 never runs (no mutated code, no result), it is
+    listed as not run, the refusal is recorded and the runner FAILS (exit 1)."""
+    root = fresh_dir("runner_falls")
+    plant = root / "planted_free"
+    plant.write_text(str(1 << 60) + "\n")
+    out, tm = root / "falls.json", root / "t_mutants"
+    env = dict(T.GENV, MBS308_SCRATCH=str(root), MBS308_BASE_STORE=str(T.BASE_STORE),
+               MBS308_TEST_DISK_FREE="file:" + str(plant))
+    with open(root / "runner.log", "wb") as fh:
+        proc = subprocess.Popen([T.PY, "-I", "-S", "-B", str(T.NSS / "tests" / "test_mbs308_mutants.py"), "--only",
+                                 "M11", "--out", str(out)], stdout=fh, stderr=subprocess.STDOUT, env=env,
+                                stdin=subprocess.DEVNULL)
+        fell = _fall_when(proc, plant, lambda: (tm / "UNMUTATED" / "code").is_dir(), 1800)
+    try:
+        rep = json.loads(out.read_text())
+    except (OSError, ValueError):
+        return {"ok": False, "fell": fell, "tail": (root / "runner.log").read_text(errors="replace")[-800:]}
+    checks = [(c.get("phase"), c.get("pass")) for c in rep.get("disk_checks", [])]
+    un = rep.get("unmutated", {})
+    ok = fell and proc.returncode == 1 and len(checks) == 3 and [c[1] for c in checks] == [True, True, False] and \
+        checks[0][0] == "start" and checks[2][0] == "M11" and rep.get("not_run") == ["M11"] and \
+        (rep.get("disk_refusal") or {}).get("phase") == "M11" and rep.get("matrix") == {} and len(un) == 1 and \
+        all(v.get("test_passed") is True and not v.get("error") for v in un.values()) and \
+        not (tm / "M11").exists() and (tm / "UNMUTATED" / "result.json").is_file() and \
+        len(rep.get("cleanups", {})) == 1 and not list(tm.rglob("sbx"))
+    return {"ok": ok, "fell_while_running": fell, "checks": checks, "not_run": rep.get("not_run"),
+            "exit_code": proc.returncode}
+
+
+def t_verifier_checks_repository_volume():
+    """G-6 (reviewQ6): the verifier's disk check reads BOTH volumes: QUAL_MIN_FREE_BYTES on the --work volume and the
+    ratified MIN_FREE_DISK on the REPOSITORY volume. On this host both are one volume, so the readings are planted
+    per path (os.statvfs): plenty on --work with the repository one byte short, or the repository unreadable, fails
+    the check, and the failing reading is the repository's; plenty on both passes; short on --work fails."""
+    sys.path.insert(0, str(T.NSS / "tests"))
+    import test_mbs308_qualify as TQ
+    Q = TQ.Q
+    S = Q.SCR
+    work = fresh_dir("repovol")
+    repo = str(Q.REPO)
+    real_statvfs, saved = os.statvfs, os.environ.pop(S.PLANT_ENV, None)
+    need_repo, need_work = S.HOST.MIN_FREE_DISK, S.QUAL_MIN_FREE_BYTES
+
+    def planted(repo_free, work_free):
+        class R:
+            f_frsize = 1
+
+        def statvfs(p):
+            v = repo_free if str(p) == repo else work_free
+            if v is None:
+                raise OSError("planted statvfs failure")
+            r = R()
+            r.f_bavail = v
+            return r
+        os.statvfs = statvfs
+        try:
+            return Q.disk_check(work, "planted")
+        finally:
+            os.statvfs = real_statvfs
+    try:
+        both = planted(need_repo, need_work)
+        repo_short = planted(need_repo - 1, 100 * need_work)
+        repo_unreadable = planted(None, 100 * need_work)
+        work_short = planted(100 * need_repo, need_work - 1)
+    finally:
+        os.statvfs = real_statvfs
+        if saved is not None:
+            os.environ[S.PLANT_ENV] = saved
+
+    def bad(c):
+        return [r["path"] for r in c["readings"] if not r["ok"]]
+    out = {"two_readings_work_then_repository": [r["path"] for r in both["readings"]] == [str(work), repo] and
+           [r["need_bytes"] for r in both["readings"]] == [need_work, need_repo],
+           "both_at_threshold_pass": both["pass"] is True,
+           "repository_one_byte_short_fails": repo_short["pass"] is False and bad(repo_short) == [repo],
+           "repository_unreadable_fails": repo_unreadable["pass"] is False and bad(repo_unreadable) == [repo] and
+           repo_unreadable["readings"][1]["free_bytes"] is None,
+           "work_one_byte_short_fails": work_short["pass"] is False and bad(work_short) == [str(work)],
+           "thresholds": need_repo == 2 * GIB and need_work == SCR().QUAL_MIN_FREE_BYTES}
+    return {"ok": all(out.values()), "cases": out}
+
+
+HOST_REPORT_CHILD = r'''
+import json, sys
+sys.path.insert(0, sys.argv[1])
+import mbs308_qualify as Q
+D = Q.driver()
+H = D.HOST
+real_run, real_pid, real_state = H._run, D.STATE.read_pidfile, H.identity_state
+out = {}
+for name, spec in json.loads(sys.argv[2]).items():
+    runs = spec.get("run", {})
+    H._run = lambda args, timeout=60, _r=runs: _r[" ".join(args)] if " ".join(args) in _r else real_run(args, timeout)
+    if "pidfile" in spec:
+        D.STATE.read_pidfile = lambda store, boot_uuid=None, _p=spec["pidfile"]: (_p[0], _p[1])
+    if "identity_state" in spec:
+        H.identity_state = lambda ident, boot_uuid=None, _s=spec["identity_state"]: _s
+    try:
+        r = Q.host_report()
+    finally:
+        H._run, D.STATE.read_pidfile, H.identity_state = real_run, real_pid, real_state
+    items = {i["item"]: i for i in r["items"]}
+    out[name] = {k: [items[k]["status"], items[k]["reading"]] for k in
+                 ("automatic_restart", "host_exclusive", "no_other_campaign_job")}
+    out[name]["ready"] = r["ready"]
+    out[name]["ready_is_all_ready_or_recorded"] = r["ready"] == all(i["status"] in ("READY", "RECORDED")
+                                                                    for i in r["items"])
+print(json.dumps(out))
+'''
+PMSET_G = "/usr/bin/pmset -g"
+PMSET_SCHED = "/usr/bin/pmset -g sched"
+PS_ALL = "/bin/ps -A -o pid=,ppid=,pcpu=,comm="
+PMSET_TEXT = "System-wide power settings:\nCurrently in use:\n sleep                0\n displaysleep         10\n" \
+    " disksleep            10\n lowpowermode         0\n"
+
+
+def t_host_report_unreadable_never_ready():
+    """R7 (reviewQ6 F-7): in the READ-ONLY host report an unreadable reading is never RECORDED and READY needs a
+    positive reading. The verifier's own host_report() in a sparse sandbox, on planted readings (the host module's
+    command reader and the pidfile reader are planted; nothing is written): with `pmset -g`, `pmset -g sched` and
+    `ps` read and no pidfile, automatic_restart is RECORDED (also where `pmset -g` lists no autorestart, as on this
+    host), host_exclusive and no_other_campaign_job are READY; a failed `pmset -g`, or a failed `pmset -g sched`,
+    makes automatic_restart UNKNOWN; a failed `ps`, or one without a process row, makes host_exclusive UNKNOWN (a busy
+    process: USER_ACTION); a pidfile whose recorded process is not positively dead (its `ps` fails) or an invalid
+    pidfile makes no_other_campaign_job UNKNOWN, a live one NOT_READY, a positively dead one READY. `ready` stays
+    "every item READY or RECORDED"."""
+    sys.path.insert(0, str(T.NSS / "tests"))
+    import test_mbs308_qualify as TQ
+    s = TQ.sparse_sandbox("host_report_planted")
+    good = {PMSET_G: PMSET_TEXT, PMSET_SCHED: "", PS_ALL: PS_QUIET}
+    ident = {"pid": 4242, "start_time": "planted", "boot_uuid": "planted", "command_sha256": "0" * 64}
+    absent = [None, "ABSENT"]
+    spec = {
+        "good": {"run": good, "pidfile": absent},
+        "pmset_fails": {"run": dict(good, **{PMSET_G: None}), "pidfile": absent},
+        "sched_fails": {"run": dict(good, **{PMSET_SCHED: None}), "pidfile": absent},
+        "ps_fails": {"run": dict(good, **{PS_ALL: None}), "pidfile": absent},
+        "ps_no_row": {"run": dict(good, **{PS_ALL: "\n"}), "pidfile": absent},
+        "ps_busy": {"run": dict(good, **{PS_ALL: PS_QUIET + " 4242     1  90.0 /Applications/Busy.app/Busy\n"}),
+                    "pidfile": absent},
+        "pidfile_not_positively_dead": {"run": good, "pidfile": [{"identity": ident}, "STALE"],
+                                        "identity_state": "UNKNOWN"},
+        "pidfile_positively_dead": {"run": good, "pidfile": [{"identity": ident}, "STALE"], "identity_state": "DEAD"},
+        "pidfile_live": {"run": good, "pidfile": [{"identity": ident}, "LIVE"]},
+        "pidfile_invalid": {"run": good, "pidfile": [None, "INVALID"]},
+    }
+    p = subprocess.run([T.PY, "-I", "-S", "-B", "-c", HOST_REPORT_CHILD, str(s["dst"] / "code"), json.dumps(spec)],
+                       capture_output=True, text=True, env=T.GENV, cwd=str(s["root"]), stdin=subprocess.DEVNULL,
+                       timeout=900)
+    try:
+        r = json.loads(p.stdout.strip().splitlines()[-1])
+    except (ValueError, IndexError):
+        return {"ok": False, "tail": (p.stdout + p.stderr)[-800:]}
+    st = {k: {i: v[i][0] for i in ("automatic_restart", "host_exclusive", "no_other_campaign_job")}
+          for k, v in r.items()}
+    want = {"good": ("RECORDED", "READY", "READY"), "pmset_fails": ("UNKNOWN", "READY", "READY"),
+            "sched_fails": ("UNKNOWN", "READY", "READY"), "ps_fails": ("RECORDED", "UNKNOWN", "READY"),
+            "ps_no_row": ("RECORDED", "UNKNOWN", "READY"), "ps_busy": ("RECORDED", "USER_ACTION", "READY"),
+            "pidfile_not_positively_dead": ("RECORDED", "READY", "UNKNOWN"),
+            "pidfile_positively_dead": ("RECORDED", "READY", "READY"),
+            "pidfile_live": ("RECORDED", "READY", "NOT_READY"), "pidfile_invalid": ("RECORDED", "READY", "UNKNOWN")}
+    out = {k: tuple(st.get(k, {}).get(i) for i in ("automatic_restart", "host_exclusive", "no_other_campaign_job"))
+           == w for k, w in want.items()}
+    out["no_reading_is_recorded_as_none"] = r.get("ps_fails", {}).get("host_exclusive", [None, 0])[1] is None and \
+        r.get("good", {}).get("host_exclusive", [None, None])[1] == [] and \
+        r.get("ps_busy", {}).get("host_exclusive", [None, None])[1] == ["Busy"]
+    out["never_ready_with_an_unknown_item"] = all(v.get("ready_is_all_ready_or_recorded") is True for v in r.values()) \
+        and all(r[k]["ready"] is False for k in want if "UNKNOWN" in want[k] or "NOT_READY" in want[k]
+                or "USER_ACTION" in want[k])
+    shutil.rmtree(s["tmp"], ignore_errors=True)
+    return {"ok": p.returncode == 0 and all(out.values()), "cases": out, "statuses": st}
+
+
+def t_repin_platform_failed_reading_refused():
+    """G-11 (reviewQ6, YRP1): PLATFORM_PINS are never rewritten from a FAILED reading. On a copy of the code whose
+    pinned libpython path does not exist (so its sha256 cannot be read) and whose OS-build pin differs: the dry run
+    names the unreadable reading and writes nothing; `--write-platform` is refused PLATFORM_READING_FAILED and the
+    driver's bytes are unchanged (the differing, readable pin is not written either)."""
+    d = fresh_dir("repin_failed")
+    code = d / "code"
+    shutil.copytree(T.code_dir(), code, ignore=shutil.ignore_patterns("__pycache__"))
+    tool, drv = code / "mbs308_repin.py", code / "mbs308_driver.py"
+    rc0, r0 = _run_tool([str(tool), "platform", "--code", str(code)])
+    lib = (r0.get("pins") or {}).get("libpython", {}).get("pinned")
+    src = drv.read_text()
+    planted = src.replace(f'"libpython": "{lib}"', '"libpython": "/nonexistent/mbs308/libpython"', 1) \
+        .replace('"os_build": "', '"os_build": "PLANTED', 1) if lib else src
+    drv.write_text(planted)
+    b0 = drv.read_bytes()
+    rc1, r1 = _run_tool([str(tool), "platform", "--code", str(code)])
+    rc2, r2 = _run_tool([str(tool), "platform", "--code", str(code), "--write-platform"])
+    out = {"clean_copy": rc0 == 0 and r0.get("differs") == [] and r0.get("unreadable") == [] and bool(lib),
+           "planted": planted != src,
+           "dry_run_names_the_failed_reading": rc1 == 1 and r1.get("unreadable") == ["libpython_sha256"] and
+           r1.get("differs") == ["libpython_sha256", "os_build"] and drv.read_bytes() == b0,
+           "write_refused_nothing_written": rc2 == 2 and r2.get("refused") == "PLATFORM_READING_FAILED" and
+           drv.read_bytes() == b0}
+    return {"ok": all(out.values()), "cases": out}
+
+
+def _carried_listed(md: str) -> list:
+    import re
+    line = [ln for ln in md.splitlines() if ln.startswith("* The carried (text-identical) functions: ")]
+    return re.findall(r"`([^`]+)`", line[0]) if len(line) == 1 else []
+
+
+def _comment_into(src: str, name: str) -> str:
+    """`src` with one comment line planted INSIDE the body of the top-level function `name` (valid Python; the
+    function's own source text changes, nothing else)."""
+    import ast as _ast
+    fn = [n for n in _ast.parse(src).body if isinstance(n, _ast.FunctionDef) and n.name == name]
+    if len(fn) != 1:
+        return src
+    lines = src.splitlines(keepends=True)
+    at = fn[0].body[0].lineno - 1
+    pad = lines[at][:len(lines[at]) - len(lines[at].lstrip())]
+    return "".join(lines[:at] + [pad + "# planted by the test: a change inside the body\n"] + lines[at:])
+
+
+def t_repin_science_glue_refused():
+    """F-4 and G-11 (reviewQ6, YRP3): the generator's SCIENCE-GLUE refusal fires for a change INSIDE a carried
+    function's body. In a sandbox whose HEAD holds the driver and its DRIVER_DIFF.md: a comment planted in the body of
+    a carried function (one the committed header lists, text-identical to MB r1's) is refused SCIENCE_GLUE_HUNK; it
+    stays refused when `--classes` names every hunk LIFECYCLE (it cannot be reclassified), and `--write` writes
+    nothing. Control: the same change in a function that is NOT carried (host_preflight) is not science glue: the
+    file is reported stale, no science-glue hunk, exit 1."""
+    tool = T.code_dir() / "mbs308_repin.py"
+    s = sb()
+    s.grant_chain()
+    ns = s.root / T.NS_REL
+    md, drv = ns / "DRIVER_DIFF.md", ns / "code" / "mbs308_driver.py"
+    shutil.copy2(T.NSS / "DRIVER_DIFF.md", md)
+    s.commit([T.NS_REL + "/DRIVER_DIFF.md"], "sandbox: DRIVER_DIFF.md of the namespace")
+    good_md, good_drv = md.read_bytes(), drv.read_text()
+    carried = _carried_listed(md.read_text())
+    args = [str(tool), "driver-diff", "--ns", str(ns), "--repo", str(s.root)]
+    rc0, r0 = _run_tool(args)
+    out = {"sandbox_clean": rc0 == 0 and r0.get("stale") is False and r0.get("science_glue_hunks") == [],
+           "carried_listed": len(carried) > 30 and "stage1" in carried and "host_preflight" not in carried}
+    every = json.dumps({str(i): "LIFECYCLE" for i in range(1, 80)})
+    for name in ("stage1", "fs"):
+        changed = _comment_into(good_drv, name)
+        drv.write_text(changed)
+        rc1, r1 = _run_tool(args)
+        rc2, r2 = _run_tool(args + ["--classes", every])
+        rc3, r3 = _run_tool(args + ["--classes", every, "--write"])
+        out[f"body_change_in_{name}_refused"] = changed != good_drv and name in carried and \
+            (rc1, r1.get("refused")) == (2, "SCIENCE_GLUE_HUNK") and \
+            (rc2, r2.get("refused")) == (2, "SCIENCE_GLUE_HUNK") and \
+            (rc3, r3.get("refused")) == (2, "SCIENCE_GLUE_HUNK") and md.read_bytes() == good_md
+    drv.write_text(_comment_into(good_drv, "host_preflight"))
+    rc4, r4 = _run_tool(args)
+    out["control_not_carried_is_not_glue"] = rc4 == 1 and r4.get("stale") is True and \
+        r4.get("science_glue_hunks") == [] and md.read_bytes() == good_md
+    drv.write_text(good_drv)
+    s.grant_chain()                                                # back to the synthetic freeze
+    return {"ok": all(out.values()), "cases": out, "carried": len(carried)}
+
+
+# ====================================================================== brief 56 follow-up (builder7): the science-phase gate
+SCIENCE_GATE_RUNS = r'''
+os.environ["MBS308_TEST_DISK_FREE"] = "file:" + str(PLANT)
+PLANT.write_text(str(1 << 60) + "\n")
+run("official_falls", ["QC03", "QC08"], "official", True, {"planted_host_report": "own"})
+PLANT.write_text(str(1 << 60) + "\n")
+PLANT_SAVED, PLANT = PLANT, None
+run("official_control", ["QC03", "QC08"], "official", True, {"planted_host_report": "own"})
+PLANT = PLANT_SAVED
+d = base / "dev_falls"
+d.mkdir(parents=True)
+del calls[:]
+start = Q.disk_check(d, "verifier start")
+PLANT.write_text("1\n")                                   # the reading falls after the verifier's start
+r = Q.science_phase(["QC08"], "dev", False, cfg, d, d, d)
+out["dev_falls"] = {"start_pass": start["pass"], "calls": list(calls),
+                    "cases": {k: {x: v.get(x) for x in ("pass", "status", "refused_before")} for k, v in r["cases"].items()},
+                    "checks": [[c["phase"], c["pass"]] for c in r["disk"]["checks"]],
+                    "refusal": (r["disk"]["refusal"] or {}).get("phase")}
+print(json.dumps(out))
+'''
+
+
+def t_verifier_science_gate_reading_falls():
+    """Follow-up item 2 (the gap noted under R4): the verifier's SCIENCE-phase disk gate with a reading that falls
+    after the start (the same `file:` facility). In a child process in a sparse sandbox, "this is the qualified
+    worktree" is PLANTED and every function that would execute science is a RECORDER (nothing is launched, no decoy
+    runs). Official: the reading drops to one byte while the FIRST official decoy "runs": the start check and the
+    check before decoy 297 pass, the check before decoy 316 fails, decoy 316 is never launched, and every decoy case
+    FAILS CLOSED (DISK_REFUSED, refused before `official decoy 316`). Control: with the reading unchanged both
+    decoys are launched and nothing is refused. Dev: the reading drops after the verifier's start check: the check
+    before the dev decoy fails, the dev decoy is never run, the case fails closed."""
+    sys.path.insert(0, str(T.NSS / "tests"))
+    import test_mbs308_cases as TC
+    import test_mbs308_qualify as TQ
+    s = TQ.sparse_sandbox("science_gate_falls")
+    plant = s["tmp"] / "planted_free"
+    p = subprocess.run([T.PY, "-I", "-S", "-B", "-c", TC.SCIENCE_PHASE_CHILD + SCIENCE_GATE_RUNS,
+                        str(s["dst"] / "code"), str(s["tmp"] / "runs"), str(plant)], capture_output=True, text=True,
+                       env=T.GENV, cwd=str(s["root"]), stdin=subprocess.DEVNULL, timeout=600)
+    try:
+        rep = json.loads(p.stdout.strip().splitlines()[-1])
+    except (ValueError, IndexError):
+        return {"ok": False, "tail": (p.stdout + p.stderr)[-800:]}
+    f, c, d = rep["official_falls"], rep["official_control"], rep["dev_falls"]
+    refused = {"pass": False, "status": "DISK_REFUSED", "refused_before": "official decoy 316"}
+    out = {"official_start_and_first_check_pass_second_fails": f["start_pass"] is True and f["checks"] ==
+           [["start", True], ["official decoy 297", True], ["official decoy 316", False]] and
+           f["refusal"] == "official decoy 316",
+           "second_decoy_never_launched": f["calls"] == ["official_readings", "official_decoy_gated:297"],
+           "decoy_cases_fail_closed": f["cases"] == {"QC03": refused, "QC08": refused},
+           "control_both_launched_nothing_refused": c["calls"] ==
+           ["official_readings", "official_decoy_gated:297", "official_decoy_gated:316"] and c["refusal"] is None and
+           all(x[1] for x in c["checks"]) and len(c["checks"]) == 3 and
+           all(v["status"] != "DISK_REFUSED" for v in c["cases"].values()),
+           "dev_reading_falls_after_the_start": d["start_pass"] is True and d["checks"] == [["dev decoy", False]] and
+           d["refusal"] == "dev decoy" and d["calls"] == [] and
+           d["cases"] == {"QC08": {"pass": False, "status": "DISK_REFUSED", "refused_before": "dev decoy"}},
+           "no_real_science_path_reached": not any(x.startswith("REAL:") for y in (f, c, d) for x in y["calls"])}
+    shutil.rmtree(s["tmp"], ignore_errors=True)
+    return {"ok": p.returncode == 0 and all(out.values()), "cases": out,
+            "calls": {k: v["calls"] for k, v in rep.items()}}
 
 
 if __name__ == "__main__":

@@ -17,7 +17,11 @@ default: nothing is written without an explicit flag.
                GENERATOR_NOT_VALIDATED); then it generates the file for the working driver; `--write` writes it.
                A class is carried from the committed hunk with the same touched-definition set (the i-th such hunk
                to the i-th); a hunk with no counterpart needs `--classes '{"<n>": "LIFECYCLE", ...}'`; a hunk touching
-               a carried (text-identical) definition is SCIENCE-GLUE (MUST NOT OCCUR) and the tool fails.
+               a carried (text-identical) definition is SCIENCE-GLUE (MUST NOT OCCUR) and the tool fails. The carried
+               definitions are those the COMMITTED file's header lists (validated above against the committed driver)
+               together with those text-identical in the working driver: a change inside a carried function's body
+               (which takes it out of the working driver's text-identical set) is therefore still SCIENCE-GLUE and
+               refused, and `--classes` cannot reclassify it (reviewQ6 F-4).
   check        helpers + driver-diff, dry-run: exit 0 only when nothing is stale.
   apply        the MECHANICAL apply step of the user's section-11.2 ruling, option (a) (protocol section 11.2): the
                canonical rule outputs A of a DESIGNATED derivation (code/mbs308_derive.py, from the designated
@@ -254,11 +258,12 @@ def hunks(base: str, new: str) -> list:
 
 
 _HUNK_HDR = re.compile(r"^### Hunk (\d+): (.+?); (.*)$")
+CARRIED_LINE = "* The carried (text-identical) functions: "
 
 
 def parse_committed(md: str) -> dict:
-    """The committed file's carried parts: its header lines (for the carried text) and each hunk's class and touched
-    set, in order."""
+    """The committed file's carried parts: its header lines (for the carried text), each hunk's class and touched
+    set, in order, and the carried (text-identical) definitions its header lists (exactly one such line)."""
     lines = md.split("\n")
     classes = []
     for ln in lines:
@@ -266,13 +271,19 @@ def parse_committed(md: str) -> dict:
         if m:
             classes.append({"n": int(m.group(1)), "class": m.group(2), "touched": m.group(3).split(", ")})
     head_end = lines.index("## Hunk index")
-    return {"header": lines[:head_end], "hunks": classes}
+    listed = [ln for ln in lines[:head_end] if ln.startswith(CARRIED_LINE)]
+    if len(listed) != 1:
+        raise Refused("CARRIED_LIST", "the committed DRIVER_DIFF.md must list the carried definitions exactly once")
+    return {"header": lines[:head_end], "hunks": classes, "carried": re.findall(r"`([^`]+)`", listed[0])}
 
 
 def render(base: str, new: str, committed: dict, classes_override: dict | None = None) -> tuple:
     """(the DRIVER_DIFF.md text, the per-hunk class decisions). Refuses on a hunk without a class."""
     hs = hunks(base, new)
-    glue = set(carried_names(base, new))
+    carried_now = set(carried_names(base, new))
+    # F-4: the definitions carried AT THE COMMIT stay science glue: a change inside one of them is refused, not
+    # silently dropped from the carried list (a body change takes it out of the text-identical set of `new`)
+    glue = carried_now | set(committed.get("carried", []))
     by_set: dict = {}
     for h in committed["hunks"]:
         by_set.setdefault(tuple(h["touched"]), []).append(h["class"])
@@ -305,8 +316,8 @@ def render(base: str, new: str, committed: dict, classes_override: dict | None =
             ln = re.sub(r"sha256 `[0-9a-f]{64}`", f"sha256 `{sha(new.encode())}`", ln)
         elif ln.startswith("* Hunks: "):
             ln = f"* Hunks: {len(hs)}; by class: " + ", ".join(f"{c} {n}" for c, n in sorted(counts.items())) + "."
-        elif ln.startswith("* The carried (text-identical) functions: "):
-            ln = "* The carried (text-identical) functions: " + ", ".join(f"`{n}`" for n in sorted(glue)) + "."
+        elif ln.startswith(CARRIED_LINE):
+            ln = CARRIED_LINE + ", ".join(f"`{n}`" for n in sorted(carried_now)) + "."
         hdr.append(ln)
     out = ["\n".join(hdr), "## Hunk index\n", "| # | class | top-level definitions touched |", "|---|---|---|"]
     for i, h in enumerate(hs, 1):

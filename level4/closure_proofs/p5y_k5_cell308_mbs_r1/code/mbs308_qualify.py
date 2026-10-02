@@ -218,8 +218,9 @@ def pending(case_id: str) -> dict:
 # ------------------------------------------------------------------ aggregation
 def config_consistency(cfg: dict) -> dict:
     """The configuration and this verifier agree: every configured case is BUILT here or DECLARED pending here (with
-    the same status and dependencies), every case of this verifier is configured, every gate has a case and every
-    case names known gates."""
+    the same status and dependencies), every case of this verifier is configured, every gate has a case, every case
+    names known gates and EVERY case names at least one gate (reviewQ6 F-5: a case without a gate would be ignored by
+    the gates, so a failing or a pending one would not fail the qualification)."""
     ids = [c["id"] for c in cfg.get("cases", [])]
     known = set(BUILT_CASES) | set(PENDING_CASES)
     status_bad = sorted(c["id"] for c in cfg.get("cases", []) if c["id"] in known and
@@ -227,26 +228,31 @@ def config_consistency(cfg: dict) -> dict:
     deps_bad = sorted(c["id"] for c in cfg.get("cases", []) if c["id"] in PENDING_CASES and
                       tuple(c.get("depends_on") or ()) != PENDING_CASES[c["id"]])
     gates = set(cfg.get("gates", {}))
-    used = {g for c in cfg.get("cases", []) for g in c.get("gates", [])}
+    used = {g for c in cfg.get("cases", []) for g in (c.get("gates") or [])}
+    ungated = sorted(c["id"] for c in cfg.get("cases", []) if not c.get("gates"))
     out = {"duplicate_ids": sorted({i for i in ids if ids.count(i) > 1}),
            "unknown_in_config": sorted(set(ids) - known), "missing_from_config": sorted(known - set(ids)),
            "status_mismatch": status_bad, "depends_on_mismatch": deps_bad,
-           "gates_without_cases": sorted(gates - used), "unknown_gates": sorted(used - gates)}
+           "gates_without_cases": sorted(gates - used), "unknown_gates": sorted(used - gates),
+           "cases_without_gates": ungated}
     out["pass"] = not any(out.values())
     return out
 
 
 def aggregate(cases: dict, cfg: dict, mode: str) -> dict:
     """Gates from the configuration; every case summary must carry a boolean `pass`. A missing / non-boolean `pass`,
-    a configured case that did not run (official / review) or an unknown case fails LOUDLY (listed and printed)."""
+    a configured case that did not run (official / review), an unknown case or a case that belongs to NO gate
+    (reviewQ6 F-5) fails LOUDLY (listed and printed)."""
     cons = config_consistency(cfg)
     missing_pass = sorted(k for k, v in cases.items() if not isinstance(v, dict) or not isinstance(v.get("pass"), bool))
     ids = [c["id"] for c in cfg.get("cases", [])]
     not_run = sorted(i for i in ids if i not in cases) if mode != "dev" else []
     unknown = sorted(k for k in cases if k not in ids)
+    gated = {c["id"] for c in cfg.get("cases", []) for g in (c.get("gates") or []) if g in cfg.get("gates", {})}
+    ungated = sorted(i for i in set(ids) if i not in gated)             # configured cases no gate would ever read
     gates = {}
     for g in sorted(cfg.get("gates", {})):
-        members = [c["id"] for c in cfg["cases"] if g in c.get("gates", [])]
+        members = [c["id"] for c in cfg["cases"] if g in (c.get("gates") or [])]
         gates[g] = {"cases": members, "pass": bool(members) and all(
             isinstance(cases.get(m), dict) and cases[m].get("pass") is True for m in members)}
     pend = sorted(k for k, v in cases.items() if isinstance(v, dict) and v.get("status") == PENDING_STATUS)
@@ -260,10 +266,13 @@ def aggregate(cases: dict, cfg: dict, mode: str) -> dict:
     for k in not_run + unknown:
         print(f"QUALIFY AGGREGATION: case {k} {'did not run' if k in not_run else 'is not configured'}",
               file=sys.stderr)
+    for k in ungated:
+        print(f"QUALIFY AGGREGATION: case {k} belongs to no gate (fails the qualification)", file=sys.stderr)
     ok = mode != "dev" and cons["pass"] and not missing_pass and not not_run and not unknown and not closed and \
-        all(g["pass"] for g in gates.values())
+        not ungated and all(g["pass"] for g in gates.values())
     return {"config_consistency": cons, "gates": gates, "cases_missing_pass": missing_pass, "cases_not_run": not_run,
-            "cases_unknown": unknown, "pending_user_decision": pend, "fail_closed_statuses": closed, "pass": ok}
+            "cases_unknown": unknown, "cases_without_gate": ungated, "pending_user_decision": pend,
+            "fail_closed_statuses": closed, "pass": ok}
 
 
 # ------------------------------------------------------------------ preconditions
@@ -319,7 +328,7 @@ def host_readiness() -> dict:
     return out
 
 
-HOST_REPORT_STATUSES = ("READY", "NOT_READY", "USER_ACTION", "RECORDED", "UNKNOWN")
+HOST_REPORT_STATUSES = DV.HOST_REPORT_STATUSES
 
 
 def _clamshell(text: str | None = None):
@@ -332,7 +341,9 @@ def _clamshell(text: str | None = None):
 
 
 def _pmset_values(text: str | None = None) -> dict:
-    """`pmset -g` settings of interest (read-only): autorestart, sleep, displaysleep, disksleep, lowpowermode."""
+    """`pmset -g` settings of interest (read-only): autorestart, sleep, displaysleep, disksleep, lowpowermode; each
+    None when the output does not state it (`autorestart` is not listed on every Mac). `readable`: the command gave an
+    output that states at least one of them (reviewQ6 F-7: an unreadable reading is never RECORDED)."""
     import re as _re
     if text is None:
         text = driver().HOST._run(["/usr/bin/pmset", "-g"])
@@ -340,7 +351,28 @@ def _pmset_values(text: str | None = None) -> dict:
     for k in ("autorestart", "sleep", "displaysleep", "disksleep", "lowpowermode"):
         m = _re.search(r"^\s*" + k + r"\s+(\d+)", text or "", _re.M)
         out[k] = int(m.group(1)) if m else None
+    out["readable"] = any(v is not None for v in out.values())
     return out
+
+
+def recorded_status(readable: bool) -> str:
+    """A recorded (ungated) item of the host report: RECORDED only when its readings were actually read."""
+    return "RECORDED" if readable is True else "UNKNOWN"
+
+
+def exclusive_status(busy) -> str:
+    """host_exclusive in the host report: READY needs a positive reading (a `ps` listing with no busy process); no
+    reading (None) is UNKNOWN, never READY."""
+    if not isinstance(busy, list):
+        return "UNKNOWN"
+    return "READY" if not busy else "USER_ACTION"
+
+
+def pidfile_status(state) -> str:
+    """no_other_campaign_job in the host report: READY needs a positive reading (no pidfile, or one whose recorded
+    process is positively dead); a live one is NOT_READY; anything else (a recorded process that is not positively
+    dead, an invalid pidfile, an unknown state) is UNKNOWN, never READY."""
+    return {"ABSENT": "READY", "STALE": "READY", "LIVE": "NOT_READY"}.get(state, "UNKNOWN")
 
 
 def _pmset_sched(text: str | None = None) -> dict:
@@ -450,9 +482,11 @@ def host_report(work: Path | None = None) -> dict:
          "disabling automatic macOS and critical-update installation is the user's action; the campaign never "
          "changes it")
     pm = _pmset_values()
+    sched = _pmset_sched()
     item("automatic_restart", "recorded (no gate): a restart is a reboot, detected by the boot UUID and resumable; "
          "the scheduled power events are read by `pmset -g sched` (owner decisions section 14: restart hazards)",
-         "RECORDED", {"autorestart": pm["autorestart"], "scheduled_power_events": _pmset_sched()},
+         recorded_status(pm["readable"] and sched["readable"] is True),
+         {"autorestart": pm["autorestart"], "pmset_readable": pm["readable"], "scheduled_power_events": sched},
          "automatic restarts by an OS update are excluded by the previous item; a scheduled restart / shutdown / sleep "
          "is for the operator to cancel (a user action; the campaign never changes it)")
     power = H.power_source()
@@ -500,15 +534,37 @@ def host_report(work: Path | None = None) -> dict:
          "platform --write-platform)", plat, bad)
     busy = D.busy_processes()
     item("host_exclusive", f"existing gate: host_exclusive (EXCL_CPU_PCT {D.EXCL_CPU_PCT}, EXCL_ALLOW; R-EXCL-PCT / "
-         "R-ALLOW at the freeze)", "READY" if not busy else "USER_ACTION", [b["comm"] for b in busy],
-         "quit the listed apps (a user action); a process is never allow-listed by hand")
-    _rec, pst = D.STATE.read_pidfile(D.store())
-    item("no_other_campaign_job", "existing gate: preflight no_other_campaign_job", "READY" if pst != "LIVE" else
-         "NOT_READY", pst)
-    return {"schema": "rebaseguard.p5y.k5.cell308-mbs-r1.host-report.v1", "read_only": True,
+         "R-ALLOW at the freeze)", exclusive_status(busy),
+         [b["comm"] for b in busy] if isinstance(busy, list) else None,
+         "quit the listed apps (a user action); a process is never allow-listed by hand; no `ps` reading is UNKNOWN "
+         "(the gate itself refuses)")
+    rec, pst = D.STATE.read_pidfile(D.store())
+    if pst == "STALE" and D.HOST.identity_state(rec["identity"]) != "DEAD":
+        pst = "UNKNOWN"                              # as the gate reads it: STALE only on positive evidence of death
+    item("no_other_campaign_job", "existing gate: preflight no_other_campaign_job", pidfile_status(pst), pst,
+         "READY needs a positive reading: no pidfile, or a recorded process that is positively dead")
+    return {"schema": DV.HOST_REPORT_SCHEMA, "read_only": True,
             "changes_made": False, "utc": utc(), "items": items,
             "owner_section14": owner_section14(),
+            "operator_actions": json.loads(json.dumps(DV.OPERATOR_ACTIONS)),
             "ready": all(i["status"] in ("READY", "RECORDED") for i in items)}
+
+
+def host_report_record(work: Path | None = None) -> dict:
+    """The read-only host report as it is EMBEDDED in a record (the official qualification record, its rule-input
+    record, the designated-measurement evidence): a report that could not be taken is recorded as such, and the
+    record's structure check (mbs308_derive.host_report_reasons) then fails."""
+    try:
+        return host_report(work)
+    except Exception as exc:                                          # noqa: BLE001 (recorded; the check fails)
+        return {"error": f"{type(exc).__name__}: {exc}"[:300], "read_only": True, "changes_made": False}
+
+
+def official_inputs(rin: dict, runs: list, host_rep) -> dict:
+    """The official qualification's rule-input record (qualification/MBS308_RRULES_OFFICIAL_INPUTS.json): its own
+    prepared-host readings, the compact inputs of its official decoys, and the embedded read-only host report taken
+    before them."""
+    return dict(rin, runs=runs, host_report=host_rep, target_evaluations=0)
 
 
 def gather_facts(mode: str) -> dict:
@@ -1053,19 +1109,23 @@ def strip_timing(o):
 
 
 def tail_hits(rel: str, text: str, rx, post_dirs: tuple, ns_rel: str = NS_REL) -> tuple:
-    """(non-exempt matches, matches exempted as timing fields). Only machine-written JSON evidence under the
-    post-freeze directories may exempt a match located ONLY inside a timing key (TIMING_KEYS, any depth); every other
-    file is scanned as text without exemption; a raw-text-only match is never exempt."""
+    """(non-exempt matches, matches exempted as timing fields). Every file is scanned as raw text. A JSON file is
+    ALSO scanned as the parser reads it (its DECODED keys and string values, wherever the file lies): a figure written
+    with a JSON escape has no raw-text match and would otherwise pass unseen. Only machine-written JSON evidence under
+    the post-freeze directories may exempt a match located ONLY inside a timing key (TIMING_KEYS, any depth); every
+    other file is scanned without exemption; a raw-text-only match is never exempt."""
     n = len(rx.findall(text))
-    parts = Path(rel).relative_to(ns_rel).parts if rel.startswith(ns_rel + "/") else ()
-    if not n or not parts or parts[0] not in post_dirs or not rel.endswith(".json"):
+    if not rel.endswith(".json"):
         return n, 0
     try:
         obj = json.loads(text)
     except ValueError:
         return n, 0
+    full = len(rx.findall(json.dumps(obj, sort_keys=True)))        # the record as decoded (escapes resolved)
+    parts = Path(rel).relative_to(ns_rel).parts if rel.startswith(ns_rel + "/") else ()
+    if not parts or parts[0] not in post_dirs:
+        return max(n, full), 0                                     # no exemption outside the post-freeze directories
     kept = len(rx.findall(json.dumps(strip_timing(obj), sort_keys=True)))
-    full = len(rx.findall(json.dumps(obj, sort_keys=True)))
     return kept + max(0, n - full), max(0, full - kept)
 
 
@@ -1161,7 +1221,11 @@ def qc12_core(files: list, pats: list, *, post_dirs: tuple, toks: set | None = N
     planted = " and ".join(re.sub(r"\\b|\\", "", pat) for pat in pats[:3])
     one = re.sub(r"\\b|\\", "", pats[0]) if pats else ""
     rec_rel = ns_rel + "/" + post_dirs[0] + "/PLANTED.json"
+    escaped = ("\\u%04x" % ord(one[0]) + one[1:]) if one else ""     # the same figure, its first character JSON-escaped
     ctl = {"planted_control_fires": len(rx.findall("row " + planted + " end")) >= 3,
+           "planted_json_escaped_value_in_evidence_fires": bool(escaped) and not rx.findall(escaped) and
+           tail_hits(rec_rel, '{"record": {"value": "' + escaped + '"}}', rx, post_dirs, ns_rel)[0] > 0 and
+           tail_hits(ns_rel + "/config/PLANTED.json", '{"value": "' + escaped + '"}', rx, post_dirs, ns_rel)[0] > 0,
            "planted_value_in_nontiming_field_of_evidence_fires":
                tail_hits(rec_rel, json.dumps({"record": {"value": one, "seconds": 1.0}}), rx, post_dirs, ns_rel)[0] > 0,
            "planted_value_in_timing_field_of_evidence_exempt_and_counted":
@@ -2575,6 +2639,9 @@ def r_rules_official(*, evidence, evidence_sha256, derivation, official: dict | 
     out["official_run_reasons"] = {str(r.get("id")): MEAS.run_reasons(r, plan, cap=C["MEM_CAP_BYTES"], poll=run_poll)
                                    for r in runs}
     out["official_reading_reasons"] = MEAS.reading_reasons(official.get("readings"))
+    # the embedded read-only host report of the official run (a recorded field: its STRUCTURE is checked, its statuses
+    # are not judged); the designated evidence's own is checked by mbs308_derive.evidence_reasons (A above)
+    out["official_host_report_reasons"] = DV.host_report_reasons(official.get("host_report"))
     rules_b = DV.apply_rules(runs=runs, readings=official.get("readings"),
                              hw_memsize_bytes=official.get("hw_memsize_bytes"),
                              hosting_app_paths=(official.get("hosting_app") or {}).get("paths"),
@@ -2597,7 +2664,8 @@ def r_rules_official(*, evidence, evidence_sha256, derivation, official: dict | 
         out["derivation_committed_is_the_recomputation"] and out["measured_driver_is_the_evidence_driver"] and
         out["frozen_driver_is_measured_driver_with_the_five_outputs_applied"] and
         len(runs) == len(plan) and not any(out["official_run_reasons"].values()) and
-        not out["official_reading_reasons"] and out["B"]["form_reasons"] == [] and
+        not out["official_reading_reasons"] and not out["official_host_report_reasons"] and
+        out["B"]["form_reasons"] == [] and
         b_checks["all_hold"] is True and cmp_["all_equal"] is True)
     out["status"] = closed[0] if closed else ("EXACT_AGREEMENT" if out["pass"] else "NOT_IN_AGREEMENT")
     return out
@@ -2800,7 +2868,8 @@ def qualified_worktree() -> bool:
 NOT_QUALIFIED = "NOT_THE_QUALIFIED_WORKTREE"
 
 
-def science_phase(sel: list, mode: str, heavy: bool, cfg: dict, work: Path, odir: Path, rdir: Path) -> dict:
+def science_phase(sel: list, mode: str, heavy: bool, cfg: dict, work: Path, odir: Path, rdir: Path,
+                  host_rep: dict | None = None) -> dict:
     """The decision-dependent cases (brief 54). Official (and review --heavy): the qualification's own prepared-host
     readings FIRST (the host still idle), then the official decoys ONE AT A TIME under the launchd launcher with the
     frozen values (QC02: 297, every block; QC03: 316, blocks 0-2), then MB r1's children (serial, the ladder pair, E4,
@@ -2810,7 +2879,7 @@ def science_phase(sel: list, mode: str, heavy: bool, cfg: dict, work: Path, odir
     cases: dict = {}
     want = [c for c in sel if c in SCIENCE_DECOY_CASES + SCIENCE_INPROCESS_CASES + ("QC01", "Q1_theory")]
     if not want:
-        return {"cases": cases, "disk": {"checks": [], "refusal": None}, "exit_codes": {}}
+        return {"cases": cases, "disk": {"checks": [], "refusal": None}, "exit_codes": {}, "host_report": host_rep}
     C = DV.driver_constants((CODE / "mbs308_driver.py").read_text())
     plan = DV.plan_of(cfg)
     paths = {k: odir / v for k, v in OUTS.items()}
@@ -2834,6 +2903,9 @@ def science_phase(sel: list, mode: str, heavy: bool, cfg: dict, work: Path, odir
         else:
             disk["refusal"] = {"phase": "dev decoy"}
     elif recompute and need_decoy:
+        # the read-only host report, embedded in the records (protocol 8.1): the official run's own (taken at its
+        # start), else taken here, before the readings and before any decoy
+        host_rep = host_rep if host_rep is not None else host_report_record(work)
         rin = official_readings()                           # before any decoy: the prepared idle host
         phases = [(f"official decoy {cell}", (cell, plan[cell], "decoy297" if cell == 297 else f"decoy{cell}"))
                   for cell in sorted(plan)]
@@ -2849,8 +2921,8 @@ def science_phase(sel: list, mode: str, heavy: bool, cfg: dict, work: Path, odir
             runs.append({k: v for k, v in r.items() if k != "raw_path"})
             jobs[f"decoy{r.get('cell')}"] = r.get("job")
             rcs[f"decoy{r.get('cell')}"] = r.get("exit")
-        paths["rinputs"].write_text(json.dumps(dict(rin, runs=runs, target_evaluations=0), indent=1, sort_keys=True)
-                                    + "\n")
+        paths["rinputs"].write_text(json.dumps(official_inputs(rin, runs, host_rep), indent=1, sort_keys=True,
+                                               default=str) + "\n")
     # MB r1's children, concurrently (as MB r1 ran them), after the official decoys
     procs = {}
     dflag = ["--_dev"] if mode == "dev" else []
@@ -2905,14 +2977,16 @@ def science_phase(sel: list, mode: str, heavy: bool, cfg: dict, work: Path, odir
     if "Q1_theory" in want:
         cases["Q1_theory"] = q1_theory()
     # ---- the heavy records' evaluations
+    if host_rep is None:                                     # a review of committed records: the report they embed
+        host_rep = (load_record(paths["rinputs"]) or {}).get("host_report")
     if disk["refusal"]:
         for c in need_decoy:
             cases[c] = {"pass": False, "status": "DISK_REFUSED", "refused_before": disk["refusal"].get("phase")}
-        return {"cases": cases, "disk": disk, "exit_codes": rcs}
+        return {"cases": cases, "disk": disk, "exit_codes": rcs, "host_report": host_rep}
     if not executes and (mode == "official" or heavy):       # the records would have to be MADE here: never
         for c in need_decoy:
             cases[c] = {"pass": False, "status": NOT_QUALIFIED}
-        return {"cases": cases, "disk": disk, "exit_codes": rcs}
+        return {"cases": cases, "disk": disk, "exit_codes": rcs, "host_report": host_rep}
     dev = mode == "dev"
     if "QC02" in want:
         ev = failures["decoy297"] or qc02_eval(dec297, frozen_ladder())
@@ -2975,7 +3049,7 @@ def science_phase(sel: list, mode: str, heavy: bool, cfg: dict, work: Path, odir
                     measured_driver_src=measured, cfg=cfg, base_names=base)
             except DV.DeriveRefusal as exc:
                 cases["R_RULES_OFFICIAL"] = {"pass": False, "reason": str(exc)[:300]}
-    return {"cases": cases, "disk": disk, "exit_codes": rcs}
+    return {"cases": cases, "disk": disk, "exit_codes": rcs, "host_report": host_rep}
 
 
 def main(argv=None) -> int:  # noqa: C901
@@ -3045,9 +3119,11 @@ def main(argv=None) -> int:  # noqa: C901
     if not pre["pass"]:
         print(f"QUALIFY REFUSED: preconditions {json.dumps(pre, default=str)}")
         return 2
+    host_rep = None
     if mode == "official":                                           # the whole official run keeps the host awake
         D = driver()
         host0 = {"keep_awake": D.HOST.keep_awake(), "start": D.HOST.snapshot(), "sampler": D.HOST.Sampler().start()}
+        host_rep = host_report_record(work_base)    # read-only, at the start: embedded in the record (protocol 8.1)
     ids = [c["id"] for c in cfg["cases"]]
     sel = ids if mode != "dev" else [i for i in (a.only or "").split(",") if i in ids]
     work_base.mkdir(parents=True, exist_ok=True)
@@ -3063,7 +3139,7 @@ def main(argv=None) -> int:  # noqa: C901
         if cid in PENDING_CASES:
             cases[cid] = pending(cid)
     # the decision-dependent cases FIRST: the official decoys and the prepared-host readings need the idle host
-    sci = science_phase([c for c in sel if c not in PENDING_CASES], mode, heavy, cfg, work, odir, rdir)
+    sci = science_phase([c for c in sel if c not in PENDING_CASES], mode, heavy, cfg, work, odir, rdir, host_rep)
     cases.update(sci["cases"])
     if "QC09-S" in sel:
         cases["QC09-S"] = qc09_guard(work)
@@ -3139,6 +3215,9 @@ def main(argv=None) -> int:  # noqa: C901
                    "what": "QC11-S static, QC12-S leak scans (counts only), QC13-S governance, Q8-S manifest, "
                            "Q1_theory, R_RULES_OFFICIAL (rule inputs: memory, host readings; no certified value)"}],
               "target_evaluations": 0, "host": host,
+              # the read-only host report (protocol 8.1), embedded; it references where the operator's actions are
+              # recorded (the research ledger). A recorded field: its statuses gate nothing here.
+              "host_report": host_rep if host_rep is not None else sci.get("host_report"),
               "disk": {"threshold_bytes": SCR.QUAL_MIN_FREE_BYTES, "repository_threshold_bytes": SCR.HOST.MIN_FREE_DISK,
                        "start": disk0, "checks": sci["disk"]["checks"] + gated["checks"],
                        "cleanups": gated["cleanups"], "refusal": sci["disk"]["refusal"] or gated["refusal"]}}

@@ -744,6 +744,7 @@ def sparse_sandbox(tag: str) -> dict:
     tmp.mkdir(parents=True)
     bs = T.base_store()
     root = tmp / "sbx"
+    T.borrow_clone(root)                     # recorded in the base store before the clone exists (protocol 8.2)
     subprocess.run(["/usr/bin/git", "clone", "-q", "--shared", "--no-checkout", str(bs), str(root)], check=True,
                    env=T.GENV, capture_output=True)
     alt = (root / ".git/objects/info/alternates").read_text().split()
@@ -875,6 +876,238 @@ def t_integration_sparse_sandbox():
             "manifest": sb["manifest_out"], "externals": sb["externals"], "first": first, "second": second,
             "official_refused": official_refused, "tampered": tampered,
             "cases": {k: v.get("pass") for k, v in c.items()}, "tail": tail if not first else ""}
+
+
+# ====================================================================== reviewQ6's repairs (builder7, research brief 56)
+def t_case_without_gate_not_ignored():
+    """R5 (reviewQ6 F-5): a case that names NO gate is not ignored. The committed configuration gives every case a
+    gate. A planted case with `gates: []` (also: no `gates` key, or only an unknown gate) makes the configuration
+    inconsistent (`cases_without_gates` names it) and fails the aggregate (`cases_without_gate` names it) whether that
+    case fails, is PENDING or even passes, while every gate still passes (which is why the gates alone would not have
+    seen it). Control: the same planted case with a gate, passing, leaves the aggregate passing."""
+    saved = Q.BUILT_CASES
+    rows = {"committed_configuration_has_no_gateless_case":
+            Q.config_consistency(CFG)["cases_without_gates"] == [] and
+            Q.aggregate(all_pass_cases(), CFG, "official")["cases_without_gate"] == []}
+    try:
+        Q.BUILT_CASES = tuple(saved) + ("QC97",)
+        for tag, extra in (("empty_list", {"gates": []}), ("no_gates_key", {}), ("gates_null", {"gates": None})):
+            cfg2 = json.loads(json.dumps(CFG))
+            cfg2["cases"].append(dict({"id": "QC97", "status": "BUILT", "depends_on": []}, **extra))
+            cons = Q.config_consistency(cfg2)
+            rows[f"{tag}:consistency_names_it"] = cons["cases_without_gates"] == ["QC97"] and cons["pass"] is False
+            for what, summary in (("failing", {"pass": False}), ("passing", {"pass": True}),
+                                  ("pending", {"pass": False, "status": Q.PENDING_STATUS})):
+                agg = Q.aggregate(dict(all_pass_cases(), QC97=summary), cfg2, "official")
+                rows[f"{tag}:{what}_fails_the_aggregate"] = agg["pass"] is False and \
+                    agg["cases_without_gate"] == ["QC97"] and all(g["pass"] for g in agg["gates"].values())
+        cfg3 = json.loads(json.dumps(CFG))
+        cfg3["cases"].append({"id": "QC97", "gates": ["Q99"], "status": "BUILT", "depends_on": []})
+        agg3 = Q.aggregate(dict(all_pass_cases(), QC97={"pass": False}), cfg3, "official")
+        rows["only_an_unknown_gate_is_no_gate"] = agg3["pass"] is False and agg3["cases_without_gate"] == ["QC97"] \
+            and agg3["config_consistency"]["unknown_gates"] == ["Q99"]
+        cfg4 = json.loads(json.dumps(CFG))
+        cfg4["cases"].append({"id": "QC97", "gates": ["Q8"], "status": "BUILT", "depends_on": []})
+        ok4 = Q.aggregate(dict(all_pass_cases(), QC97={"pass": True}), cfg4, "official")
+        bad4 = Q.aggregate(dict(all_pass_cases(), QC97={"pass": False}), cfg4, "official")
+        rows["control_with_a_gate"] = ok4["pass"] is True and ok4["cases_without_gate"] == [] and \
+            Q.config_consistency(cfg4)["pass"] is True and bad4["pass"] is False and bad4["gates"]["Q8"]["pass"] is False
+        # the aggregate's own check, in isolation: with the consistency verdict planted to PASS, a gate-less case
+        # (passing, so that no gate and no other check could fail) still fails the aggregate
+        cfg5 = json.loads(json.dumps(CFG))
+        cfg5["cases"].append({"id": "QC97", "gates": [], "status": "BUILT", "depends_on": []})
+        real_cons = Q.config_consistency
+        Q.config_consistency = lambda cfg: dict(real_cons(cfg), **{"pass": True})
+        try:
+            alone = Q.aggregate(dict(all_pass_cases(), QC97={"pass": True}), cfg5, "official")
+            alone_ok = Q.aggregate(all_pass_cases(), CFG, "official")
+        finally:
+            Q.config_consistency = real_cons
+        rows["aggregate_fails_on_its_own"] = alone["pass"] is False and alone["cases_without_gate"] == ["QC97"] and \
+            alone["config_consistency"]["pass"] is True and all(g["pass"] for g in alone["gates"].values()) and \
+            alone["cases_missing_pass"] == alone["cases_not_run"] == alone["cases_unknown"] == [] and \
+            alone_ok["pass"] is True
+    finally:
+        Q.BUILT_CASES = saved
+    return {"ok": all(rows.values()), "rows": rows}
+
+
+def t_qc13s_delta_review_tokens():
+    """R1 (reviewQ6 F-1): the two records whose named file is a DELTA review expect the token that is on line 2 of a
+    delta review, DELTA_ACCEPTED, not their status name; each keeps its id, commit and path and says what it means in
+    a `note`. Through the verifier's own check_record on PLANTED files (no real review is opened): each configured
+    record, pointed at a planted delta review (line 2 DELTA_ACCEPTED, the status name only inside a sentence), is OK;
+    pointed at a file whose line 2 is its status name it is VERDICT_MISMATCH. (The coordinator re-runs check_record
+    against the real repository; this test never reads the real files.)"""
+    repo = mini_repo("qc13_delta")
+    gov = {r["id"]: r for r in CFG["governance_records"]}
+    want = {"GOVERNANCE_ACCEPTED": ("00a432dfbde64dfae216a19d1a57ebbe6bbb5cd6", "REVIEW_SUCCESSOR_GOVERNANCE_308_DELTA.md"),
+            "ROUTE_ACCEPTED": ("87d0b2b9ff74a9559a30a918b731d5528ba64288", "REVIEW_SUCCESSOR_ROUTE_308_R3.md")}
+    files = {}
+    for i in want:
+        files[f"r/{i}_delta.md"] = f"# planted delta review\nDELTA_ACCEPTED\n\nthe earlier status {i} stands.\n"
+        files[f"r/{i}_status.md"] = f"# planted\n{i}\n\nDELTA_ACCEPTED in a sentence.\n"
+    c1 = commit(repo, files, "planted delta reviews")
+    mg(repo, "update-ref", "refs/heads/research", c1)
+    show = lambda c, p: Q.git_show_bytes(c, p, repo=repo)  # noqa: E731
+    anc = lambda c, ref: Q.git_rc("merge-base", "--is-ancestor", c, ref, repo=repo) == 0  # noqa: E731
+    rows = {}
+    for i, (cm, name) in want.items():
+        r = gov.get(i) or {}
+        rows[f"{i}:configured"] = r.get("kind") == "verdict" and r.get("verdict") == "DELTA_ACCEPTED" and \
+            r.get("commit") == cm and str(r.get("path", "")).endswith("/reviews/" + name) and \
+            isinstance(r.get("note"), str) and i in r["note"] and "DELTA_ACCEPTED" in r["note"]
+        planted = dict(r, commit=c1, ref="refs/heads/research")
+        ok = Q.check_record(dict(planted, path=f"r/{i}_delta.md"), show=show, is_ancestor=anc)
+        bad = Q.check_record(dict(planted, path=f"r/{i}_status.md"), show=show, is_ancestor=anc)
+        rows[f"{i}:delta_review_ok"] = ok["status"] == "OK" and ok["pass"] is True and ok["id"] == i
+        rows[f"{i}:status_name_on_line_2_mismatch"] = bad["status"] == "VERDICT_MISMATCH" and bad["pass"] is False
+    rows["ledger_agents"] = {"builder6", "builder7", "reviewQ6", "reviewF8", "ratifier2"} <= set(CFG["ledger"]["agents"])
+    return {"ok": all(rows.values()), "rows": rows}
+
+
+def t_q8_commit_pin_mismatch():
+    """G-8 (reviewQ6, YQ7): Q8-S fails on a commit-pin mismatch. On the planted freeze: a manifest entry naming another
+    commit, another path, another blob or (against a pinned sha256) another sha256, an entry whose commit:path no
+    longer resolves, and a missing entry each give `commit_pin_mismatches` naming the pin and fail the case; the
+    planted freeze itself passes with none."""
+    repo, ns, mp, pd, ext_pins, cpins, man = _q8_repo()
+    key = "c:old"
+    good = man["commit_pinned_files"][key]
+
+    def q8(entry=None, expect=None, drop=False):
+        cpf = dict(man["commit_pinned_files"])
+        if drop:
+            cpf.pop(key)
+        elif entry is not None:
+            cpf[key] = dict(good, **entry)
+        return Q.q8_core(dict(man, commit_pinned_files=cpf), repo=repo,
+                         on_disk={str(p.relative_to(repo)) for p in MF.namespace_files(ns, mp, pd)},
+                         expect_ext=ext_pins, expect_commit=cpins if expect is None else expect,
+                         expect_recorded={"driver.sha256": "d" * 64}, bindings_ok=True,
+                         required=[NS_REL + "/code/a.py"], schema=MF.SCHEMA)
+    clean = q8()
+    res = {"clean": clean["pass"] is True and clean["commit_pin_mismatches"] == [] and
+           set(good) >= {"commit", "path", "git_blob", "sha256"}}
+    head = mg(repo, "rev-parse", "HEAD")
+    c, rel, pin = cpins[key]
+    for tag, r in (("other_commit", q8({"commit": head})), ("other_path", q8({"path": "pinned/other.txt"})),
+                   ("other_blob", q8({"git_blob": "0" * 40})), ("other_sha256", q8({"sha256": "0" * 64})),
+                   ("entry_missing", q8(drop=True)),
+                   ("pin_expects_other_sha256", q8(expect={key: (c, rel, "1" * 64)})),
+                   ("pin_no_longer_resolves", q8(expect={key: (c, "pinned/gone.txt", pin)}))):
+        res[tag] = r["commit_pin_mismatches"] == [key] and r["pass"] is False
+    return {"ok": all(v is True for v in res.values()), "res": res}
+
+
+def t_qc12s_raw_text_only_match():
+    """G-9 (reviewQ6, YQ9): in machine-written JSON under the post-freeze directories only a match located INSIDE a
+    timing key is exempt; a match that exists in the RAW text only (it does not survive the JSON parse: here a
+    duplicated key, whose first value the parser drops) is never exempt and is counted. Controls: the same figure in
+    a timing key alone is exempt; the raw-only match beside an exempt one is still counted; the scan fails the case
+    and names the file."""
+    pd = Q.post_freeze_dirs(CODE)
+    rx = Q.tail_regex(PATS)
+    rel = NS_REL + "/qualification/MBS308_PLANTED.json"
+    raw_only = '{"value": "7.003", "value": "x"}'
+    timing_only = json.dumps({"t": {"seconds": "7.003"}})
+    both = '{"value": "7.003", "value": "x", "seconds": "7.003"}'
+    res = {"the_parse_drops_the_first_value": json.loads(raw_only) == {"value": "x"} and len(rx.findall(raw_only)) == 1,
+           "raw_only_match_counted_not_exempt": Q.tail_hits(rel, raw_only, rx, pd, NS_REL) == (1, 0),
+           "timing_key_match_exempt": Q.tail_hits(rel, timing_only, rx, pd, NS_REL) == (0, 1),
+           "raw_only_beside_an_exempt_one": Q.tail_hits(rel, both, rx, pd, NS_REL) == (1, 1)}
+    r = Q.qc12_core([(rel, raw_only)], PATS, post_dirs=pd)
+    res["the_case_fails_and_names_the_file"] = r["pass"] is False and r["tail_figure_hits"] == {rel: 1}
+    return {"ok": all(res.values()), "res": res}
+
+
+def t_rmem_formula_details():
+    """G-10 (reviewQ6: YR6, YR7, YR8, YR10; each reading confirmed by the second ratifier, readings R1): four details
+    of R-MEM on planted runs, every expectation computed here. (1) D is the LARGEST driver peak of the valid runs
+    ("the driver's own peak RSS in those runs"). (2) READING-2: the watchdog's per-RUN peak is part of P, so it moves
+    MEM_CAP. (3) READING-3: a (kind, rung)'s peak in one run is its LARGEST job peak, whatever the order of its jobs,
+    and two blocks of one rung inside ONE run are not a spread (s = 1 when no rung appears in two runs). (4) Step 5
+    sums (WORKERS - 1) x P: four workers at peak for WORKERS 5; exactly at the bound it is feasible, one byte beyond
+    it the rule FAILS ON MEMORY."""
+    M, G = RR.MIB, RR.GIB
+    rows = {}
+
+    def rmem(runs, host=Q.HOST_8G):
+        return RR.r_mem(runs, required_cells=(297, 316), workers=5, mem_poll_s="2", host=host, sampler=Q.SAMPLER_OK)
+    # (1) D: the largest driver peak (the smallest would be 64 MiB)
+    a = rmem([Q._run("a", 297, [("RLR", 4, 100 * M)], driver_peak=64 * M),
+              Q._run("b", 316, [("C2B", 20, 100 * M)], driver_peak=96 * M)])
+    a2 = rmem([Q._run("a", 297, [("RLR", 4, 100 * M)], driver_peak=96 * M),
+               Q._run("b", 316, [("C2B", 20, 100 * M)], driver_peak=64 * M)])
+    rows["D_is_the_largest_driver_peak"] = a["status"] == a2["status"] == "OK" and a["D_bytes"] == 96 * M and \
+        a2["D_bytes"] == 96 * M and a["feasibility"]["lhs_bytes"] == G + 4 * 100 * M + 96 * M
+    # (2) READING-2: the per-run watchdog peak enters P: 3 x 500 MiB = 1500 MiB -> 1536 MiB (job peaks alone: 1 GiB)
+    b = rmem([Q._run("a", 297, [("RLR", 4, 300 * M)], worker_peak=500 * M), Q._run("b", 316, [("C2B", 20, 300 * M)])])
+    b0 = rmem([Q._run("a", 297, [("RLR", 4, 300 * M)]), Q._run("b", 316, [("C2B", 20, 300 * M)])])
+    rows["watchdog_run_peak_is_part_of_P"] = b["status"] == b0["status"] == "OK" and b["P_bytes"] == 500 * M and \
+        b["MEM_CAP_BYTES"] == 1536 * M and b0["P_bytes"] == 300 * M and b0["MEM_CAP_BYTES"] == G
+    # (3) READING-3: the rung's per-run peak is its largest job, not its last (400 then 100 in run a; 400 in run b)
+    c = rmem([Q._run("a", 297, [("RLR", 4, 400 * M), ("RLR", 4, 100 * M)]), Q._run("b", 316, [("RLR", 4, 400 * M)])])
+    c2 = rmem([Q._run("a", 297, [("RLR", 4, 100 * M), ("RLR", 4, 400 * M)]), Q._run("b", 316, [("RLR", 4, 400 * M)])])
+    one = rmem([Q._run("a", 297, [("RLR", 4, 100 * M), ("RLR", 4, 400 * M)]), Q._run("b", 316, [("C2B", 20, 50 * M)])])
+    rows["rung_peak_in_a_run_is_its_largest_job"] = c["status"] == c2["status"] == "OK" and \
+        c["s"] == c2["s"] == "1" and c["k"] == c2["k"] == "3" and c["MEM_CAP_BYTES"] == c2["MEM_CAP_BYTES"] == 1280 * M
+    rows["two_blocks_in_one_run_are_no_spread"] = one["status"] == "OK" and one["s"] == "1" and one["k"] == "3" and \
+        one["spread_by_kind_rung"] == {} and one["MEM_CAP_BYTES"] == 1280 * M
+    # (4) step 5: MEM_CAP + (5 - 1) x P + D, exactly: 1280 + 4 x 400 + 64 = 2944 MiB
+    runs = [Q._run("a", 297, [("RLR", 4, 400 * M)]), Q._run("b", 316, [("RLR", 4, 400 * M)])]
+    lhs = 1280 * M + 4 * 400 * M + 64 * M
+
+    def host(rhs):                                  # hw.memsize - W_idle = rhs (W_idle = 1000 pages of 16384 bytes)
+        return {"hw_memsize_bytes": rhs + 1000 * 16384, "wired_pages": 1000, "page_size_bytes": 16384}
+    at, beyond = rmem(runs, host(lhs)), rmem(runs, host(lhs - 1))
+    three = rmem(runs, host(lhs - 400 * M))         # what a sum over three workers would still pass
+    rows["step5_sum_has_four_workers"] = at["status"] == "OK" and at["feasibility"] == {
+        "lhs_bytes": lhs, "rhs_bytes": lhs, "W_idle_bytes": 1000 * 16384, "workers": 5, "ok": True} and \
+        beyond["status"] == "FAILS_ON_MEMORY" and beyond["feasibility"]["ok"] is False and \
+        beyond["feasibility"]["lhs_bytes"] == lhs and three["status"] == "FAILS_ON_MEMORY"
+    return {"ok": all(rows.values()), "rows": rows}
+
+
+def t_qc12s_json_escaped_figure():
+    """Brief 56 follow-up, item 4: QC12-S also scans a JSON file as the parser DECODES it. A planted neutral figure
+    written with a JSON escape (its point as \\u002e, or a digit as \\u0037) has NO raw-text match; it is counted all
+    the same: in post-freeze evidence in a non-timing field (and as a KEY), and in JSON outside the post-freeze
+    directories (no exemption there); inside a timing key of post-freeze evidence it is exempt and counted as such,
+    as an unescaped one is. Not decoded: a file that is not JSON (the same characters in a Markdown file are not that
+    figure) and JSON that does not parse (raw text only). The case fails and names the file; its run-time control for
+    this (built from the patterns, as its other controls) is present and holds, and fails when the decoded scan is
+    off."""
+    pd = Q.post_freeze_dirs(CODE)
+    rx = Q.tail_regex(PATS)
+    post, conf = NS_REL + "/qualification/MBS308_PLANTED.json", NS_REL + "/config/PLANTED.json"
+    esc_point, esc_digit = "7\\u002e003", "\\u0037.003"
+    res = {"escaped_text_has_no_raw_match_but_decodes_to_the_figure": all(
+        not rx.findall('{"v": "%s"}' % e) and json.loads('{"v": "%s"}' % e) == {"v": "7.003"}
+        for e in (esc_point, esc_digit))}
+    for tag, e in (("point", esc_point), ("digit", esc_digit)):
+        res[f"{tag}:evidence_value_counted"] = Q.tail_hits(post, '{"record": {"value": "%s"}}' % e, rx, pd,
+                                                           NS_REL) == (1, 0)
+        res[f"{tag}:evidence_key_counted"] = Q.tail_hits(post, '{"%s": 1}' % e, rx, pd, NS_REL) == (1, 0)
+        res[f"{tag}:evidence_timing_key_exempt"] = Q.tail_hits(post, '{"t": {"seconds": "%s"}}' % e, rx, pd,
+                                                               NS_REL) == (0, 1)
+        res[f"{tag}:json_outside_post_freeze_counted"] = Q.tail_hits(conf, '{"seconds": "%s"}' % e, rx, pd,
+                                                                     NS_REL) == (1, 0)
+        res[f"{tag}:not_json_not_decoded"] = Q.tail_hits(NS_REL + "/protocol/P.md", 'value "%s" here' % e, rx, pd,
+                                                         NS_REL) == (0, 0)
+        res[f"{tag}:unparseable_json_raw_only"] = Q.tail_hits(post, '{"v": "%s"' % e, rx, pd, NS_REL) == (0, 0)
+    res["unescaped_counts_are_unchanged"] = Q.tail_hits(post, json.dumps({"value": "7.003"}), rx, pd, NS_REL) == (1, 0) \
+        and Q.tail_hits(conf, json.dumps({"seconds": "7.003"}), rx, pd, NS_REL) == (1, 0) and \
+        Q.tail_hits(post, json.dumps({"seconds": "7.003"}), rx, pd, NS_REL) == (0, 1) and \
+        Q.tail_hits(post, json.dumps({"value": "nothing"}), rx, pd, NS_REL) == (0, 0)
+    r1 = Q.qc12_core([(post, '{"record": {"value": "%s"}}' % esc_point)], PATS, post_dirs=pd)
+    r2 = Q.qc12_core([(conf, '{"value": "%s"}' % esc_digit)], PATS, post_dirs=pd)
+    r0 = Q.qc12_core([(post, json.dumps({"value": "nothing"}))], PATS, post_dirs=pd)
+    res["the_case_fails_and_names_the_file"] = r1["pass"] is False and r1["tail_figure_hits"] == {post: 1} and \
+        r2["pass"] is False and r2["tail_figure_hits"] == {conf: 1}
+    res["run_time_control_present_and_holds"] = r0["pass"] is True and \
+        r0.get("planted_json_escaped_value_in_evidence_fires") is True
+    return {"ok": all(res.values()), "res": res}
 
 
 if __name__ == "__main__":

@@ -475,6 +475,46 @@ def t_identity_command_unreadable_unknown():
             "recorded_command_field": recorded_now.get("command_sha256")}
 
 
+def t_identity_command_empty_reading_unknown():
+    """G-1 (reviewQ6: Y6b, Y6c): an EMPTY `ps -o command=` reading is a failed reading, never the digest of the empty
+    string. The failure is planted at the READING (the host module's command reader), not by replacing
+    process_command_sha256, so the guard inside that function is what is exercised: with the command read returning
+    an empty output, a blank line, or failing (the start-time read still works), process_command_sha256 is None, a
+    live recorded process is UNKNOWN (never DEAD), and an identity recorded at that moment carries no command field.
+    Control: unplanted, the same identity is ALIVE; DEAD once the pid is gone."""
+    import hashlib
+    H, L, S = mods()
+    direct = [H.process_command_sha256(1, text=t) for t in ("", "\n", "   \n")]
+    h = T.Helper(60)
+    real_run = H._run
+    states, recorded, start_ok = {}, {}, {}
+    try:
+        full = H.identity(h.p.pid)
+        for tag, val in (("empty_output", ""), ("blank_line", "\n"), ("failed_ps", None)):
+            def planted(args, timeout=60, _v=val):                  # only the command read is planted
+                if "command=" in args:
+                    return _v
+                return real_run(args, timeout)
+            H._run = planted
+            try:
+                states[tag] = H.identity_state(full)
+                recorded[tag] = H.identity(h.p.pid).get("command_sha256")
+                start_ok[tag] = H.process_start(h.p.pid) == full["start_time"]
+            finally:
+                H._run = real_run
+        control = H.identity_state(full)
+    finally:
+        H._run = real_run
+        h.kill()
+    empty_digest = hashlib.sha256(b"").hexdigest()
+    return {"ok": all(d is None for d in direct) and full.get("command_sha256") not in (None, empty_digest)
+            and all(v == "UNKNOWN" for v in states.values()) and len(states) == 3
+            and all(v is None for v in recorded.values()) and all(start_ok.values()) and control == "ALIVE"
+            and H.identity_state(full) == "DEAD",
+            "direct_is_none": [d is None for d in direct], "live_state_with_empty_command_reading": states,
+            "recorded_command_field": recorded, "unplanted": control}
+
+
 def t_preflight_timeout_rule():
     """R3 (ratification item 31): the launcher's preflight timeout is the RULE PRE_CAP_S + 100 s, with PRE_CAP_S the
     driver's own. Checked on the code under test (the driver's PRE_CAP_S read independently here) and on a copy whose

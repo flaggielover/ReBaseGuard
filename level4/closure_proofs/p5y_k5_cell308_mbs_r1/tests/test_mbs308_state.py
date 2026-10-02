@@ -1378,5 +1378,177 @@ def t_decoy_failure_record_on_watchdog_event():
             "events": kills[:2]}
 
 
+# ====================================================================== reviewQ6's repairs (builder7, research brief 56)
+def _pid_gates(ident, **spec) -> dict:
+    """The driver's start gates in a child, every planted reading good, with `ident` recorded in the campaign pidfile
+    (None: no pidfile)."""
+    st = store()
+    st.spool(create=True)
+    pf = st.spool() / S().PIDFILE
+    if pf.exists():
+        pf.unlink()
+    if ident is not None:
+        pf.write_text(json.dumps({"identity": ident}))
+    planted = {"host": GOOD_HOST, "su": SU_OFF, "vm_stat": _vm(big_memory())}
+    if "ps" in spec:
+        planted["ps"] = spec.pop("ps")
+    return T.child(sb(), "host_gates", dict(spec, planted=planted))["out"]
+
+
+def t_start_gates_fail_closed_on_no_reading():
+    """R6 (reviewQ6 ruling (a)): the two start gates that failed OPEN on a failed `ps` fail CLOSED. Through the
+    DRIVER's host_preflight in a sandbox child, every other reading planted good:
+    host_exclusive: a failed `ps -A` (the reading itself fails), an empty output and an output without a process row
+    refuse (HOST_PREFLIGHT: host_exclusive); a quiet listing passes; a busy process refuses (as before).
+    no_other_campaign_job: a pidfile recording a LIVE process whose `ps` readings fail is not STALE (UNKNOWN is never
+    DEAD): the gate refuses; a live recorded process refuses (as before); a pidfile of a positively dead process (pid
+    gone, or the pid reused: another start time) and no pidfile pass."""
+    fresh()
+    busy = PS_QUIET + " 4242     1  90.0 /Applications/Busy.app/Contents/MacOS/Busy\n"
+    excl = {"HOST_PREFLIGHT: host_exclusive"}
+    job = {"HOST_PREFLIGHT: no_other_campaign_job"}
+    out = {"quiet": _pid_gates(None, ps=PS_QUIET), "busy": _pid_gates(None, ps=busy),
+           "ps_fails": _pid_gates(None, ps_list_fails=True), "ps_empty": _pid_gates(None, ps=""),
+           "ps_no_row": _pid_gates(None, ps="garbage line\n\n")}
+    h = T.Helper(180)
+    try:
+        live = host().identity(h.p.pid)
+        out["pid_live"] = _pid_gates(live, ps=PS_QUIET)
+        out["pid_live_ps_failing"] = _pid_gates(live, ps=PS_QUIET, ps_fail_pids=[h.p.pid])
+        out["pid_reused"] = _pid_gates(dict(live, start_time="Thu Jan  1 00:00:00 1970"), ps=PS_QUIET)
+    finally:
+        h.kill()
+    out["pid_dead"] = _pid_gates(dead_identity(), ps=PS_QUIET)
+    out["pid_absent"] = _pid_gates(None, ps=PS_QUIET)
+    (store().spool() / S().PIDFILE).unlink(missing_ok=True)
+    det = {k: (v or {}).get("detail") for k, v in out.items()}
+    passes = {k: (v or {}).get("rc") == 0 and all(v["gates"].values()) for k, v in out.items()}
+    ok = all(passes[k] for k in ("quiet", "pid_dead", "pid_reused", "pid_absent")) and \
+        all({det[k]} == excl and out[k]["rc"] == 2 for k in ("busy", "ps_fails", "ps_empty", "ps_no_row")) and \
+        all({det[k]} == job and out[k]["rc"] == 2 for k in ("pid_live", "pid_live_ps_failing"))
+    return {"ok": ok, "cases": {k: det[k] or ("PASS" if passes[k] else "?") for k in out}}
+
+
+def t_lock_read_never_follows_symlink():
+    """G-7 (reviewQ6, YS3): lock_read, the one reader of the recover lock, never follows a symlink. A lock NAME that is
+    a symlink to a file holding a complete lock record of a DEAD process (inside the spool, or outside it) reads None,
+    exactly as no lock does, while the same bytes under a regular name are read; so Lock.acquire never takes a
+    symlink's target for a stale holder: it breaks nothing, moves nothing aside, takes nothing (LOCK_RACE) and leaves
+    the symlink and its target untouched."""
+    fresh()
+    Sm = S()
+    st = store()
+    sp = st.spool(create=True)
+    for n in os.listdir(sp):
+        if n.startswith("recover.lock") or n.startswith("planted"):
+            os.unlink(sp / n)
+    data = Sm.canon({"identity": dead_identity(), "utc": Sm.utc()})
+    inside, outside = sp / "planted-holder", sb().tmp / "planted-holder-outside"
+    out = {}
+    for tag, target in (("inside_the_spool", inside), ("outside_the_spool", outside)):
+        target.write_bytes(data)
+        lock = sp / "recover.lock"
+        os.symlink(target, lock)
+        out[f"{tag}:symlink_reads_none"] = Sm.lock_read(st, "recover.lock") is None
+        lk = Sm.Lock(st)
+        try:
+            lk.acquire()
+            res = "TAKEN"
+        except Sm.Locked as e:
+            res = e.code
+        out[f"{tag}:acquire_takes_nothing"] = res == "LOCK_RACE" and lk.held is False and lock.is_symlink() and \
+            target.read_bytes() == data and _lock_files()["asides"] == []
+        lk.release()
+        for n in os.listdir(sp):                                    # whatever the attempt left (nothing, as asserted)
+            if n.startswith("recover.lock"):
+                os.unlink(sp / n)
+        target.unlink(missing_ok=True)
+    (sp / "recover.lock").write_bytes(data)
+    out["regular_file_is_read"] = Sm.lock_read(st, "recover.lock") == data
+    os.unlink(sp / "recover.lock")
+    out["absent_reads_none"] = Sm.lock_read(st, "recover.lock") is None
+    return {"ok": all(out.values()), "cases": out}
+
+
+def t_decoy_record_ladder_and_driver_peak():
+    """G-2 (reviewQ6: YM2, YM6): two recorded fields of main()'s decoy branch. (1) The ladder: a decoy run with
+    --dev-ladder is recorded as "dev", never "frozen", so it can never satisfy R-MEM step 1 (NOT_THE_FROZEN_LADDER;
+    t_decoy_records_rmem_inputs covers the frozen side). (2) D is the DRIVER's own peak RSS (ru_maxrss of RUSAGE_SELF),
+    not its children's: the synthetic jobs hold 256 MB each, so the workers' peak (RUSAGE_CHILDREN, read in the same
+    child after the run) is far above the driver's; the recorded D is at most the driver's own peak read after the
+    run and well below the children's."""
+    sb()
+    out = sb().tmp / "decoy_main_synth_dev.json"
+    out.unlink(missing_ok=True)
+    r = T.child(sb(), "decoy-main-synth", {"out": str(out), "alloc_mb": 256, "job_sleep": 1.0, "dev_ladder": True,
+                                           "report_rusage": True}, timeout=600)
+    try:
+        rec = json.loads(out.read_text())
+    except (OSError, ValueError):
+        return {"ok": False, "child": r["out"], "tail": (r["stdout"] + r["stderr"])[-600:]}
+    S()
+    import mbs308_rrules as RR
+    lc = rec.get("lifecycle", {})
+    cfg, ctx = lc.get("rmem_run") or {}, lc.get("stage1_context") or {}
+    ch = r["out"] or {}
+    d, own, kids = lc.get("driver_maxrss_bytes"), ch.get("self_maxrss_bytes"), ch.get("children_maxrss_bytes")
+    run = {"id": "synthetic-dev", "cell": 297, "launcher": True, "ladder": cfg.get("ladder"), "workers": 5,
+           "mem_cap_bytes": cfg.get("mem_cap_bytes"), "mem_poll_s": cfg.get("mem_poll_s"), "rerun_of": None,
+           "watchdog_events": (ctx.get("memory_watchdog") or {}).get("events"), "driver_maxrss_bytes": d,
+           "worker_peak_rss_bytes": None,
+           "jobs": [{"name": n, "kind": n.split(".")[0], "rung": int(n.split(".")[2]), "job_maxrss_bytes": v}
+                    for n, v in (ctx.get("job_maxrss_bytes") or {}).items()]}
+    const = rule_constants()
+    from fractions import Fraction as F
+    reasons = RR._run_reasons(run, const["MEM_CAP_BYTES"], F(repr(float(F(const["MEM_POLL_S"])))))
+    mib = 1024 * 1024
+    rows = {"child_ran": ch.get("rc") == 0 and rec.get("synthetic") is True and len(run["jobs"]) > 0,
+            "dev_ladder_recorded_as_dev": cfg.get("ladder") == "dev",
+            "a_dev_ladder_run_is_never_a_step1_input": reasons == ["NOT_THE_FROZEN_LADDER"],
+            "control_children_far_above_the_driver": all(isinstance(x, int) for x in (d, own, kids)) and
+            kids >= 256 * mib and kids > own + 64 * mib,
+            "D_is_the_drivers_own_peak": isinstance(d, int) and isinstance(own, int) and isinstance(kids, int) and
+            10 * mib < d <= own < kids}
+    return {"ok": all(rows.values()), "rows": rows, "driver_maxrss_bytes": d, "self_after": own,
+            "children_after": kids, "ladder": cfg.get("ladder"), "r_mem_step1_reasons": reasons}
+
+
+def t_decoy_record_driver_peak_read_last():
+    """Brief 56 follow-up, item 3: R-MEM's D ("the driver's own peak RSS in those runs", ru_maxrss of RUSAGE_SELF) is
+    read LAST in main()'s decoy branch: after the run's host-provenance collection, immediately before the record is
+    serialised. The provenance collection is planted to hold 300 MB of resident memory while it runs (a stand-in for
+    its power-log read) and the process's peak RSS is read INSIDE it; the recorded D must be at least that reading
+    (ru_maxrss never decreases, so a D read before the provenance collection would be far below it) and at most the
+    process's peak read after main() returned. The same holds for a decoy that FAILS (its record is written too)."""
+    sb()
+    mib = 1024 * 1024
+    rows, seen = {}, {}
+    for tag, extra in (("completed", {"alloc_mb": 64, "job_sleep": 1.0}),
+                       ("failed", {"alloc_mb": 400, "job_sleep": 3, "mem_cap_mb": 200})):
+        out = sb().tmp / f"decoy_main_synth_last_{tag}.json"
+        out.unlink(missing_ok=True)
+        r = T.child(sb(), "decoy-main-synth", dict(extra, out=str(out), provenance_alloc_mb=300, report_rusage=True),
+                    timeout=600)
+        try:
+            rec = json.loads(out.read_text())
+        except (OSError, ValueError):
+            return {"ok": False, "case": tag, "child": r["out"], "tail": (r["stdout"] + r["stderr"])[-600:]}
+        d = (rec.get("lifecycle") or {}).get("driver_maxrss_bytes")
+        ch = r["out"] or {}
+        inside, after = ch.get("maxrss_inside_provenance_bytes"), ch.get("self_maxrss_bytes")
+        seen[tag] = {"D": d, "inside_provenance": inside, "after_main": after, "rc": r["rc"]}
+        if tag == "completed":
+            rows["completed_run_recorded"] = ch.get("rc") == 0 and rec.get("synthetic") is True and \
+                "decoy_failed" not in rec and isinstance(rec.get("host"), dict)
+            rows["control_the_plant_took_effect"] = isinstance(inside, int) and inside >= 300 * mib
+            rows["D_read_after_the_provenance_collection"] = isinstance(d, int) and isinstance(inside, int) and \
+                isinstance(after, int) and inside <= d <= after
+        else:                       # the failure is re-raised (no JSON line with rc 0); the record is still written
+            rows["failed_run_recorded"] = isinstance(rec.get("decoy_failed"), str) and r["out"] != {"rc": 0} and \
+                isinstance(rec.get("host"), dict)
+            rows["failed_run_D_read_after_the_provenance_collection"] = isinstance(d, int) and d >= 300 * mib
+    return {"ok": all(rows.values()), "rows": rows, "readings": seen}
+
+
 if __name__ == "__main__":
     T.cli(globals())

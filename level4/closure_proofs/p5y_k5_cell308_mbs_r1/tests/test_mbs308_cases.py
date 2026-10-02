@@ -146,6 +146,15 @@ HOSTING = {"paths": ["/Applications/Planted.app/"], "chain": [{"pid": 2, "comm":
 SIP_PROC = {"pid": 77, "comm": "/usr/libexec/plantedd", "pcpu": "30.0", "hosting_app": False}
 
 
+def planted_host_report(**over) -> dict:
+    """A PLANTED read-only host report with the structure the verifier's own has (brief 56 follow-up): every checklist
+    item with a status, read_only, and the reference to where the operator's actions are recorded."""
+    return dict({"schema": DV.HOST_REPORT_SCHEMA, "read_only": True, "changes_made": False, "utc": "planted",
+                 "items": [{"item": k, "checked_by": "planted", "status": "NOT_READY", "reading": None, "note": ""}
+                           for k in DV.HOST_REPORT_ITEMS],
+                 "operator_actions": copy.deepcopy(DV.OPERATOR_ACTIONS), "ready": False}, **over)
+
+
 def evidence(runs=None, rds=None, *, designated=True, driver_sha=None, commit="c" * 40, hw=16 * GIB,
              hosting=None) -> dict:
     """PLANTED designated-measurement evidence (never written into the worktree)."""
@@ -153,7 +162,8 @@ def evidence(runs=None, rds=None, *, designated=True, driver_sha=None, commit="c
             "status": "MEASURED", "invalid_reasons": [], "host_not_prepared": [], "commit": commit,
             "driver_sha256": driver_sha or sha(DRV.encode()), "hw_memsize_bytes": hw,
             "hosting_app": hosting or HOSTING, "readings": rds if rds is not None else readings(procs=[SIP_PROC]),
-            "runs": runs if runs is not None else [run_of(297), run_of(316)], "target_evaluations": 0}
+            "runs": runs if runs is not None else [run_of(297), run_of(316)], "target_evaluations": 0,
+            "host_report": planted_host_report()}
 
 
 def derive(ev: dict) -> dict:
@@ -843,7 +853,7 @@ def t_protocol_table_is_the_drivers_constants():
 
 def _official(runs=None, rds=None, hosting=None, hw=16 * GIB) -> dict:
     return {"readings": rds if rds is not None else readings(procs=[SIP_PROC]), "hosting_app": hosting or HOSTING,
-            "hw_memsize_bytes": hw, "runs": runs if runs is not None else
+            "hw_memsize_bytes": hw, "host_report": planted_host_report(), "runs": runs if runs is not None else
             [run_of(297, cap=EXPECT["MEM_CAP_BYTES"]), run_of(316, cap=EXPECT["MEM_CAP_BYTES"])]}
 
 
@@ -1205,7 +1215,7 @@ def t_measure_run_validity():
     return {"ok": all(r.values()), "rows": r}
 
 
-def _measure(tag: str, *, rds=None, spec=None, dev=True, plan=None) -> dict:
+def _measure(tag: str, *, rds=None, spec=None, dev=True, plan=None, hrep="planted") -> dict:
     """MEAS.measure on PLANTED readings with the SYNTHETIC payload as the launched program (test label prefix; logs
     under the test log directory; every job booted out and its plist removed by the measurement code itself)."""
     import mbs308_launch as L
@@ -1224,7 +1234,8 @@ def _measure(tag: str, *, rds=None, spec=None, dev=True, plan=None) -> dict:
                       workers=5, dev=dev, base_names=base_names(), h3_readings=H3, one_reading=lambda: next(seq),
                       program_for=program_for, label_prefix="org.rebaseguard.mbs308.test.",
                       log_dir=Path.home() / "Library/Logs/ReBaseGuard/mbs308-test", pre={"commit": "planted"},
-                      n_readings=10, spacing_s=0.0, hosting=HOSTING, sleep=lambda s: None)
+                      n_readings=10, spacing_s=0.0, hosting=HOSTING, sleep=lambda s: None,
+                      host_report=planted_host_report() if hrep == "planted" else hrep)
     left = sorted(p.name for p in (work / "launch").glob("*.plist"))
     jobs = subprocess.run(["/bin/launchctl", "list"], capture_output=True, text=True).stdout
     labels = [(r.get("job") or {}).get("label") for r in ev["runs"]]
@@ -1665,6 +1676,249 @@ def t_declared_cases_all_built_and_pending_fails_closed():
         all_pass["pass"] is True and "QS-CASES" in Q.SUITE_CASES and \
         CFG["suites"]["QS-CASES"] == "tests/test_mbs308_cases.py"
     return {"ok": ok, "cases": len(CFG["cases"])}
+
+
+# ====================================================================== brief 56 follow-up (builder7): the embedded host report
+def t_host_report_structure_check():
+    """Follow-up item 1 (reviewQ6 section 5, note (e)): the structure check of the EMBEDDED read-only host report
+    (mbs308_derive.host_report_reasons). A report with the verifier's structure passes whatever its statuses say (the
+    report is a record, not a gate: every item NOT_READY passes, every item READY passes); no report, a report that
+    could not be taken, another schema, one not read-only, a missing, duplicated or unknown item, an item without a
+    known status or without how it is checked, no time and no (or another) reference to where the operator's actions
+    are recorded each fail with their reason. That reference is the research ledger the configuration names (QC13-S's
+    ledger: same ref and path), written with the research logger. The verifier's OWN report -- taken read-only in a
+    fresh process in a sparse sandbox, through the measurement tool's host_report_of -- passes the check and carries
+    the reference; its code builds exactly the checklist items the check requires; protocol 8.1 names the place."""
+    ok = planted_host_report()
+    items = ok["items"]
+    r = {"planted_report_passes": DV.host_report_reasons(ok) == [],
+         "statuses_are_not_judged": DV.host_report_reasons(planted_host_report(
+             items=[dict(i, status="READY") for i in items], ready=True)) == [] and
+         DV.host_report_reasons(planted_host_report(items=[dict(i, status="UNKNOWN") for i in items])) == []}
+    bad = {"none": (None, ["HOST_REPORT_NOT_EMBEDDED"]), "not_an_object": ("report", ["HOST_REPORT_NOT_EMBEDDED"]),
+           "other_schema": (planted_host_report(schema="x"), ["HOST_REPORT_SCHEMA"]),
+           "not_read_only": (planted_host_report(read_only=False), ["HOST_REPORT_NOT_READ_ONLY"]),
+           "changes_made": (planted_host_report(changes_made=True), ["HOST_REPORT_NOT_READ_ONLY"]),
+           "item_missing": (planted_host_report(items=items[1:]), ["HOST_REPORT_ITEMS"]),
+           "item_twice": (planted_host_report(items=items[1:] + [items[1]]), ["HOST_REPORT_ITEMS"]),
+           "item_unknown": (planted_host_report(items=items + [dict(items[0], item="other")]), ["HOST_REPORT_ITEMS"]),
+           "items_not_a_list": (planted_host_report(items={"a": 1}), ["HOST_REPORT_ITEMS"]),
+           "item_not_an_object": (planted_host_report(items=items[:-1] + ["free_memory"]), ["HOST_REPORT_ITEMS"]),
+           "unknown_status": (planted_host_report(items=[dict(items[0], status="FINE")] + items[1:]),
+                              ["HOST_REPORT_ITEM_STATUS"]),
+           "no_checked_by": (planted_host_report(items=[dict(items[0], checked_by="")] + items[1:]),
+                             ["HOST_REPORT_ITEM_STATUS"]),
+           "no_time": (planted_host_report(utc=None), ["HOST_REPORT_TIME"]),
+           "no_reference": ({k: v for k, v in ok.items() if k != "operator_actions"},
+                            ["OPERATOR_ACTIONS_NOT_REFERENCED"]),
+           "another_place": (planted_host_report(operator_actions=dict(DV.OPERATOR_ACTIONS, recorded_in="notes.txt")),
+                             ["OPERATOR_ACTIONS_NOT_REFERENCED"])}
+    for k, (rep, want) in bad.items():
+        r[k] = DV.host_report_reasons(rep) == want
+    saved = Q.host_report
+
+    def boom(work=None):
+        raise RuntimeError("planted: the report cannot be taken")
+    Q.host_report = boom
+    try:
+        failed = Q.host_report_record(None)
+    finally:
+        Q.host_report = saved
+    r["a_report_that_could_not_be_taken_is_recorded_and_fails"] = "RuntimeError" in str(failed.get("error")) and \
+        "HOST_REPORT_SCHEMA" in DV.host_report_reasons(failed) and "HOST_REPORT_ITEMS" in DV.host_report_reasons(failed)
+    oa = DV.OPERATOR_ACTIONS
+    r["the_place_is_the_research_ledger_of_the_configuration"] = oa["recorded_in"] == CFG["ledger"]["path"] and \
+        oa["ref"] == CFG["ledger"]["ref"] and oa["written_with"].endswith("code/c308_quarantine.py log_event") and \
+        "user's statement and its time" in oa["line"] and len(oa["actions"]) == 4
+    fn = [x for x in ast.parse((CODE / "mbs308_qualify.py").read_text()).body
+          if isinstance(x, ast.FunctionDef) and x.name == "host_report"]
+    built = [c.args[0].value for c in ast.walk(fn[0]) if isinstance(c, ast.Call) and
+             getattr(c.func, "id", None) == "item" and c.args and isinstance(c.args[0], ast.Constant)] if fn else []
+    r["the_verifier_builds_exactly_these_items"] = sorted(built) == sorted(DV.HOST_REPORT_ITEMS) and \
+        len(built) == len(DV.HOST_REPORT_ITEMS) == 14 and Q.HOST_REPORT_STATUSES == DV.HOST_REPORT_STATUSES
+    p = PROTO.read_text()
+    s81 = p.split("\n### 8.1", 1)[1].split("\n### 8.2", 1)[0] if "\n### 8.1" in p else ""
+    r["protocol_8_1_names_the_place"] = "ledger/TARGET_INTEGRITY_LEDGER.jsonl" in s81 and "log_event" in s81 and \
+        "operator_actions" in s81 and "host_report" in s81 and "the user's statement and its time" in s81
+    sys.path.insert(0, str(T.NSS / "tests"))
+    import test_mbs308_qualify as TQ
+    sb = TQ.sparse_sandbox("host_report_embedded")
+    work = sb["tmp"] / "work"
+    work.mkdir()
+    real = MEAS.host_report_of(sb["dst"], work, sb["root"])
+    r["the_verifiers_own_report_passes"] = isinstance(real, dict) and DV.host_report_reasons(real) == [] and \
+        real.get("operator_actions") == DV.OPERATOR_ACTIONS and real.get("read_only") is True and \
+        len(list(work.glob("MBS308_HOST_REPORT_*.json"))) == 1
+    shutil.rmtree(sb["tmp"], ignore_errors=True)
+    return {"ok": all(r.values()), "rows": r, "real_report_reasons": DV.host_report_reasons(real)}
+
+
+def t_records_without_the_host_report_fail():
+    """Follow-up item 1: a record WITHOUT the embedded host report fails its case's structure check. Designated
+    evidence without it (or with a malformed one) is not evidence: the derivation is NOT_DERIVED and names the reason,
+    and R_RULES_OFFICIAL fails on it; the official rule-input record without it fails R_RULES_OFFICIAL
+    (`official_host_report_reasons`); with both reports the case passes (control), whatever the reports' statuses.
+    The measurement embeds the report it is given, as given, and a measurement without one is invalid
+    (HOST_REPORT_NOT_EMBEDDED among its reasons). The verifier's rule-input record carries the report it is given."""
+    def without(d: dict) -> dict:
+        return {k: v for k, v in d.items() if k != "host_report"}
+    good = _rro()
+    ev_none, ev_bad = without(evidence()), dict(evidence(), host_report=planted_host_report(read_only=False))
+    d_none, d_bad, d_ok = derive(ev_none), derive(ev_bad), derive(evidence())
+    a_none = _rro(ev=ev_none)
+    o_none = _rro(official=without(_official()))
+    o_bad = _rro(official=dict(_official(), host_report=planted_host_report(items=[])))
+    o_err = _rro(official=dict(_official(), host_report={"error": "planted", "read_only": True, "changes_made": False}))
+    ready = planted_host_report(items=[dict(i, status="READY") for i in planted_host_report()["items"]], ready=True)
+    o_ready = _rro(ev=dict(evidence(), host_report=ready), official=dict(_official(), host_report=ready))
+    r = {"control_passes": good["pass"] is True and good["official_host_report_reasons"] == [] and
+         good["A"]["evidence_reasons"] == [] and d_ok["status"] == "OK",
+         "statuses_do_not_matter": o_ready["pass"] is True,
+         "evidence_without_it_is_not_derived": d_none["status"] == "NOT_DERIVED" and d_none["designated"] is False and
+         d_none["evidence_reasons"] == ["HOST_REPORT_NOT_EMBEDDED"] and
+         all(v is None for v in d_none["outputs"].values()) and d_none["stop_before_freeze"] is True,
+         "evidence_with_a_malformed_one_is_not_derived": d_bad["status"] == "NOT_DERIVED" and
+         d_bad["evidence_reasons"] == ["HOST_REPORT_NOT_READ_ONLY"],
+         "r_rules_official_fails_on_such_evidence": a_none["pass"] is False and
+         a_none["A"]["evidence_reasons"] == ["HOST_REPORT_NOT_EMBEDDED"] and a_none["A"]["status"] == "NOT_DERIVED",
+         "official_record_without_it_fails": o_none["pass"] is False and
+         o_none["official_host_report_reasons"] == ["HOST_REPORT_NOT_EMBEDDED"] and
+         o_none["status"] == "NOT_IN_AGREEMENT" and all(v["equal"] for v in o_none["comparison_by_output"].values()),
+         "official_record_with_a_malformed_one_fails": o_bad["pass"] is False and
+         o_bad["official_host_report_reasons"] == ["HOST_REPORT_ITEMS"] and o_err["pass"] is False and
+         "HOST_REPORT_SCHEMA" in o_err["official_host_report_reasons"]}
+    hr = planted_host_report(utc="planted for the measurement")
+    m_ok = _measure("measure_hr", hrep=hr)
+    m_none = _measure("measure_no_hr", hrep=None)
+    r["measurement_embeds_the_report_as_given"] = m_ok["ev"]["host_report"] == hr and \
+        m_ok["ev"]["invalid_reasons"] == ["DEV_FORM_NEVER_DESIGNATED"]
+    r["measurement_without_it_is_invalid"] = m_none["ev"]["host_report"] is None and \
+        m_none["ev"]["designated"] is False and \
+        m_none["ev"]["invalid_reasons"] == ["DEV_FORM_NEVER_DESIGNATED", "HOST_REPORT_NOT_EMBEDDED"]
+    r["nothing_left_behind"] = m_ok["plists_left"] == m_none["plists_left"] == [] and \
+        m_ok["jobs_left"] == m_none["jobs_left"] == []
+    oi = Q.official_inputs({"readings": [1], "hosting_app": HOSTING, "hw_memsize_bytes": 2, "utc": "planted"},
+                           [{"id": "decoy297"}], hr)
+    r["rule_input_record_carries_the_report"] = oi["host_report"] == hr and oi["runs"] == [{"id": "decoy297"}] and \
+        oi["readings"] == [1] and oi["target_evaluations"] == 0 and DV.host_report_reasons(oi["host_report"]) == []
+    for m in (m_ok, m_none):
+        shutil.rmtree(m["work"], ignore_errors=True)
+    return {"ok": all(r.values()), "rows": r}
+
+
+SCIENCE_PHASE_CHILD = r'''
+import json, os, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+import mbs308_qualify as Q
+import mbs308_measure as MEAS
+calls = []
+PLANT = Path(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3] else None
+REPORT = {"planted_host_report": True, "utc": "planted"}
+class Done:
+    returncode = 0
+    def wait(self):
+        return 0
+def refuse(name):
+    def f(*a, **k):
+        calls.append("REAL:" + name)
+        raise RuntimeError("a real science path was reached: " + name)
+    return f
+def decoy(event, cell, first_blocks, out, work):          # a RECORDER in the place of the official decoy
+    calls.append("official_decoy_gated:%d" % cell)
+    if PLANT is not None and cell == 297:                 # the free-space reading FALLS while the first decoy runs
+        PLANT.write_text("1\n")
+    return {"id": "decoy%d" % cell, "cell": cell, "job": {"finished": True}, "exit": 0, "watchdog_events": []}
+def readings():
+    calls.append("official_readings")
+    return {"readings": [], "hosting_app": {"paths": []}, "hw_memsize_bytes": None, "utc": "planted"}
+def report(work=None):
+    calls.append("host_report")
+    return dict(REPORT)
+def dev_decoy(out, driver_path=None):
+    calls.append("dev_decoy")
+    return 1
+# this child plants "this IS the qualified worktree"; EVERY function through which the verifier would execute science
+# is replaced by a recorder, and the real launch paths below them by functions that refuse: nothing is ever launched
+Q.qualified_worktree = lambda: True
+Q.official_decoy_gated = decoy
+Q.official_decoy = refuse("official_decoy")
+MEAS.run_decoy = refuse("run_decoy")
+MEAS.run_under_launchd = refuse("run_under_launchd")
+Q.official_readings = readings
+Q.host_report = report
+Q.dev_decoy = dev_decoy
+Q.run_qc01 = refuse("run_qc01")
+Q.science_inprocess = refuse("science_inprocess")
+Q.spawn_child = refuse("spawn_child")
+cfg = Q.load_config()
+base = Path(sys.argv[2])
+out = {}
+def run(tag, sel, mode, heavy, host_rep=None):
+    d = base / tag
+    d.mkdir(parents=True)
+    del calls[:]
+    start = Q.disk_check(d, "verifier start")
+    r = Q.science_phase(sel, mode, heavy, cfg, d, d, d, host_rep)
+    rin = d / Q.OUTS["rinputs"]
+    out[tag] = {"start_pass": start["pass"], "calls": list(calls),
+                "cases": {k: {x: v.get(x) for x in ("pass", "status", "refused_before")} for k, v in r["cases"].items()},
+                "checks": [[c["phase"], c["pass"]] for c in r["disk"]["checks"]],
+                "refusal": (r["disk"]["refusal"] or {}).get("phase"), "returned_host_report": r.get("host_report"),
+                "inputs_record": json.loads(rin.read_text()) if rin.is_file() else None}
+'''
+EMBED_RUNS = r'''
+run("official", ["QC08"], "official", True, {"planted_host_report": "the official run's own"})
+run("review_heavy", ["QC08"], "review", True)
+(base / "review").mkdir()
+(base / "review" / Q.OUTS["rinputs"]).write_text(json.dumps({"host_report": {"planted_host_report": "committed"}}))
+d = base / "review"
+r = Q.science_phase(["QC08"], "review", False, cfg, d, d, d)
+out["review"] = {"returned_host_report": r.get("host_report")}
+Q.host_report = refuse("host_report")
+run("report_fails", ["QC08"], "review", True)
+print(json.dumps(out))
+'''
+
+
+def t_official_run_embeds_the_host_report():
+    """Follow-up item 1, the verifier's wiring (a child process in a sparse sandbox in which "this is the qualified
+    worktree" is PLANTED and every function that would execute science is a recorder; nothing is launched): an
+    official run writes the report it took at its start into its rule-input record and returns it for the
+    qualification record; a review --heavy run takes its own, before the readings and before any decoy; a plain
+    review returns the report its committed record embeds; a report that cannot be taken is recorded as such (the
+    structure check then fails) and the run goes on."""
+    sys.path.insert(0, str(T.NSS / "tests"))
+    import test_mbs308_qualify as TQ
+    sb = TQ.sparse_sandbox("embed_wiring")
+    p = subprocess.run([T.PY, "-I", "-S", "-B", "-c", SCIENCE_PHASE_CHILD + EMBED_RUNS, str(sb["dst"] / "code"),
+                        str(sb["tmp"] / "runs"), ""], capture_output=True, text=True, env=T.GENV, cwd=str(sb["root"]),
+                       stdin=subprocess.DEVNULL, timeout=600)
+    try:
+        rep = json.loads(p.stdout.strip().splitlines()[-1])
+    except (ValueError, IndexError):
+        return {"ok": False, "tail": (p.stdout + p.stderr)[-800:]}
+    own = {"planted_host_report": "the official run's own"}
+    o, h, f = rep["official"], rep["review_heavy"], rep["report_fails"]
+    r = {"official_embeds_its_own_report": (o["inputs_record"] or {}).get("host_report") == own and
+         o["returned_host_report"] == own and "host_report" not in o["calls"] and
+         o["calls"] == ["official_readings", "official_decoy_gated:297", "official_decoy_gated:316"] and
+         [x["id"] for x in o["inputs_record"]["runs"]] == ["decoy297", "decoy316"] and
+         o["inputs_record"]["target_evaluations"] == 0,
+         "review_heavy_takes_it_first": h["calls"][:2] == ["host_report", "official_readings"] and
+         (h["inputs_record"] or {}).get("host_report") == {"planted_host_report": True, "utc": "planted"} and
+         h["returned_host_report"] == h["inputs_record"]["host_report"],
+         "plain_review_returns_the_committed_one": rep["review"]["returned_host_report"] ==
+         {"planted_host_report": "committed"},
+         "a_report_that_cannot_be_taken_is_recorded": "RuntimeError" in str(
+             ((f["inputs_record"] or {}).get("host_report") or {}).get("error")) and
+         DV.host_report_reasons(f["inputs_record"]["host_report"]) != [] and
+         f["calls"][-2:] == ["official_decoy_gated:297", "official_decoy_gated:316"],
+         "no_real_science_path_reached": not any(c.startswith("REAL:") and c != "REAL:host_report"
+                                                 for x in (o, h, f) for c in x["calls"])}
+    shutil.rmtree(sb["tmp"], ignore_errors=True)
+    return {"ok": p.returncode == 0 and all(r.values()), "rows": r,
+            "calls": {k: v.get("calls") for k, v in rep.items()}}
 
 
 if __name__ == "__main__":

@@ -7,7 +7,11 @@ actions: execute | resume | recover | seal-only | close-indeterminate | status |
 decoy-main-synth
 spec: fault {point: {"at": k, "how": "exit"|"kill"}}, boot_uuid (the classifier's boot UUID input, a simulated
 reboot), mbr1_git_dir, control_pass, mem_cap_mb, eval_cap_s, skip_not_evaluated, decoy {...}, ps_fail_pids (`ps`
-readings fail for these pids: a planted reading failure, N-3).
+readings fail for these pids: a planted reading failure, N-3), ps_list_fails (the `ps -A` listing of the exclusivity
+gate fails: a planted reading failure, brief 56 R6), dev_ladder / report_rusage (decoy-main-synth: run main()'s decoy
+branch with --dev-ladder; report this process's own and its children's peak RSS after the run, brief 56 G-2),
+provenance_alloc_mb (decoy-main-synth: the host-provenance collection holds this much resident memory while it runs,
+and the process's peak RSS read inside it is reported: a planted stand-in for the power-log read, brief 56 follow-up).
 The last stdout line is a JSON object {"rc": ..., ...}. The driver never evaluates cell 308 here.
 """
 from __future__ import annotations
@@ -50,6 +54,9 @@ def main() -> int:
         real_start, real_cmd = D.HOST.process_start, D.HOST.process_command_sha256
         D.HOST.process_start = lambda pid, text=None: None if int(pid) in bad else real_start(pid, text)
         D.HOST.process_command_sha256 = lambda pid, text=None: None if int(pid) in bad else real_cmd(pid, text)
+    if spec.get("ps_list_fails"):                  # R6: the exclusivity gate's `ps -A` listing fails (planted)
+        real_run = D.HOST._run
+        D.HOST._run = lambda args, timeout=60: None if list(args[:2]) == ["/bin/ps", "-A"] else real_run(args, timeout)
     if action == "platform":
         print(json.dumps({"rc": 0, "platform": D.platform_readings()}))
         return 0
@@ -74,8 +81,27 @@ def main() -> int:
         SY.install(D, spec)
         D.decoy = lambda k, own_sha, workers, first_blocks, dev_ladder: SY.synth_decoy(D, k, own_sha, workers)
         STATE.test_hooks_present = lambda: []      # this harness plants no fault (FAULT stays None); its own
-        rc = D.main(["decoy", "--cell", "297", "--workers", "2", "--out", spec["out"]])    # MBS308_TEST* vars are knobs
-        print(json.dumps({"rc": rc}))
+        seen = {}
+        if spec.get("provenance_alloc_mb"):        # the provenance collection raises the driver's peak RSS (planted)
+            import resource as _res
+            real_prov = D.HOST.provenance
+
+            def planted_prov(*a, **k):
+                hold = bytearray(int(spec["provenance_alloc_mb"]) * 1024 * 1024)
+                for i in range(0, len(hold), 4096):                 # touched, so that it is resident
+                    hold[i] = 1
+                seen["maxrss_inside_provenance_bytes"] = _res.getrusage(_res.RUSAGE_SELF).ru_maxrss
+                del hold
+                return real_prov(*a, **k)
+            D.HOST.provenance = planted_prov
+        argv = ["decoy", "--cell", "297", "--workers", "2", "--out", spec["out"]]
+        rc = D.main(argv + (["--dev-ladder"] if spec.get("dev_ladder") else []))           # MBS308_TEST* vars are knobs
+        res = {"rc": rc}
+        if spec.get("report_rusage"):              # G-2: the driver's own and its children's peak RSS, after the run
+            import resource
+            res.update({"self_maxrss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+                        "children_maxrss_bytes": resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss}, **seen)
+        print(json.dumps(res))
         return 0
     inj = SY.install(D, spec)
     if spec.get("skip_not_evaluated"):

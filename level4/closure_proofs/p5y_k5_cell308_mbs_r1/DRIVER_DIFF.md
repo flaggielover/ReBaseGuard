@@ -1,7 +1,7 @@
 # DRIVER_DIFF: mbs308_driver.py against MB r1's mb308_driver.py (NOT frozen; regenerated from the files)
 
 * Base: `level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_driver.py` at freeze r3 `c46434a3` (byte-identical at `21e99cf0`), sha256 `411252b2a9fa601cc5c1ba34abaf08482cf95a06e2ce7e4d5e5a5bd9e1f56dcb`.
-* New: `code/mbs308_driver.py`, sha256 `e56d02d29042b26b46df962dd58dacbdddc2168db7e4f2ba2559d076cc8b097e` (changes with every re-pin; the freeze binds the final bytes).
+* New: `code/mbs308_driver.py`, sha256 `febf742746d699815765408b6e91861b1ba8a69d0565e68963cc50a8a7b11148` (changes with every re-pin; the freeze binds the final bytes).
 * Hunks: 23; by class: IDENTITY 2, IDENTITY + LIFECYCLE 10, LIFECYCLE 11.
 * Classes: **SCIENCE-GLUE identical** = every function in the RC1 list and every function it references is text-identical, so it appears in NO hunk (asserted by `tests/test_mbs308_static.py` t_rc1_science_glue_text_identical and t_mbs9_referenced_module_names; a hunk touching one would be classified `SCIENCE-GLUE (MUST NOT OCCUR)`); **IDENTITY** = the successor's worktree, branch, namespace, refs, grant schema and paths, MB r1's recorded state (GC-8), helper pins, lineage; **LIFECYCLE** = the durable state machine, persistence, checkpoints + resume, supervisor, host contract, platform pins, launcher gate, modes.
 * The carried (text-identical) functions: `Inconsistent`, `IndependentCheckFailed`, `Refusal`, `_eval_cap`, `_ser_block`, `_set_job_cap`, `_worker_init`, `_worker_job`, `admitted_pairs`, `check_bindings`, `check_clean`, `check_cpu_caps`, `check_flags`, `check_governance_state`, `check_helpers`, `check_identity`, `check_result_paths`, `compose_and_consume`, `control`, `controls`, `decide`, `decoy`, `decoy_bundles`, `decoy_cover`, `evaluate_target`, `failure_kind`, `freeze_commit`, `fs`, `git`, `git_blob_id`, `git_dir`, `jsonable`, `load_consumer`, `load_science`, `prepare_target`, `public_stage1`, `r0_order3_variant`, `read_pinned`, `rehearse`, `require_ac`, `sha`, `stage1`, `supply_scaled_variant`, `target_geometry`, `utc`, `verdict_ok`.
@@ -486,7 +486,7 @@
 ### Hunk 8: IDENTITY + LIFECYCLE; <module-level assignment / statement>, busy_processes, check_launched, check_platform, free_memory_bytes, host_preflight, platform_readings
 
 ```diff
-@@ -309,6 +492,112 @@
+@@ -309,6 +492,120 @@
      if not os.access(parent, os.W_OK | os.X_OK):
          raise Refusal("SEAL_PRECONDITION", "the worktree copy's parent directory is not writable")
      return {"branch_head": head}
@@ -557,12 +557,16 @@
 +    return sum(got.values()) * page
 +
 +
-+def busy_processes(text: str | None = None) -> list:
-+    """Processes above EXCL_CPU_PCT (ps %cpu) other than this process tree and the documented OS/UI allow-list."""
++def busy_processes(text: str | None = None) -> list | None:
++    """Processes above EXCL_CPU_PCT (ps %cpu) other than this process tree and the documented OS/UI allow-list.
++    None when there is NO READING: `ps` failed, or its output holds no process row (`ps -A` always lists at least this
++    process). The exclusivity gate then fails closed: host_exclusive is never true on no reading."""
 +    text = HOST._run(["/bin/ps", "-A", "-o", "pid=,ppid=,pcpu=,comm="]) if text is None else text
++    if text is None:
++        return None
 +    mine = {os.getpid(), os.getppid()}
-+    out = []
-+    for ln in (text or "").splitlines():
++    out, rows = [], 0
++    for ln in text.splitlines():
 +        parts = ln.split(None, 3)
 +        if len(parts) != 4:
 +            continue
@@ -571,13 +575,14 @@
 +            pid, ppid, pcpu = int(pid), int(ppid), float(pcpu)
 +        except ValueError:
 +            continue
++        rows += 1
 +        if pid in mine or ppid == os.getpid() or pcpu <= EXCL_CPU_PCT:
 +            continue
 +        name = comm.rsplit("/", 1)[-1]
 +        if name in EXCL_ALLOW:
 +            continue
 +        out.append({"pid": pid, "comm": name, "pcpu": pcpu})
-+    return out
++    return out if rows else None
 +
 +
 +def host_preflight(launched: dict | None, texts: dict | None = None) -> dict:
@@ -585,12 +590,15 @@
 +    readings for the tests ({"host": ..., "su": ..., "vm_stat": ..., "ps": ...}); production passes none."""
 +    t = texts or {}
 +    pid_rec, pid_state = STATE.read_pidfile(store())
-+    g = HOST.preflight_gates(REPO, other_job_running=pid_state == "LIVE", launched=launched, texts=t.get("host"),
-+                             su_texts=t.get("su"))
++    if pid_state == "STALE" and HOST.identity_state(pid_rec["identity"]) != "DEAD":
++        pid_state = "UNKNOWN"                   # a recorded driver is STALE only on POSITIVE evidence of its death: a
++    #                                             failed `ps` or boot-UUID reading is UNKNOWN, never DEAD (it refuses)
++    g = HOST.preflight_gates(REPO, other_job_running=pid_state in ("LIVE", "UNKNOWN"), launched=launched,
++                             texts=t.get("host"), su_texts=t.get("su"))
 +    fm = free_memory_bytes(t.get("vm_stat"))
 +    busy = busy_processes(t.get("ps"))
 +    g["gates"]["free_memory_ge_min"] = isinstance(fm, int) and fm >= FREE_MEM_MIN_BYTES
-+    g["gates"]["host_exclusive"] = not busy
++    g["gates"]["host_exclusive"] = busy is not None and not busy     # no `ps` reading: the gate fails closed
 +    g["readings"].update({"free_memory_bytes": fm, "busy_processes": busy, "pidfile": pid_state})
 +    g["pass"] = all(g["gates"].values())
 +    if not g["pass"]:
@@ -604,7 +612,7 @@
 ### Hunk 9: IDENTITY; check_s1_ruling, s1_index_sha256
 
 ```diff
-@@ -583,6 +872,43 @@
+@@ -583,6 +880,43 @@
  
  
  # ------------------------------------------------------------------ the grant (derived chain)
@@ -653,7 +661,7 @@
 ### Hunk 10: IDENTITY; check_grant
 
 ```diff
-@@ -594,9 +920,13 @@
+@@ -594,9 +928,13 @@
      if git("diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").stdout.split() != [GRANT_REL]:
          raise Refusal("GRANT_INVALID", "the grant commit changes more than the grant")
      g = json.loads((REPO / GRANT_REL).read_bytes())
@@ -674,7 +682,7 @@
 ### Hunk 11: IDENTITY + LIFECYCLE; check_grant, persist_emergency, persist_pending, serialize
 
 ```diff
-@@ -618,38 +948,28 @@
+@@ -618,38 +956,28 @@
      if g.get("input_manifest_sha256") != sha((REPO / MANIFEST_REL).read_bytes()):
          raise Refusal("GRANT_INVALID", "the grant does not bind the frozen input manifest")
      return {"grant_commit": head, "grant_sha256": sha((REPO / GRANT_REL).read_bytes()), "freeze_commit": fz,
@@ -732,7 +740,7 @@
 ### Hunk 12: LIFECYCLE; seal_blob
 
 ```diff
-@@ -657,7 +977,12 @@
+@@ -657,7 +985,12 @@
      for delay in (0.0, *SEAL_RETRY_DELAYS):
          time.sleep(delay)
          head = git("rev-parse", "HEAD").stdout.strip()
@@ -751,7 +759,7 @@
 ### Hunk 13: IDENTITY + LIFECYCLE; seal_blob
 
 ```diff
-@@ -667,12 +992,13 @@
+@@ -667,12 +1000,13 @@
              if any(s.returncode for s in steps) or tree.returncode:
                  last = "index"
                  continue
@@ -772,7 +780,7 @@
 ### Hunk 14: IDENTITY + LIFECYCLE; materialize
 
 ```diff
-@@ -690,20 +1016,19 @@
+@@ -690,20 +1024,19 @@
          raise OSError("the object store returned other bytes")
      fds = [os.open(str(REPO), os.O_RDONLY | os.O_DIRECTORY)]
      try:
@@ -802,7 +810,7 @@
 ### Hunk 15: IDENTITY + LIFECYCLE; fallback_bytes, materialized_ok, seal_message
 
 ```diff
-@@ -719,19 +1044,42 @@
+@@ -719,19 +1052,42 @@
              os.close(fd)
  
  
@@ -853,7 +861,7 @@
 ### Hunk 16: LIFECYCLE; <module-level assignment / statement>, _journal, after_marker, keep_awake, persist_and_seal
 
 ```diff
-@@ -751,71 +1099,133 @@
+@@ -751,71 +1107,133 @@
      return "TARGET_EVALUATION_FAILED"
  
  
@@ -1032,7 +1040,7 @@
 ### Hunk 17: LIFECYCLE; close_host
 
 ```diff
-@@ -827,8 +1237,18 @@
+@@ -827,8 +1245,18 @@
  
  
  def close_host(common: dict) -> None:
@@ -1057,7 +1065,7 @@
 ### Hunk 18: LIFECYCLE; pre_marker_common, run_execute
 
 ```diff
-@@ -859,21 +1279,21 @@
+@@ -859,21 +1287,21 @@
              "kappa_check": sci["kappa_check"]}
  
  
@@ -1092,7 +1100,7 @@
 ### Hunk 19: LIFECYCLE; pre_marker_common, run_execute, run_resume
 
 ```diff
-@@ -884,40 +1304,180 @@
+@@ -884,40 +1312,180 @@
          raise Refusal(exc.code, str(exc))
      except PIN.PinError as exc:
          raise Refusal("PIN_MISMATCH", str(exc))
@@ -1307,7 +1315,7 @@
 ### Hunk 20: IDENTITY + LIFECYCLE; _pending_seal_materialize, _read_verified_spool, _seal_control_failed, run_close_indeterminate, run_recover, run_seal_only, run_status
 
 ```diff
-@@ -928,73 +1488,191 @@
+@@ -928,73 +1496,191 @@
      return controls(con, sci, k)
  
  
@@ -1565,7 +1573,7 @@
 ### Hunk 21: LIFECYCLE; main
 
 ```diff
-@@ -1097,13 +1775,18 @@
+@@ -1097,13 +1783,18 @@
  
  def main(argv=None) -> int:
      ap = argparse.ArgumentParser()
@@ -1590,7 +1598,7 @@
 ### Hunk 22: LIFECYCLE; main
 
 ```diff
-@@ -1112,25 +1795,31 @@
+@@ -1112,25 +1803,31 @@
      signal.signal(signal.SIGALRM, wall_cap)
      signal.alarm(DECOY_CAP_S if a.mode == "decoy" else PRE_CAP_S)
      try:
@@ -1632,7 +1640,7 @@
 ### Hunk 23: LIFECYCLE; <module-level assignment / statement>, main
 
 ```diff
-@@ -1139,27 +1828,74 @@
+@@ -1139,27 +1836,77 @@
              if a.workers > 5 or a.workers < 1:
                  raise Refusal("WORKERS", "1..5 workers")
              check_bindings(allow_uncommitted=True)
@@ -1656,11 +1664,10 @@
 +            finally:
 +                STATE.CK = None
 +                rss_rec = rss.stop()
-+            # R-MEM's inputs of this run (protocol section 8; brief 50 task 3): D = the driver's own peak RSS
-+            # (ru_maxrss of RUSAGE_SELF, bytes on macOS), the <= 0.5 s sampler's growth rate and peaks, and the run's
-+            # configuration as R-MEM step 1 names it. Recorded only: nothing here changes a computed value.
++            # R-MEM's inputs of this run (protocol section 8; brief 50 task 3): the <= 0.5 s sampler's growth rate and
++            # peaks and the run's configuration as R-MEM step 1 names it; D is read below. Recorded only: nothing here
++            # changes a computed value.
 +            out["lifecycle"] = {"stage1_context": ctx.summary(), "rss_sampler": rss_rec,
-+                                "driver_maxrss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
 +                                "rmem_run": {"workers": a.workers, "ladder": "dev" if a.dev_ladder else "frozen",
 +                                             "mem_cap_bytes": MEM_CAP_BYTES, "mem_poll_s": MEM_POLL_S,
 +                                             "first_blocks": a.first_blocks,
@@ -1670,6 +1677,10 @@
              out.update({"mode": "decoy", "driver_sha256": own_sha, "utc": utc(), "wall_seconds": round(time.time() - t0, 1),
                          "cpu_seconds_workers": round(cu.ru_utime + cu.ru_stime, 1)})
 -            print(f"MB308 DECOY cell {a.cell}: stage 1 in {out['stage1_wall_seconds']} s")
++            # D = "the driver's own peak RSS in those runs" (R-MEM step 2: ru_maxrss of RUSAGE_SELF, bytes on macOS),
++            # read LAST: after the host-provenance collection above, whose power-log read raises the driver's peak,
++            # and immediately before the record is serialised (below, for a failed and for a completed decoy alike).
++            out["lifecycle"]["driver_maxrss_bytes"] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 +            if failed is not None:
 +                try:
 +                    if a.out:

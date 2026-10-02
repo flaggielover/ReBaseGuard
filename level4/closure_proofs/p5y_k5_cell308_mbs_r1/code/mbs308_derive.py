@@ -433,9 +433,59 @@ def compare(a: dict, b: dict, c: dict) -> dict:
 
 
 # ------------------------------------------------------------------ the designated evidence -> canonical outputs A
+# ---- the embedded READ-ONLY host report (protocol section 8.1; reviewQ6 section 5, note (e); brief 56 follow-up).
+# The official qualification record and the designated-measurement evidence each carry the verifier's host report as
+# a RECORDED field. What is checked is its STRUCTURE (it is there, it is the read-only report, every item of the
+# checklist is in it with a status, and it references the place where the operator's actions are recorded); the
+# statuses themselves are never judged here: the report is a record, not a gate, and carries no number of its own.
+HOST_REPORT_SCHEMA = "rebaseguard.p5y.k5.cell308-mbs-r1.host-report.v1"
+HOST_REPORT_STATUSES = ("READY", "NOT_READY", "USER_ACTION", "RECORDED", "UNKNOWN")
+HOST_REPORT_ITEMS = ("automatic_os_installation_disabled", "automatic_restart", "ac_power", "sleep_prevention_and_lid",
+                     "thermal_level_0", "lowpowermode_0", "disk_execution", "disk_qualification",
+                     "memory_pressure_normal", "free_memory", "boot_identity", "host_identity_platform_pins",
+                     "host_exclusive", "no_other_campaign_job")
+# Where the OPERATOR'S ACTIONS are recorded (what no reading can show: the lid kept open, the apps quit, no concurrent
+# sandbox-heavy work, automatic OS installation switched off by the user): the research ledger, one line written with
+# the research namespace's own logger by the operator / coordinator, quoting the user's statement and its time. The
+# records reference this place; the line itself lives in the ledger (QC13-S reads that ledger by ref and path).
+OPERATOR_ACTIONS = {
+    "recorded_in": "level4/closure_proofs/p5y_k5_cell308_research/ledger/TARGET_INTEGRITY_LEDGER.jsonl",
+    "ref": "refs/heads/p5y-k5-cell308-research",
+    "written_with": "level4/closure_proofs/p5y_k5_cell308_research/code/c308_quarantine.py log_event",
+    "line": "one ledger line by the operator / coordinator for the run, quoting the user's statement and its time",
+    "actions": ["the lid open and the host on AC for the whole run", "the operator's apps quit",
+                "no concurrent sandbox-heavy work on the host", "automatic macOS / critical-update installation "
+                "disabled by the user"],
+}
+
+
+def host_report_reasons(rep) -> list:
+    """Why a record does not carry the embedded read-only host report (empty = it does). Structure only."""
+    if not isinstance(rep, dict):
+        return ["HOST_REPORT_NOT_EMBEDDED"]
+    r = []
+    if rep.get("schema") != HOST_REPORT_SCHEMA:
+        r.append("HOST_REPORT_SCHEMA")
+    if rep.get("read_only") is not True or rep.get("changes_made") is not False:
+        r.append("HOST_REPORT_NOT_READ_ONLY")
+    items = rep.get("items")
+    rows = [i for i in items if isinstance(i, dict)] if isinstance(items, list) else []
+    if not isinstance(items, list) or len(rows) != len(items) or \
+            sorted(str(i.get("item")) for i in rows) != sorted(HOST_REPORT_ITEMS):
+        r.append("HOST_REPORT_ITEMS")
+    elif any(i.get("status") not in HOST_REPORT_STATUSES or not i.get("checked_by") for i in rows):
+        r.append("HOST_REPORT_ITEM_STATUS")
+    if not isinstance(rep.get("utc"), str) or not rep["utc"]:
+        r.append("HOST_REPORT_TIME")
+    if rep.get("operator_actions") != OPERATOR_ACTIONS:
+        r.append("OPERATOR_ACTIONS_NOT_REFERENCED")
+    return r
+
+
 def evidence_reasons(ev) -> list:
     """Why a file is not designated evidence (empty = it is): the schema, the DESIGNATED flag the measurement tool sets
-    only when its run was valid, no recorded invalidity, and the fields the derivation needs."""
+    only when its run was valid, no recorded invalidity, the fields the derivation needs, and the embedded read-only
+    host report (its structure; host_report_reasons)."""
     if not isinstance(ev, dict):
         return ["NOT_AN_OBJECT"]
     r = []
@@ -450,6 +500,7 @@ def evidence_reasons(ev) -> list:
     for k in ("commit", "driver_sha256", "runs", "readings", "hw_memsize_bytes", "hosting_app"):
         if ev.get(k) in (None, "", []):
             r.append(f"MISSING_{k.upper()}")
+    r += host_report_reasons(ev.get("host_report"))
     return r
 
 

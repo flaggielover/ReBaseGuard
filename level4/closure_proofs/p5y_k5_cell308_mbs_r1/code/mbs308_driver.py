@@ -559,12 +559,16 @@ def free_memory_bytes(text: str | None = None) -> int | None:
     return sum(got.values()) * page
 
 
-def busy_processes(text: str | None = None) -> list:
-    """Processes above EXCL_CPU_PCT (ps %cpu) other than this process tree and the documented OS/UI allow-list."""
+def busy_processes(text: str | None = None) -> list | None:
+    """Processes above EXCL_CPU_PCT (ps %cpu) other than this process tree and the documented OS/UI allow-list.
+    None when there is NO READING: `ps` failed, or its output holds no process row (`ps -A` always lists at least this
+    process). The exclusivity gate then fails closed: host_exclusive is never true on no reading."""
     text = HOST._run(["/bin/ps", "-A", "-o", "pid=,ppid=,pcpu=,comm="]) if text is None else text
+    if text is None:
+        return None
     mine = {os.getpid(), os.getppid()}
-    out = []
-    for ln in (text or "").splitlines():
+    out, rows = [], 0
+    for ln in text.splitlines():
         parts = ln.split(None, 3)
         if len(parts) != 4:
             continue
@@ -573,13 +577,14 @@ def busy_processes(text: str | None = None) -> list:
             pid, ppid, pcpu = int(pid), int(ppid), float(pcpu)
         except ValueError:
             continue
+        rows += 1
         if pid in mine or ppid == os.getpid() or pcpu <= EXCL_CPU_PCT:
             continue
         name = comm.rsplit("/", 1)[-1]
         if name in EXCL_ALLOW:
             continue
         out.append({"pid": pid, "comm": name, "pcpu": pcpu})
-    return out
+    return out if rows else None
 
 
 def host_preflight(launched: dict | None, texts: dict | None = None) -> dict:
@@ -587,12 +592,15 @@ def host_preflight(launched: dict | None, texts: dict | None = None) -> dict:
     readings for the tests ({"host": ..., "su": ..., "vm_stat": ..., "ps": ...}); production passes none."""
     t = texts or {}
     pid_rec, pid_state = STATE.read_pidfile(store())
-    g = HOST.preflight_gates(REPO, other_job_running=pid_state == "LIVE", launched=launched, texts=t.get("host"),
-                             su_texts=t.get("su"))
+    if pid_state == "STALE" and HOST.identity_state(pid_rec["identity"]) != "DEAD":
+        pid_state = "UNKNOWN"                   # a recorded driver is STALE only on POSITIVE evidence of its death: a
+    #                                             failed `ps` or boot-UUID reading is UNKNOWN, never DEAD (it refuses)
+    g = HOST.preflight_gates(REPO, other_job_running=pid_state in ("LIVE", "UNKNOWN"), launched=launched,
+                             texts=t.get("host"), su_texts=t.get("su"))
     fm = free_memory_bytes(t.get("vm_stat"))
     busy = busy_processes(t.get("ps"))
     g["gates"]["free_memory_ge_min"] = isinstance(fm, int) and fm >= FREE_MEM_MIN_BYTES
-    g["gates"]["host_exclusive"] = not busy
+    g["gates"]["host_exclusive"] = busy is not None and not busy     # no `ps` reading: the gate fails closed
     g["readings"].update({"free_memory_bytes": fm, "busy_processes": busy, "pidfile": pid_state})
     g["pass"] = all(g["gates"].values())
     if not g["pass"]:
@@ -1846,11 +1854,10 @@ def main(argv=None) -> int:
             finally:
                 STATE.CK = None
                 rss_rec = rss.stop()
-            # R-MEM's inputs of this run (protocol section 8; brief 50 task 3): D = the driver's own peak RSS
-            # (ru_maxrss of RUSAGE_SELF, bytes on macOS), the <= 0.5 s sampler's growth rate and peaks, and the run's
-            # configuration as R-MEM step 1 names it. Recorded only: nothing here changes a computed value.
+            # R-MEM's inputs of this run (protocol section 8; brief 50 task 3): the <= 0.5 s sampler's growth rate and
+            # peaks and the run's configuration as R-MEM step 1 names it; D is read below. Recorded only: nothing here
+            # changes a computed value.
             out["lifecycle"] = {"stage1_context": ctx.summary(), "rss_sampler": rss_rec,
-                                "driver_maxrss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
                                 "rmem_run": {"workers": a.workers, "ladder": "dev" if a.dev_ladder else "frozen",
                                              "mem_cap_bytes": MEM_CAP_BYTES, "mem_poll_s": MEM_POLL_S,
                                              "first_blocks": a.first_blocks,
@@ -1859,6 +1866,10 @@ def main(argv=None) -> int:
             cu = resource.getrusage(resource.RUSAGE_CHILDREN)
             out.update({"mode": "decoy", "driver_sha256": own_sha, "utc": utc(), "wall_seconds": round(time.time() - t0, 1),
                         "cpu_seconds_workers": round(cu.ru_utime + cu.ru_stime, 1)})
+            # D = "the driver's own peak RSS in those runs" (R-MEM step 2: ru_maxrss of RUSAGE_SELF, bytes on macOS),
+            # read LAST: after the host-provenance collection above, whose power-log read raises the driver's peak,
+            # and immediately before the record is serialised (below, for a failed and for a completed decoy alike).
+            out["lifecycle"]["driver_maxrss_bytes"] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             if failed is not None:
                 try:
                     if a.out:

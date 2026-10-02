@@ -433,7 +433,24 @@ only; no new number).
 Nothing here changes a system setting: the campaign only reads. A READ-ONLY report of every item is
 `code/mbs308_qualify.py --host-report [--work DIR] [--out FILE]` (queries only: `pmset -g`, `ioreg -r`, `defaults read`,
 `sysctl`, `vm_stat`, `ps`, `notifyutil -g`, `sw_vers`, `uname`, statvfs); each item carries its status (READY,
-NOT_READY, USER_ACTION, RECORDED, UNKNOWN) and how it is checked.
+NOT_READY, USER_ACTION, RECORDED, UNKNOWN) and how it is checked. An unreadable reading is never RECORDED, and READY
+needs a positive reading: an item whose reading could not be taken is UNKNOWN (reviewQ6 F-7; builder7, brief 56).
+
+**The report is embedded in the records, and the operator's actions have a named place (reviewQ6 section 5, note (e);
+builder7, brief 56 follow-up).** The official qualification embeds this report, as read at the start of the run, in
+its record (`host_report` of `qualification/MBS308_QUALIFICATION.json`) and in its rule-input record (`host_report` of
+`qualification/MBS308_RRULES_OFFICIAL_INPUTS.json`); the designated pre-freeze measurement embeds the report it takes
+before its readings in its evidence (`host_report` of `evidence_prefreeze/MBS308_RRULES_DESIGNATED.json`). It is a
+RECORDED field, not a gate, and brings no number: nobody judges its statuses there; what is checked is its structure
+(the read-only report, every item of this checklist with a status, the reference below), so that a record WITHOUT
+the embedded report fails: the derivation is not derived from such evidence, and `R_RULES_OFFICIAL` fails on such
+evidence or on such a rule-input record. **Where the operator's actions are recorded** (what no reading can show:
+the lid open and the host on AC for the whole run, the operator's apps quit, no concurrent sandbox-heavy work,
+automatic OS installation disabled by the user): in the research ledger,
+`level4/closure_proofs/p5y_k5_cell308_research/ledger/TARGET_INTEGRITY_LEDGER.jsonl` on `p5y-k5-cell308-research`
+(the ledger QC13-S reads), as one line for the run written with the research namespace's `code/c308_quarantine.py`
+`log_event` by the operator / coordinator, quoting the user's statement and its time. Every embedded report
+references that place (`operator_actions`).
 
 | item | before the official qualification | before `execute` / every `resume` | how it is checked |
 |---|---|---|---|
@@ -447,9 +464,9 @@ NOT_READY, USER_ACTION, RECORDED, UNKNOWN) and how it is checked.
 | memory pressure and free memory | normal (level 1); R-FREE's attainability readings (>= 10, 30 s apart, prepared host) | normal; free memory >= FREE_MEM_MIN | existing gates `memory_pressure_normal`, `free_memory_ge_min`; R-FREE attainability is recorded by the designated pre-freeze measurement and re-measured by the official qualification (R_RULES_OFFICIAL; section 11.2) |
 | boot identity | recorded | recorded | existing gate `boot_uuid_recorded`; every identity and the journal carry it |
 | host identity (platform pins) | the qualification host is the pinned host: PLATFORM_PINS are re-pinned at the freeze from its readings (`code/mbs308_repin.py platform --write-platform`, the pinned interpreter) | the readings must equal the pins | existing `check_platform` at preflight, execute, every resume and every computing mode (RC2 / DR2); a mismatch after the marker is terminal (close-indeterminate) |
-| host exclusivity | the operator's apps quit; the prepared-state readings of R-EXCL-PCT / R-ALLOW | no process above EXCL_CPU_PCT outside the allow-list | existing gate `host_exclusive`; quitting apps is a user action |
-| no other campaign job | none | none | existing gate `no_other_campaign_job` (pidfile LIVE) |
-| no concurrent sandbox-heavy work | no other agent's suites or matrices on the host during the official run | none from the marker to the seal (the ENOSPC incident's cause) | a recorded user / coordinator action (the start gates cannot see a disk consumer that starts later) |
+| host exclusivity | the operator's apps quit; the prepared-state readings of R-EXCL-PCT / R-ALLOW | no process above EXCL_CPU_PCT outside the allow-list | existing gate `host_exclusive`; quitting apps is a user action; the gate fails closed on NO READING (a failed `ps`, or an output without a process row: reviewQ6 ruling (a)) |
+| no other campaign job | none | none | existing gate `no_other_campaign_job` (pidfile LIVE; a pidfile whose recorded process is not POSITIVELY dead refuses too: a failed `ps` or boot-UUID reading is UNKNOWN, never dead) |
+| no concurrent sandbox-heavy work | no other agent's suites or matrices on the host during the official run | none from the marker to the seal (the ENOSPC incident's cause) | a recorded user / coordinator action (the start gates cannot see a disk consumer that starts later), recorded in the research ledger as stated above |
 
 ### 8.2 Disk safety and the scratch lifecycle (builder5, brief 50; after the ENOSPC incident of 2026-09-30)
 
@@ -461,8 +478,9 @@ closed, now tested at the gate and end to end at execute and resume); (ii) the q
 the mutant matrix, QS-RESUME-DECOY): QUAL_MIN_FREE_BYTES on the `--work` volume and MIN_FREE_DISK on the repository
 volume; (iii) the mutant runner, before its start and before every target run: QUAL_MIN_FREE_BYTES on its scratch
 volume. A refusal before the start writes nothing; a refusal before a phase stops every later heavy phase, which fail
-closed (`DISK_REFUSED`, or `not_run` in the matrix report). A test may plant a reading (`MBS308_TEST_DISK_FREE`) that
-can only lower the real one or fail it.
+closed (`DISK_REFUSED`, or `not_run` in the matrix report). A test may plant a reading (`MBS308_TEST_DISK_FREE`: a
+number, `fail`, or `file:<path>`, a file read at every probe so that a test can make the reading fall AFTER the start;
+an unreadable file is a failed probe) that can only lower the real one or fail it.
 
 **The scratch lifecycle (`code/mbs308_scratch.py`).** Every process that uses a scratch root records itself in
 `<root>/.mbs308-lifecycle/` (its identity, ACTIVE, then FINISHED): the test library for every suite process, the
@@ -472,8 +490,11 @@ without a valid record, or with a record not FINISHED, or whose owner is not pos
 finished), **FINISHED** (completed runs' evidence: reports, JSON, logs, probes, verdicts; kept), **DISPOSABLE** (only
 sandbox clones, i.e. `sbx` directories whose `.git` borrows objects from a bare base store alone, and bare base stores,
 inside a FINISHED root; the nearest recorded root governs). Cleanup (dry-run by default) removes only disposable units
-(clones before the store they borrow from; a store still borrowed is kept), re-verifies each just before deleting it,
-records every deletion value-free (`<root>/.mbs308-deletions.jsonl`), and never removes a file, a unit of an ACTIVE
+(clones before the store they borrow from; a store still borrowed is kept: the exact rule is the next paragraph),
+re-verifies each just before deleting it, records every deletion value-free (`<root>/.mbs308-deletions.jsonl`) BEFORE
+it happens (each record is written and fsync'd first, so the log is opened before the first deletion; a log that cannot
+be opened or written stops the pass, `DELETIONS_LOG_UNWRITABLE`, and nothing (more) is deleted: no deletion is ever
+unrecorded, and a record says that a deletion was started), and never removes a file, a unit of an ACTIVE
 root, a symlink or anything reached through one, anything whose real path leaves the root, or anything that is, lies
 under or contains a protected path: every worktree of the repository and its common dir (every ref, the target marker,
 the pending-result ref, the journal and checkpoint refs, the spool, every seal and committed file), the campaign's
@@ -481,6 +502,24 @@ qualified worktree / git dir / common dir and MB r1's git dir as the driver name
 The mutant runner deletes each phase's sandboxes once its result file is written and verified, so a matrix holds at
 most one sandbox at a time; the verifier does the same after each heavy phase. Roots made before this gate carry no
 record and are ACTIVE: the tool never cleans them (their owner deletes them by hand).
+
+**Base stores and their borrowers: the exact rule (reviewQ6 F-2 / G-3; builder7, brief 56).** A base store is deleted
+only after everything that borrows from it, in whichever root that lies. Every process that uses a base store first
+records itself INSIDE the store (`<store>/mbs308-borrowers/<pid>-<nonce>.json`): its identity and ACTIVE; then the real
+path of each sandbox clone it is about to make from the store; FINISHED when it ends. The test library does this for
+every suite process, whatever its scratch root, and does not use a store in which it cannot write its record; a
+process that is killed leaves its record ACTIVE. Cleanup deletes a bare base store only when ALL of the following
+hold, and checks them again just before the deletion: (1) the store is a disposable unit of a FINISHED root (above);
+(2) it has a borrower register holding at least one record: a store without one cannot be shown to be unborrowed and
+is kept (`BASE_STORE_BORROWERS_UNRECORDED`; its owner deletes it by hand); (3) every record of the register is valid
+and FINISHED and its owner is positively dead by `mbs308_host.identity_state` (UNKNOWN is never dead; a FINISHED record
+of the calling process itself counts as finished): an ACTIVE record, a live or UNKNOWN owner, an invalid or symlinked
+record keeps the store (`BASE_STORE_IN_USE`); (4) no sandbox clone that the pass keeps under the cleaned root, and no
+clone path that a record of the register names, under ANY root, still exists with the store in its alternates
+(`BASE_STORE_IN_USE`). So a store with a live borrower is never deleted, whether the borrower's sandboxes lie under
+the cleaned root or under another one, and a store goes only after the clones recorded for it. What the rule cannot
+see, stated: a clone made by something that writes no record (a hand-made `git clone --shared`) and lying outside the
+cleaned root keeps the store only while the store has no register at all (2).
 
 **Thresholds (derived; inputs measured target-free on this host, 2026-09-30, by builder5; peak allocated bytes of the
 scratch tree sampled every 2 s).**
@@ -692,6 +731,11 @@ signature; nothing executed).
 
 MB r1's QC10 (MB r1's own exactly-once flows) is not carried: QS-STATE and QS-CRASH test the successor's lifecycle.
 
+QC12-S scans every file as raw text and every JSON file ALSO as the parser decodes it (keys and string values: a
+figure written with a JSON escape has no raw-text match and is seen all the same; the timing-key exemption is
+unchanged); its planted controls, this one included, are built at run time from the pinned patterns (builder7, brief
+56 follow-up).
+
 ### 11.2 The sequencing of the R-rules: the user's ruling, option (a)
 
 **Ruling.** The user chose **section 11.2 option (a)**: designated pre-freeze measurement, then freeze the rule
@@ -817,7 +861,8 @@ official runtimes and passes or fails.
 A fact for a reviewer: the driver's decoy record carries each job's `ru_maxrss` (`job_maxrss_bytes`) and the watchdog's
 peak for the run (`worker_peak_rss_bytes`), and (builder5, brief 50, task 3; recorded fields of `main()`'s decoy branch
 only, no carried function changed) the driver's own peak RSS `lifecycle.driver_maxrss_bytes` (ru_maxrss of RUSAGE_SELF:
-R-MEM's D), the fixed-rate RSS sampler `lifecycle.rss_sampler` (set interval 0.25 s; samples, failed reads, the largest
+R-MEM's D; read LAST, after the run's host-provenance collection, whose power-log read raises the driver's peak, and
+immediately before the record is serialised: builder7, brief 56 follow-up), the fixed-rate RSS sampler `lifecycle.rss_sampler` (set interval 0.25 s; samples, failed reads, the largest
 OBSERVED spacing `max_spacing_ns`, the driver's and the workers' peak RSS, `max_growth_bytes_per_s`: R-MEM step 6's g)
 and the run's configuration `lifecycle.rmem_run` (workers, ladder, mem_cap_bytes, mem_poll_s, first_blocks,
 launched_by_launchd: R-MEM step 1). A decoy that FAILS (builder6, brief 54 with owner supplement 2; recorded fields
