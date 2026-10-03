@@ -1,0 +1,597 @@
+{
+ "cases": {
+  "Q8-S": {
+   "pass": false,
+   "reason": "no freeze manifest"
+  },
+  "QC09-S": {
+   "child": {
+    "admitted_pairs": 37,
+    "after_arming_a_non_admitted_band_point_is_refused": true,
+    "after_arming_an_admitted_pair_passes": true,
+    "after_arming_label_307_refused": true,
+    "after_arming_label_308_admitted": true,
+    "arming_refusals": {
+     "dropped_pair": true,
+     "extra_band_pair": true,
+     "grant_is_not_head": true,
+     "marker_names_another_commit": true,
+     "mbr1_marker_naming_the_grant_at_head": true,
+     "no_marker": true
+    },
+    "arms_with_the_successor_marker_and_exactly_the_frozen_set": true,
+    "band_points_intervals_and_mirror_refused": true,
+    "cover_end_points_refused_in_decoy": true,
+    "decoy_by_default": true,
+    "emergency_result_path_refused": true,
+    "labels_305_309_refused": true,
+    "other_labels_admitted": true,
+    "outside_band_admitted": true,
+    "still_decoy_after_refusals": true
+   },
+   "child_expectations_hold": true,
+   "diff_is_exactly_the_marker_line": true,
+   "driver_binds_the_guard_marker": true,
+   "driver_pins_the_guard_bytes": true,
+   "guard_marker_is_the_successors": true,
+   "mbr1_guard_bytes_are_the_pinned_bytes": true,
+   "pass": true
+  },
+  "QC09-SCI": {
+   "case": "QC09-SCI",
+   "dev_checks_ok": true,
+   "dev_form": "loader only: nothing executed",
+   "modules": [
+    {
+     "entry": "run",
+     "entry_parameters_as_called": true,
+     "module": "test_mb308_guard",
+     "pass": true,
+     "pinned_bytes": true
+    }
+   ],
+   "pass": false,
+   "status": "DEV_FORM"
+  },
+  "QC11-S": {
+   "covered_by_qs_static": [
+    "RC1: the carried science glue is text-identical to MB r1's (t_rc1_science_glue_text_identical)",
+    "MBS-9 (i): module-level names (t_mbs9_referenced_module_names)",
+    "the guard differs only in the marker line (t_rc1_guard_diff_only_marker; QC09-S re-checks)",
+    "the science modules are MB r1's pinned bytes (t_science_pins_equal_mbr1_bytes)",
+    "the fault hook is test-only (t_fault_hook_test_only)",
+    "execute / resume pass the launcher, platform and host gates (t_execute_and_resume_require_launcher_and_pins)",
+    "no MB r1 driver mode is invoked (t_no_mbr1_driver_mode_invoked)",
+    "the launcher plist contract (t_launcher_plist_contract)",
+    "the ratified rules R-MEM / R-FREE / R-EXCL-PCT / R-ALLOW in protocol s8 (t_r3_ratified_rules_applied)"
+   ],
+   "driver_structure": {
+    "ac_platform_and_host_gates_with_launcher_in_pre_marker_common": true,
+    "ac_required_in_preflight": true,
+    "arm_target_only_in_evaluate_target_worker_init_and_resume": true,
+    "cli_passes_no_injection": true,
+    "decoy_host_provenance_brackets_decoy": true,
+    "eval_cap_per_attempt_on_awake_time": true,
+    "evaluate_target_referenced_only_by_execute_and_resume": true,
+    "every_helper_pinned": true,
+    "exactly_one_marker_write_a_cas_in_run_execute": true,
+    "host_provenance_closed_in_after_marker": true,
+    "marker_after_pre_marker_checks_and_intent_before_computing": true,
+    "no_file_write_in_target_path": true,
+    "post_marker_prints_value_free": true,
+    "pre_marker_common_only_in_execute_and_resume": true,
+    "resume_arms_before_reading_checkpoints": true,
+    "stage1_target_only_in_evaluate_target": true,
+    "supervised_caffeinate_ims": true,
+    "target_control_only_in_pre_marker_common_after_check_grant": true
+   },
+   "pass": true,
+   "science_bytes": {
+    "F2_band_guard_only_from_formal_guard": true,
+    "F2_imports_stdlib_only": true,
+    "F3_imports_stdlib_only": true,
+    "_named_exception": [
+     {
+      "file": "test_mbs308_static.py",
+      "function": "t_mbs12_static_carryovers",
+      "lines": 2
+     }
+    ],
+    "control_path_names_no_penalty": true,
+    "no_private_F2_hooks_mb308_a0core": true,
+    "no_private_F2_hooks_mb308_consumer": true,
+    "no_private_F2_hooks_mb308_stage1": true,
+    "no_private_F2_hooks_mb308_supply": true,
+    "no_private_F2_hooks_mbs308_driver.py": true,
+    "no_successor_code_names_the_research_reconstructions": true,
+    "science_bytes_are_the_pinned_bytes": true,
+    "stage1_and_a0core_print_and_write_nothing": true,
+    "stage2_names_no_other_route": true,
+    "supply_band_guard_only_from_formal_guard": true
+   }
+  },
+  "QC12-S": {
+   "files_scanned": 33,
+   "pass": true,
+   "patterns": 70,
+   "planted_control_fires": true,
+   "planted_json_escaped_value_in_evidence_fires": true,
+   "planted_value_in_nontiming_field_of_evidence_fires": true,
+   "planted_value_in_timing_field_of_evidence_exempt_and_counted": true,
+   "planted_value_in_timing_field_outside_post_freeze_dirs_fires": true,
+   "record_token_scan": "not run (official and review runs, or --record-scan in dev mode)",
+   "tail_figure_hits": {},
+   "timing_field_exemptions": []
+  },
+  "QC13-S": {
+   "governance_state": {
+    "pass": true,
+    "r5_union_open_ranges": [
+     [
+      306,
+      309
+     ]
+    ],
+    "r6": "absent"
+   },
+   "ledger": {
+    "bad_line_numbers": [],
+    "lines": 132,
+    "lines_by_agent": {
+     "builder2": 16,
+     "builder3": 14,
+     "builder4": 6,
+     "builder5": 10,
+     "builder6": 9,
+     "builder7": 9,
+     "builder8": 3,
+     "editorR3C1": 44,
+     "ratifier2": 1,
+     "ratifierMBS": 4,
+     "reviewD9": 4,
+     "reviewF8": 5,
+     "reviewQ6": 6,
+     "reviewd9": 1
+    },
+    "pass": true
+   },
+   "pass": true,
+   "pending_records": [],
+   "preconditions": true,
+   "records": [
+    {
+     "commit": "00a432dfbde64dfae216a19d1a57ebbe6bbb5cd6",
+     "id": "GOVERNANCE_ACCEPTED",
+     "kind": "verdict",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_SUCCESSOR_GOVERNANCE_308_DELTA.md",
+     "status": "OK"
+    },
+    {
+     "commit": "87d0b2b9ff74a9559a30a918b731d5528ba64288",
+     "id": "ROUTE_ACCEPTED",
+     "kind": "verdict",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_SUCCESSOR_ROUTE_308_R3.md",
+     "status": "OK"
+    },
+    {
+     "commit": "b7e62dec2b10645de97381945b77046817468efd",
+     "id": "INCIDENT_RERATING_ACCEPTED",
+     "kind": "verdict",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308.md",
+     "status": "OK"
+    },
+    {
+     "commit": "ff2280e92fff3a76651bde9c6b5744c07b7334f8",
+     "id": "T6_RULING",
+     "kind": "verdict",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308_T6.md",
+     "status": "OK"
+    },
+    {
+     "commit": "5e7b8cdc75acbc809d07172ebc05881c36aa6e0b",
+     "id": "M4_USER_RULING_OPTION_B",
+     "kind": "jsonl_line",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/ledger/TARGET_INTEGRITY_LEDGER.jsonl",
+     "status": "OK"
+    },
+    {
+     "commit": "a40211cc2a5272d1ee265bcbacb0c42f32790e2c",
+     "id": "S14_MBR1_EXECUTION_REVIEW",
+     "kind": "verdict",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_mb_r1/review/MB308_EXECUTION_REVIEW.md",
+     "status": "OK"
+    },
+    {
+     "commit": "9ad632c9497cb122da93ff76e368c5a17b317bb8",
+     "id": "S14_MBR1_ADJUDICATION",
+     "kind": "presence",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_mb_r1/adjudication/MB308_CELL308_ADJUDICATION.md",
+     "status": "OK"
+    },
+    {
+     "commit": "e451e6342396dbbcf607e061ece9e5171062a83a",
+     "id": "S14_MBR1_ADJUDICATION_REVIEW",
+     "kind": "verdict",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_mb_r1/review/MB308_ADJUDICATION_REVIEW.md",
+     "status": "OK"
+    },
+    {
+     "commit": "3c2a78544899c5772ea95b7b228b1059f056e3fd",
+     "id": "CONSTANTS_RATIFICATION",
+     "kind": "verdict",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/governance/CONSTANTS_RATIFICATION_MBS308.md",
+     "status": "OK"
+    },
+    {
+     "commit": "2308651ea62d62b3637d6b78d6b28fcb45366e99",
+     "id": "LIVENESS_DELTA_ACCEPTED",
+     "kind": "verdict",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_OPTIONB_LIVENESS_MBS308.md",
+     "status": "OK"
+    },
+    {
+     "commit": "f84f39f4521a705d9698373533e4a9ac2b539220",
+     "id": "IMPLEMENTATION_REVIEW_ACCEPTED",
+     "kind": "verdict",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_IMPLEMENTATION_MBS308_DELTA_D9_4BA8B18E_FRESH_ACCEPTED.md",
+     "status": "OK"
+    },
+    {
+     "commit": "5c2394baac8aef43dcf9b675d323b0a7e2a9ccef",
+     "id": "USER_FREEZE_DECISION",
+     "kind": "presence",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/ledger/USER_RULING_MBS308_OWNER_DECISIONS.txt",
+     "status": "OK"
+    },
+    {
+     "commit": "8fc2b03856fa58084f6ba1bef8dea46429a99998",
+     "id": "USER_OWNER_SUPPLEMENT_1",
+     "kind": "presence",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_1.txt",
+     "status": "OK"
+    },
+    {
+     "commit": "74f386a54088a210a51bb81587225dae64def637",
+     "id": "USER_OWNER_SUPPLEMENT_2",
+     "kind": "presence",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/ledger/USER_RULING_MBS308_OWNER_SUPPLEMENT_2.txt",
+     "status": "OK"
+    },
+    {
+     "commit": "ca66e36736511b9dface887093e31d429ffc4a8f",
+     "id": "CONSTANTS_RATIFICATION_READINGS_R1",
+     "kind": "presence",
+     "on_ref": true,
+     "pass": true,
+     "path": "level4/closure_proofs/p5y_k5_cell308_research/governance/CONSTANTS_RATIFICATION_MBS308_READINGS_R1.md",
+     "status": "OK"
+    }
+   ],
+   "temporal_basis": "each record's commit is named in the frozen configuration (Q8-S binds its sha256), so it existed before the freeze"
+  },
+  "R_RULES_CONTROLS": {
+   "controls": {
+    "pct_refuses_floats": true,
+    "rallow_adds_sip_paths_only": true,
+    "rallow_base_kept_additions_recorded": true,
+    "rallow_hosting_app_never_added": true,
+    "rallow_invalid_readings": true,
+    "rallow_never_added_classes": true,
+    "rallow_other_paths_not_added": true,
+    "rallow_python_interpreters_never_added": true,
+    "rallow_threshold_is_strict": true,
+    "rallow_uses_the_r_excl_pct_output": true,
+    "rexcl_ceiling_50": true,
+    "rexcl_hosting_app_not_above_25": true,
+    "rexcl_hosting_app_unidentified": true,
+    "rexcl_invalid_readings": true,
+    "rexcl_other_process_never_raises_it": true,
+    "rexcl_single_exception_roundup5": true,
+    "rfree_3_consecutive_attainable": true,
+    "rfree_fewer_than_10_readings_invalid": true,
+    "rfree_floor_2GiB": true,
+    "rfree_never_3_consecutive_gate_unattainable_value_kept": true,
+    "rfree_not_on_ac_invalid": true,
+    "rfree_readings_under_30s_apart_invalid": true,
+    "rfree_sum_rounded_up": true,
+    "rfree_without_r_mem_value": true,
+    "rmem_broken_pool_release_is_not_a_watchdog_event": true,
+    "rmem_event_run_is_rerun_even_when_its_cell_is_covered": true,
+    "rmem_feasibility_fails_on_memory": true,
+    "rmem_no_rung_twice_s_is_1_and_floor_1GiB": true,
+    "rmem_no_valid_input": true,
+    "rmem_non_official_run_is_invalid": true,
+    "rmem_official_event_fails_closed_no_rerun": true,
+    "rmem_official_event_not_cured_by_duplicate_or_doubled_cap": true,
+    "rmem_plan_cell_without_valid_run_incomplete": true,
+    "rmem_poll_boundaries_exact": true,
+    "rmem_poll_clips_to_half_a_second": true,
+    "rmem_poll_noncanonical_branch_stops_no_value": true,
+    "rmem_poll_recheck_ok_keeps_mem_poll_s": true,
+    "rmem_poll_rechecks_the_value_given": true,
+    "rmem_rerun_bound_from_the_valid_runs": true,
+    "rmem_rerun_bound_undefined_without_a_valid_run_is_the_owners": true,
+    "rmem_rerun_cap_not_within_the_bound_stops": true,
+    "rmem_rerun_not_at_the_doubled_cap_cures_nothing": true,
+    "rmem_rerun_valid_and_invalid_peak_excluded": true,
+    "rmem_sampler_observed_spacing_binds_exactly_half_a_second_is_within": true,
+    "rmem_sampler_observed_spacing_unrecorded_invalid": true,
+    "rmem_sampler_slower_than_half_second_invalid": true,
+    "rmem_second_event_no_further_doubling": true,
+    "rmem_spread_raises_k_to_2s": true,
+    "rmem_valid_inputs": true,
+    "rmem_watchdog_event_is_not_a_valid_input_rerun_doubled": true
+   },
+   "failed": [],
+   "h3_reproduction": {
+    "additions": [
+     "BackgroundShortcutRunner",
+     "cloudd",
+     "modelcatalogd",
+     "spotlightknowledged.updater"
+    ],
+    "base_names": 39,
+    "equals_item16_list_at_b0dd8e93": true,
+    "h3_transcription_matches_the_ratification": true,
+    "pass": true,
+    "rejected": 0
+   },
+   "n": 50,
+   "pass": true,
+   "rule_numbers_source": "3c2a78544899c5772ea95b7b228b1059f056e3fd"
+  }
+ },
+ "cases_config_sha256": "b4261cdf7643b1cca6a2e64614498c033c5c73e0b3597c15edab34938b29cc35",
+ "cases_missing_pass": [],
+ "cases_not_run": [],
+ "cases_selected": [
+  "Q8-S",
+  "QC09-S",
+  "QC09-SCI",
+  "QC11-S",
+  "QC12-S",
+  "QC13-S",
+  "R_RULES_CONTROLS"
+ ],
+ "cases_unknown": [],
+ "cases_without_gate": [],
+ "child_exit_codes": {},
+ "config_consistency": {
+  "cases_without_gates": [],
+  "depends_on_mismatch": [],
+  "duplicate_ids": [],
+  "gates_without_cases": [],
+  "missing_from_config": [],
+  "pass": true,
+  "status_mismatch": [],
+  "unknown_gates": [],
+  "unknown_in_config": []
+ },
+ "dev_mode": true,
+ "disk": {
+  "checks": [
+   {
+    "free_bytes": [
+     276127981568,
+     276127981568
+    ],
+    "pass": true,
+    "phase": "start"
+   }
+  ],
+  "cleanups": {},
+  "refusal": null,
+  "repository_threshold_bytes": 2147483648,
+  "start": {
+   "pass": true,
+   "phase": "verifier start",
+   "planted": false,
+   "readings": [
+    {
+     "free_bytes": 276127522816,
+     "need_bytes": 7516192768,
+     "ok": true,
+     "path": "/private/tmp/c308-dev-1791014959",
+     "probed": "/private/tmp/c308-dev-1791014959"
+    },
+    {
+     "free_bytes": 276127522816,
+     "need_bytes": 2147483648,
+     "ok": true,
+     "path": "/Users/suzhe/ReBaseGuard-c308mbs",
+     "probed": "/Users/suzhe/ReBaseGuard-c308mbs"
+    }
+   ],
+   "utc": "2026-10-03T08:09:19Z"
+  },
+  "threshold_bytes": 7516192768
+ },
+ "fail_closed_statuses": [],
+ "finished_utc": "2026-10-03T08:09:22Z",
+ "freeze_commit": "efcd0789d834c614c88e5977311e2cc9aa6cb974",
+ "gates": {
+  "Q1": {
+   "cases": [
+    "QC05",
+    "Q1_theory"
+   ],
+   "pass": false
+  },
+  "Q10": {
+   "cases": [
+    "QC13-S"
+   ],
+   "pass": true
+  },
+  "Q11": {
+   "cases": [
+    "QC13-S"
+   ],
+   "pass": true
+  },
+  "Q12": {
+   "cases": [
+    "QS-STATIC",
+    "QS-STATE",
+    "QS-CRASH",
+    "QS-LAUNCH",
+    "QS-QUALIFY",
+    "QS-DISK",
+    "QS-CASES",
+    "QS-MUTANTS",
+    "QC09-S",
+    "QC11-S",
+    "Q12_caps",
+    "QC02"
+   ],
+   "pass": false
+  },
+  "Q13": {
+   "cases": [
+    "QS-CASES",
+    "R_RULES_CONTROLS",
+    "R_RULES_OFFICIAL"
+   ],
+   "pass": false
+  },
+  "Q2": {
+   "cases": [
+    "QC11-S",
+    "Q8-S",
+    "QC01",
+    "QC02",
+    "QC06"
+   ],
+   "pass": false
+  },
+  "Q3": {
+   "cases": [
+    "QC04",
+    "MBR1_REPRO",
+    "QS-RESUME-DECOY"
+   ],
+   "pass": false
+  },
+  "Q4": {
+   "cases": [
+    "QC05",
+    "QC06"
+   ],
+   "pass": false
+  },
+  "Q5": {
+   "cases": [
+    "QC05",
+    "QC07"
+   ],
+   "pass": false
+  },
+  "Q6": {
+   "cases": [
+    "QC02",
+    "QC03",
+    "QC08"
+   ],
+   "pass": false
+  },
+  "Q7": {
+   "cases": [
+    "QC02",
+    "QC05"
+   ],
+   "pass": false
+  },
+  "Q8": {
+   "cases": [
+    "Q8-S"
+   ],
+   "pass": false
+  },
+  "Q9": {
+   "cases": [
+    "QC09-S",
+    "QC09-SCI",
+    "QC12-S"
+   ],
+   "pass": false
+  }
+ },
+ "head": "efcd0789d834c614c88e5977311e2cc9aa6cb974",
+ "heavy_recomputed": false,
+ "host": null,
+ "host_report": null,
+ "ledger_entries": [
+  {
+   "agent": "mbs308_qualification",
+   "class": "HISTORICAL_RECONSTRUCTION",
+   "what": "QC01 rehearse cell 305 (C-A, C-B reproduction only; committed record; equality booleans)"
+  },
+  {
+   "agent": "mbs308_qualification",
+   "class": "NONTARGET_DRIFT_VALIDATION",
+   "what": "QC02-QC04, QC06, QC08, MBR1_REPRO, QS-RESUME-DECOY: decoy cells 297 / 316 and MB r1's validation drifts 3, 27/10, 11/10 (the official decoys under the launchd launcher)"
+  },
+  {
+   "agent": "mbs308_qualification",
+   "class": "SYNTHETIC_VALIDATION",
+   "what": "QC05, QC07 synthetic sets and decoy bundles; QS-* suites and the mutant matrix (sandboxes on a separate base store, synthetic evaluator and launchd payload); QC09-S, QC09-SCI (refusals only); Q12 and R-rule planted controls"
+  },
+  {
+   "agent": "mbs308_qualification",
+   "class": "INFRASTRUCTURE",
+   "what": "QC11-S static, QC12-S leak scans (counts only), QC13-S governance, Q8-S manifest, Q1_theory, R_RULES_OFFICIAL (rule inputs: memory, host readings; no certified value)"
+  }
+ ],
+ "pass": false,
+ "pending_user_decision": [],
+ "preconditions": {
+  "campaign_refs": [],
+  "forbidden_present": [],
+  "freeze_commit": "efcd0789d834c614c88e5977311e2cc9aa6cb974",
+  "head": "efcd0789d834c614c88e5977311e2cc9aa6cb974",
+  "head_ok": true,
+  "mbr1_recorded_state_exact": true,
+  "mode": "dev",
+  "no_campaign_refs": true,
+  "no_review_grant_result_or_post_freeze_record": true,
+  "no_spool_result": true,
+  "pass": true
+ },
+ "python": "3.14.5",
+ "record_sha256": {},
+ "review_mode": true,
+ "rules_sha256": "c04239defd01af393cb272440e3807309e08919b78a6c2abf6ff7b5bb1d23fd7",
+ "schema": "rebaseguard.p5y.k5.cell308-mbs-r1.qualification.v1",
+ "started_utc": "2026-10-03T08:09:19Z",
+ "target_evaluations": 0,
+ "verifier_sha256": "52120a2401e7bf18adf26aed3d1a52892a2e946632d76d73d4ea0f54b7e639d3",
+ "wall_seconds": 3.4
+}
