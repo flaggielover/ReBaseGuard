@@ -1,0 +1,369 @@
+{
+ "changes_made": false,
+ "items": [
+  {
+   "checked_by": "existing gate: preflight no_automatic_os_install (DR2 c)",
+   "item": "automatic_os_installation_disabled",
+   "note": "disabling automatic macOS and critical-update installation is the user's action; the campaign never changes it",
+   "reading": {
+    "auto_install_enabled": false,
+    "enabled": {
+     "AutomaticDownload": false,
+     "AutomaticallyInstallMacOSUpdates": false,
+     "ConfigDataInstall": false,
+     "CriticalUpdateInstall": false
+    },
+    "missing_means_enabled": true,
+    "values": {
+     "AutomaticDownload": 0,
+     "AutomaticallyInstallMacOSUpdates": 0,
+     "ConfigDataInstall": 0,
+     "CriticalUpdateInstall": 0
+    }
+   },
+   "status": "READY"
+  },
+  {
+   "checked_by": "recorded (no gate): a restart is a reboot, detected by the boot UUID and resumable; the scheduled power events are read by `pmset -g sched` (owner decisions section 14: restart hazards)",
+   "item": "automatic_restart",
+   "note": "automatic restarts by an OS update are excluded by the previous item; a scheduled restart / shutdown / sleep is for the operator to cancel (a user action; the campaign never changes it)",
+   "reading": {
+    "autorestart": null,
+    "pmset_readable": true,
+    "scheduled_power_events": {
+     "event_types": [
+      "wake",
+      "wake"
+     ],
+     "readable": true,
+     "restart_shutdown_or_sleep_scheduled": false
+    }
+   },
+   "status": "RECORDED"
+  },
+  {
+   "checked_by": "existing gates: require_ac and preflight ac_power; AC at every sample (sleep channels)",
+   "item": "ac_power",
+   "note": "",
+   "reading": "AC Power",
+   "status": "READY"
+  },
+  {
+   "checked_by": "existing: supervised caffeinate -i -m -s (execute / resume); the sleep channels K / S / L detect any sleep (qualification runtimes need a CLEAN assessment); the lid is a user action",
+   "item": "sleep_prevention_and_lid",
+   "note": "caffeinate cannot stop lid-close (clamshell) sleep: keep the lid open, on AC, for the whole run",
+   "reading": {
+    "disksleep_min": 10,
+    "displaysleep_min": 0,
+    "lid_closed": false,
+    "sleep_channels_available": true,
+    "sleep_min": 1
+   },
+   "status": "READY"
+  },
+  {
+   "checked_by": "existing gate: preflight thermal_pressure_0",
+   "item": "thermal_level_0",
+   "note": "",
+   "reading": 1,
+   "status": "NOT_READY"
+  },
+  {
+   "checked_by": "existing gate: preflight lowpowermode_0",
+   "item": "lowpowermode_0",
+   "note": "",
+   "reading": 0,
+   "status": "READY"
+  },
+  {
+   "checked_by": "existing gate: preflight free_disk_ge_2GiB (MIN_FREE_DISK 2147483648 bytes, ratification item 23)",
+   "item": "disk_execution",
+   "note": "a failed probe is NOT_READY (fail closed)",
+   "reading": 103932194816,
+   "status": "READY"
+  },
+  {
+   "checked_by": "new gate (brief 50): QUAL_MIN_FREE_BYTES 7516192768 bytes before the verifier's start and each heavy phase, and before the mutant runner's start and each target run",
+   "item": "disk_qualification",
+   "note": "",
+   "reading": [
+    103932194816,
+    103932194816
+   ],
+   "status": "READY"
+  },
+  {
+   "checked_by": "existing gate: preflight memory_pressure_normal (item 24)",
+   "item": "memory_pressure_normal",
+   "note": "",
+   "reading": 2,
+   "status": "NOT_READY"
+  },
+  {
+   "checked_by": "existing gate: free_memory_ge_min (FREE_MEM_MIN_BYTES 2147483648, provisional; R-FREE and its attainability at the qualification)",
+   "item": "free_memory",
+   "note": "",
+   "reading": 1553661952,
+   "status": "NOT_READY"
+  },
+  {
+   "checked_by": "existing gate: preflight boot_uuid_recorded; the journal and every identity carry it (a reboot is CONSUMED_INTERRUPTED)",
+   "item": "boot_identity",
+   "note": "",
+   "reading": true,
+   "status": "READY"
+  },
+  {
+   "checked_by": "existing check: check_platform at preflight, execute, every resume and every computing mode (RC2 / DR2); re-pinned at the freeze from the qualification host (code/mbs308_repin.py platform --write-platform)",
+   "item": "host_identity_platform_pins",
+   "note": "",
+   "reading": [],
+   "status": "READY"
+  },
+  {
+   "checked_by": "existing gate: host_exclusive (EXCL_CPU_PCT 25.0, EXCL_ALLOW; R-EXCL-PCT / R-ALLOW at the freeze)",
+   "item": "host_exclusive",
+   "note": "quit the listed apps (a user action); a process is never allow-listed by hand; no `ps` reading is UNKNOWN (the gate itself refuses)",
+   "reading": [],
+   "status": "READY"
+  },
+  {
+   "checked_by": "existing gate: preflight no_other_campaign_job",
+   "item": "no_other_campaign_job",
+   "note": "READY needs a positive reading: no pidfile, or a recorded process that is positively dead",
+   "reading": "ABSENT",
+   "status": "READY"
+  }
+ ],
+ "operator_actions": {
+  "actions": [
+   "the lid open and the host on AC for the whole run",
+   "the operator's apps quit",
+   "no concurrent sandbox-heavy work on the host",
+   "automatic macOS / critical-update installation disabled by the user"
+  ],
+  "line": "one ledger line by the operator / coordinator for the run, quoting the user's statement and its time",
+  "recorded_in": "level4/closure_proofs/p5y_k5_cell308_research/ledger/TARGET_INTEGRITY_LEDGER.jsonl",
+  "ref": "refs/heads/p5y-k5-cell308-research",
+  "written_with": "level4/closure_proofs/p5y_k5_cell308_research/code/c308_quarantine.py log_event"
+ },
+ "owner_section14": [
+  {
+   "covered_by": "the driver's preflight gate `ac_power` and `require_ac` in pre_marker_common (execute and every resume refuse before the marker / before the attempt counter moves)",
+   "host_report_items": [
+    "ac_power"
+   ],
+   "item": "AC power",
+   "kind": "GATE",
+   "names": [
+    "ac_power",
+    "require_ac"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "no accepted text makes the lid a gate (protocol 8.1: caffeinate cannot stop lid-close sleep; keeping the lid open is a user action): --host-report reads, read-only, the lid (ioreg AppleClamshellState) and the sleep / displaysleep / disksleep timers (pmset -g) and whether the sleep channels K / S / L are available; after the start any sleep is detected by K / S / L and recorded in the sealed record",
+   "host_report_items": [
+    "sleep_prevention_and_lid"
+   ],
+   "item": "required lid/sleep state",
+   "kind": "RECORDED_READING",
+   "names": [
+    "kern_times",
+    "log_events"
+   ],
+   "operator_checklist": "the lid is open and the host is on AC before the launch and stays so until the seal"
+  },
+  {
+   "covered_by": "the supervised `caffeinate -i -m -s -w <pid>` started by keep_awake in pre_marker_common (re-spawned whenever it dies; every death and re-spawn recorded durably and in the sealed record)",
+   "host_report_items": [
+    "sleep_prevention_and_lid"
+   ],
+   "item": "sleep prevention",
+   "kind": "MECHANISM",
+   "names": [
+    "keep_awake",
+    "CaffeinateSupervisor"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "the driver's preflight gate `no_automatic_os_install` (DR2 c: AutomaticallyInstallMacOSUpdates and CriticalUpdateInstall must be 0; a missing key is enabled); read-only: disabling them is the user's action",
+   "host_report_items": [
+    "automatic_os_installation_disabled"
+   ],
+   "item": "automatic macOS/critical-update installation disabled as required",
+   "kind": "GATE",
+   "names": [
+    "no_automatic_os_install"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "update-triggered restarts are excluded by the gate `no_automatic_os_install`; --host-report reads, read-only, `pmset -g` autorestart and the scheduled power events (`pmset -g sched`: a scheduled restart / shutdown / sleep is a hazard); any restart is detected by the boot UUID and classified CONSUMED_INTERRUPTED (resumable within the frozen budget), never a result",
+   "host_report_items": [
+    "automatic_restart"
+   ],
+   "item": "restart hazards controlled",
+   "kind": "RECORDED_READING",
+   "names": [
+    "no_automatic_os_install",
+    "boot_session_uuid"
+   ],
+   "operator_checklist": "no restart, shutdown or sleep is scheduled and no update restart is pending from the launch to the seal"
+  },
+  {
+   "covered_by": "the driver's preflight gate `thermal_pressure_0` (recorded after the marker, never gating)",
+   "host_report_items": [
+    "thermal_level_0"
+   ],
+   "item": "thermal state",
+   "kind": "GATE",
+   "names": [
+    "thermal_pressure_0"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "the driver's preflight gates `memory_pressure_normal` and `free_memory_ge_min`",
+   "host_report_items": [
+    "memory_pressure_normal",
+    "free_memory"
+   ],
+   "item": "memory pressure",
+   "kind": "GATE",
+   "names": [
+    "memory_pressure_normal",
+    "free_memory_ge_min"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "the driver's preflight gate `free_disk_ge_2GiB` (MIN_FREE_DISK; a failed probe fails closed)",
+   "host_report_items": [
+    "disk_execution"
+   ],
+   "item": "free disk >= frozen threshold",
+   "kind": "GATE",
+   "names": [
+    "free_disk_ge_2GiB",
+    "MIN_FREE_DISK"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "check_platform (the pinned interpreter and libpython with their sha256, the OS build, the architecture: the qualification host) and check_identity (the qualified worktree, git dir, common dir and branch)",
+   "host_report_items": [
+    "host_identity_platform_pins"
+   ],
+   "item": "host identity",
+   "kind": "GATE",
+   "names": [
+    "check_platform",
+    "check_identity"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "the driver's preflight gate `boot_uuid_recorded`; the journal and every process identity carry the boot UUID",
+   "host_report_items": [
+    "boot_identity"
+   ],
+   "item": "boot identity",
+   "kind": "GATE",
+   "names": [
+    "boot_uuid_recorded"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "check_platform at preflight, execute, every resume and every computing mode (RC2 / DR2)",
+   "host_report_items": [
+    "host_identity_platform_pins"
+   ],
+   "item": "platform pins",
+   "kind": "GATE",
+   "names": [
+    "check_platform",
+    "PLATFORM_PINS"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "check_seal_preconditions (committer / author identity; the object store writable, a private index and a trial commit object with the current configuration; the branch ref; the git dir writable), check_clean (the tree clean, ignored files included; no index / HEAD / branch / packed-refs lock), check_not_evaluated (no campaign lockfile), and the driver's own fixed git environment (GIT_NO_REPLACE_OBJECTS=1, GIT_OPTIONAL_LOCKS=0; every durable write passes core.fsync / core.fsyncMethod explicitly); no accepted text names a further git setting",
+   "host_report_items": [],
+   "item": "Git configuration safety",
+   "kind": "GATE",
+   "names": [
+    "check_seal_preconditions",
+    "check_clean",
+    "check_not_evaluated"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "the preflight gate `no_other_campaign_job` (a LIVE pidfile refuses), check_not_evaluated (a journal that is not a stale pre-marker intent refuses; campaign lockfiles refuse), check_helpers and check_grant (the driver and helper bytes are the granted, pinned bytes), the O_EXCL lock",
+   "host_report_items": [
+    "no_other_campaign_job"
+   ],
+   "item": "no stale/conflicting driver",
+   "kind": "GATE",
+   "names": [
+    "no_other_campaign_job",
+    "check_not_evaluated",
+    "check_helpers",
+    "check_grant"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "check_grant (HEAD is the grant commit on the chain freeze -> qualification -> review -> grant as the grant names it; the driver sha256 and the freeze manifest bound), check_clean and check_bindings (every pinned file equals its blob at HEAD)",
+   "host_report_items": [],
+   "item": "exact frozen commit",
+   "kind": "GATE",
+   "names": [
+    "check_grant",
+    "check_clean",
+    "check_bindings"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "check_not_evaluated (any ref under refs/p5y-k5-cell308-mbs-r1/ other than a stale pre-marker intent refuses: CONSUMED) and the marker's compare-and-swap from zero",
+   "host_report_items": [],
+   "item": "no existing MB-S marker",
+   "kind": "GATE",
+   "names": [
+    "check_not_evaluated",
+    "CONSUMED_REF"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "check_not_evaluated (the pending-result ref refuses: CONSUMED; a result in the tree, in history or in the spool refuses: TARGET_ARTIFACT_EXISTS)",
+   "host_report_items": [],
+   "item": "no pending-result state",
+   "kind": "GATE",
+   "names": [
+    "check_not_evaluated",
+    "PENDING_REF"
+   ],
+   "operator_checklist": null
+  },
+  {
+   "covered_by": "check_not_evaluated (no MB-S marker, journal attempt, checkpoint, pending result or result exists: zero successor target evaluations) and check_mbr1_state (MB r1's recorded state exactly: cell 308 consumed once, by MB r1)",
+   "host_report_items": [],
+   "item": "successor target count still zero",
+   "kind": "GATE",
+   "names": [
+    "check_not_evaluated",
+    "check_mbr1_state"
+   ],
+   "operator_checklist": null
+  }
+ ],
+ "read_only": true,
+ "ready": false,
+ "schema": "rebaseguard.p5y.k5.cell308-mbs-r1.host-report.v1",
+ "utc": "2026-10-03T06:11:46Z"
+}
