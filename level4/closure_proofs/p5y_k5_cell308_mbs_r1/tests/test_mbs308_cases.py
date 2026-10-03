@@ -1150,9 +1150,11 @@ def t_measure_readings_and_hosting_app():
         bad["free_memory_bytes"] is None and bad["procs"] is None
     clock = {"t": 0.0}
     seen = []
+    durations = iter((0.8, 0.1, 0.4, 0.1))
 
     def one():
         seen.append(clock["t"])
+        clock["t"] += next(durations)
         return {"n": len(seen)}
     MEAS.take_readings(one, 4, 30, sleep=lambda s: clock.__setitem__("t", clock["t"] + s), clock=lambda: clock["t"])
     r["series_spacing_at_least_as_ruled"] = len(seen) == 4 and all(b - a >= 30 for a, b in zip(seen, seen[1:])) and \

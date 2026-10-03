@@ -252,8 +252,12 @@ def take_readings(one, n: int = READINGS_N, spacing_s: float = READINGS_SPACING_
         if last is not None:
             while clock() - last < spacing_s:
                 sleep(min(1.0, max(0.01, spacing_s - (clock() - last))))
-        last = clock()
+        # Anchor the next interval to the timestamp after the reading has been
+        # collected.  Starting the interval before `one()` lets the read itself
+        # consume part of the required spacing, so the recorded timestamps can
+        # be less than `spacing_s` apart even though the loop waited that long.
         out.append(one())
+        last = clock()
     return out
 
 
