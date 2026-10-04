@@ -1,0 +1,664 @@
+{
+ "all_pass": true,
+ "driver_sha256": "8cc96f34e6673d16fcf31f831328173f32ad7cdeaab455b06103a8668ddd1a81",
+ "flows": 112,
+ "results": {
+  "A01_shifted_cell_same_width": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['cell_interval', 'drift_hull_Ew']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A02_geometry_not_exact_strings": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['geometry']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A03_wrong_verifier_id": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['verifier_id']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A04_wrong_guard_id": {
+   "detail": "ADMISSION: ValueError: guard_id is not this file",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A05_wrong_marker_ref": {
+   "detail": "ADMISSION: ValueError: grant marker_ref is not this context's marker",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A06_wrong_host": {
+   "detail": "ADMISSION: ValueError: execution host mismatch",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A07_wrong_worktree": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['worktree']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A08_wrong_runtime": {
+   "detail": "ADMISSION: ValueError: runtime mismatch",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A09_short_horizon": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['not_after_horizon']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A10_expired": {
+   "detail": "ADMISSION: ValueError: grant expired",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A11_placeholder_expiry": {
+   "detail": "ADMISSION: ValueError: time data '<SET BY THE OWNER, ISO-8601 UTC, e.g. 2026-10-31T23:59:59Z>' does not match format '%Y-%m-%dT%H:%M:%SZ'",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A12_placeholder_issued": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['issued_utc', 'not_after_horizon']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A13_placeholder_authority": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['authority']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A14_missing_authority": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['authority']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A15_issued_in_the_future": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['issued_utc']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A16_detached_head": {
+   "detail": "BRANCH: HEAD must be attached to a branch under refs/heads/",
+   "got": "('REFUSED', 'BRANCH')",
+   "pass": true
+  },
+  "A17_strict_descendant_ref": {
+   "detail": "ADMISSION: ValueError: a strict descendant of the grant commit exists (refs/heads/side)",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "A18_ref_at_grant_commit_allowed": {
+   "got": 0,
+   "pass": true
+  },
+  "A19_window_commits_allowed": {
+   "got": 0,
+   "pass": true
+  },
+  "A20_window_commit_outside_window_paths": {
+   "detail": "GRANT_INVALID: only the freeze record and checkpoint records may precede the qualification",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "A21_window_type_commit_before_review": {
+   "detail": "GRANT_INVALID: only the freeze record and checkpoint records may precede the qualification",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "A22_window_commit_touching_review_files": {
+   "detail": "GRANT_INVALID: only the freeze record and checkpoint records may precede the qualification",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "A23_freeze_record_missing": {
+   "detail": "FREEZE_RECORD: no freeze record",
+   "got": "('REFUSED', 'FREEZE_RECORD')",
+   "pass": true
+  },
+  "A24_freeze_record_names_another_commit": {
+   "detail": "FREEZE_RECORD: the record commit is not the freeze commit's record-only child",
+   "got": "('REFUSED', 'FREEZE_RECORD')",
+   "pass": true
+  },
+  "A25_freeze_record_changed_later": {
+   "detail": "FREEZE_RECORD: the freeze record was changed after it was made",
+   "got": "('REFUSED', 'FREEZE_RECORD')",
+   "pass": true
+  },
+  "A26_hooks_refused_outside_sandbox": {
+   "got": "HOOKS",
+   "pass": true
+  },
+  "A27_authority_quoting_owner_text_admitted": {
+   "pass": true
+  },
+  "A28_missing_worktree": {
+   "detail": "ADMISSION: grant preconditions fail before the marker: ['worktree']",
+   "got": "('REFUSED', 'ADMISSION')",
+   "pass": true
+  },
+  "F01_no_grant_commit": {
+   "detail": "GRANT_MISSING",
+   "got": "('REFUSED', 'GRANT_MISSING')",
+   "pass": true
+  },
+  "F02_grant_not_at_head": {
+   "detail": "GRANT_INVALID: HEAD is not the grant commit",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F03_grant_touches_another_file": {
+   "detail": "GRANT_INVALID: the grant commit changes more than the grant",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F04_grant_is_a_merge": {
+   "pass": true
+  },
+  "F05_wrong_driver_sha": {
+   "detail": "GRANT_INVALID: driver bytes differ from the granted driver",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F06_wrong_manifest_sha": {
+   "detail": "GRANT_INVALID: the grant does not bind the frozen manifest",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F07_frozen_commit_not_recorded": {
+   "detail": "GRANT_INVALID: the grant does not name the recorded freeze commit",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F08_missing_review": {
+   "detail": "GRANT_INVALID: only the freeze record and checkpoint records may precede the qualification",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F09_extra_commit_in_chain": {
+   "detail": "GRANT_INVALID: only the freeze record and checkpoint records may precede the qualification",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F10_review_rejected": {
+   "detail": "REVIEW_VERDICT: qualification review is not QUALIFICATION_ACCEPTED",
+   "got": "('REFUSED', 'REVIEW_VERDICT')",
+   "pass": true
+  },
+  "F11_review_verdict_not_on_line_2": {
+   "detail": "REVIEW_VERDICT: qualification review is not QUALIFICATION_ACCEPTED",
+   "got": "('REFUSED', 'REVIEW_VERDICT')",
+   "pass": true
+  },
+  "F12_qualification_not_pass": {
+   "detail": "GRANT_INVALID: the qualification report is not a PASS at the freeze commit",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F13_qualification_other_freeze": {
+   "detail": "GRANT_INVALID: the qualification report is not a PASS at the freeze commit",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F14_qualification_touches_code": {
+   "detail": "FREEZE_RECORD: a frozen directory changed after the recorded freeze",
+   "got": "('REFUSED', 'FREEZE_RECORD')",
+   "pass": true
+  },
+  "F15_review_touches_another_file": {
+   "detail": "GRANT_INVALID: the review commit changes more than the review files",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F16_frozen_dir_changed_after_freeze": {
+   "detail": "FREEZE_RECORD: a frozen directory changed after the recorded freeze",
+   "got": "('REFUSED', 'FREEZE_RECORD')",
+   "pass": true
+  },
+  "F17_dirty_tree": {
+   "detail": "DIRTY_TREE",
+   "got": "('REFUSED', 'DIRTY_TREE')",
+   "pass": true
+  },
+  "F18_result_file_present": {
+   "detail": "TARGET_ARTIFACT_EXISTS: TEST_ONLY/P309_TEST_RESULT.json",
+   "got": "('REFUSED', 'TARGET_ARTIFACT_EXISTS')",
+   "pass": true
+  },
+  "F19_result_tmp_is_symlink": {
+   "detail": "RESULT_PATH_OCCUPIED: TEST_ONLY/P309_TEST_RESULT.json.tmp holds a lrwxrwxrwx object",
+   "got": "('REFUSED', 'RESULT_PATH_OCCUPIED')",
+   "pass": true
+  },
+  "F20_marker_already_exists": {
+   "detail": "CONSUMED: a ref exists under a marker namespace: ['refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_MARKER']",
+   "got": "('REFUSED', 'CONSUMED')",
+   "pass": true
+  },
+  "F21_pending_ref_exists": {
+   "detail": "CONSUMED: a ref exists under a marker namespace: ['refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_PENDING']",
+   "got": "('REFUSED', 'CONSUMED')",
+   "pass": true
+  },
+  "F22_emergency_file_exists": {
+   "detail": "TARGET_ARTIFACT_EXISTS: emergency evidence file in the git dir",
+   "got": "('REFUSED', 'TARGET_ARTIFACT_EXISTS')",
+   "pass": true
+  },
+  "F22b_run_nonce_exists": {
+   "detail": "TARGET_ARTIFACT_EXISTS: a run nonce exists in the git dir (an earlier execute stopped there)",
+   "got": "('REFUSED', 'TARGET_ARTIFACT_EXISTS')",
+   "pass": true
+  },
+  "F23_prior_marker_namespace": {
+   "detail": "CONSUMED: a ref exists under a marker namespace: ['refs/rlr-tail/x']",
+   "got": "('REFUSED', 'CONSUMED')",
+   "pass": true
+  },
+  "F24_unparseable_grant": {
+   "detail": "GRANT_INVALID: the grant does not parse as a JSON object",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F24b_executions_authorized_true": {
+   "detail": "GRANT_INVALID: schema / cell / scope / executions",
+   "got": "('REFUSED', 'GRANT_INVALID')",
+   "pass": true
+  },
+  "F25_control_failed_sealed_not_consumed": {
+   "got": 3,
+   "pass": true
+  },
+  "F25b_control_raises_sealed_not_consumed": {
+   "got": 3,
+   "pass": true
+  },
+  "F26_record_commits_allowed": {
+   "got": 0,
+   "pass": true
+  },
+  "F27_success_and_postexec": {
+   "got": {
+    "postexec": {
+     "P1_blob_equals_pending_and_self_hash": true,
+     "P2_seal_changes_result_only_parent_is_grant": true,
+     "P3_marker_names_grant_one_execution": true,
+     "P4_second_execute_refused": true,
+     "P5_seal_only_changes_nothing": true,
+     "P6_worktree_copy_equals_sealed": true,
+     "P7_no_r6": true,
+     "P8_single_target_cell": true,
+     "P9_control_digest": true,
+     "ok": true,
+     "outcome_if_failed": null
+    },
+    "rc": 0
+   },
+   "pass": true
+  },
+  "F28_evaluator_raises": {
+   "got": 5,
+   "pass": true
+  },
+  "F29_independent_check_fails": {
+   "got": 5,
+   "pass": true
+  },
+  "F30_base_exception": {
+   "got": 5,
+   "pass": true
+  },
+  "F31_persist_fails_emergency_then_seal_only": {
+   "got": [
+    4,
+    0
+   ],
+   "pass": true
+  },
+  "F32_consumed_unrecorded_never_again": {
+   "got": [
+    6,
+    "('REFUSED', 'CONSUMED')"
+   ],
+   "pass": true
+  },
+  "F33_seal_fails_then_seal_only": {
+   "got": [
+    4,
+    0
+   ],
+   "pass": true
+  },
+  "F34_materialize_fails_then_seal_only": {
+   "got": [
+    7,
+    0
+   ],
+   "pass": true
+  },
+  "F35_seal_only_without_evidence_refused": {
+   "got": "SEAL_ONLY: no persisted evidence (no pending ref, no emergency file)",
+   "pass": true
+  },
+  "F36_seal_only_post_marker_evidence_without_marker": {
+   "pass": true
+  },
+  "F37_seal_only_head_holds_other_result": {
+   "pass": true
+  },
+  "F38_second_execute_refused": {
+   "pass": true
+  },
+  "F39_recording_failure_sealed": {
+   "got": 5,
+   "pass": true
+  },
+  "F40_seal_only_emergency_without_marker": {
+   "got": "SEAL_ONLY: emergency evidence without a marker: nothing is persisted",
+   "pass": true
+  },
+  "F41_seal_only_emergency_bound_elsewhere": {
+   "got": "SEAL_ONLY: the emergency evidence is not bound to the marker's grant commit",
+   "pass": true
+  },
+  "F42_seal_only_marker_without_grant": {
+   "got": "SEAL_ONLY: the marker does not name a grant commit",
+   "pass": true
+  },
+  "H01_execute_hook_refused_before_marker": {
+   "got": "('REFUSED', 'HOST_GIT')",
+   "pass": true
+  },
+  "H02_execute_config_key_refused_before_marker": {
+   "got": "('REFUSED', 'HOST_GIT')",
+   "pass": true
+  },
+  "H03_hook_during_control_refused_before_marker": {
+   "got": "('REFUSED', 'HOST_GIT')",
+   "pass": true
+  },
+  "H04_hook_during_failed_control_refused_before_seal": {
+   "got": "('REFUSED', 'HOST_GIT')",
+   "pass": true
+  },
+  "H05_hook_during_evaluation_emergency_then_seal_only": {
+   "got": [
+    4,
+    "HOST_GIT",
+    0
+   ],
+   "pass": true
+  },
+  "H06_seal_only_hook_refused": {
+   "got": [
+    4,
+    "HOST_GIT",
+    0
+   ],
+   "pass": true
+  },
+  "H07_seal_only_config_key_refused": {
+   "got": [
+    4,
+    "HOST_GIT",
+    0
+   ],
+   "pass": true
+  },
+  "I01_review_mode_P10_TEST_band": {
+   "got": {
+    "P10": true,
+    "postexec": {
+     "P1_blob_equals_pending_and_self_hash": true,
+     "P2_seal_changes_result_only_parent_is_grant": true,
+     "P3_marker_names_grant_one_execution": true,
+     "P5_seal_only_changes_nothing": true,
+     "P6_worktree_copy_equals_sealed": true,
+     "P7_no_r6": true,
+     "P8_single_target_cell": true,
+     "P9_control_digest": true,
+     "ok": true,
+     "outcome_if_failed": null
+    },
+    "rc": 0
+   },
+   "pass": true
+  },
+  "I02_review_mode_detects_a_wrong_sealed_verdict": {
+   "got": {
+    "P10": false,
+    "postexec": {
+     "P1_blob_equals_pending_and_self_hash": true,
+     "P2_seal_changes_result_only_parent_is_grant": true,
+     "P3_marker_names_grant_one_execution": true,
+     "P5_seal_only_changes_nothing": true,
+     "P6_worktree_copy_equals_sealed": true,
+     "P7_no_r6": true,
+     "P8_single_target_cell": true,
+     "P9_control_digest": true,
+     "ok": true,
+     "outcome_if_failed": null
+    },
+    "rc": 0
+   },
+   "pass": true
+  },
+  "I03_whole_evaluation_on_decoys": {
+   "got": {
+    "gate": "GATE",
+    "postexec": {
+     "P10_review_mode_reverification": true,
+     "P1_blob_equals_pending_and_self_hash": true,
+     "P2_seal_changes_result_only_parent_is_grant": true,
+     "P3_marker_names_grant_one_execution": true,
+     "P5_seal_only_changes_nothing": true,
+     "P6_worktree_copy_equals_sealed": true,
+     "P7_no_r6": true,
+     "P8_single_target_cell": false,
+     "P9_control_digest": true,
+     "ok": false,
+     "outcome_if_failed": "EXECUTION_INDETERMINATE"
+    },
+    "rc": 0,
+    "status": "TARGET_EVALUATED"
+   },
+   "pass": true
+  },
+  "S01_non_certified_falls_back": {
+   "pass": true
+  },
+  "S02_non_accept_verdicts_fall_back": {
+   "got": {
+    "ACCEPT": {
+     "1": "21741356733022696114772245256787190739698540597251299/748288838313422294120286634350736906063837462003712",
+     "2": "105512860481061343607470302594935363370729501559495709/2993155353253689176481146537402947624255349848014848",
+     "3": "10290767818768262450330352396426285236004406858026009/187072209578355573530071658587684226515959365500928",
+     "4": "153173417854266038540204068761869475149415534960715409/1496577676626844588240573268701473812127674924007424"
+    },
+    "REJECT": {
+     "1": null,
+     "2": null,
+     "3": null,
+     "4": null
+    }
+   },
+   "pass": true
+  },
+  "S03_budget_zero_no_job_starts_no_raise": {
+   "pass": true
+  },
+  "S04_job_exception_raises": {
+   "pass": true
+  },
+  "S05_rung_major_order": {
+   "pass": true
+  },
+  "S06_job_limit_terminates_and_discards": {
+   "got": {
+    "cpu_s": 1.002,
+    "kind": "TERMINATED_JOB_LIMIT",
+    "signal": 24
+   },
+   "pass": true
+  },
+  "S07_start_threshold_stops_starting_without_raising": {
+   "got": [
+    1,
+    2
+   ],
+   "pass": true
+  },
+  "S08_verdicts_from_another_verifier_raise": {
+   "pass": true
+  },
+  "S09_stage1b_failure_gives_S_I1": {
+   "pass": true
+  },
+  "S10_stage1b_not_certified_is_certification_failed": {
+   "pass": true
+  },
+  "S11_stage1b_job_exception_raises": {
+   "pass": true
+  },
+  "S12_stage1b_reconstruction_mismatch_raises": {
+   "pass": true
+  },
+  "S13_stage1b_after_srk_imports_table_unchanged": {
+   "got": {
+    "changed": [],
+    "srk_side_c1b_gauss_preloaded": true
+   },
+   "pass": true
+  },
+  "S14_frozen_budget_mechanics": {
+   "got": {
+    "stage1a_jobs": 12,
+    "stage1b_jobs": 3,
+    "stage1b_order": [
+     [
+      8,
+      0
+     ],
+     [
+      6,
+      0
+     ],
+     [
+      4,
+      0
+     ]
+    ]
+   },
+   "pass": true
+  },
+  "S15_sigkill_below_limit_is_job_exception": {
+   "got": {
+    "cpu_s": 0.019,
+    "error": "killed by signal 9 below the CPU limit",
+    "kind": "JOB_EXCEPTION"
+   },
+   "pass": true
+  },
+  "S16_target_job_needs_the_run_nonce": {
+   "got": {
+    "no_nonce": "refused",
+    "wrong_token": "refused"
+   },
+   "pass": true
+  },
+  "S17_sigxcpu_below_limit_is_job_exception": {
+   "got": {
+    "cpu_s": 0.02,
+    "error": "killed by signal 24 below the CPU limit",
+    "kind": "JOB_EXCEPTION"
+   },
+   "pass": true
+  },
+  "V01_valid_candidate_passes": {
+   "got": {
+    "authority": true,
+    "cell_interval": true,
+    "committer_identity": true,
+    "drift_hull_Ew": true,
+    "driver_sha256": true,
+    "frozen_manifest_sha256": true,
+    "geometry": true,
+    "guard_candidate_check": true,
+    "guard_field_parse": true,
+    "guard_id": true,
+    "host_id": true,
+    "issued_utc": true,
+    "marker_ref": true,
+    "not_after_horizon": true,
+    "runtime": true,
+    "schema_cell_scope": true,
+    "verifier_id": true,
+    "worktree": true
+   },
+   "pass": true
+  },
+  "V02_placeholder_authority": {
+   "got": {
+    "authority": false
+   },
+   "pass": true
+  },
+  "V03_missing_worktree": {
+   "got": {
+    "worktree": false
+   },
+   "pass": true
+  },
+  "V04_short_horizon": {
+   "got": {
+    "not_after_horizon": false
+   },
+   "pass": true
+  },
+  "V05_wrong_verifier": {
+   "got": {
+    "verifier_id": false
+   },
+   "pass": true
+  },
+  "V06_wrong_host": {
+   "got": {
+    "guard_candidate_check": false,
+    "host_id": false,
+    "worktree": false
+   },
+   "pass": true
+  },
+  "V07_wrong_chain_commit": {
+   "pass": true
+  },
+  "V08_dirty_tree": {
+   "pass": true
+  },
+  "V09_validated_candidate_admitted_by_execute": {
+   "pass": true
+  },
+  "V10_window_commit_between_validation_and_grant": {
+   "pass": true
+  },
+  "V11_hook_present": {
+   "got": {
+    "branch": true,
+    "clean": true,
+    "flags": true,
+    "host_git": false,
+    "host_git_refusal": "HOST_GIT: git hooks present: ['reference-transaction']",
+    "not_evaluated": true,
+    "result_paths": true
+   },
+   "pass": true
+  },
+  "Z_no_production_ref_anywhere": {
+   "got": [],
+   "pass": true
+  }
+ },
+ "test_sha256": "820bf0ea097919b83a45451d20de84c33c3582d391df5a776c35d785af20be25",
+ "utc": "2026-10-04T19:26:07Z"
+}

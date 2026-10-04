@@ -1,0 +1,24 @@
+{
+ "freeze_commit": "4c754a73767903a5ad5dddff725f1e173a0a6876",
+ "harness": "frozen",
+ "pass": false,
+ "qc": "QC11",
+ "runs": [
+  {
+   "cmd": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py"
+   ],
+   "cpu_children_s": 44.2,
+   "rc": 1,
+   "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py\", line 939, in <module>\n    res.update(validate_flows())\n               ^^^^^^^^^^^^^^^^\n  File \"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py\", line 598, in validate_flows\n    sb, c, cand, out, same = validate(\"V01_valid_candidate_passes\")\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py\", line 594, in validate\n    out = D.validate_grant(cand, OWN_SHA, ctx=ctx_of(sb))\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_driver.py\", line 668, in validate_grant\n    fz = recorded_freeze(ctx.repo)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_driver.py\", line 346, in recorded_freeze\n    raise Refusal(\"FREEZE_RECORD\", \"the freeze record was changed after it was made\")\np309_driver.Refusal: FREEZE_RECORD: the freeze record was changed after it was made\n",
+   "stdout_tail": "",
+   "wall_s": 49.7
+  }
+ ],
+ "utc": "2026-10-04T17:07:43.215151Z",
+ "wall_s": 49.7
+}

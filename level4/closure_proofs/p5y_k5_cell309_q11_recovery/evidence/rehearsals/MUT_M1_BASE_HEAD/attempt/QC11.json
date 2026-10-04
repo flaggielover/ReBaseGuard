@@ -1,0 +1,24 @@
+{
+ "freeze_commit": "4c754a73767903a5ad5dddff725f1e173a0a6876",
+ "harness": "mutant",
+ "pass": false,
+ "qc": "QC11",
+ "runs": [
+  {
+   "cmd": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py"
+   ],
+   "cpu_children_s": 0.6,
+   "rc": 1,
+   "stderr_tail": "Traceback (most recent call last):\n  File \"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py\", line 994, in <module>\n    res.update(pre_marker_flows())\n               ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py\", line 301, in pre_marker_flows\n    refused(\"F01_no_grant_commit\", \"GRANT_MISSING\", setup=lambda sb, c: (\n  File \"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py\", line 288, in refused\n    c = build_chain(sb, **kw)\n        ^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py\", line 165, in build_chain\n    raise RuntimeError(f\"QC11 harness: {have} freeze-record commits in the sandbox chain, expected {want}\")\nRuntimeError: QC11 harness: 2 freeze-record commits in the sandbox chain, expected 1\n",
+   "stdout_tail": "",
+   "wall_s": 0.7
+  }
+ ],
+ "utc": "2026-10-04T19:13:34.182162Z",
+ "wall_s": 0.8
+}

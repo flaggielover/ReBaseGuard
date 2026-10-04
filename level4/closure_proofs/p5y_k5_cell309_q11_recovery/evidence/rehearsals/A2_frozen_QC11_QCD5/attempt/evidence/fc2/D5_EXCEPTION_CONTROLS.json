@@ -1,0 +1,675 @@
+{
+ "all_pass": true,
+ "allowance_config_sha256": "4f6db1ec96176336bd7edb62511725fac7a4611b9d3cdaedb6f5e67dd2433b4c",
+ "controls": 166,
+ "results": {
+  "C01_additional_marker_site": {
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C02_additional_pending_site": {
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C03_duplicate_named_site": {
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C04_identical_site_in_another_file": {
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C05_unlisted_ref_mutation_non_production": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C06_listed_function_changed": {
+   "detail": "{'GIT_WRITE_UNLISTED', 'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_an-unknown-verb": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_branch": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_commit": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_config": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_fast-import": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_gc": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_push": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_reset": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_symbolic-ref": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07_unlisted_tag": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C07b_symbolic_ref_read_form_allowed": {
+   "detail": "set()",
+   "pass": true
+  },
+  "C07c_object_write_unlisted": {
+   "detail": "{'GIT_WRITE_UNLISTED'}",
+   "pass": true
+  },
+  "C08_ref_file_write": {
+   "detail": "{'REF_FILE_WRITE'}",
+   "pass": true
+  },
+  "C08b_ref_dir_create": {
+   "detail": "{'REF_FILE_WRITE'}",
+   "pass": true
+  },
+  "C08c_git_dir_write": {
+   "detail": "{'GITDIR_WRITE'}",
+   "pass": true
+  },
+  "C08d_head_file_write": {
+   "detail": "{'REF_FILE_WRITE'}",
+   "pass": true
+  },
+  "C09_subprocess_git_ref_mutation": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C10_dynamic_name_from_pieces": {
+   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C11_getattr_constructed": {
+   "detail": "{'REF_MUTATION_UNLISTED', 'INTROSPECTION'}",
+   "pass": true
+  },
+  "C12_alias_through_tuple": {
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C13_alias_through_return": {
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C14_alias_through_parameter": {
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C15_alias_through_fstring": {
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
+   "pass": true
+  },
+  "C16_production_token_outside_definitions": {
+   "detail": "{'MARKER_TOKEN', 'CELL_LITERAL'}",
+   "pass": true
+  },
+  "C17_grant_path_alias_write": {
+   "detail": "{'GRANT_WRITE'}",
+   "pass": true
+  },
+  "C18_control_mark_cannot_exempt_a_file": {
+   "detail": "{'CONTROL_MARK_UNLISTED'}",
+   "pass": true
+  },
+  "C19_site_without_execute_assertion": {
+   "detail": "({'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}, {'_arm_marker': {'starts_with_assert': False, 'referrers': ['run_execute'], 'ok': False}, '_persist_pending': {'starts_with_assert': True, 'referrers': ['after_marker', 'run_seal_only'], 'ok': True}})",
+   "pass": true
+  },
+  "C20_site_called_from_a_qualification_mode": {
+   "detail": "{'_arm_marker': {'starts_with_assert': True, 'referrers': ['decoy_stage1a', 'run_execute'], 'ok': False}, '_persist_pending': {'starts_with_assert': True, 'referrers': ['after_marker', 'run_seal_only'], 'ok': True}}",
+   "pass": true
+  },
+  "C21_marker_before_check_grant": {
+   "detail": "{'hooks_refused_first': True, 'check_grant_single_top_level': True, 'premarker_admission_single_top_level': True, 'create_run_nonce_single_top_level': True, '_arm_marker_single_top_level': False, 'after_marker_single_top_level': True, 'order': False, 'seal_only_persist_guarded': True, 'after_marker_",
+   "pass": true
+  },
+  "C22_dry_admission_removed": {
+   "detail": "{'hooks_refused_first': True, 'check_grant_single_top_level': True, 'premarker_admission_single_top_level': False, 'create_run_nonce_single_top_level': True, '_arm_marker_single_top_level': True, 'after_marker_single_top_level': True, 'order': False, 'seal_only_persist_guarded': True, 'after_marker_",
+   "pass": true
+  },
+  "C23_seal_only_marker_gate_removed": {
+   "detail": "{'hooks_refused_first': True, 'check_grant_single_top_level': True, 'premarker_admission_single_top_level': True, 'create_run_nonce_single_top_level': True, '_arm_marker_single_top_level': True, 'after_marker_single_top_level': True, 'order': True, 'seal_only_persist_guarded': False, 'after_marker_o",
+   "pass": true
+  },
+  "C24_hooks_allowed_in_production": {
+   "detail": "{'hooks_refused_first': False, 'check_grant_single_top_level': True, 'premarker_admission_single_top_level': True, 'create_run_nonce_single_top_level': True, '_arm_marker_single_top_level': True, 'after_marker_single_top_level': True, 'order': True, 'seal_only_persist_guarded': True, 'after_marker_o",
+   "pass": true
+  },
+  "C25_marker_inside_a_branch": {
+   "detail": "{'hooks_refused_first': True, 'check_grant_single_top_level': True, 'premarker_admission_single_top_level': True, 'create_run_nonce_single_top_level': True, '_arm_marker_single_top_level': False, 'after_marker_single_top_level': True, 'order': True, 'seal_only_persist_guarded': True, 'after_marker_o",
+   "pass": true
+  },
+  "C25b_backstop_arm_grant_check_removed": {
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': False, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': False, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pr",
+   "pass": true
+  },
+  "C25b_backstop_arm_nonce_removed": {
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': False, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': False, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pr",
+   "pass": true
+  },
+  "C25b_backstop_backstop_call_removed": {
+   "detail": "{'pinned__assert_execute_context': False, 'pinned__site_backstop': True, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': False, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pr",
+   "pass": true
+  },
+  "C25b_backstop_nonce_pid_check_removed": {
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': True, 'pinned__require_own_run_nonce': False, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pro",
+   "pass": true
+  },
+  "C25b_backstop_pending_marker_check_removed": {
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': False, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': False, 'nonce_names_this_pr",
+   "pass": true
+  },
+  "C25b_backstop_site_check_removed": {
+   "detail": "{'pinned__assert_execute_context': False, 'pinned__site_backstop': True, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': False, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pr",
+   "pass": true
+  },
+  "C25b_backstop_third_site_code": {
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': True, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': False, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pro",
+   "pass": true
+  },
+  "C26_test_path_driver_attribute_store": {
+   "detail": "['[MODULE_ATTRIBUTE_STORE] tests/test_evil.py:6: D.check_grant']",
+   "pass": true
+  },
+  "C26_test_path_driver_cli_execute": {
+   "detail": "['[DRIVER_EXECUTE] tests/test_evil.py:6: the driver run in execute / seal-only mode']",
+   "pass": true
+  },
+  "C26_test_path_driver_cli_seal_only": {
+   "detail": "['[DRIVER_EXECUTE] tests/test_evil.py:6: the driver run in execute / seal-only mode']",
+   "pass": true
+  },
+  "C26_test_path_exec_context": {
+   "detail": "['[EXEC_CONTEXT] tests/test_evil.py:6: ExecContext construction', '[PRODUCTION_REFERENCE] tests/test_evil.py:6: D.G.PRODUCTION']",
+   "pass": true
+  },
+  "C26_test_path_execute_with_none": {
+   "detail": "['[NO_CONTEXT] tests/test_evil.py:6: run_execute without an explicit context']",
+   "pass": true
+  },
+  "C26_test_path_execute_without_context": {
+   "detail": "['[NO_CONTEXT] tests/test_evil.py:6: run_execute without an explicit context']",
+   "pass": true
+  },
+  "C26_test_path_getattr_driver": {
+   "detail": "['[DYNAMIC_ACCESS] tests/test_evil.py:6: getattr on the driver / guard module']",
+   "pass": true
+  },
+  "C26_test_path_guard_attribute_store": {
+   "detail": "['[MODULE_ATTRIBUTE_STORE] tests/test_evil.py:6: D.G.premarker_check']",
+   "pass": true
+  },
+  "C26_test_path_import_from_alias": {
+   "detail": "[\"[IMPORT_FROM] tests/test_evil.py:1: from p309_driver import ['_arm_marker']\"]",
+   "pass": true
+  },
+  "C26_test_path_import_production": {
+   "detail": "[\"[IMPORT_FROM] tests/test_evil.py:1: from p309_guard import ['PRODUCTION']\"]",
+   "pass": true
+  },
+  "C26_test_path_mode_store": {
+   "detail": "['[FORBIDDEN_NAME] tests/test_evil.py:6: reference to _MODE']",
+   "pass": true
+  },
+  "C26_test_path_module_dict": {
+   "detail": "['[DYNAMIC_ACCESS] tests/test_evil.py:6: D.__dict__']",
+   "pass": true
+  },
+  "C26_test_path_production_ctx": {
+   "detail": "['[FORBIDDEN_NAME] tests/test_evil.py:6: reference to production_context']",
+   "pass": true
+  },
+  "C26_test_path_production_reference": {
+   "detail": "['[PRODUCTION_REFERENCE] tests/test_evil.py:6: D.G.PRODUCTION']",
+   "pass": true
+  },
+  "C26_test_path_python_c_execute": {
+   "detail": "['[FORBIDDEN_NAME] tests/test_evil.py:6:-c:1: reference to _MODE', \"[STRING_NAME] tests/test_evil.py:6: a string naming ['_MODE']\"]",
+   "pass": true
+  },
+  "C26_test_path_seal_only_without_context": {
+   "detail": "['[NO_CONTEXT] tests/test_evil.py:6: run_seal_only without an explicit context']",
+   "pass": true
+  },
+  "C26_test_path_site_call": {
+   "detail": "['[FORBIDDEN_NAME] tests/test_evil.py:6: reference to _arm_marker']",
+   "pass": true
+  },
+  "C26_test_path_string_name": {
+   "detail": "[\"[STRING_NAME] tests/test_evil.py:6: a string naming ['_arm_marker']\"]",
+   "pass": true
+  },
+  "C26_test_path_sys_modules": {
+   "detail": "[\"[DYNAMIC_ACCESS] tests/test_evil.py:6: sys.modules['p309_driver']\"]",
+   "pass": true
+  },
+  "C26_test_path_vars_driver": {
+   "detail": "['[DYNAMIC_ACCESS] tests/test_evil.py:6: vars on the driver / guard module']",
+   "pass": true
+  },
+  "C27_test_mutates_the_production_marker": {
+   "detail": "{'MARKER_MUTATION'}",
+   "pass": true
+  },
+  "C28_t7_exemption_is_hash_bound": {
+   "detail": "['[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:396: G._git_bytes', '[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:409: S.Q', '[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:400: G._git_bytes', '[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:417: S.Q', '[FORBIDDEN_NAME] tests/test_p309",
+   "pass": true
+  },
+  "C29_dynamic_import": {
+   "detail": "{'DYNAMIC_IMPORT_UNRESOLVED', 'INTROSPECTION', 'DYNAMIC_IMPORT'}",
+   "pass": true
+  },
+  "C29_executable_file": {
+   "detail": "{'EXEC_BIT'}",
+   "pass": true
+  },
+  "C29_forbidden_git_option_after_verb": {
+   "detail": "{'GIT_OPTION_FORBIDDEN'}",
+   "pass": true
+  },
+  "C29_listed_runner_changed": {
+   "detail": "{'GIT_CALL_OPAQUE', 'ENV_UNLISTED', 'RUNNER_UNREVIEWED'}",
+   "pass": true
+  },
+  "C29_non_python_file": {
+   "detail": "{'NONPY_FILE'}",
+   "pass": true
+  },
+  "C29_process_module_alias": {
+   "detail": "{'PROCESS_ALIAS'}",
+   "pass": true
+  },
+  "C29_python_c_code_scanned": {
+   "detail": "{'PROCESS_FORBIDDEN'}",
+   "pass": true
+  },
+  "C29_ref_path_returned_by_a_helper": {
+   "detail": "{'REF_FILE_WRITE'}",
+   "pass": true
+  },
+  "C29_ref_path_through_a_with_local": {
+   "detail": "{'REF_FILE_WRITE'}",
+   "pass": true
+  },
+  "C29_ref_path_through_an_inner_local": {
+   "detail": "{'REF_FILE_WRITE'}",
+   "pass": true
+  },
+  "C29_runner_used_as_value": {
+   "detail": "{'RUNNER_ALIAS'}",
+   "pass": true
+  },
+  "C29_shadow_research_module": {
+   "detail": "{'SHADOW_MODULE'}",
+   "pass": true
+  },
+  "C29_unregistered_wrapper": {
+   "detail": "{'GIT_CALL_OPAQUE', 'RUNNER_UNREGISTERED'}",
+   "pass": true
+  },
+  "K01_composite_introspection_site_call": {
+   "detail": "(['GITDIR_WRITE', 'IMPORT_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "K02_getmembers_only": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "K03_guard_alias_store_only": {
+   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "K04_same_in_a_qc_tool": {
+   "detail": "(['GITDIR_WRITE', 'IMPORT_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "M01_file_named_q309_guard_in_FNS": {
+   "detail": "(['MARKER_ALIAS', 'MARKER_MUTATION', 'MARKER_TOKEN', 'REF_MUTATION_UNLISTED', 'SHADOW_MODULE'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M02_os_system_shell_string_production": {
+   "detail": "(['PROCESS_FORBIDDEN'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M03_shell_true_string": {
+   "detail": "(['PROCESS_SHELL'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M04_dynamic_verb_production": {
+   "detail": "(['MARKER_MUTATION', 'REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M05_starred_args_pending": {
+   "detail": "(['GIT_CALL_OPAQUE', 'MARKER_MUTATION', 'RUNNER_UNREGISTERED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M06_git_config_alias_production": {
+   "detail": "(['GIT_OPTION_FORBIDDEN', 'MARKER_MUTATION'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M07_ref_file_dynamic_path": {
+   "detail": "(['REF_FILE_WRITE'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M08_packed_refs_append_dynamic": {
+   "detail": "(['REF_FILE_WRITE'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M09_aliased_runner": {
+   "detail": "(['PROCESS_ALIAS'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M10_getattr_runner": {
+   "detail": "(['INTROSPECTION', 'PROCESS_ALIAS'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M11_os_execvp": {
+   "detail": "(['PROCESS_FORBIDDEN'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M12_getoutput_shell": {
+   "detail": "(['PROCESS_FORBIDDEN'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "M13_test_imports_site_under_alias": {
+   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "M14_test_site_via_module_dict": {
+   "detail": "(['INTROSPECTION'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "M15_shell_script_invoked": {
+   "detail": "(['NONPY_FILE', 'PROCESS_UNLISTED', 'RUNNER_UNREGISTERED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N01_ctypes_system_bytes_marker": {
+   "detail": "(['IMPORT_UNLISTED', 'MARKER_ALIAS', 'MARKER_TOKEN'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N02_runpy_txt_script": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N03_sourcefileloader_json": {
+   "detail": "(['IMPORT_UNLISTED', 'PROCESS_ALIAS'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N04_env_config_fsmonitor_read_verb": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N05_env_external_diff_read_verb": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N06_env_ssh_command_ls_remote": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N07_builtins_dunder_exec": {
+   "detail": "(['INTROSPECTION'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N08_builtins_module_dict_exec": {
+   "detail": "(['IMPORT_UNLISTED', 'INTROSPECTION'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N09_pickle_loads": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N10_code_interpreter": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N11_ref_file_chr_built": {
+   "detail": "(['GITDIR_WRITE', 'REF_FILE_WRITE'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N12_git_grep_open_files_in_pager": {
+   "detail": "(['GIT_OPTION_FORBIDDEN'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N13_git_grep_O_pager": {
+   "detail": "(['GIT_OPTION_FORBIDDEN'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N14_test_module_alias_store": {
+   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "N15_test_guard_store_via_driver": {
+   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "N16_test_guard_store_alias": {
+   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "N17_multiprocessing_target": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N18_pager_env": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N19_git_config_global_env": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N20_raw_git_env": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "P0_genuine_tree_scan_pass": {
+   "detail": "set()",
+   "pass": true
+  },
+  "P0b_genuine_tree_static_pass": {
+   "detail": "{}",
+   "pass": true
+  },
+  "P0c_exactly_two_sanctioned_sites": {
+   "detail": "[{'file': 'code/p309_driver.py', 'line': 1223, 'function': '_persist_pending', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}, {'file': 'code/p309_driver.py', 'line': 1213, 'function': '_arm_marker', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}]",
+   "pass": true
+  },
+  "P0d_formal_control_fires_every_process_kind": {
+   "detail": "[{'file': 'tests/planted_control_p309.py', 'fired': ['IMPORT_UNLISTED']}, {'file': 'tests/planted_control_p309_formal.py', 'fired': ['DYNAMIC_EXEC', 'DYNAMIC_IMPORT', 'ENV_UNLISTED', 'GITDIR_WRITE', 'GIT_CALL_OPAQUE', 'GIT_OPTION_FORBIDDEN', 'GIT_WRITE_UNLISTED', 'GRANT_WRITE', 'IMPORT_UNLISTED', 'I",
+   "pass": true
+  },
+  "R01_driver_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R02_guard__git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R03_guard__git_bytes": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R04_guard__git_ok": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R05_make_freeze_manifest_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R06_make_freeze_params_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R07_make_proposed_authorization_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R08_checkpoint_push_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R09_qualify_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R10_self_audit_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R11_verify_start_state_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R12_qc11_sh": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R13_guard_test_sh": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R14_scoped_sandbox__git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R15_variant__run_git_list": {
+   "detail": "(['IMPORT_UNLISTED', 'REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R16_variant__git_ok": {
+   "detail": "(['IMPORT_UNLISTED', 'REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R17_qualify_run_argv": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R18_qualify_qc_formal_param": {
+   "detail": "(['PROCESS_UNLISTED', 'RUNNER_UNREGISTERED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R19_qualify_research_test_param": {
+   "detail": "(['PROCESS_UNLISTED', 'RUNNER_UNREGISTERED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R20_qualify_qc_research_simple_param": {
+   "detail": "(['PROCESS_UNLISTED', 'RUNNER_UNREGISTERED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R21_qc11_sh_env_config_read_verb": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R22_guard_test_sh_env_config_read_verb": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R23_qualify_run_env": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "T7a_import_module_computed_name_getattr": {
+   "detail": "(['DYNAMIC_IMPORT_UNRESOLVED', 'INTROSPECTION'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "T7b_sys_modules_computed_name": {
+   "detail": "(['INTROSPECTION'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "T7c_driver_reached_via_postexec": {
+   "detail": "(['GITDIR_WRITE', 'INTROSPECTION'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "T7d_composite_in_postexec": {
+   "detail": "(['GITDIR_WRITE'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "T8a_arm_backstop_neutered_same_shape": {
+   "detail": "([], ['T8_runtime_backstop_at_the_sites'])",
+   "pass": true
+  },
+  "T8b_nonce_neutered_same_shape": {
+   "detail": "([], ['T8_runtime_backstop_at_the_sites'])",
+   "pass": true
+  },
+  "T8c_nonce_neutered_mismatch": {
+   "detail": "([], ['T8_runtime_backstop_at_the_sites'])",
+   "pass": true
+  },
+  "X01_seal_only_check_removed": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': False, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X02_seal_only_check_after_first_git": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': False, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X03_seal_only_check_in_a_branch": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': False, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X04_execute_recheck_removed": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': False, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X05_post_marker_recheck_removed": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': False, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X06_post_marker_recheck_after_persist": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': False, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X07_driver_env_not_hermetic": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': False, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X08_job_env_overrides_global_config": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': False, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X09_guard_git_not_hermetic": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': False, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X10_guard_hermetic_value_changed": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': False, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X11_guard_git_key_after_hermetic": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_he",
+   "pass": true
+  },
+  "Z_no_marker_namespace_ref_anywhere": {
+   "detail": "[]",
+   "pass": true
+  }
+ },
+ "scan_sha256": "aba944832c716cb9681bf52611ea220c36094ccebe71c954cafb042b640f0d65",
+ "static_check_sha256": "bd2a1b4723cb239ebd83058f9bc6625e3a68b1911d1aaaac7d34461e4c5f19be",
+ "test_sha256": "d968f5304a6f0edf0c0fac1bdf2eb6f38bbf84f547fe511ae3cadc3693cd92d8",
+ "utc": "2026-10-04T18:07:13Z"
+}

@@ -147,13 +147,18 @@ def gate_evidence(gate: str, rec: dict, base: Path, v: Verdict) -> None:
         f = base / "evidence" / "fc6" / "EXACTLY_ONCE_FLOWS.json"
         if f.exists():
             d = load_json(f, v, "EXACTLY_ONCE_FLOWS.json") or {}
-            flows = {k: x for k, x in d.items() if isinstance(x, dict) and "pass" in x}
-            bad = sorted(k for k, x in flows.items() if not x.get("pass"))
+            res = d.get("results") if isinstance(d.get("results"), dict) else {}
+            flows = {k: x for k, x in res.items() if isinstance(x, dict) and "pass" in x}
+            bad = sorted(k for k, x in flows.items() if x.get("pass") is not True)
             v.checks["QC11:flows"] = len(flows)
+            v.checks["QC11:flows_declared"] = d.get("flows")
             v.checks["QC11:flows_failed"] = bad
-            if rec.get("pass") and (bad or not flows):
-                v.raise_to("CORRUPT", f"QC11 record says pass but its flow table has failures {bad[:5]} / no flows")
-            if not rec.get("pass") and not bad and flows and d.get("pass") is True:
+            table_pass = d.get("all_pass") is True and bool(flows) and not bad and d.get("flows") == len(flows)
+            v.checks["QC11:table_pass"] = table_pass
+            if rec.get("pass") and not table_pass:
+                v.raise_to("CORRUPT", f"QC11 record says pass but its flow table does not (failed {bad[:5]}, "
+                                      f"{len(flows)} of {d.get('flows')} flows, all_pass {d.get('all_pass')})")
+            if not rec.get("pass") and table_pass:
                 v.raise_to("CORRUPT", "QC11 record says fail but its flow table passes")
         else:
             v.checks["QC11:flows"] = "no flow table (the harness crashed before writing it)"

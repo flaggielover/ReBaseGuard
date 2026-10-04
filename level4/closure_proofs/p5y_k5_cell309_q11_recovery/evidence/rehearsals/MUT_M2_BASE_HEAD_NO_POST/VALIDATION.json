@@ -1,0 +1,58 @@
+{
+ "checks": {
+  "QC11:flows": "no flow table (the harness crashed before writing it)",
+  "QC11:freeze": true,
+  "QC11:harness_matches_provenance": true,
+  "QC11:names_itself": true,
+  "gate_ledger:rows": 3,
+  "gate_ledger:target_counters_zero": true,
+  "ledger:binds_provenance": true,
+  "ledger:exactly_once_per_gate": true,
+  "ledger:row_order": true,
+  "ledger:single_run_start": true,
+  "ledger:starts_with_run_start": true,
+  "ledger:summary_row_last": true,
+  "provenance:freeze_is_F": true,
+  "provenance:target_zero": true,
+  "records_form_a_prefix": true,
+  "summary:binds_provenance": true,
+  "summary:freeze": true,
+  "summary:gate_table_matches_records": true,
+  "summary:hashes_match": true,
+  "summary:lists_exactly_the_records": true,
+  "summary:no_replica_refs": true,
+  "summary:pass_consistent": true,
+  "summary:requested_gates": true
+ },
+ "gate_evidence_checked": true,
+ "gates_failed": [
+  "QC11"
+ ],
+ "gates_passed": [],
+ "gates_present": [
+  "QC11"
+ ],
+ "gates_requested": [
+  "QC11"
+ ],
+ "harness": "mutant",
+ "mode": "rehearsal",
+ "reasons": [
+  "FAIL: gate(s) failed: QC11"
+ ],
+ "replica_head": "c950054ae0aa8f9e5d7171b520af3f601238a017",
+ "runtime": {
+  "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+  "executable": "/usr/bin/python3",
+  "host_id_sha256": "33010a62775e0b2323f5cf6cb387ef5402af1765fa8e728028e8aec84ad72222",
+  "hostname_sha256": "5bce98f73f3ed0c837f2729ed9509b38ea66a156db7f653356cb6fe37b366e85",
+  "implementation": "CPython",
+  "machine": "x86_64",
+  "nproc": 4,
+  "platform": "Linux-6.18.44-fc-v64-x86_64-with-glibc2.39",
+  "python": "3.11.15",
+  "workers": 4
+ },
+ "schema": "P309_ATTEMPT_VALIDATION/1",
+ "verdict": "FAIL"
+}

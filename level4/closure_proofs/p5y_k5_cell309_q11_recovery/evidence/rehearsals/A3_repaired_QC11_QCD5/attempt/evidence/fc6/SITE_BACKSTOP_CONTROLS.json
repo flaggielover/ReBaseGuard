@@ -1,0 +1,117 @@
+{
+ "all_pass": true,
+ "controls": 27,
+ "driver_sha256": "8cc96f34e6673d16fcf31f831328173f32ad7cdeaab455b06103a8668ddd1a81",
+ "results": {
+  "B01_arm_without_a_grant_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B02_arm_without_a_run_nonce_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B03_arm_with_another_process_nonce_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B04_arm_in_seal_only_mode_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B04b_arm_without_mode_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B04c_no_refused_arm_moved_a_ref": {
+   "detail": "",
+   "pass": true
+  },
+  "B05_arm_with_grant_nonce_and_execute_allowed": {
+   "detail": "{'refs/heads/p309-test-sandbox': 'a7df9010034224d6055f4dde77bc32786830c12b', 'refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_MARKER': 'a7df9010034224d6055f4dde77bc32786830c12b'}",
+   "pass": true
+  },
+  "B05b_second_arm_refused_by_the_backstop": {
+   "detail": "",
+   "pass": true
+  },
+  "B06_pending_without_a_marker_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B07_pending_with_an_ungranted_marker_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B08_pending_in_execute_without_nonce_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B08b_pending_outside_execute_and_seal_only_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B09_pending_in_seal_only_with_a_granted_marker_allowed": {
+   "detail": "{'refs/heads/p309-test-sandbox': 'a7df9010034224d6055f4dde77bc32786830c12b', 'refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_MARKER': 'a7df9010034224d6055f4dde77bc32786830c12b', 'refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_PENDING': 'be2e3327a78056ab04b1a3d738587da2db6bc0c4'}",
+   "pass": true
+  },
+  "B09b_pending_in_execute_with_the_nonce_allowed": {
+   "detail": "",
+   "pass": true
+  },
+  "B10_direct_call_is_not_a_site": {
+   "detail": "",
+   "pass": true
+  },
+  "B10b_a_wrapper_is_not_a_site": {
+   "detail": "",
+   "pass": true
+  },
+  "B10c_site_codes_are_read_only": {
+   "detail": "",
+   "pass": true
+  },
+  "B11a_outside_execute_mode_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B11b_no_mode_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B11c_production_kind_with_test_names_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B11d_sandbox_kind_on_this_repository_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B11e_sandbox_kind_with_production_guard_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B11f_sandbox_kind_with_production_marker_name_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B11g_unknown_kind_refused": {
+   "detail": "",
+   "pass": true
+  },
+  "B11h_good_shape_reaches_the_caller_check": {
+   "detail": "",
+   "pass": true
+  },
+  "Z1_no_production_namespace_ref_in_any_sandbox": {
+   "detail": "['refs/heads/p309-test-sandbox', 'refs/heads/p309-test-sandbox', 'refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_MARKER', 'refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_PENDING', 'refs/heads/p309-test-sandbox', 'refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_MARKER', 'refs/heads/p309-test-sandbox', 'refs",
+   "pass": true
+  },
+  "Z2_no_marker_namespace_ref_in_this_repository": {
+   "detail": "",
+   "pass": true
+  }
+ },
+ "test_sha256": "8cf11c969b72e3c0c431237dcb3dd857d39601581081b8f9ba2fe13dd389dcb9",
+ "utc": "2026-10-04T19:13:22Z"
+}
