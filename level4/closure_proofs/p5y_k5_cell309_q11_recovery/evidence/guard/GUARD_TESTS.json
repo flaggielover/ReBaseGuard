@@ -997,6 +997,78 @@
    "stderr": "P309 GUARD REFUSED [R3_PUSH_TARGET]: mcp__github__create_pull_request writes to GitHub outside the one allowed branch push; refused"
   },
   {
+   "expected_rule": "R3_FORCE_PUSH",
+   "id": "H34",
+   "kind": "deny",
+   "logged": {
+    "decision": "deny",
+    "rule": "R3_FORCE_PUSH"
+   },
+   "pass": true,
+   "rc": 2,
+   "stderr": "P309 GUARD REFUSED [R3_FORCE_PUSH]: git push --force is refused"
+  },
+  {
+   "expected_rule": "R3_FORCE_PUSH",
+   "id": "H35",
+   "kind": "deny",
+   "logged": {
+    "decision": "deny",
+    "rule": "R3_FORCE_PUSH"
+   },
+   "pass": true,
+   "rc": 2,
+   "stderr": "P309 GUARD REFUSED [R3_FORCE_PUSH]: git push -f is refused"
+  },
+  {
+   "expected_rule": "R3_PUSH_TARGET",
+   "id": "H36",
+   "kind": "deny",
+   "logged": {
+    "decision": "deny",
+    "rule": "R3_PUSH_TARGET"
+   },
+   "pass": true,
+   "rc": 2,
+   "stderr": "P309 GUARD REFUSED [R3_PUSH_TARGET]: push only as `git push -u origin claude/p309-q11-recovery-20261005`"
+  },
+  {
+   "expected_rule": "R5_PROTECTED_WRITE",
+   "id": "W15",
+   "kind": "deny",
+   "logged": {
+    "decision": "deny",
+    "rule": "R5_PROTECTED_WRITE"
+   },
+   "pass": true,
+   "rc": 2,
+   "stderr": "P309 GUARD REFUSED [R5_PROTECTED_WRITE]: shell redirect outside the declared write-set: level4/closure_proofs/p5y_k5_cell309_p309_r1/ledger/ZERO_TARGET_LEDGER.jsonl"
+  },
+  {
+   "expected_rule": "R5_PROTECTED_WRITE",
+   "id": "W16",
+   "kind": "deny",
+   "logged": {
+    "decision": "deny",
+    "rule": "R5_PROTECTED_WRITE"
+   },
+   "pass": true,
+   "rc": 2,
+   "stderr": "P309 GUARD REFUSED [R5_PROTECTED_WRITE]: shell redirect outside the declared write-set: level4/closure_proofs/p5y_k5_cell309_p309_r2/ledger/ZERO_TARGET_LEDGER.jsonl"
+  },
+  {
+   "expected_rule": "R5_PROTECTED_WRITE",
+   "id": "W17",
+   "kind": "deny",
+   "logged": {
+    "decision": "deny",
+    "rule": "R5_PROTECTED_WRITE"
+   },
+   "pass": true,
+   "rc": 2,
+   "stderr": "P309 GUARD REFUSED [R5_PROTECTED_WRITE]: shell redirect outside the declared write-set: level4/closure_proofs/p5y_k5_cell307_rlr_r1/x.json"
+  },
+  {
    "expected_rule": "R4_REMOTE",
    "id": "X01",
    "kind": "deny",
@@ -1513,6 +1585,54 @@
    "stderr": ""
   },
   {
+   "expected_rule": null,
+   "id": "P19",
+   "kind": "allow",
+   "logged": {
+    "decision": "allow",
+    "rule": "-"
+   },
+   "pass": true,
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "expected_rule": null,
+   "id": "P20",
+   "kind": "allow",
+   "logged": {
+    "decision": "allow",
+    "rule": "-"
+   },
+   "pass": true,
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "expected_rule": null,
+   "id": "P21",
+   "kind": "allow",
+   "logged": {
+    "decision": "allow",
+    "rule": "-"
+   },
+   "pass": true,
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "expected_rule": null,
+   "id": "P22",
+   "kind": "allow",
+   "logged": {
+    "decision": "allow",
+    "rule": "-"
+   },
+   "pass": true,
+   "rc": 0,
+   "stderr": ""
+  },
+  {
    "desc": "commit with a staged protected (r1 ledger) path is refused",
    "id": "CM1",
    "kind": "fixture",
@@ -1647,19 +1767,19 @@
   }
  ],
  "counts": {
-  "allow": 18,
-  "deny": 108,
+  "allow": 22,
+  "deny": 114,
   "failed": 0,
   "fixture": 12,
-  "total": 138
+  "total": 148
  },
  "hook_sha256": {
   "p309_guard_policy.py": "4a341c1e3b318c60bfcca211cba02c1f74a70eb862cc2bcd9fa28c39e137aa63",
   "p309_posttooluse_tripwire.py": "ba14ae46ead35945bd5aab71a9df98288dbaa33da52108a72877ee2b35be0eee",
-  "p309_pretooluse_guard.py": "764ee9be7d9c4a993591ba5b03aea8853102841a36d0029bd3bb8cbe8c6a0e4a",
+  "p309_pretooluse_guard.py": "f6abf352913106cb134cbda739b32b8b6200e03c58f879ec638dd973b1e7e35a",
   "p309_session_audit.py": "64460f1a6c83f4a41ce83dc56f628822d213f0dad2a9c1585bd783734aa38e29",
   "settings.json": "714a74cd4c441ddbd0afcdcca03876de4c7ffba48dbaa3ed79b2acbfa68ecd87",
-  "tests/guard_vectors.json": "5101f9e85c29b70a2e83be223574ed0a824293fcb07251cfd4221926bc440be3",
+  "tests/guard_vectors.json": "7dbc02c622892ed65b28a412c3c137b8da66611796ae447232db55d696b2a3f9",
   "tests/test_guard.py": "9b0e9a4ba215c3dc8d889c40f2e5b0e4fd553a5921a3699be0fb15d4d285ebe7"
  },
  "pass": true,

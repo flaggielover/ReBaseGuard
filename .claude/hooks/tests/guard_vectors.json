@@ -88,6 +88,12 @@
   {"id": "H31", "rule": "R3_PUSH_TARGET", "tool": "mcp__github__push_files", "input": {"branch": "main"}},
   {"id": "H32", "rule": "R3_PUSH_TARGET", "tool": "mcp__github__merge_pull_request", "input": {"pullNumber": 1}},
   {"id": "H33", "rule": "R3_PUSH_TARGET", "tool": "mcp__github__create_pull_request", "input": {}},
+  {"id": "H34", "rule": "R3_FORCE_PUSH", "cmd": "git commit -m \"ok\nfine\" && git push --force origin claude/p309-q11-recovery-20261005 2>&1"},
+  {"id": "H35", "rule": "R3_FORCE_PUSH", "cmd": "true\ngit push -f origin claude/p309-q11-recovery-20261005"},
+  {"id": "H36", "rule": "R3_PUSH_TARGET", "cmd": "git push -u origin claude/p309-q11-recovery-20261005 extra 2>&1"},
+  {"id": "W15", "rule": "R5_PROTECTED_WRITE", "cmd": "echo x 2>&1 >level4/closure_proofs/p5y_k5_cell309_p309_r1/ledger/ZERO_TARGET_LEDGER.jsonl"},
+  {"id": "W16", "rule": "R5_PROTECTED_WRITE", "cmd": "cd level4/closure_proofs/p5y_k5_cell309_p309_r2 && echo x &>> ledger/ZERO_TARGET_LEDGER.jsonl"},
+  {"id": "W17", "rule": "R5_PROTECTED_WRITE", "cmd": "echo x 1> level4/closure_proofs/p5y_k5_cell307_rlr_r1/x.json"},
 
   {"id": "X01", "rule": "R4_REMOTE", "cmd": "aws ec2 describe-instances"},
   {"id": "X02", "rule": "R4_REMOTE", "cmd": "aws s3 cp x s3://bucket/"},
@@ -134,6 +140,10 @@
   {"id": "P15", "cmd": "cd @SCRATCH@/iso && python3 -I -S -B level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py > @SCRATCH@/qc11.out 2>&1"},
   {"id": "P16", "tool": "Read", "input": {"file_path": "@REPO@/level4/closure_proofs/p5y_k5_cell309_p309_r1/ledger/ZERO_TARGET_LEDGER.jsonl"}},
   {"id": "P17", "cmd": "git push origin claude/p309-q11-recovery-20261005"},
-  {"id": "P18", "cmd": "mkdir -p level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence"}
+  {"id": "P18", "cmd": "mkdir -p level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence"},
+  {"id": "P19", "cmd": "git push -u origin claude/p309-q11-recovery-20261005 2>&1 | tail -3"},
+  {"id": "P20", "cmd": "git add x && git commit -q -m \"line one\n\nline two: git push --force is refused\" && git push -u origin claude/p309-q11-recovery-20261005 2>&1 | tail -3"},
+  {"id": "P21", "cmd": "python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py --help > /dev/null 2>&1"},
+  {"id": "P22", "cmd": "python3 x.py > @SCRATCH@/out.log 2>&1 < /dev/null"}
  ]
 }

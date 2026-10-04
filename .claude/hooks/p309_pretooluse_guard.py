@@ -128,13 +128,40 @@ def split_heredocs(cmd: str) -> tuple[str, list[tuple[str, str]]]:
 SEP = {";", "&&", "||", "|", "&", "\n", "(", ")", "|&", ";;"}
 
 
-def segments(text: str) -> list[list[str]]:
-    """simple commands as token lists (shlex with operators split); command substitutions are scanned as text too"""
-    # expose $( ... ) and backtick bodies as separate commands
+def unquoted_newlines_to_semicolons(text: str) -> str:
+    """a newline separates commands only outside quotes (a multi-line quoted argument stays one argument)"""
+    out, q, esc = [], None, False
+    for ch in text:
+        if esc:
+            out.append(ch)
+            esc = False
+            continue
+        if ch == "\\" and q != "'":
+            esc = True
+        elif q:
+            if ch == q:
+                q = None
+        elif ch in ("'", '"'):
+            q = ch
+        elif ch == "\n":
+            out.append(" ; ")
+            continue
+        out.append(ch)
+    return "".join(out)
+
+
+FD_DUP_RE = re.compile(r"(?<![\w/])\d*[<>]&(?:\d+|-)")
+REDIR_TOKEN_RE = re.compile(r"^(\d*>>?|\d*<<?<?)(.*)$")
+
+
+def segments_with_redirects(text: str) -> list[tuple[list[str], list[str]]]:
+    """simple commands as (argv, output-redirect targets): shell operators split, fd duplications (2>&1) dropped,
+    redirections removed from argv; command substitutions are scanned as commands too"""
     extra = re.findall(r"\$\(([^()]*)\)", text) + re.findall(r"`([^`]*)`", text)
     out = []
     for chunk in [text] + extra:
-        lex = shlex.shlex(chunk.replace("\n", " ; "), posix=True, punctuation_chars=";&|()")
+        chunk = FD_DUP_RE.sub(" ", unquoted_newlines_to_semicolons(chunk)).replace("&>", ">")
+        lex = shlex.shlex(chunk, posix=True, punctuation_chars=";&|()")
         lex.whitespace_split = True
         lex.commenters = ""
         try:
@@ -142,16 +169,36 @@ def segments(text: str) -> list[list[str]]:
         except ValueError as exc:
             raise Refuse("GUARD_PARSE", f"the command cannot be parsed safely ({exc})") from None
         cur: list[str] = []
+        red: list[str] = []
+        pending = None
         for t in toks:
             if t in SEP or set(t) <= set(";&|()"):
-                if cur:
-                    out.append(cur)
-                cur = []
-            else:
-                cur.append(t)
-        if cur:
-            out.append(cur)
+                if cur or red:
+                    out.append((cur, red))
+                cur, red, pending = [], [], None
+                continue
+            if pending is not None:
+                if ">" in pending:
+                    red.append(t)
+                pending = None
+                continue
+            m = REDIR_TOKEN_RE.match(t)
+            if m:
+                op, rest = m.group(1), m.group(2)
+                if rest:
+                    if ">" in op:
+                        red.append(rest)
+                else:
+                    pending = op
+                continue
+            cur.append(t)
+        if cur or red:
+            out.append((cur, red))
     return out
+
+
+def segments(text: str) -> list[list[str]]:
+    return [argv for argv, _ in segments_with_redirects(text)]
 
 
 ENV_ASSIGN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
@@ -453,15 +500,14 @@ def check_bash(cmd: str, cwd: str | None, depth: int = 0) -> None:
     if P.PRIVATE_HOME_RE.search(head):
         raise Refuse("R4_REMOTE", "access to a credential directory (.aws / .ssh / gcloud / vultr)")
     eff = cwd
-    for seg in segments(head):
+    for seg, reds in segments_with_redirects(head):
         s = strip_prefix(seg)
         if s and s[0] in ("cd", "pushd"):
             dest = next((a for a in s[1:] if not a.startswith("-")), os.path.expanduser("~"))
             dest = os.path.expanduser(os.path.expandvars(dest))
             eff = os.path.normpath(dest if os.path.isabs(dest) else os.path.join(eff or str(P.repo_root()), dest))
             continue
-        seg_text = " ".join(seg)
-        for t in redirect_targets(seg_text):
+        for t in [r for r in reds if r not in ("/dev/null", "/dev/stdout", "/dev/stderr", "/dev/tty")]:
             if P.GRANT_RE.search(t) or P.R5R6_RE.search(t):
                 raise Refuse("R2_GRANT", f"redirect into a grant / result / r5 / r6 path: {t}")
             check_write_path(t, eff, "shell redirect")

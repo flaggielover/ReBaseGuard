@@ -1,0 +1,48 @@
+{
+ "schema": "P309_Q11_RECOVERY_PHASE0/1",
+ "utc": "2026-10-04",
+ "note": "read-only reconnaissance; the forecasts below were fixed before any write and are enforced by .claude/hooks/p309_guard_policy.py (WRITE_ALLOW) at commit 42a266e2",
+ "repository": {"url": "https://github.com/flaggielover/ReBaseGuard", "fresh_clone": "scratchpad/fresh (git clone --no-local of the session checkout, then fetched from origin)"},
+ "actual_starting_refs": {
+  "origin/main": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+  "origin/claude/p5y-k5-cell309-p309-r1": "c902fe2fe33003ac7e4e61f29c10c81682fc940c",
+  "origin/claude/p5y-k5-cell309-p309-r2": "101ef2cb17e5eab2892212178278da45b98004ed",
+  "origin/claude/rebaseguard-k5-cell-309-w0jv8m": "eb9a9c22b093f938e1bf13e0b30512608c58c370",
+  "origin/claude/jolly-carson-o9jaww": "a91411b59188b820932c619652543dcf3bb03e15",
+  "session_checkout_start": "claude/festive-galileo-083h51 at 1cb45382 (= main); that branch no longer exists on origin",
+  "CORRECTIONS_CONFIRMED_8ca441c5": "8ca441c52503fad06352bcccbb6e02892937aefa (ancestor of r1; r1 = 8ca441c5 + one ledger checkpoint commit)",
+  "protected_refs_on_origin": [],
+  "recovery_branch_on_origin_before_push": "absent"
+ },
+ "ancestry": {
+  "r1_ahead_of_main": 721, "r2_ahead_of_main": 766, "merge_base_r1_main": "f3cec1ed4ba407e28ee502f6fe9e579c3f24f051",
+  "r1_is_ancestor_of_r2": true, "8ca441c5_is_ancestor_of_r1": true,
+  "r2_commits_beyond_r1": 45, "r2_last_commit": "2026-10-02T20:59:23+09:00",
+  "r2_touches_only_its_namespace": true,
+  "r1_namespace_tree_at_r1_and_r2": "ecd1c359ef0c3e0c9911b014b884376a10f6ed5b",
+  "r1_root_tree": "83e35e089f01a9796a0ae9fe621bf8971759313f"
+ },
+ "stale_known_state": "The brief's 'latest known working branch' (r1 @ c902fe2f) is not the latest cell-309 state: r2 (101ef2cb) is the successor campaign the r1 postmortem called for. It already implements and reviewed (4 follow-up reviews) the QC11 harness repair, ran 10 cloud-tier drills (attempt 7 INTERRUPTED by a container restart during QC_D5; attempt 10 PASS, validated 44/44), and stands at HOST_SUITABILITY_PENDING awaiting owner decisions OD-R2-0..6 (which require an AWS qualification host). Not merged, rebased or reset; used read-only.",
+ "branch_decision": "claude/p309-q11-recovery-20261005 created at r1 HEAD c902fe2f as the brief directs; r2 is read only by git show",
+ "invariants_at_start": {"r5_blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6", "r6_files": 0, "authorization_dirs_r1_r2": 0,
+                         "r1_ledger_rows_nonzero": 0, "r2_ledger_rows_nonzero": 0},
+ "environment": {"os": "Ubuntu 24.04.4 LTS, Linux 6.18.44-fc-v64 x86_64", "python": "CPython 3.11.15 (/usr/bin/python3; 3.10, 3.12, 3.13 also installed)",
+                 "git": "2.43.0", "nproc": 4, "mem_gb": 15, "dependencies": "stdlib only (r1 manifest: stdlib_only true)",
+                 "host_id_sha256": "33010a62775e0b2323f5cf6cb387ef5402af1765fa8e728028e8aec84ad72222 (r1 freeze host: a6744a79...)",
+                 "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2", "boot_time": "2026-10-04 16:07:36",
+                 "relevant_env": {"PYTHONUNBUFFERED": "1", "GIT_CONFIG_*": "url rewrites ssh->https, credential.interactive=false", "P309_*": "unset"}},
+ "entry_points": {
+  "Q11": "r1 code/p309_qualify.py item QC11 -> qc_formal('tests/test_p309_exactly_once.py', flags=True) -> python3 -I -S -B tests/test_p309_exactly_once.py (sandboxes from new_sandbox/build_chain; driver run_execute only with SandboxContext + stub evaluators; run_execute refuses hooks outside a sandbox)",
+  "QC-D5": "qc_d5 -> tests/test_p309_d5_exception.py, tests/test_p309_site_backstop.py (imports test_p309_exactly_once builders), code/p309_scan_pins.py --list",
+  "QC10": "qc10 -> p309_driver.py decoy-stage1a --decoy a2_h5 (declared out-of-band decoy cell [1/2,37/72], guard_interval enforced), compared with QC08",
+  "reads": ["frozen r1 namespace", "research_r1 impl/verify/code (pinned)", "pinned 307 code rlr307_independent (QC17, load_rlr307)", "overnight-research mirror paths (QC01-QC07)", "replica git history"],
+  "writes_of_the_frozen_runner": ["r1 qualification/attempt_N/ (O_EXCL)", "r1 qualification/P309_QUALIFICATION.json", "r1 ledger/ZERO_TARGET_LEDGER.jsonl and EXPOSURE_LEDGER.jsonl (append)", "hard-coded /tmp/claude-0/.../ea54e9f6.../scratchpad/{qualification,qc11_sandboxes,d5_controls,fc2_sandbox_coordinator}"]
+ },
+ "target_evaluator_reachability": {
+  "target_reaching_entry_points": ["p309_driver.py execute", "p309_driver.py seal-only", "p309_driver.py validate-grant", "run_execute / evaluate_target / cell_inputs / historical_control (cell_inputs refuses outside execute mode and for any cell but 309; execute refuses without a committed grant)", "r2 code/p309_launch.py, code/p309_qualify.py (official run on the approved host)"],
+  "planned_commands_reach_them": false,
+  "why": "the planned commands run only the gate functions in scratch replicas (no execute / seal-only / validate-grant mode; QC11 and the D5 backstop use SandboxContext with TEST names and stub evaluators); the PreToolUse guard refuses every target-reaching entry point by command, and the rehearsal tool refuses them again inside its process (guard_cmd)"
+ },
+ "write_set_forecast": ["level4/closure_proofs/p5y_k5_cell309_q11_recovery/**", ".claude/hooks/**", ".claude/settings.json", ".claude/.gitignore", ".claude/audit/** (git-ignored)", "scratchpad (outside the repository)"],
+ "command_set_forecast": ["git fetch / log / show / diff / ls-tree / rev-parse / ls-remote (read-only)", "git clone --no-local into the scratchpad (replicas; local remotes only)", "python3 .claude/hooks/tests/test_guard.py", "python3 <recovery>/code/{attempt_validator,make_repaired_harness,p309_rehearsal}.py", "python3 <recovery>/tests/{crash_matrix,make_harness_mutants}.py", "git add / commit on the recovery branch only", "git push -u origin claude/p309-q11-recovery-20261005 (once, after all safety tests pass)"]
+}
