@@ -1,0 +1,244 @@
+{
+ "schema": "rebaseguard.p5y.k5.cell308.new-host-route-cloud-r1.host-inventory.v1",
+ "class": "INFRASTRUCTURE",
+ "not_designated_evidence": true,
+ "classification": "HOST_UNVERIFIED",
+ "new_target_evaluations": 0,
+ "proxy_evaluations": 0,
+ "cell309_activity": "none",
+ "benchmarks_run": false,
+ "decoys_run": false,
+ "packages_installed": false,
+ "system_changed": false,
+ "collected_utc": {
+  "first": "2026-10-04T06:13:19Z",
+  "last": "2026-10-04T06:17:03Z"
+ },
+ "method": "read-only inspection of /proc, /sys, mount tables, ps, df, lsblk, interpreter --version and sha256 of interpreter files; no workload of any kind was started to measure the host",
+ "source_baseline": {
+  "research_tip": "39b75ad52c5015410892c74a2b4d77be0d81153f",
+  "research_verification_baseline": "b565d89e4589f1387c5c3367a29267e32fe54e92",
+  "historical_candidate": "142d97a90a1c3fafff394044aa1448674f7a633c",
+  "old_designated_evidence_sha256": "86d3f8cba3543e2b165ac648f9858fef8fb5a0efc141fec77bfa0ab604ee90fe",
+  "old_derivation_sha256": "8a4e7984ca3f0412c33225c0291f9d42fea6396031384595a02d995a9ae29c17",
+  "old_status_preserved": "NOT_DERIVED / R-FREE GATE_UNATTAINABLE (unchanged; candidate untouched)",
+  "route_preparation_source_bindings": {
+   "governance/SUCCESSOR_GOVERNANCE_308.md": [
+    "4e9e6ad414ddcc38b5561f06d13cddc534e2956bb1fbeba46bff9fb23982278e",
+    "MATCH at b565d89e and 39b75ad5"
+   ],
+   "governance/SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1.md": [
+    "c170c726c43601ee8c3d028a64b0639708c8b5799698aaf1ced62f5a13ee152c",
+    "MATCH at b565d89e and 39b75ad5"
+   ],
+   "governance/USER_DECISION_BRIEF_308_MBS_R1_RFREE_STOP.md": [
+    "770778cd88f97bbab1319af6f236b712895bf053ca4602b60012ceb180b60941",
+    "MATCH at b565d89e and 39b75ad5"
+   ],
+   "governance/USER_DECISION_BRIEF_308_SUCCESSOR_R2.md": [
+    "cda3cf4509dcc327cb4ba407c9afd435308f58d085a03aa85296737bc80fad9c",
+    "MATCH at b565d89e and 39b75ad5"
+   ],
+   "reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308.md": [
+    "89a2b6aea8a04bc3ff74a926038c8bc8618bf9a364660bee2e8450f66b51562b",
+    "MATCH at b565d89e and 39b75ad5"
+   ]
+  }
+ },
+ "platform": {
+  "virtualization": "KVM (lscpu 'Hypervisor vendor: KVM'); Firecracker microVM (PID 1 '/process_api --firecracker-init'; kernel suffix '-fc')",
+  "kernel": "Linux 6.18.44-fc-v64 #1 SMP PREEMPT_DYNAMIC (gcc 15.3.0, builder@sandboxing)",
+  "os": "Ubuntu 24.04.4 LTS (noble)",
+  "glibc": "2.39-0ubuntu8.7",
+  "git": "2.43.0",
+  "architecture": "x86_64",
+  "long_bit": 64,
+  "hostname": "vm"
+ },
+ "python": {
+  "required_by_historical_candidate": "CPython 3.14.5 at /Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14 (macOS; PLATFORM_PINS in mbs308_driver.py)",
+  "python3.14_present": false,
+  "interpreters": [
+   {
+    "path": "/usr/bin/python3",
+    "resolves_to": "/usr/bin/python3.11",
+    "version": "3.11.15",
+    "sha256": "f56a588548dd013906ae1dcd1b6faa417f4e204da634ff354840d9643e78ff9e"
+   },
+   {
+    "path": "/usr/bin/python3.10",
+    "version": "3.10.20",
+    "sha256": "bb9b606c5bf61af2f6a4796ae982ddd0dc7ab24d3ee84f3eba3ab3e0475e5e7f"
+   },
+   {
+    "path": "/usr/bin/python3.12",
+    "version": "3.12.3",
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+   },
+   {
+    "path": "/usr/bin/python3.13",
+    "version": "3.13.14",
+    "sha256": "c75c3b4fca886a3652ec0586d49d4b12e3411c0774048e3b7b7466d29e4a02d9"
+   }
+  ],
+  "note": "interpreter digests are of the executable file only; shared-library digests not taken"
+ },
+ "cpu": {
+  "model": "Intel(R) Xeon(R) Processor @ 2.80GHz (microcode 0x1, as exposed to the guest)",
+  "online_vcpus": 4,
+  "threads_per_core": 1,
+  "cores_per_socket": 4,
+  "sockets": 1,
+  "numa_nodes": 1,
+  "sched_getaffinity": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "cgroup_v1_cpu_root": {
+   "cpu.cfs_quota_us": -1,
+   "cpu.cfs_period_us": 100000,
+   "cpu.shares": 1024
+  },
+  "cgroup_v1_cpuset_root": {
+   "cpuset.cpus": "0-3",
+   "cpuset.effective_cpus": "0-3"
+  },
+  "process_cgroup_for_cpu_cpuset_pids": "/ (root) in every v1 hierarchy except memory",
+  "host_side_vcpu_quota_or_overcommit": "UNKNOWN",
+  "historical_campaign_reference": "WORKERS 5 on a 6-core host (USER_DECISION_BRIEF_308_SUCCESSOR_R2, host-identity row); WORKERS is fixed and was not changed"
+ },
+ "memory": {
+  "MemTotal_bytes": 16876515328,
+  "MemAvailable_bytes_at_collection": 16398102528,
+  "MemAvailable_note": "Linux /proc/meminfo figure; NOT the historical macOS free_memory_bytes (vm_stat free+inactive+speculative+purgeable) and not substituted for it",
+  "SwapTotal_bytes": 0,
+  "zram0_size_bytes": 0,
+  "vm.overcommit_memory": 0,
+  "vm.swappiness": 60,
+  "cgroup_layout": "hybrid: cgroup v1 controllers (cpu, cpuacct, cpuset, memory, devices, freezer, blkio, pids, name=systemd) plus an empty-controller cgroup2 at /sys/fs/cgroup/unified",
+  "memory_cgroup_chain": [
+   {
+    "path": "/process_api/01a1058a-d6aa-7355-af6e-03724ab5dce9/claude-code-bash",
+    "role": "this tool shell and its children",
+    "memory.limit_in_bytes": 14345035776,
+    "memory.memsw.limit_in_bytes": "unlimited (9223372036854771712)",
+    "memory.soft_limit_in_bytes": "unlimited",
+    "hierarchical_memory_limit": 14345035776,
+    "memory.usage_in_bytes": 85708800,
+    "memory.failcnt": 0,
+    "oom_kill": 0,
+    "use_hierarchy": 1
+   },
+   {
+    "path": "/process_api/01a1058a-d6aa-7355-af6e-03724ab5dce9",
+    "role": "parent; holds the session controller (claude, environment-manager)",
+    "memory.limit_in_bytes": "unlimited",
+    "hierarchical_memory_limit": "unlimited",
+    "memory.usage_in_bytes": 558428160
+   },
+   {
+    "path": "/process_api",
+    "memory.limit_in_bytes": "unlimited",
+    "hierarchical_memory_limit": "unlimited"
+   },
+   {
+    "path": "/",
+    "memory.limit_in_bytes": "unlimited",
+    "hierarchical_memory_limit": "unlimited",
+    "note": "PID 1 (process_api) lives here; sibling cgroup 'sbx-telemetry' exists"
+   }
+  ],
+  "effective_allowance_for_processes_started_from_this_shell_bytes": 14345035776,
+  "effective_allowance_note": "cgroup v1 leaf limit (13.36 GiB); bounded above by MemTotal and by whatever the controller and kernel use outside the leaf. The provider's guarantee that this limit is stable across sessions is UNKNOWN.",
+  "cgroup_v2_memory_files": "ABSENT (memory.max/high/current not present: v2 has no controllers enabled)",
+  "psi_memory_at_collection": "some avg10=0.00 avg60=0.00 avg300=0.00; full 0"
+ },
+ "pids": {
+  "cgroup_pids.max": "ABSENT at root",
+  "ulimit_max_user_processes": 64301,
+  "kernel.pid_max": 32768,
+  "ulimit_open_files": 20000
+ },
+ "storage": {
+  "root": {
+   "device": "/dev/vda",
+   "fstype": "ext4",
+   "options": "rw,relatime,discard,no_prefetch_block_bitmaps,resv_strict,resuid=65534,resgid=65534",
+   "size_bytes": 270553174016,
+   "used_bytes": 12046815232,
+   "avail_bytes": 29087260672,
+   "avail_note": "avail is far below size-used: consistent with the per-session writable allowance the environment description states",
+   "block_queue_write_cache": "write back"
+  },
+  "read_only_mounts": [
+   "/opt/rclone (squashfs)",
+   "/opt/claude-code (ext4 ro)",
+   "/opt/env-runner (ext4 ro)",
+   "/mnt/skills/* (squashfs)"
+  ],
+  "tmpfs": [
+   "/dev/shm (size = MemTotal)",
+   "/run/sandbox-telemetry"
+  ],
+  "observed_persistence": "files written 2026-10-04 05:26-05:33Z (repository clone, scratchpad worktrees) were present after the VM booted at 06:12Z",
+  "durability_guarantee": "UNKNOWN",
+  "provider_statement": "environment description given to this session: 'isolated, ephemeral container ... the container is reclaimed after a period of inactivity (or when the session ends), so anything worth keeping needs to be committed and pushed first'; documentation page session.resources: 'a new session starts on a fresh machine'"
+ },
+ "boot_and_lifetime": {
+  "boot_id": "f2d36d2c-76e0-424a-a332-0d6dab2d6412",
+  "boot_time_utc": "2026-10-04T06:12 (who -b); uptime 213 s at 06:16Z",
+  "observed_restart": "the previous turn of this session ran until about 05:36Z; at 06:12Z the VM was booted again: every process from the earlier boot (including this agent's background tasks) was gone, while the disk contents survived",
+  "max_session_lifetime": "UNKNOWN",
+  "inactivity_timeout": "UNKNOWN",
+  "reclaim_policy_details": "UNKNOWN",
+  "disconnect_survival": "processes survive only while the VM lives; the VM is reclaimed on inactivity or session end (provider statement) and was observed restarted between turns. Survival of a multi-hour detached process: UNKNOWN / not guaranteed",
+  "host_identity_across_sessions": "not stable by statement ('a new session starts on a fresh machine'); boot_id changes on every restart",
+  "background_task_limit_of_agent_tool": "Bash tool background runs are capped at 7200000 ms (2 h) by the tool's own definition; a setsid/nohup process is not tied to that cap but dies with the VM"
+ },
+ "supervisor": {
+  "pid1": "/process_api --firecracker-init --addr 0.0.0.0:2024 ... (sandbox init, not a general service manager)",
+  "systemd": "binary present (/sbin/init -> systemd) but not PID 1: 'System has not been booted with systemd as init system'; systemctl is-system-running: offline",
+  "other_supervisors": "none found (supervisord, runit, s6, tini, dumb-init absent)",
+  "launchd_equivalent_available": false
+ },
+ "clocks": {
+  "clocksource": "tsc (available: tsc kvm-clock)",
+  "CLOCK_MONOTONIC_minus_BOOTTIME_s_at_collection": 3.8e-07,
+  "suspend_accounting": "guest suspend not observed in this boot; host-side VM pause/snapshot visibility to the guest: UNKNOWN",
+  "timedatectl": "unavailable (no systemd)"
+ },
+ "power_and_thermal": {
+  "/sys/class/power_supply": "empty (no AC/battery source exposed)",
+  "/sys/class/thermal": "empty (no thermal zones exposed)",
+  "consequence": "the historical AC-power and thermal-level provenance has no source on this host"
+ },
+ "co_resident_processes": [
+  {
+   "comm": "process_api",
+   "pid": 1,
+   "rss_bytes": 5525504
+  },
+  {
+   "comm": "environment-manager",
+   "pid": 83,
+   "rss_bytes": 40534016
+  },
+  {
+   "comm": "claude",
+   "pid": 94,
+   "rss_bytes": 326889472,
+   "note": "the session controller running this agent; it must stay alive for the session to exist and it uses CPU while the agent works"
+  }
+ ],
+ "exclusive_compute_evidence": "none: the 4 vCPUs are shared with the session controller; host-side neighbour isolation UNKNOWN",
+ "unknown_required_facts": [
+  "maximum session/VM lifetime and inactivity timeout",
+  "whether a VM is ever reclaimed or restarted while a process is running",
+  "storage durability across reclaim and power loss (fsync semantics through the virtual disk)",
+  "host-side CPU quota, overcommit and neighbour isolation",
+  "stability of CPU model, vCPU count, memory limit and image across sessions (host identity)",
+  "guest visibility of host-side pause/snapshot (sleep-clock semantics)"
+ ]
+}
