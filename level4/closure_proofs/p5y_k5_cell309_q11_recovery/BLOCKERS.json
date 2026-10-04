@@ -1,0 +1,25 @@
+{
+ "schema": "P309_Q11_RECOVERY_BLOCKERS/1",
+ "unresolved": [
+  {"id": "B1", "kind": "EVIDENCE_COMPLETENESS",
+   "statement": "No single uninterrupted end-to-end run of one repaired package exists. The repaired-path evidence is assembled from separate, never-resumed runs: Run B (r1 bytes, QC01-QC09 PASS, interrupted at QC10 by a container restart), Run C (r1 QC12-QC_U2), Run D (QC10 reproduction), the targeted QC11/QC-D5 runs, and the r2 post-freeze runs (one of which was interrupted at QC_D5). Every record was validated by content, but an accepted recovery needs one complete attempt.",
+   "resolvable_here": false,
+   "why": "this cloud container restarted during the session (boot ba1fb020 -> 973d41ad at 2026-10-04T23:09:14Z) and is not a durable host for a no-resume ~6-8 h attempt; external or paid compute (AWS, Vultr, SSH workers) is prohibited for this task"},
+  {"id": "B2", "kind": "OWNER_DECISION",
+   "statement": "The vehicle for any official re-qualification is r2 (r1 is frozen and A27 forbids retry or resumption; the QC11 repair cannot be applied to r1 in place because r1's frozen scanner pins the harness by AST hash). r2 awaits owner decisions OD-R2-0..OD-R2-6 (authority, carry-over, namespaces, pending-ref / marker names, the AWS access path and windows, host-change consents, the target-execution host).",
+   "resolvable_here": false, "why": "owner decisions; not an engineering task"},
+  {"id": "B3", "kind": "HOST_BINDING",
+   "statement": "r1's frozen manifest and parameters bind the freeze host (machine-id + hostname): off that host the runner's precondition refuses (crash matrix R17) and QC13 fails 'freeze_params_regenerate_identically' (Run C). By design, not a defect; it means r1's gates can only be re-witnessed on the freeze host, which no longer exists as such.",
+   "resolvable_here": false, "why": "designed binding of a frozen package"},
+  {"id": "B4", "kind": "PROTOCOL_HARDENING_PROPOSAL",
+   "statement": "Findings for a future r2 delta (not applied: r2 is not this task's to change): (a) the runner's xwrite is O_EXCL but neither fsynced nor written via temp + link, so a crash can leave an empty or torn record (crash matrix R04, R05, R09: fail-closed, classified CORRUPT, but the attempt is lost); (b) the runner does not check ledger integrity before RUN START (R15: a torn ledger tail is only caught by QC13 hours later); (c) QC-D5's D5-exception controls run 60-80 min on a 4-core host, the window in which both r1's attempt and this session's r2 items run were interrupted.",
+   "resolvable_here": false, "why": "changes to r2 require r2's own delta review and the owner's process"}
+ ],
+ "resolved_in_this_session": [
+  "root cause of Q11 reproduced independently and classified",
+  "QC-D5 outcome under r1's frozen harness established (PASS)",
+  "the reviewed QC11 repair verified on r1's real post-freeze history and on r2's post-freeze package, with mutants",
+  "restart / resume / exactly-once protocol tested (36 crash cases) and observed under two real interruptions",
+  "QC10's 48 certificates reproduced byte-identically across hosts"
+ ]
+}
