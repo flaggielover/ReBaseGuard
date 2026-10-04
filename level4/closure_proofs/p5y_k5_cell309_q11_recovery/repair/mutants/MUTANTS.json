@@ -1,0 +1,26 @@
+{
+ "mutants": {
+  "M1_BASE_HEAD": {
+   "expected_qc11": "FAIL",
+   "expected_reason_fragment": "freeze-record commits in the sandbox chain",
+   "sha256": "75a78461e540329f701d3459d70eb697e25e4763e1cc3c49261db9395db4fd45"
+  },
+  "M2_BASE_HEAD_NO_POST": {
+   "expected_qc11": "FAIL",
+   "expected_reason_fragment": "the freeze record was changed after it was made",
+   "sha256": "d87961c046f3a42fa434b44e371abd81436d18ea35005b691f94a4e0674eef7a"
+  },
+  "M3_DETAIL_SWAP": {
+   "expected_qc11": "FAIL",
+   "expected_reason_fragment": "detail",
+   "sha256": "476301845d6a9cb67d7d4ed3235fb9d3886140faffc2fb3ab0e8a3cde91492d5"
+  },
+  "M4_MANIFEST_FROM_TREE": {
+   "expected_qc11": "PASS (equivalent here)",
+   "expected_reason_fragment": "",
+   "sha256": "820bf0ea097919b83a45451d20de84c33c3582d391df5a776c35d785af20be25"
+  }
+ },
+ "schema": "P309_QC11_HARNESS_MUTANTS/1",
+ "source_sha256": "7159db648719ac9f9a5fcf90611528c456099c28ad1028a04b0e2157e47f6e54"
+}

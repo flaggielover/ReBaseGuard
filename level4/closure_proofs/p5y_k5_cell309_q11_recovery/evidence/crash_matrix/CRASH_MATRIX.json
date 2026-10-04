@@ -1,0 +1,511 @@
+{
+ "cases": [
+  {
+   "desc": "interrupted before the first write",
+   "id": "R01",
+   "killed": true,
+   "no_trace_before_restart": true,
+   "pass": true,
+   "restart_stdout": " \"Q07\": true,\n  \"Q08\": true,\n  \"Q09\": true,\n  \"Q10\": true,\n  \"Q11\": true,\n  \"Q12\": true,\n  \"Q13\": true,\n  \"Q14\": true,\n  \"Q15\": true,\n  \"Q16\": true,\n  \"Q17\": true,\n  \"Q_U2\": true,\n  \"Q_D5\": true\n }\n}\n",
+   "restart_verdict": "PASS",
+   "run_start_lines": 1
+  },
+  {
+   "crash": "before_run_start",
+   "desc": "attempt directory created, no RUN START",
+   "id": "R02",
+   "killed": true,
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: 19 gate record(s) missing; first missing QC01",
+    "INTERRUPTED: the attempt directory exists without a RUN START ledger line (interrupted before start)",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "run_start_lines": 0,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "during_gate:QC01",
+   "desc": "interrupted during the first gate",
+   "id": "R03",
+   "killed": true,
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: 19 gate record(s) missing; first missing QC01",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "run_start_lines": 1,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "empty_record:QC05",
+   "desc": "interrupted after open, before write (empty record)",
+   "id": "R04",
+   "killed": true,
+   "pass": true,
+   "reasons": [
+    "CORRUPT: QC05.json: empty file (torn write)",
+    "INTERRUPTED: 14 gate record(s) missing; first missing QC06",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "run_start_lines": 1,
+   "verdict": "CORRUPT"
+  },
+  {
+   "crash": "partial_record:QC05",
+   "desc": "interrupted during the record write (torn)",
+   "id": "R05",
+   "killed": true,
+   "pass": true,
+   "reasons": [
+    "CORRUPT: QC05.json: unparseable (Unterminated string starting at at 112 of 114 bytes; torn write)",
+    "INTERRUPTED: 14 gate record(s) missing; first missing QC06",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "run_start_lines": 1,
+   "verdict": "CORRUPT"
+  },
+  {
+   "crash": "after_record:QC05",
+   "desc": "interrupted after the record, before the next ledger update",
+   "id": "R06",
+   "killed": true,
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: 14 gate record(s) missing; first missing QC06",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "run_start_lines": 1,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "during_gate:QC06",
+   "desc": "interrupted after the ledger update (gate start), before its record",
+   "id": "R07",
+   "killed": true,
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: 14 gate record(s) missing; first missing QC06",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "run_start_lines": 1,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "during_gate:QC_D5",
+   "desc": "r1's actual case: interrupted during QC-D5 after QC_U2's record",
+   "id": "R08",
+   "killed": true,
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: 1 gate record(s) missing; first missing QC_D5",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "run_start_lines": 1,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "partial_summary",
+   "desc": "all records written, summary torn",
+   "id": "R09",
+   "killed": true,
+   "pass": true,
+   "reasons": [
+    "CORRUPT: P309_QUALIFICATION.json: unparseable (Unterminated string starting at at 1141 of 1162 bytes; torn write)"
+   ],
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "run_start_lines": 1,
+   "verdict": "CORRUPT"
+  },
+  {
+   "crash": "none",
+   "desc": "control: an uninterrupted synthetic run",
+   "id": "R10",
+   "killed": false,
+   "pass": true,
+   "reasons": [],
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "run_start_lines": 1,
+   "verdict": "PASS"
+  },
+  {
+   "desc": "stale lock: an empty attempt directory blocks every restart (fail closed)",
+   "id": "R11",
+   "pass": true,
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "desc": "restart over a pre-existing partial artifact is refused; the artifact is classified CORRUPT",
+   "id": "R12",
+   "pass": true,
+   "resume": {
+    "all_refused_unchanged": true,
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "verdict": "CORRUPT"
+  },
+  {
+   "desc": "a stray summary blocks a start",
+   "id": "R13",
+   "pass": true,
+   "stdout": "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved)\n"
+  },
+  {
+   "desc": "duplicated start request (two racing runners): exactly one attempt, one RUN START, a valid record set",
+   "id": "R14",
+   "loser_stderr": [
+    "stsError: [Errno 17] File exists: '/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_crash/level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1'\n"
+   ],
+   "pass": true,
+   "rcs": [
+    0,
+    1
+   ],
+   "verdict": "PASS"
+  },
+  {
+   "desc": "torn ledger tail before the start: the r1 runner does NOT detect it at start (finding); the validator classifies the attempt CORRUPT",
+   "finding": "r1 runner: no ledger integrity check before RUN START (QC13 would fail hours later)",
+   "id": "R15",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: execution_ledger: row 1173 unparseable (torn append)",
+    "CORRUPT: records exist without a RUN START ledger line"
+   ],
+   "runner_rc": 0,
+   "verdict": "CORRUPT"
+  },
+  {
+   "desc": "start / resume from a mismatched commit (frozen directory changed) is refused before any write",
+   "id": "R16",
+   "pass": true,
+   "stdout": "QUALIFICATION REFUSED: FREEZE_RECORD: a frozen directory changed after the recorded freeze\n"
+  },
+  {
+   "desc": "mismatched environment: the frozen manifest binds the freeze host (machine-id + hostname); on this host the runner's precondition refuses",
+   "id": "R17",
+   "pass": true,
+   "stdout": "MANIFEST DIFFERS"
+  },
+  {
+   "crash": "before_provenance",
+   "desc": "interrupted before the first write",
+   "id": "N01",
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: no provenance record (interrupted before the first write)"
+   ],
+   "restart_refused_unchanged": true,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "tmp_partial:QC02",
+   "desc": "interrupted during the temporary write",
+   "id": "N02",
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: leftover temporary file .QC02.json.tmp-11909 (interrupted during a record write)",
+    "INTERRUPTED: 2 gate record(s) missing",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "restart_refused_unchanged": true,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "after_tmp_before_link:QC02",
+   "desc": "temporary complete, record not yet linked",
+   "id": "N03",
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: leftover temporary file .QC02.json.tmp-11912 (interrupted during a record write)",
+    "INTERRUPTED: 2 gate record(s) missing",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "restart_refused_unchanged": true,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "after_link_before_unlink:QC02",
+   "desc": "record linked, temporary not removed, ledger not updated",
+   "id": "N04",
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: leftover temporary file .QC02.json.tmp-11915 (interrupted during a record write)",
+    "INTERRUPTED: QC02: complete record without its ledger row (interrupted after the record)",
+    "INTERRUPTED: 1 gate record(s) missing"
+   ],
+   "restart_refused_unchanged": true,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "after_record_before_ledger:QC02",
+   "desc": "after the artifact write, before the ledger update",
+   "id": "N05",
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: QC02: complete record without its ledger row (interrupted after the record)",
+    "INTERRUPTED: 1 gate record(s) missing",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "restart_refused_unchanged": true,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "after_ledger:QC02",
+   "desc": "after the ledger update",
+   "id": "N06",
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: 1 gate record(s) missing",
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "restart_refused_unchanged": true,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "torn_ledger_row:QC02",
+   "desc": "torn ledger row (power-loss model)",
+   "id": "N07",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: gate_ledger: last row has no newline (torn append)",
+    "CORRUPT: gate_ledger: row 3 unparseable (torn append)",
+    "INTERRUPTED: QC02: complete record without its ledger row (interrupted after the record)"
+   ],
+   "restart_refused_unchanged": true,
+   "verdict": "CORRUPT"
+  },
+  {
+   "crash": "tmp_partial_summary",
+   "desc": "interrupted during the summary write",
+   "id": "N08",
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: no summary (the run did not finish)"
+   ],
+   "restart_refused_unchanged": true,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "after_summary_before_row",
+   "desc": "summary written, its ledger row not",
+   "id": "N09",
+   "pass": true,
+   "reasons": [
+    "INTERRUPTED: summary written but its ledger row is missing (interrupted after the summary)"
+   ],
+   "restart_refused_unchanged": true,
+   "verdict": "INTERRUPTED"
+  },
+  {
+   "crash": "none",
+   "desc": "control: an uninterrupted synthetic run",
+   "id": "N10",
+   "pass": true,
+   "reasons": [],
+   "restart_refused_unchanged": true,
+   "verdict": "PASS"
+  },
+  {
+   "desc": "duplicated start request into one directory: exactly one run, valid records",
+   "id": "N11",
+   "pass": true,
+   "rcs": [
+    0,
+    1
+   ],
+   "verdict": "PASS"
+  },
+  {
+   "desc": "mixed provenance: a record from another run swapped in",
+   "id": "N13",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: QC02: record differs from the hash its ledger row bound (rewritten / foreign)",
+    "CORRUPT: a record changed after the summary (sha256 mismatch)"
+   ],
+   "verdict": "CORRUPT"
+  },
+  {
+   "desc": "stale record: foreign freeze commit",
+   "id": "N14",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: QC02 foreign freeze",
+    "CORRUPT: QC02: record differs from the hash its ledger row bound (rewritten / foreign)",
+    "CORRUPT: a record changed after the summary (sha256 mismatch)"
+   ],
+   "verdict": "CORRUPT"
+  },
+  {
+   "desc": "duplicated ledger row (a gate recorded twice)",
+   "id": "N15",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: duplicate ledger rows ['QC02']",
+    "CORRUPT: ledger rows out of the requested order",
+    "INTERRUPTED: summary written but its ledger row is missing (interrupted after the summary)"
+   ],
+   "verdict": "CORRUPT"
+  },
+  {
+   "desc": "ledger row without its record (record deleted)",
+   "id": "N16",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: ledger row for QC03 without its record (row before record)",
+    "INTERRUPTED: 1 gate record(s) missing",
+    "CORRUPT: summary lists ['QC03'] differently from disk"
+   ],
+   "verdict": "CORRUPT"
+  },
+  {
+   "desc": "a second RUN_START (a resumed run appended to an old one)",
+   "id": "N17",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: more than one RUN_START (a resumed run)",
+    "INTERRUPTED: summary written but its ledger row is missing (interrupted after the summary)"
+   ],
+   "verdict": "CORRUPT"
+  },
+  {
+   "desc": "a record edited after the summary",
+   "id": "N18",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: QC01: record differs from the hash its ledger row bound (rewritten / foreign)",
+    "CORRUPT: a record changed after the summary (sha256 mismatch)"
+   ],
+   "verdict": "CORRUPT"
+  },
+  {
+   "desc": "summary claims a gate the records do not hold",
+   "id": "N19",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: summary gate table disagrees",
+    "INTERRUPTED: summary written but its ledger row is missing (interrupted after the summary)"
+   ],
+   "verdict": "CORRUPT"
+  },
+  {
+   "desc": "a target counter set in the ledger",
+   "id": "N20",
+   "pass": true,
+   "reasons": [
+    "CORRUPT: gate_ledger: 1 row(s) with a nonzero target counter",
+    "INTERRUPTED: summary written but its ledger row is missing (interrupted after the summary)"
+   ],
+   "verdict": "CORRUPT"
+  }
+ ],
+ "counts": {
+  "failed": 0,
+  "total": 36
+ },
+ "pass": true,
+ "python": "3.11.15",
+ "replica_head": "c950054ae0aa8f9e5d7171b520af3f601238a017",
+ "schema": "P309_CRASH_MATRIX/1",
+ "sha256": {
+  "attempt_validator.py": "b0bd5c27db1582cf7d2731716655ea91e6e464c083630de824511fef9e1cdb71",
+  "crash_matrix.py": "030bb4c15328bf0e385ed3e6f96c69705dadee4bef5b878fbf5f1d089b9775c3",
+  "p309_rehearsal.py": "61241255d7dd41317f4457ab6c0e11b01d62bd3c4997231c2d227d285e605901"
+ },
+ "statement": "synthetic gates only; nothing evaluated; NEW TARGET EVALUATIONS = 0",
+ "wall_s": 13.3
+}
