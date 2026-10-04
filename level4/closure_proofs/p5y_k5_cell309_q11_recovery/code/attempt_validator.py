@@ -101,7 +101,8 @@ def cert_identity(paths: list[Path]) -> dict:
         hs = sorted(c.get("sha256") for c in certs)
         verdicts = d.get("verdicts") or {}
         gate = d.get("gate") or {}
-        per[p.name] = {"certificates": len(certs), "distinct": len(set(hs)), "self_hash_mismatches": len(bad_self),
+        key = f"{len(per) + 1}:{p}"                      # files may share a name (QC08 of two runs)
+        per[key] = {"certificates": len(certs), "distinct": len(set(hs)), "self_hash_mismatches": len(bad_self),
                        "all_certified": all(c.get("status") == "CERTIFIED" for c in certs),
                        "verdicts_cover_certs": set(verdicts) == set(hs),
                        "all_accept": set(verdicts.values()) == {"ACCEPT"},
@@ -110,13 +111,13 @@ def cert_identity(paths: list[Path]) -> dict:
                        "verdict_source": gate.get("verdict_source"),
                        "jobs_returned": sum(1 for j in (d.get("jobs") or {}).values() if j.get("kind") == "JOB_RETURNED"),
                        "set_sha256": sha("\n".join(hs).encode()), "file_sha256": sha(p.read_bytes())}
-        x = per[p.name]
-        v.check(f"{p.name}:count", x["certificates"] == EXPECTED_CERTS and x["distinct"] == EXPECTED_CERTS, "FAIL",
-                f"{p.name}: {x['certificates']} certificates ({x['distinct']} distinct), expected {EXPECTED_CERTS}")
-        v.check(f"{p.name}:self_hash", not bad_self, "CORRUPT", f"{p.name}: certificate self-hash mismatch")
-        v.check(f"{p.name}:certified_accept_gate", x["all_certified"] and x["verdicts_cover_certs"] and x["all_accept"]
+        x = per[key]
+        v.check(f"{key}:count", x["certificates"] == EXPECTED_CERTS and x["distinct"] == EXPECTED_CERTS, "FAIL",
+                f"{key}: {x['certificates']} certificates ({x['distinct']} distinct), expected {EXPECTED_CERTS}")
+        v.check(f"{key}:self_hash", not bad_self, "CORRUPT", f"{key}: certificate self-hash mismatch")
+        v.check(f"{key}:certified_accept_gate", x["all_certified"] and x["verdicts_cover_certs"] and x["all_accept"]
                 and x["gate_source"] == "GATE" and x["gate_admitted_equals_certs"] and not x["gate_refused"]
-                and x["jobs_returned"] == 12, "FAIL", f"{p.name}: certificate status / verdict / gate inconsistency")
+                and x["jobs_returned"] == 12, "FAIL", f"{key}: certificate status / verdict / gate inconsistency")
         sets.append(hs)
     v.check("byte_identical_across_files", len(sets) == len(paths) and all(s == sets[0] for s in sets), "FAIL",
             "certificate sets differ between runs")
@@ -140,7 +141,7 @@ def gate_evidence(gate: str, rec: dict, base: Path, v: Verdict) -> None:
             v.checks["QC10:independent_certificate_identity"] = ci["verdict"] == "PASS"
             if ci["verdict"] != "PASS":
                 v.raise_to("FAIL", f"QC10 independent certificate identity: {ci['reasons'][:2]}")
-            v.checks["QC10:certificates"] = ci["files"]["QC10_DECOY_STAGE1A.json"]["certificates"]
+            v.checks["QC10:certificates"] = [x["certificates"] for x in ci["files"].values()][-1]
         else:
             v.raise_to("CORRUPT", "QC10 record without its decoy outputs")
     elif gate == "QC11":
