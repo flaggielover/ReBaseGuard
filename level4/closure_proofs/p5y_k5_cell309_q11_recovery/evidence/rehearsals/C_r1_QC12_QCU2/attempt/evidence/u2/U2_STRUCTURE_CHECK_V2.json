@@ -1,0 +1,550 @@
+{
+ "S1": {
+  "fG_statement_shape_ok": true,
+  "gamma_coefficients_new3": {
+   "G1": "3*sH",
+   "G2": "3*sD",
+   "G3": "1*sF"
+  },
+  "gamma_coefficients_new4": {
+   "G2": "6*sH",
+   "G3": "4*rho*sH + 4*sD",
+   "G4": "1*rho*sD + 1/2*rho^2*sH + 1*sF"
+  },
+  "k_coefficients_A0fG_TCT": {
+   "k1": "3*sH",
+   "k2": "3*sD",
+   "k3": "1*sF"
+  },
+  "k_coefficients_Env4_TCT_sG0": {
+   "k2": "6*sH",
+   "k3": "4*rho*sH + 4*sD",
+   "k4": "1*rho*sD + 1/2*rho^2*sH + 1*sF"
+  },
+  "new3_is_A0_fG_with_A0k_i_replaced_by_Gamma_i": true,
+  "new4_is_A0_Env4_at_sG0_with_A0k_i_replaced_by_Gamma_i": true,
+  "p_terms_identical_to_tc_rule_taylor_bounds": true,
+  "rad_srk_with_TCT_branches_equals_rad_tct": true,
+  "rad_tct_identical_to_tc_rule_radius": true
+ },
+ "S2": {
+  "c2_d5_forecast.direct": [
+   "ad.D_interval.lo",
+   "ad.M_R2",
+   "ad.R2_interval.hi",
+   "ad.R2_interval.lo",
+   "ad.R_interval.hi",
+   "cov.*"
+  ],
+  "c2_d5_forecast.main (per-cell validation and supply)": [
+   "adopted.cells.*.m.5",
+   "blk.*",
+   "d.C_upper",
+   "d.cell",
+   "d.identity_gate.identical",
+   "d.k1_record_sha256",
+   "d.order3_fields_present",
+   "meas.*.C_upper",
+   "meas.*.norms.k.*",
+   "rec.C_upper",
+   "rec.auxiliary_evidence",
+   "st.KM",
+   "st.R",
+   "st.cover",
+   "st.hashes.*",
+   "st.records.*"
+  ],
+  "srk_adapter.assemble": [
+   "meas.W2.*",
+   "meas.r.*.H_at_a"
+  ],
+  "srk_adapter.fields_for_r": [
+   "A.A0",
+   "A.A1",
+   "A.A2",
+   "m.delta_D",
+   "m.delta_F",
+   "m.delta_H",
+   "m.eps_src.0",
+   "m.eps_src.1",
+   "m.eps_src.2",
+   "m.eps_src.3",
+   "m.sup.D",
+   "m.sup.F",
+   "m.sup.H",
+   "meas.r.*",
+   "obj_r.env4",
+   "obj_r.f_G",
+   "obj_r.sigma3",
+   "obj_r.sigma4"
+  ],
+  "srk_adapter.srk_enclosure": [
+   "frozen_obj.*",
+   "meas.rho",
+   "o.abs_G_at_a",
+   "o.half",
+   "o.rad",
+   "o.sup_G"
+  ],
+  "tct_rule.sigmas": [
+   "aux.candidate_suprema",
+   "aux.midpoint_eps",
+   "cs.*",
+   "cs.Sclosed:0:3",
+   "me.*",
+   "me.Sclosed:3"
+  ],
+  "tct_rule.tail_enclosure": [
+   "meas.W2.*",
+   "meas.norms.j.*",
+   "meas.norms.k.*",
+   "meas.r.*.H_at_a",
+   "meas.rho",
+   "meas.sup_S0.*",
+   "order3.*"
+  ],
+  "tct_rule.tail_object": [
+   "meas_r.delta_D",
+   "meas_r.delta_F",
+   "meas_r.delta_H",
+   "meas_r.eps_src.0",
+   "meas_r.eps_src.1",
+   "meas_r.eps_src.2",
+   "meas_r.eps_src.3",
+   "meas_r.sup.*",
+   "order3.*",
+   "order3.sup_D",
+   "order3.sup_F",
+   "order3.sup_H"
+  ]
+ },
+ "S3": {
+  "c1b:c1b_certify.py": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "c1b_float",
+    "c1b_gauss",
+    "c1b_kernel",
+    "c1b_prov",
+    "fractions",
+    "json",
+    "math",
+    "ov_quarantine",
+    "pathlib",
+    "sys",
+    "time"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "47bdc8e223b7f6f67183c451ec09d930d9a19d88cf5767eacded0a2132dc5f59"
+  },
+  "c1b:c1b_certpw.py": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "c1b_gauss",
+    "c1b_kernel",
+    "c1b_prov",
+    "c1b_pw",
+    "fractions",
+    "json",
+    "math",
+    "ov_quarantine",
+    "pathlib",
+    "sys",
+    "time"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "48080dd4df193a1474113ea792ab550fe325f51cb0e4d0e1c8a3e3bebd195c25"
+  },
+  "c1b:c1b_float.py": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "fractions",
+    "math"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "2a14067cd0c629f5d9b18a56bf66e439acd9802dc62a166e5ff5f7e2d5726f5f"
+  },
+  "c1b:c1b_gauss.py": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "fractions",
+    "functools",
+    "math"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "3189208d6c4ce37ce7dd1e013caf58ae454f35211fd36154b2afa8b96cd9c43f"
+  },
+  "c1b:c1b_kernel.py": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "c1b_gauss",
+    "fractions",
+    "functools",
+    "math"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "dfdc871b18ff132a95ed98d7354e3e95fbbc749cc473629923e4dec19bc4c41e"
+  },
+  "c1b:c1b_prov.py": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [
+    "loads",
+    "read_bytes",
+    "read_text"
+   ],
+   "imports": [
+    "__future__",
+    "hashlib",
+    "json",
+    "pathlib",
+    "sys"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "d12c2a2183e6636ec3fa1379db8024c5402f6b7e1f8cb6f7ad11b3ce6d20cf47"
+  },
+  "c1b:c1b_pw.py": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "c1b_float",
+    "c1b_kernel",
+    "fractions",
+    "math"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "f10c2cf14691e56699aa823800381d799eb6bdbdf47fdfcf5f28e1f1abb839d0"
+  },
+  "guard:p309_guard": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [
+    "loads",
+    "read_bytes"
+   ],
+   "imports": [
+    "__future__",
+    "datetime",
+    "fractions",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "platform",
+    "q309_guard",
+    "socket",
+    "subprocess"
+   ],
+   "non_whitelisted_imports": [],
+   "record_words_in_string_constants": [],
+   "sha256": "9efa6f7fd3cd97f7194b798dac045b774cbcdb00efa7c0a0a618027b7e9dfb28"
+  },
+  "guard:q309_guard": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [
+    "open",
+    "read_text"
+   ],
+   "imports": [
+    "__future__",
+    "ast",
+    "datetime",
+    "fractions",
+    "importlib",
+    "json",
+    "pathlib",
+    "re",
+    "sys"
+   ],
+   "non_whitelisted_imports": [],
+   "record_words_in_string_constants": [],
+   "sha256": "b0f45a21c2cf642ab79133acbacc2856a35543053486a35b7c53723ead8e5b01"
+  },
+  "rlr307_independent": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "decimal",
+    "fractions"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "91a75ea8f4c5a6183efc0eeec4eff3315abaafd92c4a4c8bc5d94c6d44cf94f4"
+  },
+  "rlr307_pinned": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [
+    "exec",
+    "read_bytes"
+   ],
+   "imports": [
+    "__future__",
+    "hashlib",
+    "pathlib",
+    "subprocess",
+    "sys",
+    "types"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "a5746d9c6d044c40a149fa18e0cd35e1070cc09c996a80d4a5dfbfe0f3350176"
+  },
+  "rlr307_stage1": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "fractions",
+    "hashlib",
+    "math",
+    "time"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "6fa9f69168d619a194c1e508e9bb264c01715998dc755e8bd481846758cf685f"
+  },
+  "srk_certify": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [
+    "read_bytes"
+   ],
+   "imports": [
+    "__future__",
+    "argparse",
+    "fractions",
+    "hashlib",
+    "json",
+    "math",
+    "pathlib",
+    "q309_guard",
+    "srk_envelope",
+    "srk_float",
+    "srk_kernel",
+    "sys",
+    "time"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "46a4668c0bcd360c73c9f241a52461a9ae5816684e20e97f9e7b156a27daeff7"
+  },
+  "srk_envelope": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "fractions",
+    "functools",
+    "srk_kernel"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "c251ffffc8767bef1e7c3d8cbc8e6989edf8cc66242f1ca1faa9e12fc9770c9e"
+  },
+  "srk_float": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "fractions",
+    "math"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "1489788546bacdccb9e627304700c331e6c3a7e8050371ebbce21f6108e13167"
+  },
+  "srk_gate": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [
+    "loads",
+    "read_bytes"
+   ],
+   "imports": [
+    "__future__",
+    "fractions",
+    "hashlib",
+    "json",
+    "pathlib",
+    "srk_certify",
+    "types"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "c921a5cb4ad69a85a64e6216ac09925c7bc96cf602590365eb2e802963e328f1"
+  },
+  "srk_kernel": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [],
+   "imports": [
+    "__future__",
+    "c1b_gauss",
+    "fractions",
+    "functools",
+    "math",
+    "pathlib",
+    "sys"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "a4c1a2898a36c5a60862d737c4c1e138e7eab717931f311a418887899d5dd745"
+  },
+  "srk_verify_indep": {
+   "consumer_or_record_imports": [],
+   "file_read_calls": [
+    "load",
+    "open"
+   ],
+   "imports": [
+    "argparse",
+    "fractions",
+    "functools",
+    "hashlib",
+    "json",
+    "math",
+    "multiprocessing",
+    "os",
+    "re",
+    "sys",
+    "time"
+   ],
+   "record_words_in_string_constants": [],
+   "sha256": "a32d5d397893a1fc698d3609f59cb65aab3bc4fe1445c51c676fd9ad54652333"
+  }
+ },
+ "S4": {
+  "adapter_subscripts_record_fields": [],
+  "direct_reads_adopted_fields": [
+   "D_interval",
+   "M_R2",
+   "R2_interval",
+   "R_interval"
+  ],
+  "direct_subscript_assignments": []
+ },
+ "U3a": {
+  "A0": true,
+  "A1": true,
+  "A2": true,
+  "Env4": true,
+  "_no_extra_keys": true,
+  "eps3": true,
+  "fD": true,
+  "fF": true,
+  "fG": true,
+  "fH": true,
+  "rho": true,
+  "sD": true,
+  "sF": true,
+  "sH": true,
+  "sigma3": true,
+  "sigma4": true
+ },
+ "U3b": {
+  "B3_is_min_old_new": true,
+  "B4_is_min_old_new": true,
+  "old_is_frozen_product": true,
+  "rad_uses_selected_branches": true
+ },
+ "U3c_pins_stage1b": {
+  "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/rlr307_guard.py": true,
+  "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/rlr307_independent.py": true,
+  "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/rlr307_pinned.py": true,
+  "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/rlr307_stage1.py": true,
+  "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_certpw.py": true,
+  "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_float.py": true,
+  "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_gauss.py": true,
+  "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_kernel.py": true,
+  "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_prov.py": true,
+  "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_pw.py": true
+ },
+ "U4": {
+  "i_direct_called_unchanged_via_shim": true,
+  "ii_detail": [],
+  "ii_no_forbidden_consumer_calls": true,
+  "iii_detail": [],
+  "iii_stage1_reads_no_record_or_measurement": true,
+  "iv_detail": {
+   "reads_outside_cell_inputs": [],
+   "stores": [
+    "p309_driver:cell_inputs:C_upper"
+   ]
+  },
+  "iv_record_fields_read_only_in_frozen_roles": true,
+  "v_cell_inputs_callers": [
+   "historical_control"
+  ],
+  "v_cell_inputs_only_from_the_control": true,
+  "vi_detail": {
+   "p309_guard": {
+    "imports": [
+     "__future__",
+     "datetime",
+     "fractions",
+     "hashlib",
+     "json",
+     "os",
+     "pathlib",
+     "platform",
+     "q309_guard",
+     "socket",
+     "subprocess"
+    ],
+    "record_words": []
+   },
+   "variant": {
+    "imports": [
+     "argparse",
+     "datetime",
+     "fractions",
+     "functools",
+     "hashlib",
+     "json",
+     "math",
+     "multiprocessing",
+     "os",
+     "platform",
+     "re",
+     "socket",
+     "subprocess",
+     "sys",
+     "time",
+     "types"
+    ],
+    "record_words": []
+   }
+  },
+  "vi_fc2_components_isolated": true
+ },
+ "checks": {
+  "S1_symbolic_identity": true,
+  "S3_stage1_no_consumer_or_record_import": true,
+  "S3_stage1_no_record_file_named": true,
+  "S4_adapter_touches_no_record_field": true,
+  "S4_direct_reads_adopted_fields_without_assignment": true,
+  "U3a_adapter_fields_bound_to_frozen_roles": true,
+  "U3b_branch_selection_is_min": true,
+  "U3c_stage1b_pins": true,
+  "U4_drivers": true,
+  "pins": true
+ },
+ "git_head": "c950054ae0aa8f9e5d7171b520af3f601238a017",
+ "ok": true,
+ "pins": {
+  "level4/closure_proofs/p5y_k5_cell309_research_r1/impl/srk_adapter.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_cell309_research_r1/impl/srk_assemble.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_cell309_research_r1/impl/srk_certify.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_cell309_research_r1/impl/srk_envelope.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_cell309_research_r1/impl/srk_float.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_cell309_research_r1/impl/srk_gate.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_cell309_research_r1/impl/srk_kernel.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_cell309_research_r1/verify/srk_verify_indep.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_lower_front_order3/code/tc_rule.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py": "PINNED_MATCH",
+  "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_d5_forecast.py": "PINNED_MATCH"
+ },
+ "schema": "p309.u2-structure-check/1",
+ "tool_sha256": "a990da97df70fb628a0e118354875b2bfcf62cd49682a00e9d6c72adbf3ee239",
+ "utc": "2026-10-04T23:32:43Z",
+ "version": 2
+}

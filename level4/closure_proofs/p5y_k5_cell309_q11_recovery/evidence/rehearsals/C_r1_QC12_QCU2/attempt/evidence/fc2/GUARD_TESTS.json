@@ -1,0 +1,249 @@
+{
+ "all_pass": true,
+ "git_head": "c950054ae0aa8f9e5d7171b520af3f601238a017",
+ "guard_sha256": "9efa6f7fd3cd97f7194b798dac045b774cbcdb00efa7c0a0a618027b7e9dfb28",
+ "results": {
+  "D1_real_band_production_no_grant": {
+   "detail": "('REFUSE', 'quarantine: ValueError: no grant at HEAD')",
+   "pass": true
+  },
+  "D1b_real_mirror_production_no_grant": {
+   "detail": "('REFUSE', 'quarantine: ValueError: no grant at HEAD')",
+   "pass": true
+  },
+  "D1c_decoy_interval_not_banded": {
+   "detail": "",
+   "pass": true
+  },
+  "D1d_guard_interval_raises": {
+   "detail": "DRIFT_BAND_REFUSED [1.4, 1.5]: quarantine: ValueError: no grant at HEAD",
+   "pass": true
+  },
+  "D1e_production_adapter_real_band_raises": {
+   "detail": "",
+   "pass": true
+  },
+  "D1f_producer_call_site_refuses": {
+   "detail": "",
+   "pass": true
+  },
+  "N10a2_test_ctx_refuses_production_shaped_grant": {
+   "detail": "('REFUSE', \"quarantine: ValueError: grant schema/campaign is not this context's\")",
+   "pass": true
+  },
+  "N10a_production_ctx_ignores_sandbox": {
+   "detail": "('REFUSE', 'quarantine: ValueError: no grant at HEAD')",
+   "pass": true
+  },
+  "N10b_real_band_with_test_ctx": {
+   "detail": "('REFUSE', 'quarantine: the REAL band is admissible only in the production context')",
+   "pass": true
+  },
+  "N10c_testcontext_refuses_repo_root": {
+   "detail": "TestContext refused: the sandbox is this repository",
+   "pass": true
+  },
+  "N10c_testcontext_refuses_repo_subdir": {
+   "detail": "TestContext refused: the sandbox is this repository",
+   "pass": true
+  },
+  "N11_synthetic_marker_not_production": {
+   "detail": "",
+   "pass": true
+  },
+  "N12_guard_has_no_review_mode": {
+   "detail": "('REFUSE', 'quarantine: the guard has no review mode')",
+   "pass": true
+  },
+  "N13a_fail_closed_on_git_error": {
+   "detail": "",
+   "pass": true
+  },
+  "N13b_testcontext_non_git_raises": {
+   "detail": "RuntimeError",
+   "pass": true
+  },
+  "N1_no_test_grant": {
+   "detail": "('REFUSE', 'quarantine: ValueError: no grant at HEAD')",
+   "pass": true
+  },
+  "N2_ew_lo_ge_hi": {
+   "detail": "('REFUSE', 'quarantine: ValueError: grant drift_hull_Ew malformed')",
+   "pass": true
+  },
+  "N2_invalid_json": {
+   "detail": "('REFUSE', 'quarantine: JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)')",
+   "pass": true
+  },
+  "N2_missing_field": {
+   "detail": "('REFUSE', \"quarantine: ValueError: grant misses ['runtime']\")",
+   "pass": true
+  },
+  "N2_non_rational": {
+   "detail": "('REFUSE', 'quarantine: ValueError: not an exact rational string')",
+   "pass": true
+  },
+  "N2_unknown_schema": {
+   "detail": "('REFUSE', \"quarantine: ValueError: grant schema/campaign is not this context's\")",
+   "pass": true
+  },
+  "N2_wrong_type": {
+   "detail": "('REFUSE', 'quarantine: ValueError: grant cell_interval malformed')",
+   "pass": true
+  },
+  "N3a_wrong_cell_string": {
+   "detail": "('REFUSE', \"quarantine: ValueError: grant cell is not this context's\")",
+   "pass": true
+  },
+  "N3b_wrong_cell_type": {
+   "detail": "('REFUSE', \"quarantine: ValueError: grant cell is not this context's\")",
+   "pass": true
+  },
+  "N4a_interval_leaves_Ew": {
+   "detail": "('REFUSE', 'quarantine: ValueError: interval not inside Ew')",
+   "pass": true
+  },
+  "N4b_Ew_not_outward_hull": {
+   "detail": "('REFUSE', 'quarantine: ValueError: Ew is not the outward 2^-10 hull of cell_interval')",
+   "pass": true
+  },
+  "N4c_narrower_Ew_excludes_block": {
+   "detail": "('REFUSE', 'quarantine: ValueError: interval not inside Ew')",
+   "pass": true
+  },
+  "N5_wrong_guard_id": {
+   "detail": "('REFUSE', 'quarantine: ValueError: guard_id is not this file')",
+   "pass": true
+  },
+  "N6a_manifest_sha_mismatch": {
+   "detail": "('REFUSE', 'quarantine: ValueError: frozen manifest sha256 mismatch')",
+   "pass": true
+  },
+  "N6b_own_file_not_in_manifest": {
+   "detail": "('REFUSE', 'quarantine: ValueError: this guard is not pinned (with this sha256) by the frozen manifest')",
+   "pass": true
+  },
+  "N6c_own_file_other_sha": {
+   "detail": "('REFUSE', 'quarantine: ValueError: this guard is not pinned (with this sha256) by the frozen manifest')",
+   "pass": true
+  },
+  "N6d_frozen_commit_unknown": {
+   "detail": "('REFUSE', 'quarantine: ValueError: frozen_commit is not an ancestor of the grant commit')",
+   "pass": true
+  },
+  "N6e_frozen_commit_not_ancestor": {
+   "detail": "('REFUSE', 'quarantine: ValueError: frozen_commit is not an ancestor of the grant commit')",
+   "pass": true
+  },
+  "N7a_marker_absent": {
+   "detail": "('REFUSE', 'quarantine: RuntimeError: git rev-parse failed')",
+   "pass": true
+  },
+  "N7b_marker_elsewhere": {
+   "detail": "('REFUSE', 'quarantine: ValueError: marker does not name the grant commit')",
+   "pass": true
+  },
+  "N7c_extra_namespace_ref": {
+   "detail": "('REFUSE', 'quarantine: ValueError: the marker namespace holds other refs (recording begun or consumed)')",
+   "pass": true
+  },
+  "N7d_head_not_grant_commit": {
+   "detail": "('REFUSE', 'quarantine: ValueError: HEAD is not the grant commit')",
+   "pass": true
+  },
+  "N7e_grant_commit_touches_other_file": {
+   "detail": "('REFUSE', 'quarantine: ValueError: the grant commit touches other paths')",
+   "pass": true
+  },
+  "N7f_two_commits_add_grant": {
+   "detail": "('REFUSE', 'quarantine: ValueError: 2 commits add the grant')",
+   "pass": true
+  },
+  "N7g_expired": {
+   "detail": "('REFUSE', 'quarantine: ValueError: grant expired')",
+   "pass": true
+  },
+  "N7h_strict_descendant_on_other_ref": {
+   "detail": "('REFUSE', 'quarantine: ValueError: a strict descendant of the grant commit exists (refs/heads/p309-test-other)')",
+   "pass": true
+  },
+  "N7i_ref_at_grant_commit_admitted": {
+   "detail": "('ADMIT', 'admitted under grant commit 504d3112145e (TEST)')",
+   "pass": true
+  },
+  "N7j_detached_head_refused": {
+   "detail": "('REFUSE', 'quarantine: RuntimeError: git symbolic-ref failed')",
+   "pass": true
+  },
+  "N8a_wrong_host": {
+   "detail": "('REFUSE', 'quarantine: ValueError: execution host mismatch')",
+   "pass": true
+  },
+  "N8b_wrong_runtime": {
+   "detail": "('REFUSE', 'quarantine: ValueError: runtime mismatch')",
+   "pass": true
+  },
+  "N9a_test_ctx_real_band_geometry_5": {
+   "detail": "('REFUSE', 'quarantine: the REAL band is admissible only in the production context')",
+   "pass": true
+  },
+  "N9b_test_ctx_real_band_geometry_3": {
+   "detail": "('REFUSE', 'quarantine: the REAL band is admissible only in the production context')",
+   "pass": true
+  },
+  "N9c_production_ctx_test_band": {
+   "detail": "('REFUSE', 'quarantine: the TEST band is admissible only in a test context')",
+   "pass": true
+  },
+  "N9d_test_adapter_real_band_raises": {
+   "detail": "",
+   "pass": true
+  },
+  "P1_test_band_admitted_inside_Ew": {
+   "detail": "[('ADMIT', 'admitted under grant commit 0ed9ee5f0375 (TEST)'), ('ADMIT', 'admitted under grant commit 0ed9ee5f0375 (TEST)')]",
+   "pass": true
+  },
+  "P1b_guard_interval_and_adapter_allowed": {
+   "detail": "",
+   "pass": true
+  },
+  "PM1_premarker_ready_without_marker": {
+   "detail": "grant commit 6ae4c6715de6 passes the pre-marker checks (TEST)",
+   "pass": true
+  },
+  "PM1b_no_admission_without_marker": {
+   "detail": "('REFUSE', 'quarantine: RuntimeError: git rev-parse failed')",
+   "pass": true
+  },
+  "PM2_premarker_refuses_when_namespace_not_empty": {
+   "detail": "ValueError: the marker namespace is not empty before the marker",
+   "pass": true
+  },
+  "PM3_premarker_refuses_expired": {
+   "detail": "ValueError: grant expired",
+   "pass": true
+  },
+  "PM4_premarker_refuses_wrong_host": {
+   "detail": "ValueError: execution host mismatch",
+   "pass": true
+  },
+  "PM5_premarker_refuses_unknown_context": {
+   "detail": "not a guard context",
+   "pass": true
+  },
+  "S1_production_context_immutable": {
+   "detail": "",
+   "pass": true
+  },
+  "S2_production_singleton": {
+   "detail": "",
+   "pass": true
+  },
+  "Z_no_production_marker_or_grant_anywhere": {
+   "detail": "[]",
+   "pass": true
+  }
+ },
+ "test_sha256": "284d5ee928fdca7ccc02512509d337e1c9b339711aebd78eee9e004ee9a7f5b8",
+ "utc": "2026-10-04T23:32:40Z"
+}

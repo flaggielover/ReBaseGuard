@@ -1,0 +1,119 @@
+{
+ "all_pass": true,
+ "driver_sha256": "8cc96f34e6673d16fcf31f831328173f32ad7cdeaab455b06103a8668ddd1a81",
+ "results": {
+  "T10_host_git_checked_before_git_writes": {
+   "detail": {
+    "after_marker_recheck_before_persist": true,
+    "driver_env_hermetic": true,
+    "guard__git_bytes_hermetic": true,
+    "guard__git_hermetic": true,
+    "guard__git_ok_hermetic": true,
+    "guard_hermetic_constant": true,
+    "jobs_inherit_env": true,
+    "run_execute_host_git_first": true,
+    "run_execute_recheck_after_control": true,
+    "run_seal_only_host_git_first": true
+   },
+   "pass": true
+  },
+  "T1_no_path_from_qualification_modes_to_target": {
+   "detail": {
+    "_job": [],
+    "decoy-stage1a": [],
+    "decoy-stage1b": [],
+    "preflight": [],
+    "rehearse": [],
+    "validate-grant": []
+   },
+   "pass": true
+  },
+  "T2_fc4_static_items": {
+   "detail": [],
+   "pass": true
+  },
+  "T3_target_inputs_only_via_the_control": {
+   "detail": {
+    "cell_inputs": [
+     "historical_control"
+    ],
+    "historical_control": [
+     "run_execute"
+    ]
+   },
+   "pass": true
+  },
+  "T4_exactly_once_sites": {
+   "detail": {
+    "_arm_marker": {
+     "ok": true,
+     "referrers": [
+      "run_execute"
+     ],
+     "starts_with_assert": true
+    },
+    "_persist_pending": {
+     "ok": true,
+     "referrers": [
+      "after_marker",
+      "run_seal_only"
+     ],
+     "starts_with_assert": true
+    }
+   },
+   "pass": true
+  },
+  "T5_formal_scan": {
+   "detail": "PASS",
+   "pass": true
+  },
+  "T6_mutation_dominated_by_the_grant": {
+   "detail": {
+    "_arm_marker_single_top_level": true,
+    "after_marker_only_from_run_execute": true,
+    "after_marker_single_top_level": true,
+    "check_grant_single_top_level": true,
+    "create_run_nonce_single_top_level": true,
+    "hooks_refused_first": true,
+    "order": true,
+    "premarker_admission_single_top_level": true,
+    "seal_only_persist_guarded": true
+   },
+   "pass": true
+  },
+  "T7_no_production_execution_from_tests_or_qualification": {
+   "detail": [],
+   "pass": true
+  },
+  "T8_runtime_backstop_at_the_sites": {
+   "detail": {
+    "arm_requires_execute_grant_and_nonce": true,
+    "assert_ends_with_site_check_and_backstop": true,
+    "nonce_names_this_process": true,
+    "pending_requires_marker_and_grant": true,
+    "pinned__SITE_CODES": true,
+    "pinned__assert_execute_context": true,
+    "pinned__require_own_run_nonce": true,
+    "pinned__site_backstop": true,
+    "site_backstop_referenced_only_by_assert": true,
+    "site_codes_is_the_only_module_reference": true
+   },
+   "pass": true
+  },
+  "T9_validate_grant_runs_execute_prechecks": {
+   "detail": {
+    "check_bindings_same_condition": true,
+    "check_branch_in_both": true,
+    "check_clean_in_both": true,
+    "check_flags_in_both": true,
+    "check_governance_state_same_condition": true,
+    "check_host_git_in_both": true,
+    "check_not_evaluated_in_both": true,
+    "check_result_paths_in_both": true
+   },
+   "pass": true
+  }
+ },
+ "tool_sha256": "bd2a1b4723cb239ebd83058f9bc6625e3a68b1911d1aaaac7d34461e4c5f19be",
+ "utc": "2026-10-04T23:10:52Z"
+}
