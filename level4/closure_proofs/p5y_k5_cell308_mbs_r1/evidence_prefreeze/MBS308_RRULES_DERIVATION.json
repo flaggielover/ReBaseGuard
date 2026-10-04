@@ -1,0 +1,415 @@
+{
+ "checks": {
+  "all_hold": false,
+  "host_prepared_no_process_left_above_the_threshold": true,
+  "r_allow_b_every_addition_under_a_sip_path": true,
+  "r_allow_never_added_none_admitted": true,
+  "r_allow_ok": true,
+  "r_excl_pct_ok": true,
+  "r_free_attainable": false,
+  "r_mem_no_invalid_run": true,
+  "r_mem_no_rerun_required": true,
+  "r_mem_status_ok": true,
+  "r_mem_step5_feasible": true,
+  "r_mem_step6_poll_on_a_canonical_branch": true,
+  "r_mem_step6_sampler_valid": true,
+  "runs_all_as_planned": true
+ },
+ "designated": true,
+ "evidence": {
+  "commit": "45b93b892129550a7e61c0e32baa0151771cd165",
+  "driver_sha256": "117624e9477f6b315f1c9a63920d10e79a0f8819aafad5d0eeff50adf71beab1",
+  "name": "MBS308_RRULES_DESIGNATED.json",
+  "sha256": "86d3f8cba3543e2b165ac648f9858fef8fb5a0efc141fec77bfa0ab604ee90fe"
+ },
+ "evidence_reasons": [],
+ "fail_closed_statuses": [],
+ "form_reasons": [],
+ "inputs": {
+  "base_names": [
+   "ControlCenter",
+   "Dock",
+   "Finder",
+   "ReportCrash",
+   "SystemUIServer",
+   "UserEventAgent",
+   "WindowServer",
+   "backupd",
+   "bird",
+   "bluetoothd",
+   "cfprefsd",
+   "configd",
+   "coreaudiod",
+   "coreservicesd",
+   "diskarbitrationd",
+   "distnoted",
+   "fseventsd",
+   "hidd",
+   "kernel_task",
+   "launchd",
+   "logd",
+   "loginwindow",
+   "mds",
+   "mds_stores",
+   "mdworker",
+   "mdworker_shared",
+   "notifyd",
+   "opendirectoryd",
+   "powerd",
+   "remoted",
+   "runningboardd",
+   "securityd",
+   "spindump",
+   "symptomsd",
+   "syslogd",
+   "sysmond",
+   "thermalmonitord",
+   "trustd",
+   "watchdogd"
+  ],
+  "h3_readings": [
+   {
+    "name": "spotlightknowledged.updater",
+    "path": "/usr/libexec",
+    "pcpu": "70.3"
+   },
+   {
+    "name": "cloudd",
+    "path": "/System/\u2026/CloudKitDaemon.framework",
+    "pcpu": "30.5"
+   },
+   {
+    "name": "BackgroundShortcutRunner",
+    "path": "/System/\u2026/WorkflowKit.framework/XPCServices",
+    "pcpu": "32.9"
+   },
+   {
+    "name": "BackgroundShortcutRunner",
+    "path": "/System/\u2026/WorkflowKit.framework/XPCServices",
+    "pcpu": "52.2"
+   },
+   {
+    "name": "modelcatalogd",
+    "path": "/System/\u2026/ModelCatalogRuntime.framework",
+    "pcpu": "27.7"
+   }
+  ],
+  "measurement_cap_bytes": 3221225472,
+  "mem_poll_s_in": "2",
+  "plan": {
+   "297": null,
+   "316": 3
+  },
+  "workers": 5
+ },
+ "outputs": {
+  "EXCL_ALLOW": null,
+  "EXCL_CPU_PCT": null,
+  "FREE_MEM_MIN_BYTES": null,
+  "MEM_CAP_BYTES": null,
+  "MEM_POLL_S": null
+ },
+ "outputs_as_computed": {
+  "EXCL_ALLOW": [
+   "BackgroundShortcutRunner",
+   "ControlCenter",
+   "Dock",
+   "Finder",
+   "ReportCrash",
+   "SystemUIServer",
+   "UserEventAgent",
+   "WindowServer",
+   "backupd",
+   "bird",
+   "bluetoothd",
+   "cfprefsd",
+   "cloudd",
+   "configd",
+   "coreaudiod",
+   "coreservicesd",
+   "diskarbitrationd",
+   "distnoted",
+   "fseventsd",
+   "hidd",
+   "kernel_task",
+   "launchd",
+   "logd",
+   "loginwindow",
+   "mds",
+   "mds_stores",
+   "mdworker",
+   "mdworker_shared",
+   "modelcatalogd",
+   "notifyd",
+   "opendirectoryd",
+   "powerd",
+   "remoted",
+   "runningboardd",
+   "securityd",
+   "spindump",
+   "spotlightknowledged.updater",
+   "symptomsd",
+   "syslogd",
+   "sysmond",
+   "thermalmonitord",
+   "trustd",
+   "watchdogd"
+  ],
+  "EXCL_CPU_PCT": 25,
+  "FREE_MEM_MIN_BYTES": 6979321856,
+  "MEM_CAP_BYTES": 2952790016,
+  "MEM_POLL_S": "1/2"
+ },
+ "poll": {
+  "MEM_CAP_BYTES": 2952790016,
+  "MEM_POLL_S": "1/2",
+  "branch": null,
+  "canonical": true,
+  "case": "ii",
+  "g_bytes_per_s": "1118368877",
+  "mem_poll_s_in": "2",
+  "recheck_ok": false,
+  "sampler_interval_s": "1/4",
+  "sampler_max_spacing_ns": 493034916,
+  "unrounded_quotient_not_an_output": null
+ },
+ "ratification": "3c2a78544899c5772ea95b7b228b1059f056e3fd",
+ "rules": {
+  "host_input": {
+   "hw_memsize_bytes": 8589934592,
+   "page_size_bytes": 16384,
+   "wired_pages": 87522,
+   "wired_pages_by_reading": [
+    86119,
+    81280,
+    81446,
+    82563,
+    82573,
+    87522,
+    82601,
+    82284,
+    81675,
+    82390
+   ]
+  },
+  "r_allow": {
+   "EXCL_ALLOW": [
+    "BackgroundShortcutRunner",
+    "ControlCenter",
+    "Dock",
+    "Finder",
+    "ReportCrash",
+    "SystemUIServer",
+    "UserEventAgent",
+    "WindowServer",
+    "backupd",
+    "bird",
+    "bluetoothd",
+    "cfprefsd",
+    "cloudd",
+    "configd",
+    "coreaudiod",
+    "coreservicesd",
+    "diskarbitrationd",
+    "distnoted",
+    "fseventsd",
+    "hidd",
+    "kernel_task",
+    "launchd",
+    "logd",
+    "loginwindow",
+    "mds",
+    "mds_stores",
+    "mdworker",
+    "mdworker_shared",
+    "modelcatalogd",
+    "notifyd",
+    "opendirectoryd",
+    "powerd",
+    "remoted",
+    "runningboardd",
+    "securityd",
+    "spindump",
+    "spotlightknowledged.updater",
+    "symptomsd",
+    "syslogd",
+    "sysmond",
+    "thermalmonitord",
+    "trustd",
+    "watchdogd"
+   ],
+   "additions": [
+    {
+     "already_listed": false,
+     "name": "BackgroundShortcutRunner",
+     "records": [
+      {
+       "name": "BackgroundShortcutRunner",
+       "path": "/System/\u2026/WorkflowKit.framework/XPCServices",
+       "reading": "329/10",
+       "source": "ratification H3"
+      },
+      {
+       "name": "BackgroundShortcutRunner",
+       "path": "/System/\u2026/WorkflowKit.framework/XPCServices",
+       "reading": "261/5",
+       "source": "ratification H3"
+      }
+     ]
+    },
+    {
+     "already_listed": false,
+     "name": "cloudd",
+     "records": [
+      {
+       "name": "cloudd",
+       "path": "/System/\u2026/CloudKitDaemon.framework",
+       "reading": "61/2",
+       "source": "ratification H3"
+      }
+     ]
+    },
+    {
+     "already_listed": false,
+     "name": "modelcatalogd",
+     "records": [
+      {
+       "name": "modelcatalogd",
+       "path": "/System/\u2026/ModelCatalogRuntime.framework",
+       "reading": "277/10",
+       "source": "ratification H3"
+      }
+     ]
+    },
+    {
+     "already_listed": false,
+     "name": "spotlightknowledged.updater",
+     "records": [
+      {
+       "name": "spotlightknowledged.updater",
+       "path": "/usr/libexec",
+       "reading": "703/10",
+       "source": "ratification H3"
+      }
+     ]
+    }
+   ],
+   "base_count": 39,
+   "excl_cpu_pct": "25",
+   "ratification": "3c2a78544899c5772ea95b7b228b1059f056e3fd",
+   "readings": {
+    "n": 10,
+    "reasons": [],
+    "valid": true
+   },
+   "rejected": [],
+   "rule": "R-ALLOW",
+   "status": "OK",
+   "valid": true
+  },
+  "r_excl_pct": {
+   "EXCL_CPU_PCT": 25,
+   "ceiling_applied": false,
+   "exception_applied": false,
+   "hosting_app_max_reading": "3/5",
+   "hosting_app_paths": [
+    "/System/Applications/Utilities/Terminal.app/"
+   ],
+   "ratification": "3c2a78544899c5772ea95b7b228b1059f056e3fd",
+   "readings": {
+    "n": 10,
+    "reasons": [],
+    "valid": true
+   },
+   "rule": "R-EXCL-PCT",
+   "status": "OK",
+   "valid": true
+  },
+  "r_free": {
+   "FREE_MEM_MIN_BYTES": 6979321856,
+   "attainable": false,
+   "longest_consecutive_reaching": 0,
+   "ratification": "3c2a78544899c5772ea95b7b228b1059f056e3fd",
+   "readings": {
+    "n": 10,
+    "reasons": [],
+    "valid": true
+   },
+   "rule": "R-FREE",
+   "status": "GATE_UNATTAINABLE",
+   "sum_bytes": 6793986048,
+   "valid": true
+  },
+  "r_mem": {
+   "D_bytes": 142147584,
+   "MEM_CAP_BYTES": 2952790016,
+   "P_bytes": 924762112,
+   "feasibility": {
+    "W_idle_bytes": 1433960448,
+    "lhs_bytes": 6793986048,
+    "ok": true,
+    "rhs_bytes": 7155974144,
+    "workers": 5
+   },
+   "inputs": {
+    "measurement_cap_bytes": 3221225472,
+    "measurement_poll_s": "2",
+    "required_cells": [
+     297,
+     316
+    ],
+    "runs": 2
+   },
+   "invalid_runs": [],
+   "k": "3",
+   "poll": {
+    "MEM_POLL_S": "1/2",
+    "canonical": true,
+    "case": "ii",
+    "g_bytes_per_s": "1118368877",
+    "mem_poll_s_in": "2",
+    "recheck_ok": false,
+    "sampler_interval_s": "1/4",
+    "sampler_max_spacing_ns": 493034916
+   },
+   "ratification": "3c2a78544899c5772ea95b7b228b1059f056e3fd",
+   "rerun_required": [],
+   "rule": "R-MEM",
+   "s": "56443/38088",
+   "spread_by_kind_rung": {
+    "C1B:10": "1153/1139",
+    "C1B:12": "6457/6428",
+    "C1B:8": "1013/1010",
+    "C2B:20": "5870/5837",
+    "C2B:40": "16078/15961",
+    "C2B:80": "56443/38088",
+    "RLR:4": "1577/1541",
+    "RLR:6": "5627/5624",
+    "RLR:8": "6963/6922"
+   },
+   "status": "OK",
+   "valid": true,
+   "valid_runs": [
+    "decoy297",
+    "decoy316"
+   ]
+  },
+  "runs_not_as_planned": [],
+  "sampler_input": {
+   "interval_s": "1/4",
+   "max_growth_bytes_per_s": 1118368877,
+   "max_spacing_ns": 493034916,
+   "max_spacing_ns_by_run": [
+    493034916,
+    403707583
+   ],
+   "runs": 2
+  }
+ },
+ "rules_sha256": "c04239defd01af393cb272440e3807309e08919b78a6c2abf6ff7b5bb1d23fd7",
+ "schema": "rebaseguard.p5y.k5.cell308-mbs-r1.rrules-derivation.v1",
+ "status": "NOT_DERIVED",
+ "stop_before_freeze": true,
+ "target_evaluations": 0,
+ "tool_sha256": "da35e7e1627ac7dce39c5f45e945cad68bcccadac2d6c4ce7ea69ec1126027e8"
+}
