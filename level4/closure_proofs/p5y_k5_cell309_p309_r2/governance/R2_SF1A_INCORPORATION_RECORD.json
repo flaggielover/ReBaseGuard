@@ -1,0 +1,270 @@
+{
+ "schema": "P309_R2_INCORPORATION_RECORD/1",
+ "what": "the owner's SF1-A incorporation (message 6): a fast-forward of r2 from b66a45f0 to 716946e8, nothing else in that step; then this separate governance-only commit",
+ "authorization": {
+  "owner_record": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISIONS_R2_MSG6_VERBATIM.md",
+  "owner_message_sha256": "c073fc02239cca6bd643b7387d702671fbc93ae49ac3bda6e782189af8e6e448",
+  "answers": "the line left unanswered by message 5 (OWNER_DECISIONS_R2_RECORD_1.json, not_answered_or_pending: 'SF1-A incorporation into r2')",
+  "earlier_authority": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISIONS_R2_MSG5_VERBATIM.md (SF1: SELECT SF1-A)"
+ },
+ "review": {
+  "brief": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/BRIEF_SF1A_DELTA_REVIEW.md",
+  "review": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/REVIEW_SF1A_DELTA.md",
+  "review_sha256": "1f95ca2f81953a8643fc41cfc7a4bf6dcfd2175adccefce5670db39f141828a2",
+  "exec_ledger": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/REVIEW_SF1A_DELTA_EXEC_LEDGER.jsonl",
+  "disposition": "SF1A_DELTA_REVIEW_ACCEPTED_WITH_NONBLOCKING_FOLLOWUPS",
+  "sf1_ruling": "SF1: RESOLVED",
+  "condition_applied": "C-B1 (blocking-before-incorporation): incorporate exactly 716946e8 on top of b66a45f0 (a fast-forward); no hardening-branch file, tool, test or evidence enters r2 in the same step",
+  "conditions_carried_forward": {
+   "C-F1 (before-freeze)": "the worker-tier drill (formal review 5, C3) on bytes that include SF1-A",
+   "C-A1..C-A5 (advisory)": "residual write-free-probe limits recorded as accepted limits; extra tests (symlinked ledger, ledger bytes/mtime unchanged); fs_probe docstring under SF2; unit evidence self-binding; matrix S09 rc normalization"
+  },
+  "hardening_evidence": "4bf00fef:level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/sf1a_review/evidence/"
+ },
+ "fast_forward": {
+  "branch": "claude/p5y-k5-cell309-p309-r2",
+  "from": "b66a45f097989764176075802c953df4b72c2aef",
+  "to": "716946e8d9a6744d0b49de6acc802605b6eb1bf8",
+  "new_commit_created": false,
+  "forced": false,
+  "pushed_from": "the local SF1-A branch claude/p309-r2-sf1a-20261005 at 716946e8, as HEAD:refs/heads/claude/p5y-k5-cell309-p309-r2",
+  "push_output": [
+   "To https://github.com/flaggielover/ReBaseGuard",
+   " \tHEAD:refs/heads/claude/p5y-k5-cell309-p309-r2\tb66a45f0..716946e8",
+   "branch 'claude/p309-r2-sf1a-20261005' set up to track 'origin/claude/p5y-k5-cell309-p309-r2'.",
+   "Done"
+  ],
+  "local_side_effect": "`push -u` set the local SF1-A branch's upstream (local git config) to origin r2; no ref other than origin r2 changed",
+  "commits_entering_r2": [
+   "716946e8d9a6744d0b49de6acc802605b6eb1bf8"
+  ],
+  "paths_entering_r2": [
+   "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_qualify.py"
+  ],
+  "numstat": "3\t0\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_qualify.py",
+  "added_lines": [
+   "        for led in (E.Q.EXEC_LEDGER, E.Q.EXPOSURE_LEDGER):  # SF1-A: RUN START's append must not fail after the mkdir",
+   "            step = f\"ledger appendability ({Path(led).name}: must exist and open for appending; nothing is written)\"",
+   "            os.close(os.open(str(led), os.O_WRONLY | os.O_APPEND | os.O_NOFOLLOW))"
+  ],
+  "runner_sha256": {
+   "before": "36e428fbcd386a013bb97eb7ba154c9a815ab85265129daf11eb5cb5243abe1d",
+   "after": "540df0552bfc31512289e30eaf1ead57bf82a4ac806f38080439c05c43f9a3af"
+  },
+  "tree": "3afb045cea6b78c708686ecc9108abd6a2d46100",
+  "precheck": {
+   "candidate unchanged (a119e978)": true,
+   "r1 unchanged": true,
+   "main unchanged": true,
+   "no protected ref on origin": true,
+   "SF1-A branch tip is exactly 716946e8": true,
+   "origin r2 is exactly b66a45f0": true,
+   "716946e8 is a descendant of b66a45f0": true,
+   "range is exactly one commit, 716946e8": true,
+   "its only parent is b66a45f0": true,
+   "exactly one path changed: the runner": true,
+   "3 lines added, 0 deleted": true,
+   "exactly one hunk": true,
+   "added lines are byte-for-byte the reviewed three": true,
+   "runner at b66a45f0 is the reviewed base bytes": true,
+   "runner at 716946e8 is the reviewed bytes (540df055)": true,
+   "tree of 716946e8 is the reviewed tree (3afb045c)": true,
+   "by AST only fs_probe differs": true,
+   "module-level statements identical": true,
+   "the hunk lies inside fs_probe": true,
+   "accepted review is the recorded bytes (1f95ca2f)": true,
+   "review line 2 is SF1A_DELTA_REVIEW_ACCEPTED_WITH_NONBLOCKING_FOLLOWUPS": true,
+   "review names 716946e8 and b66a45f0": true,
+   "review rules SF1: RESOLVED": true
+  },
+  "precheck_before_push": {
+   "candidate unchanged (a119e978)": true,
+   "r1 unchanged": true,
+   "main unchanged": true,
+   "no protected ref on origin": true,
+   "SF1-A branch tip is exactly 716946e8": true,
+   "origin r2 is exactly b66a45f0": true,
+   "716946e8 is a descendant of b66a45f0": true,
+   "range is exactly one commit, 716946e8": true,
+   "its only parent is b66a45f0": true,
+   "exactly one path changed: the runner": true,
+   "3 lines added, 0 deleted": true,
+   "exactly one hunk": true,
+   "added lines are byte-for-byte the reviewed three": true,
+   "runner at b66a45f0 is the reviewed base bytes": true,
+   "runner at 716946e8 is the reviewed bytes (540df055)": true,
+   "tree of 716946e8 is the reviewed tree (3afb045c)": true,
+   "by AST only fs_probe differs": true,
+   "module-level statements identical": true,
+   "the hunk lies inside fs_probe": true,
+   "accepted review is the recorded bytes (1f95ca2f)": true,
+   "review line 2 is SF1A_DELTA_REVIEW_ACCEPTED_WITH_NONBLOCKING_FOLLOWUPS": true,
+   "review names 716946e8 and b66a45f0": true,
+   "review rules SF1: RESOLVED": true,
+   "HEAD is the local SF1-A branch": true,
+   "HEAD is exactly 716946e8": true,
+   "no tracked change in the working tree": true
+  },
+  "postcheck": {
+   "candidate unchanged (a119e978)": true,
+   "r1 unchanged": true,
+   "main unchanged": true,
+   "no protected ref on origin": true,
+   "SF1-A branch tip is exactly 716946e8": true,
+   "origin r2 is exactly 716946e8 (no new commit)": true,
+   "b66a45f0 is an ancestor of origin r2": true,
+   "only r2 changed on origin since the pre snapshot": true,
+   "r2 moved exactly b66a45f0 -> 716946e8": true
+  },
+  "refs_changed_on_origin": {
+   "refs/heads/claude/p5y-k5-cell309-p309-r2": [
+    "b66a45f097989764176075802c953df4b72c2aef",
+    "716946e8d9a6744d0b49de6acc802605b6eb1bf8"
+   ]
+  }
+ },
+ "independent_verification_fresh_clone": {
+  "checks": {
+   "HEAD is 716946e8 (no new commit)": true,
+   "tree is the reviewed tree 3afb045c": true,
+   "first-parent chain 716946e8 -> b66a45f0 -> a119e978 -> 93d55063 -> 101ef2cb": true,
+   "b66a45f0 is an ancestor of HEAD": true,
+   "exactly the runner changed since b66a45f0": true,
+   "runner bytes equal the reviewed commit's blob byte-for-byte": true,
+   "runner sha256 equals the AST evidence (540df055)": true,
+   "runner sha256 equals the regression-bound runner": true,
+   "base runner equals the AST evidence's old bytes": true,
+   "by AST only fs_probe differs (recomputed)": true,
+   "module-level statements identical": true,
+   "the 9 pinned runner functions are byte-identical": true,
+   "every other r2 file is the same blob as at b66a45f0": true,
+   "no path outside r2's namespace changed since c902fe2f (A7)": true,
+   "r1 tree is ecd1c359": true,
+   "r5 unchanged": true,
+   "no r6": true,
+   "no freeze record": true,
+   "no qualification directory": true
+  },
+  "first_parent_chain": [
+   "716946e8d9a6744d0b49de6acc802605b6eb1bf8",
+   "b66a45f097989764176075802c953df4b72c2aef",
+   "a119e9789e2a1d42b584fff8a2301946a37f1bcb",
+   "93d550638b8c79ae1c252fc6c2b0194b1a416b49",
+   "101ef2cb17e5eab2892212178278da45b98004ed"
+  ],
+  "ast_changed_definitions": [
+   "fs_probe"
+  ],
+  "pinned_functions_byte_identical": {
+   "git": true,
+   "mirror": true,
+   "qc_formal": true,
+   "qc_research_simple": true,
+   "qhost_preflight": true,
+   "research_test": true,
+   "run": true,
+   "start_qhost_monitor": true,
+   "stop_qhost_monitor": true
+  },
+  "r2_subtrees_other_than_runner": {
+   "code/": {
+    "files": 19,
+    "all_identical_to_b66a45f0": true
+   },
+   "config/": {
+    "files": 2,
+    "all_identical_to_b66a45f0": true
+   },
+   "fc2/": {
+    "files": 3,
+    "all_identical_to_b66a45f0": true
+   },
+   "tests/": {
+    "files": 12,
+    "all_identical_to_b66a45f0": true
+   },
+   "verify/": {
+    "files": 8,
+    "all_identical_to_b66a45f0": true
+   },
+   "governance/": {
+    "files": 84,
+    "all_identical_to_b66a45f0": true
+   },
+   "freeze/": {
+    "files": 0,
+    "all_identical_to_b66a45f0": true
+   }
+  }
+ },
+ "fast_checks_on_the_fresh_clone": {
+  "commit": "716946e8d9a6744d0b49de6acc802605b6eb1bf8",
+  "steps_rc": {
+   "QC12_static_check": 0,
+   "static_controls": 0,
+   "scan_pins_list": 0,
+   "scan_allowance_test": 0,
+   "make_freeze_params": 0,
+   "make_freeze_manifest": 0,
+   "placeholder_check": 0,
+   "manifest_check": 0,
+   "QC15_self_audit": 0
+  },
+  "content": {
+   "QC12 T1-T14 PASS": true,
+   "static controls 22/22, T14a PASS": true,
+   "scanner pins all current": true,
+   "scan-allowance controls PASS": true,
+   "unresolved-marker check pass": true,
+   "manifest identical": true,
+   "QC15 A1-A10 true": true
+  },
+  "content_ok": true
+ },
+ "unchanged": {
+  "scientific logic, target logic, gate logic": "every r2 file but the runner is the same blob as at b66a45f0; in the runner only fs_probe differs (AST); the 9 pinned functions are byte-identical",
+  "scanner pins": "config/ unchanged; p309_scan_pins.py --list: all current"
+ },
+ "filed_in_this_commit": {
+  "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/BRIEF_SF1A_DELTA_REVIEW.md": {
+   "sha256": "59c2544d85c2c1f10a2219566c5840479f9fe9868a2e04b6a8462c662db40c66",
+   "source": "4bf00fef:level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/sf1a_review/BRIEF_SF1A_DELTA_REVIEW.md",
+   "bytes_identical_to_source": true
+  },
+  "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/REVIEW_SF1A_DELTA.md": {
+   "sha256": "1f95ca2f81953a8643fc41cfc7a4bf6dcfd2175adccefce5670db39f141828a2",
+   "source": "4bf00fef:level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/sf1a_review/REVIEW_SF1A_DELTA.md",
+   "bytes_identical_to_source": true
+  },
+  "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/REVIEW_SF1A_DELTA_EXEC_LEDGER.jsonl": {
+   "sha256": "566fb3dac57b87aadfa06e45eb2d41001b2c596a516172cc654eb5a533d22925",
+   "source": "4bf00fef:level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/sf1a_review/REVIEW_SF1A_DELTA_EXEC_LEDGER.jsonl",
+   "bytes_identical_to_source": true
+  },
+  "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISIONS_R2_MSG6_VERBATIM.md": {
+   "sha256": "238cdca0c73b809245764d1cc7999651a3533aa9774fdb7542a242d2c003462d",
+   "source": "4bf00fef:level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/owner_decision_packet/owner_reply_msg6/OWNER_DECISIONS_R2_MSG6_VERBATIM.md",
+   "bytes_identical_to_source": true
+  },
+  "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/REVIEW_SF1A_DELTA.sha256": {
+   "sha256": "34a23595447d6f8e653899fb322575ff2b59b0043d04bcc1fdd699f1b0965de8",
+   "content": "sha256 of REVIEW_SF1A_DELTA.md, in r2's .sha256 format"
+  }
+ },
+ "sf1_status": "SF1: RESOLVED for the incorporated r2 bytes (r2 716946e8 and its governance-only child; runner sha256 540df0552bfc31512289e30eaf1ead57bf82a4ac806f38080439c05c43f9a3af), as message 6 states once the incorporation and this filing are complete",
+ "not_authorized": [
+  "freeze",
+  "formal qualification",
+  "worker-tier execution before its host prerequisites are met",
+  "grant issuance or consumption",
+  "Gamma(309) evaluation",
+  "any target evaluation",
+  "Cell 309 adoption",
+  "scientific-status change",
+  "r5 modification",
+  "creation of r6",
+  "unrelated hardening",
+  "any additional mutation of r2"
+ ],
+ "statement": "NEW Γ309 TARGET EVALUATIONS = 0; no grant; OD-R2-0(D) OPEN; Cell 309 OPEN"
+}
