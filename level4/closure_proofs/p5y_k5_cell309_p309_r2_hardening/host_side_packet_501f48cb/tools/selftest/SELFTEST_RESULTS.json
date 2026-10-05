@@ -1,0 +1,135 @@
+{
+ "all_ok": true,
+ "expect": {
+  "drill_extra_file": {
+   "classification": "FAIL",
+   "must_fail": [
+    "V22_clone_changes_only_this_drill"
+   ]
+  },
+  "drill_fail_gate": {
+   "classification": "FAIL"
+  },
+  "drill_incident": {
+   "classification": "INCIDENT"
+  },
+  "drill_interrupted": {
+   "classification": "INTERRUPTED"
+  },
+  "drill_pass": {
+   "classification": "PASS",
+   "failed": []
+  },
+  "prelaunch_container": {
+   "failed": [
+    "C25_no_p309_unit_loaded"
+   ]
+  },
+  "prelaunch_dirty": {
+   "failed": [
+    "C04_clone_clean_incl_untracked",
+    "C16_scratch_empty",
+    "C25_no_p309_unit_loaded"
+   ]
+  },
+  "prelaunch_no_remote": {
+   "failed": [
+    "C13_origin_r2_is_501f48cb",
+    "C14_no_protected_ref_on_origin",
+    "C25_no_p309_unit_loaded"
+   ]
+  }
+ },
+ "note": "run in the coordinating Cloud Session on a fresh clone of origin r2 (501f48cb); the drill cases use synthetic worker-shaped fixtures built from the committed cloud-tier report 20261002T052554Z; nothing here is host evidence",
+ "results": {
+  "drill_extra_file": {
+   "classification": "FAIL",
+   "clone_unchanged_by_tool": true,
+   "failed": [
+    "V22_clone_changes_only_this_drill"
+   ],
+   "incident": [],
+   "n_checks": 30,
+   "ok": true,
+   "rc": 1
+  },
+  "drill_fail_gate": {
+   "classification": "FAIL",
+   "clone_unchanged_by_tool": true,
+   "failed": [
+    "V02_schema_tier_pass",
+    "V03_all_verdicts_true",
+    "V12_runner_rc0_pass_confined_head_unchanged",
+    "V13_all_20_gates_present_and_true_incl_QHOST",
+    "V24_ledger_is_head_plus_one_governance_row"
+   ],
+   "incident": [],
+   "n_checks": 30,
+   "ok": true,
+   "rc": 1
+  },
+  "drill_incident": {
+   "classification": "INCIDENT",
+   "clone_unchanged_by_tool": true,
+   "failed": [
+    "V24_ledger_is_head_plus_one_governance_row"
+   ],
+   "incident": [
+    "a nonzero target counter in the P309 clone's ledger"
+   ],
+   "n_checks": 30,
+   "ok": true,
+   "rc": 1
+  },
+  "drill_interrupted": {
+   "classification": "INTERRUPTED",
+   "clone_unchanged_by_tool": true,
+   "failed": null,
+   "incident": [],
+   "n_checks": 1,
+   "ok": true,
+   "rc": 1
+  },
+  "drill_pass": {
+   "classification": "PASS",
+   "clone_unchanged_by_tool": true,
+   "failed": [],
+   "incident": [],
+   "n_checks": 30,
+   "ok": true,
+   "rc": 0
+  },
+  "prelaunch_container": {
+   "clone_unchanged_by_tool": true,
+   "failed": [
+    "C25_no_p309_unit_loaded"
+   ],
+   "n_checks": 36,
+   "ok": true,
+   "rc": 1
+  },
+  "prelaunch_dirty": {
+   "clone_unchanged_by_tool": true,
+   "failed": [
+    "C04_clone_clean_incl_untracked",
+    "C16_scratch_empty",
+    "C25_no_p309_unit_loaded"
+   ],
+   "n_checks": 36,
+   "ok": true,
+   "rc": 1
+  },
+  "prelaunch_no_remote": {
+   "clone_unchanged_by_tool": true,
+   "failed": [
+    "C13_origin_r2_is_501f48cb",
+    "C14_no_protected_ref_on_origin",
+    "C25_no_p309_unit_loaded"
+   ],
+   "n_checks": 36,
+   "ok": true,
+   "rc": 1
+  }
+ },
+ "schema": "P309_R2_PACKET_TOOL_SELFTEST/1"
+}
