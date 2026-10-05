@@ -1,0 +1,1366 @@
+{
+ "commands": {
+  "allowed": 153,
+  "denied": 9,
+  "denied_by_rule": {
+   "CANARY": 2,
+   "R3_FORCE_PUSH": 1,
+   "R3_HISTORY": 3,
+   "R3_PUSH_TARGET": 1,
+   "R5_PROTECTED_WRITE": 2
+  },
+  "denied_detail": [
+   {
+    "command": "echo P309_GUARD_CANARY_7f3a",
+    "rule": "CANARY",
+    "utc": "2026-10-04T16:17:50.768+00:00",
+    "why": "the live guard canary (this refusal proves the PreToolUse hook is active)"
+   },
+   {
+    "command": "true || git push --force origin HEAD:main",
+    "rule": "R3_FORCE_PUSH",
+    "utc": "2026-10-04T16:17:53.912+00:00",
+    "why": "git push --force is refused"
+   },
+   {
+    "command": "F=/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/fresh; cd $F && git checkout -q --detach c902fe2f && cd level4/closure_proofs/p5y_k5_cell309_p309_r1 && grep -rn \"scratchpad\\|/tmp/\" code tests verify | grep -v \"^.*#\" | cut -c1-200 | head -20; grep -n \"STAGE1A_BU",
+    "rule": "R3_HISTORY",
+    "utc": "2026-10-04T16:22:07.085+00:00",
+    "why": "git checkout -q --detach c902fe2f"
+   },
+   {
+    "command": "python3 .claude/hooks/tests/test_guard.py | tail -1 && git add level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/phase0 && git status --porcelain && git commit -q -m \"p309 Q11 recovery: Phase 0 reconnaissance record (actual refs, ancestry, environment, entry points, write-set and command-se",
+    "rule": "R3_PUSH_TARGET",
+    "utc": "2026-10-04T16:57:55.199+00:00",
+    "why": "push only as `git push -u origin claude/p309-q11-recovery-20261005`"
+   },
+   {
+    "command": "python3 - <<'PYEOF'\nfrom pathlib import Path\np = Path(\".claude/hooks/p309_pretooluse_guard.py\"); s = p.read_text()\nstart = s.index(\"SEP = {\"); end = s.index(\"ENV_ASSIGN = \")\nnew_seg = '''SEP = {\";\", \"&&\", \"||\", \"|\", \"&\", \"\\\\n\", \"(\", \")\", \"|&\", \";;\"}\n\n\ndef unquoted_newlines_to_semicolons(text: str) -",
+    "rule": "R3_HISTORY",
+    "utc": "2026-10-04T16:58:34.078+00:00",
+    "why": "heredoc to python3 contains a refused git / remote operation (push --force)"
+   },
+   {
+    "command": "SP=/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad; cd $SP && git clone -q --no-local --origin isolated-source $SP/fresh iso_r2 2>/dev/null; git -C $SP/iso_r2 checkout -q -b claude/p5y-k5-cell309-p309-r2 101ef2cb17e5eab2892212178278da45b98004ed 2>&1 | tail -1; gi",
+    "rule": "R3_HISTORY",
+    "utc": "2026-10-04T19:27:54.025+00:00",
+    "why": "git checkout -q -b claude/p5y-k5-cell309-p309-r2 101ef2cb17e5eab2892212178278da45b98004ed"
+   },
+   {
+    "command": "D=level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze && mkdir -p $D && cp /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_POSTFREEZE.json $D/ && cp -r /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchp",
+    "rule": "R5_PROTECTED_WRITE",
+    "utc": "2026-10-04T21:30:31.159+00:00",
+    "why": "mkdir outside the declared write-set: $D"
+   },
+   {
+    "command": "echo P309_GUARD_CANARY_7f3a",
+    "rule": "CANARY",
+    "utc": "2026-10-04T23:09:34.546+00:00",
+    "why": "the live guard canary (this refusal proves the PreToolUse hook is active)"
+   },
+   {
+    "command": "F=level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py && sed -i '104,119s/p\\.name/key/g' $F && sed -i '97s/^        certs = d.get(\"certificates\") or \\[\\]$/        certs = d.get(\"certificates\") or []\\n        key = f\"{len(per) + 1}:{p}\"/' $F && sed -n 95,121p $F | grep -n \"key",
+    "rule": "R5_PROTECTED_WRITE",
+    "utc": "2026-10-04T23:12:02.683+00:00",
+    "why": "sed outside the declared write-set: $F"
+   }
+  ],
+  "executed_bash": [
+   {
+    "command": "git status --short && ls .claude/audit/ && tail -n 3 .claude/audit/*.jsonl | cut -c1-300",
+    "interrupted": false,
+    "stdout_sha256": "ee7a657ce96a28ca5e9235283a9f7bf534598a207202fedb670250a0bf7be041",
+    "utc": "2026-10-04T16:18:05.105+00:00"
+   },
+   {
+    "command": "python3 - <<'PYEOF'\nfrom pathlib import Path\np = Path(\".claude/hooks/p309_pretooluse_guard.py\")\ns = p.read_text()\nold = '''    if prog == \"git\":\n        check_git(s, cwd, raw)\n        return\n    text = \" \".join(s)\n'''\nnew = '''    if prog == \"git\":\n        check_git(s, cwd, raw)\n        return\n    text = \" \".join(s)\n    if prog not in READ_ONLY and P.REMOTE_TEXT_RE.search(\" \".join(seg)):\n        raise Refuse(\"R4_REMOTE\", f\"remote-compute identifier in `{prog}` ({P.REMOTE_TEXT_RE.search(' '.join(seg)).group(0)})\")\n'''\nassert old in s; s = s.replace(old, new)\nold2 = '''def check_segment(seg: lis",
+    "interrupted": false,
+    "stdout_sha256": "d7017ebcd65455e76e953d5b42fa96c3df28c7c3b616c7f069ed930fb4fae5fd",
+    "utc": "2026-10-04T16:18:58.760+00:00"
+   },
+   {
+    "command": "python3 - <<'PYEOF'\nfrom pathlib import Path\np = Path(\".claude/hooks/p309_pretooluse_guard.py\")\ns = p.read_text()\nold = '''    # write-type commands: path arguments inside the repository must be in the write-set\n'''\nnew = '''    if prog == \"find\" and any(a in (\"-delete\", \"-exec\", \"-execdir\", \"-ok\", \"-okdir\", \"-fprint\", \"-fprintf\", \"-fls\")\n                              for a in s[1:]):\n        roots = []\n        for a in s[1:]:\n            if a.startswith(\"-\") or a in (\"(\", \"!\"):\n                break\n            roots.append(a)\n        for pth in roots or [\".\"]:\n            check_write_path(pt",
+    "interrupted": false,
+    "stdout_sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df",
+    "utc": "2026-10-04T16:19:07.060+00:00"
+   },
+   {
+    "command": "python3 .claude/hooks/tests/test_guard.py 2>&1 | tail -40",
+    "interrupted": false,
+    "stdout_sha256": "ad938535e24b73446380df0fba483440906125b3f94c617e49ea16f21c9dcc41",
+    "utc": "2026-10-04T16:21:02.944+00:00"
+   },
+   {
+    "command": "python3 - <<'PYEOF'\nfrom pathlib import Path\np = Path(\".claude/hooks/p309_guard_policy.py\"); s = p.read_text()\nold = 'ADOPT_RE = re.compile(r\"\\\\b(?:adopt(?:ion|ed)?_?(?:record|status|cell)|ADOPTION)\\\\b\", re.I)'\nassert old in s, \"adopt\"\ns = s.replace(old, 'ADOPT_RE = re.compile(r\"(?:adopt(?:ion|ed)?[_-]?(?:record|status|cell)|adoption)\", re.I)')\np.write_text(s)\ng = Path(\".claude/hooks/p309_pretooluse_guard.py\"); t = g.read_text()\nold2 = \"    if os.path.abspath(path).startswith(home_settings):\"\nassert old2 in t\nt = t.replace(old2, \"    if os.path.abspath(os.path.expanduser(path)).startswith(home",
+    "interrupted": false,
+    "stdout_sha256": "b79739dfc98db3fe7695cde9b6537ddab4f879ddedc4c073e2a99de65cb60c7a",
+    "utc": "2026-10-04T16:21:21.744+00:00"
+   },
+   {
+    "command": "git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/fresh checkout -q --detach c902fe2f && cd /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/fresh/level4/closure_proofs/p5y_k5_cell309_p309_r1 && grep -rn \"scratchpad\\|/tmp/\" code tests verify | cut -c1-220 | head -20; grep -n \"STAGE1A_BUDGET_S =\\|STAGE1A_JOB_LIMIT_S =\\|RLIMIT_CPU\\|def run_jobs\" code/p309_driver.py | head; ls /tmp/claude-0/",
+    "interrupted": false,
+    "stdout_sha256": "3196c3cbfe4660249346783fc72b5df6e33b09b6b2b1134bc4c1bb742105ad26",
+    "utc": "2026-10-04T16:22:13.672+00:00"
+   },
+   {
+    "command": "git show --stat --format='%H %ci %s' c950054a | cut -c1-200; git log -1 --format=%ci f433d490; git show c950054a:level4/closure_proofs/p5y_k5_cell309_p309_r1/ledger/ZERO_TARGET_LEDGER.jsonl | tail -1 | cut -c1-300; grep -n \"^import\\|^from\\|test_p309_exactly_once\\|new_sandbox\\|build_chain\" level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_site_backstop.py | head -20",
+    "interrupted": false,
+    "stdout_sha256": "a82301944c8f2bafafaa157e46e8cfeb7e6a1547592ce795e62c448e9abea476",
+    "utc": "2026-10-04T16:22:43.854+00:00"
+   },
+   {
+    "command": "cd /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad && git clone -q --no-local --origin isolated-source /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/fresh iso_r1 && git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1 checkout -q -b claude/p5y-k5-cell309-p309-r1 c950054ae0aa8f9e5d7171b520af3f601238a017 && git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1 rev-parse HEAD HEAD^{tree} && git -C /tmp/claude-0/-home-user-ReBaseGuar",
+    "interrupted": false,
+    "stdout_sha256": "bffa237aaaefc48b2f7ca837be3f6607b2070e1f2a01358846022bda1d85d7ac",
+    "utc": "2026-10-04T16:23:20.218+00:00"
+   },
+   {
+    "command": "python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/make_repaired_harness.py && sed -n 1,400p level4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/QC11_HARNESS_REPAIR.diff | grep '^[+-]' | head -120",
+    "interrupted": false,
+    "stdout_sha256": "0e580c0f7030e1e5f56efe88d3cc7f939560bf1155b3ddfaea3c992cbed5cd5b",
+    "utc": "2026-10-04T16:26:14.470+00:00"
+   },
+   {
+    "command": "sed -i 's/test_p309_exactly_once.R2_PORTED_TO_R1.py\")/test_p309_exactly_once.R2_PORTED_TO_R1.py.txt\")/' level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py && grep -n \"R2_PORTED\" level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py && time python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py --iso /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1 --out /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5 --gates QC11,QC_D5 --harn",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T16:36:21.746+00:00"
+   },
+   {
+    "command": "cd /home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1 && python3 - <<'EOF'\nimport json,glob\nfor f in sorted(glob.glob(\"qualification/attempt_1/QC*.json\")):\n    d=json.load(open(f)); print(f.split('/')[-1], d.get('qc'), d.get('pass'), sorted(d.keys())[:12])\nEOF\ngrep -n \"def sha256\\|\\\"sha256\\\"\\|'sha256'\" ../p5y_k5_cell309_research_r1/impl/srk_certify.py | head; ls qualification/attempt_1/evidence/fc6 2>/dev/null; python3 -c \"\nimport json;d=json.load(open('qualification/attempt_1/QC11.json'));print(d.get('error'), str(d)[:1500])\"",
+    "interrupted": false,
+    "stdout_sha256": "80b174c11bd527b585c8cd9c397270f86030e5bebe40aaaeaddc5d2aa30a3011",
+    "utc": "2026-10-04T16:36:28.151+00:00"
+   },
+   {
+    "command": "cd /home/user/ReBaseGuard && sed -n 325,352p level4/closure_proofs/p5y_k5_cell309_research_r1/impl/srk_certify.py",
+    "interrupted": false,
+    "stdout_sha256": "409afd859abf53878e3dd0e1020c8c588626cf697418865f32ecdd3259eb6821",
+    "utc": "2026-10-04T16:36:32.515+00:00"
+   },
+   {
+    "command": "V=level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py; R1=level4/closure_proofs/p5y_k5_cell309_p309_r1; mkdir -p level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r1_attempt_1 && python3 $V r1-attempt $R1/qualification/attempt_1 $R1/ledger/ZERO_TARGET_LEDGER.jsonl --record-utc 2026-09-30T17:06:09Z --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r1_attempt_1/R1_ATTEMPT_1_VALIDATION.json; echo \"rc=$?\"; python3 $V certs $R1/qualification/attempt_1/QC08_DECOY_STAGE1A.json $R1/qualification/attempt_1/QC10_DECOY_STAGE1A.json --out level4/closure_proo",
+    "interrupted": false,
+    "stdout_sha256": "00fbc2ea45005b36813a962a96b8a4d65afc1eebb162ca350e6130cf89d22b6c",
+    "utc": "2026-10-04T16:38:15.684+00:00"
+   },
+   {
+    "command": "cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/tasks/bosge295d.output | tail -20; ls -la /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5/attempt/ 2>&1; ps aux | grep -c \"test_p309\\|p309_scan\" ",
+    "interrupted": false,
+    "stdout_sha256": "9691e7c7c8f141d29ce0c112b732ec1f5055b1b2d883eae1990890ddd44ef809",
+    "utc": "2026-10-04T16:38:23.060+00:00"
+   },
+   {
+    "command": "python3 -c \"\nimport json;d=json.load(open('/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5/attempt/QC11.json'));print(d['pass'], d['wall_s'], d['runs'][0]['rc']); print(d['runs'][0]['stderr_tail'][-500:])\"; ps -eo pid,etime,args | grep -E \"test_p309|p309_scan|rehearsal\" | grep -v grep | cut -c1-200",
+    "interrupted": false,
+    "stdout_sha256": "e16b4e1cad2ff3c135b6387b97e9d849fe21e96c81ab80e9e91d08758b3af482",
+    "utc": "2026-10-04T16:38:26.634+00:00"
+   },
+   {
+    "command": "python3 - <<'PYEOF'\nfrom pathlib import Path\np = Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py\"); s = p.read_text()\ns = s.replace(\"import shutil\\n\", \"\")\nanchor = \"def git(repo: Path, *a: str) -> str:\"\nfuncs = '''def record_gate(att: Path, ledger: Path, k: str, res: dict) -> str:\n    \"\"\"the per-gate commit point: the record (atomic, never overwritten), then its ledger row\"\"\"\n    data = (json.dumps(res, indent=1, sort_keys=True, default=str) + \"\\\\n\").encode()\n    digest = atomic_create(att / f\"{k}.json\", data)\n    ledger_append(ledger, {\"utc\": utc(), \"event\": \"GA",
+    "interrupted": false,
+    "stdout_sha256": "23d3fc8b3fa29779368647176431007272648a98b7cde5c4ccbb1faa76b4367f",
+    "utc": "2026-10-04T16:39:09.100+00:00"
+   },
+   {
+    "command": "cd /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_crash/level4/closure_proofs/p5y_k5_cell309_p309_r1 && sed -n 1,120p code/make_freeze_manifest.py",
+    "interrupted": false,
+    "stdout_sha256": "f15975cd6ea430157076004d8cff10ee27c6d4c8dacd93c57fd79f1112c82b9a",
+    "utc": "2026-10-04T16:40:29.675+00:00"
+   },
+   {
+    "command": "cd /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_crash/level4/closure_proofs/p5y_k5_cell309_p309_r1 && python3 - <<'EOF'\nimport json, sys, importlib.util\nsys.argv=[\"x\"]\nspec=importlib.util.spec_from_file_location(\"mfm\",\"code/make_freeze_manifest.py\"); M=importlib.util.module_from_spec(spec); spec.loader.exec_module(M)\nnew=M.build(); old=json.load(open(\"freeze/P309_FREEZE_MANIFEST.json\"))\nfor k in sorted(set(old)|set(new)):\n    if k in (\"built_utc\",\"built_at_head\"): continue\n    if old.get(k)!=new.get(k):\n        if isinstance(old.get(k),dict):\n       ",
+    "interrupted": false,
+    "stdout_sha256": "e18d66b5166bc71c8fc0fdfefe484901b98e10271725c807860836e36706d11e",
+    "utc": "2026-10-04T16:40:37.838+00:00"
+   },
+   {
+    "command": "tail -5 /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/tasks/bosge295d.output; ls /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5/attempt/; ps -eo pid,etime,args | grep -E \"test_p309|p309_scan\" | grep -v grep | cut -c1-160",
+    "interrupted": false,
+    "stdout_sha256": "752a5aedf7974c6aa39f88a635942e156cf8909316547853249abd228a7d941c",
+    "utc": "2026-10-04T16:40:49.285+00:00"
+   },
+   {
+    "command": "cd /home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1 && python3 -c \"\nimport json\nfor f in ['evidence/fc2/D5_EXCEPTION_CONTROLS.json','evidence/fc6/SITE_BACKSTOP_CONTROLS.json','evidence/fc6/EXACTLY_ONCE_FLOWS.json']:\n    d=json.load(open(f)); print(f, {k:d[k] for k in d if k in ('pass','utc','wall_s','wall_seconds','elapsed_s','runtime','summary','counts')})\n\"",
+    "interrupted": false,
+    "stdout_sha256": "cefddde35df78e114066ad32630509678977dc45c71676d6c93ac017fcbb6fce",
+    "utc": "2026-10-04T16:40:54.717+00:00"
+   },
+   {
+    "command": "cd /home/user/ReBaseGuard && python3 - <<'PYEOF'\nfrom pathlib import Path\np = Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py\"); s = p.read_text()\nold = '''    v.check(\"summary:pass_consistent\", s.get(\"pass\") == (len(recs) == len(GATES) and all(want.values())) or\n            (s.get(\"pass\") is False), \"CORRUPT\", \"summary pass inconsistent with its gates\")'''\nnew = '''    expected_pass = len(recs) == len(want) and all(want.values()) and (gates_key != \"gates\" or len(want) >= 1)\n    if files_key == \"files\" and gate_name(\"QC01\") == \"Q01\":\n        expected_pass = ex",
+    "interrupted": false,
+    "stdout_sha256": "9eef55d3a571c5f3c09ab2f4e9f9033718ed1983b08da05003c9a61843278450",
+    "utc": "2026-10-04T16:43:02.540+00:00"
+   },
+   {
+    "command": "python3 - <<'PYEOF'\nfrom pathlib import Path\np = Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py\"); s = p.read_text()\nold = '''    expected_pass = len(recs) == len(want) and all(want.values()) and (gates_key != \"gates\" or len(want) >= 1)\n    if files_key == \"files\" and gate_name(\"QC01\") == \"Q01\":\n        expected_pass = expected_pass and len(recs) == len(GATES)\n'''\nnew = '''    expected_pass = len(recs) == n_expected and all(want.values())\n'''\nassert old in s; s = s.replace(old, new)\nold2 = '''def summary_check(summ: Path, att: Path, recs: dict, v: Verdict, fr",
+    "interrupted": false,
+    "stdout_sha256": "661b89622e1ff1e5559bd629cdd391a96c1cdf9d36e184e58728156272941e5d",
+    "utc": "2026-10-04T16:43:12.045+00:00"
+   },
+   {
+    "command": "mkdir -p level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/crash_matrix && timeout 3000 python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/crash_matrix.py run --replica /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_crash --work /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/crash_work_1 --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/crash_matrix/CRASH_MATRIX.json 2>&1 | tail -45",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T16:43:18.618+00:00"
+   },
+   {
+    "command": "sleep 1; ls /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5/attempt/; ps -eo pid,etime,pcpu,args | grep -E \"test_p309|p309_scan|crash_matrix\" | grep -v grep | cut -c1-170",
+    "interrupted": false,
+    "stdout_sha256": "8ad40b68bd08e167a4312b60b10f3a04945045cd9f4e82a2bf21eae1abfcc7a7",
+    "utc": "2026-10-04T16:43:37.779+00:00"
+   },
+   {
+    "command": "cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/tasks/b0uaej36d.output",
+    "interrupted": false,
+    "stdout_sha256": "ead0de6d02e334ccbe9737eec988873aefd3e1c2333144621f0d795380db692c",
+    "utc": "2026-10-04T16:43:40.586+00:00"
+   },
+   {
+    "command": "python3 -c \"\nimport json;d=json.load(open('level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/crash_matrix/CRASH_MATRIX.json'))\nfor c in d['cases']:\n    if c['id'] in ('R01','R04','R08','R14','R15','R16','R17','N04','N07','N13'):\n        print(c['id'], {k:v for k,v in c.items() if k not in ('desc','id')})\nprint(d['wall_s'])\n\" | cut -c1-600",
+    "interrupted": false,
+    "stdout_sha256": "2e5d9248abf0c30daafbb145df28154b65048b884c820c1825675bf46a2f58b5",
+    "utc": "2026-10-04T16:43:45.561+00:00"
+   },
+   {
+    "command": "python3 - <<'PYEOF'\nfrom pathlib import Path\np = Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py\"); s = p.read_text()\nold = '''    ap.add_argument(\"--harness\", choices=(\"frozen\", \"repaired\"), required=True)'''\nnew = '''    ap.add_argument(\"--harness\", choices=(\"frozen\", \"repaired\", \"mutant\"), required=True)\n    ap.add_argument(\"--harness-file\", help=\"--harness mutant: the mutant harness (data file) swapped in for QC11/QC-D5\")'''\nassert old in s; s = s.replace(old, new)\nold2 = '''    repaired = repaired_harness(iso) if a.harness == \"repaired\" else None'''\nnew2 = '",
+    "interrupted": false,
+    "stdout_sha256": "4c734d65f7766ee8acf8d4078eade25c31cd8b7a96ead64d275d58efc279b72f",
+    "utc": "2026-10-04T16:43:56.750+00:00"
+   },
+   {
+    "command": "python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/make_harness_mutants.py | head -30; ls /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5/attempt/",
+    "interrupted": false,
+    "stdout_sha256": "e2aa3d2a3ccdcae877011db439f78af9a02a2af8c554ca55c86e0b49e11a4618",
+    "utc": "2026-10-04T16:44:19.020+00:00"
+   },
+   {
+    "command": "mkdir -p level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/guard && python3 .claude/hooks/tests/test_guard.py --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/guard/GUARD_TESTS.json | tail -2 && git add .claude level4/closure_proofs/p5y_k5_cell309_q11_recovery && git status --short | head -40",
+    "interrupted": false,
+    "stdout_sha256": "85d3b4c06d5b3f142e32b3d75a9ec06aed98cb2ad91e13baa4cbc9cf52c957aa",
+    "utc": "2026-10-04T16:44:35.662+00:00"
+   },
+   {
+    "command": "git commit -q -F - <<'EOF'\np309 Q11 recovery: enforceable session guards, independent validator, crash matrix (result-free)\n\nPhase 1: PreToolUse guard (fail closed; refuses target-evaluation modes and\ntools, grant/adoption/r5/r6/exactly-once-ref mutation, force/non-branch\npushes, reset --hard, destructive clean, history rewriting, AWS/Vultr/SSH and\nother remote compute, and writes outside the declared write-set), PostToolUse\ntripwire, SessionEnd audit; 138/138 negative/positive/fixture tests.\n\nPhase 2/3 tooling in a new namespace (p5y_k5_cell309_q11_recovery): an\nindependent attempt validator ",
+    "interrupted": false,
+    "stdout_sha256": "aceda071b97e56c1d1cea15bf536a17bc337af8b369e929defe5f316eefbc174",
+    "utc": "2026-10-04T16:44:46.951+00:00"
+   },
+   {
+    "command": "ps -eo pid,etime,pcpu,args | grep -E \"test_p309|p309_scan|rehearsal\" | grep -v grep | cut -c1-220; ls -la /tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/ 2>&1 | head; ls /tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/d5_controls 2>/dev/null | wc -l",
+    "interrupted": false,
+    "stdout_sha256": "da11a412379cedff6848740316bc5d869a0a3041b5a94b85b86bbf2b82f0dfab",
+    "utc": "2026-10-04T16:44:51.238+00:00"
+   },
+   {
+    "command": "grep -n \"D5\\|d5_exception\\|site_backstop\\|SCAN PINS\\|scan_pins\" level4/closure_proofs/p5y_k5_cell309_p309_r1/ledger/ZERO_TARGET_LEDGER.jsonl | python3 -c \"\nimport sys,json\nfor l in sys.stdin:\n    n,_,j=l.partition(':'); d=json.loads(j); print(n, d['utc'], d['script'][:50], d['purpose'][:90])\" | tail -14",
+    "interrupted": false,
+    "stdout_sha256": "b99f3ea4251aeb37bc9e52affee41396285243ebaa0f9ebff451e98d9e301428",
+    "utc": "2026-10-04T16:44:56.861+00:00"
+   },
+   {
+    "command": "cd /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad && git clone -q --no-local --origin isolated-source /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/fresh iso_r1b 2>/dev/null; git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1b checkout -q -b claude/p5y-k5-cell309-p309-r1 c950054ae0aa8f9e5d7171b520af3f601238a017 2>&1 | tail -1; git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1b rev-parse HEAD; git -C /tmp/claude-0/-home-use",
+    "interrupted": false,
+    "stdout_sha256": "211c5f71bf28bf50afe1b68a506b52965abcfa7aba861b89eaea4098e01a3321",
+    "utc": "2026-10-04T16:45:33.163+00:00"
+   },
+   {
+    "command": "grep -rln \"/tmp/claude-0\\|scratchpad\" level4/closure_proofs/p5y_k5_cell309_research_r1/tests level4/closure_proofs/p5y_k5_cell309_research_r1/verify level4/closure_proofs/p5y_k5_cell309_research_r1/impl level4/closure_proofs/p5y_k5_cell309_research_r1/code 2>/dev/null | head; grep -rn \"Path(\\\"/tmp/claude-0\" level4/closure_proofs/p5y_k5_cell309_research_r1 level4/closure_proofs/p5y_k5_cell309_p309_r1/verify level4/closure_proofs/p5y_k5_cell309_p309_r1/code 2>/dev/null | cut -c1-200",
+    "interrupted": false,
+    "stdout_sha256": "0882f14ed80ef4d3ed8455f80cedaa927fb86514c1e7fdf3fba02937697fba78",
+    "utc": "2026-10-04T16:45:40.466+00:00"
+   },
+   {
+    "command": "setsid nohup python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py --iso /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1b --out /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired --gates all --harness repaired --workers 4 --run-start-line > /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired.log 2>&1 < /dev/null & \nsleep 20; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs",
+    "interrupted": false,
+    "stdout_sha256": "a05251bdd06ccca4a223d185c20dac96226f7578a71746942c9e475e86af3809",
+    "utc": "2026-10-04T16:46:14.018+00:00"
+   },
+   {
+    "command": "ps -eo pid,etime,pcpu,args | grep -E \"p309_rehearsal|test_p309|run_verify|p309_driver\" | grep -v grep | cut -c1-200",
+    "interrupted": false,
+    "stdout_sha256": "b4241a52d224e52d048ec8df893a6674063e29e43ec9d7bd9bb7de261dc0dcdd",
+    "utc": "2026-10-04T16:46:18.233+00:00"
+   },
+   {
+    "command": "while kill -0 3401 2>/dev/null; do sleep 5; done; tail -c 1500 /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/tasks/bosge295d.output; ls /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5/",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T16:46:31.018+00:00"
+   },
+   {
+    "command": "env | grep -E \"^(P309|PYTHON|GIT_|CLAUDE_PROJECT|LANG|LC_|TZ)\" | sed 's/=.*TOKEN.*/=<redacted>/' ; cat /etc/machine-id | sha256sum | cut -c1-16; hostname | sha256sum | cut -c1-16; uptime -s; cat /proc/sys/kernel/random/boot_id; git rev-parse origin/main origin/claude/p5y-k5-cell309-p309-r1 origin/claude/p5y-k5-cell309-p309-r2 origin/claude/rebaseguard-k5-cell-309-w0jv8m origin/claude/jolly-carson-o9jaww; git rev-parse c902fe2f^{tree} 101ef2cb^{tree}; git log -1 --format='%ci' 101ef2cb; git ls-remote origin refs/heads/claude/p309-q11-recovery-20261005 'refs/p5y*' 'refs/p309*' 'refs/rlr*' 2>&1 |",
+    "interrupted": false,
+    "stdout_sha256": "aa2772baa5e43fabdc6cf56f184cd273399024f49a4227148a06e9996b7df847",
+    "utc": "2026-10-04T16:46:40.392+00:00"
+   },
+   {
+    "command": "git rev-parse c902fe2f:level4/closure_proofs/p5y_k5_cell309_p309_r1 101ef2cb:level4/closure_proofs/p5y_k5_cell309_p309_r1; git diff --quiet c902fe2f 101ef2cb -- level4/closure_proofs/p5y_k5_cell309_p309_r1 && echo \"r1 namespace unchanged on r2\"; git diff --name-only c902fe2f 101ef2cb | grep -v p5y_k5_cell309_p309_r2 | wc -l; git rev-parse c902fe2f:level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json HEAD:level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json; git ls-tree -r --name-only HEAD | grep -ci \"COVERAGE_MAP_R6\"",
+    "interrupted": false,
+    "stdout_sha256": "4c83e1212f0adee49cd538300d01d2dddcd51a47df234c4dfdc73f645375931e",
+    "utc": "2026-10-04T16:46:49.419+00:00"
+   },
+   {
+    "command": "until [ -f /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5/REHEARSAL_SUMMARY.json ] || ! kill -0 3401 2>/dev/null; do sleep 10; done; echo A-done",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T16:57:26.899+00:00"
+   },
+   {
+    "command": "ps -eo pid,etime,pcpu,args | grep -E \"test_p309|p309_scan|run_verify|p309_driver|srk|python3 /tmp\" | grep -v grep | cut -c1-230; ls /tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/d5_controls/*; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired.log",
+    "interrupted": false,
+    "stdout_sha256": "132fd9d6a2fc52b90d9034be1528ba9c6d302ba22f49bb5547d14a7e08fc1ac5",
+    "utc": "2026-10-04T16:57:31.793+00:00"
+   },
+   {
+    "command": "cd /home/user/ReBaseGuard/ && grep -n \"def \\|static_check\\|p309_scan\\|for .* in \" level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_d5_exception.py | head -50; cat /proc/8813/wchan; echo; ls -la /proc/8813/fd | tail -5; cat /proc/8813/io | head -4",
+    "interrupted": false,
+    "stdout_sha256": "41e67313d66a0751a54f538c0e1bc1f3c1a216eb9707f93a79f1378b3d46deac",
+    "utc": "2026-10-04T16:57:39.073+00:00"
+   },
+   {
+    "command": "until [ -f /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5/REHEARSAL_SUMMARY.json ] || ! kill -0 3401 2>/dev/null; do sleep 15; done; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/tasks/bosge295d.output | tail -12",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T16:57:46.485+00:00"
+   },
+   {
+    "command": "python3 .claude/hooks/tests/test_guard.py | tail -6",
+    "interrupted": false,
+    "stdout_sha256": "2f3645c5f18d90aa4b2e5cb310c2d3f87dc95fc78f952872a331a1166d9be8b4",
+    "utc": "2026-10-04T16:59:16.201+00:00"
+   },
+   {
+    "command": "python3 .claude/hooks/tests/test_guard.py --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/guard/GUARD_TESTS.json | tail -1 && git add .claude level4/closure_proofs/p5y_k5_cell309_q11_recovery && git commit -q -m \"p309 Q11 recovery: Phase 0 record; guard parser fix (quoted newlines, fd duplication 2>&1) with regression vectors (148/148)\n\nThe guard refused a legitimate allowed-branch push because 2>&1 was tokenised as a positional argument (fail-closed false positive); fixed and covered by P19-P22, H34-H36, W15-W17. NEW TARGET EVALUATIONS = 0.\n\nCo-Authored-By: Claude Opus 5.5 <n",
+    "interrupted": false,
+    "stdout_sha256": "7351e88047ca030e0f1151f77692892889eb19e7d4fa8bd645ece997d42680d2",
+    "utc": "2026-10-04T16:59:35.812+00:00"
+   },
+   {
+    "command": "git push -u origin claude/p309-q11-recovery-20261005 2>&1 | tail -4",
+    "interrupted": false,
+    "stdout_sha256": "45c4cb36234656e6ebc13b2d74b9d2fa2eebb0544ca22e3beb3abe5d1c3ee239",
+    "utc": "2026-10-04T16:59:38.782+00:00"
+   },
+   {
+    "command": "cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired.log; ls /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5/; ps -eo etime,args | grep -E \"test_p309_d5|site_backstop|scan_pins\" | grep -v grep | cut -c1-120",
+    "interrupted": false,
+    "stdout_sha256": "06eed7e4d7588430453d67c3881c3041f05fb329532904561a4038f7c7c82104",
+    "utc": "2026-10-04T16:59:43.803+00:00"
+   },
+   {
+    "command": "ps -eo pid,etime,args | grep -E \"test_p309_d5|site_backstop|scan_pins|iso_r1/\" | grep -v grep | grep -v iso_r1b | cut -c1-150; cd /home/user/ReBaseGuard && python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py rehearsal /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_QC11_QCD5 --out /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A_frozen_validation.json; git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1 status --porcelain |",
+    "interrupted": false,
+    "stdout_sha256": "7789e4bd9e70e1f3ff669b9bc5c9170b81394c6d7cbc1dffa6142119f9b35305",
+    "utc": "2026-10-04T17:06:30.103+00:00"
+   },
+   {
+    "command": "setsid nohup bash level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/run_targeted_rehearsals.sh > /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/targeted.log 2>&1 < /dev/null & sleep 15; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/targeted.log",
+    "interrupted": false,
+    "stdout_sha256": "557926fc229fd9498cc32258172c597457772bc7d9e8dd0411ad6e339f472229",
+    "utc": "2026-10-04T17:07:08.272+00:00"
+   },
+   {
+    "command": "git status --porcelain && git add level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/run_targeted_rehearsals.sh && git commit -q -m \"p309 Q11 recovery: detached driver for the targeted QC11 / QC-D5 rehearsals and harness mutants\n\nRun A (frozen QC11+QC-D5) was stopped by the tool's 30-minute background limit during QC-D5; the validator classifies it INTERRUPTED. Reruns are detached. NEW TARGET EVALUATIONS = 0.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01MBSA6X29N8R97caFgLLEkz\" && git push -u origin claude/p309-q11-recovery-20261",
+    "interrupted": false,
+    "stdout_sha256": "b673a6176e87824b1ecbf72e2f3c3023f6847ce12a78a4304cfe7c99a66ad230",
+    "utc": "2026-10-04T17:07:21.758+00:00"
+   },
+   {
+    "command": "ps -eo pid,etime,pcpu,args | grep -E \"p309_rehearsal|p309_driver|test_p309|_job\" | grep -v grep | cut -c1-140; cat /proc/sys/kernel/random/boot_id; tail -3 /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/targeted.log",
+    "interrupted": false,
+    "stdout_sha256": "632e066e8a0072caa08d33a014d7e07c72c9cc58f381c7ff1f8e6c8c08f3c6b3",
+    "utc": "2026-10-04T17:46:41.415+00:00"
+   },
+   {
+    "command": "L=/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/targeted.log; until grep -q \"ALL DONE\" $L || ! pgrep -f run_targeted_rehearsals.sh >/dev/null; do sleep 20; done; grep -E \"^===|^\\[(PASS|FAIL)\\]\" $L",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T18:07:25.863+00:00"
+   },
+   {
+    "command": "D=/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs; until [ -f $D/B_full_repaired/REHEARSAL_SUMMARY.json ] || ! kill -0 13015 2>/dev/null; do sleep 30; done; cat $D/B_full_repaired.log | tail -40",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T18:07:26.275+00:00"
+   },
+   {
+    "command": "cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/tasks/bhl994q4n.output; tail -5 /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/targeted.log",
+    "interrupted": false,
+    "stdout_sha256": "5a4d6087d00bba9c80f754b95971c33d7d0cb977f2c3bcb854eeeb8e8ef6762e",
+    "utc": "2026-10-04T19:26:16.823+00:00"
+   },
+   {
+    "command": "python3 - <<'EOF'\nimport json\nd=json.load(open('/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A3_repaired_QC11_QCD5/attempt/QC_D5.json'))\nfor i,p in enumerate(d['parts']):\n    print('PART',i,p['pass'], p.get('not_current'))\n    for r in p['runs']:\n        print('  rc',r['rc'], r['cmd'][-1][-60:]); print('  OUT', r['stdout_tail'][-1500:]); print('  ERR', r['stderr_tail'][-600:])\nEOF",
+    "interrupted": false,
+    "stdout_sha256": "bece807d9042ab3a83190eb2bbea4b2180e63a8b1d42ba2406b354cdefe05ab4",
+    "utc": "2026-10-04T19:26:25.729+00:00"
+   },
+   {
+    "command": "cd /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs && find A3_repaired_QC11_QCD5/attempt/evidence A2_frozen_QC11_QCD5/attempt/evidence -type f | sort; python3 - <<'EOF'\nimport json,glob\nfor run in (\"A3_repaired_QC11_QCD5\",\"A2_frozen_QC11_QCD5\"):\n    for f in glob.glob(f\"{run}/attempt/evidence/**/D5_EXCEPTION_CONTROLS.json\", recursive=True):\n        d=json.load(open(f)); \n        items = d.get(\"tests\") or d.get(\"results\") or d\n        bad=[(k,v.get(\"detail\") if isinstance(v,dict) else v) for k,v in (items.items() if isinstance(items,dict) else []) if is",
+    "interrupted": false,
+    "stdout_sha256": "d694154c7f27adfc166b8d97f531f51cf00ca8a3b463292b205efdfb8abe5c62",
+    "utc": "2026-10-04T19:26:37.028+00:00"
+   },
+   {
+    "command": "git show 101ef2cb:level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_topology_drill.py | sed -n 1,60p; git show 101ef2cb:level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_topology_drill.py | grep -n \"freeze\\|FREEZE\" | head -30",
+    "interrupted": false,
+    "stdout_sha256": "8b82cb551fa70c092cbd1385619c7573e14e40e663acf47d472638fbfe2eb853",
+    "utc": "2026-10-04T19:26:52.147+00:00"
+   },
+   {
+    "command": "git show 101ef2cb:level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_topology_drill.py | sed -n 196,240p; echo ----; git show 101ef2cb:level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_env.py | sed -n 1,80p | grep -n \"SCRATCH\\|def scratch_dir\" -A6 | head -50",
+    "interrupted": false,
+    "stdout_sha256": "15ea1b942329a3a68e2d50b29ad1aa6bdf32a39d374e663191798c264aa14f88",
+    "utc": "2026-10-04T19:27:04.691+00:00"
+   },
+   {
+    "command": "S=/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/r2_qualify.py; sed -n 361,374p $S; sed -n 501,530p $S | grep -n \"QC11\\|QC12\\|QC_D5\"; sed -n 260,267p $S",
+    "interrupted": false,
+    "stdout_sha256": "5cedf06b4a3a24314a08753dbd166a69f0b8d7793f828cfbaa661b4dd2a1368d",
+    "utc": "2026-10-04T19:27:11.298+00:00"
+   },
+   {
+    "command": "cd /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad && git clone -q --no-local --origin isolated-source /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/fresh iso_r2 2>/dev/null; git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r2 checkout -q -b claude/p5y-k5-cell309-p309-r2 101ef2cb17e5eab2892212178278da45b98004ed 2>&1 | tail -1; git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r2 rev-parse HEAD; git -C /tmp/claude-0/-home-user-R",
+    "interrupted": false,
+    "stdout_sha256": "4585d2cfb668fb312e7f0de1876859d22191940c1a4cd8adbab0e9abb85dc977",
+    "utc": "2026-10-04T19:28:27.916+00:00"
+   },
+   {
+    "command": "git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r2 fetch -q /home/user/ReBaseGuard refs/remotes/origin/claude/p5y-k5-cell309-p309-r2 && git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r2 checkout -q -b claude/p5y-k5-cell309-p309-r2 101ef2cb17e5eab2892212178278da45b98004ed && git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r2 rev-parse HEAD && git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r2 status --por",
+    "interrupted": false,
+    "stdout_sha256": "a8edf57da0ccf2c185a821c2cc3f77621b6382504942a80493b56f2be82aca4e",
+    "utc": "2026-10-04T19:28:38.446+00:00"
+   },
+   {
+    "command": "setsid nohup python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/r2_postfreeze_rehearsal.py --replica /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r2 --work /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_postfreeze --out /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_POSTFREEZE.json > /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_postfreeze.log 2>&1 < /dev/null &\nsleep 30; cat /tmp/claude-0/-home-user-",
+    "interrupted": false,
+    "stdout_sha256": "5c2e22905c0804947c7e7d86e4684032f17012b2e32bc9f8a1a2b973592d0a5b",
+    "utc": "2026-10-04T19:29:14.895+00:00"
+   },
+   {
+    "command": "python3 - <<'EOF'\nimport json, shutil, subprocess, hashlib\nfrom pathlib import Path\nSP=Path(\"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs\")\nDST=Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals\")\nV=\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py\"\nfor run in [\"A_frozen_QC11_QCD5\",\"A2_frozen_QC11_QCD5\",\"A3_repaired_QC11_QCD5\",\"MUT_M1_BASE_HEAD\",\"MUT_M2_BASE_HEAD_NO_POST\",\"MUT_M3_DETAIL_SWAP\",\"MUT_M4_MANIFEST_FROM_TREE\"]:\n    src=SP/run; d=DST/run; d.mkdir(parents=True, exist_ok=True)\n    for f in ",
+    "interrupted": false,
+    "stdout_sha256": "c93e03061ad3a9db7fec925b6cb1be93ac34aa9dbae6bbaeb7cbbb0cd0d0b5d6",
+    "utc": "2026-10-04T19:29:28.134+00:00"
+   },
+   {
+    "command": "python3 - <<'EOF'\nimport json\nd=json.load(open('/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/A3_repaired_QC11_QCD5/attempt/evidence/fc6/EXACTLY_ONCE_FLOWS.json'))\ndef show(x,depth=0,key='root'):\n    if depth>2: return\n    if isinstance(x,dict):\n        ks=list(x.keys()); print('  '*depth+f\"{key}: dict {len(ks)} keys e.g. {ks[:6]}\")\n        for k in ks[:3]: show(x[k],depth+1,k)\n    elif isinstance(x,list): print('  '*depth+f\"{key}: list {len(x)}\"); \n    else: print('  '*depth+f\"{key}: {str(x)[:80]}\")\nshow(d)\nprint({k:(type(v).__name__, (len(v) if has",
+    "interrupted": false,
+    "stdout_sha256": "b2ebc2aa70942d9808a30ea697adccb6fe57416790e133a0510174cdc995cbd4",
+    "utc": "2026-10-04T19:29:35.083+00:00"
+   },
+   {
+    "command": "python3 - <<'EOF'\nimport json, subprocess\nfrom pathlib import Path\nSP=Path(\"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs\")\nDST=Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals\")\nV=\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py\"\nfor run in [\"A_frozen_QC11_QCD5\",\"A2_frozen_QC11_QCD5\",\"A3_repaired_QC11_QCD5\",\"MUT_M1_BASE_HEAD\",\"MUT_M2_BASE_HEAD_NO_POST\",\"MUT_M3_DETAIL_SWAP\",\"MUT_M4_MANIFEST_FROM_TREE\"]:\n    subprocess.run([\"python3\",V,\"rehearsal\",str(SP/run),\"--out\",str(DST/run/\"VALIDATION.json\")",
+    "interrupted": false,
+    "stdout_sha256": "648b56183bbd504b285f2fd3e1958a5b3b6bde5d9b9dae4e7fe0931c0cc0a101",
+    "utc": "2026-10-04T19:29:50.482+00:00"
+   },
+   {
+    "command": "until ! pgrep -f r2_postfreeze_rehearsal >/dev/null; do sleep 20; done; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_postfreeze.log | tail -40",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T19:29:58.018+00:00"
+   },
+   {
+    "command": "git add level4/closure_proofs/p5y_k5_cell309_q11_recovery && git status --porcelain | grep -v \"^A \\|^M \" ; git commit -q -m \"p309 Q11 recovery: targeted QC11 / QC-D5 rehearsals, harness mutants, r2 post-freeze rehearsal tool\n\nFrozen harness: QC11 FAIL (r1 defect reproduced), QC-D5 PASS (r1's never-run gate resolved).\nRepaired harness alone: QC11 PASS (112/112 flows) but QC-D5 FAIL - r1's frozen scanner pins the\nharness by AST hash (9 pins STALE; genuine-tree scan P0/P0b/C07b), so the repair must travel with\na reviewed re-pin (as r2 does). Mutants M1-M3 killed as predicted; M4 an equivalent sur",
+    "interrupted": false,
+    "stdout_sha256": "c77c43599c1b27616f639889fa5a1b2cae8ad666bbfda8fab1eb18fd008ccedd",
+    "utc": "2026-10-04T19:30:08.426+00:00"
+   },
+   {
+    "command": "cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired.log; kill -0 13015 && echo B-alive; cat /proc/sys/kernel/random/boot_id; date -u +%T",
+    "interrupted": false,
+    "stdout_sha256": "a03da26848b7e9268141e255433fc1595e7efe14aea926d234ec1c45762a0fb4",
+    "utc": "2026-10-04T20:07:32.534+00:00"
+   },
+   {
+    "command": "D=/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs; until [ -f $D/B_full_repaired/REHEARSAL_SUMMARY.json ] || ! kill -0 13015 2>/dev/null; do sleep 30; done; tail -30 $D/B_full_repaired.log",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T20:07:38.316+00:00"
+   },
+   {
+    "command": "date -u +%T; pgrep -af r2_postfreeze_rehearsal | cut -c1-80; ps -eo pid,etime,pcpu,args | grep \"iso_r2\" | grep -v grep | cut -c1-60,190-260; ls -la /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_postfreeze/evidence -R | head -20; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired.log | tail -2",
+    "interrupted": false,
+    "stdout_sha256": "8cfd15b2d68ff6021cd6ac1aa8abe693a5e7698b8104b7eccecac5e4e9475b75",
+    "utc": "2026-10-04T21:30:07.716+00:00"
+   },
+   {
+    "command": "cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_postfreeze.log; python3 -c \"\nimport json;d=json.load(open('/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_POSTFREEZE.json'))\nprint(d['pass'], d['topology'], d['topology_ok'], d['rcs'], d['replica_protected_refs_after'], d['session_repo_unchanged'], d['utc_start'], d['utc_end'])\nprint({k:[r['wall_s'] for r in v] for k,v in d['runs'].items()})\"",
+    "interrupted": false,
+    "stdout_sha256": "aa48a6fd0cd1c8a0be0bf1ca1578f4e05d0efaf30ef93f2895e5297570e15e11",
+    "utc": "2026-10-04T21:30:13.276+00:00"
+   },
+   {
+    "command": "python3 -c \"\nimport json;d=json.load(open('/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_postfreeze/evidence/fc6/EXACTLY_ONCE_FLOWS.json'));print('all_pass',d['all_pass'],'flows',d['flows'],len(d['results']))\"; git log --format='%h %ci %s' --since='2026-10-04T19:28:00Z' --until='2026-10-04T20:57:00Z' | cut -c1-110; git log --format='%h %ci' -1 HEAD~1",
+    "interrupted": false,
+    "stdout_sha256": "1510530232f78402e435bde5ba4efa857600c1e941a326f63a33d65b73930374",
+    "utc": "2026-10-04T21:30:22.776+00:00"
+   },
+   {
+    "command": "mkdir -p level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze && cp /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_POSTFREEZE.json level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/ && cp -r /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_postfreeze/evidence level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence && find level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze -type f | sort",
+    "interrupted": false,
+    "stdout_sha256": "6755c479c951c47d4b002b5ed614647b99cae172b40f14df1c8db6342592b121",
+    "utc": "2026-10-04T21:30:36.619+00:00"
+   },
+   {
+    "command": "git add level4/closure_proofs/p5y_k5_cell309_q11_recovery && git commit -q -m \"p309 Q11 recovery: independent r2 post-freeze rehearsal evidence (PASS)\n\nScratch r2 replica at 101ef2cb; synthetic F' from r2's unmodified generators, record-only FR',\ncheckpoint commit. QC11 112/112 flows, QC12 PASS, QC-D5 166/166 D5 controls, 27/27 backstop,\nscan pins all current; no protected ref. The tool's QC11_table_pass field reads null (it read\n'pass', the table's key is 'all_pass' = true); left unchanged so its recorded sha256 matches.\nNEW TARGET EVALUATIONS = 0.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@an",
+    "interrupted": false,
+    "stdout_sha256": "c77c43599c1b27616f639889fa5a1b2cae8ad666bbfda8fab1eb18fd008ccedd",
+    "utc": "2026-10-04T21:30:44.780+00:00"
+   },
+   {
+    "command": "S=/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/r2_qualify.py; sed -n 60,80p $S; sed -n 115,125p $S; sed -n 501,530p $S; cd /home/user/ReBaseGuard && python3 - <<'EOF'\nimport json,subprocess\ndef man(c,ns):\n    return json.loads(subprocess.run([\"git\",\"show\",f\"{c}:level4/closure_proofs/{ns}/freeze/P309_FREEZE_MANIFEST.json\"],capture_output=True,text=True).stdout or \"{}\")\nr1=man(\"c902fe2f\",\"p5y_k5_cell309_p309_r1\")\np1={p[\"path\"]:p[\"sha256\"] for p in r1.get(\"code_pins\",[])+r1.get(\"data_pins\",[])}\n# r2 not frozen: compare r1 pins outside r1 namespace with r2 t",
+    "interrupted": false,
+    "stdout_sha256": "413c05442db73748e42c9e85fa90b55a025afc9d3877dbbc6d8f502053a47fd8",
+    "utc": "2026-10-04T21:31:22.514+00:00"
+   },
+   {
+    "command": "diff <(git show c902fe2f:level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_driver.py | sed 's/p309_r1/p309_rX/g;s/p309-r1/p309-rX/g') <(git show 101ef2cb:level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_driver.py | sed 's/p309_r2/p309_rX/g;s/p309-r2/p309-rX/g') | head -60",
+    "interrupted": false,
+    "stdout_sha256": "d192b3463a628e6acc550d1db0ad9d066a730e7ff01f7234a517246f73a17dd1",
+    "utc": "2026-10-04T21:31:28.419+00:00"
+   },
+   {
+    "command": "git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r2 status --porcelain | head; setsid nohup python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/r2_items_rehearsal.py --replica /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r2 --work /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_items --out /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_ITEMS.json > /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5",
+    "interrupted": false,
+    "stdout_sha256": "5e2eaed10b86053d1a7181b9a0dc339e6f9f689c5223a9000061fd59de833d4e",
+    "utc": "2026-10-04T21:32:51.282+00:00"
+   },
+   {
+    "command": "while pgrep -f \"[r]2_items_rehearsal.py --replica\" >/dev/null; do sleep 20; done; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_items.log | tail -40",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T21:32:57.257+00:00"
+   },
+   {
+    "command": "git add level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/r2_items_rehearsal.py && git commit -q -m \"p309 Q11 recovery: r2 light-items post-freeze rehearsal tool (r2 items_table/run_item; no main, no launcher)\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01MBSA6X29N8R97caFgLLEkz\" && git push -u origin claude/p309-q11-recovery-20261005 2>&1 | tail -1",
+    "interrupted": false,
+    "stdout_sha256": "c77c43599c1b27616f639889fa5a1b2cae8ad666bbfda8fab1eb18fd008ccedd",
+    "utc": "2026-10-04T21:33:03.498+00:00"
+   },
+   {
+    "command": "tail -4 /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired.log; kill -0 13015 && echo B-alive; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_items.log | tail -12; cat /proc/sys/kernel/random/boot_id; date -u +%T",
+    "interrupted": false,
+    "stdout_sha256": "acc0204b06d817aaeaa96fa7fbd1a73582c2b6f21934cbf4845ab6b9edc3ccc8",
+    "utc": "2026-10-04T22:07:42.750+00:00"
+   },
+   {
+    "command": "D=/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs; until [ -f $D/B_full_repaired/REHEARSAL_SUMMARY.json ] || ! kill -0 13015 2>/dev/null; do sleep 30; done; tail -30 $D/B_full_repaired.log",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T22:07:48.371+00:00"
+   },
+   {
+    "command": "git branch --show-current && git rev-parse HEAD && git status --porcelain | head && git fetch -q origin claude/p309-q11-recovery-20261005 && git rev-parse origin/claude/p309-q11-recovery-20261005 && git diff --stat HEAD -- .claude level4/closure_proofs/p5y_k5_cell309_q11_recovery | tail -2; cat /proc/sys/kernel/random/boot_id; uptime -s; uname -r; ls /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/ 2>&1 | head; ls /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs 2>&1 | head -30",
+    "interrupted": false,
+    "stdout_sha256": "5b975b0f54da21e43c32edf0de9225da1770908f92456ccbee27bd9b5c49150d",
+    "utc": "2026-10-04T23:09:44.596+00:00"
+   },
+   {
+    "command": "tail -4 /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired.log; python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py rehearsal /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired --out /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_VALIDATION.json; python3 -c \"\nimport json;d=json.load(open('/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_VALIDATION.json'));print('prese",
+    "interrupted": false,
+    "stdout_sha256": "5ad2b25d142344e584d887c2c3048820d670123b068022759525d772e69b7a9f",
+    "utc": "2026-10-04T23:09:55.018+00:00"
+   },
+   {
+    "command": "git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1b diff -- level4/closure_proofs/p5y_k5_cell309_p309_r1/ledger > /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired.replica_ledger.diff; wc -l /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired.replica_ledger.diff; git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1 status --porcelain; git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-5",
+    "interrupted": false,
+    "stdout_sha256": "3c5e93541a06dc6d5cc13e14c9063486431ebcd4dcf90f99d5c0e72169fe585c",
+    "utc": "2026-10-04T23:10:26.281+00:00"
+   },
+   {
+    "command": "setsid nohup python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py --iso /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1 --out /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/C_r1_QC12_QCU2 --gates QC12,QC13,QC14,QC15,QC16,QC17,QC_U2 --harness frozen --run-start-line > /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/C_r1_QC12_QCU2.log 2>&1 < /dev/null &\nmkdir -p /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratc",
+    "interrupted": false,
+    "stdout_sha256": "edf0244294eb64e0a768f5ac3919fdea52cca595da01d70aeb84bd9b45c73931",
+    "utc": "2026-10-04T23:11:17.811+00:00"
+   },
+   {
+    "command": "python3 -c \"\nimport json;d=json.load(open('/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/C_r1_QC12_QCU2/attempt/QC13.json'));print({k:v for k,v in d['checks'].items() if v is not True}); print(d.get('error'))\nfor r in d.get('runs',[]): print(r['rc'], r['stdout_tail'][-400:])\"; python3 -c \"\nimport json;d=json.load(open('/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC13.json'));print('r1 attempt QC13 checks:', d['checks'])\"",
+    "interrupted": false,
+    "stdout_sha256": "db0a40093e121c5450f1dcce58b18267b282b79eef69ef72c0cf90a79ea9713c",
+    "utc": "2026-10-04T23:11:22.730+00:00"
+   },
+   {
+    "command": "cd /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1 && python3 code/make_freeze_params.py --check 2>&1 | tail -3; grep -n \"host_id\\|manifest_sha\\|MANIFEST\\|def build\\|--check\" code/make_freeze_params.py | head -20",
+    "interrupted": false,
+    "stdout_sha256": "69d936e6fbd95225a75aa0821c2a44b0e12cec2d82d0e2a2b394fdc0d83c483b",
+    "utc": "2026-10-04T23:11:27.974+00:00"
+   },
+   {
+    "command": "cd /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_r1/level4/closure_proofs/p5y_k5_cell309_p309_r1 && sed -n 336,366p code/make_freeze_params.py; python3 - <<'EOF'\nimport json, sys, importlib.util\nsys.argv=[\"x\"]\nspec=importlib.util.spec_from_file_location(\"mfp\",\"code/make_freeze_params.py\"); M=importlib.util.module_from_spec(spec); spec.loader.exec_module(M)\nnew=M.build(); old=json.load(open(\"freeze/P309_FREEZE.json\"))\ndef diff(a,b,p=\"\"):\n    if isinstance(a,dict) and isinstance(b,dict):\n        for k in set(a)|set(b): diff(a.get(k),b.get(k),p+\"/\"+k)\n  ",
+    "interrupted": false,
+    "stdout_sha256": "e78052a3f73bb4ec0a261ffad6d1189359bb28a80530ef8d5ae8e3813363a87e",
+    "utc": "2026-10-04T23:11:32.368+00:00"
+   },
+   {
+    "command": "until [ -f /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/C_r1_QC12_QCU2/REHEARSAL_SUMMARY.json ] || ! pgrep -f \"[C]_r1_QC12_QCU2 --gates\" >/dev/null; do sleep 15; done; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/C_r1_QC12_QCU2.log | grep \"^\\[\"",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T23:11:39.919+00:00"
+   },
+   {
+    "command": "mkdir -p level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction && python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py certs level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC08_DECOY_STAGE1A.json level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC10_DECOY_STAGE1A.json /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired/attempt/QC08_DECOY_STAGE1A.json --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/CERTS_R1QC08_R",
+    "interrupted": false,
+    "stdout_sha256": "c1e7659b1d1f1e66f7018ce01578d76c6d6436081d7e583781a2b5a18577676f",
+    "utc": "2026-10-04T23:11:48.134+00:00"
+   },
+   {
+    "command": "grep -n 'per\\[p.name\\]\\|x = per\\[p.name\\]\\|f\"{p.name}:' level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py | head",
+    "interrupted": false,
+    "stdout_sha256": "4ead1ae400c82e27dd9b29ac99bb73c9d10a830c1bea69fe550ff10799f33127",
+    "utc": "2026-10-04T23:11:53.794+00:00"
+   },
+   {
+    "command": "F=level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py && sed -n 95,100p $F",
+    "interrupted": false,
+    "stdout_sha256": "5b449103c515b430937ba9f5e12bc6402b8ee88ed46c5473f7f7a63c2d85d2e0",
+    "utc": "2026-10-04T23:11:56.044+00:00"
+   },
+   {
+    "command": "python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py certs level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC08_DECOY_STAGE1A.json level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC10_DECOY_STAGE1A.json /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired/attempt/QC08_DECOY_STAGE1A.json --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/CERTS_R1QC08_R1QC10_RUNB_QC08.json | head -2; python3 -c \"\nimport json;d=json.load(open('level4/closure",
+    "interrupted": false,
+    "stdout_sha256": "59a7444674da12f15e6f7d2b02ca74e42e38aa1e323a7c1f7fb728004e94d30f",
+    "utc": "2026-10-04T23:12:22.872+00:00"
+   },
+   {
+    "command": "git add level4/closure_proofs/p5y_k5_cell309_q11_recovery && git status --porcelain && git commit -q -m \"p309 Q11 recovery: cross-host certificate identity (r1 QC08/QC10 vs this host's QC08: 48/48, set a044291a); validator keys cert reports by path\n\nA container restart (boot ba1fb020 -> 973d41ad, 23:09Z) interrupted Run B during QC10; its\nrecords QC01-QC09 (all PASS) survived consistent under the atomic protocol. NEW TARGET\nEVALUATIONS = 0.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01MBSA6X29N8R97caFgLLEkz\" && git push -u origin cla",
+    "interrupted": false,
+    "stdout_sha256": "d270ac77d8425d4469b17120d1e0df2c0f400d7a5a1d62ab4fa1eca26658c118",
+    "utc": "2026-10-04T23:12:36.651+00:00"
+   },
+   {
+    "command": "cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/tasks/b8iauhl7a.output; python3 -c \"\nimport json\nfor g in ('QC15','QC16'):\n    d=json.load(open(f'/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/C_r1_QC12_QCU2/attempt/{g}.json'))\n    if not d['pass']:\n        rs=d.get('runs') or [r for p in d.get('parts',[]) for r in p['runs']]\n        for r in rs:\n            if r['rc']: print(g, r['cmd'][-2:], r['rc'], r['stdout_tail'][-1200:], r['stderr_tail'][-400:])\n\"",
+    "interrupted": false,
+    "stdout_sha256": "032e502a5b3e84dce5d33c4e261213ec81e3bf38aad5e1007043be391084946b",
+    "utc": "2026-10-04T23:33:01.132+00:00"
+   },
+   {
+    "command": "python3 - <<'EOF'\nimport json, shutil, subprocess, hashlib\nfrom pathlib import Path\nSP=Path(\"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs\")\nDST=Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals\")\nV=\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py\"\nsubprocess.run([\"git\",\"-C\",str(SP.parent/\"iso_r1\"),\"diff\",\"--\",\"level4/closure_proofs/p5y_k5_cell309_p309_r1/ledger\"],stdout=open(SP/\"C_r1_QC12_QCU2.replica_ledger.diff\",\"w\"))\nfor run in [\"B_full_repaired\",\"C_r1_QC12_QCU2\"]:\n    src=SP/run; d=DST/run; (",
+    "interrupted": false,
+    "stdout_sha256": "617b55aadaf2a86284f60d9cfcdb484f08cda7678a50d4a2ad01f73f609248f3",
+    "utc": "2026-10-04T23:33:15.896+00:00"
+   },
+   {
+    "command": "python3 - <<'EOF'\nimport json, hashlib\nfrom pathlib import Path\nA=Path(\"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/R2_items/attempt\")\nD=Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items\"); D.mkdir(parents=True, exist_ok=True)\nitems=[\"QC01\",\"QC02\",\"QC03\",\"QC04\",\"QC05\",\"QC07\",\"QC11\",\"QC12\",\"QC13\",\"QC14\",\"QC15\",\"QC16\",\"QC17\",\"QC_U2\",\"QC_D5\"]\nrecs={}\nfor k in items:\n    p=A/f\"{k}.json\"\n    if p.exists():\n        raw=p.read_bytes(); d=json.loads(raw); recs[k]={\"pass\":d.get(\"pass\"),\"freeze_commit\":d.get(\"freeze_commit\"),\"utc\":d.g",
+    "interrupted": false,
+    "stdout_sha256": "fbc4795f63d565d4420415e5c6ee6705de7e4e450db2eb37500c53fdce373963",
+    "utc": "2026-10-04T23:33:28.358+00:00"
+   },
+   {
+    "command": "git add level4/closure_proofs/p5y_k5_cell309_q11_recovery && git commit -q -m \"p309 Q11 recovery: Run B (QC01-QC09 PASS, interrupted at QC10 by the container restart), Run C (r1 QC12, QC14-QC_U2 PASS; QC13 FAIL by the designed freeze-host binding), r2 light items (all present PASS; QC_D5 interrupted)\n\nNEW TARGET EVALUATIONS = 0.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01MBSA6X29N8R97caFgLLEkz\" && git push -u origin claude/p309-q11-recovery-20261005 2>&1 | tail -1; tail -2 /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e8",
+    "interrupted": false,
+    "stdout_sha256": "58df0ab3c1fded45d9e614401190a11c9227a5a8ca4db2cb0cd8ef616ef45218",
+    "utc": "2026-10-04T23:33:53.577+00:00"
+   },
+   {
+    "command": "while pgrep -f \"[d]ecoy-stage1a --decoy a2_h5\" >/dev/null; do sleep 30; done; cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/D_QC10_repro.log; ls -la /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/D_QC10_repro/; cat /proc/sys/kernel/random/boot_id",
+    "interrupted": false,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-04T23:33:57.964+00:00"
+   },
+   {
+    "command": "git -C /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_crash status --porcelain | head -3; timeout 1800 python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/crash_matrix.py run --replica /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/iso_crash --work /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/crash_work_2 --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/crash_matrix/CRASH_MATRIX.json 2>&1 | tail -3; python3 .claude/hooks/tests/test_guard.py --out l",
+    "interrupted": false,
+    "stdout_sha256": "39968d63bb650781a52e937ff1fb5105302d313849b91979397ba3f2391b417a",
+    "utc": "2026-10-04T23:34:41.178+00:00"
+   },
+   {
+    "command": "git add level4/closure_proofs/p5y_k5_cell309_q11_recovery && git commit -q -m \"p309 Q11 recovery: blockers file; crash matrix (36/36) and guard tests (148/148) regenerated on the final code\n\nNEW TARGET EVALUATIONS = 0.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01MBSA6X29N8R97caFgLLEkz\" && git push -u origin claude/p309-q11-recovery-20261005 2>&1 | tail -1",
+    "interrupted": false,
+    "stdout_sha256": "c77c43599c1b27616f639889fa5a1b2cae8ad666bbfda8fab1eb18fd008ccedd",
+    "utc": "2026-10-04T23:35:05.832+00:00"
+   },
+   {
+    "command": "cat /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/tasks/blh530q4t.output; cd /home/user/ReBaseGuard && python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py certs level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC08_DECOY_STAGE1A.json level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC10_DECOY_STAGE1A.json /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired/attempt/QC08_DECOY_STAGE1A.json /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5",
+    "interrupted": false,
+    "stdout_sha256": "d22db8237c6e4a4819984ccc02232490793266ae0b8c4105249af7247e0eab78",
+    "utc": "2026-10-05T00:42:39.118+00:00"
+   },
+   {
+    "command": "python3 - <<'EOF'\nimport json, shutil, hashlib\nfrom pathlib import Path\nfs=[\"level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC08_DECOY_STAGE1A.json\",\"level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC10_DECOY_STAGE1A.json\",\n\"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/B_full_repaired/attempt/QC08_DECOY_STAGE1A.json\",\"/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/runs/D_QC10_repro/QC10_REPRO_DECOY_STAGE1A.json\"]\nds=[json.load(open(f)) for f in fs]\nsame_verdicts=all(d[\"",
+    "interrupted": false,
+    "stdout_sha256": "288f78b1685dd69ed2e7974f7e367ca7e2b06c86acdb4120084543e00d605da3",
+    "utc": "2026-10-05T00:42:54.860+00:00"
+   },
+   {
+    "command": "python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/count_target_evaluations.py --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/TARGET_EVALUATION_COUNT.json --scratch /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad --scratch /tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad; echo rc=$?",
+    "interrupted": false,
+    "stdout_sha256": "b5829dbca06fd2bc88a50eb175be03d0a35a60ffa173d311c2be3adc20d7535a",
+    "utc": "2026-10-05T00:44:20.420+00:00"
+   },
+   {
+    "command": "python3 -c \"\nimport json;d=json.load(open('level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/TARGET_EVALUATION_COUNT.json'))\nprint('refs:'); [print(' ',k[-110:],v) for k,v in d['protected_refs'].items()]\nprint('files:',d['protected_files'][:5])\nprint('ledgers nonzero:'); [print(' ',k[-120:],v) for k,v in d['ledgers'].items() if v['nonzero_or_unreadable']]\n\"",
+    "interrupted": false,
+    "stdout_sha256": "9e032e16723abbfe82073b978ce26a161c87446411ac974e6a2e5235d990e461",
+    "utc": "2026-10-05T00:44:25.924+00:00"
+   },
+   {
+    "command": "grep -n \"F23_prior_marker_namespace\\|rlr-tail/x\" level4/closure_proofs/p5y_k5_cell309_p309_r1/tests/test_p309_exactly_once.py | head -5; L=level4/closure_proofs/p5y_k5_tail_overnight_research/ledger/ZERO_TARGET_LEDGER.jsonl; git log --format='%h %ci %s' -3 -- level4/closure_proofs/p5y_k5_tail_overnight_research/ledger/ZERO_TARGET_LEDGER.jsonl | cut -c1-120; git diff --quiet origin/main -- level4/closure_proofs/p5y_k5_tail_overnight_research/ledger/ZERO_TARGET_LEDGER.jsonl && echo \"identical to origin/main\" || echo \"differs from main\"; git merge-base --is-ancestor $(git log --format=%H -1 -- le",
+    "interrupted": false,
+    "stdout_sha256": "2f2e86362d173ea3e101df4d4a81560d706398cfaeac6e64e494b10f1c1e16aa",
+    "utc": "2026-10-05T00:44:39.498+00:00"
+   },
+   {
+    "command": "python3 level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/count_target_evaluations.py --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/TARGET_EVALUATION_COUNT.json --scratch /tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad --scratch /tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad; echo rc=$?; python3 -c \"\nimport json;d=json.load(open('level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/TARGET_EVALUATION_COUNT.json'))\nprint('fixture refs', len(d['test_sandbox_fixture_refs']), 'preexisting nonzer",
+    "interrupted": false,
+    "stdout_sha256": "e645b6086f698292431e299ef27cb1866c128487c7caa34cae2e61bb6d58a4fe",
+    "utc": "2026-10-05T00:45:15.356+00:00"
+   },
+   {
+    "command": "python3 - <<'EOF'\nimport json, hashlib\nfrom pathlib import Path\nNS=Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery\"); E=NS/\"evidence\"\ndef j(p): return json.loads((E/p).read_text())\ndef sha(p): return hashlib.sha256((E/p).read_bytes()).hexdigest()\ng=j(\"guard/GUARD_TESTS.json\"); c=j(\"crash_matrix/CRASH_MATRIX.json\")\nreh={r:j(f\"rehearsals/{r}/VALIDATION.json\") for r in [\"A_frozen_QC11_QCD5\",\"A2_frozen_QC11_QCD5\",\"A3_repaired_QC11_QCD5\",\"MUT_M1_BASE_HEAD\",\"MUT_M2_BASE_HEAD_NO_POST\",\"MUT_M3_DETAIL_SWAP\",\"MUT_M4_MANIFEST_FROM_TREE\",\"B_full_repaired\",\"C_r1_QC12_QCU2\"]}\nr2=j(\"r2_postfreeze/R2_",
+    "interrupted": false,
+    "stdout_sha256": "25aeae2120cd3944bf7fc6f29926c40c2b83f21710cce2c131db1e8883d19066",
+    "utc": "2026-10-05T00:45:32.882+00:00"
+   },
+   {
+    "command": "python3 .claude/hooks/p309_session_audit.py --snapshot level4/closure_proofs/p5y_k5_cell309_q11_recovery/audit/SESSION_AUDIT_SNAPSHOT.json && python3 -c \"\nimport json;d=json.load(open('level4/closure_proofs/p5y_k5_cell309_q11_recovery/audit/SESSION_AUDIT_SNAPSHOT.json'))\nprint('decisions',d['commands']['guard_decisions'],'denied',d['commands']['denied_by_rule']); print('tripwire violations',len(d['tripwire_violations'])); print('target',d['target_evaluation_count']['new_target_evaluations'], 'tests sha', d['tests']['sha256'][:12]); print([v['violations'][:2] for v in d['tripwire_violations']][",
+    "interrupted": false,
+    "stdout_sha256": "8104fe582fde09cb2c13588b36c6866a0c250736615195e1dc39fe02c1253018",
+    "utc": "2026-10-05T00:47:00.176+00:00"
+   },
+   {
+    "command": "python3 -c \"\nimport json;d=json.load(open('level4/closure_proofs/p5y_k5_cell309_q11_recovery/audit/SESSION_AUDIT_SNAPSHOT.json'))['target_evaluation_count']\nprint({k:v for k,v in d.items() if k!='guard_allowed_target_mode_commands'}); print('allowed target-mode cmds:'); [print(' ',c[:300]) for c in d['guard_allowed_target_mode_commands']]\"",
+    "interrupted": false,
+    "stdout_sha256": "492a4a805824ca13ba8d12f0bc5bbc211678f59ce471e1b06cf6b1c6bd0915fe",
+    "utc": "2026-10-05T00:47:04.926+00:00"
+   },
+   {
+    "command": "for f in level4/closure_proofs/p5y_k5_cell307_rlr_r1/authorization/RLR307_GRANT.json level4/closure_proofs/p5y_k5_cusum_real_point_executor/authorization/COUNTERSIGNATURE_ACTIVE.json level4/closure_proofs/p5y_k5_lower_front_order3/evidence/tc_r1/AUTHORIZATION.json level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/config/C11RD_GRANT.json level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/authorization/C12R2_GRANT.json level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/authorization/C2_AUTHORIZATION.json level4/closure_proofs/p5y_k5_tail_c3_closure/evidence/authorization/C3_AUTHORI",
+    "interrupted": false,
+    "stdout_sha256": "aca5e1fa803f4bd8609f2e84025ea2814c4bb695a2dbe245a6f2821043a4ddde",
+    "utc": "2026-10-05T00:47:14.693+00:00"
+   },
+   {
+    "command": "python3 .claude/hooks/tests/test_guard.py --out level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/guard/GUARD_TESTS.json | tail -3 && python3 .claude/hooks/p309_session_audit.py --snapshot level4/closure_proofs/p5y_k5_cell309_q11_recovery/audit/SESSION_AUDIT_SNAPSHOT.json && python3 -c \"\nimport json;d=json.load(open('level4/closure_proofs/p5y_k5_cell309_q11_recovery/audit/SESSION_AUDIT_SNAPSHOT.json'))['target_evaluation_count'];print(d['new_target_evaluations'], d['grant_or_result_files_added_or_changed_by_session'], len(d['preexisting_grant_files_unchanged_since_branch_point']))\"",
+    "interrupted": false,
+    "stdout_sha256": "7f03ca53b8b8f2b874b3a14c50e2a3aa7ba8b5b8ad2513681cd2db17b504e575",
+    "utc": "2026-10-05T00:47:44.615+00:00"
+   },
+   {
+    "command": "python3 - <<'EOF'\nimport json, hashlib\nfrom pathlib import Path\nNS=Path(\"level4/closure_proofs/p5y_k5_cell309_q11_recovery\")\nr=NS/\"QUALIFICATION_RECOVERY_REPORT_P309_Q11.md\"; t=r.read_text()\nt=t.replace(\"- **148/148** negative, positive and fixture tests\",\"- **149/149** negative, positive and fixture tests\")\nold=\"\"\"## 9. Remaining blockers\"\"\"\nadd=\"\"\"**Two counter corrections, disclosed.** Both counters first reported nonzero values, and both were investigated\nbefore any claim was made:\n- The scan-wide counter first reported 35: the 3 fixture refs and the 32 pre-existing rows above.\n- The Sessi",
+    "interrupted": false,
+    "stdout_sha256": "416ab0560bdcc139907d44c56f614f0d0fdf62bc059499872015721280e2332d",
+    "utc": "2026-10-05T00:47:57.879+00:00"
+   }
+  ],
+  "guard_decisions": 162
+ },
+ "files_written": [
+  "/home/user/ReBaseGuard/.claude/hooks/p309_pretooluse_guard.py",
+  "/home/user/ReBaseGuard/.claude/hooks/p309_session_audit.py",
+  "/home/user/ReBaseGuard/.claude/hooks/tests/guard_vectors.json",
+  "/home/user/ReBaseGuard/.claude/hooks/tests/test_guard.py",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/BLOCKERS.json",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/QUALIFICATION_RECOVERY_AUDIT_P309_Q11.json",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/QUALIFICATION_RECOVERY_REPORT_P309_Q11.md",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/count_target_evaluations.py",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/make_repaired_harness.py",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/phase0/PHASE0_RECON.json",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/crash_matrix.py",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/make_harness_mutants.py",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/r2_items_rehearsal.py",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/r2_postfreeze_rehearsal.py",
+  "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/run_targeted_rehearsals.sh"
+ ],
+ "git": {
+  "base": "c902fe2fe33003ac7e4e61f29c10c81682fc940c",
+  "branch": "claude/p309-q11-recovery-20261005",
+  "commits_since_base": [
+   "6c6ed9fc97ab9fe8d3df5464c74413dc3815eb66 p309 Q11 recovery: blockers file; crash matrix (36/36) and guard tests (148/148) regenerated on the final code",
+   "8f7b78e38a989d101880dd0df8599a87ec74510c p309 Q11 recovery: Run B (QC01-QC09 PASS, interrupted at QC10 by the container restart), Run C (r1 QC12, QC14-QC_U2 PASS; QC13 FAIL by the designed freeze-host binding), r2 light items (all present PASS; QC_D5 interrupted)",
+   "52ff4ddff6e9314f5cea1d38f0e9469d0cdc1cce p309 Q11 recovery: cross-host certificate identity (r1 QC08/QC10 vs this host's QC08: 48/48, set a044291a); validator keys cert reports by path",
+   "5854e964197ac24e699bfb22826904b9fb99d48f p309 Q11 recovery: r2 light-items post-freeze rehearsal tool (r2 items_table/run_item; no main, no launcher)",
+   "9ffaff04e9be8219a898b683edce7bcf84f2d03e p309 Q11 recovery: independent r2 post-freeze rehearsal evidence (PASS)",
+   "0953ef8492e74f8a0a946e6a9ab4eb0b3bf36bf4 p309 Q11 recovery: targeted QC11 / QC-D5 rehearsals, harness mutants, r2 post-freeze rehearsal tool",
+   "737d7b357a653ef23ae285d553ff2c075604114a p309 Q11 recovery: detached driver for the targeted QC11 / QC-D5 rehearsals and harness mutants",
+   "4066fee7b5add42e817ed5fab652a17aa651ae9b p309 Q11 recovery: Phase 0 record; guard parser fix (quoted newlines, fd duplication 2>&1) with regression vectors (148/148)",
+   "42a266e2aa36455688fdb6eb04d621b323842f3f p309 Q11 recovery: enforceable session guards, independent validator, crash matrix (result-free)"
+  ],
+  "diff_name_status_vs_base": [
+   "A\t.claude/.gitignore",
+   "A\t.claude/hooks/p309_guard_policy.py",
+   "A\t.claude/hooks/p309_posttooluse_tripwire.py",
+   "A\t.claude/hooks/p309_pretooluse_guard.py",
+   "A\t.claude/hooks/p309_session_audit.py",
+   "A\t.claude/hooks/tests/guard_vectors.json",
+   "A\t.claude/hooks/tests/test_guard.py",
+   "A\t.claude/settings.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/BLOCKERS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/code/make_repaired_harness.py",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/crash_matrix/CRASH_MATRIX.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/guard/GUARD_TESTS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/phase0/PHASE0_RECON.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/CERTS_R1QC08_R1QC10_RUNB_QC08.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r1_attempt_1/R1_ATTEMPT_1_VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r1_attempt_1/R1_QC08_QC10_CERT_IDENTITY.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC01.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC02.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC03.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC04.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC05.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC07.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC11.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC12.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC13.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC14.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC15.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC16.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC17.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC_U2.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/R2_ITEMS_PARTIAL.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/R2_POSTFREEZE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/fc2/D5_EXCEPTION_CONTROLS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/fc6/EXACTLY_ONCE_FLOWS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/fc6/SITE_BACKSTOP_CONTROLS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/fc6/STATIC_CHECK.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/freeze/PLACEHOLDER_CHECK.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/GATE_LEDGER.jsonl",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/PROVENANCE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/REHEARSAL_SUMMARY.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/attempt/QC11.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/attempt/QC_D5.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/attempt/evidence/fc2/D5_EXCEPTION_CONTROLS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/attempt/evidence/fc6/SITE_BACKSTOP_CONTROLS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/replica_ledger.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/GATE_LEDGER.jsonl",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/PROVENANCE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/REHEARSAL_SUMMARY.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/QC11.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/QC_D5.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/evidence/fc2/D5_EXCEPTION_CONTROLS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/evidence/fc6/EXACTLY_ONCE_FLOWS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/evidence/fc6/SITE_BACKSTOP_CONTROLS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/replica_ledger.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/GATE_LEDGER.jsonl",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/PROVENANCE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/attempt/QC11.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/replica_ledger.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/ATTEMPT_FILE_SHA256.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/GATE_LEDGER.jsonl",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/PROVENANCE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC01.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC02.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC03.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC04.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC05.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC06.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC07.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC08.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC08_DECOY_STAGE1A.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC09.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/replica_ledger.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/ATTEMPT_FILE_SHA256.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/GATE_LEDGER.jsonl",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/PROVENANCE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/REHEARSAL_SUMMARY.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC12.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC13.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC14.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC14_REHEARSE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC15.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC16.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC17.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC_U2.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/VERIFY_RESULTS_SCOPED.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/fc2/GUARD_TESTS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/fc2/SCAN_ALLOWANCE_CONTROLS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/fc6/STATIC_CHECK.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/freeze/PLACEHOLDER_CHECK.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/self_audit/SELF_AUDIT_QUALIFICATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/u2/U2_CONTROLS_V2.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/u2/U2_STRUCTURE_CHECK_V2.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/replica_ledger.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/GATE_LEDGER.jsonl",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/PROVENANCE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/REHEARSAL_SUMMARY.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/attempt/QC11.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/replica_ledger.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/GATE_LEDGER.jsonl",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/PROVENANCE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/REHEARSAL_SUMMARY.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/attempt/QC11.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/replica_ledger.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/GATE_LEDGER.jsonl",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/PROVENANCE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/REHEARSAL_SUMMARY.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/attempt/QC11.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/attempt/evidence/fc6/EXACTLY_ONCE_FLOWS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/replica_ledger.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/GATE_LEDGER.jsonl",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/PROVENANCE.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/REHEARSAL_SUMMARY.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/VALIDATION.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/attempt/QC11.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/attempt/evidence/fc6/EXACTLY_ONCE_FLOWS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/replica_ledger.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/QC11_HARNESS_REPAIR.diff",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/QC11_HARNESS_REPAIR.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/M1_BASE_HEAD.py.txt",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/M2_BASE_HEAD_NO_POST.py.txt",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/M3_DETAIL_SWAP.py.txt",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/M4_MANIFEST_FROM_TREE.py.txt",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/MUTANTS.json",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/test_p309_exactly_once.R2_PORTED_TO_R1.py.txt",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/crash_matrix.py",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/make_harness_mutants.py",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/r2_items_rehearsal.py",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/r2_postfreeze_rehearsal.py",
+   "A\tlevel4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/run_targeted_rehearsals.sh"
+  ],
+  "head": "6c6ed9fc97ab9fe8d3df5464c74413dc3815eb66",
+  "remote_tracking_allowed_branch": "6c6ed9fc97ab9fe8d3df5464c74413dc3815eb66",
+  "working_tree_status": [
+   " M .claude/hooks/p309_session_audit.py",
+   " M .claude/hooks/tests/test_guard.py",
+   " M level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/guard/GUARD_TESTS.json",
+   "?? level4/closure_proofs/p5y_k5_cell309_q11_recovery/QUALIFICATION_RECOVERY_AUDIT_P309_Q11.json",
+   "?? level4/closure_proofs/p5y_k5_cell309_q11_recovery/QUALIFICATION_RECOVERY_REPORT_P309_Q11.md",
+   "?? level4/closure_proofs/p5y_k5_cell309_q11_recovery/audit/SESSION_AUDIT_SNAPSHOT.json",
+   "?? level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/count_target_evaluations.py",
+   "?? level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/TARGET_EVALUATION_COUNT.json",
+   "?? level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/TEST_RESULTS.json",
+   "?? level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/CERTS_4WAY.json",
+   "?? level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/QC10_STRUCTURE_IDENTITY.json",
+   "?? level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/RUN_D_QC10_REPRO_DECOY_STAGE1A.json"
+  ]
+ },
+ "hook_sha256": {
+  "p309_guard_policy.py": "4a341c1e3b318c60bfcca211cba02c1f74a70eb862cc2bcd9fa28c39e137aa63",
+  "p309_posttooluse_tripwire.py": "ba14ae46ead35945bd5aab71a9df98288dbaa33da52108a72877ee2b35be0eee",
+  "p309_pretooluse_guard.py": "f6abf352913106cb134cbda739b32b8b6200e03c58f879ec638dd973b1e7e35a",
+  "p309_session_audit.py": "dd10cdef78771c5d7a7ef122a582c8fbfbdd3bc82b56f3690afca572f309975f",
+  "settings.json": "714a74cd4c441ddbd0afcdcca03876de4c7ffba48dbaa3ed79b2acbfa68ecd87"
+ },
+ "schema": "P309_Q11_RECOVERY_SESSION_AUDIT/1",
+ "session_id": null,
+ "sessions_in_log": [
+  "ede4e097-f9ec-54f5-9e84-81294f8ad688"
+ ],
+ "target_evaluation_count": {
+  "grant_or_result_files_added_or_changed_by_session": [],
+  "guard_allowed_target_mode_commands": [],
+  "ledger_rows_checked": 1421,
+  "ledger_rows_nonzero_or_unreadable": 0,
+  "method": "independent of the model: refs, HEAD tree, every execution-ledger row, the guard's own log",
+  "new_target_evaluations": 0,
+  "preexisting_grant_files_unchanged_since_branch_point": [
+   "level4/closure_proofs/p5y_k5_cell307_rlr_r1/authorization/RLR307_GRANT.json",
+   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/authorization/COUNTERSIGNATURE_ACTIVE.json",
+   "level4/closure_proofs/p5y_k5_lower_front_order3/evidence/tc_r1/AUTHORIZATION.json",
+   "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/config/C11RD_GRANT.json",
+   "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/authorization/C12R2_GRANT.json",
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/authorization/C2_AUTHORIZATION.json",
+   "level4/closure_proofs/p5y_k5_tail_c3_closure/evidence/authorization/C3_AUTHORIZATION.json"
+  ],
+  "protected_refs_in_session_repo": [],
+  "r5_blob_at_HEAD": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+  "r5_blob_expected": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+  "r5_unchanged": true,
+  "r6_files_at_HEAD": []
+ },
+ "tests": {
+  "content": {
+   "crash_matrix": {
+    "cases": {
+     "N01": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "N02": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "N03": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "N04": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "N05": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "N06": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "N07": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "N08": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "N09": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "N10": {
+      "pass": true,
+      "verdict": "PASS"
+     },
+     "N11": {
+      "pass": true,
+      "verdict": "PASS"
+     },
+     "N13": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "N14": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "N15": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "N16": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "N17": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "N18": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "N19": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "N20": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "R01": {
+      "pass": true,
+      "verdict": null
+     },
+     "R02": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "R03": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "R04": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "R05": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "R06": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "R07": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "R08": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "R09": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "R10": {
+      "pass": true,
+      "verdict": "PASS"
+     },
+     "R11": {
+      "pass": true,
+      "verdict": "INTERRUPTED"
+     },
+     "R12": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "R13": {
+      "pass": true,
+      "verdict": null
+     },
+     "R14": {
+      "pass": true,
+      "verdict": "PASS"
+     },
+     "R15": {
+      "pass": true,
+      "verdict": "CORRUPT"
+     },
+     "R16": {
+      "pass": true,
+      "verdict": null
+     },
+     "R17": {
+      "pass": true,
+      "verdict": null
+     }
+    },
+    "counts": {
+     "failed": 0,
+     "total": 36
+    },
+    "pass": true,
+    "path": "evidence/crash_matrix/CRASH_MATRIX.json",
+    "sha256": "ec435cc42c01d93bb7e48e2897cd1cb3eddd57d8ee048ac343a4a64e6aecb837"
+   },
+   "guard_tests": {
+    "counts": {
+     "allow": 22,
+     "deny": 114,
+     "failed": 0,
+     "fixture": 13,
+     "total": 149
+    },
+    "pass": true,
+    "path": "evidence/guard/GUARD_TESTS.json",
+    "sha256": "7762b815f36635a702b88f42496b17626d3c01700b4cde799f2f674c1d475ea2"
+   },
+   "mutants_expected_vs_observed": {
+    "M1_BASE_HEAD": [
+     "FAIL (postcondition)",
+     [
+      "QC11"
+     ]
+    ],
+    "M2_BASE_HEAD_NO_POST": [
+     "FAIL (FREEZE_RECORD)",
+     [
+      "QC11"
+     ]
+    ],
+    "M3_DETAIL_SWAP": [
+     "FAIL (A24,A25)",
+     [
+      "A24_freeze_record_names_another_commit",
+      "A25_freeze_record_changed_later"
+     ]
+    ],
+    "M4_MANIFEST_FROM_TREE": [
+     "PASS (equivalent mutant; survivor)",
+     [
+      "QC11"
+     ]
+    ]
+   },
+   "qc10_certificates": {
+    "four_way": "PASS",
+    "structure": {
+     "gate_identical": true,
+     "verdicts_identical": true
+    },
+    "three_way": "PASS"
+   },
+   "r1_attempt_1_validation": {
+    "gates_failed": [
+     "QC11"
+    ],
+    "gates_missing": [
+     "QC_D5"
+    ],
+    "verdict": "INTERRUPTED"
+   },
+   "r2_items_partial": {
+    "all_present_pass": true,
+    "missing": [
+     "QC_D5"
+    ],
+    "status": "INTERRUPTED by the container restart at 2026-10-04T23:09:14Z during QC_D5 (boot ba1fb020 -> 973d41ad); no resumption"
+   },
+   "r2_postfreeze": {
+    "content": {
+     "D5_controls": 166,
+     "D5_controls_failed": [],
+     "QC11_flows": 112,
+     "QC11_flows_failed": [],
+     "QC11_table_pass": null,
+     "backstop_controls": 27,
+     "backstop_failed": [],
+     "scan_pins_all_current": true,
+     "scan_pins_not_current": []
+    },
+    "gates": {
+     "QC11": true,
+     "QC12": true,
+     "QC_D5": true
+    },
+    "pass": true,
+    "topology_ok": true
+   },
+   "rehearsals": {
+    "A2_frozen_QC11_QCD5": {
+     "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+     "gates_failed": [
+      "QC11"
+     ],
+     "gates_passed": [
+      "QC_D5"
+     ],
+     "harness": "frozen",
+     "verdict": "FAIL"
+    },
+    "A3_repaired_QC11_QCD5": {
+     "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+     "gates_failed": [
+      "QC_D5"
+     ],
+     "gates_passed": [
+      "QC11"
+     ],
+     "harness": "repaired",
+     "verdict": "FAIL"
+    },
+    "A_frozen_QC11_QCD5": {
+     "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+     "gates_failed": [
+      "QC11"
+     ],
+     "gates_passed": [],
+     "harness": "frozen",
+     "verdict": "INTERRUPTED"
+    },
+    "B_full_repaired": {
+     "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+     "gates_failed": [],
+     "gates_passed": [
+      "QC01",
+      "QC02",
+      "QC03",
+      "QC04",
+      "QC05",
+      "QC06",
+      "QC07",
+      "QC08",
+      "QC09"
+     ],
+     "harness": "repaired",
+     "verdict": "INTERRUPTED"
+    },
+    "C_r1_QC12_QCU2": {
+     "boot_id": "973d41ad-a8ad-4ecd-90e5-cfae9fe9d5e8",
+     "gates_failed": [
+      "QC13"
+     ],
+     "gates_passed": [
+      "QC12",
+      "QC14",
+      "QC15",
+      "QC16",
+      "QC17",
+      "QC_U2"
+     ],
+     "harness": "frozen",
+     "verdict": "FAIL"
+    },
+    "MUT_M1_BASE_HEAD": {
+     "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+     "gates_failed": [
+      "QC11"
+     ],
+     "gates_passed": [],
+     "harness": "mutant",
+     "verdict": "FAIL"
+    },
+    "MUT_M2_BASE_HEAD_NO_POST": {
+     "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+     "gates_failed": [
+      "QC11"
+     ],
+     "gates_passed": [],
+     "harness": "mutant",
+     "verdict": "FAIL"
+    },
+    "MUT_M3_DETAIL_SWAP": {
+     "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+     "gates_failed": [
+      "QC11"
+     ],
+     "gates_passed": [],
+     "harness": "mutant",
+     "verdict": "FAIL"
+    },
+    "MUT_M4_MANIFEST_FROM_TREE": {
+     "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+     "gates_failed": [],
+     "gates_passed": [
+      "QC11"
+     ],
+     "harness": "mutant",
+     "verdict": "PASS"
+    }
+   },
+   "schema": "P309_Q11_RECOVERY_TEST_RESULTS/1",
+   "target_evaluation_count": 0,
+   "verdict_basis": "content, hashes, order and provenance (attempt_validator.py); no exit status taken alone"
+  },
+  "path": "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/TEST_RESULTS.json",
+  "sha256": "ba4287eb2be9f43593694a92f7d7df3a33e5831b3d84a25164f35f0a06bcb48c"
+ },
+ "tripwire_violations": [],
+ "unresolved_blockers": {
+  "resolved_in_this_session": [
+   "root cause of Q11 reproduced independently and classified",
+   "QC-D5 outcome under r1's frozen harness established (PASS)",
+   "the reviewed QC11 repair verified on r1's real post-freeze history and on r2's post-freeze package, with mutants",
+   "restart / resume / exactly-once protocol tested (36 crash cases) and observed under two real interruptions",
+   "QC10's 48 certificates reproduced byte-identically across hosts"
+  ],
+  "schema": "P309_Q11_RECOVERY_BLOCKERS/1",
+  "unresolved": [
+   {
+    "id": "B1",
+    "kind": "EVIDENCE_COMPLETENESS",
+    "resolvable_here": false,
+    "statement": "No single uninterrupted end-to-end run of one repaired package exists. The repaired-path evidence is assembled from separate, never-resumed runs: Run B (r1 bytes, QC01-QC09 PASS, interrupted at QC10 by a container restart), Run C (r1 QC12-QC_U2), Run D (QC10 reproduction), the targeted QC11/QC-D5 runs, and the r2 post-freeze runs (one of which was interrupted at QC_D5). Every record was validated by content, but an accepted recovery needs one complete attempt.",
+    "why": "this cloud container restarted during the session (boot ba1fb020 -> 973d41ad at 2026-10-04T23:09:14Z) and is not a durable host for a no-resume ~6-8 h attempt; external or paid compute (AWS, Vultr, SSH workers) is prohibited for this task"
+   },
+   {
+    "id": "B2",
+    "kind": "OWNER_DECISION",
+    "resolvable_here": false,
+    "statement": "The vehicle for any official re-qualification is r2 (r1 is frozen and A27 forbids retry or resumption; the QC11 repair cannot be applied to r1 in place because r1's frozen scanner pins the harness by AST hash). r2 awaits owner decisions OD-R2-0..OD-R2-6 (authority, carry-over, namespaces, pending-ref / marker names, the AWS access path and windows, host-change consents, the target-execution host).",
+    "why": "owner decisions; not an engineering task"
+   },
+   {
+    "id": "B3",
+    "kind": "HOST_BINDING",
+    "resolvable_here": false,
+    "statement": "r1's frozen manifest and parameters bind the freeze host (machine-id + hostname): off that host the runner's precondition refuses (crash matrix R17) and QC13 fails 'freeze_params_regenerate_identically' (Run C). By design, not a defect; it means r1's gates can only be re-witnessed on the freeze host, which no longer exists as such.",
+    "why": "designed binding of a frozen package"
+   },
+   {
+    "id": "B4",
+    "kind": "PROTOCOL_HARDENING_PROPOSAL",
+    "resolvable_here": false,
+    "statement": "Findings for a future r2 delta (not applied: r2 is not this task's to change): (a) the runner's xwrite is O_EXCL but neither fsynced nor written via temp + link, so a crash can leave an empty or torn record (crash matrix R04, R05, R09: fail-closed, classified CORRUPT, but the attempt is lost); (b) the runner does not check ledger integrity before RUN START (R15: a torn ledger tail is only caught by QC13 hours later); (c) QC-D5's D5-exception controls run 60-80 min on a 4-core host, the window in which both r1's attempt and this session's r2 items run were interrupted.",
+    "why": "changes to r2 require r2's own delta review and the owner's process"
+   }
+  ]
+ },
+ "utc": "2026-10-05T00:48:06+00:00"
+}

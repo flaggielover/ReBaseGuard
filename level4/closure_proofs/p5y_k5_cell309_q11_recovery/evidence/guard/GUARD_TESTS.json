@@ -1706,12 +1706,13 @@
   },
   {
    "count": {
-    "grant_or_result_files_at_HEAD": [],
+    "grant_or_result_files_added_or_changed_by_session": [],
     "guard_allowed_target_mode_commands": [],
     "ledger_rows_checked": 1,
     "ledger_rows_nonzero_or_unreadable": 0,
     "method": "independent of the model: refs, HEAD tree, every execution-ledger row, the guard's own log",
     "new_target_evaluations": 0,
+    "preexisting_grant_files_unchanged_since_branch_point": [],
     "protected_refs_in_session_repo": [],
     "r5_blob_at_HEAD": "",
     "r5_blob_expected": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
@@ -1725,12 +1726,13 @@
   },
   {
    "count": {
-    "grant_or_result_files_at_HEAD": [],
+    "grant_or_result_files_added_or_changed_by_session": [],
     "guard_allowed_target_mode_commands": [],
     "ledger_rows_checked": 1,
     "ledger_rows_nonzero_or_unreadable": 0,
     "method": "independent of the model: refs, HEAD tree, every execution-ledger row, the guard's own log",
     "new_target_evaluations": 1,
+    "preexisting_grant_files_unchanged_since_branch_point": [],
     "protected_refs_in_session_repo": [
      "refs/p5y-k5-cell309-p309-r2/pending-result"
     ],
@@ -1748,12 +1750,13 @@
   },
   {
    "count": {
-    "grant_or_result_files_at_HEAD": [],
+    "grant_or_result_files_added_or_changed_by_session": [],
     "guard_allowed_target_mode_commands": [],
     "ledger_rows_checked": 3,
     "ledger_rows_nonzero_or_unreadable": 2,
     "method": "independent of the model: refs, HEAD tree, every execution-ledger row, the guard's own log",
     "new_target_evaluations": 2,
+    "preexisting_grant_files_unchanged_since_branch_point": [],
     "protected_refs_in_session_repo": [],
     "r5_blob_at_HEAD": "",
     "r5_blob_expected": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
@@ -1764,23 +1767,47 @@
    "id": "SA3",
    "kind": "fixture",
    "pass": true
+  },
+  {
+   "count": {
+    "grant_or_result_files_added_or_changed_by_session": [
+     "level4/closure_proofs/p5y_k5_cell309_p309_r2/authorization/P309_GRANT.json"
+    ],
+    "guard_allowed_target_mode_commands": [],
+    "ledger_rows_checked": 1,
+    "ledger_rows_nonzero_or_unreadable": 0,
+    "method": "independent of the model: refs, HEAD tree, every execution-ledger row, the guard's own log",
+    "new_target_evaluations": 1,
+    "preexisting_grant_files_unchanged_since_branch_point": [],
+    "protected_refs_in_session_repo": [],
+    "r5_blob_at_HEAD": "",
+    "r5_blob_expected": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+    "r5_unchanged": false,
+    "r6_files_at_HEAD": []
+   },
+   "desc": "audit counts a grant file the session added (untracked)",
+   "id": "SA4",
+   "kind": "fixture",
+   "pass": [
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2/authorization/P309_GRANT.json"
+   ]
   }
  ],
  "counts": {
   "allow": 22,
   "deny": 114,
   "failed": 0,
-  "fixture": 12,
-  "total": 148
+  "fixture": 13,
+  "total": 149
  },
  "hook_sha256": {
   "p309_guard_policy.py": "4a341c1e3b318c60bfcca211cba02c1f74a70eb862cc2bcd9fa28c39e137aa63",
   "p309_posttooluse_tripwire.py": "ba14ae46ead35945bd5aab71a9df98288dbaa33da52108a72877ee2b35be0eee",
   "p309_pretooluse_guard.py": "f6abf352913106cb134cbda739b32b8b6200e03c58f879ec638dd973b1e7e35a",
-  "p309_session_audit.py": "64460f1a6c83f4a41ce83dc56f628822d213f0dad2a9c1585bd783734aa38e29",
+  "p309_session_audit.py": "dd10cdef78771c5d7a7ef122a582c8fbfbdd3bc82b56f3690afca572f309975f",
   "settings.json": "714a74cd4c441ddbd0afcdcca03876de4c7ffba48dbaa3ed79b2acbfa68ecd87",
   "tests/guard_vectors.json": "7dbc02c622892ed65b28a412c3c137b8da66611796ae447232db55d696b2a3f9",
-  "tests/test_guard.py": "9b0e9a4ba215c3dc8d889c40f2e5b0e4fd553a5921a3699be0fb15d4d285ebe7"
+  "tests/test_guard.py": "be5182ae143abfa5d4942d7b449a917bbc6273c61f6400aaff84d617809a6a8b"
  },
  "pass": true,
  "python": "3.11.15",

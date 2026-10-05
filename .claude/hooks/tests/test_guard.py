@@ -202,6 +202,14 @@ def fixture_cases(tmp: Path) -> list[dict]:
     c = audit(a, "sa3")
     out.append({"id": "SA3", "kind": "fixture", "desc": "audit counts a nonzero row and a torn (unreadable) row",
                 "pass": c["ledger_rows_nonzero_or_unreadable"] == 2 and c["new_target_evaluations"] >= 2, "count": c})
+    b = fixture(tmp, "fx_audit_grant")
+    gp = b / "level4/closure_proofs/p5y_k5_cell309_p309_r2/authorization/P309_GRANT.json"
+    gp.parent.mkdir(parents=True)
+    gp.write_text("{}")
+    c = audit(b, "sa4")
+    out.append({"id": "SA4", "kind": "fixture", "desc": "audit counts a grant file the session added (untracked)",
+                "pass": c["new_target_evaluations"] >= 1 and c["grant_or_result_files_added_or_changed_by_session"],
+                "count": c})
     return out
 
 

@@ -1,0 +1,606 @@
+{
+ "files": {
+  ".claude/.gitignore": {
+   "bytes": 102,
+   "sha256": "99a13400eaf6d4b229d1da6c9ddbe3c516fb100240f10ef600d91c78b0942db4"
+  },
+  ".claude/hooks/p309_guard_policy.py": {
+   "bytes": 5195,
+   "sha256": "4a341c1e3b318c60bfcca211cba02c1f74a70eb862cc2bcd9fa28c39e137aa63"
+  },
+  ".claude/hooks/p309_posttooluse_tripwire.py": {
+   "bytes": 3775,
+   "sha256": "ba14ae46ead35945bd5aab71a9df98288dbaa33da52108a72877ee2b35be0eee"
+  },
+  ".claude/hooks/p309_pretooluse_guard.py": {
+   "bytes": 29782,
+   "sha256": "f6abf352913106cb134cbda739b32b8b6200e03c58f879ec638dd973b1e7e35a"
+  },
+  ".claude/hooks/p309_session_audit.py": {
+   "bytes": 9075,
+   "sha256": "dd10cdef78771c5d7a7ef122a582c8fbfbdd3bc82b56f3690afca572f309975f"
+  },
+  ".claude/hooks/tests/guard_vectors.json": {
+   "bytes": 15109,
+   "sha256": "7dbc02c622892ed65b28a412c3c137b8da66611796ae447232db55d696b2a3f9"
+  },
+  ".claude/hooks/tests/test_guard.py": {
+   "bytes": 12176,
+   "sha256": "be5182ae143abfa5d4942d7b449a917bbc6273c61f6400aaff84d617809a6a8b"
+  },
+  ".claude/settings.json": {
+   "bytes": 822,
+   "sha256": "714a74cd4c441ddbd0afcdcca03876de4c7ffba48dbaa3ed79b2acbfa68ecd87"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/BLOCKERS.json": {
+   "bytes": 3107,
+   "sha256": "87359604138504e026b1c2dbb5fd0c041e0ff7b050ce67480b578145695e0d3f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/QUALIFICATION_RECOVERY_AUDIT_P309_Q11.json": {
+   "bytes": 5223,
+   "sha256": "5180e2c77dc54ad32d39a94adf060eb7974dabc3d96a5a7f602c7d841685e48b"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/QUALIFICATION_RECOVERY_REPORT_P309_Q11.md": {
+   "bytes": 15539,
+   "sha256": "d95182e9d9dd49b69d0c8896f43427a38b12351bbd9651c346fddde77848a930"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/audit/SESSION_AUDIT_SNAPSHOT.json": {
+   "bytes": 106650,
+   "sha256": "e563094dd995eabc65b69da67a7eb5b36cf9ffae527c0c20fe5c5f2f44d2e0b9"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/attempt_validator.py": {
+   "bytes": 24086,
+   "sha256": "f96b83709393f7ffb666186234a0c537c6a8634abe4ab2d0475bc7893262e4b5"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/count_target_evaluations.py": {
+   "bytes": 7305,
+   "sha256": "3403f165ff1d55e8fc6da66947a1c171fd261ecb58bd5a3d8e523a090825df6c"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/make_repaired_harness.py": {
+   "bytes": 6712,
+   "sha256": "a9c7ebbce4203dc90d8035dcaf408d96dd87d62ff6f139caa0110fa8f6876e04"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/code/p309_rehearsal.py": {
+   "bytes": 16524,
+   "sha256": "a504cfe2fce9d659579c035b530d9a15a84ec73e6c903f89edcb8584494919b1"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/TARGET_EVALUATION_COUNT.json": {
+   "bytes": 102248,
+   "sha256": "77ecab0af1dba27ea54df650c98948786c590f70a6f0641cefd417a7cf835c90"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/TEST_RESULTS.json": {
+   "bytes": 6212,
+   "sha256": "ba4287eb2be9f43593694a92f7d7df3a33e5831b3d84a25164f35f0a06bcb48c"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/crash_matrix/CRASH_MATRIX.json": {
+   "bytes": 14044,
+   "sha256": "ec435cc42c01d93bb7e48e2897cd1cb3eddd57d8ee048ac343a4a64e6aecb837"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/guard/GUARD_TESTS.json": {
+   "bytes": 44948,
+   "sha256": "7762b815f36635a702b88f42496b17626d3c01700b4cde799f2f674c1d475ea2"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/phase0/PHASE0_RECON.json": {
+   "bytes": 5970,
+   "sha256": "bd27ab2e5faeac158cbdc36b6f116cca945df8569b9343d8f2f57031b5f852db"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/CERTS_4WAY.json": {
+   "bytes": 4552,
+   "sha256": "7213283467d02d158fb0f879a2218776f62ba773b5c21d22ea988d922d5055c3"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/CERTS_R1QC08_R1QC10_RUNB_QC08.json": {
+   "bytes": 3397,
+   "sha256": "70775d20225686daefab888f35e7ab11718cad267555944b0387ab83c33b9ee0"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/QC10_STRUCTURE_IDENTITY.json": {
+   "bytes": 1305,
+   "sha256": "d556d4d10e2877dd5779adfbdc285214814586463df2880a3c8284705fa45a43"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/RUN_D.log": {
+   "bytes": 43,
+   "sha256": "d3dd3195716f4a7c9dc9eb65f0b2046b7de169eab2a62104725470e4a1625d35"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/qc10_reproduction/RUN_D_QC10_REPRO_DECOY_STAGE1A.json": {
+   "bytes": 1384894,
+   "sha256": "084f13081895c88d2a98fdc420a552c82d93dde31e0a6e01a1a5d44d5cc053e2"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r1_attempt_1/R1_ATTEMPT_1_VALIDATION.json": {
+   "bytes": 3083,
+   "sha256": "03a705491f8e7d3ccd8adc7f715a4f47d7729d0730a64cbfc1a9d2700fdb7ff8"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r1_attempt_1/R1_QC08_QC10_CERT_IDENTITY.json": {
+   "bytes": 1622,
+   "sha256": "4ab2fc69513db82e8f8eb90fac3aea7eb4c1db1d399da9238eccad750a51f034"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC01.json": {
+   "bytes": 575,
+   "sha256": "9a05abef79a0b0eba042f9032c646888631c606dbdd3dc1cfce8b69afb35869a"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC02.json": {
+   "bytes": 851,
+   "sha256": "2b16246dc647dbd9924c877946d7224b63c80f70e18928002967053c7a723940"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC03.json": {
+   "bytes": 1139,
+   "sha256": "ac272e54d40649a993dff55ac5c568f2ce2d78adcc69df3ff7de8e9bab535d23"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC04.json": {
+   "bytes": 1903,
+   "sha256": "211dc547c1f876654759261e5d42f33e4ddadb6cf91d3fe0f7708524d5cb0ddd"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC05.json": {
+   "bytes": 1235,
+   "sha256": "1b320f7a176920538376f019a691c263257d98fc62d93cb5e1bf943ad6390160"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC07.json": {
+   "bytes": 3582,
+   "sha256": "f8f9fb6b3100424f66590bf2010997f5d929222110a82e495ea5ec12898d4f9a"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC11.json": {
+   "bytes": 3590,
+   "sha256": "de94ac1b96c1491c3710594189d57d459eddf122d0f2884a72227d01d569a7d5"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC12.json": {
+   "bytes": 1126,
+   "sha256": "f3ddb73087caeb2c0fae96786120aca5a654e6ab4cad1fc9e185c2fe52f1540a"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC13.json": {
+   "bytes": 1087,
+   "sha256": "50374bd7e2a8728d1aaf3b1af4a56150ec4c607eb8dd9ab56015b7c3700fad6c"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC14.json": {
+   "bytes": 1346,
+   "sha256": "6fbf34abd511e1e98b2aadd96090c4577bf6221a7c5e289c6a5f91716a435073"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC15.json": {
+   "bytes": 926,
+   "sha256": "0de02c5b8444e45e8b764c945e5b573d2188381cb156cb4b29d0c377a34c9f5b"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC16.json": {
+   "bytes": 10168,
+   "sha256": "f6561b3222691eaf2d9048af1cca4c94887a51f3f807f493e89634b2c5b64a19"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC17.json": {
+   "bytes": 177,
+   "sha256": "21a0baf5889e477185c3aa0ae94ac1de04f9d1c2e25b84a10813ac8dce94a23f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/QC_U2.json": {
+   "bytes": 2160,
+   "sha256": "4dd410accd573f1719996b8836ad11e54e419de5551fd0f86d461ecdfbefc202"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_items/R2_ITEMS_PARTIAL.json": {
+   "bytes": 3620,
+   "sha256": "ca7d736e4ad107575235cd792b294adfbc24434ffc92ffa7984b5f624036a386"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/R2_POSTFREEZE.json": {
+   "bytes": 25017,
+   "sha256": "c18480d6b4a5e7cd61cb12d2effc11be8f7a4312add68c7b1cfac99ffb5a8641"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/fc2/D5_EXCEPTION_CONTROLS.json": {
+   "bytes": 27849,
+   "sha256": "477d1524dde80c6d23903234d975ecf265bf3c0258c17187bbdf57f32947de3f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/fc6/EXACTLY_ONCE_FLOWS.json": {
+   "bytes": 18108,
+   "sha256": "d82637db1edcc660b25fd32a80f7c47ad76001d2d0c910380e5dbda32277526d"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/fc6/SITE_BACKSTOP_CONTROLS.json": {
+   "bytes": 3290,
+   "sha256": "5f3255ca614c0ac43614146da784933bdfad115b50a8bd170a43071b921fda95"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/fc6/STATIC_CHECK.json": {
+   "bytes": 5121,
+   "sha256": "efcbbf536507764219b4a91a83f92279233bb9c7062137195cd4389756b1282f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/r2_postfreeze/evidence/freeze/PLACEHOLDER_CHECK.json": {
+   "bytes": 22810,
+   "sha256": "ac823cd7e12e606d11beaa8543b3dbd41b04c3b86be6df6e91b35ceebebcfce3"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/GATE_LEDGER.jsonl": {
+   "bytes": 917,
+   "sha256": "508ab59321b86b83260d736857499ec2755cbba698b6d3d0e5f5431042ce7c63"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/PROVENANCE.json": {
+   "bytes": 1929,
+   "sha256": "2d62304994f2ffcf895aaae1952cbb65fb180723627e49c69f542e114fbae085"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/REHEARSAL_SUMMARY.json": {
+   "bytes": 868,
+   "sha256": "7478bbebc42b3f7527fab0cce1b5851bdc1f48082a6c87bcf45ba2984dea757d"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/VALIDATION.json": {
+   "bytes": 1859,
+   "sha256": "08a5f90946d2ec4671de543d7496e60e39935a53c22f8d8ddf0efc4d0b3ed55c"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/attempt/QC11.json": {
+   "bytes": 2169,
+   "sha256": "bbd905547115b104283b732c6888f57593874fc639018aac20e96159f6ed9eae"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/attempt/QC_D5.json": {
+   "bytes": 8934,
+   "sha256": "ef4db53a496244eb7f98bd2be4d1e523eb9c60012784d3474fd590385ce2c170"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/attempt/evidence/fc2/D5_EXCEPTION_CONTROLS.json": {
+   "bytes": 27881,
+   "sha256": "0c9c05f5a44a726e4875665af8b10899f8f6bb04d725fc9a96fb37b754ecd5a2"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/attempt/evidence/fc6/SITE_BACKSTOP_CONTROLS.json": {
+   "bytes": 3290,
+   "sha256": "4959a8f4f453312b798046b3054434b123a57a824e828c0af1f624d32ff6b077"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A2_frozen_QC11_QCD5/replica_ledger.diff": {
+   "bytes": 3312,
+   "sha256": "2ea43876da6cbca7d2bfb116c386a9e93d640ff336808b77755313e3aafdae13"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/GATE_LEDGER.jsonl": {
+   "bytes": 919,
+   "sha256": "4981889dfa5f8fee14bbb320a9c0d994f3321b4c46745970d8e3493e93d32300"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/PROVENANCE.json": {
+   "bytes": 1993,
+   "sha256": "8733f58673d2da90109e0cb6d6fd7649a590cc3eb404d263601d52baaac695e5"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/REHEARSAL_SUMMARY.json": {
+   "bytes": 868,
+   "sha256": "cd9c2b8be92de3ed6df5cefc10cf7420663c8e1bd7d5d0561bb6e0bc6aa36da6"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/VALIDATION.json": {
+   "bytes": 1896,
+   "sha256": "a9faba8a0cae8ef63bc87f3f865c140b83a46b96d00573bf4a0023178df83a8f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/QC11.json": {
+   "bytes": 3621,
+   "sha256": "bc22e6e73f98766b93b524f75dbe6b6b5ffe765fe03d8c851897659e68ae5c7f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/QC_D5.json": {
+   "bytes": 9276,
+   "sha256": "504baa48da540a5f3b7cbaecdfbd9dfc3509c52fe6dff5ac7d7ed1117bbb79ea"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/evidence/fc2/D5_EXCEPTION_CONTROLS.json": {
+   "bytes": 40242,
+   "sha256": "50b09e4d2b70bb4535a90f9804bb1a7b05be03d95d466af513fe485430863e6d"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/evidence/fc6/EXACTLY_ONCE_FLOWS.json": {
+   "bytes": 18108,
+   "sha256": "e9ca779d4d4070c8c6d0aaa6540d7a3f6ad7c5f436aab3763a02eac237fdfdeb"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/attempt/evidence/fc6/SITE_BACKSTOP_CONTROLS.json": {
+   "bytes": 3290,
+   "sha256": "b55174d6417cfb060f575647bf3fc7c2dab78daa85b4e55ee2ba280c33975ab9"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A3_repaired_QC11_QCD5/replica_ledger.diff": {
+   "bytes": 3312,
+   "sha256": "56dcf1cc54e84bfed8b5f4758585db07ed433b875b45e695ff9f8b3595e1323c"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/GATE_LEDGER.jsonl": {
+   "bytes": 460,
+   "sha256": "94067367ce252943e96fab9ffd8f019b7b7acfac6b96890db68dbc348c7c6c76"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/PROVENANCE.json": {
+   "bytes": 1929,
+   "sha256": "0912a93c77442a9a8b0fc18a6f86fe55a24d92c654b4c8fec4dcabf9fee61ade"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/VALIDATION.json": {
+   "bytes": 1467,
+   "sha256": "3a53f77deff175f54145b3f06b17835d93826dbe8da040b7e3a9553398086a32"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/attempt/QC11.json": {
+   "bytes": 2169,
+   "sha256": "23faca4c284bdf278d1186832806733aeab6d33cc67940e69b5ce3c26471f295"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/A_frozen_QC11_QCD5/replica_ledger.diff": {
+   "bytes": 2779,
+   "sha256": "00e2a8cd211c7897d6e3a9cb92731bc60e85fb783b02b11c9fbec5a680da70c0"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/ATTEMPT_FILE_SHA256.json": {
+   "bytes": 1037,
+   "sha256": "41b69797e24757385aef876c7ae611ce87f4bb6263aa19507a01ae04f2acaa16"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/GATE_LEDGER.jsonl": {
+   "bytes": 2446,
+   "sha256": "2c62e82335cb3b5f96a4a1fa17ccd055707004d80c02aa9333b9d7d311d3fd84"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/PROVENANCE.json": {
+   "bytes": 2165,
+   "sha256": "d4436c274ef97516810f62ba54f81a3184991df595ef5ecd9257ff5a835669fd"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/VALIDATION.json": {
+   "bytes": 2070,
+   "sha256": "56f033738f76ddf797b3ba0bc528c43677bd76ceab2166f2e7bfe41821282221"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC01.json": {
+   "bytes": 598,
+   "sha256": "243c7bf367c761ca093ac163a2ef4ff4bac396a74ed44cbb24ded31c34cee5bf"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC02.json": {
+   "bytes": 874,
+   "sha256": "4d23575fe16720414d50df0fc4fe648fbed6b33e29f4b0f490c95085dc302882"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC03.json": {
+   "bytes": 1165,
+   "sha256": "e9e6c5b3fa1490c83f1c35386776db6bbab9b1d628c1ee69bdb7c28ed6cedc8b"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC04.json": {
+   "bytes": 1923,
+   "sha256": "66733375bb899f10d98c8c349942e0d6a1a7834bf0befdc2041e55f5d9fe9e2c"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC05.json": {
+   "bytes": 1258,
+   "sha256": "a317a0b8f6cae85293249eb5d900401dd939b1b6d8afc090bfd864df4a1fcb3c"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC06.json": {
+   "bytes": 6510,
+   "sha256": "991b0c719d9918376402580a9c540b965b4d7ddadd8fccc18483b246b8bbc5f6"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC07.json": {
+   "bytes": 3605,
+   "sha256": "786b0fcdb42b9cff5e096fcf02fc22b9dd464f9a81948ade33007e6a1ec0300f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC08.json": {
+   "bytes": 13786,
+   "sha256": "745bc560942498df7b17939e36d962d19495971914b04d157b9a897f5e01117b"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC08_DECOY_STAGE1A.json": {
+   "bytes": 1384897,
+   "sha256": "39dc8d1bdf231c97ee6de0bfe5e921bbf4a221888a17d1cb2ea71bf23634d6cd"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/attempt/QC09.json": {
+   "bytes": 1717,
+   "sha256": "4943a63344a655c4177a686211086bdd70912f2f1f375134c92ad7fc0570507f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/replica_ledger.diff": {
+   "bytes": 42809,
+   "sha256": "c1fc7e298990ec7c50601f7c6f751a9d11eff7bc40e48fca86315076ecf729d1"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/B_full_repaired/run.log": {
+   "bytes": 193,
+   "sha256": "783a2168d105d6f158b77cdba8393cd84aa1c6088363e82772d0b9e09a326517"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/ATTEMPT_FILE_SHA256.json": {
+   "bytes": 669,
+   "sha256": "2257a522a7420436458f5085c8a764d3fa4f14a54f31d92178e7ff4766934144"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/GATE_LEDGER.jsonl": {
+   "bytes": 2112,
+   "sha256": "1f4ef62a0807d63cf115c7c487870a280e137ad9329d94cbb2acf83354e5e240"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/PROVENANCE.json": {
+   "bytes": 1979,
+   "sha256": "ae7f4b1877c2265a420a1804ac7257d076170325447090a9db68c0df895ad3a2"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/REHEARSAL_SUMMARY.json": {
+   "bytes": 1388,
+   "sha256": "82fbeebb9a9181e9c72814dc4efbb42448969f7e8371c02fbd6153d001e7d30a"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/VALIDATION.json": {
+   "bytes": 2131,
+   "sha256": "dae23439ea5da044b7d55011f982a2f591a079018134d1ee5816ac8a3cc74fbb"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC12.json": {
+   "bytes": 979,
+   "sha256": "37f2e9920745da50a8b297d3a3a49e42045d2834b242cd28fdd54ad1a41fc4a5"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC13.json": {
+   "bytes": 1081,
+   "sha256": "4db919cc8719fdc0d0522b673dda5312775064eab1dedcf3b98e7fd8c39e229b"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC14.json": {
+   "bytes": 1378,
+   "sha256": "f89fb8e82d70c0170c34a8f056ec732a7d8cf6e5b098fa1f570a8eeeacc79863"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC14_REHEARSE.json": {
+   "bytes": 610,
+   "sha256": "eee060ba8784ed45be7a155754d8c68d103e82d49fdb796868b9b9c85c7fcd10"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC15.json": {
+   "bytes": 952,
+   "sha256": "6505017595f0e5fcba71bd0c36e27975bfcb34507ce0430ac6b20b60da4f0b67"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC16.json": {
+   "bytes": 10195,
+   "sha256": "b65fa6cae8af20b612bc8c0bda9134db081fed27b0bbaef9fa07c2350e5c0108"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC17.json": {
+   "bytes": 203,
+   "sha256": "d7551dab23597e62a0064af2aea4a55328c51b156fc12c45b5a3469c06bbe8cf"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/QC_U2.json": {
+   "bytes": 2186,
+   "sha256": "24e2b7cab0012e56772962b86417837f0dc3380e0bab41fb7f5241838093d969"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/VERIFY_RESULTS_SCOPED.json": {
+   "bytes": 1227389,
+   "sha256": "a6542e9116596ba6cc43d02ce306c7a6101b854036340aafdad1289b18f0d4ef"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/fc2/GUARD_TESTS.json": {
+   "bytes": 8129,
+   "sha256": "1c584a7ad90df0fc13c9512f5b81d41677bcbbc337f9f0312c5e604ab6da9282"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/fc2/SCAN_ALLOWANCE_CONTROLS.json": {
+   "bytes": 985,
+   "sha256": "85af2819734770161c20e58eb34d020da78d307c6ef8480a7ce6ec80e1fb5845"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/fc6/STATIC_CHECK.json": {
+   "bytes": 3089,
+   "sha256": "00236e653981203bad2416e52f40ea444d12fb6035607255798c294efa76f0c1"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/freeze/PLACEHOLDER_CHECK.json": {
+   "bytes": 18035,
+   "sha256": "12fabc2e55a4770698c665da7c7d5834850289d85c5edcf757db558f5dfd440f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/u2/U2_CONTROLS_V2.json": {
+   "bytes": 1068,
+   "sha256": "4bc42141b98b2137f3d7c8b8f78dc52655ae09d5f30b7afd145aea48f76ec527"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/attempt/evidence/u2/U2_STRUCTURE_CHECK_V2.json": {
+   "bytes": 13097,
+   "sha256": "3346656bc01193a1328bb118c1963985f5a523521e532bed19c055aee0071314"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/replica_ledger.diff": {
+   "bytes": 41296,
+   "sha256": "25069cd57f907aa36f417a4dbccb2d387bc4ea5fb525814e70945a76489b0bb5"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/C_r1_QC12_QCU2/run.log": {
+   "bytes": 295,
+   "sha256": "b80e297472ea86129dffdf809941cb2842b85e4b20ee4ccfdcb5444e13d19ed7"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/GATE_LEDGER.jsonl": {
+   "bytes": 675,
+   "sha256": "4e26a997f9cb996d51c6e3c5fe782cbd4145624f883c37993fb474bcc7531a15"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/PROVENANCE.json": {
+   "bytes": 1980,
+   "sha256": "9d0db367a715ced9f22feed69f7d421e892ca4d4ecbbdb00a6cc9b8c14751431"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/REHEARSAL_SUMMARY.json": {
+   "bytes": 761,
+   "sha256": "5c1d17d00f8d7a6771614d2d3b32bc250a6a20cac31f54857deef4e3bd03db14"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/VALIDATION.json": {
+   "bytes": 1677,
+   "sha256": "046fd0b91b8257eea2fcabd5ce3ee9e0999136dc14a44be22e3771248ed21779"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/attempt/QC11.json": {
+   "bytes": 1813,
+   "sha256": "6ac6391650ee87b5eb1a8c26bb6b9cc2c02ea95a98736d900ff9e65c9a7de7d7"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M1_BASE_HEAD/replica_ledger.diff": {
+   "bytes": 2313,
+   "sha256": "272bd2067e8917f869197d914f51b684ab511e9890ad5df40b4ea652fa1dca26"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/GATE_LEDGER.jsonl": {
+   "bytes": 675,
+   "sha256": "5cafcb3d699bbbc7a3b2eb3b3850657d7531c11b072939e7dfe66391bd93ddd1"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/PROVENANCE.json": {
+   "bytes": 1980,
+   "sha256": "5adf1c00c46240d0920d56fcd795221de7217daf02b6117a2aa9e6550289863e"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/REHEARSAL_SUMMARY.json": {
+   "bytes": 761,
+   "sha256": "dcba2e5bc4fc23e7b959be7d22d3b872dad2f5176ce5c8638d4c204fd4d0c0b5"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/VALIDATION.json": {
+   "bytes": 1677,
+   "sha256": "046fd0b91b8257eea2fcabd5ce3ee9e0999136dc14a44be22e3771248ed21779"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/attempt/QC11.json": {
+   "bytes": 2169,
+   "sha256": "23b642cc3fe74c50f2be0ce5e8d11fb49b3d7da32bc641da48869971d2509fff"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M2_BASE_HEAD_NO_POST/replica_ledger.diff": {
+   "bytes": 2313,
+   "sha256": "e6e32c31826c1e83b6ec48034a5f7fb476c702b6062eca55e2d02e2f864f2584"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/GATE_LEDGER.jsonl": {
+   "bytes": 675,
+   "sha256": "adb28ff1921556e54154420620735067f54f9da921ef70038cdf0b81f20bc9f3"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/PROVENANCE.json": {
+   "bytes": 1980,
+   "sha256": "b554ab62b8551fdafecc3c70d2aadb0170ec905c314b74d7c4b7368ca3481903"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/REHEARSAL_SUMMARY.json": {
+   "bytes": 761,
+   "sha256": "85514fe981d9096ab2c0bcbdb376580cb4d512705f9fa8b295f35d70fe35ba6d"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/VALIDATION.json": {
+   "bytes": 1795,
+   "sha256": "38297511b9ad0b011e1ab6c3139c5a69e57184a2dc9bd56138c1978af5b132d8"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/attempt/QC11.json": {
+   "bytes": 3618,
+   "sha256": "c95e590f5eb7d8b10b57db4c48387f9b73828e3794a108093f1de43c1a7c720f"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/attempt/evidence/fc6/EXACTLY_ONCE_FLOWS.json": {
+   "bytes": 18109,
+   "sha256": "681166a1f727e70d1df673a234395c52efd2dc46503d439cc6cb3bf050a59c72"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M3_DETAIL_SWAP/replica_ledger.diff": {
+   "bytes": 2313,
+   "sha256": "1b45babc2ab21d929b988e02a9ddc47a95770a10373ccc9f95706aa8d688d8d6"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/GATE_LEDGER.jsonl": {
+   "bytes": 673,
+   "sha256": "e895bfb860ef9e3b5d2e5301b8f0555fbee325f2d8ef3ae149e31ef83f387f5b"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/PROVENANCE.json": {
+   "bytes": 1980,
+   "sha256": "f0e691ffe004610975fa5dbf9c4c94a692d872abbfab1abeb67d74e93b51bdeb"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/REHEARSAL_SUMMARY.json": {
+   "bytes": 759,
+   "sha256": "5ff18401ac327daaa81f71f38942a3412bfb08ceb0fecdcdcbed863501603e8d"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/VALIDATION.json": {
+   "bytes": 1676,
+   "sha256": "875ad350897072461eb1f7a7c465409bf5d9d09d99ab43cca91c48f29d82d548"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/attempt/QC11.json": {
+   "bytes": 3619,
+   "sha256": "0036b19cde01c0044b5f8d19e972292c2cf0a318cee0ce9fcc515375e2a470f4"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/attempt/evidence/fc6/EXACTLY_ONCE_FLOWS.json": {
+   "bytes": 18107,
+   "sha256": "ae0f277bf9b1bca6edcee70e05eb0959c1787f68c847dea9b6f96b3be3b3da93"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/evidence/rehearsals/MUT_M4_MANIFEST_FROM_TREE/replica_ledger.diff": {
+   "bytes": 2313,
+   "sha256": "1d9bd9583478a980379f8340bfd7102ce53c4e2e4f0ed7088aac3ab80da8c3cc"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/QC11_HARNESS_REPAIR.diff": {
+   "bytes": 6906,
+   "sha256": "2fccc7b6ac2c5d792f0b3d652f053f75eaa242eb0e2d28c07e7cf02c2e571a35"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/QC11_HARNESS_REPAIR.json": {
+   "bytes": 1243,
+   "sha256": "70e674bc627daeaf4fdf246a27ca809672e4705a1efd6bbea9cdb984496f2724"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/M1_BASE_HEAD.py.txt": {
+   "bytes": 59483,
+   "sha256": "75a78461e540329f701d3459d70eb697e25e4763e1cc3c49261db9395db4fd45"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/M2_BASE_HEAD_NO_POST.py.txt": {
+   "bytes": 59192,
+   "sha256": "d87961c046f3a42fa434b44e371abd81436d18ea35005b691f94a4e0674eef7a"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/M3_DETAIL_SWAP.py.txt": {
+   "bytes": 59441,
+   "sha256": "476301845d6a9cb67d7d4ed3235fb9d3886140faffc2fb3ab0e8a3cde91492d5"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/M4_MANIFEST_FROM_TREE.py.txt": {
+   "bytes": 59425,
+   "sha256": "820bf0ea097919b83a45451d20de84c33c3582d391df5a776c35d785af20be25"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/mutants/MUTANTS.json": {
+   "bytes": 952,
+   "sha256": "3ece864c20895f9214a117470d80a3ae26d774ecc7d339dc9217a03b37956964"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/repair/test_p309_exactly_once.R2_PORTED_TO_R1.py.txt": {
+   "bytes": 59441,
+   "sha256": "7159db648719ac9f9a5fcf90611528c456099c28ad1028a04b0e2157e47f6e54"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/crash_matrix.py": {
+   "bytes": 28090,
+   "sha256": "030bb4c15328bf0e385ed3e6f96c69705dadee4bef5b878fbf5f1d089b9775c3"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/make_harness_mutants.py": {
+   "bytes": 3732,
+   "sha256": "1243e77c58ddfeb6ee2e3899bbad9cbe7cc29e207d33d40d84cf36a502faf951"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/r2_items_rehearsal.py": {
+   "bytes": 6772,
+   "sha256": "1e1e86aa5e16321200e9b87a9644192c4105c45f912ec986654c328c31d7ef7e"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/r2_postfreeze_rehearsal.py": {
+   "bytes": 11079,
+   "sha256": "981474f57a5d51ee55f88731261b9a0d558b417b5bceefd21c022f7b9f4dcdd2"
+  },
+  "level4/closure_proofs/p5y_k5_cell309_q11_recovery/tests/run_targeted_rehearsals.sh": {
+   "bytes": 1627,
+   "sha256": "56adca4eb1cef9ecc68181db25fdff20e7ede1471131defe800aed56ad10877f"
+  }
+ },
+ "note": "every file of the recovery namespace and the session hooks (raw .claude/audit logs are git-ignored and excluded); this manifest excludes only itself",
+ "schema": "P309_Q11_RECOVERY_EVIDENCE_MANIFEST/1"
+}

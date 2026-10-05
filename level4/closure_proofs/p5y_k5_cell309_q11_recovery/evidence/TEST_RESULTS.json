@@ -1,0 +1,345 @@
+{
+ "crash_matrix": {
+  "cases": {
+   "N01": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "N02": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "N03": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "N04": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "N05": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "N06": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "N07": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "N08": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "N09": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "N10": {
+    "pass": true,
+    "verdict": "PASS"
+   },
+   "N11": {
+    "pass": true,
+    "verdict": "PASS"
+   },
+   "N13": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "N14": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "N15": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "N16": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "N17": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "N18": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "N19": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "N20": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "R01": {
+    "pass": true,
+    "verdict": null
+   },
+   "R02": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "R03": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "R04": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "R05": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "R06": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "R07": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "R08": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "R09": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "R10": {
+    "pass": true,
+    "verdict": "PASS"
+   },
+   "R11": {
+    "pass": true,
+    "verdict": "INTERRUPTED"
+   },
+   "R12": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "R13": {
+    "pass": true,
+    "verdict": null
+   },
+   "R14": {
+    "pass": true,
+    "verdict": "PASS"
+   },
+   "R15": {
+    "pass": true,
+    "verdict": "CORRUPT"
+   },
+   "R16": {
+    "pass": true,
+    "verdict": null
+   },
+   "R17": {
+    "pass": true,
+    "verdict": null
+   }
+  },
+  "counts": {
+   "failed": 0,
+   "total": 36
+  },
+  "pass": true,
+  "path": "evidence/crash_matrix/CRASH_MATRIX.json",
+  "sha256": "ec435cc42c01d93bb7e48e2897cd1cb3eddd57d8ee048ac343a4a64e6aecb837"
+ },
+ "guard_tests": {
+  "counts": {
+   "allow": 22,
+   "deny": 114,
+   "failed": 0,
+   "fixture": 13,
+   "total": 149
+  },
+  "pass": true,
+  "path": "evidence/guard/GUARD_TESTS.json",
+  "sha256": "7762b815f36635a702b88f42496b17626d3c01700b4cde799f2f674c1d475ea2"
+ },
+ "mutants_expected_vs_observed": {
+  "M1_BASE_HEAD": [
+   "FAIL (postcondition)",
+   [
+    "QC11"
+   ]
+  ],
+  "M2_BASE_HEAD_NO_POST": [
+   "FAIL (FREEZE_RECORD)",
+   [
+    "QC11"
+   ]
+  ],
+  "M3_DETAIL_SWAP": [
+   "FAIL (A24,A25)",
+   [
+    "A24_freeze_record_names_another_commit",
+    "A25_freeze_record_changed_later"
+   ]
+  ],
+  "M4_MANIFEST_FROM_TREE": [
+   "PASS (equivalent mutant; survivor)",
+   [
+    "QC11"
+   ]
+  ]
+ },
+ "qc10_certificates": {
+  "four_way": "PASS",
+  "structure": {
+   "gate_identical": true,
+   "verdicts_identical": true
+  },
+  "three_way": "PASS"
+ },
+ "r1_attempt_1_validation": {
+  "gates_failed": [
+   "QC11"
+  ],
+  "gates_missing": [
+   "QC_D5"
+  ],
+  "verdict": "INTERRUPTED"
+ },
+ "r2_items_partial": {
+  "all_present_pass": true,
+  "missing": [
+   "QC_D5"
+  ],
+  "status": "INTERRUPTED by the container restart at 2026-10-04T23:09:14Z during QC_D5 (boot ba1fb020 -> 973d41ad); no resumption"
+ },
+ "r2_postfreeze": {
+  "content": {
+   "D5_controls": 166,
+   "D5_controls_failed": [],
+   "QC11_flows": 112,
+   "QC11_flows_failed": [],
+   "QC11_table_pass": null,
+   "backstop_controls": 27,
+   "backstop_failed": [],
+   "scan_pins_all_current": true,
+   "scan_pins_not_current": []
+  },
+  "gates": {
+   "QC11": true,
+   "QC12": true,
+   "QC_D5": true
+  },
+  "pass": true,
+  "topology_ok": true
+ },
+ "rehearsals": {
+  "A2_frozen_QC11_QCD5": {
+   "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+   "gates_failed": [
+    "QC11"
+   ],
+   "gates_passed": [
+    "QC_D5"
+   ],
+   "harness": "frozen",
+   "verdict": "FAIL"
+  },
+  "A3_repaired_QC11_QCD5": {
+   "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+   "gates_failed": [
+    "QC_D5"
+   ],
+   "gates_passed": [
+    "QC11"
+   ],
+   "harness": "repaired",
+   "verdict": "FAIL"
+  },
+  "A_frozen_QC11_QCD5": {
+   "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+   "gates_failed": [
+    "QC11"
+   ],
+   "gates_passed": [],
+   "harness": "frozen",
+   "verdict": "INTERRUPTED"
+  },
+  "B_full_repaired": {
+   "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+   "gates_failed": [],
+   "gates_passed": [
+    "QC01",
+    "QC02",
+    "QC03",
+    "QC04",
+    "QC05",
+    "QC06",
+    "QC07",
+    "QC08",
+    "QC09"
+   ],
+   "harness": "repaired",
+   "verdict": "INTERRUPTED"
+  },
+  "C_r1_QC12_QCU2": {
+   "boot_id": "973d41ad-a8ad-4ecd-90e5-cfae9fe9d5e8",
+   "gates_failed": [
+    "QC13"
+   ],
+   "gates_passed": [
+    "QC12",
+    "QC14",
+    "QC15",
+    "QC16",
+    "QC17",
+    "QC_U2"
+   ],
+   "harness": "frozen",
+   "verdict": "FAIL"
+  },
+  "MUT_M1_BASE_HEAD": {
+   "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+   "gates_failed": [
+    "QC11"
+   ],
+   "gates_passed": [],
+   "harness": "mutant",
+   "verdict": "FAIL"
+  },
+  "MUT_M2_BASE_HEAD_NO_POST": {
+   "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+   "gates_failed": [
+    "QC11"
+   ],
+   "gates_passed": [],
+   "harness": "mutant",
+   "verdict": "FAIL"
+  },
+  "MUT_M3_DETAIL_SWAP": {
+   "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+   "gates_failed": [
+    "QC11"
+   ],
+   "gates_passed": [],
+   "harness": "mutant",
+   "verdict": "FAIL"
+  },
+  "MUT_M4_MANIFEST_FROM_TREE": {
+   "boot_id": "ba1fb020-1cc9-45c0-9ac8-1e6abdd12ca2",
+   "gates_failed": [],
+   "gates_passed": [
+    "QC11"
+   ],
+   "harness": "mutant",
+   "verdict": "PASS"
+  }
+ },
+ "schema": "P309_Q11_RECOVERY_TEST_RESULTS/1",
+ "target_evaluation_count": 0,
+ "verdict_basis": "content, hashes, order and provenance (attempt_validator.py); no exit status taken alone"
+}

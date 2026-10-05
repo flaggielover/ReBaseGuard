@@ -1,0 +1,120 @@
+{
+ "schema": "P309_Q11_QUALIFICATION_RECOVERY_AUDIT/1",
+ "verdict": "QUALIFICATION_RECOVERY_BLOCKED",
+ "new_target_evaluations": {
+  "gamma309": 0,
+  "cells_306_308": 0,
+  "count_evidence": "evidence/TARGET_EVALUATION_COUNT.json",
+  "counter_corrections_disclosed": [
+   "scan-wide counter first 35: 3 harness F23 fixture refs + 32 copies of 4 pre-existing PROXY_EXPOSURE rows (new_target_evaluations 0)",
+   "session audit first 7: pre-existing grant files of older campaigns, byte-identical at the branch point; now counted only if added/changed"
+  ],
+  "session_audit_snapshot": "audit/SESSION_AUDIT_SNAPSHOT.json (0)"
+ },
+ "grants": {
+  "issued": 0,
+  "consumed": 0,
+  "simulated": 0,
+  "modified": 0
+ },
+ "adoption_or_status_change": false,
+ "r5_unchanged": true,
+ "r6_exists": false,
+ "branch": {
+  "name": "claude/p309-q11-recovery-20261005",
+  "base": "c902fe2fe33003ac7e4e61f29c10c81682fc940c",
+  "files_outside_write_set": 0,
+  "pull_request": "none (not requested)"
+ },
+ "starting_refs": {
+  "origin/main": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+  "r1": "c902fe2fe33003ac7e4e61f29c10c81682fc940c",
+  "r2_not_in_brief": "101ef2cb17e5eab2892212178278da45b98004ed",
+  "corrections_confirmed": "8ca441c52503fad06352bcccbb6e02892937aefa",
+  "known_state_stale": true,
+  "stale_because": "r2 (successor campaign, unmerged) already implements and reviewed the QC11 repair; HOST_SUITABILITY_PENDING; owner decisions OD-R2-0..6 open"
+ },
+ "root_cause": {
+  "Q11": {
+   "class": "identity/provenance mismatch in the frozen QC11 test harness",
+   "detail": "sandboxes based on HEAD inherit the real freeze-record commit; each sandbox chain holds 2 record commits; recorded_freeze refuses (FREEZE_RECORD) at flow V01; deterministic, post-freeze only, production path unaffected",
+   "caused_by_reboot": false,
+   "reproduced_independently": true
+  },
+  "QC_D5": {
+   "class": "pure infrastructure interruption (host reboot 2026-09-30T22:41:12Z)",
+   "outcome_under_frozen_harness_on_this_host": "PASS"
+  },
+  "ruled_out": [
+   "incomplete restart/resume protocol (none by design; fails closed)",
+   "stale lock or checkpoint",
+   "non-atomic write as the cause (last record complete)",
+   "duplicate execution after resume"
+  ],
+  "other_findings": [
+   "record writes not atomic/fsynced (fail-closed CORRUPT on torn write)",
+   "no ledger-integrity check before RUN START",
+   "r1 manifest and parameters bound to the freeze host (runner refuses elsewhere; QC13 fails elsewhere)"
+  ]
+ },
+ "repair": {
+  "source": "r2 reviewed P6 repair (plan section 4; review P6 a/b/c), derived mechanically, not re-implemented",
+  "diff": "repair/QC11_HARNESS_REPAIR.diff (-8 +64)",
+  "r1_post_freeze": {
+   "QC11": "PASS 112/112",
+   "QC_D5": "FAIL by design: frozen scanner AST-pins the harness (9 STALE)"
+  },
+  "sufficient_alone": false,
+  "requires": "reviewed scanner re-pin (as r2 ships)",
+  "mutants": {
+   "M1_BASE_HEAD": "killed",
+   "M2_BASE_HEAD_NO_POST": "killed",
+   "M3_DETAIL_SWAP": "killed (A24, A25)",
+   "M4_MANIFEST_FROM_TREE": "survived (equivalent in this replica; disclosed)"
+  },
+  "r2_post_freeze": {
+   "QC11": "112/112",
+   "QC12": "PASS",
+   "QC_D5": "166/166 D5, 27/27 backstop, pins current",
+   "light_items_QC01-05_07_11-17_U2": "PASS",
+   "verdict": "PASS"
+  }
+ },
+ "gates_on_this_host": {
+  "QC01-QC09": "PASS (Run B, r1 bytes)",
+  "QC10": "48 certificates byte-identical in 4 runs on 2 hosts (set a044291a...)",
+  "QC11": "PASS repaired / FAIL frozen",
+  "QC12": "PASS",
+  "QC13": "FAIL only by freeze-host binding (r1); PASS (r2 synthetic freeze)",
+  "QC14-QC17": "PASS",
+  "QC_U2": "PASS",
+  "QC_D5": "PASS frozen r1; PASS r2 package; FAIL r1+repair-only (pins)"
+ },
+ "restart_resume_exactly_once": {
+  "crash_matrix": "36/36",
+  "real_interruptions_observed": 3,
+  "all_classified_INTERRUPTED_never_resumed": true
+ },
+ "safety_controls": {
+  "pretooluse_guard": ".claude/hooks/p309_pretooluse_guard.py",
+  "posttooluse_tripwire": ".claude/hooks/p309_posttooluse_tripwire.py",
+  "sessionend_audit": ".claude/hooks/p309_session_audit.py",
+  "tests": "149/149",
+  "live_canary_refused": true,
+  "limits": [
+   "sees command text, not internal program behaviour (tripwire + self-guards mitigate)",
+   "project-level hooks editable by the session (tamper-evident hashes); managed settings would be stronger"
+  ]
+ },
+ "verification_method": "independent validator (code/attempt_validator.py): content, hashes, write order, provenance; never exit status alone",
+ "blockers": [
+  "B1 no single uninterrupted end-to-end attempt of one repaired package (no durable host here; external compute prohibited)",
+  "B2 owner decisions OD-R2-0..6",
+  "B3 r1 freeze-host binding",
+  "B4 proposed r2 hardening (atomic writes, ledger check at start, QC-D5 window) not applied"
+ ],
+ "next_permitted_action": "owner decides r2's OD-R2-0..6 (optionally commissioning an r2 delta for B4 first); then r2's own freeze and single official qualification via code/p309_launch.py on the approved durable host; no grant, marker or Gamma309 evaluation is authorized by this audit",
+ "report": "QUALIFICATION_RECOVERY_REPORT_P309_Q11.md",
+ "evidence_manifest": "EVIDENCE_MANIFEST.json",
+ "tests": "evidence/TEST_RESULTS.json"
+}

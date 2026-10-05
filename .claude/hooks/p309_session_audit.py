@@ -57,7 +57,16 @@ def target_count(rows: list[dict]) -> dict:
     refs = git("for-each-ref", "--format=%(refname)").split()
     prot = [r for r in refs if P.PROTECTED_REF_RE.search(r)]
     head_files = git("ls-tree", "-r", "--name-only", "HEAD").splitlines()
-    grant = [f for f in head_files if P.GRANT_RE.search(f)]
+    grant_at_head = [f for f in head_files if P.GRANT_RE.search(f)]
+    # count what this session added or changed (committed since the branch point, or in the working tree); grant
+    # files of other, older campaigns that are byte-identical at the branch point are listed, not counted
+    if git("cat-file", "-t", P.BASE_COMMIT).strip() == "commit":
+        changed = set(git("diff", "--name-only", P.BASE_COMMIT, "HEAD").splitlines())
+    else:
+        changed = set(head_files)                     # no branch point (fixtures): every file counts
+    changed |= {l[3:] for l in git("status", "--porcelain=v1", "--untracked-files=all").splitlines()}
+    grant = [f for f in sorted(changed) if P.GRANT_RE.search(f)]
+    preexisting_grant = [f for f in grant_at_head if f not in changed]
     r6 = [f for f in head_files if re.search(r"COVERAGE_MAP_R6", f, re.I)]
     r5_blob = git("rev-parse", "HEAD:level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/"
                                "K5_COVERAGE_MAP_R5.json").strip()
@@ -83,7 +92,8 @@ def target_count(rows: list[dict]) -> dict:
                            (P.TARGET_MODE_RE.search(r["command"]))]
     count = len(prot) + len(grant) + nonzero + len(allowed_target_cmds)
     return {"new_target_evaluations": count, "protected_refs_in_session_repo": prot,
-            "grant_or_result_files_at_HEAD": grant, "r6_files_at_HEAD": r6,
+            "grant_or_result_files_added_or_changed_by_session": grant,
+            "preexisting_grant_files_unchanged_since_branch_point": preexisting_grant, "r6_files_at_HEAD": r6,
             "r5_blob_at_HEAD": r5_blob, "r5_blob_expected": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
             "r5_unchanged": r5_blob == "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
             "ledger_rows_checked": total, "ledger_rows_nonzero_or_unreadable": nonzero,
