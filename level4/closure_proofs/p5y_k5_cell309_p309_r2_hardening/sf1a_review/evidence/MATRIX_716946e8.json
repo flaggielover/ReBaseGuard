@@ -1,0 +1,724 @@
+{
+ "cases": [
+  {
+   "crash": "before_attempt_dir",
+   "desc": "interruption before first write",
+   "fresh_start_allowed_after": true,
+   "id": "C01",
+   "no_trace": false,
+   "rc": -9,
+   "restart": {
+    "ok": false,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     false,
+     true,
+     true
+    ],
+    "unchanged": false
+   },
+   "risk": "interruption before first write",
+   "status_after_crash": "NOT_STARTED"
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "before_run_start",
+   "desc": "attempt directory without RUN START (stale lock)",
+   "fsync_ops": 8,
+   "fsynced": [
+    ".p309-fsprobe-5353",
+    "EXPOSURE_LEDGER.jsonl",
+    "ZERO_TARGET_LEDGER.jsonl",
+    "ledger",
+    "probe.a",
+    "qualification"
+   ],
+   "id": "C02",
+   "link_ops": 2,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: attempt directory without a RUN START line (interrupted before the start)",
+    "INTERRUPTED: no summary: 19 record(s) missing; first missing QC01"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "attempt directory without RUN START (stale lock)",
+   "run_start_lines": 0
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "during_gate:QC01",
+   "desc": "interruption during a gate",
+   "fsync_ops": 22,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-5510",
+    ".LAUNCH_RECORD.json.tmp-5510",
+    ".QHOST_BASELINE.json.tmp-5510",
+    ".UNIT_PROPERTIES.json.tmp-5510",
+    ".p309-fsprobe-5510",
+    "EXPOSURE_LEDGER.jsonl",
+    "ZERO_TARGET_LEDGER.jsonl",
+    "attempt_1",
+    "ledger",
+    "probe.a",
+    "qualification"
+   ],
+   "id": "C03",
+   "link_ops": 6,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: no summary: 19 record(s) missing; first missing QC01"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "interruption during a gate",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "empty_record:QC05",
+   "desc": "interruption after open, before write (record)",
+   "fsync_ops": 46,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-5667",
+    ".LAUNCH_RECORD.json.tmp-5667",
+    ".QC01.json.tmp-5667",
+    ".QC02.json.tmp-5667",
+    ".QC03.json.tmp-5667",
+    ".QC04.json.tmp-5667",
+    ".QHOST_BASELINE.json.tmp-5667",
+    ".UNIT_PROPERTIES.json.tmp-5667",
+    ".p309-fsprobe-5667",
+    "EXPOSURE_LEDGER.jsonl",
+    "ZERO_TARGET_LEDGER.jsonl",
+    "attempt_1"
+   ],
+   "id": "C04",
+   "link_ops": 10,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: leftover temporary file(s) ['.QC05.json.tmp-5667'] (an interrupted write)",
+    "INTERRUPTED: no summary: 15 record(s) missing; first missing QC05"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "interruption after open, before write (record)",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "partial_record:QC05",
+   "desc": "interruption during the record write",
+   "fsync_ops": 46,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-5824",
+    ".LAUNCH_RECORD.json.tmp-5824",
+    ".QC01.json.tmp-5824",
+    ".QC02.json.tmp-5824",
+    ".QC03.json.tmp-5824",
+    ".QC04.json.tmp-5824",
+    ".QHOST_BASELINE.json.tmp-5824",
+    ".UNIT_PROPERTIES.json.tmp-5824",
+    ".p309-fsprobe-5824",
+    "EXPOSURE_LEDGER.jsonl",
+    "ZERO_TARGET_LEDGER.jsonl",
+    "attempt_1"
+   ],
+   "id": "C05",
+   "link_ops": 10,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: leftover temporary file(s) ['.QC05.json.tmp-5824'] (an interrupted write)",
+    "INTERRUPTED: no summary: 15 record(s) missing; first missing QC05"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "interruption during the record write",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "before_link:QC05",
+   "desc": "interruption before the record is linked",
+   "fsync_ops": 47,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-5981",
+    ".LAUNCH_RECORD.json.tmp-5981",
+    ".QC01.json.tmp-5981",
+    ".QC02.json.tmp-5981",
+    ".QC03.json.tmp-5981",
+    ".QC04.json.tmp-5981",
+    ".QC05.json.tmp-5981",
+    ".QHOST_BASELINE.json.tmp-5981",
+    ".UNIT_PROPERTIES.json.tmp-5981",
+    ".p309-fsprobe-5981",
+    "EXPOSURE_LEDGER.jsonl",
+    "ZERO_TARGET_LEDGER.jsonl"
+   ],
+   "id": "C06",
+   "link_ops": 11,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: leftover temporary file(s) ['.QC05.json.tmp-5981'] (an interrupted write)",
+    "INTERRUPTED: no summary: 15 record(s) missing; first missing QC05"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "interruption before the record is linked",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "after_link:QC05",
+   "desc": "interruption after the record is linked",
+   "fsync_ops": 47,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-6138",
+    ".LAUNCH_RECORD.json.tmp-6138",
+    ".QC01.json.tmp-6138",
+    ".QC02.json.tmp-6138",
+    ".QC03.json.tmp-6138",
+    ".QC04.json.tmp-6138",
+    ".QC05.json.tmp-6138",
+    ".QHOST_BASELINE.json.tmp-6138",
+    ".UNIT_PROPERTIES.json.tmp-6138",
+    ".p309-fsprobe-6138",
+    "EXPOSURE_LEDGER.jsonl",
+    "ZERO_TARGET_LEDGER.jsonl"
+   ],
+   "id": "C07",
+   "link_ops": 11,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: leftover temporary file(s) ['.QC05.json.tmp-6138'] (an interrupted write)",
+    "INTERRUPTED: no summary: 14 record(s) missing; first missing QC06"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "interruption after the record is linked",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "after_record:QC05",
+   "desc": "crash between artifact write and ledger update",
+   "fsync_ops": 48,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-6295",
+    ".LAUNCH_RECORD.json.tmp-6295",
+    ".QC01.json.tmp-6295",
+    ".QC02.json.tmp-6295",
+    ".QC03.json.tmp-6295",
+    ".QC04.json.tmp-6295",
+    ".QC05.json.tmp-6295",
+    ".QHOST_BASELINE.json.tmp-6295",
+    ".UNIT_PROPERTIES.json.tmp-6295",
+    ".p309-fsprobe-6295",
+    "EXPOSURE_LEDGER.jsonl",
+    "ZERO_TARGET_LEDGER.jsonl"
+   ],
+   "id": "C08",
+   "link_ops": 11,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: no summary: 14 record(s) missing; first missing QC06"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "crash between artifact write and ledger update",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "during_gate:QC06",
+   "desc": "crash between ledger update and the record",
+   "fsync_ops": 52,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-6452",
+    ".LAUNCH_RECORD.json.tmp-6452",
+    ".QC01.json.tmp-6452",
+    ".QC02.json.tmp-6452",
+    ".QC03.json.tmp-6452",
+    ".QC04.json.tmp-6452",
+    ".QC05.json.tmp-6452",
+    ".QHOST_BASELINE.json.tmp-6452",
+    ".UNIT_PROPERTIES.json.tmp-6452",
+    ".p309-fsprobe-6452",
+    "EXPOSURE_LEDGER.jsonl",
+    "ZERO_TARGET_LEDGER.jsonl"
+   ],
+   "id": "C09",
+   "link_ops": 11,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: no summary: 14 record(s) missing; first missing QC06"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "crash between ledger update and the record",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "during_gate:QC_D5",
+   "desc": "host restart during QC-D5 (r1's case)",
+   "fsync_ops": 130,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-6609",
+    ".LAUNCH_RECORD.json.tmp-6609",
+    ".QC01.json.tmp-6609",
+    ".QC02.json.tmp-6609",
+    ".QC03.json.tmp-6609",
+    ".QC04.json.tmp-6609",
+    ".QC05.json.tmp-6609",
+    ".QC06.json.tmp-6609",
+    ".QC07.json.tmp-6609",
+    ".QC08.json.tmp-6609",
+    ".QC09.json.tmp-6609",
+    ".QC10.json.tmp-6609"
+   ],
+   "id": "C10",
+   "link_ops": 24,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: no summary: 1 record(s) missing; first missing QC_D5"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "host restart during QC-D5 (r1's case)",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "before_summary",
+   "desc": "crash between the last ledger update and the completion marker",
+   "fsync_ops": 143,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-6766",
+    ".LAUNCH_RECORD.json.tmp-6766",
+    ".QC01.json.tmp-6766",
+    ".QC02.json.tmp-6766",
+    ".QC03.json.tmp-6766",
+    ".QC04.json.tmp-6766",
+    ".QC05.json.tmp-6766",
+    ".QC06.json.tmp-6766",
+    ".QC07.json.tmp-6766",
+    ".QC08.json.tmp-6766",
+    ".QC09.json.tmp-6766",
+    ".QC10.json.tmp-6766"
+   ],
+   "id": "C11",
+   "link_ops": 26,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: no summary: 0 record(s) missing"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "crash between the last ledger update and the completion marker",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "partial_summary",
+   "desc": "interruption during the completion marker write",
+   "fsync_ops": 143,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-6923",
+    ".LAUNCH_RECORD.json.tmp-6923",
+    ".QC01.json.tmp-6923",
+    ".QC02.json.tmp-6923",
+    ".QC03.json.tmp-6923",
+    ".QC04.json.tmp-6923",
+    ".QC05.json.tmp-6923",
+    ".QC06.json.tmp-6923",
+    ".QC07.json.tmp-6923",
+    ".QC08.json.tmp-6923",
+    ".QC09.json.tmp-6923",
+    ".QC10.json.tmp-6923"
+   ],
+   "id": "C12",
+   "link_ops": 26,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: leftover temporary file(s) in the qualification directory: ['.P309_QUALIFICATION.json.tmp-6923']",
+    "INTERRUPTED: no summary: 0 record(s) missing"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "interruption during the completion marker write",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "ABORTED",
+   "crash": "abort_signal:QC07",
+   "desc": "Q-HOST abort during a gate (real abort path)",
+   "fsync_ops": 66,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-7080",
+    ".LAUNCH_RECORD.json.tmp-7080",
+    ".P309_QUALIFICATION.json.tmp-7080",
+    ".QC01.json.tmp-7080",
+    ".QC02.json.tmp-7080",
+    ".QC03.json.tmp-7080",
+    ".QC04.json.tmp-7080",
+    ".QC05.json.tmp-7080",
+    ".QC06.json.tmp-7080",
+    ".QHOST_BASELINE.json.tmp-7080",
+    ".QHOST_FAIL.json.tmp-7080",
+    ".UNIT_PROPERTIES.json.tmp-7080"
+   ],
+   "id": "C13",
+   "link_ops": 14,
+   "rc": 3,
+   "reasons": [
+    "ABORTED: ended by Q-HOST: Q-HOST: the host changed or cell-308 heavy work appeared during the run (OD-R2-5 (i))"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "Q-HOST abort during a gate (real abort path)",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "INTERRUPTED",
+   "crash": "abort_crash:QC07",
+   "desc": "interruption inside the Q-HOST abort, before its summary",
+   "fsync_ops": 60,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-7237",
+    ".LAUNCH_RECORD.json.tmp-7237",
+    ".QC01.json.tmp-7237",
+    ".QC02.json.tmp-7237",
+    ".QC03.json.tmp-7237",
+    ".QC04.json.tmp-7237",
+    ".QC05.json.tmp-7237",
+    ".QC06.json.tmp-7237",
+    ".QHOST_BASELINE.json.tmp-7237",
+    ".QHOST_FAIL.json.tmp-7237",
+    ".UNIT_PROPERTIES.json.tmp-7237",
+    ".p309-fsprobe-7237"
+   ],
+   "id": "C14",
+   "link_ops": 13,
+   "rc": -9,
+   "reasons": [
+    "INTERRUPTED: Q-HOST abort began but its summary was not written (interrupted during the abort)",
+    "INTERRUPTED: no summary: 13 record(s) missing; first missing QC07"
+   ],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "interruption inside the Q-HOST abort, before its summary",
+   "run_start_lines": 1
+  },
+  {
+   "classification": "COMPLETE_PASS",
+   "crash": "none",
+   "desc": "control: an uninterrupted synthetic run",
+   "fsync_ops": 145,
+   "fsynced": [
+    ".ATTEMPT_START.json.tmp-7394",
+    ".LAUNCH_RECORD.json.tmp-7394",
+    ".P309_QUALIFICATION.json.tmp-7394",
+    ".QC01.json.tmp-7394",
+    ".QC02.json.tmp-7394",
+    ".QC03.json.tmp-7394",
+    ".QC04.json.tmp-7394",
+    ".QC05.json.tmp-7394",
+    ".QC06.json.tmp-7394",
+    ".QC07.json.tmp-7394",
+    ".QC08.json.tmp-7394",
+    ".QC09.json.tmp-7394"
+   ],
+   "id": "C15",
+   "link_ops": 27,
+   "rc": 0,
+   "reasons": [],
+   "restart": {
+    "ok": true,
+    "refusal_texts": [
+     "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+    ],
+    "refused": [
+     true,
+     true,
+     true
+    ],
+    "unchanged": true
+   },
+   "risk": "control: an uninterrupted synthetic run",
+   "run_start_lines": 1
+  },
+  {
+   "classification_after": "INTERRUPTED",
+   "desc": "stale lock: an empty attempt directory",
+   "id": "S01",
+   "refusal": [
+    "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+   ],
+   "risk": "stale lock: an empty attempt directory",
+   "run_start_lines": 0,
+   "runner_refused": true,
+   "stdout_tail": "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)\n",
+   "unchanged": true
+  },
+  {
+   "classification_after": "CORRUPT",
+   "desc": "partial artifact: a torn record in a prior attempt",
+   "id": "S02",
+   "refusal": [
+    "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+   ],
+   "risk": "partial artifact: a torn record in a prior attempt",
+   "run_start_lines": 0,
+   "runner_refused": true,
+   "stdout_tail": "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)\n",
+   "unchanged": true
+  },
+  {
+   "classification_after": "CORRUPT",
+   "desc": "stray completion marker without an attempt",
+   "id": "S03",
+   "refusal": [
+    "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)"
+   ],
+   "risk": "stray completion marker without an attempt",
+   "run_start_lines": 0,
+   "runner_refused": true,
+   "stdout_tail": "QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; classify it read-only with the status validator)\n",
+   "unchanged": true
+  },
+  {
+   "classification_after": "INTERRUPTED",
+   "desc": "leftover temporary file in the qualification directory",
+   "id": "S04",
+   "refusal": [
+    "QUALIFICATION REFUSED: pre-launch state (H3): qualification/.P309_QUALIFICATION.json.tmp-1 exists (a prior or partial run)"
+   ],
+   "risk": "leftover temporary file in the qualification directory",
+   "run_start_lines": 0,
+   "runner_refused": true,
+   "stdout_tail": "QUALIFICATION REFUSED: pre-launch state (H3): qualification/.P309_QUALIFICATION.json.tmp-1 exists (a prior or partial run)\n",
+   "unchanged": true
+  },
+  {
+   "classification_after": "CORRUPT",
+   "desc": "torn ledger tail before launch (truncated checkpoint)",
+   "id": "S05",
+   "refusal": [
+    "QUALIFICATION REFUSED: pre-launch state (H3): ZERO_TARGET_LEDGER.jsonl: the last row has no newline (torn append); ZERO_TARGET_LEDGER.jsonl: row 21 does not parse (torn or corrupt)"
+   ],
+   "risk": "torn ledger tail before launch (truncated checkpoint)",
+   "run_start_lines": 0,
+   "runner_refused": true,
+   "stdout_tail": "QUALIFICATION REFUSED: pre-launch state (H3): ZERO_TARGET_LEDGER.jsonl: the last row has no newline (torn append); ZERO_TARGET_LEDGER.jsonl: row 21 does not parse (torn or corrupt)\n",
+   "unchanged": false
+  },
+  {
+   "classification_after": "CORRUPT",
+   "desc": "orphan RUN START: a prior run's start line but no attempt directory",
+   "id": "S06",
+   "refusal": [
+    "QUALIFICATION REFUSED: pre-launch state (H3): a 'QUALIFICATION RUN START' line at 2099-01-01T00:00:00Z after the freeze record: a prior run's attempt is missing"
+   ],
+   "risk": "orphan RUN START: a prior run's start line but no attempt directory",
+   "run_start_lines": 1,
+   "runner_refused": true,
+   "stdout_tail": "QUALIFICATION REFUSED: pre-launch state (H3): a 'QUALIFICATION RUN START' line at 2099-01-01T00:00:00Z after the freeze record: a prior run's attempt is missing\n",
+   "unchanged": false
+  },
+  {
+   "desc": "Q-HOST preflight raises HostError (host changed)",
+   "id": "S07",
+   "refusal": [
+    "QUALIFICATION REFUSED: Q-HOST: the host changed since the launch: {'same_boot': False} (test double)"
+   ],
+   "risk": "host identity differs at launch",
+   "runner_refused": true,
+   "unchanged": true
+  },
+  {
+   "desc": "a frozen directory changed after the freeze",
+   "id": "S08",
+   "refusal": [
+    "QUALIFICATION REFUSED: FREEZE_RECORD: a frozen directory changed after the recorded freeze"
+   ],
+   "risk": "resume / start from a mismatched commit",
+   "runner_refused": true,
+   "unchanged": true
+  },
+  {
+   "classification": "COMPLETE_PASS",
+   "desc": "both pass the existence check, then mkdir decides",
+   "id": "S09",
+   "loser": [
+    "me-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/t7/matrix_sf1a/replica/level4/closure_proofs/p5y_k5_cell309_p309_r2/qualification/attempt_1'"
+   ],
+   "rcs": [
+    0,
+    1
+   ],
+   "risk": "double launch (two runners race)",
+   "run_start_lines": 1
+  }
+ ],
+ "label": "hardened",
+ "package_commit": "716946e8d9a6744d0b49de6acc802605b6eb1bf8",
+ "python": "3.11.15",
+ "replica": {
+  "commit": "716946e8d9a6744d0b49de6acc802605b6eb1bf8",
+  "dest": "/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/t7/matrix_sf1a/replica",
+  "parents": [
+   "b66a45f097989764176075802c953df4b72c2aef"
+  ],
+  "tree": "3afb045cea6b78c708686ecc9108abd6a2d46100"
+ },
+ "runner_sha256": "540df0552bfc31512289e30eaf1ead57bf82a4ac806f38080439c05c43f9a3af",
+ "schema": "P309_R2H_CRASH_MATRIX/1",
+ "statement": "synthetic gates only; nothing evaluated; NEW TARGET EVALUATIONS = 0",
+ "tool_sha256": "fc1743357ebf4012b2cfd122121c7425b7aa06fd1956d405018ad0d9aa5abbc3",
+ "topology": {
+  "F": "1d4f84fae1cb2e300657ea09c8a5c397647de24e",
+  "FR": "55c629af4e85fbefac0da70357ab663b0bbc5718",
+  "ok": true,
+  "record_commit_touches_only_record": true,
+  "record_commits_at_head": 1,
+  "record_commits_in_F_history": 0,
+  "record_parent_is_F": true,
+  "record_utc": "2026-10-05T13:29:18+00:00",
+  "tip": "0f5a5afd8ddf88122c2d05131b0b206e6e3fb39e"
+ },
+ "validator_sha256": "3ec033464f01888052b6a663e7be6233e4e56b895ed138018051208dce770ada",
+ "wall_s": 38.5
+}

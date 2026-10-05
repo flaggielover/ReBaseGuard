@@ -1,0 +1,87 @@
+{
+ "commit": "716946e8d9a6744d0b49de6acc802605b6eb1bf8",
+ "tree": "3afb045cea6b78c708686ecc9108abd6a2d46100",
+ "rehearsal_gates": {
+  "QC01": true,
+  "QC02": true,
+  "QC03": true,
+  "QC04": true,
+  "QC05": true,
+  "QC07": true,
+  "QC11": true,
+  "QC12": true,
+  "QC13": true,
+  "QC14": true,
+  "QC15": true,
+  "QC16": true,
+  "QC17": true,
+  "QC_D5": true,
+  "QC_U2": true
+ },
+ "qc15_checks": [
+  [
+   "A10_probe_envelope",
+   "true"
+  ],
+  [
+   "A1_target_counters_zero",
+   "true"
+  ],
+  [
+   "A2_no_band_drift",
+   "true"
+  ],
+  [
+   "A3_immutable_governance",
+   "true"
+  ],
+  [
+   "A4_formal_static_scan",
+   "true"
+  ],
+  [
+   "A5_producer_lock",
+   "true"
+  ],
+  [
+   "A6_r5_unchanged_no_r6",
+   "true"
+  ],
+  [
+   "A7_formal_namespace_only_research_unchanged",
+   "true"
+  ],
+  [
+   "A8_refs_ordinary_no_marker",
+   "true"
+  ],
+  [
+   "A9_variant_independent_imports",
+   "true"
+  ]
+ ],
+ "regression_runs": {
+  "QC11": 0,
+  "QC12": 0,
+  "QC_D5_backstop": 0,
+  "QC_D5_controls": 0,
+  "QC_D5_pins": 0,
+  "test_p309_host.py": 0,
+  "test_p309_host_controls.py": 0,
+  "test_p309_static_controls.py": 0
+ },
+ "checks": {
+  "rehearsal re-validation PASS, no reasons": true,
+  "rehearsal bound to 716946e8": true,
+  "rehearsal tree equals 716946e8's tree": true,
+  "rehearsal parent is r2 b66a45f0": true,
+  "all 15 light gates PASS (record content)": true,
+  "QC15 PASS with A1-A10 all true": true,
+  "regression: every run rc 0": true,
+  "regression runner bytes are 716946e8's": true,
+  "QC11 112/112 flows, 0 failed": true,
+  "scan pins all current": true,
+  "static controls 22/22 with T14a PASS": true
+ },
+ "ok": true
+}
