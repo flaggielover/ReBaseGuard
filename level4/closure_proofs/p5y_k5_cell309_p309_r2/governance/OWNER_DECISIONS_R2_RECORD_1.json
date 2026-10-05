@@ -1,0 +1,112 @@
+{
+ "schema": "P309_R2_OWNER_DECISION_RECORD/1",
+ "message_file": "governance/OWNER_DECISIONS_R2_MSG5_VERBATIM.md",
+ "message_sha256": "bf393a77cd4ee39bcc71b94019ffe320f13db2e8fbf53c90af556bc1f1b91094",
+ "answers_to": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/owner_decision_packet/OWNER_DECISION_EXECUTION_PACKET.md (hardening branch 8c21918a)",
+ "answers": {
+  "OD-R2-0(A)": {
+   "recorded_answer": "CONFIRM",
+   "owner_answer_line": "CONFIRM."
+  },
+  "OD-R2-0(B)": {
+   "recorded_answer": "CONFIRM ALL ROWS",
+   "owner_answer_line": "CONFIRM ALL ROWS."
+  },
+  "OD-R2-0(C)": {
+   "recorded_answer": "ACKNOWLEDGE, and record the later development-only interruptions as additive history",
+   "owner_answer_line": "ACKNOWLEDGE."
+  },
+  "OD-R2-0(D)": {
+   "recorded_answer": "OPEN (deferred; may be brought back only after the listed prerequisites are satisfied and independently evidenced)",
+   "owner_answer_line": "DEFER / REMAIN OPEN."
+  },
+  "OD-R2-1": {
+   "recorded_answer": "(b)",
+   "owner_answer_line": "SELECT OPTION (b)."
+  },
+  "OD-R2-1b": {
+   "recorded_answer": "CONFIRM",
+   "owner_answer_line": "CONFIRM."
+  },
+  "OD-R2-2": {
+   "recorded_answer": "RATIFY",
+   "owner_answer_line": "RATIFY."
+  },
+  "OD-R2-3": {
+   "recorded_answer": "APPROVE AUDIT ONLY (read-only host audit only; dedicated-host availability pending)",
+   "owner_answer_line": "APPROVE the read-only host audit only."
+  },
+  "OD-R2-4": {
+   "recorded_answer": "OPEN (deferred until the read-only audit identifies the exact host changes)",
+   "owner_answer_line": "DEFER."
+  },
+  "OD-R2-5": {
+   "recorded_answer": "(i)",
+   "owner_answer_line": "SELECT OPTION (i)."
+  },
+  "OD-R2-6(ii)": {
+   "recorded_answer": "REQUIRE",
+   "owner_answer_line": "REQUIRE the QC10 host re-run before any grant may be considered."
+  },
+  "OD-R2-6(iii)": {
+   "recorded_answer": "NO HOST AT FREEZE (at this time)",
+   "owner_answer_line": "NO HOST IS NAMED AT FREEZE at this time."
+  },
+  "SF1": {
+   "recorded_answer": "SF1-A (limited to the minimal probe extension and its required tests/review)",
+   "owner_answer_line": "SELECT SF1-A."
+  },
+  "OD-R2-H": {
+   "recorded_answer": "H-A (exactly the fast-forward 101ef2cb -> a119e978 under C1; nothing else in that step)",
+   "owner_answer_line": "SELECT H-A."
+  },
+  "F-DRILL-ORDER": {
+   "recorded_answer": "FD-A (separate recorded owner action)",
+   "owner_answer_line": "SELECT FD-A."
+  },
+  "AF-1": {
+   "recorded_answer": "CONDITIONAL / NOT YET TRIGGERED",
+   "owner_answer_line": "CONDITIONAL / NOT YET TRIGGERED."
+  },
+  "AF-2": {
+   "recorded_answer": "CONDITIONAL / NOT YET TRIGGERED",
+   "owner_answer_line": "CONDITIONAL / NOT YET TRIGGERED."
+  },
+  "AF-3": {
+   "recorded_answer": "AUTHORIZE (separate additive governance-only commit after the verified fast-forward)",
+   "owner_answer_line": "AUTHORIZE FILING OF GOVERNANCE RECORDS."
+  },
+  "AF-4": {
+   "recorded_answer": "DEFER (no grant authorized)",
+   "owner_answer_line": "DEFER."
+  },
+  "AF-5": {
+   "recorded_answer": "NOT TRIGGERED",
+   "owner_answer_line": "NOT TRIGGERED."
+  }
+ },
+ "not_answered_or_pending": {
+  "OD-R2-6(i)": "OPEN: the message does not answer it (the packet recommended DEFER; nothing is inferred)",
+  "SF1-A incorporation into r2": "OPEN: the reply form's separate line 'SF1-A only: incorporate the reviewed SF1-A delta into r2' is not answered; SF1-A is authorized only up to its tests/review",
+  "OD-R2-3 dedicated host": "pending host selection/confirmation (the owner's own words)"
+ },
+ "consistency_checks": {
+  "FD-A requires H-A": true,
+  "OD-R2-6(iii) NO HOST needs no OD-R2-6(i) answer": true,
+  "OD-R2-0(D) not AUTHORIZE": true,
+  "OD-R2-5 (i) needs no amendment text": true,
+  "SF1-A incorporation not answered, so not authorized": true
+ },
+ "consistent": true,
+ "authorized_sequence": [
+  "1. Record these owner decisions additively.",
+  "2. Perform the exact C1 fast-forward incorporation:",
+  "3. Independently verify the resulting r2 bytes and ancestry.",
+  "4. In a separate governance-only commit, file the approved review/governance records and this owner-decision record.",
+  "5. Implement only the narrowly scoped SF1-A change under its own branch/review process.",
+  "6. Perform the required worker-tier drill on the incorporated/reviewed bytes when the host prerequisites are satisfied.",
+  "7. Complete the required host audit and remaining pre-freeze reviews.",
+  "8. Return to me for OD-R2-0(D)."
+ ],
+ "statement": "a record of the owner's answers; it authorizes exactly what the verbatim message states and nothing more; NEW Γ309 TARGET EVALUATIONS = 0; no grant; Cell 309 OPEN"
+}
