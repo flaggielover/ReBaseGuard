@@ -1,0 +1,39 @@
+{
+ "expectation": "the hardening tests fail and the common tests pass (the tests discriminate)",
+ "label": "baseline",
+ "meets_expectation": true,
+ "results": {
+  "T01_xwrite_writes_exact_bytes": {
+   "pass": true
+  },
+  "T02_xwrite_never_overwrites": {
+   "pass": true
+  },
+  "T03_fsync_file_and_dir": {
+   "error": "AssertionError: the record bytes were not fsynced: []",
+   "pass": false
+  },
+  "T04_interrupted_write_leaves_no_record": {
+   "error": "AssertionError: a torn record exists under its final name",
+   "pass": false
+  },
+  "T05_ledger_problems": {
+   "error": "AttributeError: module 'p309_qualify' has no attribute '_ledger_problems'",
+   "pass": false
+  },
+  "T06_prelaunch_state": {
+   "error": "AttributeError: module 'p309_qualify' has no attribute 'prelaunch_state'",
+   "pass": false
+  },
+  "T07_sync_ledgers": {
+   "error": "AttributeError: module 'p309_qualify' has no attribute 'sync_ledgers'",
+   "pass": false
+  },
+  "T08_attempt_start_marker": {
+   "error": "AttributeError: module 'p309_qualify' has no attribute 'attempt_start'",
+   "pass": false
+  }
+ },
+ "runner": "/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/t2/matrix_baseline/replica/level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_qualify.py",
+ "schema": "P309_R2H_RUNTIME_TESTS/1"
+}

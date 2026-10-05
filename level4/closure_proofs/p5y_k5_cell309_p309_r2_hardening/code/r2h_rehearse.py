@@ -145,7 +145,12 @@ def durable_checks(f: dict) -> dict:
 def run(a) -> int:
     root = Path(a.root).resolve()
     root.parent.mkdir(parents=True, exist_ok=True)
-    os.mkdir(root)                                        # exclusive: no second start, no restart, no resume
+    try:
+        os.mkdir(root)                                    # exclusive: no second start, no restart, no resume
+    except FileExistsError:
+        print(f"REHEARSAL REFUSED: {root} exists -- a rehearsal is never restarted or resumed; classify it with "
+              f"`status --root {root}` and start a new one in a new root")
+        return 2
     fsync_dir(root.parent)
     facts = host_facts(root)
     dchk = durable_checks(facts)
