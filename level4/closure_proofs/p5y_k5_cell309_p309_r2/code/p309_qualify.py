@@ -210,6 +210,9 @@ def fs_probe(where: Path) -> list:
         _fsync_dir(where)
         step = "ledger and ledger-directory fsync (sync_ledgers)"
         sync_ledgers()
+        for led in (E.Q.EXEC_LEDGER, E.Q.EXPOSURE_LEDGER):  # SF1-A: RUN START's append must not fail after the mkdir
+            step = f"ledger appendability ({Path(led).name}: must exist and open for appending; nothing is written)"
+            os.close(os.open(str(led), os.O_WRONLY | os.O_APPEND | os.O_NOFOLLOW))
     except OSError as exc:
         problems.append(f"{step}: {_oserr(exc)}")
     finally:
