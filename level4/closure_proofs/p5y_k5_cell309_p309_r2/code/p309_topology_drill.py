@@ -215,8 +215,8 @@ def confined(paths: list) -> bool:
 def make_topology(clone: Path, scratch: Path) -> dict:
     """F' (unmodified generators + placeholder check), FR' (record only), then one checkpoint record commit"""
     code = clone / NS_REL / "code"
-    gen = [run_py([sys.executable, "-B", str(code / "make_freeze_manifest.py")], clone, scratch),
-           run_py([sys.executable, "-B", str(code / "make_freeze_params.py")], clone, scratch),
+    gen = [run_py([sys.executable, "-B", str(code / "make_freeze_params.py")], clone, scratch),
+           run_py([sys.executable, "-B", str(code / "make_freeze_manifest.py")], clone, scratch),
            run_py([sys.executable, "-B", str(code / "p309_placeholder_check.py")], clone, scratch)]
     if any(g["rc"] != 0 for g in gen):
         raise DrillError("generators/placeholder check failed in the clone: " + " | ".join(

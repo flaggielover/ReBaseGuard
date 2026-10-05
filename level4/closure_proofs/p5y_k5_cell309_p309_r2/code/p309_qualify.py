@@ -91,13 +91,107 @@ RUN_START = "QUALIFICATION RUN START"                   # the single run's ledge
 HOST_START = "HOST RERUN START"
 
 
-def xwrite(path: Path, text: str) -> None:
-    """write a new file exclusively (never overwrite)"""
-    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
+def _fsync_dir(d: Path) -> None:
+    """hardening H1: make a directory entry (a new file or subdirectory name) durable"""
+    fd = os.open(str(d), os.O_RDONLY | os.O_DIRECTORY)
     try:
-        os.write(fd, text.encode())
+        os.fsync(fd)
     finally:
         os.close(fd)
+
+
+def _fsync_path(p: Path) -> None:
+    try:
+        fd = os.open(str(p), os.O_RDONLY)
+    except FileNotFoundError:
+        return
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
+def xwrite(path: Path, text: str) -> None:
+    """write a new file exclusively and durably (never overwrite).
+    Hardening H1: the bytes go to a temporary file in the same directory (O_EXCL), are written completely and
+    fsynced, then hard-linked to the final name -- os.link fails if the name exists, so a record is never overwritten
+    -- the temporary name is removed and the directory is fsynced.  An interruption therefore leaves either no record
+    or a complete one (plus at most a temporary file, which the pre-launch check H3 refuses and the status classifier
+    reports as INTERRUPTED): never a torn or empty record under its final name."""
+    path = Path(path)
+    data = text.encode()
+    tmp = path.with_name(f".{path.name}.tmp-{os.getpid()}")
+    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
+    try:
+        view = memoryview(data)
+        while view:
+            view = view[os.write(fd, view):]
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+    os.link(tmp, path)                                   # FileExistsError: an existing record is never replaced
+    os.unlink(tmp)
+    _fsync_dir(path.parent)
+
+
+def sync_ledgers() -> None:
+    """hardening H2: the execution and exposure ledgers are appended by this process and by the gates' subprocesses
+    (q309_guard.log_execution, unchanged); after every start line and every gate record their bytes and directory
+    entries are fsynced, so a ledger row is durable before the next step depends on it"""
+    for p in (E.Q.EXEC_LEDGER, E.Q.EXPOSURE_LEDGER):
+        _fsync_path(Path(p))
+        if Path(p).parent.exists():
+            _fsync_dir(Path(p).parent)
+
+
+def _ledger_problems(p: Path) -> list:
+    """hardening H3: a ledger is launchable only if every row parses, the file ends with a newline and every target
+    counter is zero"""
+    if not p.exists():
+        return []
+    raw = p.read_bytes()
+    bad = [] if not raw or raw.endswith(b"\n") else [f"{p.name}: the last row has no newline (torn append)"]
+    for i, line in enumerate(raw.decode(errors="replace").splitlines()):
+        if not line.strip():
+            continue
+        try:
+            row = json.loads(line)
+        except ValueError:
+            bad.append(f"{p.name}: row {i + 1} does not parse (torn or corrupt)")
+            continue
+        if any(row.get(k, 0) != 0 for k in ("new_target_evaluations", "target_equivalent_proxies",
+                                              "target_informed_optimisation")):
+            bad.append(f"{p.name}: row {i + 1} has a nonzero target counter")
+    return bad
+
+
+def prelaunch_state(start_prefix: str, allowed: tuple) -> list:
+    """hardening H3: deterministic refusal on any trace of a prior or partial run, before Q-HOST, the attempt directory
+    and the start line exist.  Refused when: the qualification directory holds anything but the `allowed` entries
+    (a prior attempt, a stray summary, a temporary file of an interrupted write); a ledger has a torn or unparseable
+    row or a nonzero counter; or a `start_prefix` line was logged at or after the freeze record (a prior run whose
+    attempt directory is missing).  Nothing is repaired, removed or resumed."""
+    problems = []
+    if QDIR.exists():
+        problems += [f"qualification/{p.name} exists (a prior or partial run)" for p in sorted(QDIR.iterdir())
+                     if p.name not in allowed]
+    for p in (E.Q.EXEC_LEDGER, E.Q.EXPOSURE_LEDGER):
+        problems += _ledger_problems(Path(p))
+    rec = git("log", "-1", "--format=%cI", "--", D.FREEZE_RECORD_REL)     # the registered read runner
+    try:
+        t0 = datetime.datetime.fromisoformat(rec).astimezone(datetime.timezone.utc)
+    except ValueError:
+        return problems + ["the freeze record's commit time is unreadable"]
+    for line in Path(E.Q.EXEC_LEDGER).read_text(errors="replace").splitlines() if Path(E.Q.EXEC_LEDGER).exists() else []:
+        try:
+            row = json.loads(line)
+            when = datetime.datetime.fromisoformat(str(row.get("utc", "")).replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        if str(row.get("purpose", "")).startswith(start_prefix) and when >= t0:
+            problems.append(f"a '{start_prefix}' line at {row.get('utc')} after the freeze record: a prior run's "
+                            "attempt is missing")
+    return problems
 
 
 def run(cmd: list, cwd: Path, timeout: int = 6 * 3600) -> dict:
@@ -445,6 +539,7 @@ def _qhost_abort(signum, frame) -> None:
                 "reason": reason, "retry_rule": "none (R4 B8; r2 P23)"}, indent=1, sort_keys=True) + "\n")
         E.log("code/p309_qualify.py", f"{ATT['label'].upper()} ABORTED BY Q-HOST (the attempt is preserved; no retry)",
               klass="GOVERNANCE", notes="r2 P10")
+        sync_ledgers()                                        # hardening H2
     finally:
         os._exit(3)
 
@@ -536,8 +631,20 @@ def run_item(k: str, fn, freeze: str) -> dict:
         res = {"pass": False, "error": f"{type(exc).__name__}: {exc}"[:800]}
     res.update({"qc": k, "freeze_commit": freeze, "utc": utc(), "wall_s": round(time.time() - t0, 1)})
     xwrite(ATT["dir"] / f"{k}.json", json.dumps(res, indent=1, sort_keys=True, default=str) + "\n")
+    sync_ledgers()                                            # hardening H2: the gate's ledger rows are durable too
     print(f"[{'PASS' if res['pass'] else 'FAIL'}] {k} ({res['wall_s']} s)", flush=True)
     return res
+
+
+def attempt_start(freeze: str, qh: dict) -> dict:
+    """hardening H4: the durable start marker -- which boot, process and runner bytes began this attempt (lets an
+    interrupted attempt be attributed to a reboot by boot id; nothing reads it to resume)"""
+    return {"schema": "P309_ATTEMPT_START/1", "utc": utc(), "pid": os.getpid(), "freeze_commit": freeze,
+            "boot_id": (Path("/proc/sys/kernel/random/boot_id").read_text().strip()
+                        if Path("/proc/sys/kernel/random/boot_id").exists() else None),
+            "runner_sha256": sha_file(Path(__file__)), "unit": qh.get("unit"), "mode": qh.get("mode"),
+            "launch_record_sha256": hashlib.sha256(qh.get("record_bytes") or b"").hexdigest(),
+            "retry_rule": "none (R4 B8; r2 P23): an interrupted attempt is preserved and never resumed"}
 
 
 def host_rerun(workers: int) -> int:
@@ -554,6 +661,16 @@ def host_rerun(workers: int) -> int:
     if target.exists():
         print("HOST RERUN REFUSED: this host's re-run already exists (no retry; it is preserved)")
         return 2
+    # hardening H3: no temporary file of an interrupted write anywhere under the re-run directory, launchable ledgers,
+    # and no earlier start line for this host's re-run after the freeze record
+    names = sorted(p.name for p in QDIR.iterdir()) if QDIR.exists() else []
+    problems = prelaunch_state(f"{HOST_START} {D.G.host_id()[:16]}", tuple(n for n in names if not n.startswith(".")))
+    rr = QDIR / "host_rerun"
+    problems += [f"qualification/host_rerun/{p.name} (a temporary file of an interrupted write)"
+                 for p in (sorted(rr.iterdir()) if rr.exists() else []) if p.name.startswith(".")]
+    if problems:
+        print("HOST RERUN REFUSED: pre-launch state (H3): " + "; ".join(problems[:5]))
+        return 2
     try:
         qh = qhost_preflight(("host-rerun",))                 # r2 C7: before the attempt directory and the start line
     except (H.HostError, OSError, ValueError, KeyError) as exc:
@@ -565,7 +682,11 @@ def host_rerun(workers: int) -> int:
     os.mkdir(ATT["dir"])                                      # exclusive per host id
     E.log("code/p309_qualify.py --host-rerun", f"{HOST_START} {D.G.host_id()[:16]} (rev. 2c A14 / delta D7)",
           klass="NONTARGET_DECOY", drifts=[["1/2", "37/72"]], notes="QC10 host re-run; the declared a2_h5 decoy")
+    _fsync_dir(target.parent)                                 # hardening H4 (after the start line; QC12 T14)
+    sync_ledgers()                                            # hardening H2
+    xwrite(ATT["dir"] / "ATTEMPT_START.json", json.dumps(attempt_start(freeze, qh), indent=1, sort_keys=True) + "\n")
     (ATT["dir"] / "evidence").mkdir()
+    _fsync_dir(ATT["dir"])
     start_qhost_monitor(qh)                                   # r2 C7: continuous Q-HOST sampling (<= 60 s)
     a = decoy_stage1a("QC08_HOST", workers)
     d = decoy_stage1a("QC10_HOST", workers)
@@ -575,7 +696,9 @@ def host_rerun(workers: int) -> int:
     same = lambda u, v: (sorted(c["sha256"] for c in u.get("certificates", [])) ==  # noqa: E731
                          sorted(c["sha256"] for c in v.get("certificates", [])) and u.get("verdicts") == v.get("verdicts"))
     qhost = stop_qhost_monitor()
+    _fsync_path(QHOST["file"])                                # hardening H2
     xwrite(ATT["dir"] / "QHOST_SUMMARY.json", json.dumps(qhost, indent=1, sort_keys=True, default=str) + "\n")
+    sync_ledgers()                                            # hardening H2
     res = {"schema": "P309_HOST_RERUN/2", "freeze_commit": freeze, "utc": utc(), "host_id_sha256": D.G.host_id(),
            "runtime": {"python": platform.python_version(), "platform": f"{sys.platform} {platform.machine()}"},
            "runs": [a["run"], d["run"]], "qhost": {"unit": qh["unit"], "mode": qh["mode"], "pass": qhost["pass"]},
@@ -614,7 +737,12 @@ def main() -> int:
         return 2
     QDIR.mkdir(exist_ok=True)
     if any(p.name.startswith("attempt_") for p in QDIR.iterdir()) or (QDIR / "P309_QUALIFICATION.json").exists():
-        print("QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved)")
+        print("QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; "
+              "classify it read-only with the status validator)")
+        return 2
+    problems = prelaunch_state(RUN_START, ())                 # hardening H3: before Q-HOST, the attempt and RUN START
+    if problems:
+        print("QUALIFICATION REFUSED: pre-launch state (H3): " + "; ".join(problems[:5]))
         return 2
     try:
         qh = qhost_preflight(("official", "drill"))         # r2 P10: before the attempt directory and RUN START
@@ -625,7 +753,13 @@ def main() -> int:
     os.mkdir(ATT["dir"])                                      # exclusive
     E.log("code/p309_qualify.py", f"{RUN_START} attempt_1 at the recorded freeze {freeze[:12]} (the single "
           "qualification run; R4 B8, delta-2 E6)", klass="GOVERNANCE", notes="no retry, no resumption")
+    # hardening H4 (after the start line, which QC12 T14 requires right after the mkdir): the attempt directory
+    # entry and the start line are made durable, then the durable start marker is written
+    _fsync_dir(QDIR)
+    sync_ledgers()                                            # hardening H2
+    xwrite(ATT["dir"] / "ATTEMPT_START.json", json.dumps(attempt_start(freeze, qh), indent=1, sort_keys=True) + "\n")
     (ATT["dir"] / "evidence").mkdir()
+    _fsync_dir(ATT["dir"])
     start_qhost_monitor(qh)                                   # r2 P10: continuous Q-HOST sampling (<= 60 s)
     m = mirror(freeze)
     items = items_table(m, freeze, a.workers)
@@ -633,7 +767,9 @@ def main() -> int:
     for k, fn in items.items():
         results[k] = run_item(k, fn, freeze)
     qhost = stop_qhost_monitor()
+    _fsync_path(QHOST["file"])                                # hardening H2: the monitor's rows are durable
     xwrite(ATT["dir"] / "QHOST_SUMMARY.json", json.dumps(qhost, indent=1, sort_keys=True, default=str) + "\n")
+    sync_ledgers()                                            # hardening H2: every ledger row precedes the marker
     gates = {("Q" + k[2:]): bool(v.get("pass")) and v.get("freeze_commit") == freeze for k, v in results.items()}
     gates["Q-HOST"] = qhost["pass"]                           # r2 P10
     summary = {"schema": "P309_QUALIFICATION/2", "freeze_commit": freeze, "attempt": ATT["dir"].name, "utc": utc(),
@@ -641,6 +777,8 @@ def main() -> int:
                "runtime": {"python": platform.python_version(), "implementation": platform.python_implementation(),
                            "platform": f"{sys.platform} {platform.machine()}", "host_id_sha256": D.G.host_id()},
                "files": {k: sha_file(ATT["dir"] / f"{k}.json") for k in results},
+               # hardening H5: the completion marker binds every attempt file (records, decoy outputs, Q-HOST files)
+               "attempt_files_sha256": {p.name: sha_file(p) for p in sorted(ATT["dir"].iterdir()) if p.is_file()},
                "qhost": {"unit": qh["unit"], "mode": qh["mode"], "baseline": qh["baseline"], "monitor": qhost},
                "statement": "no target input read; no quarantined cell evaluated; no in-band computation; "
                             "NEW Γ309 TARGET EVALUATIONS = 0"}
