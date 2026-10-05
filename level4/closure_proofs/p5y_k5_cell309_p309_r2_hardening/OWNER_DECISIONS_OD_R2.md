@@ -223,14 +223,32 @@ This decision is a recommendation only.
   `claude/p309-r2-hardening-20261005` (H1–H5, `R2_QUALIFICATION_HARDENING_REVIEW.md`), after r2's own independent
   delta review of it?
 - **Options:** (a) adopt via review; (b) freeze r2 as shipped; (c) commission a different hardening.
+- **What the finished runs established:**
+  - **Fixes:** the hardening fixes R01, R05, R07 and R09 in `R2_FAILURE_MATRIX.json`. R02–R04 move from UNSAFE to
+    SAFE_BUT_UNPROVEN.
+  - **Passes:** r2's QC11, QC12, QC-D5 (controls, backstop, pins) and host tests, the same as on r2.
+  - **But it is not adoptable as is:**
+    - (i) **R17**: it fails r2's own static control T14a. The control's anchor includes the comment `# exclusive` on
+      the attempt-`mkdir` line, which the hardening extended. Fix: restore that comment (comment only);
+    - (ii) **R18**: it must be adopted as the **single file** `code/p309_qualify.py` applied onto r2, never as a
+      merge of the hardening branch. The branch's guard and tools would fail QC15 A7.
 - **Consequences:**
-  - (a): the hardening changes only `code/p309_qualify.py` (no pinned function, no gate logic) and needs a delta
-    review and a re-drill;
+  - (a): the hardening changes only `code/p309_qualify.py` (no pinned function, no gate logic). Adoption is that
+    file with the T14a comment restored, then r2's delta review, then a re-drill;
   - (b): accepts torn or empty records on a crash (the attempt is lost, fail closed), and a second start over an
     orphan RUN START. In the matrix, S06 shows this as a real exactly-once gap;
   - (c): its own cost.
-- **Recommendation (only):** **(a)**.
-- **Decide now?** After the delta review.
+- **Recommendation (only):** **(a)**, with the T14a comment restored, as a single-file delta onto r2.
+- **Decide now?** The owner can commission the delta review now. Adoption itself comes after that review.
+
+## Proposed owner action (not an OD in the packet): F-DRILL-ORDER
+
+r2's drill topology (`code/p309_topology_drill.py`, `make_topology`) generates the freeze manifest before the
+parameters. A worker-tier drill (8d) would therefore refuse at the runner's own manifest precondition.
+- It is **left for owner action**, and is still blocking for the 8d drill. It lies outside the hardening's write-set
+  and does not affect the runtime or a real freeze.
+- The one-line fix (swap two generator calls) is in `R2_QUALIFICATION_HARDENING_REVIEW.md` §5.
+- **Recommendation (only):** include it in the same r2 delta review as OD-R2-H.
 
 ## Consolidated table
 
@@ -243,4 +261,5 @@ This decision is a recommendation only.
 | OD-R2-4 | host mutations 1–5 and unit limits (owner + cell-308 operator) | consent / decline each | 1, 2, 3, 5 yes; 4 only with the operator, per window | packet list; isolation rule; uids/patterns needed | 4 is host-wide; without 3 no launch; without 4 the reboot class stays open | request the operator's data now; consent after the 8a audit |
 | OD-R2-5 | interference during the single attempt | (i) Q-HOST FAIL ends it; (ii) idle priority (needs amendment) | **(i)** + whole-host windows, preferably a dedicated host | thresholds; detection about 80–90 s; abort durable (C13/C14) | (i) a third party can consume the attempt; (ii) conflicts with msg 3 §3 | decide now |
 | OD-R2-6 | target-execution host; QC10 re-run before grant; may the freeze name a host | (a) qualification host; (b) dedicated; (c) shared + amendment | **defer the host**; freeze with no host; **require the QC10 re-run** before any grant; lean (b) | 31.5 h single shot; runtime pin; execute ungated; QC10 reproducible | (b) needs an identical runtime + re-run; (c) code + review | decide the deferral now; the host later |
-| OD-R2-H (proposed) | adopt the runtime hardening before the freeze? | (a) adopt via review; (b) freeze as shipped; (c) other | **(a)** | baseline vs hardened matrix; unit tests; regression; AST diff | (a) delta review + re-drill; (b) known evidence-loss and exactly-once gaps | commission the delta review |
+| OD-R2-H (proposed) | adopt the runtime hardening before the freeze? | (a) adopt via review; (b) freeze as shipped; (c) other | **(a)** as the single file, with the T14a comment restored | baseline vs hardened matrix; unit tests; regression (T14a the only difference); AST diff | (a) delta review + re-drill; (b) known evidence-loss and exactly-once gaps | commission the delta review |
+| F-DRILL-ORDER (proposed action) | fix the drill's generator order? | fix via review; leave | **fix** in the same delta review | first matrix run; r1 F manifest | until fixed, the 8d worker-tier drill refuses at launch | include in the delta review |

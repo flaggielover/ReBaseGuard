@@ -58,7 +58,8 @@ These runs are labelled DEVELOPMENT_ONLY, because message 4 item 13 excludes the
 | run | result |
 |---|---|
 | kill test: a light rehearsal SIGKILLed after QC05 (runner and its gate child) | `status` gives **INTERRUPTED** ("no summary (10 record(s) missing)"); a second `run` into the same root gives `REHEARSAL REFUSED: … exists -- a rehearsal is never restarted or resumed` (rc 2); `status` afterwards: still INTERRUPTED |
-| light rehearsal of the hardened package `3c191ac2` (all gates but QC06, QC08–QC10) | see `evidence/rehearsal/` and the section appended below |
+| light rehearsal of the hardened package `3c191ac2` (all gates but QC06, QC08–QC10) | the validator reports **FAIL (COMPLETE_FAIL: QC15)**. Every protocol check passed: one RUN_START, every record bound by its ledger row, the summary last, no temporary file, no protected ref and no grant or result file in the clone. QC01–QC05, QC07, QC11–QC14, QC16, QC17, QC_U2 and QC_D5 (2 921 s) passed. QC15 fails on A7 only: the hardening branch carries `.claude/**` and the hardening namespace outside r2's namespace (a packaging artefact; R18). Host checks: DEVELOPMENT_ONLY. `evidence/rehearsal/light_3c191ac2/` |
+| what this shows | the tool runs end to end, validates by content, and reports a gate failure as FAIL, not PASS. The full `--gates all --require-durable-host` run belongs on the durable host, on the package actually adopted (single file onto r2, T14a comment restored) |
 
 ## On the durable host
 

@@ -1,0 +1,282 @@
+{
+ "classes": [
+  "ALREADY_SAFE",
+  "UNSAFE",
+  "SAFE_BUT_UNPROVEN",
+  "IRRELEVANT_BY_DESIGN"
+ ],
+ "evidence_sha256": {
+  "evidence/matrix/MATRIX_BASELINE_r2_101ef2cb.json": "3013ba4da556f2856de02996cf85c611c7e6026e065c21c24a6fb26ad836e4c6",
+  "evidence/matrix/MATRIX_HARDENED_3c191ac2.json": "260c013b3d18a02dfcabcc479eb8d368e9eca2c52d065e89f9c71ea6ab45675f",
+  "evidence/matrix/MATRIX_HARDENED_v1_b609549c_superseded.json": "f58479aa3c73249914d4daad8f37430d0a3d10341b6c892d470d0697652628e0",
+  "evidence/regression/REGRESSION_BASELINE_101ef2cb.json": "afbc6223d3dfb574bf7a5ef0d0ad78f9795659953d47fe2c4c8d87b846eda43d",
+  "evidence/regression/REGRESSION_HARDENED_3c191ac2.json": "2503908dbc2e255d170ea2d0d9e8db8d46f98213e3ea0950c597bc72a4f3b3b8",
+  "evidence/unit/UNIT_BASELINE_101ef2cb.json": "f803e4d07278b6b37524d0c92bbe6dde36685252949bdc878429ae03e7a0c5f0",
+  "evidence/unit/UNIT_HARDENED_3c191ac2.json": "81c8e2a771a35c67676a58e5ebcfa7a8a96d09aa55a29c0c87634154ad9f0bd2"
+ },
+ "facts_from_evidence": {
+  "baseline_S04_refused": false,
+  "baseline_S05_refused": false,
+  "baseline_S06_refused": false,
+  "baseline_S06_run_start_lines": 2,
+  "baseline_corrupt_cases": [
+   "C04",
+   "C05",
+   "C12"
+  ],
+  "baseline_fsyncs_in_control": 0,
+  "baseline_restarts_all_refused_unchanged": true,
+  "hardened_S04_refused": true,
+  "hardened_S05_refused": true,
+  "hardened_S06_refused": true,
+  "hardened_corrupt_cases": [],
+  "hardened_fsyncs_in_control": 137,
+  "hardened_restarts_all_refused_unchanged": true,
+  "regression": {
+   "QC11": {
+    "baseline_rc": 0,
+    "hardened_rc": 0
+   },
+   "QC12": {
+    "baseline_rc": 0,
+    "hardened_rc": 0
+   },
+   "QC_D5_backstop": {
+    "baseline_rc": 0,
+    "hardened_rc": 0
+   },
+   "QC_D5_controls": {
+    "baseline_rc": 0,
+    "hardened_rc": 0
+   },
+   "QC_D5_pins": {
+    "baseline_rc": 0,
+    "hardened_rc": 0
+   },
+   "test_p309_host.py": {
+    "baseline_rc": 0,
+    "hardened_rc": 0
+   },
+   "test_p309_host_controls.py": {
+    "baseline_rc": 0,
+    "hardened_rc": 0
+   },
+   "test_p309_static_controls.py": {
+    "baseline_rc": 0,
+    "hardened_rc": 1
+   }
+  },
+  "regression_pins_all_current": {
+   "baseline": true,
+   "hardened": true
+  },
+  "unit_baseline_discriminates": true,
+  "unit_baseline_failed": [
+   "T03_fsync_file_and_dir",
+   "T04_interrupted_write_leaves_no_record",
+   "T05_ledger_problems",
+   "T06_prelaunch_state",
+   "T07_sync_ledgers",
+   "T08_attempt_start_marker"
+  ],
+  "unit_hardened_all_pass": true
+ },
+ "packages": {
+  "hardened": "3c191ac2f00a99c5823aefa1ade8c028a17a8918",
+  "r2_as_shipped": "101ef2cb17e5eab2892212178278da45b98004ed"
+ },
+ "rows": [
+  {
+   "evidence": [
+    "matrix C04 C05 C12",
+    "unit T04"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R01",
+   "note": "baseline torn/empty records or markers in ['C04', 'C05', 'C12'] (fail-closed CORRUPT, the attempt's evidence lost); hardened: temp + fsync + link, every crash point INTERRUPTED, never CORRUPT",
+   "r2_as_shipped": "UNSAFE",
+   "risk": "non-atomic evidence writes"
+  },
+  {
+   "evidence": [
+    "matrix C15 fsync_ops",
+    "unit T03"
+   ],
+   "hardened": "SAFE_BUT_UNPROVEN",
+   "id": "R02",
+   "note": "baseline 0 fsyncs in a full run; hardened 137, each record fsynced before its link (25/25 ordered). Unproven: true power-loss durability depends on the filesystem honouring fsync; no power-cut test is possible here",
+   "r2_as_shipped": "UNSAFE",
+   "risk": "missing fsync on evidence"
+  },
+  {
+   "evidence": [
+    "matrix C15 fsync log (dir fsync after every link)",
+    "unit T03"
+   ],
+   "hardened": "SAFE_BUT_UNPROVEN",
+   "id": "R03",
+   "note": "hardened fsyncs the directory after every link and after the attempt mkdir (after the RUN START line, QC12 T14); same power-loss caveat as R02",
+   "r2_as_shipped": "UNSAFE",
+   "risk": "missing fsync on parent directories"
+  },
+  {
+   "evidence": [
+    "matrix S05",
+    "unit T05 T07"
+   ],
+   "hardened": "SAFE_BUT_UNPROVEN",
+   "id": "R04",
+   "note": "rows are still appended by the research ledger writer (unchanged, one buffered write per row); hardened fsyncs both ledgers after every start line, gate record and abort, and refuses launch over a torn or unparseable row (H3). A row torn by power loss is detected, never silently continued",
+   "r2_as_shipped": "UNSAFE",
+   "risk": "ledger append durability"
+  },
+  {
+   "evidence": [
+    "matrix S05 S06",
+    "unit T06"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R05",
+   "note": "baseline launched over a torn ledger (S05 refused=False) and over an orphan RUN START (S06 refused=False, 2 start lines); hardened refuses both before Q-HOST and the attempt (H3)",
+   "r2_as_shipped": "UNSAFE",
+   "risk": "launch without checking existing ledger state"
+  },
+  {
+   "evidence": [
+    "matrix S09"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R06",
+   "note": "two racing runners: os.mkdir decides, exactly one attempt and one RUN START. The launcher's own check (no loaded p309-r2-* unit, empty scratch root) is SAFE_BUT_UNPROVEN here (no systemd)",
+   "r2_as_shipped": "ALREADY_SAFE",
+   "risk": "double-launch protection"
+  },
+  {
+   "evidence": [
+    "matrix S06",
+    "restart probes C02-C15"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R07",
+   "note": "restarts over an existing attempt are refused in both; but if the attempt directory is lost (power loss before its entry is durable, or removal) r2 as shipped starts a second run (two RUN STARTs); hardened refuses it and makes the entry durable",
+   "r2_as_shipped": "UNSAFE",
+   "risk": "duplicate execution after interruption"
+  },
+  {
+   "evidence": [
+    "matrix S01 C02"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R08",
+   "note": "no lock files by design: the attempt directory is a permanent tombstone; an empty one blocks every restart (fail closed) and is classified INTERRUPTED. No stale-lock 'recovery' exists, by design (A27 / P23)",
+   "r2_as_shipped": "ALREADY_SAFE",
+   "risk": "stale lock handling"
+  },
+  {
+   "evidence": [
+    "matrix S02 S04"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R09",
+   "note": "a torn record inside a prior attempt is refused by both (S02); a temporary file left in the qualification directory was ignored by r2 as shipped (S04) and is refused by the hardened runner",
+   "r2_as_shipped": "UNSAFE",
+   "risk": "partial artifact handling"
+  },
+  {
+   "evidence": [
+    "matrix C08"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R10",
+   "note": "INTERRUPTED in both; restart refused, bytes unchanged",
+   "r2_as_shipped": "ALREADY_SAFE",
+   "risk": "crash between artifact write and ledger update"
+  },
+  {
+   "evidence": [
+    "matrix C11 C12"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R11",
+   "note": "the gap itself is INTERRUPTED in both; the marker WRITE was torn in r2 as shipped (C12 CORRUPT, see R01) and is atomic when hardened; the hardened marker binds every attempt file (H5)",
+   "r2_as_shipped": "ALREADY_SAFE",
+   "risk": "crash between ledger update and completion marker"
+  },
+  {
+   "evidence": [
+    "matrix C10",
+    "recovery-branch R08"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R12",
+   "note": "fail closed: INTERRUPTED, never resumed, never a pass (the attempt is lost by design; the mitigation is the durable host, see DURABLE_HOST_EXECUTION_PACKET.md). Hardened adds ATTEMPT_START (boot id) so the interruption can be attributed to a reboot",
+   "r2_as_shipped": "ALREADY_SAFE",
+   "risk": "host restart during QC-D5"
+  },
+  {
+   "evidence": [
+    "matrix S07",
+    "r2 code: qhost_preflight continuity; manifest runtime.host_id_sha256"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R13",
+   "note": "Q-HOST refuses before the attempt directory (S07, with a test double for the systemd context); the freeze manifest binds the freeze host, so make_freeze_manifest --check refuses on another host; Q-HOST's monitor aborts on a continuity break during the run (C13)",
+   "r2_as_shipped": "ALREADY_SAFE",
+   "risk": "clean refusal when host identity differs"
+  },
+  {
+   "evidence": [
+    "restart probes C02-C15 (3 requests each, bytes unchanged)",
+    "static review"
+   ],
+   "hardened": "ALREADY_SAFE",
+   "id": "R14",
+   "note": "the runner never deletes, renames or rewrites evidence (mirror() rmtree touches only the scratch mirror); the hardened xwrite removes only its own temporary name after the link; validators and status are read-only",
+   "r2_as_shipped": "ALREADY_SAFE",
+   "risk": "cleanup or retry paths that could mutate preserved evidence"
+  },
+  {
+   "evidence": [
+    "matrix run 1 (all NOT_STARTED: manifest precondition refused)",
+    "r1 F manifest pins freeze/P309_FREEZE.json"
+   ],
+   "hardened": "UNSAFE",
+   "id": "R15",
+   "note": "p309_topology_drill.make_topology runs the manifest generator before the parameters; a worker-tier drill (which calls main()) would refuse at its manifest precondition. Rehearsal tooling, not runtime: outside this branch's write-set; the result-free rehearsal tool (r2h_rehearse.py) uses the correct order",
+   "r2_as_shipped": "UNSAFE",
+   "risk": "drill topology generator order (F-DRILL-ORDER, found here)"
+  },
+  {
+   "evidence": [
+    "code/p309_host.py durability_preflight"
+   ],
+   "hardened": "SAFE_BUT_UNPROVEN",
+   "id": "R16",
+   "note": "requires a cloud metadata service (IMDS), not-spot, not-burstable: fails closed (safe) on any non-cloud durable host; a non-AWS host needs a reviewed change (owner decision OD-R2-3/6)",
+   "r2_as_shipped": "SAFE_BUT_UNPROVEN",
+   "risk": "host portability of the durability preflight"
+  },
+  {
+   "evidence": [
+    "regression test_p309_static_controls.py: baseline rc 0, hardened rc 1"
+   ],
+   "hardened": "UNSAFE",
+   "id": "R17",
+   "note": "T14a plants a mutant into main by an exact anchor that includes the comment '# exclusive' on the attempt mkdir line; the hardened runner extended that comment, the anchor occurs 0 times, and r2's rule reports a missing anchor as FAIL. T14 itself still passes (QC12) and T14b-k pass. Required pre-adoption fix (comment only, NOT applied here by instruction): restore the comment to '# exclusive'",
+   "r2_as_shipped": "ALREADY_SAFE",
+   "risk": "hardened package vs r2's own static-control suite (T14a anchor)"
+  },
+  {
+   "evidence": [
+    "rehearsal light_3c191ac2: validator FAIL; QC15 A7 false=True"
+   ],
+   "hardened": "IRRELEVANT_BY_DESIGN",
+   "id": "R18",
+   "note": "A7 requires every path changed since c902fe2f to lie in r2's namespace; this branch also carries .claude/** (session guard) and the hardening namespace (tools, docs), so A7 fails by construction. The runtime change itself is one file inside r2's namespace (r2 alone: 0 paths outside). Adoption must therefore be the single file code/p309_qualify.py applied to r2, never a merge of this branch",
+   "r2_as_shipped": "ALREADY_SAFE",
+   "risk": "QC15 self-audit A7 on the hardening branch as packaged"
+  }
+ ],
+ "schema": "P309_R2_FAILURE_MATRIX/1",
+ "statement": "synthetic gates and scratch replicas only; NEW TARGET EVALUATIONS = 0"
+}

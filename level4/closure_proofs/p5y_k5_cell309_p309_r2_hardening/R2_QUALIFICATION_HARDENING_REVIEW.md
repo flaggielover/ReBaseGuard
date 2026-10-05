@@ -81,9 +81,48 @@ is kept as `evidence/matrix/MATRIX_HARDENED_v1_b609549c_superseded.json`.
 | r2's own gates on the hardened package (post-synthetic-freeze) | see §3a | `evidence/regression/` |
 | pinned functions | 9/9 unchanged | `evidence/AST_DIFF_RUNNER.json` |
 
-### 3a. Regression against r2's own gates
+### 3a. Regression against r2's own gates (both packages after a synthetic freeze, run side by side)
 
-Filled from `evidence/regression/REGRESSION_*.json` (the section is appended when the runs finish).
+| check (as r2 defines it) | r2 `101ef2cb` | hardened `3c191ac2` |
+|---|---|---|
+| QC11 `test_p309_exactly_once.py` | rc 0; 112/112 flows | rc 0; 112/112 flows |
+| QC12 `p309_static_check.py` (T1–T14) | rc 0 | rc 0 (v1 failed T5 and T14 and was fixed, §2) |
+| QC-D5 D5-exception controls | rc 0 (2 953 s) | rc 0 (2 946 s) |
+| QC-D5 site backstop | rc 0 | rc 0 |
+| QC-D5 scan pins | all current | all current |
+| `test_p309_host.py` | rc 0 | rc 0 |
+| `test_p309_host_controls.py` (includes the runner's Q-HOST refusals) | rc 0 | rc 0 |
+| **`test_p309_static_controls.py`** | rc 0 | **rc 1: `[FAIL] T14a_main_preflight_after_the_attempt`** |
+
+**R17: the T14a regression (interpretable, not fixed here by instruction).**
+- Cause: T14a plants a mutant into `main` by an exact anchor that ends with the comment `# exclusive` on the line
+  `os.mkdir(ATT["dir"])`. The hardened runner extended that comment (`# exclusive: of two racing runners exactly one
+  passes`), so the anchor occurs **0** times. r2's rule reports a missing anchor as FAIL, never a silent pass.
+- T14 itself is not weakened: QC12's T14 passes, and the sibling controls T14b–T14k, which plant other
+  "refusal after the attempt" mutants into the same `main`, all pass.
+- Even so, the delivered package fails r2's own suite, which r2's drill runs.
+- **Required pre-adoption fix (comment only):** restore that comment to exactly `# exclusive`. It is not applied on
+  this branch, by the instruction to add nothing more once the runs were under way.
+
+### 3b. The result-free rehearsal (development only; `evidence/rehearsal/`)
+
+**`light_3c191ac2`**: the single-command rehearsal of the hardened package, all gates but QC06 and QC08–QC10.
+- QC01–QC05, QC07, QC11–QC14, QC16, QC17, QC_U2 and **QC_D5 (2 921 s)** pass.
+- **QC15 fails on A7 only.**
+- The validator reports `COMPLETE_FAIL: gate(s) failed: QC15`. Every protocol check passed (one RUN_START, records
+  bound, summary last, no temporary file). The clone holds no protected ref and no grant or result file.
+- Host checks: DEVELOPMENT_ONLY. No systemd PID 1, a container, and 23 GB free (below 40 GB).
+
+**R18: QC15 / A7 is a packaging artefact.**
+- A7 requires every path changed since `c902fe2f` to lie in r2's namespace. This branch also carries `.claude/**` (8
+  files, the session guard) and `…_p309_r2_hardening/**` (9 files, tools and docs).
+- The runtime change is one file inside r2's namespace, and r2 alone has 0 paths outside it (QC15 passed on r2 in
+  the previous task's rehearsal).
+- **Adoption must therefore be the single file `code/p309_qualify.py` applied onto r2 by r2's review route, never a
+  merge of this branch.**
+
+**`killed_3c191ac2`**: SIGKILLed after QC05. It is INTERRUPTED; a restart into the same root is refused with an
+explicit message; it remains INTERRUPTED.
 
 ## 4. Residual risks after hardening
 
@@ -96,7 +135,18 @@ Filled from `evidence/regression/REGRESSION_*.json` (the section is appended whe
 - **A ledger row torn at power loss *during* an attempt** is not repaired. It makes the attempt CORRUPT on validation
   (fail closed) and blocks any later launch (H3) until the owner decides.
 
-## 5. Proposed fix for F5 (not applied; outside the write-set; needs r2's review route)
+## 5. F-DRILL-ORDER (F5): status, and the proposed fix
+
+**Status: intentionally left for owner action, and still blocking for r2's worker-tier drill.**
+- It is **not fixed** on this branch: `code/p309_topology_drill.py` is outside this branch's write-set (runtime
+  hardening only).
+- It does **not** affect the qualification runtime, and it does not affect a real freeze. It affects only the
+  synthetic topology the drill builds.
+- `code/r2h_rehearse.py` uses the correct order, so the result-free rehearsal is unaffected.
+- Until the fix goes through r2's review route, r2's 8d worker-tier drill would refuse at the runner's own manifest
+  precondition.
+
+The proposed fix (not applied):
 
 In `code/p309_topology_drill.py`, `make_topology`, swap the first two generator calls, so that the parameters are
 generated before the manifest (as in a real freeze; r1's F manifest pins `freeze/P309_FREEZE.json`):

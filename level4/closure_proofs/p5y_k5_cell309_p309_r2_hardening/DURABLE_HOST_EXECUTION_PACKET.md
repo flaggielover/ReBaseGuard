@@ -17,8 +17,8 @@ and never relaxes them.
 | # | prerequisite | why | status at this packet |
 |---|---|---|---|
 | P0.1 | the owner has answered OD-R2-0 (A)–(D), -1, -2, -3, -4 and -5 (`OWNER_DECISIONS_OD_R2.md`) | authority (msg 4 item 7) | **open** |
-| P0.2 | the package to freeze is fixed: r2 `101ef2cb`, or r2 + the hardening `claude/p309-r2-hardening-20261005` after its delta review (OD-R2-H) | durability (§6) | **open** (recommended: hardened) |
-| P0.3 | F-DRILL-ORDER fixed in `code/p309_topology_drill.py` (params before manifest) and re-reviewed, **or** the drill replaced by `r2h_rehearse.py` plus the launcher's `--mode drill` | otherwise the worker-tier drill refuses at the runner's manifest precondition | **open** |
+| P0.2 | the package to freeze is fixed: r2 `101ef2cb`, **or** r2 plus the single file `code/p309_qualify.py` from `claude/p309-r2-hardening-20261005` **with the T14a comment `# exclusive` restored** (R17), after r2's delta review (OD-R2-H). Never a merge of the hardening branch (R18: QC15 A7) | durability (§6) | **open** (recommended: hardened single-file delta) |
+| P0.3 | F-DRILL-ORDER fixed in `code/p309_topology_drill.py` (params before manifest) and re-reviewed | otherwise the worker-tier drill refuses at the runner's manifest precondition | **open: left for owner action; blocking for the 8d drill** |
 | P0.4 | the host provides a cloud metadata service (IMDS), **or** a reviewed host-portability change to `durability_preflight` exists | `cloud_metadata_available`, `not_spot`, `not_burstable`, `no_scheduled_maintenance` fail closed without one | met only on an IMDS cloud host |
 | P0.5 | the cell-308 operator's `foreign_uids` and heavy patterns, and window agreement with every non-root workload on the host | OD-R2-4/5 | **open** |
 

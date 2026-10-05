@@ -138,6 +138,30 @@ def main() -> int:
             "requires a cloud metadata service (IMDS), not-spot, not-burstable: fails closed (safe) on any non-cloud "
             "durable host; a non-AWS host needs a reviewed change (owner decision OD-R2-3/6)"),
     ]
+    # results of the finished runs that bear on the hardened package as delivered
+    sc_h = rh["runs"].get("test_p309_static_controls.py", {})
+    t14a_fail = "[FAIL] T14a_main_preflight_after_the_attempt" in sc_h.get("stdout_tail", "")
+    rows.append(row(
+        "R17", "hardened package vs r2's own static-control suite (T14a anchor)", "ALREADY_SAFE",
+        "UNSAFE" if t14a_fail else "ALREADY_SAFE",
+        ["regression test_p309_static_controls.py: baseline rc "
+         f"{rb['runs'].get('test_p309_static_controls.py', {}).get('rc')}, hardened rc {sc_h.get('rc')}"],
+        "T14a plants a mutant into main by an exact anchor that includes the comment '# exclusive' on the attempt "
+        "mkdir line; the hardened runner extended that comment, the anchor occurs 0 times, and r2's rule reports a "
+        "missing anchor as FAIL. T14 itself still passes (QC12) and T14b-k pass. Required pre-adoption fix "
+        "(comment only, NOT applied here by instruction): restore the comment to '# exclusive'"))
+    reh = json.loads((ev / "rehearsal" / "light_3c191ac2" / "VALIDATION.json").read_text())
+    q15 = json.loads((ev / "rehearsal" / "light_3c191ac2" / "attempt" / "QC15.json").read_text())
+    a7 = "A7_formal_namespace_only_research_unchanged" in q15["runs"][0]["stdout_tail"] and \
+        '"A7_formal_namespace_only_research_unchanged": false' in q15["runs"][0]["stdout_tail"]
+    rows.append(row(
+        "R18", "QC15 self-audit A7 on the hardening branch as packaged", "ALREADY_SAFE",
+        "IRRELEVANT_BY_DESIGN" if a7 else "ALREADY_SAFE",
+        [f"rehearsal light_3c191ac2: validator {reh['verdict']}; QC15 A7 false={a7}"],
+        "A7 requires every path changed since c902fe2f to lie in r2's namespace; this branch also carries .claude/** "
+        "(session guard) and the hardening namespace (tools, docs), so A7 fails by construction. The runtime change "
+        "itself is one file inside r2's namespace (r2 alone: 0 paths outside). Adoption must therefore be the "
+        "single file code/p309_qualify.py applied to r2, never a merge of this branch"))
     out = {"schema": "P309_R2_FAILURE_MATRIX/1",
            "packages": {"r2_as_shipped": "101ef2cb17e5eab2892212178278da45b98004ed",
                         "hardened": mh["package_commit"]},
