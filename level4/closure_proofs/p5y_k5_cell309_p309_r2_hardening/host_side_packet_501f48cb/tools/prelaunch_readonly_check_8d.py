@@ -8,8 +8,9 @@ usage (as the P309 user, with the pinned interpreter, from anywhere outside the 
 
 What it reads, and nothing else:
   * git (with GIT_OPTIONAL_LOCKS=0, so `status` never writes the index) in <CLONE>: HEAD, tree, branch, status,
-    common dir, alternates, configuration, local refs; with --remote, `git ls-remote origin` (network; the P309
-    credential helper);
+    common dir, alternates, configuration, local refs; with --remote, `git ls-remote origin` (network; for a private
+    repository, set GIT_ASKPASS to the P309-only helper in this command's environment: it is passed to ls-remote only,
+    and appears in no git configuration);
   * the working-tree bytes of the four reviewed r2 tools and the two ledgers;
   * the host configuration file, the A-02d check record and the 8b-final verdict record (JSON);
   * `systemctl list-units` (read-only), /proc, the IMDS (through r2's own p309_host.provenance, loaded from the clone
@@ -41,7 +42,8 @@ TOOLS = {  # path in the namespace -> sha256 of the bytes at 501f48cb
 COMMITTED_DRILLS = ["20261001T132113Z", "20261001T132325Z", "20261001T143415Z", "20261001T160409Z",
                     "20261001T171235Z", "20261001T202159Z", "20261001T222108Z_INTERRUPTED", "20261001T224858Z",
                     "20261002T025624Z", "20261002T052554Z"]
-PROTECTED_REF = re.compile(r"refs/(?:p5y-k5-cell30|p309-cell309|rlr-tail/|p309-test/)", re.I)
+# r2's exactly-once refs: every ref under refs/p5y-k5-cell309 (both production namespaces, markers, pending results)
+PROTECTED_REF = re.compile(r"^refs/p5y-k5-cell309")
 COUNTERS = ("new_target_evaluations", "target_equivalent_proxies", "target_informed_optimisation")
 LAUNCH_KEYS = ("unit_user", "unit_group", "memory_max", "oom_score_adjust", "cpu_weight", "io_weight")
 GIT_ENV = {"LC_ALL": "C", "GIT_PAGER": "cat", "GIT_TERMINAL_PROMPT": "0", "GIT_OPTIONAL_LOCKS": "0",
@@ -53,9 +55,12 @@ def arg(name, default=None):
     return a[a.index(name) + 1] if name in a else default
 
 
-def git(repo, *args):
+def git(repo, *args, askpass=False):
+    env = dict(GIT_ENV)
+    if askpass and os.environ.get("GIT_ASKPASS"):   # the P309-only credential helper (F-2), for ls-remote only
+        env["GIT_ASKPASS"] = os.environ["GIT_ASKPASS"]
     p = subprocess.run(["git", "-C", repo] + list(args), stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE, universal_newlines=True, timeout=120, env=GIT_ENV)
+                       stderr=subprocess.PIPE, universal_newlines=True, timeout=120, env=env)
     return p.stdout.strip() if p.returncode == 0 else None
 
 
@@ -144,7 +149,7 @@ def main():
     c["C11_ledgers_parse_newline_zero_counters"] = not led
     refs = (git(clone, "for-each-ref", "--format=%(refname)") or "").splitlines()
     c["C12_no_protected_ref_local"] = not [r for r in refs if PROTECTED_REF.search(r)]
-    rem = git(clone, "ls-remote", "origin") if "--remote" in sys.argv else None   # fail closed without --remote
+    rem = git(clone, "ls-remote", "origin", askpass=True) if "--remote" in sys.argv else None   # fail closed without --remote
     info["ls_remote_ok"] = rem is not None
     rows = [l.split("\t") for l in (rem or "").splitlines() if "\t" in l]
     c["C13_origin_r2_is_501f48cb"] = any(r[1] == BRANCH_REF and r[0] == R2_COMMIT for r in rows)
@@ -207,10 +212,13 @@ def main():
     c["C27_check_record_recent"] = age_h is not None and 0 <= age_h <= max_age_h
     c["C28_check_record_dir_is_not_the_run_scratch"] = not overlaps(os.path.dirname(os.path.realpath(
         check_record)), scratch)
-    spec = importlib.util.spec_from_file_location("p309host_ro", os.path.join(ns, "code", P + "host.py"))
-    H = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(H)
-    now = H.provenance(H.load_config([]))
+    if c["C08_bytes_" + P + "host"]:            # only the reviewed bytes are ever loaded
+        spec = importlib.util.spec_from_file_location("p309host_ro", os.path.join(ns, "code", P + "host.py"))
+        H = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(H)
+        now = H.provenance(H.load_config([]))
+    else:
+        now = {}
     ver = load_json(verdict_path) or {}
     keys = ("machine_id_sha256", "hostname_sha256")
     rp = ((rec.get("preflight") or {}).get("provenance") or {})

@@ -55,7 +55,7 @@ workload, not only with cell 308 (Part C).
 | OOM preference | `OOMScoreAdjust=500`: P309 dies first | U-2 |
 | foreign activity allowed at the start | ≤ 0.05 core per process; load ≤ baseline + 0.5 | `heavy_cpu_fraction`, `load_margin` |
 | foreign activity allowed during the run | ≤ 0.5 core per process; ≤ 1.0 core together; no heavy pattern | `monitor_*` (OD-R2-5 (i)) |
-| P309 disk use | the drill clone, scratch mirrors and decoy outputs, about 2–3 GB, on the P309 volume. If that is the same filesystem as cell 308's, agree the space (M2) | HP §1 |
+| P309 disk use | the drill clone (about 0.5 GB per clone, HP §1), scratch mirrors (about 1 GB, HP §1) and the attempt's outputs (HP §1: about 3–4 MB for a full attempt with decoy outputs), on the P309 volume. If that is the same filesystem as cell 308's, agree the space (M2) | HP §1 |
 
 ## 4. Ports, services and other resources
 
@@ -63,7 +63,7 @@ workload, not only with cell 308 (Part C).
 |---|---|---|
 | network ports | none opened | — |
 | systemd units | only transient `p309-r2-*` | cell 308 must use no unit named `p309-r2-*` (the launcher refuses while one is loaded) |
-| IMDS | about two reads per minute during a run (token plus a few paths, 1 s timeouts) | the operator says whether cell 308 relies on IMDS in a way a low request rate could disturb (Part B) |
+| IMDS | about six requests per Q-HOST sample (a token, then instance-id, instance-type, life cycle, scheduled maintenance and spot action; 1 s timeouts), one sample per ≤ 60 s, plus the launch's and the runner's own reads | the operator says whether cell 308 relies on IMDS in a way a low request rate could disturb (Part B) |
 | GitHub | P309's fetch and push before and after a window, with a P309-only credential | separate credentials; no shared clone, ref or object store |
 | journald | the unit's output goes to the journal | journal size limits are the host administrator's (Part B) |
 | `/dev/shm` | Python multiprocessing semaphores, with unique names | none expected |
@@ -117,7 +117,8 @@ B6  Other non-root workloads or accounts on the host (service accounts, other us
 B7  Consent to the host-wide holds during each P309 window (OD-R2-4 M4): automatic upgrades and reboots
     held for the window, restored after it:   consent / decline
 B8  Consent, if the 8b rows fired, to: X-1 reboot __ ; X-2 time sync __ ; X-3 hostname/machine-id __ ;
-    X-4 /proc hidepid __ ; X-8 cgroup controllers __ ; the M2 disk space on a shared filesystem __
+    X-4 /proc hidepid __ ; X-5 git package __ ; X-6 polkit / systemd-run packages __ ;
+    X-7 interpreter build dependencies __ ; X-8 cgroup controllers __ ; the M2 disk space on a shared filesystem __
 B9  Does cell 308 rely on IMDS, on unit names beginning with p309-r2-, or on the journal size, in a way P309
     could disturb?  ______
 B10 Contact path during a window (for an emergency on cell 308's side): ______

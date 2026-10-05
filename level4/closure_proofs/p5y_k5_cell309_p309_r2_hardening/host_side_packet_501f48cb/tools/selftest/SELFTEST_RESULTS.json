@@ -1,6 +1,12 @@
 {
  "all_ok": true,
  "expect": {
+  "drill_corrupt_report": {
+   "classification": "FAIL",
+   "must_fail": [
+    "V02_schema_tier_pass"
+   ]
+  },
   "drill_extra_file": {
    "classification": "FAIL",
    "must_fail": [
@@ -42,6 +48,17 @@
  },
  "note": "run in the coordinating Cloud Session on a fresh clone of origin r2 (501f48cb); the drill cases use synthetic worker-shaped fixtures built from the committed cloud-tier report 20261002T052554Z; nothing here is host evidence",
  "results": {
+  "drill_corrupt_report": {
+   "classification": "FAIL",
+   "clone_unchanged_by_tool": true,
+   "failed": [
+    "V02_schema_tier_pass"
+   ],
+   "incident": [],
+   "n_checks": 2,
+   "ok": true,
+   "rc": 1
+  },
   "drill_extra_file": {
    "classification": "FAIL",
    "clone_unchanged_by_tool": true,

@@ -53,7 +53,7 @@ export P309_SCRATCH_ROOT="$S/scratch" P309_EVIDENCE_DIR="$S/evidence" TMPDIR="$S
 <INTERP> -B code/p309_static_check.py              # QC12: every T-line [PASS], exit 0
 <INTERP> -B tests/test_p309_static_controls.py     # 22 controls [PASS], incl. T14a_main_preflight_after_the_attempt
 <INTERP> -B code/p309_scan_pins.py --list          # last line exactly: P309 SCAN PINS: all current
-<INTERP> -B tests/test_p309_scan_allowance.py      # every C-line [PASS]
+<INTERP> -B tests/test_p309_scan_allowance.py      # every line [PASS] (the C-lines and the genuine_* lines)
 <INTERP> -B code/make_freeze_params.py             # writes freeze/ in THIS disposable clone only
 <INTERP> -B code/make_freeze_manifest.py
 <INTERP> -B code/p309_placeholder_check.py         # "pass": true, "unallowed": []
@@ -106,8 +106,8 @@ Rules for step 3:
     verdict and to the check record.
 - **Ledger state, no prior attempt, host identity.** These are `C09`–`C12` and `C29`–`C33`.
 - **The filesystem pre-launch probe** cannot be read-only. It is the runner's own `fs_probe` (S1 + SF1-A), which runs
-  inside the drill before Q-HOST, the attempt and RUN START. A probe failure is a drill FAIL classed **FAIL-PROBE**
-  (§8). No attempt directory or start line exists then.
+  inside the drill before Q-HOST, the attempt and RUN START. A probe failure is a drill FAIL classed
+  **FAIL-PRESTART** (§8). No attempt directory or start line exists then.
 - `<P309_HOME>/p309_8d_records/` is a P309 directory outside the clone and outside every scratch root.
 
 ## 3. The launch (once; never repeated automatically)
@@ -121,13 +121,20 @@ P309_SCRATCH_ROOT=<RUN_SCRATCH> P309_FOREIGN_ROOTS=<FOREIGN_ROOTS> \
 
 **Expected standard output:** `{"launched": true, "unit": "p309-r2-drill-<utc>", "record": "<RUN_SCRATCH>/launch_<utc>.json", "rc": 0, …, "watch": "journalctl -u p309-r2-drill-<utc> -f"}`.
 
-**What the launcher does,** per `code/p309_launch.py`, refusing on the first failure:
-1. the unit user check (A16), and a valid scratch root;
-2. the durability preflight, the exclusion gate (60 s sample), and the isolation check;
-3. no loaded `p309-r2-*` unit, and the launcher running as the unit user;
-4. it writes `launch_<utc>.json` exclusively;
-5. it creates `<RUN_SCRATCH>/home` and `<RUN_SCRATCH>/tmp`;
+**What the launcher does,** per `code/p309_launch.py`:
+1. it refuses at once, with no record, if the unit user check (A16) or the scratch root fails;
+2. it evaluates the durability preflight, the exclusion gate (60 s sample) and the isolation check, lists the loaded
+   `p309-r2-*` units, and checks that it runs as the unit user. It collects **every** failure as a blocker;
+3. it writes `launch_<utc>.json` exclusively, with the blockers in it;
+4. if any blocker exists, it refuses, and nothing starts;
+5. otherwise it creates `<RUN_SCRATCH>/home` and `<RUN_SCRATCH>/tmp`;
 6. it starts **one** transient unit `p309-r2-drill-<utc>`, running `<INTERP> -B <NS>/code/p309_topology_drill.py --tier worker`.
+
+**The journal.** The `watch` hint in the output names `journalctl -u`. A non-root P309 user outside the
+`systemd-journal` and `adm` groups (M1) normally cannot read a system unit's journal. In the worker tier, the drill
+also captures the runner's output without keeping it, so the per-gate `[PASS]/[FAIL]` lines never reach the journal.
+Monitoring therefore uses the files and `systemctl` (§4). A read-only journal extract by the host administrator after
+the window is optional evidence.
 
 **If the launch does not start:**
 - `"launched": false` with `"refused"`, or a `systemd-run` rc ≠ 0, means **NOT_STARTED** (§8). Keep the record.
@@ -140,7 +147,7 @@ P309_SCRATCH_ROOT=<RUN_SCRATCH> P309_FOREIGN_ROOTS=<FOREIGN_ROOTS> \
 U=p309-r2-drill-<utc>                                    # from the launch output
 A=<RUN_SCRATCH>/drill_<stamp>/clone/level4/closure_proofs/p5y_k5_cell309_p309_r2/qualification/attempt_1
 systemctl show "$U" -p ActiveState -p SubState -p MainPID -p ExecMainStatus -p MemoryCurrent --no-pager
-journalctl -u "$U" --no-pager -n 40                     # [PASS]/[FAIL] <QC> (<s> s) lines, in gate order
+systemctl list-units --all 'p309-r2-*' --no-legend --plain   # snapshot: only "$U" may appear (E-1)
 ls -la "$A"                                              # QC records appear one by one
 tail -n 2 "$A/QHOST_MONITOR.jsonl"                       # a "sample" row with "pass": true at most ~60 s old
 cat /proc/sys/kernel/random/boot_id; grep -o '"boot_id": "[^"]*"' "$A/ATTEMPT_START.json"   # must be equal
@@ -169,12 +176,12 @@ Rules while the unit runs:
 | launch | `<RUN_SCRATCH>/launch_<utc>.json` | `P309_R2_LAUNCH/2`: mode `drill`; unit; redacted configuration; preflight, gate and isolation documents; `p309_units_loaded: []`; argv; `blockers: []` |
 | launch | `<RUN_SCRATCH>/home/`, `<RUN_SCRATCH>/tmp/` | the unit's HOME and TMPDIR |
 | run | `<RUN_SCRATCH>/drill_<stamp>/clone/` | the drill's clone of the committed branch (no remote); the synthetic freeze F′, record FR′ and checkpoint commit |
-| run | `…/clone/<NS-rel>/qualification/attempt_1/` | `ATTEMPT_START.json`, `LAUNCH_RECORD.json`, `UNIT_PROPERTIES.json`, `QHOST_BASELINE.json`, `QHOST_MONITOR.jsonl`, `QC01.json` … `QC_D5.json` (QC08/QC10 with their decoy outputs under `evidence/`), `QHOST_SUMMARY.json`; then `qualification/P309_QUALIFICATION.json` |
+| run | `…/clone/<NS-rel>/qualification/attempt_1/` | `ATTEMPT_START.json`, `LAUNCH_RECORD.json`, `UNIT_PROPERTIES.json`, `QHOST_BASELINE.json`, `QHOST_MONITOR.jsonl`, `QC01.json` … `QC_D5.json` (the decoy outputs `QC08_DECOY_STAGE1A.json`, `QC09_DECOY_STAGE1B_*.json` and `QC10_DECOY_STAGE1A.json` lie directly in `attempt_1/`; the gates' subprocess evidence goes under `attempt_1/evidence/`), `QHOST_SUMMARY.json`; then `qualification/P309_QUALIFICATION.json` |
 | end | `<NS>/evidence/drill/<stamp>/DRILL_REPORT.json` | `P309_R2_DRILL/1`, tier `worker`: `clone_base`, topology, witnesses, `items.main` (rc, pass, the 20 gates incl. `Q-HOST`), host functions, controls, ledger rows/sha256/counters/completeness, the embedded launch record and unit properties, `p309_unchanged`, `pass` |
 | end | `<NS>/evidence/drill/<stamp>/DRILL_ZERO_TARGET_LEDGER.jsonl`, `DRILL_EXPOSURE_LEDGER.jsonl` | the drill clone's new ledger rows, in full |
 | end | `<NS>/ledger/ZERO_TARGET_LEDGER.jsonl` | **one** appended GOVERNANCE row: `topology drill (worker tier) <stamp>: PASS|FAIL`, with the report's sha256 |
 | end | the drill root | **deleted** by the drill (the launcher's drill mode passes no `--keep`). So the attempt files above do not persist, except as the report's content and the optional observations of §4 |
-| always | the unit's journal | the runner's `[PASS]/[FAIL]` lines and the drill's final JSON |
+| always | the unit's journal (system journal) | the drill's own output only (its final JSON line). The runner's output is captured by the drill and not kept. Normally unreadable as the P309 user; an administrator's read-only extract is optional evidence |
 
 ## 6. Expected gate order and time limits
 
@@ -186,8 +193,8 @@ Rules while the unit runs:
    **QC01 → QC02 → QC03 → QC04 → QC05 → QC06 → QC07 → QC08 → QC09 → QC10 → QC11 → QC12 → QC13 → QC14 → QC15 → QC16 →
    QC17 → QC_U2 → QC_D5**, then the Q-HOST stop and the summary (`gates` keys `Q01`…`Q17`, `Q_U2`, `Q_D5`, `Q-HOST`).
 4. After the runner: the witnesses after the items; the host functions (provenance ×2 and continuity, preflight
-   (expected PASS on the worker), `tests/test_p309_host.py`, `tests/test_p309_host_controls.py` (U01–U03 run here
-   only; P02 is "not applicable" as a non-root user), and `tests/test_p309_static_controls.py`); the controls
+   (expected PASS on the worker), `tests/test_p309_host.py`, `tests/test_p309_host_controls.py` (U01–U03 can run only here, and the unit
+   environment meets their condition, but the kept evidence holds only the test's exit status and its count of PASS lines; P02 is "not applicable" as a non-root user), and `tests/test_p309_static_controls.py`); the controls
    (R2-M01a, R2-M01b, the second freeze record, the TEST-only prior ref, the push-URL and P309-repository guards); the
    ledger; the export.
 
@@ -198,9 +205,10 @@ Rules while the unit runs:
 
 | layer | rule | effect |
 |---|---|---|
-| Q-HOST monitor (in the unit) | samples ≤ 60 s apart. It fails on a foreign or unattributable process > 0.5 core or on a heavy pattern; on > 1.0 core together; on any continuity break; on a gap > 105 s; or if the monitor is dead at the stop | the runner SIGKILLs its tree, writes `QHOST_FAIL.json` and a failed summary, and exits 3; the drill stops at once (FAIL-QHOST) |
+| Q-HOST monitor, during the run | samples ≤ 60 s apart. A sample fails on a foreign or unattributable process > 0.5 core or on a heavy pattern; on > 1.0 core together; or on any continuity break | the monitor signals the runner, which SIGKILLs its tree, writes `QHOST_FAIL.json` and a failed summary, and exits 3; the drill stops at once (FAIL-QHOST) |
+| Q-HOST, judged at the stop | a gap > 105 s; the monitor dead at the stop; no completed sample; a corrupt monitor file; or a final sample showing another host | `gates["Q-HOST"]` false in the summary; the runner exits 1; the drill continues to its report (FAIL-QHOST) |
 | the drill's limit on the runner | `subprocess.run(…, timeout=12 h)` | the drill records `TimeoutExpired` and fails (FAIL-TIMEOUT) |
-| the runner's per-gate limit | `run(…, timeout=6 h)` for each subprocess | that gate records FAIL |
+| the runner's per-gate limit | `run(…)`: 6 h by default for each gate subprocess; 24 h for the QC08–QC10 decoy runs | that gate records FAIL |
 | the unit | `KillMode=control-group`, `KillSignal=SIGKILL`, `SendSIGKILL=yes`, `TimeoutStopSec=10s` | anything left dies when the unit stops |
 | external watchdog (operator) | every ≤ 10 min, the §4 commands only. It **never** writes, restarts, signals or resumes | observations; on an incident (below), the one permitted action |
 
@@ -228,8 +236,8 @@ Use `WORKER_TIER_PASS_FAIL_RULES.md` for the exact criteria.
 |---|---|---|
 | NOT_STARTED | the launcher refused or `systemd-run` failed; or the unit started but the drill refused before creating `drill_<stamp>` (e.g. a dirty namespace, exit 2) | no attempt exists. Record the launch record and the output. A new launch needs the cause fixed (with consent if the host changes) and a new empty scratch root. It is **not** a retry of an attempt |
 | PASS | the validator classifies PASS | §10 |
-| FAIL-PROBE / FAIL-QHOST / FAIL-GATE / FAIL-HOST-FUNCTIONS / FAIL-CONTROLS / FAIL-LEDGER / FAIL-F2 / FAIL-TIMEOUT | a `DRILL_REPORT.json` exists with `pass: false` | preserve everything; validate; report to the owner at return point R-2. **No second drill without a recorded owner decision** |
-| INTERRUPTED | `drill_<stamp>` exists (or the unit started) but no `DRILL_REPORT.json` / GOVERNANCE row for it: reboot, power loss, an OOM kill, `systemctl stop`, or a unit crash | preserve the drill root as it is (it was not deleted). Do not remove, resume or re-run anything. Classify read-only (the journal; `ATTEMPT_START.json` boot id vs the current one). Report at R-2 |
+| FAIL-PRESTART / FAIL-QHOST / FAIL-GATE / FAIL-HOST-FUNCTIONS / FAIL-CONTROLS / FAIL-LEDGER / FAIL-F2 / FAIL-TIMEOUT | a `DRILL_REPORT.json` exists with `pass: false` | preserve everything; validate; report to the owner at return point R-2. **No second drill without a recorded owner decision** |
+| INTERRUPTED | `drill_<stamp>` exists (or the unit started) but no `DRILL_REPORT.json` / GOVERNANCE row for it: reboot, power loss, an OOM kill, `systemctl stop`, or a unit crash | preserve the drill root as it is (it was not deleted). Do not remove, resume or re-run anything. Classify read-only: the last files present, `ATTEMPT_START.json`'s boot id vs the current one, `systemctl show` of the unit if it is still loaded, and an administrator's journal extract if one is supplied. Report at R-2 |
 | INCIDENT | any target counter, protected ref, grant or result file | the incident rule (§7); report immediately; it overrides every other class |
 
 **Interruption handling.**
@@ -240,8 +248,8 @@ Use `WORKER_TIER_PASS_FAIL_RULES.md` for the exact criteria.
 
 ## 9. Exactly-once checks (after the run; part of the validator)
 
-- exactly one `p309-r2-drill-*` unit started in the window (the journal); exactly one launch record with
-  `blockers: []` and `launched: true`;
+- exactly one launch in the window whose record has `blockers: []` and whose launcher output says `launched: true`,
+  and no other `p309-r2-*` unit seen (E-1);
 - exactly one new `evidence/drill/<stamp>/` with exactly its three files; exactly one new GOVERNANCE row in
   `ledger/ZERO_TARGET_LEDGER.jsonl`, naming that stamp and the report's sha256; the exposure ledger unchanged;
 - in the drill's own ledger rows: exactly one `RUN START` row, naming F′; every counter 0; no cells; no band hit;
@@ -270,7 +278,7 @@ It must print `"classification": "PASS"` with `"failed": []`. Its 30 checks are 
 **4. Return the evidence to the coordinator, as text.**
 - the launch output and launch record; the pre-launch, validation and static records;
 - `DRILL_REPORT.json` and the two exported ledgers, with sha256;
-- the GOVERNANCE row; the journal's `[PASS]/[FAIL]` lines;
+- the GOVERNANCE row; the `systemctl` snapshots; any administrator journal extract;
 - the Part D form.
 
 The coordinator files them in this hardening namespace (`host_evidence/DRILL_8D_<stamp>/`).
@@ -306,4 +314,4 @@ The drill reads no target input and evaluates no quarantined cell. "NEW Γ309 TA
 - the unit-property and instance-id refusal branches are exercised nowhere;
 - the unit's `KillMode=control-group`/SIGKILL backstop after a runner abort, and the drill's own stop on exit 3, are
   unexercised by a passing drill;
-- U01–U03 run only here.
+- U01–U03 can run only here, and the kept evidence does not show separately that they ran.

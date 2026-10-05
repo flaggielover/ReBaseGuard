@@ -18,6 +18,7 @@ EXPECT = {
     "drill_extra_file": {"classification": "FAIL", "must_fail": ["V22_clone_changes_only_this_drill"]},
     "drill_incident": {"classification": "INCIDENT"},
     "drill_interrupted": {"classification": "INTERRUPTED"},
+    "drill_corrupt_report": {"classification": "FAIL", "must_fail": ["V02_schema_tier_pass"]},
 }
 
 
@@ -52,9 +53,15 @@ for case, extra, dirty in (("prelaunch_container", ["--remote"], False), ("prela
     failed = sorted(k for k, v in d.get("checks", {}).items() if not v)
     res[case] = {"rc": rc, "n_checks": len(d.get("checks", {})), "failed": failed, "clone_unchanged_by_tool": st0 == st1,
                  "ok": failed == EXPECT[case]["failed"] and st0 == st1 and rc == 1}
-for case in ("drill_pass", "drill_fail_gate", "drill_extra_file", "drill_incident", "drill_interrupted"):
+for case in ("drill_pass", "drill_fail_gate", "drill_extra_file", "drill_incident", "drill_interrupted",
+             "drill_corrupt_report"):
     fresh()
-    subprocess.run([PY, "-B", fx, T, case, "--fake-imds"], check=True, stdout=subprocess.DEVNULL)
+    subprocess.run([PY, "-B", fx, T, "drill_pass" if case == "drill_corrupt_report" else case, "--fake-imds"],
+                   check=True, stdout=subprocess.DEVNULL)
+    if case == "drill_corrupt_report":                 # a torn report: the validator must classify, not crash
+        rp = os.path.join(clone, "level4/closure_proofs/p5y_k5_cell309_p309_r2/evidence/drill/20261012T080102Z",
+                          "DRILL_REPORT.json")
+        open(rp, "w").write(open(rp).read()[:500])
     st0 = subprocess.run(["git", "-C", clone, "status", "--porcelain", "--untracked-files=all"], stdout=subprocess.PIPE,
                          universal_newlines=True).stdout
     rc, d = run([PY, "-B", os.path.join(tools, "validate_worker_drill_8d.py"), "--clone", clone, "--stamp",

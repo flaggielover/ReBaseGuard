@@ -25,7 +25,8 @@ R2_COMMIT = "501f48cb31fd3f80d5c6dd33f1eef6b8f01b2853"
 NS = "level4/closure_proofs/p5y_k5_cell309_p309_r2"
 ZT, EX = NS + "/ledger/ZERO_TARGET_LEDGER.jsonl", NS + "/ledger/EXPOSURE_LEDGER.jsonl"
 COUNTERS = ("new_target_evaluations", "target_equivalent_proxies", "target_informed_optimisation")
-PROTECTED_REF = re.compile(r"refs/(?:p5y-k5-cell30|p309-cell309|rlr-tail/|p309-test/)", re.I)
+# r2's exactly-once refs: every ref under refs/p5y-k5-cell309 (both production namespaces, markers, pending results)
+PROTECTED_REF = re.compile(r"^refs/p5y-k5-cell309")
 GRANT_NAME = re.compile(r"(?:P309_GRANT|GRANT\.json|P309_RESULT|p309-emergency-result|p309-run-nonce)", re.I)
 GATES = ["Q01", "Q02", "Q03", "Q04", "Q05", "Q06", "Q07", "Q08", "Q09", "Q10", "Q11", "Q12", "Q13", "Q14", "Q15",
          "Q16", "Q17", "Q_U2", "Q_D5", "Q-HOST"]
@@ -103,8 +104,17 @@ def main():
         sys.stdout.write(json.dumps(out, indent=1, sort_keys=True) + "\n")
         return 1
     raw = open(rep_path, "rb").read()
-    rep = json.loads(raw)
     rep_sha = hashlib.sha256(raw).hexdigest()
+    try:
+        rep = json.loads(raw)
+        if not isinstance(rep, dict):
+            raise ValueError("not an object")
+    except ValueError as exc:                           # a corrupt report is FAIL-EVIDENCE, never a crash
+        out = {"schema": "P309_R2_8D_VALIDATION/1", "classification": "INCIDENT" if incident else "FAIL",
+               "failed": ["V02_schema_tier_pass"], "incident": incident, "checks": dict(c, V02_schema_tier_pass=False),
+               "info": dict(info, report_sha256=rep_sha, error="DRILL_REPORT.json does not parse: %s" % exc)}
+        sys.stdout.write(json.dumps(out, indent=1, sort_keys=True) + "\n")
+        return 1
     info["report_sha256"] = rep_sha
 
     # ---- the report itself
@@ -147,6 +157,7 @@ def main():
     c["V15_controls_all_caught"] = sorted(ctl) == sorted(CONTROLS) and all(
         (v.get("caught") if isinstance(v, dict) else v) is True for v in ctl.values())
     h = rep.get("host") or {}
+    info["host_controls_pass_lines"] = h.get("host_controls_pass_lines")   # for the reviewer (U01-U03 vs U00); not judged
     c["V16_host_functions"] = h.get("provenance_rc") == [0, 0] and h.get("continuity_pass") is True and \
         h.get("preflight_rc") == 0 and h.get("preflight_as_expected") is True and h.get("r1_tree_unchanged") is True \
         and h.get("host_package_tests_rc") == 0 and h.get("host_controls_rc") == 0 and h.get("static_controls_rc") == 0

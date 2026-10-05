@@ -94,12 +94,13 @@ It writes only inside `.p309-fsprobe-<pid>/`, which it creates and removes itsel
 | R-SD-1 | systemd as PID 1 | REQUIRED | `/proc/1/comm` = `systemd` | HR §2 | `pid1_is_systemd` |
 | R-SD-2 | `systemd-run` | REQUIRED | on `PATH` | HR §2 | `systemd_run_available` |
 | R-SD-3 | `systemctl` works | REQUIRED | `systemctl list-units --all --no-legend --plain` succeeds; no `p309-r2-*` unit is loaded | LAUNCH refusal 5 | `p309_units_loaded` / `systemctl_unavailable` |
-| R-SD-4 | launch privilege | REQUIRED | a **polkit** rule lets the P309 user start only transient system units named `p309-r2-*` (and reset them if failed). No sudo rule is used | HR §2; BS 8c-5; OP OD-R2-4 M3 | the unit's start (`systemd-run` rc) |
+| R-SD-4 | launch privilege | REQUIRED | a **polkit** rule lets the P309 user start only transient system units named `p309-r2-*` (SI §3 adds: and reset them if failed). No sudo rule is used | HR §2; BS 8c-5; OP OD-R2-4 M3; SI §3 | the unit's start (`systemd-run` rc) |
 | R-SD-5 | unit properties (checked) | REQUIRED | `Restart=no`, `KillMode=control-group`, `KillSignal=SIGKILL` (`9`), `NoNewPrivileges=yes`, `PrivateTmp=yes`, `ProtectSystem=strict` | LAUNCH; RUN `UNIT_REQUIRED` | `qhost_preflight` (refuses) |
 | R-SD-6 | unit properties (recorded only) | REQUIRED (set by the launcher) | `SendSIGKILL=yes`, `TimeoutStopSec=10s`, `MemoryMax`, `OOMScoreAdjust`, `CPUWeight`, `IOWeight`, `ReadWritePaths=<repo> <scratch>`, `InaccessiblePaths=-<each foreign root>` | LAUNCH; OP OD-R2-4 | recorded in `UNIT_PROPERTIES.json` / the drill report, **not checked** (follow-up FU1 (a)) |
 | R-SD-7 | the launcher runs as the unit user | REQUIRED | `getuid()` equals the unit user's uid | LAUNCH refusal 6 | `launcher_not_unit_user` |
 | R-SD-8 | unit user | REQUIRED | exists; not root; owns no foreign root; not a configured cell-308 uid | LAUNCH refusal 0 (A16) | `unit_user_check` |
-| R-SD-9 | `timedatectl`, `journalctl`, `systemd-detect-virt` | REQUIRED (effective) | `ntp_status()` returns None without `timedatectl`, so `ntp_synchronized` fails. The audit's boot and OOM counts need `journalctl`. `systemd-detect-virt` feeds container detection | HOST `system_reads`, `ntp_status` | `ntp_synchronized`; audit fields |
+| R-SD-9 | `timedatectl` | REQUIRED (effective) | `ntp_status()` returns None without `timedatectl`, so `ntp_synchronized` fails | HOST `ntp_status` | `ntp_synchronized` |
+| R-SD-10 | `journalctl`, `systemd-detect-virt` | RECOMMENDED | without them the audit's boot and OOM counts are null, and container detection falls back to its file checks; r2 refuses nothing for their absence | HOST `system_reads`, `_container` | — (audit fields) |
 
 ## 5. Durability and boot/restart expectations
 

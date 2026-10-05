@@ -50,7 +50,7 @@ items.
 | B-05 | `provenance.arch` ≠ `x86_64` | REJECTED | yes | none | another host |
 | B-06 | `cpu.affinity_cpus` < 4 | REJECTED | yes | none (an instance resize is outside M1–M5) | resize or replace the instance: a new owner decision; host-wide, so cell-308 consent too |
 | B-07 | instance type burstable (`t2./t3./t3a./t4g.`) or unknown with IMDS available | REJECTED | yes | none | as B-06 |
-| B-08 | `instance_life_cycle` = `spot`, or `spot_instance_action` non-null | REJECTED | yes | none | another (on-demand) instance |
+| B-08 | `instance_life_cycle` = `spot` (`spot_instance_action` is recorded; r2 does not check it) | REJECTED | yes | none | another (on-demand) instance |
 | B-09 | `mem_total_gb` < 8 | REJECTED | yes | none | as B-06 |
 | B-10 | `provenance.cloud.available` = false (no IMDS) | REJECTED for the bytes `501f48cb` | yes | **AF-2** (not OD-R2-4) | AF-2: a minimal reviewed portability proposal for `durability_preflight`. It changes r2's bytes, so 8d would no longer be on `501f48cb`, and it needs its own owner decision. Never pre-emptive |
 | B-11 | `scheduled_maintenance` holds an event | INCOMPLETE | no | — | wait until the event has passed; re-run A-01 |
@@ -72,7 +72,7 @@ items.
 | B-25 | `tools.git` < 2.32 or absent | CHANGES_REQUIRED | yes | **X-5** | a git ≥ 2.32 (system package; or a P309-private git, which r2 does not describe) |
 | B-26 | `tools.systemd_run` false | CHANGES_REQUIRED | yes | **X-6** | install the package providing `systemd-run` |
 | B-27 | cgroup v2 `memory`, `cpu` or `io` controller missing (S-10) | CHANGES_REQUIRED | yes (host-wide) | **X-8** | enable the controllers (kernel or boot configuration: host-wide, reboot) |
-| B-28 | filesystem not in {ext4, xfs, btrfs}, or `nobarrier` (S-01) | CHANGES_REQUIRED | yes | **M2** (choose the volume) | put the P309 roots on an ext4/xfs/btrfs volume without `nobarrier` |
+| B-28 | filesystem not in {ext4, xfs, btrfs}, or `nobarrier` (S-01) | clear (an ADVISORY note in the verdict record: R-FS-7 is HP-only and RECOMMENDED, never an r2 requirement) | no | the M2 recommendation | presented to the owner with M2 as a recommendation. A filesystem lacking a required capability fails the drill's `fs_probe` instead (R-FS-1–R-FS-5) |
 | B-29 | `foreign_uids` unknown, or contains the P309 user's uid | INCOMPLETE | no (operator data) | — | Part B of the 8c form |
 | B-30 | load baseline not agreed (`load_baseline`) | INCOMPLETE | no (operator data) | — | Part B of the 8c form |
 | B-31 | the unit limits (`memory_max`, `oom_score_adjust`, `cpu_weight`, `io_weight`) not agreed | CHANGES_REQUIRED | yes (owner and cell-308 operator) | **OD-R2-4 unit limits** | agree the values (§2 of the OD-R2-4 packet) |

@@ -9,8 +9,9 @@ state" column is filled from the 8a evidence (`HOST_READ_ONLY_AUDIT_8A.md`); her
 copy. Items the audit shows to be unnecessary are marked "not needed" with their evidence, and are not asked.
 
 **Who consents.** Each item needs the **owner's** consent. An item marked "host-wide" also needs the **cell-308
-operator's** consent (`governance/OWNER_DECISION_PACKET_R2.md` OD-R2-4: "the cell-308 operator's consent for
-mutation 4"; message 3 items 3, 6 and 8).
+operator's** consent (`governance/OWNER_DECISION_PACKET_R2.md`, OD-R2-4's heading: "host changes requiring consent
+(the owner's and the cell-308 operator's)"; `governance/R2_DELTA_FOLLOWUP_5_RECORD.md`: OD-R2-4 covers "the cell-308
+operator's consent for mutation 4"; message 3 items 3, 6 and 8).
 
 **Who executes.** A host administrator executes, through the P309 host-side session's access path (OD-R2-3). This
 Cloud Session never does. Every change is recorded before and after (§4).
@@ -45,7 +46,7 @@ Cloud Session never does. Every change is recorded before and after (§4).
 | field | content |
 |---|---|
 | current state | 8a: `disk_free_gb` for the planned roots; S-01 to S-03 (type, options, inodes) |
-| proposed state | every P309 root (`<CLONE>`'s filesystem and `<SCRATCH_BASE>`) on a local ext4, xfs or btrfs filesystem without `nobarrier`, with **≥ 40 GB free** (60 GB recommended), owned by `<P309_USER>`. Preferably the clone and the scratch base on **one** filesystem, so the drill's `fs_probe` covers the official run's filesystem (R-FS-9) |
+| proposed state | every P309 root (`<CLONE>`'s filesystem and `<SCRATCH_BASE>`) with **≥ 40 GB free** (R-DISK-1; 60 GB recommended), owned by `<P309_USER>`. Recommended (HP-only, R-FS-7): a local ext4, xfs or btrfs filesystem without `nobarrier`. Preferably the clone and the scratch base on **one** filesystem, so the drill's `fs_probe` covers the official run's filesystem (R-FS-9) |
 | action | **(a)** if the existing filesystem has the space while leaving cell 308 its own: a directory `<P309_VOLDIR>` owned by `<P309_USER>` (`install -d -o <P309_USER> -g <P309_GROUP> -m 0750 <P309_VOLDIR>`). **(b)** otherwise, a new block volume attached by the owner through the cloud provider (not from this Cloud Session): `mkfs.ext4 /dev/<NEWDEV>`; `mkdir /p309vol`; an fstab line `/dev/<NEWDEV> /p309vol ext4 defaults,nofail 0 2`; `mount /p309vol`; `install -d -o <P309_USER> -g <P309_GROUP> -m 0750 /p309vol/scratch` |
 | reversibility | (a) remove the directory; (b) unmount, remove the fstab line and detach. Both only after evidence export |
 | risk | (a) consumes space cell 308 may need, so agree the space with the operator. (b) a mistyped device can destroy data: the administrator verifies `<NEWDEV>` with `lsblk` first; the fstab line must carry `nofail` so a missing volume cannot block a boot |

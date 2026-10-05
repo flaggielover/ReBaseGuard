@@ -18,9 +18,9 @@
 
 | # | criterion (the owner's list, Task 9 step 7) | evidence that decides it |
 |---|---|---|
-| P-1 | all required drill gates complete | V12 (the runner rc 0, pass, confined, HEAD unchanged); V13 (all 20 gates `Q01`…`Q17`, `Q_U2`, `Q_D5`, `Q-HOST` present and true); V14 (witnesses before and after, incl. the QC11 sandbox); V15 (all 9 controls caught); V16 (host functions: provenance ×2, continuity, preflight PASS on the worker, host-package tests, host controls incl. U01–U03, static controls); V03 (all five verdicts true); V02 (`pass` true, tier `worker`, no error) |
+| P-1 | all required drill gates complete | V12 (the runner rc 0, pass, confined, HEAD unchanged); V13 (all 20 gates `Q01`…`Q17`, `Q_U2`, `Q_D5`, `Q-HOST` present and true); V14 (witnesses before and after, incl. the QC11 sandbox); V15 (all 9 controls caught); V16 (host functions: provenance ×2, continuity, preflight PASS on the worker, host-package tests, host controls (exit 0; that U01–U03 ran is not separately evidenced, §7), static controls); V03 (all five verdicts true); V02 (`pass` true, tier `worker`, no error) |
 | P-2 | no evidence corruption | V19 (each exported ledger equals the report's rows byte for byte, and its sha256 equals the report's); V20 (every drill ledger row parses); V24 (the P309 ledger is HEAD's rows plus exactly one parseable row); the report parses as JSON |
-| P-3 | no duplicate RUN START | V18 (`run_start_rows` = 1); V20 (exactly one `RUN START` row in the drill's rows, naming F′); E-1 (exactly one `p309-r2-drill-*` unit started in the window); E-2 (exactly one launch with `launched: true`) |
+| P-3 | no duplicate RUN START | V18 (`run_start_rows` = 1); V20 (exactly one `RUN START` row in the drill's rows, naming F′); E-1 (exactly one `p309-r2-drill-*` unit started in the window); E-2 (exactly one launch whose launcher output says `launched: true`) |
 | P-4 | no resume and no silent retry | precondition D6 (no earlier worker-tier drill on these bytes without a recorded owner decision); V22 and V23 (exactly one new `evidence/drill/<stamp>/`, with exactly three files); V24 (exactly one new GOVERNANCE row); E-1, E-2. The runner and the drill have no resume path, and none may be added |
 | P-5 | all expected records are present | V23 (`DRILL_REPORT.json`, `DRILL_ZERO_TARGET_LEDGER.jsonl`, `DRILL_EXPOSURE_LEDGER.jsonl`); V06–V08 (the embedded launch record: mode `drill`, no blockers, preflight, gate and isolation PASS, no loaded unit); V10–V11 (the unit properties); V09 (the launch record file equals the embedded one); E-3 (the launch, pre-launch, static and validation records kept in `p309_8d_records/`) |
 | P-6 | scanner pins remain current | V13's `Q_D5` (the runner's own `p309_scan_pins.py --list` = "all current" inside the drill); E-4 (the post-run static re-run on `<CLONE>`'s HEAD: "P309 SCAN PINS: all current", MANIFEST IDENTICAL, QC15 A1–A10 true) |
@@ -32,13 +32,16 @@
 | P-12 | the drill ran the reviewed bytes | V04 (`clone_base` = `501f48cb`); the pre-launch `C01`–`C08`; V29 (wall time within the drill's 12 h limit) |
 
 **Operator checks** (read-only, recorded with the validation):
-- **E-1:** `journalctl -u 'p309-r2-drill-*' --no-pager -o short-iso | grep -c 'Started '` over the window equals 1,
-  and `systemctl list-units --all 'p309-r2-*' --no-legend` shows at most that unit.
+- **E-1:** every launch writes its record exclusively before anything starts. Across every scratch root used in the
+  window there is exactly one `launch_<utc>.json` with `blockers: []`, and its launcher output says
+  `launched: true`. The `systemctl list-units --all 'p309-r2-*'` snapshots of `WORKER_TIER_DRILL_8D.md` §4 show
+  no other unit, and the report's `unit_properties.Id` names that unit. An administrator's journal extract, if
+  supplied, must show exactly one start. The P309 user normally cannot read the system journal.
 - **E-2:** the launch output and the scratch root show exactly one launch record with `blockers: []`. Any other
   record in the window has blockers, or a failed `systemd-run` (NOT_STARTED).
 - **E-3:** the records of `WORKER_TIER_DRILL_8D.md` §2–§3 and §10 exist.
 - **E-4:** §10 step 2 passed by content.
-- **E-5:** `git ls-remote origin` shows r2 at `501f48cb` and no ref matching `refs/(p5y-k5-cell30|p309-cell309|rlr-tail/|p309-test/)`.
+- **E-5:** `git ls-remote origin` shows r2 at `501f48cb` and no ref under `refs/p5y-k5-cell309` (r2's exactly-once namespace).
 
 ## 2. The validator's checks (`tools/validate_worker_drill_8d.py`, schema `P309_R2_8D_VALIDATION/1`)
 
@@ -78,7 +81,8 @@
 apply (30 entries: V19 has two parts). The tool was exercised in this packet's own test on synthetic fixtures built
 from the committed cloud-tier report `20261002T052554Z`:
 - a complete worker-shaped fixture gives PASS (30/30);
-- a failed gate, a changed file, a nonzero counter and a missing report give FAIL, FAIL, INCIDENT and INTERRUPTED.
+- a failed gate, a changed file, a corrupt report, a nonzero counter and a missing report give FAIL, FAIL, FAIL,
+  INCIDENT and INTERRUPTED.
 
 See `tools/selftest/`.
 
@@ -88,7 +92,7 @@ Subclass by the first failing area, in this order:
 
 | subclass | when |
 |---|---|
-| FAIL-PROBE | `items.main.rc` = 2, with the runner's journal line `QUALIFICATION REFUSED: filesystem probe (S1): …` (or `pre-launch state (H3)`, or `Q-HOST:`). No attempt directory was made |
+| FAIL-PRESTART | `items.main.rc` = 2 and `items.main.gates` null: the runner refused before creating its attempt. The cause is one of the manifest check, a dirty tree, an existing attempt, `fs_probe` (S1 + SF1-A), H3 or `qhost_preflight`. The drill captures the runner's output without keeping it, so the kept evidence does not show which one; record that limit. No attempt directory and no RUN START exist |
 | FAIL-QHOST | `items.main.rc` = 3, or `QHOST_FAIL.json`, or the drill error "Q-HOST aborted the runner", or `gates["Q-HOST"]` false |
 | FAIL-TIMEOUT | the report's `error` starts with `TimeoutExpired` |
 | FAIL-GATE | any other gate `Q01`…`Q_D5` false |
@@ -102,13 +106,13 @@ Subclass by the first failing area, in this order:
 | FAIL-OPERATOR | any of E-1–E-5 false |
 
 **What a FAIL means.**
-- The attempt is preserved: the report, the ledger row and the journal.
+- The attempt is preserved: the report, the ledger row, the launch record and the P309 records.
 - It is reported at return point R-2.
 - A further drill needs a **recorded owner decision**. Nothing is retried, resumed or "re-run to confirm".
 
 ## 4. INTERRUPTED
 
-The class is INTERRUPTED when the unit started (journal) or a `drill_<stamp>` exists, but there is no
+The class is INTERRUPTED when the unit started (the launcher output says `launched: true`) or a `drill_<stamp>` exists, but there is no
 `DRILL_REPORT.json` for that stamp, or no GOVERNANCE row naming it. Typical causes:
 - a reboot or power loss (the boot id differs from `ATTEMPT_START.json`'s, if the attempt had begun);
 - an OOM kill;
@@ -117,7 +121,7 @@ The class is INTERRUPTED when the unit started (journal) or a `drill_<stamp>` ex
 
 **What then.**
 - The drill root is **not** deleted: the deletion step never ran. Preserve it unchanged.
-- Classify read-only: the journal, the last records present, and the boot id.
+- Classify read-only: the last records present, the boot id, and an administrator's journal extract if supplied.
 - Report at R-2. No resume, no re-run without an owner decision.
 
 ## 5. NOT_STARTED
@@ -136,7 +140,7 @@ The class is NOT_STARTED when any of these happened:
 
 The class is INCIDENT when, at any time, any of these exists:
 - a nonzero target counter in any ledger row;
-- a ref matching `refs/(p5y-k5-cell30|p309-cell309|rlr-tail/|p309-test/)` locally or on origin (outside the drill
+- a ref under `refs/p5y-k5-cell309` locally or on origin (outside the drill
   clone's TEST-only control, which the drill creates and deletes inside its disposable clone);
 - a grant or result file.
 
@@ -156,6 +160,8 @@ Nothing else is done.
 - power-loss durability (SAFE_BUT_UNPROVEN);
 - the official run's filesystem, if it differs from the scratch root's (R-FS-9);
 - the unexercised branches named in `WORKER_TIER_DRILL_8D.md` §11;
+- that U01–U03 ran: only the host controls' exit status and PASS-line count are kept. The reviewer compares the count
+  with the committed cloud-tier report `20261002T052554Z` (41);
 - r2's `HOST_SUITABLE`. That also needs the pre-freeze review to accept the drill and the host evidence
   (`R2_HOST_REQUIREMENTS.md` §4);
 - anything about freeze, qualification, grant or Γ309.

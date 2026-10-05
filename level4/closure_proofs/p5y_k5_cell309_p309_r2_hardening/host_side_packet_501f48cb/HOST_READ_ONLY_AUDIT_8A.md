@@ -29,7 +29,7 @@ Requirements are cited by their ids in `HOST_REQUIREMENTS_501F48CB.md` (R-…).
   coordinator. It is never saved on the worker, and it is never written with `> file`;
 - install, remove or upgrade anything; create users; change permissions, services, timers, mounts, polkit or sudo
   rules; reboot;
-- run `git` anywhere on the host. No clone exists before 8c;
+- run `git` on the host, other than `git version` / `git --version`, which touch no repository. No clone exists before 8c;
 - read inside cell 308's checkout. Only the reviewed `stat()` and `access()` of its top directory, made by `audit()`,
   is allowed;
 - signal, renice or ionice any process; `systemctl` anything other than the read-only verbs below;
@@ -97,7 +97,7 @@ Equivalently, the session's own GitHub tool may supply the bytes. The same sha25
 | `provenance.cloud.instance_type` | R-CPU-2 | known and not `t2./t3./t3a./t4g.` | burstable or unknown | HOST_REJECTED (resize is outside M1–M5) |
 | `provenance.cloud.instance_life_cycle` | R-IMDS-3 | ≠ `spot` | `spot` | HOST_REJECTED |
 | `provenance.cloud.scheduled_maintenance` | R-IMDS-2 | `[]`, empty or null | an event | HOST_AUDIT_INCOMPLETE until it has passed; re-audit |
-| `provenance.cloud.spot_instance_action` | R-IMDS-3 | null | non-null | HOST_REJECTED |
+| `provenance.cloud.spot_instance_action` | R-IMDS-3 | recorded | — | advisory (r2 checks only the life cycle) |
 | `os` (`/etc/os-release`) | R-OS-3 | recorded | — | advisory |
 | `pid1` | R-SD-1 | `systemd` | anything else | HOST_REJECTED |
 | `cpu.affinity_cpus`, `cpu.logical_cpus`, `cpu.models`, `cpu.hypervisor_flag` | R-CPU-1 | affinity ≥ 4 | < 4 | HOST_REJECTED |
@@ -126,7 +126,7 @@ configuration. `<R>` is each planned P309 root, or its existing mount point befo
 
 | id | command | purpose | expected output | read-only? | pass | fail | feeds |
 |---|---|---|---|---|---|---|---|
-| S-01 | `findmnt -no SOURCE,FSTYPE,OPTIONS --target <R>` | filesystem type and mount options | one line, e.g. `/dev/nvme1n1 ext4 rw,relatime` | yes | FSTYPE ∈ {ext4, xfs, btrfs} and no `nobarrier` / `barrier=0` | tmpfs, overlay, nfs*, cifs, fuse*, or `nobarrier` | R-FS-7 (RECOMMENDED): 8b note; OD-R2-4 M2 (choice of volume) |
+| S-01 | `findmnt -no SOURCE,FSTYPE,OPTIONS --target <R>` | filesystem type and mount options | one line, e.g. `/dev/nvme1n1 ext4 rw,relatime` | yes | FSTYPE ∈ {ext4, xfs, btrfs} and no `nobarrier` / `barrier=0` | tmpfs, overlay, nfs*, cifs, fuse*, or `nobarrier`: an ADVISORY note, not an 8b blocker | R-FS-7 (RECOMMENDED): 8b advisory note; the M2 recommendation |
 | S-02 | `df -PT <R>` and `df -Pi <R>` | free space and free inodes | one row each | yes | ≥ 40 GB available; inodes not near exhaustion | < 40 GB | R-DISK-1: M2 |
 | S-03 | `stat -f -c '%T bsize=%S blocks=%b avail=%a' <R>` | the filesystem as the kernel names it (cross-check of S-01) | e.g. `ext2/ext3 bsize=4096 …` | yes | agrees with S-01 | disagrees: record, NEEDS AUDIT | R-FS-7 |
 | S-04 | `cat /sys/block/<dev>/queue/write_cache` for S-01's device (strip the partition suffix) | volatile write cache | `write back` or `write through` | yes (sysfs read) | either, recorded. `write back` is normal; the kernel flushes on fsync unless `nobarrier` | unreadable: record | R-FS-8 (ADVISORY) |

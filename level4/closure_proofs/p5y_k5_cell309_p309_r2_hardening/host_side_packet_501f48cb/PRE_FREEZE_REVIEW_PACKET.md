@@ -17,7 +17,7 @@ own recomputation.
 
 **Boundaries:**
 - **No git write** to the session repository. Use only `git show`, `diff`, `log`, `ls-tree`, `cat-file`,
-  `rev-parse`, `merge-base` and `ls-remote`.
+  `rev-parse`, `merge-base` and `ls-remote`. `clone` and `checkout` are allowed only inside your own workspace (§3).
 - **NEW Γ309 TARGET EVALUATIONS = 0.** Never run or import:
   - the driver;
   - the runner, the launcher, the host tool's run paths or the topology drill;
@@ -42,7 +42,7 @@ own recomputation.
 | I-3 | the 8a audit bundle; the 8b-initial and 8b-final verdict records | the hardening namespace `host_evidence/`, and r2 if filed |
 | I-4 | the owner's OD-R2-4 answer (verbatim) and `APPLIED_CHANGES_<UTC>.json` | the hardening namespace, and r2 governance if filed |
 | I-5 | the cell-308 forms, Parts A–D (redacted as the operator asked) | `host_evidence/` |
-| I-6 | the 8d records: `LAUNCH_STDOUT`, `launch_<utc>.json`, `STATIC_8D` (pre and post), `PRELAUNCH_8D`, `VALIDATION_8D`, the journal's `[PASS]/[FAIL]` lines, the E-1–E-5 outputs | `host_evidence/DRILL_8D_<stamp>/` |
+| I-6 | the 8d records: `LAUNCH_STDOUT`, `launch_<utc>.json`, `STATIC_8D` (pre and post), `PRELAUNCH_8D`, `VALIDATION_8D`, the `systemctl` snapshots and any administrator journal extract, the E-1–E-5 outputs | `host_evidence/DRILL_8D_<stamp>/` |
 | I-7 | `evidence/drill/<stamp>/{DRILL_REPORT.json, DRILL_ZERO_TARGET_LEDGER.jsonl, DRILL_EXPOSURE_LEDGER.jsonl}` and the GOVERNANCE ledger row | r2 `<R2_FILING>` |
 | I-8 | this packet (all ten files and `tools/`), by its commit and its `PACKET_MANIFEST.json` | the hardening branch |
 
@@ -84,7 +84,9 @@ own recomputation.
 `failed: []`. Also check all of:
 - E-1–E-5;
 - the report states, or you state, what 8d does not show (`WORKER_TIER_DRILL_8D.md` §11, W7);
-- the 20 gates, the 9 controls and the host functions (U01–U03 ran; P02 not applicable as non-root).
+- the 20 gates, the 9 controls and the host functions. For the host controls, the exit status and the PASS-line count
+  are compared with the committed cloud-tier report `20261002T052554Z` (41). That U01–U03 ran is not separately
+  evidenced; say so. P02 is not applicable as a non-root user.
 
 **Q6. Were the Cell-308 coordination constraints satisfied?** Check all of:
 - Parts A–C were complete before the launch, and the drill's `utc_start`…`utc_end` lies inside Part C's window;
@@ -102,13 +104,13 @@ own recomputation.
 - QC15 A1–A10 are all true (A7: no path outside r2's namespace changed since `c902fe2f`; A3: governance immutable).
 
 **Q8. Were there any interruptions?** Check all of:
-- list every NOT_STARTED, INTERRUPTED or FAIL event in the window, with its evidence: the journal's boot list (no
-  reboot inside the window), `ATTEMPT_START`'s boot id if observed, Part D, and the hardening namespace's
+- list every NOT_STARTED, INTERRUPTED or FAIL event in the window, with its evidence: no reboot inside the window (the
+  launch record's and `ATTEMPT_START`'s boot ids; `uptime -s` after the window), `ATTEMPT_START`'s boot id if observed, Part D, and the hardening namespace's
   `host_evidence/`;
 - none may be unreported.
 
 **Q9. Were any retries or resumes attempted?** Check all of:
-- exactly one launch with `launched: true` (E-2) and one unit (E-1);
+- exactly one started launch and one unit (E-1, E-2);
 - one new `evidence/drill/<stamp>/` and one GOVERNANCE row;
 - no earlier worker-tier drill on these bytes, or an owner record authorizing a further one, which is then quoted;
 - no resume path used (none exists).
