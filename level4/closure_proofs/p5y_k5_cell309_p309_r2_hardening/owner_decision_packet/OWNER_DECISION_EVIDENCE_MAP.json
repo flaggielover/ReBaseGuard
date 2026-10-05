@@ -1,0 +1,1180 @@
+{
+ "schema": "P309_R2_OWNER_DECISION_EVIDENCE_MAP/1",
+ "built_utc": "2026-10-05T12:25:30Z",
+ "refs": {
+  "r2": "101ef2cb17e5eab2892212178278da45b98004ed",
+  "candidate": "a119e9789e2a1d42b584fff8a2301946a37f1bcb",
+  "r1": "c902fe2fe33003ac7e4e61f29c10c81682fc940c",
+  "main": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+  "hardening_formal_record": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0"
+ },
+ "sources": {
+  "R2_PACKET": {
+   "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md",
+   "sha256": "9be65aa61625525406598a4d987a8cd30bc1fde8dc1f56504a45d4432f2bcaca",
+   "git_blob": "fe6386872f0ab7701b0eeb7d6d6f46c23d6c1072",
+   "last_commit_touching": "2fc6c130 2026-10-02T05:25:28+00:00",
+   "anchors": {
+    "OD-R2-0": 31,
+    "OD-R2-0(A)": 35,
+    "OD-R2-0(B)": 43,
+    "OD-R2-0(C)": 44,
+    "OD-R2-0(D)": 46,
+    "OD-R2-0 carry-over table": 61,
+    "OD-R2-0 liabilities": 84,
+    "OD-R2-1": 103,
+    "OD-R2-1b": 125,
+    "OD-R2-2": 129,
+    "OD-R2-3": 152,
+    "OD-R2-4": 174,
+    "OD-R2-4 world-readable checkout": 211,
+    "OD-R2-5": 219,
+    "OD-R2-6": 295,
+    "OD-R2-6 also to decide": 328,
+    "OD-R2-6 freeze field": 314
+   }
+  },
+  "MSG_1_3": {
+   "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_INSTRUCTIONS_R2_VERBATIM.md",
+   "sha256": "05b88579fc6f95b1134b300f54f2bbd5b8a1939d6e63328837470211470de73b",
+   "git_blob": "63e111387603ef7806e2a3a84aa6be588518bd29",
+   "last_commit_touching": "e9bc840c 2026-10-01T11:56:28+00:00",
+   "anchors": {
+    "msg1 §4 host suitability gate": 160,
+    "msg1 §5B no retry": 225,
+    "msg1 §10 autonomy": 315,
+    "msg1 READY_FOR_OWNER_GRANT_DECISION": 342,
+    "msg3 shared host": 406,
+    "msg3 §3 exclusive heavy compute": 424,
+    "msg3 §6 do not alter cell 308": 440,
+    "msg3 §8 do not interrupt": 447
+   }
+  },
+  "MSG_4": {
+   "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_INSTRUCTIONS_R2_MSG4_VERBATIM.md",
+   "sha256": "75bccb12d705bcff992912839ee8ff75253de11a6ba9dec0bbbd6b5eba84fc02",
+   "git_blob": "59980b42a9a65b8caeb2d690601800dfc0cfee5f",
+   "last_commit_touching": "7ed74347 2026-10-01T17:09:09+00:00",
+   "anchors": {
+    "msg4 decides none of OD-R2-0..6": 11,
+    "msg4 item 7": 90,
+    "msg4 item 13": 107
+   }
+  },
+  "R2_AMENDMENTS": {
+   "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/P309_R2_AMENDMENTS.md",
+   "sha256": "908da234d61d2344a96d618e0b55ea07933940ea92863874f4b713857e7f0538",
+   "git_blob": "993a224f4c19687f3575ab0dcf8027d3b804dbe8",
+   "last_commit_touching": "2fc6c130 2026-10-02T05:25:28+00:00",
+   "anchors": {
+    "§A provisional OD-R2-1 (b) names": 16,
+    "§C execute on a shared host": 54
+   }
+  },
+  "R2_HOST_SESSION": {
+   "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_AWS_SESSION_INSTRUCTIONS.md",
+   "sha256": "5cdaee7a25062dd9f928bc94ee4b8d37a96fdd81b0dc7198ab0273b28fa948fe",
+   "git_blob": "085d64bdf239a35bf64c93d60facfeaf54372975",
+   "last_commit_touching": "2fc6c130 2026-10-02T05:25:28+00:00",
+   "anchors": {
+    "8a audit": 28,
+    "8b verdict + STOP": 74,
+    "8c bootstrap": 76,
+    "8d worker-tier drill": 176,
+    "owner-gated after 8d (incl. gate step 9 pre-freeze follow-up review)": 298
+   }
+  },
+  "R2_BOOTSTRAP": {
+   "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_BOOTSTRAP.md",
+   "sha256": "27939274717fa30f48df62781d86beb1ecd7383cc238684a2ebe695dfbdbca79",
+   "git_blob": "3ded3f332e6390ac8661796acc148f8a90514dab",
+   "last_commit_touching": "8c2aa69f 2026-10-02T02:55:51+00:00",
+   "anchors": {
+    "STOP until OD-R2-3/4": 47
+   }
+  },
+  "R2_FREEZE_PARAMS": {
+   "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/make_freeze_params.py",
+   "sha256": "e9ebd875bdf92984315652999922b550a1c29a978e7d7390968fcccfdb09867a",
+   "git_blob": "780db1a418cffda93450026c7c9fb26d3a13e788",
+   "last_commit_touching": "4e6a6901 2026-10-01T20:21:18+00:00",
+   "anchors": {
+    "OD-R2-6 answer file": 201,
+    "answer fields read": 211,
+    "no host named by default": 213
+   }
+  },
+  "R2_REVIEW_FU4": {
+   "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/REVIEW_R2_DELTA_FOLLOWUP_4.md",
+   "sha256": "c46d1679b8324c33d9c3a28df92a92681f7ef38c9fd3e3abcccf18ca8c84203c",
+   "git_blob": "9fd884bfd494d2e9fd18909780364a208005ff16",
+   "last_commit_touching": "38842550 2026-10-02T20:53:37+09:00",
+   "anchors": {
+    "verdict line": 2
+   }
+  },
+  "AID_TASK2": {
+   "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/OWNER_DECISIONS_OD_R2.md",
+   "sha256": "c78406114c212c155a552f834dc1eac87c87c8161ba951a1aaa6424137eda4d5",
+   "git_blob": "df3c03443c545ac819522f418d65360c0918c831",
+   "last_commit_touching": "ae7db324 2026-10-05T07:04:26+00:00",
+   "anchors": {
+    "no answers in r2": 14,
+    "OD-R2-H (proposed)": 219,
+    "F-DRILL-ORDER (proposed action)": 244,
+    "consolidated table": 253
+   }
+  },
+  "DURABLE_HOST_PACKET": {
+   "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/DURABLE_HOST_EXECUTION_PACKET.md",
+   "sha256": "0475777259c557cce968e1b6ebb2a9a5d42689755dbcec545c051fa0b4d794da",
+   "git_blob": "a45c850114fcc3a3b5b4bcb2b5374d7ad6959691",
+   "last_commit_touching": "ae7db324 2026-10-05T07:04:26+00:00",
+   "anchors": {
+    "prerequisites P0": 15,
+    "P0.4 IMDS": 22,
+    "P0.5 operator data": 23,
+    "filesystem requirements": 38
+   }
+  },
+  "FAILURE_MATRIX": {
+   "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/R2_FAILURE_MATRIX.json",
+   "sha256": "a229f85052795b00fd34c4deb56620759c01833285e180bfc98eeb3b561c4f5c",
+   "git_blob": "71fa005c2622bcd089dbad3e719f30623934dcab",
+   "last_commit_touching": "ae7db324 2026-10-05T07:04:26+00:00",
+   "anchors": {}
+  },
+  "FORMAL_RECORD": {
+   "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md",
+   "sha256": "17083865b767e7c8fbfaab8165bf87e36df563fec9dcd66bfa8e6f4767be2dda",
+   "git_blob": "dc3aac3a135f59203c730749868da81c2113f9f8",
+   "last_commit_touching": "bbe0b253 2026-10-05T12:19:44+00:00",
+   "anchors": {
+    "disposition": 3,
+    "C1": 112,
+    "C2": 113,
+    "C3": 114,
+    "SF1 ruling": 95,
+    "re-pin ruling": 101,
+    "owner decisions gating": 136,
+    "filing into r2 governance": 14
+   }
+  },
+  "FORMAL_REVIEW": {
+   "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/REVIEW_FORMAL_DELTA_FOLLOWUP_5.md",
+   "sha256": "9b1c2eaa7498d3adb5e5f2d1dc56ef7993e9e7b62c99b80ead159989bc11f545",
+   "git_blob": "268288a12255e2341ed744be8787d97f6a9daa99",
+   "last_commit_touching": "bbe0b253 2026-10-05T12:19:44+00:00",
+   "anchors": {
+    "line 2 disposition": 2,
+    "SF1 remedy": 399,
+    "C1": 410,
+    "C2": 416,
+    "C3": 418
+   }
+  },
+  "FORMAL_PACKET": {
+   "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/r2_candidate_followup/FORMAL_DELTA_REVIEW_PACKET.md",
+   "sha256": "a379d6f76aa79546972407eff2c6766a6d7e39ba77d5fb98505ae4195352c267",
+   "git_blob": "87db88d9880c0045121c88a4c0755790d9ecbe7c",
+   "last_commit_touching": "4b3baebd 2026-10-05T11:40:53+00:00",
+   "anchors": {
+    "S1-SF1 proposed fix": 172
+   }
+  },
+  "F_DRILL_ORDER_REVIEW": {
+   "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/r2_candidate/F_DRILL_ORDER_REVIEW.md",
+   "sha256": "a8af28b9a3f2024937a53ac3a0f36c9807ee5596e8d74a3f568eea4da606843a",
+   "git_blob": "73c59f958ec71590ee886de4a64dc1d0dcd7cafe",
+   "last_commit_touching": "5e43e84c 2026-10-05T08:41:02+00:00",
+   "anchors": {
+    "current order": 18,
+    "corrected order": 58
+   }
+  },
+  "PROBE_REVIEW": {
+   "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/r2_candidate_followup/FILESYSTEM_PRELAUNCH_PROBE_REVIEW.md",
+   "sha256": "3021839f34b719a16228a86e3c98cec60197f4db68aec4c363e4137b1168dffe",
+   "git_blob": "a16a4baceb2aa2e7112525d6bec1ec3aeb9f1be7",
+   "last_commit_touching": "4b3baebd 2026-10-05T11:40:53+00:00",
+   "anchors": {}
+  },
+  "REPIN_SUPPLEMENT_5": {
+   "commit": "a119e9789e2a1d42b584fff8a2301946a37f1bcb",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_REPIN_LIST_SUPPLEMENT_5.json",
+   "sha256": "e6de3880a62e61c4c6d0bda9b759db4cb88f04f65dca0516c74547f18594ef94",
+   "git_blob": "97cef269a9b3bc7675bbb1f33f141b8b54c8b748",
+   "last_commit_touching": "a119e978 2026-10-05T09:40:00+00:00",
+   "anchors": {}
+  }
+ },
+ "missing_anchors": [],
+ "owner_answer_files_in_r2": [],
+ "statement": "No decision is recorded or inferred: repository_status is OPEN for every item (no owner answer file in r2; message 4 decides none of OD-R2-0..6). recommendation_only is a recommendation, never an answer. Nothing here authorizes incorporation, freeze, qualification, grant or Γ(309).",
+ "decisions": [
+  {
+   "id": "OD-R2-0(A)",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-0(A)",
+     "line": 35,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "MSG_4",
+     "anchor": "msg4 decides none of OD-R2-0..6",
+     "line": 11,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_INSTRUCTIONS_R2_MSG4_VERBATIM.md"
+    }
+   ],
+   "options": [
+    "CONFIRM",
+    "CORRECT"
+   ],
+   "recommendation_only": "CONFIRM",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-0(B)",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-0(B)",
+     "line": 43,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-0 carry-over table",
+     "line": 61,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    }
+   ],
+   "options": [
+    "CONFIRM ALL ROWS",
+    "CONFIRM EXCEPT <row>"
+   ],
+   "recommendation_only": "CONFIRM ALL ROWS",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-0(C)",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-0(C)",
+     "line": 44,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-0 liabilities",
+     "line": 84,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    }
+   ],
+   "options": [
+    "ACKNOWLEDGE",
+    "ACKNOWLEDGE WITH ADDITIONS",
+    "DECLINE"
+   ],
+   "recommendation_only": "ACKNOWLEDGE WITH ADDITIONS",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-0(D)",
+   "phase": "D",
+   "repository_status": "OPEN",
+   "decidable_now": false,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-0(D)",
+     "line": 46,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "FORMAL_RECORD",
+     "anchor": "C1",
+     "line": 112,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md"
+    },
+    {
+     "source": "FORMAL_RECORD",
+     "anchor": "C2",
+     "line": 113,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md"
+    },
+    {
+     "source": "FORMAL_RECORD",
+     "anchor": "C3",
+     "line": 114,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md"
+    },
+    {
+     "source": "DURABLE_HOST_PACKET",
+     "anchor": "prerequisites P0",
+     "line": 15,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/DURABLE_HOST_EXECUTION_PACKET.md"
+    },
+    {
+     "source": "R2_HOST_SESSION",
+     "anchor": "owner-gated after 8d (incl. gate step 9 pre-freeze follow-up review)",
+     "line": 298,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_AWS_SESSION_INSTRUCTIONS.md"
+    }
+   ],
+   "options": [
+    "AUTHORIZE (packet text verbatim)",
+    "DECLINE"
+   ],
+   "recommendation_only": "leave OPEN until prerequisites P-1..P-11 hold",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [
+    "OD-R2-0(A)",
+    "OD-R2-0(B)",
+    "OD-R2-0(C)",
+    "OD-R2-1",
+    "OD-R2-1b",
+    "OD-R2-2",
+    "OD-R2-3",
+    "OD-R2-4",
+    "OD-R2-5",
+    "OD-R2-6(iii)",
+    "OD-R2-H",
+    "SF1",
+    "AF-3"
+   ],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-1",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-1",
+     "line": 103,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "R2_AMENDMENTS",
+     "anchor": "§A provisional OD-R2-1 (b) names",
+     "line": 16,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/P309_R2_AMENDMENTS.md"
+    }
+   ],
+   "options": [
+    "(b)",
+    "(a)",
+    "(c)"
+   ],
+   "recommendation_only": "(b)",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": true,
+    "grant": true,
+    "target_evaluation": true
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-1b",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-1b",
+     "line": 125,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    }
+   ],
+   "options": [
+    "CONFIRM",
+    "NAME OTHERS"
+   ],
+   "recommendation_only": "CONFIRM",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": true,
+    "grant": true,
+    "target_evaluation": true
+   },
+   "depends_on": [
+    "OD-R2-1"
+   ],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-2",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-2",
+     "line": 129,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    }
+   ],
+   "options": [
+    "RATIFY",
+    "OTHER NAMES",
+    "DECLINE EXTENSION"
+   ],
+   "recommendation_only": "RATIFY",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": true,
+    "grant": true,
+    "target_evaluation": true
+   },
+   "depends_on": [
+    "OD-R2-1"
+   ],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-3",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-3",
+     "line": 152,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "R2_HOST_SESSION",
+     "anchor": "8a audit",
+     "line": 28,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_AWS_SESSION_INSTRUCTIONS.md"
+    },
+    {
+     "source": "R2_HOST_SESSION",
+     "anchor": "8b verdict + STOP",
+     "line": 74,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_AWS_SESSION_INSTRUCTIONS.md"
+    },
+    {
+     "source": "MSG_4",
+     "anchor": "msg4 item 13",
+     "line": 107,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_INSTRUCTIONS_R2_MSG4_VERBATIM.md"
+    },
+    {
+     "source": "DURABLE_HOST_PACKET",
+     "anchor": "P0.4 IMDS",
+     "line": 22,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/DURABLE_HOST_EXECUTION_PACKET.md"
+    }
+   ],
+   "options": [
+    "APPROVE AUDIT ONLY",
+    "APPROVE",
+    "DECLINE"
+   ],
+   "recommendation_only": "APPROVE AUDIT ONLY (+ ask about a dedicated host)",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": true,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-4",
+   "phase": "C",
+   "repository_status": "OPEN",
+   "decidable_now": false,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-4",
+     "line": 174,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-4 world-readable checkout",
+     "line": 211,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "R2_HOST_SESSION",
+     "anchor": "8c bootstrap",
+     "line": 76,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_AWS_SESSION_INSTRUCTIONS.md"
+    },
+    {
+     "source": "DURABLE_HOST_PACKET",
+     "anchor": "P0.5 operator data",
+     "line": 23,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/DURABLE_HOST_EXECUTION_PACKET.md"
+    }
+   ],
+   "options": [
+    "per mutation M1..M5 and limits: CONSENT | DECLINE"
+   ],
+   "recommendation_only": "after 8a: M1, M2, M3, M5 CONSENT; M4 only with the cell-308 operator per window; request operator data now",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": true,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [
+    "OD-R2-3"
+   ],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-5",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-5",
+     "line": 219,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "MSG_1_3",
+     "anchor": "msg3 §3 exclusive heavy compute",
+     "line": 424,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_INSTRUCTIONS_R2_VERBATIM.md"
+    },
+    {
+     "source": "MSG_1_3",
+     "anchor": "msg3 §8 do not interrupt",
+     "line": 447,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_INSTRUCTIONS_R2_VERBATIM.md"
+    }
+   ],
+   "options": [
+    "(i)",
+    "(ii) with message 3 amendment"
+   ],
+   "recommendation_only": "(i)",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": true,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-6(i)",
+   "phase": "E",
+   "repository_status": "OPEN",
+   "decidable_now": false,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-6",
+     "line": 295,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "R2_AMENDMENTS",
+     "anchor": "§C execute on a shared host",
+     "line": 54,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/P309_R2_AMENDMENTS.md"
+    },
+    {
+     "source": "R2_FREEZE_PARAMS",
+     "anchor": "OD-R2-6 answer file",
+     "line": 201,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/make_freeze_params.py"
+    },
+    {
+     "source": "R2_FREEZE_PARAMS",
+     "anchor": "answer fields read",
+     "line": 211,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/make_freeze_params.py"
+    }
+   ],
+   "options": [
+    "DEFER",
+    "(a) qualification host",
+    "(b) dedicated host",
+    "(c) shared worker + §C amendment"
+   ],
+   "recommendation_only": "DEFER (lean (b))",
+   "gates": {
+    "incorporation": false,
+    "freeze": false,
+    "worker_tier_drill": false,
+    "qualification": false,
+    "grant": true,
+    "target_evaluation": true
+   },
+   "depends_on": [
+    "OD-R2-6(ii)"
+   ],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-6(ii)",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-6 also to decide",
+     "line": 328,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    }
+   ],
+   "options": [
+    "REQUIRE",
+    "DO NOT REQUIRE"
+   ],
+   "recommendation_only": "REQUIRE",
+   "gates": {
+    "incorporation": false,
+    "freeze": false,
+    "worker_tier_drill": false,
+    "qualification": false,
+    "grant": true,
+    "target_evaluation": false
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-6(iii)",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-6 freeze field",
+     "line": 314,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "R2_FREEZE_PARAMS",
+     "anchor": "no host named by default",
+     "line": 213,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/make_freeze_params.py"
+    }
+   ],
+   "options": [
+    "NO HOST AT FREEZE",
+    "NAME A HOST AT FREEZE"
+   ],
+   "recommendation_only": "NO HOST AT FREEZE",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": false,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "OD-R2-H",
+   "phase": "B",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "AID_TASK2",
+     "anchor": "OD-R2-H (proposed)",
+     "line": 219,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/OWNER_DECISIONS_OD_R2.md"
+    },
+    {
+     "source": "FORMAL_RECORD",
+     "anchor": "C1",
+     "line": 112,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md"
+    },
+    {
+     "source": "FORMAL_RECORD",
+     "anchor": "disposition",
+     "line": 3,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md"
+    },
+    {
+     "source": "FORMAL_REVIEW",
+     "anchor": "line 2 disposition",
+     "line": 2,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/REVIEW_FORMAL_DELTA_FOLLOWUP_5.md"
+    }
+   ],
+   "options": [
+    "H-A (fast-forward 101ef2cb -> a119e978 under C1, nothing else)",
+    "H-B (do not incorporate yet)"
+   ],
+   "recommendation_only": "H-A",
+   "gates": {
+    "incorporation": true,
+    "freeze": true,
+    "worker_tier_drill": true,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "F-DRILL-ORDER",
+   "phase": "B",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "AID_TASK2",
+     "anchor": "F-DRILL-ORDER (proposed action)",
+     "line": 244,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/OWNER_DECISIONS_OD_R2.md"
+    },
+    {
+     "source": "F_DRILL_ORDER_REVIEW",
+     "anchor": "current order",
+     "line": 18,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/r2_candidate/F_DRILL_ORDER_REVIEW.md"
+    },
+    {
+     "source": "F_DRILL_ORDER_REVIEW",
+     "anchor": "corrected order",
+     "line": 58,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/r2_candidate/F_DRILL_ORDER_REVIEW.md"
+    },
+    {
+     "source": "FORMAL_RECORD",
+     "anchor": "re-pin ruling",
+     "line": 101,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md"
+    }
+   ],
+   "options": [
+    "FD-A (adopted by H-A incorporation; recorded closed)",
+    "FD-B (leave; only with H-B)"
+   ],
+   "recommendation_only": "FD-A",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": true,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [
+    "OD-R2-H"
+   ],
+   "additional_finding": false
+  },
+  {
+   "id": "SF1",
+   "phase": "A",
+   "repository_status": "OPEN",
+   "decidable_now": true,
+   "sources": [
+    {
+     "source": "FORMAL_REVIEW",
+     "anchor": "SF1 remedy",
+     "line": 399,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/REVIEW_FORMAL_DELTA_FOLLOWUP_5.md"
+    },
+    {
+     "source": "FORMAL_RECORD",
+     "anchor": "SF1 ruling",
+     "line": 95,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md"
+    },
+    {
+     "source": "FORMAL_RECORD",
+     "anchor": "C2",
+     "line": 113,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md"
+    },
+    {
+     "source": "FORMAL_PACKET",
+     "anchor": "S1-SF1 proposed fix",
+     "line": 172,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/r2_candidate_followup/FORMAL_DELTA_REVIEW_PACKET.md"
+    }
+   ],
+   "options": [
+    "SF1-A (probe extension under its own reviewed delta)",
+    "SF1-B (recorded host-preparation check)"
+   ],
+   "recommendation_only": "SF1-A, before the 8d drill",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [],
+   "additional_finding": false
+  },
+  {
+   "id": "AF-1",
+   "phase": "C",
+   "repository_status": "OPEN",
+   "decidable_now": false,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-4 world-readable checkout",
+     "line": 211,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    },
+    {
+     "source": "MSG_1_3",
+     "anchor": "msg3 §6 do not alter cell 308",
+     "line": 440,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_INSTRUCTIONS_R2_VERBATIM.md"
+    }
+   ],
+   "options": [
+    "AMEND MESSAGE 3 §6 (with operator consent)",
+    "DO NOT AMEND",
+    "NOT TRIGGERED"
+   ],
+   "recommendation_only": "decide only if 8a triggers it",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": true,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [
+    "OD-R2-3"
+   ],
+   "additional_finding": true
+  },
+  {
+   "id": "AF-2",
+   "phase": "C",
+   "repository_status": "OPEN",
+   "decidable_now": false,
+   "sources": [
+    {
+     "source": "DURABLE_HOST_PACKET",
+     "anchor": "P0.4 IMDS",
+     "line": 22,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/DURABLE_HOST_EXECUTION_PACKET.md"
+    }
+   ],
+   "options": [
+    "COMMISSION REVIEWED PORTABILITY CHANGE",
+    "USE AN IMDS HOST",
+    "NOT TRIGGERED"
+   ],
+   "recommendation_only": "decide only if the host lacks IMDS",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": true,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [
+    "OD-R2-3"
+   ],
+   "additional_finding": true
+  },
+  {
+   "id": "AF-3",
+   "phase": "C",
+   "repository_status": "OPEN",
+   "decidable_now": false,
+   "sources": [
+    {
+     "source": "FORMAL_RECORD",
+     "anchor": "filing into r2 governance",
+     "line": 14,
+     "commit": "bbe0b2533b77fc2255542dc49cdec8a8d4557cd0",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/formal_review_followup_5/FORMAL_DELTA_REVIEW_RECORD.md"
+    },
+    {
+     "source": "MSG_4",
+     "anchor": "msg4 decides none of OD-R2-0..6",
+     "line": 11,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_INSTRUCTIONS_R2_MSG4_VERBATIM.md"
+    }
+   ],
+   "options": [
+    "AUTHORIZE separate governance-only filing after the fast-forward",
+    "DO NOT FILE"
+   ],
+   "recommendation_only": "AUTHORIZE, after the fast-forward",
+   "gates": {
+    "incorporation": false,
+    "freeze": true,
+    "worker_tier_drill": false,
+    "qualification": true,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [
+    "OD-R2-H"
+   ],
+   "additional_finding": true
+  },
+  {
+   "id": "AF-4",
+   "phase": "E",
+   "repository_status": "OPEN",
+   "decidable_now": false,
+   "sources": [
+    {
+     "source": "MSG_1_3",
+     "anchor": "msg1 READY_FOR_OWNER_GRANT_DECISION",
+     "line": 342,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_INSTRUCTIONS_R2_VERBATIM.md"
+    },
+    {
+     "source": "R2_HOST_SESSION",
+     "anchor": "owner-gated after 8d (incl. gate step 9 pre-freeze follow-up review)",
+     "line": 298,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_AWS_SESSION_INSTRUCTIONS.md"
+    }
+   ],
+   "options": [
+    "grant / do not grant (after a passed, reviewed qualification)"
+   ],
+   "recommendation_only": "not answerable now",
+   "gates": {
+    "incorporation": false,
+    "freeze": false,
+    "worker_tier_drill": false,
+    "qualification": false,
+    "grant": true,
+    "target_evaluation": true
+   },
+   "depends_on": [
+    "OD-R2-0(D)",
+    "OD-R2-6(i)",
+    "OD-R2-6(ii)"
+   ],
+   "additional_finding": true
+  },
+  {
+   "id": "AF-5",
+   "phase": "E",
+   "repository_status": "OPEN",
+   "decidable_now": false,
+   "sources": [
+    {
+     "source": "R2_PACKET",
+     "anchor": "OD-R2-0 carry-over table",
+     "line": 61,
+     "commit": "101ef2cb17e5eab2892212178278da45b98004ed",
+     "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/OWNER_DECISION_PACKET_R2.md"
+    }
+   ],
+   "options": [
+    "r3 / no r3 (only after a failed r2 qualification)"
+   ],
+   "recommendation_only": "not answerable now",
+   "gates": {
+    "incorporation": false,
+    "freeze": false,
+    "worker_tier_drill": false,
+    "qualification": false,
+    "grant": false,
+    "target_evaluation": false
+   },
+   "depends_on": [
+    "OD-R2-0(D)"
+   ],
+   "additional_finding": true
+  }
+ ],
+ "phases": {
+  "A": [
+   "OD-R2-0(A)",
+   "OD-R2-0(B)",
+   "OD-R2-0(C)",
+   "OD-R2-1",
+   "OD-R2-1b",
+   "OD-R2-2",
+   "OD-R2-3",
+   "OD-R2-5",
+   "OD-R2-6(ii)",
+   "OD-R2-6(iii)",
+   "SF1"
+  ],
+  "B": [
+   "OD-R2-H",
+   "F-DRILL-ORDER"
+  ],
+  "C": [
+   "OD-R2-4",
+   "AF-1",
+   "AF-2",
+   "AF-3"
+  ],
+  "D": [
+   "OD-R2-0(D)"
+  ],
+  "E": [
+   "OD-R2-6(i)",
+   "AF-4",
+   "AF-5"
+  ]
+ },
+ "consistency": {
+  "problems": [],
+  "required_items_missing": [],
+  "every_decision_in_exactly_one_phase": true,
+  "owner_answer_files_in_r2": []
+ }
+}
