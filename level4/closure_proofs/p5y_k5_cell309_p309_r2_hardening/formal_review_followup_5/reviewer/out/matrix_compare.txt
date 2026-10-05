@@ -1,0 +1,175 @@
+base_t3 package 101ef2cb17e5eab2892212178278da45b98004ed runner e9eba86f37850bdc replica tree db04dfc9386de000ac622d8cc8050648c9d51d6c cases 24 tool fc1743357ebf
+base_t2 package 101ef2cb17e5eab2892212178278da45b98004ed runner e9eba86f37850bdc replica tree db04dfc9386de000ac622d8cc8050648c9d51d6c cases 24 tool fc1743357ebf
+c93d package 93d550638b8c79ae1c252fc6c2b0194b1a416b49 runner c60624b3db85efa0 replica tree 3b2f12f54bf9dba2961865f419a46caa19ffecdb cases 24 tool fc1743357ebf
+a119 package a119e9789e2a1d42b584fff8a2301946a37f1bcb runner 36e428fbcd386a01 replica tree 684d8540db014d9b3009c5ac6f1811e1dd6ae4a5 cases 24 tool fc1743357ebf
+a119r2 package a119e9789e2a1d42b584fff8a2301946a37f1bcb runner 36e428fbcd386a01 replica tree 684d8540db014d9b3009c5ac6f1811e1dd6ae4a5 cases 24 tool fc1743357ebf
+
+C01: interruption before first write
+   base_t3  fresh=True notrace=False
+   base_t2  fresh=True notrace=False
+   c93d     fresh=True notrace=False
+   a119     fresh=True notrace=False
+   a119r2   fresh=True notrace=False
+
+C02: attempt directory without RUN START (stale lock)
+   base_t3 INTERRUPTED fs=0 ln=0 rs=0
+   base_t2 INTERRUPTED fs=0 ln=0 rs=0
+   c93d    INTERRUPTED fs=0 ln=0 rs=0
+   a119    INTERRUPTED fs=8 ln=2 rs=0
+   a119r2  INTERRUPTED fs=8 ln=2 rs=0
+
+C03: interruption during a gate
+   base_t3 INTERRUPTED fs=0 ln=0 rs=1
+   base_t2 INTERRUPTED fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=14 ln=4 rs=1
+   a119    INTERRUPTED fs=22 ln=6 rs=1
+   a119r2  INTERRUPTED fs=22 ln=6 rs=1
+
+C04: interruption after open, before write (record)
+   base_t3 CORRUPT fs=0 ln=0 rs=1
+   base_t2 CORRUPT fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=38 ln=8 rs=1
+   a119    INTERRUPTED fs=46 ln=10 rs=1
+   a119r2  INTERRUPTED fs=46 ln=10 rs=1
+
+C05: interruption during the record write
+   base_t3 CORRUPT fs=0 ln=0 rs=1
+   base_t2 CORRUPT fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=38 ln=8 rs=1
+   a119    INTERRUPTED fs=46 ln=10 rs=1
+   a119r2  INTERRUPTED fs=46 ln=10 rs=1
+
+C06: interruption before the record is linked
+   base_t3 COMPLETE_PASS fs=0 ln=0 rs=1
+   base_t2 COMPLETE_PASS fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=39 ln=9 rs=1
+   a119    INTERRUPTED fs=47 ln=11 rs=1
+   a119r2  INTERRUPTED fs=47 ln=11 rs=1
+
+C07: interruption after the record is linked
+   base_t3 COMPLETE_PASS fs=0 ln=0 rs=1
+   base_t2 COMPLETE_PASS fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=39 ln=9 rs=1
+   a119    INTERRUPTED fs=47 ln=11 rs=1
+   a119r2  INTERRUPTED fs=47 ln=11 rs=1
+
+C08: crash between artifact write and ledger update
+   base_t3 INTERRUPTED fs=0 ln=0 rs=1
+   base_t2 INTERRUPTED fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=40 ln=9 rs=1
+   a119    INTERRUPTED fs=48 ln=11 rs=1
+   a119r2  INTERRUPTED fs=48 ln=11 rs=1
+
+C09: crash between ledger update and the record
+   base_t3 INTERRUPTED fs=0 ln=0 rs=1
+   base_t2 INTERRUPTED fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=44 ln=9 rs=1
+   a119    INTERRUPTED fs=52 ln=11 rs=1
+   a119r2  INTERRUPTED fs=52 ln=11 rs=1
+
+C10: host restart during QC-D5 (r1's case)
+   base_t3 INTERRUPTED fs=0 ln=0 rs=1
+   base_t2 INTERRUPTED fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=122 ln=22 rs=1
+   a119    INTERRUPTED fs=130 ln=24 rs=1
+   a119r2  INTERRUPTED fs=130 ln=24 rs=1
+
+C11: crash between the last ledger update and the completion marker
+   base_t3 INTERRUPTED fs=0 ln=0 rs=1
+   base_t2 INTERRUPTED fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=135 ln=24 rs=1
+   a119    INTERRUPTED fs=143 ln=26 rs=1
+   a119r2  INTERRUPTED fs=143 ln=26 rs=1
+
+C12: interruption during the completion marker write
+   base_t3 CORRUPT fs=0 ln=0 rs=1
+   base_t2 CORRUPT fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=135 ln=24 rs=1
+   a119    INTERRUPTED fs=143 ln=26 rs=1
+   a119r2  INTERRUPTED fs=143 ln=26 rs=1
+
+C13: Q-HOST abort during a gate (real abort path)
+   base_t3 ABORTED fs=0 ln=0 rs=1
+   base_t2 ABORTED fs=0 ln=0 rs=1
+   c93d    ABORTED fs=58 ln=12 rs=1
+   a119    ABORTED fs=66 ln=14 rs=1
+   a119r2  ABORTED fs=66 ln=14 rs=1
+
+C14: interruption inside the Q-HOST abort, before its summary
+   base_t3 INTERRUPTED fs=0 ln=0 rs=1
+   base_t2 INTERRUPTED fs=0 ln=0 rs=1
+   c93d    INTERRUPTED fs=52 ln=11 rs=1
+   a119    INTERRUPTED fs=60 ln=13 rs=1
+   a119r2  INTERRUPTED fs=60 ln=13 rs=1
+
+C15: control: an uninterrupted synthetic run
+   base_t3 COMPLETE_PASS fs=0 ln=0 rs=1
+   base_t2 COMPLETE_PASS fs=0 ln=0 rs=1
+   c93d    COMPLETE_PASS fs=137 ln=25 rs=1
+   a119    COMPLETE_PASS fs=145 ln=27 rs=1
+   a119r2  COMPLETE_PASS fs=145 ln=27 rs=1
+
+S01: stale lock: an empty attempt directory
+   base_t3 INTERRUPTED refused=True rs=0 unch=True
+   base_t2 INTERRUPTED refused=True rs=0 unch=True
+   c93d    INTERRUPTED refused=True rs=0 unch=True
+   a119    INTERRUPTED refused=True rs=0 unch=True
+   a119r2  INTERRUPTED refused=True rs=0 unch=True
+
+S02: partial artifact: a torn record in a prior attempt
+   base_t3 CORRUPT refused=True rs=0 unch=True
+   base_t2 CORRUPT refused=True rs=0 unch=True
+   c93d    CORRUPT refused=True rs=0 unch=True
+   a119    CORRUPT refused=True rs=0 unch=True
+   a119r2  CORRUPT refused=True rs=0 unch=True
+
+S03: stray completion marker without an attempt
+   base_t3 CORRUPT refused=True rs=0 unch=True
+   base_t2 CORRUPT refused=True rs=0 unch=True
+   c93d    CORRUPT refused=True rs=0 unch=True
+   a119    CORRUPT refused=True rs=0 unch=True
+   a119r2  CORRUPT refused=True rs=0 unch=True
+
+S04: leftover temporary file in the qualification directory
+   base_t3 INTERRUPTED refused=False rs=1 unch=False
+   base_t2 INTERRUPTED refused=False rs=1 unch=False
+   c93d    INTERRUPTED refused=True rs=0 unch=True
+   a119    INTERRUPTED refused=True rs=0 unch=True
+   a119r2  INTERRUPTED refused=True rs=0 unch=True
+
+S05: torn ledger tail before launch (truncated checkpoint)
+   base_t3 CORRUPT refused=False rs=1 unch=False
+   base_t2 CORRUPT refused=False rs=1 unch=False
+   c93d    CORRUPT refused=True rs=0 unch=False
+   a119    CORRUPT refused=True rs=0 unch=False
+   a119r2  CORRUPT refused=True rs=0 unch=False
+
+S06: orphan RUN START: a prior run's start line but no attempt directory
+   base_t3 CORRUPT refused=False rs=2 unch=False
+   base_t2 CORRUPT refused=False rs=2 unch=False
+   c93d    CORRUPT refused=True rs=1 unch=False
+   a119    CORRUPT refused=True rs=1 unch=False
+   a119r2  CORRUPT refused=True rs=1 unch=False
+
+S07: Q-HOST preflight raises HostError (host changed)
+   base_t3  refused=True unch=True
+   base_t2  refused=True unch=True
+   c93d     refused=True unch=True
+   a119     refused=True unch=True
+   a119r2   refused=True unch=True
+
+S08: a frozen directory changed after the freeze
+   base_t3  refused=True unch=True
+   base_t2  refused=True unch=True
+   c93d     refused=True unch=True
+   a119     refused=True unch=True
+   a119r2   refused=True unch=True
+
+S09: both pass the existence check, then mkdir decides
+   base_t3 COMPLETE_PASS rs=1
+   base_t2 COMPLETE_PASS rs=1
+   c93d    COMPLETE_PASS rs=1
+   a119    COMPLETE_PASS rs=1
+   a119r2  COMPLETE_PASS rs=1
+
+R2_FAILURE_MATRIX keys: ['classes', 'evidence_sha256', 'facts_from_evidence', 'packages', 'rows', 'schema', 'statement']
