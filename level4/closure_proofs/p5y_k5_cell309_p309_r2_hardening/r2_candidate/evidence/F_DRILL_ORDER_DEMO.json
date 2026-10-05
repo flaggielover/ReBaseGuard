@@ -1,0 +1,68 @@
+{
+ "orders": {
+  "corrected": {
+   "manifest_check_rc": 0,
+   "manifest_check_tail": "MANIFEST IDENTICAL\n",
+   "manifest_path_count": 194,
+   "manifest_pins_params_file": true,
+   "order": [
+    "make_freeze_params.py",
+    "make_freeze_manifest.py",
+    "p309_placeholder_check.py"
+   ],
+   "params_file_exists": true,
+   "steps": [
+    {
+     "rc": 0,
+     "script": "make_freeze_params.py",
+     "tail": "-> level4/closure_proofs/p5y_k5_cell309_p309_r2/freeze/P309_FREEZE.json (91032 bytes)\n"
+    },
+    {
+     "rc": 0,
+     "script": "make_freeze_manifest.py",
+     "tail": "183 code pins, 10 data pins -> level4/closure_proofs/p5y_k5_cell309_p309_r2/freeze/P309_FREEZE_MANIFEST.json\n"
+    },
+    {
+     "rc": 0,
+     "script": "p309_placeholder_check.py",
+     "tail": "{\n \"pass\": true,\n \"unallowed\": [],\n \"nulls\": []\n}\n"
+    }
+   ]
+  },
+  "current_r2": {
+   "manifest_check_rc": 1,
+   "manifest_check_tail": "MANIFEST DIFFERS\n",
+   "manifest_path_count": 193,
+   "manifest_pins_params_file": false,
+   "order": [
+    "make_freeze_manifest.py",
+    "make_freeze_params.py",
+    "p309_placeholder_check.py"
+   ],
+   "params_file_exists": true,
+   "steps": [
+    {
+     "rc": 0,
+     "script": "make_freeze_manifest.py",
+     "tail": "182 code pins, 10 data pins -> level4/closure_proofs/p5y_k5_cell309_p309_r2/freeze/P309_FREEZE_MANIFEST.json\n"
+    },
+    {
+     "rc": 0,
+     "script": "make_freeze_params.py",
+     "tail": "-> level4/closure_proofs/p5y_k5_cell309_p309_r2/freeze/P309_FREEZE.json (91032 bytes)\n"
+    },
+    {
+     "rc": 0,
+     "script": "p309_placeholder_check.py",
+     "tail": "{\n \"pass\": true,\n \"unallowed\": [],\n \"nulls\": []\n}\n"
+    }
+   ]
+  }
+ },
+ "r1_real_manifest": {
+  "path_count": 125,
+  "pins_params_file": true,
+  "sha256": "728fbf10608b1357e14b1a0f6147d9b4bbc3719a94c0d94ef2243c3fe7733c6c"
+ },
+ "r2_commit": "101ef2cb17e5eab2892212178278da45b98004ed"
+}

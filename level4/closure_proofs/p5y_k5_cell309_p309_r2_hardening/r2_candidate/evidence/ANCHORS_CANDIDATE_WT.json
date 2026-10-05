@@ -1,0 +1,114 @@
+{
+ "all_anchors_exactly_once": true,
+ "mutants": [
+  {
+   "anchor_count": 1,
+   "check": "T11",
+   "file": "tests/test_p309_exactly_once.py",
+   "mutant": "T11a_qc11_harness_reads_real_head"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T11",
+   "file": "tests/test_p309_guard.py",
+   "mutant": "T11b_guard_harness_bypasses_sandbox_base"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T11",
+   "file": "verify/scoped_sandbox.py",
+   "mutant": "T11c_verifier_sandbox_bypasses_its_base_rule"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T12",
+   "file": "code/p309_guard.py",
+   "mutant": "T12a_guard_forbids_only_r2"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T12",
+   "file": "code/p309_qualify.py",
+   "mutant": "T12b_qc13_drops_the_namespace_check"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T13",
+   "file": "code/p309_driver.py",
+   "mutant": "T13a_recorded_freeze_changed"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T13",
+   "file": "code/p309_driver.py",
+   "mutant": "T13b_read_path_constant_changed"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14a_main_preflight_after_the_attempt"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14b_main_refusal_after_the_attempt"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14c_monitor_started_after_work"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14d_host_rerun_wrong_modes"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14e_host_rerun_without_preflight"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14f_main_raise_after_the_attempt"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14g_main_sys_exit_after_the_attempt"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14i_main_assert_after_the_attempt"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14j_main_aliased_exit_after_the_attempt"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14k_main_self_signal_after_the_attempt"
+  },
+  {
+   "anchor_count": 1,
+   "check": "T14",
+   "file": "code/p309_qualify.py",
+   "mutant": "T14h_host_rerun_os_exit_after_the_attempt"
+  }
+ ],
+ "namespace": "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r2"
+}

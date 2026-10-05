@@ -402,6 +402,11 @@ def check_git(argv: list[str], cwd: str | None, raw: str) -> None:
         bad = sorted({s for s in staged if s and not in_write_set(s)})
         if bad:
             raise Refuse("R5_PROTECTED_WRITE", f"the commit would touch protected paths: {bad[:5]}")
+        commit_allow = getattr(P, "COMMIT_ALLOW", None)
+        if commit_allow is not None:
+            extra = sorted({s for s in staged if s and s.replace(os.sep, "/") not in commit_allow})
+            if extra:
+                raise Refuse("R5_PROTECTED_WRITE", f"the commit may contain only {list(commit_allow)}: {extra[:5]}")
         return
     if sub == "config" and in_main_repo and not any(a in ("--get", "--list", "-l", "--get-all", "--get-regexp")
                                                     for a in rest):

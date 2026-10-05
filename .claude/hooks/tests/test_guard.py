@@ -145,8 +145,19 @@ def fixture_cases(tmp: Path) -> list[dict]:
     g(fx, "reset", "-q")
     (fx / P.NEW_NS / "a.txt").write_text("b\n")
     g(fx, "add", P.NEW_NS)
+    commit_allow = getattr(P, "COMMIT_ALLOW", None)
+    if commit_allow is not None:
+        r = guard_commit(fx, "git commit -m x", "c2b")
+        rec("CM2b", "commit of a write-set path outside the commit-set (COMMIT_ALLOW) is refused", r,
+            r.returncode == 2 and "[R5_PROTECTED_WRITE]" in r.stderr and "may contain only" in r.stderr)
+        g(fx, "reset", "-q")
+        g(fx, "checkout", "-q", "--", P.NEW_NS)
+        cf = fx / commit_allow[0]
+        cf.parent.mkdir(parents=True, exist_ok=True)
+        cf.write_text("c\n")
+        g(fx, "add", commit_allow[0])
     r = guard_commit(fx, "git commit -m x", "c2")
-    rec("CM2", "commit of write-set paths only is allowed", r, r.returncode == 0)
+    rec("CM2", "commit of write-set (and commit-set) paths only is allowed", r, r.returncode == 0)
     r = guard_commit(fx, "git commit -a -m x", "c3")
     rec("CM3", "commit -a sweeping in an unstaged protected change is refused", r,
         r.returncode == 2 and "[R5_PROTECTED_WRITE]" in r.stderr)

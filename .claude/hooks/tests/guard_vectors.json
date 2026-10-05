@@ -96,8 +96,9 @@
   {"id": "W17", "rule": "R5_PROTECTED_WRITE", "cmd": "echo x 1> level4/closure_proofs/p5y_k5_cell307_rlr_r1/x.json"},
   {"id": "W18", "rule": "R5_PROTECTED_WRITE", "tool": "Edit", "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_driver.py", "old": "a", "new": "b"},
   {"id": "W19", "rule": "R5_PROTECTED_WRITE", "tool": "Write", "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2/ledger/ZERO_TARGET_LEDGER.jsonl", "content": "{}"},
-  {"id": "W20", "rule": "R5_PROTECTED_WRITE", "tool": "Edit", "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json", "old": "a", "new": "b"},
+  {"id": "W20", "rule": "R5_PROTECTED_WRITE", "tool": "Edit", "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2/config/FORMAL_QUARANTINE_P309.json", "old": "a", "new": "b"},
   {"id": "W21", "rule": "R5_PROTECTED_WRITE", "cmd": "sed -i s/a/b/ level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_env.py"},
+  {"id": "W22", "rule": "R5_PROTECTED_WRITE", "tool": "Edit", "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_qualify.py", "old": "a", "new": "b"},
   {"id": "W22", "rule": "R5_PROTECTED_WRITE", "tool": "Write", "file": "level4/closure_proofs/p5y_k5_cell309_q11_recovery/x.md", "content": "x"},
   {"id": "H37", "rule": "R3_HISTORY", "cmd": "git checkout -b claude/p309-r2-hardening-20261005 c902fe2fe33003ac7e4e61f29c10c81682fc940c"},
   {"id": "H38", "rule": "R3_HISTORY", "cmd": "git checkout -b claude/other 101ef2cb17e5eab2892212178278da45b98004ed"},
@@ -155,7 +156,7 @@
   {"id": "P20", "cmd": "git add x && git commit -q -m \"line one\n\nline two: git push --force is refused\" && git push -u origin claude/p309-r2-hardening-20261005 2>&1 | tail -3"},
   {"id": "P21", "cmd": "python3 level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/code/attempt_validator.py --help > /dev/null 2>&1"},
   {"id": "P22", "cmd": "python3 x.py > @SCRATCH@/out.log 2>&1 < /dev/null"},
-  {"id": "P23", "tool": "Edit", "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_qualify.py", "old": "a", "new": "b"},
+  {"id": "P23", "tool": "Edit", "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/r2_candidate/x.md", "old": "a", "new": "b"},
   {"id": "P24", "tool": "Write", "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/OWNER_DECISIONS_OD_R2.md", "content": "recommendation only"}
  ]
 }

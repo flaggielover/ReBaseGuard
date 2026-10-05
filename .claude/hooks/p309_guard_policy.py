@@ -25,22 +25,29 @@ def audit_dir() -> Path:
     return Path(v) if v else repo_root() / ".claude" / "audit"
 
 
-# Task 2 (r2 qualification hardening, 2026-10-05).  The only branch this session may commit to or push; it is
+# Task 3 (minimal r2 adoption candidate, 2026-10-05).  The only branch this session may commit to or push; it is
 # created once from r2's head R2_HEAD (the guard admits exactly `git checkout -b ALLOWED_BRANCH R2_HEAD`).
-ALLOWED_BRANCH = "claude/p309-r2-hardening-20261005"
+ALLOWED_BRANCH = "claude/p309-r2-hardening-20261005"   # task 3 phase C: the reports go here, not on the candidate
 R2_HEAD = "101ef2cb17e5eab2892212178278da45b98004ed"
-# branches the session repository may be on (the finished task-1 branch, read only from now on, and this one)
-KNOWN_BRANCHES = ("claude/p309-q11-recovery-20261005", ALLOWED_BRANCH)
+# branches the session repository may be on (the finished task-1 and task-2 branches, read only, and this one)
+KNOWN_BRANCHES = ("claude/p309-q11-recovery-20261005", ALLOWED_BRANCH,
+                  "claude/p309-r2-adoption-candidate-20261005")
 ALLOWED_REMOTE = "origin"
 BASE_COMMIT = R2_HEAD                                           # the branch point of ALLOWED_BRANCH
 
-# the write-set: repository-relative prefixes / files this session may create or change.  Everything else in the
-# repository (every live evidence namespace, the r1 and r2 campaigns -- r2's evidence, ledgers, governance, reviews,
-# tests and every other code file --, cells 306-308, r5, status documents) is protected.  The one r2 file admitted is
-# the qualification runner, for runtime hardening only (no scientific or target logic lives in it).
+# the write-set (working tree): the two r2 files of the adoption candidate, the task-2 hardening namespace (drafts of
+# this task's reports, never committed to ALLOWED_BRANCH) and the guard itself.  Everything else is protected.
 NEW_NS = "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/"
 R2_RUNNER = "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_qualify.py"
-WRITE_ALLOW = (NEW_NS, R2_RUNNER, ".claude/hooks/", ".claude/settings.json", ".claude/audit/", ".claude/.gitignore")
+R2_DRILL = "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_topology_drill.py"
+# F-DRILL-ORDER changes make_topology's AST, which r2's scanner allowance pins (ref_mutation_functions): that one
+# hash is re-pinned with r2's own `code/p309_scan_pins.py --refresh`, so the allowance is admitted too
+R2_ALLOWANCE = "level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json"
+# phase C: the candidate is committed and pushed; no r2 file is writable any more
+WRITE_ALLOW = (NEW_NS, ".claude/hooks/", ".claude/settings.json", ".claude/audit/", ".claude/.gitignore")
+# the commit-set: a commit on ALLOWED_BRANCH may contain these three r2 files and nothing else (the adoption candidate
+# carries no .claude/**, no hardening namespace, no evidence and no documentation)
+COMMIT_ALLOW = None                                             # phase C: the commit-set is the write-set
 # files under these prefixes may name prohibited identifiers as data (the guard's own rules and test vectors)
 CONTENT_SCAN_EXEMPT = (".claude/hooks/",)
 
