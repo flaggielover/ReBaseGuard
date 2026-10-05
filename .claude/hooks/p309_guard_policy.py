@@ -25,27 +25,25 @@ def audit_dir() -> Path:
     return Path(v) if v else repo_root() / ".claude" / "audit"
 
 
-# Task 7 (owner message 5: H-A, AF-3, SF1-A; 2026-10-05), phase c.  The only branch this session may commit to
-# or push.  `git checkout -b ALLOWED_BRANCH R2_HEAD` creates it only at R2_HEAD; a push is never forced.
+# Task 8 (owner message 6: SF1-A incorporation b66a45f0 -> 716946e8, then one governance-only commit; 2026-10-05),
+# phase c.  The only branch this session may commit to or push.  `git checkout -b ALLOWED_BRANCH R2_HEAD` creates
+# it only at R2_HEAD; a push is never forced.
 ALLOWED_BRANCH = "claude/p309-r2-hardening-20261005"
 R2_HEAD = "101ef2cb17e5eab2892212178278da45b98004ed"
-KNOWN_BRANCHES = ("claude/p309-q11-recovery-20261005", "claude/p309-r2-hardening-20261005", "claude/p309-r2-adoption-candidate-20261005", "claude/p5y-k5-cell309-p309-r2", "claude/p309-r2-sf1a-20261005")
+KNOWN_BRANCHES = ("claude/p309-q11-recovery-20261005", "claude/p309-r2-hardening-20261005", "claude/p309-r2-adoption-candidate-20261005", "claude/p5y-k5-cell309-p309-r2", "claude/p309-r2-sf1a-20261005", "claude/p309-r2-sf1a-filing-20261005")
 ALLOWED_REMOTE = "origin"
-BASE_COMMIT = "101ef2cb17e5eab2892212178278da45b98004ed"        # r2 before the owner's H-A fast-forward
+BASE_COMMIT = "b66a45f097989764176075802c953df4b72c2aef"        # r2 before the owner's SF1-A incorporation
 
 NEW_NS = "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/"
 R2_RUNNER = "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_qualify.py"
 R2_GOV = "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/"
-# AF-3: the NEW, additive governance files of the separate governance-only commit on r2 (no existing record changes)
-R2_GOV_NEW = (R2_GOV + "BRIEF_R2_DELTA_FOLLOWUP_5.md",
-              R2_GOV + "REVIEW_R2_DELTA_FOLLOWUP_5.md",
-              R2_GOV + "REVIEW_R2_DELTA_FOLLOWUP_5.sha256",
-              R2_GOV + "REVIEW_R2_DELTA_FOLLOWUP_5_EXEC_LEDGER.jsonl",
-              R2_GOV + "R2_DELTA_FOLLOWUP_5_RECORD.md",
-              R2_GOV + "OWNER_DECISIONS_R2_MSG5_VERBATIM.md",
-              R2_GOV + "OWNER_DECISIONS_R2_RECORD_1.json",
-              R2_GOV + "R2_DEVELOPMENT_HISTORY_SUPPLEMENT_1.md",
-              R2_GOV + "R2_INCORPORATION_RECORD_C1.json")
+# message 6: the NEW, additive SF1-A governance files of the separate governance-only commit (no existing record changes)
+R2_GOV_NEW = (R2_GOV + "BRIEF_SF1A_DELTA_REVIEW.md",
+              R2_GOV + "REVIEW_SF1A_DELTA.md",
+              R2_GOV + "REVIEW_SF1A_DELTA.sha256",
+              R2_GOV + "REVIEW_SF1A_DELTA_EXEC_LEDGER.jsonl",
+              R2_GOV + "OWNER_DECISIONS_R2_MSG6_VERBATIM.md",
+              R2_GOV + "R2_SF1A_INCORPORATION_RECORD.json")
 WRITE_ALLOW = (NEW_NS, ".claude/hooks/", ".claude/settings.json", ".claude/audit/", ".claude/.gitignore") + tuple(())
 COMMIT_ALLOW = None
 

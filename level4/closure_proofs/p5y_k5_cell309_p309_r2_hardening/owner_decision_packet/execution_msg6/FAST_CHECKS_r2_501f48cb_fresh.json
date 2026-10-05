@@ -1,0 +1,51 @@
+{
+ "commit": "501f48cb31fd3f80d5c6dd33f1eef6b8f01b2853",
+ "steps": {
+  "QC12_static_check": {
+   "rc": 0,
+   "wall_s": 11.2,
+   "tail": "[PASS] T1_no_path_from_qualification_modes_to_target  \n[PASS] T2_fc4_static_items  \n[PASS] T3_target_inputs_only_via_the_control  \n[PASS] T4_exactly_once_sites  \n[PASS] T5_formal_scan  \n[PASS] T6_mutation_dominated_by_the_grant  \n[PASS] T7_no_production_execution_from_tests_or_qualification  \n[PASS] T8_runtime_backstop_at_the_sites  \n[PASS] T9_validate_grant_runs_execute_prechecks  \n[PASS] T10_host_git_checked_before_git_writes  \n[PASS] T11_sandbox_base_rule  \n[PASS] T12_both_production_namespaces_forbidden  \n[PASS] T13_production_read_path_pinned  \n[PASS] T14_qhost_refusals_before_the_attempt  \n"
+  },
+  "static_controls": {
+   "rc": 0,
+   "wall_s": 10.0,
+   "tail": "[PASS] S00_unmutated_copy_passes_T11_T14\n[PASS] T11a_qc11_harness_reads_real_head\n[PASS] T11b_guard_harness_bypasses_sandbox_base\n[PASS] T11c_verifier_sandbox_bypasses_its_base_rule\n[PASS] T12a_guard_forbids_only_r2\n[PASS] T12b_qc13_drops_the_namespace_check\n[PASS] T13a_recorded_freeze_changed\n[PASS] T13b_read_path_constant_changed\n[PASS] T14a_main_preflight_after_the_attempt\n[PASS] T14b_main_refusal_after_the_attempt\n[PASS] T14c_monitor_started_after_work\n[PASS] T14d_host_rerun_wrong_modes\n[PASS] T14e_host_rerun_without_preflight\n[PASS] T14f_main_raise_after_the_attempt\n[PASS] T14g_main_sys_exit_after_the_attempt\n[PASS] T14i_main_assert_after_the_attempt\n[PASS] T14j_main_aliased_exit_after_the_attempt\n[PASS] T14k_main_self_signal_after_the_attempt\n[PASS] T14h_host_rerun_os_exit_after_the_attempt\n[PASS] T12c_production_tokens_lack_r1\n[PASS] T13c_constant_pin_missing\n[PASS] S99_copy_restored\n"
+  },
+  "scan_pins_list": {
+   "rc": 0,
+   "wall_s": 12.7,
+   "tail": "nctions: tests/test_p309_host_controls.py in_unit: current\nreviewed_functions: code/p309_host.py _start_time: current\nreviewed_functions: code/p309_host.py exclusion_gate: current\nreviewed_functions: code/p309_host.py durability_preflight: current\nreviewed_functions: code/p309_qualify.py qhost_preflight: current\nreviewed_functions: tests/test_p309_host_controls.py kill_token: current\nreviewed_functions: code/p309_host.py MonitorIO.signal_parent: current\nreviewed_functions: code/p309_host.py MonitorIO.sample: current\nreviewed_functions: code/p309_host.py _state: current\nreviewed_functions: tests/test_p309_host_controls.py case_u: current\nreviewed_functions: tests/test_p309_host_controls.py case_k02: current\nreviewed_functions: tests/test_p309_host_controls.py case_r01: current\nt7_exemptions: tests/test_p309_guard.py <module>: current\nt7_exemptions: tests/test_p309_site_backstop.py <module>: current\nt7_exemptions: code/p309_postexec.py <module>: current\nt7_exemptions: code/p309_env.py <module>: current\nt7_exemptions: code/p309_scan.py <module>: current\nt7_exemptions: code/checkpoint_push_p309.py <module>: current\nt7_exemptions: tests/test_p309_exactly_once.py <module>: current\nt7_exemptions: tests/test_verify_scoped.py <module>: current\nt7_exemptions: verify/run_verify_all_scoped.py <module>: current\nmodule_level_exemptions: verify/srk_verify_indep_scoped.py <module>: current\nmodule_level_exemptions: verify/run_verify_all_scoped.py <module>: current\nP309 SCAN PINS: all current\n"
+  },
+  "scan_allowance_test": {
+   "rc": 0,
+   "wall_s": 1.6,
+   "tail": "[PASS] genuine_guard_allowance_holds\n[PASS] genuine_full_scan_pass\n[PASS] C1_second_literal_occurrence\n[PASS] C2_literal_outside_the_assignment\n[PASS] C3_rebinding\n[PASS] C4_update_ref_with_constant\n[PASS] C5_push_with_literal\n[PASS] C5b_delete_in_namespace\n[PASS] C6_unlisted_file\n[PASS] C7_grant_write\n[PASS] C7b_git_add_grant\n[PASS] C8_alias_outside_class_attr\n[PASS] C9_attribute_rebind_elsewhere\n[PASS] C10_refusal_test_mark_does_not_cover_literal\n[PASS] C11_formal_planted_control_fires_all\n[PASS] C12_allowed_findings_are_listed\n[PASS] C13_pending_literal_outside_guard\n[PASS] C14_unlisted_site_is_a_finding\n[PASS] C15_listed_site_sanctioned_changed_body_refused\n"
+  },
+  "make_freeze_params": {
+   "rc": 0,
+   "wall_s": 0.1,
+   "tail": "-> level4/closure_proofs/p5y_k5_cell309_p309_r2/freeze/P309_FREEZE.json (91032 bytes)\n"
+  },
+  "make_freeze_manifest": {
+   "rc": 0,
+   "wall_s": 0.1,
+   "tail": "198 code pins, 10 data pins -> level4/closure_proofs/p5y_k5_cell309_p309_r2/freeze/P309_FREEZE_MANIFEST.json\n"
+  },
+  "placeholder_check": {
+   "rc": 0,
+   "wall_s": 0.8,
+   "tail": "{\n \"pass\": true,\n \"unallowed\": [],\n \"nulls\": []\n}\n"
+  },
+  "manifest_check": {
+   "rc": 0,
+   "wall_s": 0.1,
+   "tail": "MANIFEST IDENTICAL\n"
+  },
+  "QC15_self_audit": {
+   "rc": 0,
+   "wall_s": 12.0,
+   "tail": "{\n \"ok\": true,\n \"checks\": {\n  \"A1_target_counters_zero\": true,\n  \"A2_no_band_drift\": true,\n  \"A3_immutable_governance\": true,\n  \"A4_formal_static_scan\": true,\n  \"A5_producer_lock\": true,\n  \"A6_r5_unchanged_no_r6\": true,\n  \"A7_formal_namespace_only_research_unchanged\": true,\n  \"A8_refs_ordinary_no_marker\": true,\n  \"A9_variant_independent_imports\": true,\n  \"A10_probe_envelope\": true\n }\n}\n"
+  }
+ },
+ "all_rc0": true
+}
