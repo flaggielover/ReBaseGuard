@@ -10,14 +10,19 @@ namespace).  Nothing evaluates a target: every gate, the mirror, Q-HOST's prefli
 F01-F13  unit tests of fs_probe() in temporary directories, with faults injected through a proxy of the runner's `os`
          (no unsupported filesystem is available in this container, so each missing capability is simulated at the
          system-call boundary the probe uses).
-M01-M05  integration: the real main() / host_rerun() in the replica, run in a child process:
+F14-F15  SF1-A unit tests: a ledger that cannot be opened for appending (F14), a missing ledger (F15).
+M01-M06  integration: the real main() / host_rerun() in the replica, run in a child process:
          M01 supported filesystem: the run proceeds and completes; no probe directory is left.
          M02 hard links unsupported (os.link -> EPERM): refused before Q-HOST, the attempt directory and RUN START;
              qualification/ empty; ledger bytes unchanged.
          M03 directory fsync unsupported (EINVAL on an O_DIRECTORY fd): the same.
          M04 a probe directory left by an interrupted probe: refused, naming it; it is not removed.
          M05 host_rerun with hard links unsupported: refused before HOST RERUN START.
-Label s1: every test must pass.  Label pre_s1 (the candidate before S1): F01-F13 and M02-M05 must fail and M01 must
+         M06 (SF1-A) a ledger that cannot be appended to (the fault is injected both in the runner's os.open and
+             in the ledger writer's Path.open): refused before Q-HOST, the attempt directory and RUN START.
+Labels: s1a (the SF1-A runner): every test must pass.  pre_s1a (S1 runner without SF1-A): F01-F13 and M01-M05 pass,
+F14, F15 and M06 fail (they discriminate; M06 records the attempt being consumed).  pre_s1 (before S1): see below.
+Label s1 (historical, before SF1-A existed): every S1 test must pass.  Label pre_s1 (the candidate before S1): F01-F13 and M02-M05 must fail and M01 must
 pass -- the tests discriminate; for M02/M03/M05 the report records what the pre-S1 runner does instead (it writes
 the start line and creates the attempt, then fails at its first durable write: the single attempt is consumed).
 """
@@ -46,6 +51,7 @@ HOST_MOD = "p309_" + "host"
 PROBE_PREFIX = ".p309-fsprobe-"
 UNIT = [f"F{i:02d}" for i in range(1, 14)]
 INTEG = ["M01", "M02", "M03", "M04", "M05"]
+SF1A = ["F14", "F15", "M06"]                                       # the SF1-A cases
 
 
 def import_runner(replica: Path):
@@ -66,6 +72,9 @@ class Faulty:
         return getattr(self.real, k)
 
     def open(self, path, flags, mode=0o777, **kw):
+        if ("ledger_noappend" in self.faults and str(path).endswith(".jsonl") and flags & self.real.O_APPEND
+                and flags & (self.real.O_WRONLY | self.real.O_RDWR)):
+            raise PermissionError(errno.EACCES, "Permission denied (injected: ledger not appendable)")
         if "no_excl" in self.faults and Path(path).name == "probe.a" and self.real.path.exists(path):
             flags &= ~self.real.O_EXCL
         fd = self.real.open(path, flags, mode, **kw)
@@ -221,6 +230,20 @@ def unit_tests(replica: Path, scratch: Path) -> dict:
     case("F11", f11)
     case("F12", f12)
     case("F13", expect("F13", {"enospc"}, "write", errno.ENOSPC))
+    case("F14", expect("F14", {"ledger_noappend"}, "ledger appendability", errno.EACCES))
+
+    def f15():
+        saved15 = Q.E.Q.EXPOSURE_LEDGER
+        Q.E.Q.EXPOSURE_LEDGER = led_dir / "MISSING_LEDGER.jsonl"
+        try:
+            d, out, _ = probe("f15")
+        finally:
+            Q.E.Q.EXPOSURE_LEDGER = saved15
+        assert any("ledger appendability (MISSING_LEDGER.jsonl" in p and f"errno {errno.ENOENT}" in p for p in out), out
+        assert left(d) == [], f"the probe left {left(d)}"
+        assert not (led_dir / "MISSING_LEDGER.jsonl").exists(), "the probe created a ledger"
+
+    case("F15", f15)
     Q.E.Q.EXEC_LEDGER, Q.E.Q.EXPOSURE_LEDGER = saved
     return res
 
@@ -230,8 +253,18 @@ def child(replica: Path, case: str) -> int:
     Q = import_runner(replica)
     H = __import__(HOST_MOD)
     real_os, real_sub = Q.os, Q.subprocess
-    faults = {"M02": {"no_link"}, "M03": {"no_dir_fsync"}, "M05": {"no_link"}}.get(case, set())
+    faults = {"M02": {"no_link"}, "M03": {"no_dir_fsync"}, "M05": {"no_link"},
+              "M06": {"ledger_noappend"}}.get(case, set())
     Q.os = Faulty(real_os, faults)
+    if case == "M06":                       # the same fault for the ledger writer (pathlib, outside the runner's os)
+        import pathlib
+        real_path_open = pathlib.Path.open
+
+        def path_open(self, mode="r", *a, **kw):
+            if self.name.endswith(".jsonl") and self.parent.name == "ledger" and any(c in mode for c in "aw+"):
+                raise PermissionError(errno.EACCES, "Permission denied (injected: ledger not appendable)")
+            return real_path_open(self, mode, *a, **kw)
+        pathlib.Path.open = path_open
 
     class DummyMonitor:
         class _In:
@@ -380,6 +413,20 @@ def integration(replica: Path, topo: dict, env: dict, label: str) -> dict:
                           "probe (S1)") and not res["M05"]["preflight_called"] and starts("HOST RERUN START") == 0
                           and res["M05"]["ledger_unchanged"] and not res["M05"]["host_rerun_dir"]
                           and not res["M05"]["probe_left"])
+    # M06 (SF1-A): a ledger that cannot be appended to -> refused before Q-HOST, the attempt directory and RUN START
+    reset()
+    before = ledger.read_bytes()
+    r = run("M06")
+    refusal = [l for l in r.stdout.splitlines() if "REFUSED" in l]
+    res["M06"] = {"rc": r.returncode, "refusal": refusal[:1], "preflight_called": "PREFLIGHT_CALLED" in r.stdout,
+                  "attempt_dir": (qdir / "attempt_1").exists(), "run_start_lines": starts(),
+                  "qualification_entries": sorted(p.name for p in qdir.iterdir()) if qdir.exists() else None,
+                  "ledger_unchanged": ledger.read_bytes() == before, "probe_left": probe_left(),
+                  "stderr_tail": r.stderr[-400:]}
+    res["M06"]["pass"] = (r.returncode == 2 and bool(refusal) and "filesystem probe (S1)" in refusal[0]
+                          and "ledger appendability" in refusal[0] and not res["M06"]["preflight_called"]
+                          and not res["M06"]["attempt_dir"] and starts() == 0 and res["M06"]["ledger_unchanged"]
+                          and res["M06"]["qualification_entries"] == [] and not res["M06"]["probe_left"])
     reset()
     return res
 
@@ -409,9 +456,17 @@ def main() -> int:
     units = unit_tests(replica, scratch)
     integ = integration(replica, topo, env, a.label)
     results = {**units, **integ}
-    if a.label == "s1":
+    s1_ids = UNIT + INTEG
+    if a.label == "s1a":
         ok = all(v["pass"] for v in results.values())
-        expectation = "every test passes"
+        expectation = "every test passes (S1 and SF1-A)"
+    elif a.label == "pre_s1a":
+        ok = all(results[k]["pass"] for k in s1_ids) and all(not results[k]["pass"] for k in SF1A)
+        expectation = ("the S1 tests pass and the SF1-A tests fail on the runner without SF1-A: the SF1-A tests "
+                       "discriminate")
+    elif a.label == "s1":
+        ok = all(results[k]["pass"] for k in s1_ids)
+        expectation = "every S1 test passes"
     else:
         ok = (all(not units[k]["pass"] for k in UNIT) and integ["M01"]["pass"]
               and all(not integ[k]["pass"] for k in ("M02", "M03", "M04", "M05")))

@@ -25,22 +25,29 @@ def audit_dir() -> Path:
     return Path(v) if v else repo_root() / ".claude" / "audit"
 
 
-# Task 4 (S1-S3 follow-up of the r2 adoption candidate, 2026-10-05), phase c.  The only branch this session may
-# commit to or push; the guard admits `git checkout ALLOWED_BRANCH` (both branches already exist).
+# Task 7 (owner message 5: H-A, AF-3, SF1-A; 2026-10-05), phase c.  The only branch this session may commit to
+# or push.  `git checkout -b ALLOWED_BRANCH R2_HEAD` creates it only at R2_HEAD; a push is never forced.
 ALLOWED_BRANCH = "claude/p309-r2-hardening-20261005"
 R2_HEAD = "101ef2cb17e5eab2892212178278da45b98004ed"
-KNOWN_BRANCHES = ("claude/p309-q11-recovery-20261005", "claude/p309-r2-hardening-20261005",
-                  "claude/p309-r2-adoption-candidate-20261005")
+KNOWN_BRANCHES = ("claude/p309-q11-recovery-20261005", "claude/p309-r2-hardening-20261005", "claude/p309-r2-adoption-candidate-20261005", "claude/p5y-k5-cell309-p309-r2", "claude/p309-r2-sf1a-20261005")
 ALLOWED_REMOTE = "origin"
-BASE_COMMIT = R2_HEAD                                           # the branch point of both task branches
+BASE_COMMIT = "101ef2cb17e5eab2892212178278da45b98004ed"        # r2 before the owner's H-A fast-forward
 
 NEW_NS = "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/"
 R2_RUNNER = "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_qualify.py"
-# S2: one NEW additive governance supplement; every earlier supplement and the rest of governance stay protected
-R2_REPIN_SUPP5 = "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/R2_REPIN_LIST_SUPPLEMENT_5.json"
-# phase c: the candidate is committed and pushed; no r2 file is writable any more
-WRITE_ALLOW = (NEW_NS, ".claude/hooks/", ".claude/settings.json", ".claude/audit/", ".claude/.gitignore")
-COMMIT_ALLOW = None                                             # the commit-set is the write-set
+R2_GOV = "level4/closure_proofs/p5y_k5_cell309_p309_r2/governance/"
+# AF-3: the NEW, additive governance files of the separate governance-only commit on r2 (no existing record changes)
+R2_GOV_NEW = (R2_GOV + "BRIEF_R2_DELTA_FOLLOWUP_5.md",
+              R2_GOV + "REVIEW_R2_DELTA_FOLLOWUP_5.md",
+              R2_GOV + "REVIEW_R2_DELTA_FOLLOWUP_5.sha256",
+              R2_GOV + "REVIEW_R2_DELTA_FOLLOWUP_5_EXEC_LEDGER.jsonl",
+              R2_GOV + "R2_DELTA_FOLLOWUP_5_RECORD.md",
+              R2_GOV + "OWNER_DECISIONS_R2_MSG5_VERBATIM.md",
+              R2_GOV + "OWNER_DECISIONS_R2_RECORD_1.json",
+              R2_GOV + "R2_DEVELOPMENT_HISTORY_SUPPLEMENT_1.md",
+              R2_GOV + "R2_INCORPORATION_RECORD_C1.json")
+WRITE_ALLOW = (NEW_NS, ".claude/hooks/", ".claude/settings.json", ".claude/audit/", ".claude/.gitignore") + tuple(())
+COMMIT_ALLOW = None
 
 # files under these prefixes may name prohibited identifiers as data (the guard's own rules and test vectors)
 CONTENT_SCAN_EXEMPT = (".claude/hooks/",)
