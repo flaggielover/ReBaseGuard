@@ -48,11 +48,11 @@ def build(source: str, commit: str, dest: Path) -> dict:
                         str(dest)], capture_output=True, text=True)
     if p.returncode:
         raise ReplicaError(f"clone failed: {p.stderr.strip()[:300]}")
-    for url in git(dest, "remote", "-v").split():
-        if "://" in url or "@" in url:
-            raise ReplicaError("the replica has a network remote; only filesystem sources are accepted")
     if git(dest, "cat-file", "-t", commit, check=False) != "commit":
         git(dest, "fetch", "-q", str(source), commit)
+    git(dest, "remote", "remove", "isolated-source")      # no remote at all: nothing in a replica can be pushed
+    if git(dest, "remote", "-v"):
+        raise ReplicaError("the replica still has a remote")
     git(dest, "checkout", "-q", "-b", "rehearsal", commit)
     if git(dest, "rev-parse", "HEAD") != git(dest, "rev-parse", commit + "^{commit}"):
         raise ReplicaError("checkout did not land on the requested commit")

@@ -177,8 +177,7 @@ def prelaunch_state(start_prefix: str, allowed: tuple) -> list:
                      if p.name not in allowed]
     for p in (E.Q.EXEC_LEDGER, E.Q.EXPOSURE_LEDGER):
         problems += _ledger_problems(Path(p))
-    rec = subprocess.run(["git", "-C", str(REPO), "log", "-1", "--format=%cI", "--", D.FREEZE_RECORD_REL],
-                         capture_output=True, text=True).stdout.strip()
+    rec = git("log", "-1", "--format=%cI", "--", D.FREEZE_RECORD_REL)     # the registered read runner
     try:
         t0 = datetime.datetime.fromisoformat(rec).astimezone(datetime.timezone.utc)
     except ValueError:
@@ -583,7 +582,6 @@ def stop_qhost_monitor() -> dict:
             mon.kill()
             mon.wait()
     stopped = time.monotonic()                          # follow-up X1: after the monitor is reaped, so every row precedes it
-    _fsync_path(QHOST["file"])                          # hardening H2: the monitor's rows are durable before judgement
     events, torn, corrupt = H.parse_monitor_rows(QHOST["file"].read_text())
     rows = [r for r in events if r.get("kind") == "sample"]             # the completed samples
     live = H.monitor_liveness([r.get("m", 0) for r in events], QHOST["started"], stopped, alive, QHOST["interval"],
@@ -682,11 +680,11 @@ def host_rerun(workers: int) -> int:
     (QDIR / "host_rerun").mkdir(parents=True, exist_ok=True)
     ATT["dir"] = target
     os.mkdir(ATT["dir"])                                      # exclusive per host id
-    _fsync_dir(target.parent)                                 # hardening H4
-    xwrite(ATT["dir"] / "ATTEMPT_START.json", json.dumps(attempt_start(freeze, qh), indent=1, sort_keys=True) + "\n")
     E.log("code/p309_qualify.py --host-rerun", f"{HOST_START} {D.G.host_id()[:16]} (rev. 2c A14 / delta D7)",
           klass="NONTARGET_DECOY", drifts=[["1/2", "37/72"]], notes="QC10 host re-run; the declared a2_h5 decoy")
+    _fsync_dir(target.parent)                                 # hardening H4 (after the start line; QC12 T14)
     sync_ledgers()                                            # hardening H2
+    xwrite(ATT["dir"] / "ATTEMPT_START.json", json.dumps(attempt_start(freeze, qh), indent=1, sort_keys=True) + "\n")
     (ATT["dir"] / "evidence").mkdir()
     _fsync_dir(ATT["dir"])
     start_qhost_monitor(qh)                                   # r2 C7: continuous Q-HOST sampling (<= 60 s)
@@ -698,7 +696,9 @@ def host_rerun(workers: int) -> int:
     same = lambda u, v: (sorted(c["sha256"] for c in u.get("certificates", [])) ==  # noqa: E731
                          sorted(c["sha256"] for c in v.get("certificates", [])) and u.get("verdicts") == v.get("verdicts"))
     qhost = stop_qhost_monitor()
+    _fsync_path(QHOST["file"])                                # hardening H2
     xwrite(ATT["dir"] / "QHOST_SUMMARY.json", json.dumps(qhost, indent=1, sort_keys=True, default=str) + "\n")
+    sync_ledgers()                                            # hardening H2
     res = {"schema": "P309_HOST_RERUN/2", "freeze_commit": freeze, "utc": utc(), "host_id_sha256": D.G.host_id(),
            "runtime": {"python": platform.python_version(), "platform": f"{sys.platform} {platform.machine()}"},
            "runs": [a["run"], d["run"]], "qhost": {"unit": qh["unit"], "mode": qh["mode"], "pass": qhost["pass"]},
@@ -751,11 +751,13 @@ def main() -> int:
         return 2
     ATT["dir"] = QDIR / "attempt_1"
     os.mkdir(ATT["dir"])                                      # exclusive: of two racing runners exactly one passes
-    _fsync_dir(QDIR)                                          # hardening H4: the attempt's existence is durable first
-    xwrite(ATT["dir"] / "ATTEMPT_START.json", json.dumps(attempt_start(freeze, qh), indent=1, sort_keys=True) + "\n")
     E.log("code/p309_qualify.py", f"{RUN_START} attempt_1 at the recorded freeze {freeze[:12]} (the single "
           "qualification run; R4 B8, delta-2 E6)", klass="GOVERNANCE", notes="no retry, no resumption")
+    # hardening H4 (after the start line, which QC12 T14 requires right after the mkdir): the attempt directory
+    # entry and the start line are made durable, then the durable start marker is written
+    _fsync_dir(QDIR)
     sync_ledgers()                                            # hardening H2
+    xwrite(ATT["dir"] / "ATTEMPT_START.json", json.dumps(attempt_start(freeze, qh), indent=1, sort_keys=True) + "\n")
     (ATT["dir"] / "evidence").mkdir()
     _fsync_dir(ATT["dir"])
     start_qhost_monitor(qh)                                   # r2 P10: continuous Q-HOST sampling (<= 60 s)
@@ -765,6 +767,7 @@ def main() -> int:
     for k, fn in items.items():
         results[k] = run_item(k, fn, freeze)
     qhost = stop_qhost_monitor()
+    _fsync_path(QHOST["file"])                                # hardening H2: the monitor's rows are durable
     xwrite(ATT["dir"] / "QHOST_SUMMARY.json", json.dumps(qhost, indent=1, sort_keys=True, default=str) + "\n")
     sync_ledgers()                                            # hardening H2: every ledger row precedes the marker
     gates = {("Q" + k[2:]): bool(v.get("pass")) and v.get("freeze_commit") == freeze for k, v in results.items()}
