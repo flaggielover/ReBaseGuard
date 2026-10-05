@@ -1,0 +1,73 @@
+{
+ "schema": "P309_R2_REPIN_LIST_SUPPLEMENT/1",
+ "supplements": "governance/R2_REPIN_LIST.json (51 rows), governance/R2_REPIN_LIST_SUPPLEMENT_1.json (48 rows), governance/R2_REPIN_LIST_SUPPLEMENT_2.json (13 rows), governance/R2_REPIN_LIST_SUPPLEMENT_3.json (10 rows), governance/R2_REPIN_LIST_SUPPLEMENT_4.json (8 rows), all unchanged (additive record: no earlier row is edited, removed or re-ordered)",
+ "round": "adoption-candidate follow-up after the fourth follow-up review (R2_DELTA_FOLLOWUP_4_ACCEPTED at 38842550): F-DRILL-ORDER",
+ "hash": "sha256 of ast.dump(<node>), CPython 3.11.15",
+ "compared": {
+  "before": "101ef2cb:level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json (byte-identical to 38842550:level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json, the commit the fourth follow-up review read)",
+  "after": "93d55063:level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json (unchanged at the commit that adds this file)",
+  "r1_at_F": "4c754a73767903a5ad5dddff725f1e173a0a6876:level4/closure_proofs/p5y_k5_cell309_p309_r1/config/SCANNER_ALLOWANCE_P309.json"
+ },
+ "unchanged_lists": {
+  "exactly_once_sites": true,
+  "backstop_pins": true,
+  "production_read_path_pins": true,
+  "production_tokens": true,
+  "planted_control_files": true,
+  "mutating_git_verbs": true,
+  "production_ref_namespace": true,
+  "process_policy": true,
+  "t7_exemptions": true,
+  "import_policy": true
+ },
+ "import_allowlist_additions": {
+  "code": [],
+  "tests": [],
+  "verify": []
+ },
+ "rows": [
+  {
+   "list": "ref_mutation_functions",
+   "file": "code/p309_topology_drill.py",
+   "name": "make_topology",
+   "reviewed_38842550": "9b59c12fa22f27226590d870315370d72bae18a57ef0b70c63217205152b92e8",
+   "now": "8af1bb7836674141f69a53175b094eb31092d55462bfb1b9ba2c27a0dc8dc575",
+   "r1_at_F": null,
+   "kind": "re-pinned",
+   "reason_now": "r2 topology drill: `git add` / `git commit` of the synthetic F', FR' and the checkpoint-style record, in the drill clone only",
+   "reason_unchanged": true,
+   "change": "F-DRILL-ORDER: the drill's synthetic freeze F' now runs make_freeze_params.py before make_freeze_manifest.py (the order of a real freeze; r1's recorded F manifest pins its own freeze/P309_FREEZE.json), so the F' manifest pins freeze/P309_FREEZE.json and the runner's make_freeze_manifest.py --check precondition passes in the worker-tier drill. The edit swaps two elements of one list literal in make_topology; nothing else in the drill changed.",
+   "how_repinned": "code/p309_scan_pins.py --refresh in a scratch clone (it recomputes only already-listed entries); its output named exactly this entry; the resulting file was copied byte for byte"
+  }
+ ],
+ "proof": {
+  "allowance_leaves_before_after": [
+   1228,
+   1228
+  ],
+  "allowance_changed_leaves": [
+   "/ref_mutation_functions[20]/ast_sha256"
+  ],
+  "allowance_sha256_before": "57cc9a222bc37112519e70983a28eda14676a687615435e565e2d3acf270d4be",
+  "allowance_sha256_after": "f1780a9189cf36ba48c362386ffc061f2fc35b819578fc20e95a60fb8998028b",
+  "paths_changed_by_the_candidate_commit": [
+   "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_qualify.py",
+   "level4/closure_proofs/p5y_k5_cell309_p309_r2/code/p309_topology_drill.py",
+   "level4/closure_proofs/p5y_k5_cell309_p309_r2/config/SCANNER_ALLOWANCE_P309.json"
+  ],
+  "no_scientific_or_target_change": "the candidate commit changes only the qualification runner (durability and exactly-once hardening), the drill's make_topology and this one hash; every gate function, items_table, the driver, guard, generators, evaluators, verifiers, tests, data, ledgers and evidence are unchanged (AST and byte comparison: AST_RUNNER_R2_VS_CANDIDATE.json, AST_DRILL_R2_VS_CANDIDATE.json; independent delta review Q2 YES)"
+ },
+ "validation_of_this_repin": {
+  "where": "branch claude/p309-r2-hardening-20261005, level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/r2_candidate/ (the task-3 evidence of the candidate commit above)",
+  "scan_pins_list_r2": "all current (evidence/SCAN_PINS_LIST_R2.txt)",
+  "scan_pins_list_before_repin": "make_topology STALE HASH, 1 NOT CURRENT (evidence/SCAN_PINS_LIST_BEFORE_REPIN.txt)",
+  "scan_pins_refresh": "refreshed exactly ref_mutation_functions code/p309_topology_drill.py make_topology (evidence/SCAN_PINS_REFRESH.txt)",
+  "scan_pins_list_after_repin": "all current (evidence/SCAN_PINS_LIST_AFTER_REPIN.txt)",
+  "qc_d5_pins_regression": "rc 0, pins_all_current true (evidence/regression/REG_CANDIDATE.json)",
+  "qc12_static_check": "rc 0 (regression) and PASS in the rehearsal (evidence/rehearsal/attempt/QC12.json)",
+  "f_drill_order_demo": "current order MANIFEST DIFFERS (rc 1); corrected order MANIFEST IDENTICAL (rc 0) (evidence/F_DRILL_ORDER_DEMO.json)",
+  "rehearsal": "light rehearsal of the candidate commit PASS, 15/15 gates; F' built with 183 code pins",
+  "recheck_after_this_file": "the runner's S1 change and this file do not change the allowance; the scan pins are re-listed at the commit that adds this file and recorded with the S1-S3 follow-up reports"
+ },
+ "statement": "an additive governance record; no target input read; NEW Γ309 TARGET EVALUATIONS = 0"
+}

@@ -1,0 +1,97 @@
+{
+ "commit": "a119e9789e2a1d42b584fff8a2301946a37f1bcb",
+ "descends_from_r2_101ef2cb": true,
+ "durable_host_checks": {
+  "cpus": true,
+  "disk": false,
+  "filesystem_durable": true,
+  "not_in_container": false,
+  "pid1_systemd": false,
+  "python_exact": true,
+  "ram": true
+ },
+ "gates": [
+  "QC01",
+  "QC02",
+  "QC03",
+  "QC04",
+  "QC05",
+  "QC07",
+  "QC11",
+  "QC12",
+  "QC13",
+  "QC14",
+  "QC15",
+  "QC16",
+  "QC17",
+  "QC_U2",
+  "QC_D5"
+ ],
+ "generators": [
+  {
+   "rc": 0,
+   "tail": "-> level4/closure_proofs/p5y_k5_cell309_p309_r2/freeze/P309_FREEZE.json (91032 bytes)\n",
+   "tool": "make_freeze_params.py"
+  },
+  {
+   "rc": 0,
+   "tail": "184 code pins, 10 data pins -> level4/closure_proofs/p5y_k5_cell309_p309_r2/freeze/P309_FREEZE_MANIFEST.json\n",
+   "tool": "make_freeze_manifest.py"
+  },
+  {
+   "rc": 0,
+   "tail": "{\n \"pass\": true,\n \"unallowed\": [],\n \"nulls\": []\n}\n",
+   "tool": "p309_placeholder_check.py"
+  }
+ ],
+ "host": {
+  "boot_id": "67a6dfe3-9fff-465f-9f73-29b7113066ad",
+  "cpus_affinity": 4,
+  "disk_free_gb": 25.7,
+  "filesystem": "ext4",
+  "glibc": "glibc 2.39",
+  "hostname_sha256": "5bce98f73f3ed0c837f2729ed9509b38ea66a156db7f653356cb6fe37b366e85",
+  "in_container": true,
+  "interpreter": "/usr/bin/python3.11",
+  "interpreter_sha256": "f56a588548dd013906ae1dcd1b6faa417f4e204da634ff354840d9643e78ff9e",
+  "kernel": "6.18.44-fc-v70",
+  "machine_id_sha256": "dc39bf1e25efdf45cb0b7583363c818d597fe9089107034b1c5198803ffebaca",
+  "pid1": "process_api",
+  "python": "3.11.15",
+  "ram_available_gb": 15.9,
+  "uptime_h": 0.04,
+  "utc": "2026-10-05T10:12:43.410750Z"
+ },
+ "kind": "RESULT-FREE REHEARSAL (synthetic freeze; never qualification evidence)",
+ "label": "DEVELOPMENT_ONLY",
+ "new_target_evaluations": 0,
+ "package": {
+  "commit": "a119e9789e2a1d42b584fff8a2301946a37f1bcb",
+  "dest": "/tmp/claude-0/-home-user-ReBaseGuard/ede4e097-f9ec-54f5-9e84-81294f8ad688/scratchpad/t4/rehearsal_light_a119_2/package",
+  "parents": [
+   "93d550638b8c79ae1c252fc6c2b0194b1a416b49"
+  ],
+  "tree": "684d8540db014d9b3009c5ac6f1811e1dd6ae4a5"
+ },
+ "schema": "P309_R2H_REHEARSAL_PROVENANCE/1",
+ "source": "/home/user/ReBaseGuard",
+ "synthetic_freeze": "1a3a6862e7d25abaa2b16e8a02cf2f209f0406f8",
+ "tool_sha256": {
+  "r2h_rehearse.py": "8aa1fe2c685c08ffc6df38a4d2af1b4befe147105d0895d2cb2d1266f640870e",
+  "r2h_replica.py": "21b477fee3f169741bfefecefcef13f0ddaddb4d1f0bf1cc01484bbb8b54fca3",
+  "r2h_validator.py": "3ec033464f01888052b6a663e7be6233e4e56b895ed138018051208dce770ada"
+ },
+ "topology": {
+  "F": "1a3a6862e7d25abaa2b16e8a02cf2f209f0406f8",
+  "FR": "7ab4d26d251f7463fd0a1074dfd5792b65f02980",
+  "ok": true,
+  "record_commit_touches_only_record": true,
+  "record_commits_at_head": 1,
+  "record_commits_in_F_history": 0,
+  "record_parent_is_F": true,
+  "record_utc": "2026-10-05T10:13:05+00:00",
+  "tip": "6e50c1f95d79249005b1161e755094f57601d0b1"
+ },
+ "utc_start": "2026-10-05T10:13:05.665630Z",
+ "workers": 4
+}

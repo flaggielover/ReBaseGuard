@@ -1,0 +1,114 @@
+{
+ "commit": "a119e9789e2a1d42b584fff8a2301946a37f1bcb",
+ "expectation": "every test passes",
+ "label": "s1",
+ "meets_expectation": true,
+ "results": {
+  "F01": {
+   "pass": true
+  },
+  "F02": {
+   "pass": true
+  },
+  "F03": {
+   "pass": true
+  },
+  "F04": {
+   "pass": true
+  },
+  "F05": {
+   "pass": true
+  },
+  "F06": {
+   "pass": true
+  },
+  "F07": {
+   "pass": true
+  },
+  "F08": {
+   "pass": true
+  },
+  "F09": {
+   "pass": true
+  },
+  "F10": {
+   "pass": true
+  },
+  "F11": {
+   "pass": true
+  },
+  "F12": {
+   "pass": true
+  },
+  "F13": {
+   "pass": true
+  },
+  "M01": {
+   "attempt_start": true,
+   "pass": true,
+   "preflight_called": true,
+   "probe_left": [],
+   "rc": 0,
+   "run_start_lines": 1,
+   "stderr_tail": "",
+   "stdout_tail": "true,\n  \"Q02\": true,\n  \"Q03\": true,\n  \"Q04\": true,\n  \"Q05\": true,\n  \"Q06\": true,\n  \"Q07\": true,\n  \"Q08\": true,\n  \"Q09\": true,\n  \"Q10\": true,\n  \"Q11\": true,\n  \"Q12\": true,\n  \"Q13\": true,\n  \"Q14\": true,\n  \"Q15\": true,\n  \"Q16\": true,\n  \"Q17\": true,\n  \"Q_U2\": true,\n  \"Q_D5\": true,\n  \"Q-HOST\": true\n }\n}\n",
+   "summary_pass": true
+  },
+  "M02": {
+   "attempt_dir": false,
+   "ledger_unchanged": true,
+   "pass": true,
+   "preflight_called": false,
+   "probe_left": [],
+   "qualification_entries": [],
+   "rc": 2,
+   "refusal": [
+    "QUALIFICATION REFUSED: filesystem probe (S1): same-directory hard link: PermissionError (errno 1: Operation not permitted (injected: hard links unsupported))"
+   ],
+   "run_start_lines": 0,
+   "stderr_tail": ""
+  },
+  "M03": {
+   "attempt_dir": false,
+   "ledger_unchanged": true,
+   "pass": true,
+   "preflight_called": false,
+   "probe_left": [],
+   "qualification_entries": [],
+   "rc": 2,
+   "refusal": [
+    "QUALIFICATION REFUSED: filesystem probe (S1): directory fsync: OSError (errno 22: Invalid argument (injected: directory fsync unsupported)); directory fsync after removing the probe: OSError (errno 22: Invalid argument (injected: directory fsync unsupported))"
+   ],
+   "run_start_lines": 0,
+   "stderr_tail": ""
+  },
+  "M04": {
+   "pass": true,
+   "preflight_called": false,
+   "rc": 2,
+   "refusal": [
+    "QUALIFICATION REFUSED: filesystem probe (S1): qualification/.p309-fsprobe-4242 is left by an interrupted filesystem probe (no attempt was started; it holds only probe files): remove it by hand, then launch again"
+   ],
+   "run_start_lines": 0,
+   "unchanged": true
+  },
+  "M05": {
+   "host_rerun_dir": false,
+   "host_start_lines": 0,
+   "ledger_unchanged": true,
+   "pass": true,
+   "preflight_called": false,
+   "probe_left": [],
+   "rc": 2,
+   "refusal": [
+    "HOST RERUN REFUSED: filesystem probe (S1): same-directory hard link: PermissionError (errno 1: Operation not permitted (injected: hard links unsupported))"
+   ],
+   "stderr_tail": ""
+  }
+ },
+ "runner_sha256": "36e428fbcd386a013bb97eb7ba154c9a815ab85265129daf11eb5cb5243abe1d",
+ "schema": "P309_R2H_FSPROBE_TESTS/1",
+ "statement": "synthetic gates and Q-HOST doubles; faults injected at the os boundary; nothing evaluated; NEW TARGET EVALUATIONS = 0",
+ "tool_sha256": "b597ed8bea1fdfebb354c76a967d8c32fef626c0543b03474df745d257d7d649",
+ "tree": "684d8540db014d9b3009c5ac6f1811e1dd6ae4a5"
+}
