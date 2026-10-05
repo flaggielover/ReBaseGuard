@@ -144,6 +144,95 @@ def sync_ledgers() -> None:
             _fsync_dir(Path(p).parent)
 
 
+def _oserr(exc: OSError) -> str:
+    return f"{type(exc).__name__} (errno {exc.errno}: {exc.strerror or exc})"
+
+
+def fs_probe(where: Path) -> list:
+    """S1 (independent review of the hardening): a fail-fast proof, before Q-HOST, the attempt directory and the start
+    line, that the filesystem holding `where` (the qualification directory) supports exactly what xwrite, sync_ledgers
+    and the exclusive attempt rely on: an exclusive create (O_EXCL) that refuses an existing name, a complete write and
+    a file fsync, a same-directory hard link that is a second name of the same file and refuses an existing name, a
+    directory fsync, and sync_ledgers itself (both ledgers and their directories).  It works only inside its own new
+    directory where/.p309-fsprobe-<pid>/ and removes it, so no qualification evidence persists.  A probe directory left
+    by an interrupted probe is refused by name and never removed here (nothing is repaired).  Returns the problems, each
+    naming the step and the error; an empty list means supported.  Nothing is retried."""
+    prefix = ".p309-fsprobe-"
+    if not where.is_dir():
+        return [f"{where.name}/ does not exist (nothing to probe)"]
+    left = sorted(p.name for p in where.iterdir() if p.name.startswith(prefix))
+    if left:
+        return [f"{where.name}/{n} is left by an interrupted filesystem probe (no attempt was started; it holds only "
+                "probe files): remove it by hand, then launch again" for n in left]
+    d = where / f"{prefix}{os.getpid()}"
+    a, b = d / "probe.a", d / "probe.b"
+    data = b"P309 filesystem probe\n"
+    step = f"create the probe directory {where.name}/{d.name}"
+    try:
+        os.mkdir(d)
+    except OSError as exc:
+        return [f"{step}: {_oserr(exc)}"]
+    problems = []
+    try:
+        step = "exclusive create (O_EXCL)"
+        fd = os.open(a, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
+        try:
+            step = "write"
+            view = memoryview(data)
+            while view:
+                view = view[os.write(fd, view):]
+            step = "file fsync"
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+        step = "exclusive create over an existing name"
+        try:
+            os.close(os.open(a, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644))
+            problems.append(f"{step}: O_EXCL did not refuse an existing name")
+        except FileExistsError:
+            pass
+        step = "same-directory hard link"
+        os.link(a, b)
+        sa, sb = os.stat(a), os.stat(b)
+        if (sa.st_dev, sa.st_ino) != (sb.st_dev, sb.st_ino) or sa.st_nlink < 2:
+            problems.append(f"{step}: the new name is not a second name of the same file (inodes {sa.st_ino} and "
+                            f"{sb.st_ino}, link count {sa.st_nlink})")
+        elif b.read_bytes() != data:
+            problems.append(f"{step}: the new name does not read back the bytes written")
+        step = "hard link over an existing name"
+        try:
+            os.link(a, b)
+            problems.append(f"{step}: os.link did not refuse an existing name (a record could be replaced)")
+        except FileExistsError:
+            pass
+        step = "directory fsync"
+        _fsync_dir(d)
+        _fsync_dir(where)
+        step = "ledger and ledger-directory fsync (sync_ledgers)"
+        sync_ledgers()
+    except OSError as exc:
+        problems.append(f"{step}: {_oserr(exc)}")
+    finally:
+        for p in (b, a):
+            try:
+                os.unlink(p)
+            except FileNotFoundError:
+                pass
+            except OSError as exc:
+                problems.append(f"remove the probe file {p.name}: {_oserr(exc)}")
+        try:
+            os.rmdir(d)
+        except OSError as exc:
+            problems.append(f"remove the probe directory {where.name}/{d.name}: {_oserr(exc)} (it blocks every launch "
+                            "until removed by hand)")
+        else:
+            try:
+                _fsync_dir(where)
+            except OSError as exc:
+                problems.append(f"directory fsync after removing the probe: {_oserr(exc)}")
+    return problems
+
+
 def _ledger_problems(p: Path) -> list:
     """hardening H3: a ledger is launchable only if every row parses, the file ends with a newline and every target
     counter is zero"""
@@ -661,6 +750,10 @@ def host_rerun(workers: int) -> int:
     if target.exists():
         print("HOST RERUN REFUSED: this host's re-run already exists (no retry; it is preserved)")
         return 2
+    problems = fs_probe(QDIR)                                 # S1: this host's filesystem, before H3 and the start
+    if problems:
+        print("HOST RERUN REFUSED: filesystem probe (S1): " + "; ".join(problems[:5]))
+        return 2
     # hardening H3: no temporary file of an interrupted write anywhere under the re-run directory, launchable ledgers,
     # and no earlier start line for this host's re-run after the freeze record
     names = sorted(p.name for p in QDIR.iterdir()) if QDIR.exists() else []
@@ -739,6 +832,10 @@ def main() -> int:
     if any(p.name.startswith("attempt_") for p in QDIR.iterdir()) or (QDIR / "P309_QUALIFICATION.json").exists():
         print("QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved; "
               "classify it read-only with the status validator)")
+        return 2
+    problems = fs_probe(QDIR)                                 # S1: before H3, Q-HOST, the attempt and RUN START
+    if problems:
+        print("QUALIFICATION REFUSED: filesystem probe (S1): " + "; ".join(problems[:5]))
         return 2
     problems = prelaunch_state(RUN_START, ())                 # hardening H3: before Q-HOST, the attempt and RUN START
     if problems:
