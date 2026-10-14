@@ -1,0 +1,3742 @@
+{
+ "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.portmap.v1",
+ "class": "INFRASTRUCTURE",
+ "candidate_commit": "142d97a90a1c3fafff394044aa1448674f7a633c",
+ "files_scanned": 28,
+ "lines_flagged": 457,
+ "per_category": {
+  "LAUNCHD": 134,
+  "SLEEP_PREVENTION": 44,
+  "POWER_PMSET": 47,
+  "THERMAL": 21,
+  "MACOS_CLOCKS": 29,
+  "SYSCTL": 14,
+  "VM_STAT_MEMORY": 27,
+  "PS_SEMANTICS": 44,
+  "SOFTWARE_UPDATE": 9,
+  "FULLFSYNC": 6,
+  "MACOS_PATHS": 80,
+  "PLATFORM_PIN": 36
+ },
+ "per_file": {
+  "code/mbs308_derive.py": 4,
+  "code/mbs308_driver.py": 40,
+  "code/mbs308_host.py": 60,
+  "code/mbs308_launch.py": 19,
+  "code/mbs308_manifest.py": 2,
+  "code/mbs308_measure.py": 24,
+  "code/mbs308_qualify.py": 70,
+  "code/mbs308_repin.py": 10,
+  "code/mbs308_rrules.py": 11,
+  "code/mbs308_scratch.py": 1,
+  "code/mbs308_state.py": 11,
+  "tests/mbs308_child.py": 2,
+  "tests/mbs308_decoy_payload.py": 3,
+  "tests/mbs308_launch_harness.py": 2,
+  "tests/mbs308_payload.py": 5,
+  "tests/mbs308_synth.py": 1,
+  "tests/mbs308_testlib.py": 1,
+  "tests/test_mbs308_cases.py": 61,
+  "tests/test_mbs308_crash.py": 2,
+  "tests/test_mbs308_decoy.py": 2,
+  "tests/test_mbs308_disk.py": 32,
+  "tests/test_mbs308_launch.py": 41,
+  "tests/test_mbs308_mutants.py": 19,
+  "tests/test_mbs308_qualify.py": 7,
+  "tests/test_mbs308_state.py": 26,
+  "tests/test_mbs308_static.py": 1
+ },
+ "hits": [
+  {
+   "file": "code/mbs308_derive.py",
+   "line": 32,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "READING-11 R-MEM step 5's W_idle (\"vm_stat wired down x page size in the prepared idle state\") is taken as the LARGEST"
+  },
+  {
+   "file": "code/mbs308_derive.py",
+   "line": 184,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "return {\"id\": run.get(\"id\"), \"cell\": run.get(\"cell\"), \"launcher\": cfg.get(\"launched_by_launchd\"),"
+  },
+  {
+   "file": "code/mbs308_derive.py",
+   "line": 246,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "\"\"\"R-MEM step 5's host readings: hw.memsize and W_idle = the LARGEST wired-down reading of the prepared-state series"
+  },
+  {
+   "file": "code/mbs308_derive.py",
+   "line": 444,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"thermal_level_0\", \"lowpowermode_0\", \"disk_execution\", \"disk_qualification\","
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 22,
+   "categories": [
+    "LAUNCHD",
+    "SLEEP_PREVENTION"
+   ],
+   "text": "the launchd launcher mbs308_launch); a supervised caffeinate; EVAL_CAP per attempt on awake time."
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 29,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "execute                            launchd-launched, granted worktree only: the ONE evaluation of cell 308"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 32,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "resume                             CONSUMED_INTERRUPTED only (launchd-launched): verified checkpoints are reused"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 150,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "QUALIFIED_WORKTREE = \"/Users/suzhe/ReBaseGuard-c308mbs\""
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 151,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "QUALIFIED_GIT_DIR = \"/Users/suzhe/ReBaseGuard/.git/worktrees/ReBaseGuard-c308mbs\""
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 152,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "QUALIFIED_COMMON_DIR = \"/Users/suzhe/ReBaseGuard/.git\""
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 206,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "MBR1_GIT_DIR = \"/Users/suzhe/ReBaseGuard/.git/worktrees/ReBaseGuard-c308mb\""
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 228,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "PLATFORM_PINS = {"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 229,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"python_executable\": \"/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14\","
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 231,
+   "categories": [
+    "MACOS_PATHS",
+    "PLATFORM_PIN"
+   ],
+   "text": "\"libpython\": \"/Library/Frameworks/Python.framework/Versions/3.14/Python\","
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 232,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"libpython_sha256\": \"34463f1b2fc9b5507f493af35080960ba3e86b94c0832c83ea771f8f252b5a55\","
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 235,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"os_build\": \"25F84\","
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 500,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "lib = PLATFORM_PINS[\"libpython\"]"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 507,
+   "categories": [
+    "SOFTWARE_UPDATE"
+   ],
+   "text": "build = HOST._run([\"/usr/bin/sw_vers\", \"-buildVersion\"])"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 509,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "return {\"python_executable\": exe, \"python_sha256\": fsha(exe), \"libpython\": lib, \"libpython_sha256\": fsha(lib),"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 511,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"os_build\": (build or \"\").strip() or None,"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 517,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "bad = [k for k, v in PLATFORM_PINS.items() if got.get(k) != v]"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 524,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"execute / resume run only as the launchd job the launcher installed (section 5).\"\"\""
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 525,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "rec = HOST.launched_by_launchd()"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 527,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "raise Refusal(\"NOT_LAUNCHED_BY_LAUNCHER\", \"execute / resume must run as the mbs308_launch launchd job\")"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 538,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "EXCL_ALLOW = frozenset({\"kernel_task\", \"WindowServer\", \"launchd\", \"logd\", \"mds\", \"mds_stores\", \"mdworker\","
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 548,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "text = HOST._run([\"/usr/bin/vm_stat\"]) if text is None else text"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 556,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "got = {k: int(v) for k, v in re.findall(r\"^Pages (free|inactive|speculative|purgeable):\\s+(\\d+)\\.\", text, re.M)}"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 557,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "if set(got) != {\"free\", \"inactive\", \"speculative\", \"purgeable\"}:"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 566,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "text = HOST._run([\"/bin/ps\", \"-A\", \"-o\", \"pid=,ppid=,pcpu=,comm=\"]) if text is None else text"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 575,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "pid, ppid, pcpu, comm = parts"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 577,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "pid, ppid, pcpu = int(pid), int(ppid), float(pcpu)"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 581,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "if pid in mine or ppid == os.getpid() or pcpu <= EXCL_CPU_PCT:"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 586,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "out.append({\"pid\": pid, \"comm\": name, \"pcpu\": pcpu})"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 592,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "readings for the tests ({\"host\": ..., \"su\": ..., \"vm_stat\": ..., \"ps\": ...}); production passes none.\"\"\""
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 600,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "fm = free_memory_bytes(t.get(\"vm_stat\"))"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 1178,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "per attempt on awake time (CLOCK_UPTIME_RAW); the Stage-1 checkpoints of `ctx` are written as jobs complete.\"\"\""
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 1225,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "\"\"\"Environmental only: a SUPERVISED `caffeinate -i -m -s -w <pid>` (re-spawned whenever it dies; every death and"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 1231,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "st.host_log({\"source\": \"caffeinate_supervisor\", **ev})"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 1236,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "return {\"caffeinate_supervisor\": True, \"caffeinate_flags\": \" \".join(HOST.CAFFEINATE_FLAGS)}"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 1251,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "\"\"\"Replace the live host record (start snapshot + sampler) by its closed provenance, with the caffeinate supervisor's"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 1256,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "common.setdefault(\"lifecycle\", {})[\"caffeinate\"] = None if sup is None else sup.record()"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 1262,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "common.setdefault(\"lifecycle\", {})[\"caffeinate\"] = {\"error\": type(exc).__name__}"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 1867,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"launched_by_launchd\": HOST.launched_by_launchd()[\"pass\"]}}"
+  },
+  {
+   "file": "code/mbs308_driver.py",
+   "line": 1911,
+   "categories": [
+    "LAUNCHD",
+    "SLEEP_PREVENTION"
+   ],
+   "text": "# by an exception (e.g. the EVAL_CAP alarm) -- a lingering launchd job holding caffeinate."
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 4,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "volume, the memory-pressure level (read-only), low-power mode, a caffeinate SUPERVISOR thread that re-spawns"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 5,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "`caffeinate -i -m -s -w <pid>` whenever it dies and records every death and re-spawn, and the pre-marker PREFLIGHT"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 16,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "K  kernel clocks: CLOCK_MONOTONIC_RAW keeps counting while the host sleeps, CLOCK_UPTIME_RAW does not (macOS); both"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 19,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "S  kern.sleeptime / kern.waketime (the kernel's last sleep and wake instants): any change over the interval is a"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 21,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "L  the power-management log (`pmset -g log`): any Sleep / Wake / DarkWake entry stamped inside the interval."
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 22,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "Power: `pmset -g batt` must report AC power at the start, at every sample and at the end."
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 24,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "only make a cap check fail, never pass): the OS thermal-pressure level (`notifyutil -g"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 25,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "com.apple.system.thermalpressurelevel`: 0 nominal, 1 moderate, 2 heavy, ...; None if unreadable) at every snapshot and"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 26,
+   "categories": [
+    "POWER_PMSET",
+    "THERMAL"
+   ],
+   "text": "sample, the power log's ThermalEvent entries in the interval, the load average, and `pmset -g therm` (kept for the"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 36,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "Prevention (keep_awake): `caffeinate -i -m -s` for the life of the calling process. macOS still sleeps on lid close"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 49,
+   "categories": [
+    "SLEEP_PREVENTION",
+    "POWER_PMSET",
+    "THERMAL",
+    "SYSCTL"
+   ],
+   "text": "PMSET, SYSCTL, CAFFEINATE, NOTIFYUTIL = \"/usr/bin/pmset\", \"/usr/sbin/sysctl\", \"/usr/bin/caffeinate\", \"/usr/bin/notifyutil\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 50,
+   "categories": [
+    "LAUNCHD",
+    "PS_SEMANTICS"
+   ],
+   "text": "PS, LAUNCHCTL = \"/bin/ps\", \"/bin/launchctl\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 51,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "THERMAL_KEY = \"com.apple.system.thermalpressurelevel\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 54,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "AC = \"AC Power\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 59,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "LOG_THERMAL_TYPES = (\"ThermalEvent\",)"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 91,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "return {\"monotonic_raw_ns\": time.clock_gettime_ns(time.CLOCK_MONOTONIC_RAW),"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 92,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "\"uptime_raw_ns\": time.clock_gettime_ns(time.CLOCK_UPTIME_RAW), \"epoch_s\": int(time.time()),"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 97,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "text = _run([SYSCTL, \"kern.sleeptime\", \"kern.waketime\"]) if text is None else text"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 157,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "\"\"\"ThermalEvent entries of the power log in the same window (recorded only).\"\"\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 165,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"boot_uuid\": boot_session_uuid(), \"memory_pressure\": memory_pressure_level(), \"lowpowermode\": lowpowermode()}"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 205,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "return {\"caffeinate_pid\": p.pid, \"caffeinate_flags\": \" \".join(CAFFEINATE_FLAGS)}"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 207,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "return {\"caffeinate\": f\"unavailable ({type(exc).__name__})\"}"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 237,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "reasons.append(\"AMBIGUOUS: S kern.sleeptime / kern.waketime absent\")"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 239,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "reasons.append(\"CONTAMINATED: S kern.sleeptime / kern.waketime changed in the interval\")"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 277,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "\"\"\"Close an interval: read the power log over it (sleep entries, and ThermalEvent entries for the record) and"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 297,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "_LPM = re.compile(r\"^\\s*lowpowermode\\s+(\\d+)\\s*$\", re.M)"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 299,
+   "categories": [
+    "SOFTWARE_UPDATE"
+   ],
+   "text": "DEFAULTS = \"/usr/bin/defaults\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 300,
+   "categories": [
+    "SOFTWARE_UPDATE",
+    "MACOS_PATHS"
+   ],
+   "text": "SOFTWARE_UPDATE_DOMAIN = \"/Library/Preferences/com.apple.SoftwareUpdate\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 305,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "MEMORY_PRESSURE_NORMAL = 1                     # kern.memorystatus_vm_pressure_level: 1 normal, 2 warn, 4 critical"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 310,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "\"\"\"kern.bootsessionuuid: changes at every boot (a reboot is detected by its change; section 6).\"\"\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 311,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "text = _run([SYSCTL, \"-n\", \"kern.bootsessionuuid\"]) if text is None else text"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 325,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "\"\"\"Read-only: kern.memorystatus_vm_pressure_level (1 normal, 2 warn, 4 critical); None if unreadable.\"\"\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 326,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "text = _run([SYSCTL, \"-n\", \"kern.memorystatus_vm_pressure_level\"]) if text is None else text"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 331,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "def lowpowermode(text: str | None = None) -> int | None:"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 351,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "# O-1 (REVIEW_OPTIONB_LIVENESS_MBS308, reviewB5): `ps -o lstart=` prints LOCAL time -- the zone of its environment's"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 374,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "\"\"\"The process start time as `ps -o lstart=` prints it in UTC (O-1; one-second resolution); None if no such"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 376,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "text = _run_ps([PS, \"-p\", str(int(pid)), \"-o\", \"lstart=\"]) if text is None else text"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 469,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "# ------------------------------------------------------------------ the caffeinate supervisor (section 5)"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 471,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "\"\"\"Runs `caffeinate -i -m -s -w <pid>` and re-spawns it whenever it dies while the watched process lives; records"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 472,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "every spawn and death (utc, caffeinate pid, return code). Environment only: it never touches the computation, a"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 482,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "self._t = threading.Thread(target=self._loop, name=\"mbs308-caffeinate-supervisor\", daemon=True)"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 498,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "self._record({\"event\": \"spawn\", \"caffeinate_pid\": self.proc.pid, \"watched_pid\": self.pid})"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 518,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "self._record({\"event\": \"death\", \"caffeinate_pid\": p.pid, \"returncode\": rc})"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 524,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "self._record({\"event\": \"respawn\", \"caffeinate_pid\": None if self.proc is None else self.proc.pid})"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 549,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "return {\"caffeinate_flags\": \" \".join(CAFFEINATE_FLAGS), \"watched_pid\": self.pid, \"events\": ev,"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 555,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "# ------------------------------------------------------------------ the launchd context (section 5)"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 556,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "def launchd_job_pid(label: str, uid: int | None = None) -> int | None:"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 557,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"The pid launchd reports for gui/<uid>/<label> (`launchctl print`), None if the job is not running.\"\"\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 569,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "def launched_by_launchd(label_env: str = \"MBS308_LAUNCH_LABEL\") -> dict:"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 570,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"The execute-side check (section 6, last gate): XPC_SERVICE_NAME must EQUAL the launcher's label (the hosting app"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 571,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "exports XPC_SERVICE_NAME=0, so presence alone proves nothing), the label must carry the campaign prefix, the parent"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 572,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "must be launchd (pid 1), and `launchctl print` must name THIS pid as the running job.\"\"\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 574,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "xpc = os.environ.get(\"XPC_SERVICE_NAME\", \"\")"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 577,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "job_pid = launchd_job_pid(label) if ok_label else None"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 579,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"launchctl_pid\": job_pid, \"pass\": bool(ok_label and ppid == 1 and job_pid == os.getpid())}"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 586,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "launcher's own preflight, before it bootstraps the job); execute passes launched_by_launchd().\"\"\""
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 589,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "lpm = lowpowermode(t.get(\"pmset\"))"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 595,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "gates = {\"ac_power\": power == AC, \"lowpowermode_0\": lpm == 0, \"thermal_pressure_0\": tl == 0,"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 601,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "gates[\"launched_by_launchd\"] = bool(launched.get(\"pass\"))"
+  },
+  {
+   "file": "code/mbs308_host.py",
+   "line": 603,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"readings\": {\"power\": power, \"lowpowermode\": lpm, \"thermal_level\": tl, \"free_disk_bytes\": free,"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 1,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"Cell-308 MB-S successor campaign (r1) -- the launchd launcher (architecture section 5). No science."
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 4,
+   "categories": [
+    "LAUNCHD",
+    "MACOS_PATHS"
+   ],
+   "text": "~/Library/LaunchAgents) with a unique label org.rebaseguard.mbs308.<mode>.<utc>:"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 7,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "StandardOutPath / StandardErrorPath under ~/Library/Logs/ReBaseGuard/mbs308/ (never /private/tmp);"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 9,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "refuse unless XPC_SERVICE_NAME equals it, the parent is launchd and `launchctl print` names this pid)."
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 10,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "It is started with `launchctl bootstrap gui/<uid> <plist>`: the job is launchd's child, outside the hosting app's"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 13,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "of the launcher's ancestors, its session differs from the launcher's, and launchd names it as the running job."
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 42,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "PYTHON = \"/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14\""
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 112,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "launcher's ancestors other than launchd (pid 1); (b) its session differs from the launcher's; (c) launchd names the"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 119,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "lpid = HOST.launchd_job_pid(label) if label else None"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 124,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"launchctl_pid\": lpid, \"launchd_names_job_running\": named,"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 140,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "return _run([\"/bin/launchctl\", \"bootout\", f\"gui/{os.getuid()}/{label}\"]).returncode == 0"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 144,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "return _run([\"/bin/launchctl\", \"print\", f\"gui/{os.getuid()}/{label}\"]).returncode == 0"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 150,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "detachment proof when launchd reported the job). R2: after the bootstrap the launcher NEVER boots the job out --"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 152,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "launchd check (XPC_SERVICE_NAME = label, PPID 1, launchctl pid = self). Only a bootstrap failure removes the plist.\"\"\""
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 157,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "path = plist_dir / f\"{label}.plist\""
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 160,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "boot = _run([\"/bin/launchctl\", \"bootstrap\", f\"gui/{os.getuid()}\", str(path)])"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 167,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "pid = HOST.launchd_job_pid(label)"
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 190,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "`launchctl print` never decides anything; without a recorded identity nothing is booted out.\"\"\""
+  },
+  {
+   "file": "code/mbs308_launch.py",
+   "line": 195,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "info = _run([\"/bin/launchctl\", \"print\", f\"gui/{os.getuid()}/{label}\"]).stdout"
+  },
+  {
+   "file": "code/mbs308_manifest.py",
+   "line": 175,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "\"su_gating_keys\": list(HOST.SU_GATING_KEYS), \"caffeinate_flags\": list(HOST.CAFFEINATE_FLAGS)}"
+  },
+  {
+   "file": "code/mbs308_manifest.py",
+   "line": 199,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"platform_pins\": dict(D.PLATFORM_PINS),"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 5,
+   "categories": [
+    "POWER_PMSET",
+    "SYSCTL",
+    "VM_STAT_MEMORY"
+   ],
+   "text": "imports the driver, never touches a ref, never changes a system setting (queries only: vm_stat, ps, sysctl, pmset -g,"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 6,
+   "categories": [
+    "LAUNCHD",
+    "THERMAL",
+    "SOFTWARE_UPDATE"
+   ],
+   "text": "notifyutil -g, sw_vers, uname; the launchd job it bootstraps is the driver's own `decoy` mode)."
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 10,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "own `free_memory_bytes` (the function's own text, executed here), vm_stat wired-down pages and the page size, and"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 14,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "for cell 297 (every block) and cell 316 (blocks 0-2), each as a transient LaunchAgent of the launchd launcher"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 25,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "sleep on channel K, S or L, a battery reading, samples not covering the run); a ThermalEvent entry of the power log"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 26,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "falls in a run (READING-13: \"thermal event\" is the host module's ThermalEvent power-log entry; the thermal-pressure"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 96,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "_WIRED = re.compile(r\"^Pages wired down:\\s+(\\d+)\\.\", re.M)"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 200,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "\"\"\"(`ps -A -o pid=,ppid=,pcpu=,comm=` rows as {pid, ppid, pcpu, comm}, the number of rows read, the number"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 202,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "busy_processes does. This process and its children are excluded (the reading's own `ps`, the caffeinate).\"\"\""
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 215,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "rows.append({\"pid\": pid, \"ppid\": ppid, \"pcpu\": parts[2], \"comm\": parts[3].strip()})"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 226,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "if host or RR.pct(r[\"pcpu\"]) > RR.EXCL_BASE_PCT:"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 227,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "out.append({\"pid\": r[\"pid\"], \"comm\": r[\"comm\"], \"pcpu\": r[\"pcpu\"], \"hosting_app\": host})"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 232,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"\"\"One prepared-state reading. `texts` (tests only): planted {\"vm_stat\", \"ps\", \"batt\", \"thermal\", \"pressure\"}.\"\"\""
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 234,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "vm = t[\"vm_stat\"] if \"vm_stat\" in t else HOST._run([\"/usr/bin/vm_stat\"])"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 235,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "ps = t[\"ps\"] if \"ps\" in t else HOST._run([HOST.PS, \"-A\", \"-o\", \"pid=,ppid=,pcpu=,comm=\"])"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 238,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "return {\"t_s\": f\"{time.clock_gettime_ns(time.CLOCK_MONOTONIC_RAW)}/1000000000\", \"utc\": utc(),"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 306,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "# ------------------------------------------------------------------ one official-configuration decoy under launchd"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 318,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "def run_under_launchd(L, program: list, label: str, *, plist_dir: Path, log_dir: Path, workdir: Path,"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 343,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"One decoy run under the launchd launcher and its COMPACT record (DV.compact_run). `program` (tests only): a"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 347,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "job = run_under_launchd(L, prog, label, plist_dir=plist_dir, log_dir=log_dir, workdir=workdir,"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 361,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "not CLEAN (sleep on K / S / L, battery, samples not covering the run), a ThermalEvent power-log entry in the run"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 434,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"memory_pressure\": HOST.memory_pressure_level(), \"lowpowermode\": HOST.lowpowermode(),"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 449,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"LOW_POWER_MODE\": out[\"lowpowermode\"] == 0, \"BOOT_UUID_UNREADABLE\": bool(out[\"boot_uuid\"]),"
+  },
+  {
+   "file": "code/mbs308_measure.py",
+   "line": 522,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "hw = (HOST._run([HOST.SYSCTL, \"-n\", \"hw.memsize\"]) or \"\").strip()"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 10,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "synthetic evaluator and the synthetic launchd payload;"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 17,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "driver's `decoy` under the launchd launcher (QC02, QC03; their records also feed QC04, QC08, MBR1_REPRO, Q12_caps"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 347,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"\"\"`pmset -g` settings of interest (read-only): autorestart, sleep, displaysleep, disksleep, lowpowermode; each"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 352,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "text = driver().HOST._run([\"/usr/bin/pmset\", \"-g\"])"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 354,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "for k in (\"autorestart\", \"sleep\", \"displaysleep\", \"disksleep\", \"lowpowermode\"):"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 382,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"\"\"`pmset -g sched` (read-only): the scheduled and repeating power events, by TYPE only (wake, sleep, restart,"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 387,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "text = driver().HOST._run([\"/usr/bin/pmset\", \"-g\", \"sched\"])"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 406,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "(\"required lid/sleep state\", \"RECORDED_READING\", \"no accepted text makes the lid a gate (protocol 8.1: caffeinate \""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 408,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"(ioreg AppleClamshellState) and the sleep / displaysleep / disksleep timers (pmset -g) and whether the sleep \""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 412,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "(\"sleep prevention\", \"MECHANISM\", \"the supervised `caffeinate -i -m -s -w <pid>` started by keep_awake in \""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 420,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"`no_automatic_os_install`; --host-report reads, read-only, `pmset -g` autorestart and the scheduled power events \""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 421,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"(`pmset -g sched`: a scheduled restart / shutdown / sleep is a hazard); any restart is detected by the boot UUID \""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 431,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "(\"host identity\", \"GATE\", \"check_platform (the pinned interpreter and libpython with their sha256, the OS build, \""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 437,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"DR2)\", (\"check_platform\", \"PLATFORM_PINS\"), (\"host_identity_platform_pins\",), None),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 472,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"\"\"Protocol section 8.1: the host-readiness checklist, READ-ONLY (every reading is a query: pmset -g, ioreg -r,"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 473,
+   "categories": [
+    "THERMAL",
+    "SYSCTL",
+    "VM_STAT_MEMORY",
+    "SOFTWARE_UPDATE"
+   ],
+   "text": "defaults read, sysctl, vm_stat, ps, notifyutil -g, sw_vers, uname, statvfs; NO system setting is ever changed)."
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 490,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"the scheduled power events are read by `pmset -g sched` (owner decisions section 14: restart hazards)\","
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 499,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "item(\"sleep_prevention_and_lid\", \"existing: supervised caffeinate -i -m -s (execute / resume); the sleep channels \""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 505,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "\"caffeinate cannot stop lid-close (clamshell) sleep: keep the lid open, on AC, for the whole run\")"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 509,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "lpm = H.lowpowermode()"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 510,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "item(\"lowpowermode_0\", \"existing gate: preflight lowpowermode_0\", \"READY\" if lpm == 0 else"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 981,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "r[\"supervised_caffeinate_ims\"] = hc.get(\"CAFFEINATE_FLAGS\") == (\"-i\", \"-m\", \"-s\") and \\"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1490,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"helper_sha256\": dict(D.HELPER_SHA256), \"platform_pins\": dict(D.PLATFORM_PINS),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1669,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "host = [\"/Applications/Host.app\"]"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1672,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "ps = [{\"pid\": 1, \"comm\": \"/Applications/Host.app/Contents/MacOS/Host\", \"pcpu\": v}]"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1683,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "x4 = RR.r_excl_pct(hp(\"10.0\", {\"pid\": 2, \"comm\": \"/usr/libexec/busyd\", \"pcpu\": \"95.0\"}), hosting_app_paths=host)"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1688,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "procs = [{\"pid\": 10 + i, \"comm\": c, \"pcpu\": v} for i, (c, v) in enumerate(["
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1689,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "(\"/System/Library/PrivateFrameworks/P.framework/sysd\", \"30.0\"), (\"/usr/libexec/ld1\", \"30.0\"),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1690,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "(\"/usr/sbin/sb1\", \"30.0\"), (\"/sbin/sb2\", \"30.0\"), (\"/Library/Apple/System/ap1\", \"30.0\"),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1691,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "(\"/Applications/App.app/Contents/MacOS/App\", \"90.0\"), (\"/Users/u/bin/tool\", \"90.0\"), (\"/opt/o/bin/od\", \"90.0\"),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1692,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "(\"/usr/local/bin/ul\", \"90.0\"), (\"/Library/Frameworks/F.framework/fw\", \"90.0\"), (\"/usr/bin/ub\", \"90.0\"),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1693,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "(\"/bin/bb\", \"90.0\"), (\"/usr/libexec/python3\", \"90.0\"),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1694,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "(\"/System/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9\", \"90.0\"),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1695,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "(\"/System/Planted/Host.app/Contents/MacOS/Host\", \"90.0\"), (\"/private/var/x/nd\", \"90.0\"), (\"(kern)\", \"90.0\"),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1696,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "(\"/usr/libexec/at25\", \"25.0\"), (\"/usr/libexec/at251\", \"25.1\"), (\"/usr/libexec/WindowServer2\", \"40\")])]"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1697,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "al = RR.r_allow(_prep(procs=[procs] + [[]] * 9), excl_cpu_pct=25, base_names={\"launchd\", \"WindowServer\"},"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1698,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "h3_readings=[], hosting_app_paths=[\"/System/Planted/Host.app\"])"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1704,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"/Applications/App.app/Contents/MacOS/App\", \"/Users/u/bin/tool\", \"/opt/o/bin/od\", \"/usr/local/bin/ul\","
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1705,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"/Library/Frameworks/F.framework/fw\", \"/usr/bin/ub\", \"/bin/bb\"))"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1706,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "rows[\"rallow_python_interpreters_never_added\"] = why.get(\"/usr/libexec/python3\") == \\"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1708,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "why.get(\"/System/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9\") == \\"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1710,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "rows[\"rallow_hosting_app_never_added\"] = why.get(\"/System/Planted/Host.app/Contents/MacOS/Host\") == \\"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1714,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "rows[\"rallow_threshold_is_strict\"] = \"at25\" not in names and \"at251\" in names and \"/usr/libexec/at25\" not in why"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1715,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "rows[\"rallow_base_kept_additions_recorded\"] = {\"launchd\", \"WindowServer\"} <= set(al[\"EXCL_ALLOW\"]) and all("
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1718,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "hosting_app_paths=[\"/System/Planted/Host.app\"])"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1747,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "transcribed = bool(h3) and all(f\"{r['name']} \" in sec and r[\"pcpu\"] in sec and f\"`{r['path']}`\" in sec for r in h3)"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1751,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "hosting_app_paths=[\"/Applications/\"])"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1879,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "per attempt on awake time (CLOCK_UPTIME_RAW), the per-job CPU caps, PRE_CAP and WORKERS. Mechanical: constants"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1896,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "# STATE.AwakeCap(EVAL_CAP_S); AwakeCap reads CLOCK_UPTIME_RAW and no other clock"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1910,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "r[\"eval_cap_clock_is_clock_uptime_raw\"] = len(cls) == 1 and clocks == {\"CLOCK_UPTIME_RAW\"} and not other and \\"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1911,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "want.get(\"eval_cap_clock\") == \"CLOCK_UPTIME_RAW\""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1982,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "configuration: the real driver's decoy as a launchd job of the launcher, the frozen ladder, WORKERS workers.\"\"\""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 1987,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "if cfg.get(\"launched_by_launchd\") is not True:"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2054,
+   "categories": [
+    "MACOS_CLOCKS",
+    "SYSCTL"
+   ],
+   "text": "\"\"\"Planted `sysctl kern.sleeptime kern.waketime` output in the host's real format (parsed by the host module).\"\"\""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2055,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "return (f\"kern.sleeptime: {{ sec = {sleep_s}, usec = 370188 }} Tue Sep 29 13:41:35 2026\\n\""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2056,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "f\"kern.waketime: {{ sec = {wake_s}, usec = 975077 }} Tue Sep 29 13:42:02 2026\\n\")"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2101,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "the official one (launchd launcher, frozen ladder, WORKERS) unless planted otherwise.\"\"\""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2110,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "cfg = dict({\"launched_by_launchd\": True, \"workers\": caps[\"WORKERS\"], \"ladder\": \"frozen\"}, **(run_cfg or {}))"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2120,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "Q12_SUCCESSOR_CONTROLS = 3                # + RC6: the launchd launcher, WORKERS and the frozen ladder"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2183,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "(\"not_under_the_launchd_launcher_316\", {\"launched_by_launchd\": False}, \"NOT_UNDER_THE_LAUNCHD_LAUNCHER\"),"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2344,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "driver's decoy as a launchd job of the launcher, the frozen ladder, WORKERS, the planned blocks).\"\"\""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2610,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "for B; every official run must be a valid input (official configuration under the launchd launcher, CLEAN host"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2824,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "the launchd launcher, the frozen ladder, WORKERS, the driver's own MEM_CAP_BYTES and MEM_POLL_S; the compact rule"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2848,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "\"\"\"The official qualification's OWN prepared-host readings (>= 10, >= 30 s apart), the hosting app and hw.memsize:"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2856,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "hw = (HOST._run([HOST.SYSCTL, \"-n\", \"hw.memsize\"]) or \"\").strip()"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2863,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "under launchd, never evidence). NONTARGET_DRIFT_VALIDATION.\"\"\""
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2881,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "The verifier EXECUTES real science (the official decoys under launchd, MB r1's children, the rehearsal, the"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 2897,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "readings FIRST (the host still idle), then the official decoys ONE AT A TIME under the launchd launcher with the"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 3232,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"validation drifts 3, 27/10, 11/10 (the official decoys under the launchd launcher)\"},"
+  },
+  {
+   "file": "code/mbs308_qualify.py",
+   "line": 3235,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"on a separate base store, synthetic evaluator and launchd payload); QC09-S, QC09-SCI \""
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 9,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "platform     the PLATFORM_PINS the driver's platform_readings() would read on THIS host with THIS interpreter"
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 10,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "(realpath of sys.executable and its sha256, the pinned libpython path and its sha256, sys.version,"
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 11,
+   "categories": [
+    "SOFTWARE_UPDATE"
+   ],
+   "text": "`sw_vers -buildVersion`, `uname -m`), compared with the pins; `--write-platform` rewrites them (for the"
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 157,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "lib = pins[\"libpython\"]"
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 164,
+   "categories": [
+    "SOFTWARE_UPDATE"
+   ],
+   "text": "build = HOST._run([\"/usr/bin/sw_vers\", \"-buildVersion\"])"
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 166,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "return {\"python_executable\": exe, \"python_sha256\": fsha(exe), \"libpython\": lib, \"libpython_sha256\": fsha(lib),"
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 168,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"os_build\": (build or \"\").strip() or None, \"arch\": (arch or \"\").strip() or None}"
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 172,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "pins, _ = _dict_literal((code / DRIVER).read_text(), \"PLATFORM_PINS\")"
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 189,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "new = _rewrite_table(drv.read_text(), \"PLATFORM_PINS\", {k: st[\"pins\"][k][\"reading\"] for k in st[\"differs\"]})"
+  },
+  {
+   "file": "code/mbs308_repin.py",
+   "line": 607,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "ap.add_argument(\"--write-platform\", action=\"store_true\", help=\"platform: rewrite PLATFORM_PINS (the freeze)\")"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 51,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "SIP_PREFIXES = (\"/System/\", \"/usr/libexec/\", \"/usr/sbin/\", \"/sbin/\", \"/Library/Apple/\")        # R-ALLOW (b)"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 52,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "NEVER_PREFIXES = (\"/Applications/\", \"/Users/\", \"/opt/\", \"/usr/local/\", \"/Library/Frameworks/\", \"/usr/bin/\","
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 54,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "AC = \"AC Power\"                       # prepared state: AC power (R-FREE attainability), as mbs308_host reads it"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 171,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"R-MEM step 1: an OFFICIAL decoy run (the real driver's decoy under the launchd launcher, frozen ladder, WORKERS"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 444,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "v = pct(p[\"pcpu\"])"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 460,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "/usr/local, /Library/Frameworks, /usr/bin or /bin; any Python interpreter (READING-5: a basename python, pythonN or"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 475,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "(`h3_readings`: [{name, path, pcpu}]), and (b) whose executable path lies under /System/, /usr/libexec/,"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 476,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "/usr/sbin/, /sbin/ or /Library/Apple/; never an excluded class. Each addition is recorded with its path and reading;"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 489,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "cands.append({\"comm\": str(p.get(\"comm\", \"\")), \"pcpu\": p.get(\"pcpu\"), \"source\": f\"qualification[{i}]\"})"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 491,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "cands.append({\"comm\": str(h.get(\"path\", \"\")), \"name\": h.get(\"name\"), \"pcpu\": h.get(\"pcpu\"),"
+  },
+  {
+   "file": "code/mbs308_rrules.py",
+   "line": 495,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "v = pct(c[\"pcpu\"])"
+  },
+  {
+   "file": "code/mbs308_scratch.py",
+   "line": 30,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "names them, and ~/Library/Logs/ReBaseGuard), a root that is or contains a protected path, a symlink, or anything whose"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 14,
+   "categories": [
+    "FULLFSYNC"
+   ],
+   "text": "result.json.tmp by O_CREAT|O_EXCL|O_NOFOLLOW, fsync (+ F_FULLFSYNC), rename, directory fsync (+ F_FULLFSYNC),"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 429,
+   "categories": [
+    "FULLFSYNC"
+   ],
+   "text": "\"\"\"Section 3 steps 3-5: O_EXCL tmp, fsync, rename, dir fsync (+ F_FULLFSYNC), read-back verify. Fault points"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 466,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "\"\"\"Append one value-free host event (caffeinate deaths / re-spawns, attempt snapshots) durably.\"\"\""
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 496,
+   "categories": [
+    "FULLFSYNC"
+   ],
+   "text": "fcntl.fcntl(fd, fcntl.F_FULLFSYNC)"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 504,
+   "categories": [
+    "FULLFSYNC"
+   ],
+   "text": "fcntl.fcntl(dfd, fcntl.F_FULLFSYNC)"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 974,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "\"\"\"EVAL_CAP counted on CLOCK_UPTIME_RAW (which stops while the host sleeps, channel K): the cap applies per attempt,"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 987,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "return (time.clock_gettime_ns(time.CLOCK_UPTIME_RAW) - self.t0) / 1e9"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 997,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "self.t0 = time.clock_gettime_ns(time.CLOCK_UPTIME_RAW)"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 1004,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "\"clock\": \"CLOCK_UPTIME_RAW\"}"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 1170,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "p = subprocess.run([\"/bin/ps\", \"-A\", \"-o\", \"pid=,ppid=,rss=\"], capture_output=True, text=True,"
+  },
+  {
+   "file": "code/mbs308_state.py",
+   "line": 1338,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "p = subprocess.run([\"/bin/ps\", \"-o\", \"pid=,rss=\", \"-p\", \",\".join(map(str, pids))], capture_output=True,"
+  },
+  {
+   "file": "tests/mbs308_child.py",
+   "line": 46,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "D.PLATFORM_PINS = dict(D.PLATFORM_PINS, **spec[\"pin_override\"])"
+  },
+  {
+   "file": "tests/mbs308_child.py",
+   "line": 59,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "D.HOST._run = lambda args, timeout=60: None if list(args[:2]) == [\"/bin/ps\", \"-A\"] else real_run(args, timeout)"
+  },
+  {
+   "file": "tests/mbs308_decoy_payload.py",
+   "line": 1,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"MB-S r1 tests: a SYNTHETIC launchd payload standing in for the driver's `decoy` mode (brief 54; never the driver,"
+  },
+  {
+   "file": "tests/mbs308_decoy_payload.py",
+   "line": 3,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "REAL host-provenance readings of the host module for its short interval and the REAL launchd check, and writes a record"
+  },
+  {
+   "file": "tests/mbs308_decoy_payload.py",
+   "line": 53,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"launched_by_launchd\": H.launched_by_launchd()[\"pass\"]}},"
+  },
+  {
+   "file": "tests/mbs308_launch_harness.py",
+   "line": 1,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"MB-S r1 tests: the LAUNCHING side of the launchd integration test. Run by a shell in its own session; it installs the"
+  },
+  {
+   "file": "tests/mbs308_launch_harness.py",
+   "line": 3,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "~/Library/Logs/ReBaseGuard/mbs308-test/) whose program is the SYNTHETIC payload, writes the launch record (with the"
+  },
+  {
+   "file": "tests/mbs308_payload.py",
+   "line": 1,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"MB-S r1 tests: the SYNTHETIC launchd payload (never the driver's target path). It runs as the transient LaunchAgent"
+  },
+  {
+   "file": "tests/mbs308_payload.py",
+   "line": 2,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "the launcher installs, starts the caffeinate supervisor for its own pid, writes a campaign pidfile into a scratch"
+  },
+  {
+   "file": "tests/mbs308_payload.py",
+   "line": 27,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"xpc_service_name\": os.environ.get(\"XPC_SERVICE_NAME\"), \"label\": os.environ.get(\"MBS308_LAUNCH_LABEL\"),"
+  },
+  {
+   "file": "tests/mbs308_payload.py",
+   "line": 28,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"launched_by_launchd\": H.launched_by_launchd(), \"preferred_encoding\": locale.getpreferredencoding(False),"
+  },
+  {
+   "file": "tests/mbs308_payload.py",
+   "line": 33,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "rec = dict(info, heartbeat=n, utc=S.utc(), caffeinate_pid=sup.current_pid(), supervisor=sup.record())"
+  },
+  {
+   "file": "tests/mbs308_synth.py",
+   "line": 110,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "D.check_launched = lambda: {\"pass\": True, \"stub\": \"launchd integration is test_mbs308_launch\"}"
+  },
+  {
+   "file": "tests/mbs308_testlib.py",
+   "line": 33,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "PY = \"/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14\""
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 2,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "research brief 54). TARGET-FREE: planted records, planted host readings, synthetic launchd payloads, throw-away git"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 10,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "readings and a synthetic payload under launchd; the owner records in the configuration, the protocol, the manifest and"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 122,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"launched_by_launchd\": launched}},"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 135,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"first_blocks\": first_blocks, \"launched_by_launchd\": launched}},"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 155,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "HOSTING = {\"paths\": [\"/Applications/Planted.app/\"], \"chain\": [{\"pid\": 2, \"comm\": \"/Applications/Planted.app/x\","
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 156,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"bundle\": \"/Applications/Planted.app\"}]}"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 157,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "SIP_PROC = {\"pid\": 77, \"comm\": \"/usr/libexec/plantedd\", \"pcpu\": \"30.0\", \"hosting_app\": False}"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 229,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"not_under_the_launchd_launcher_316\", \"workers_not_the_frozen_value_316\","
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 264,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "per attempt on CLOCK_UPTIME_RAW; RLR 1800 / 4200 / 8700 s; C2b 1800 / 1800 / 2700 s; C1b 1800 s; VER 1800 s;"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 276,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "\"CLOCK_UPTIME_RAW\", \"RUNG_CPU_CAP_S\": {\"RLR\": {\"4\": 1800, \"6\": 4200, \"8\": 8700},"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 296,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "DRV, STATE_SRC.replace(\"        return (time.clock_gettime_ns(time.CLOCK_UPTIME_RAW) - self.t0) / 1e9\","
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 297,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "\"        return (time.clock_gettime_ns(time.CLOCK_MONOTONIC_RAW) - self.t0) / 1e9\"),"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 330,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"lifecycle\": {\"rmem_run\": {\"launched_by_launchd\": launched, \"workers\": workers, \"ladder\": \"frozen\","
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 343,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "official configuration: launchd launcher, WORKERS, frozen ladder, planned blocks, launched / detached / finished),"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 678,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "busy = {\"pid\": 9, \"comm\": \"/Applications/Busy.app/Contents/MacOS/Busy\", \"pcpu\": \"80.0\", \"hosting_app\": False}"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 697,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"EXCL_ALLOW\": [[], [\"b\", \"a\"], [\"a\", \"a\"], [\"/usr/libexec/a\"], [\"\"], \"a\"]}"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 736,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "host_busy = {\"pid\": 5, \"comm\": \"/Applications/Planted.app/Contents/MacOS/Planted\", \"pcpu\": \"28.4\","
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 788,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"EXCL_ALLOW\": sorted((set(cur[\"EXCL_ALLOW\"]) | {\"zzd\"}) - {\"launchd\"})}"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 820,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "(\"allow_with_a_path\", dict(outs, EXCL_ALLOW=[\"/usr/libexec/a\", \"b\"]))):"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 891,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "launchd launcher, ran with a cap other than the frozen one, has a sampler record whose observed spacing is above"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 933,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "host_busy = {\"pid\": 5, \"comm\": \"/Applications/Planted.app/Contents/MacOS/Planted\", \"pcpu\": \"26.0\","
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 938,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "other = {\"pid\": 78, \"comm\": \"/usr/libexec/otherd\", \"pcpu\": \"31.0\", \"hosting_app\": False}"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 983,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "r[\"official_decoy_not_under_launchd\"] = nl[\"pass\"] is False and \\"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 990,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "clean_host(), thermal_events=[{\"type\": \"ThermalEvent\"}]))]))"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1119,
+   "categories": [
+    "LAUNCHD",
+    "MACOS_PATHS"
+   ],
+   "text": "PS_TEXT = (\"    1     0   0.4 /sbin/launchd\\n  300     1  30.5 /usr/libexec/somed\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1120,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"  310     1  12.0 /Applications/Planted.app/Contents/MacOS/Planted\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1121,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"  320     1  26.0 /Applications/Other.app/Contents/MacOS/Other\\n  330     1   0.0 (kernel)\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1122,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "\"  {SELF}   300  99.0 /usr/bin/python3\\n  341 {SELF}  99.0 /bin/ps\\n  garbage line\\n\")"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1124,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"Pages active:    1000.\\nPages inactive:      2000.\\nPages speculative:      10.\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1125,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"Pages throttled:      0.\\nPages wired down:      4321.\\nPages purgeable:      5.\\n\")"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1129,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"\"\"One prepared-state reading from PLANTED vm_stat / ps / battery texts: the driver's own free_memory_bytes (its"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1136,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "rd = MEAS.reading(fmb, [\"/Applications/Planted.app/\"], texts={"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1137,
+   "categories": [
+    "POWER_PMSET",
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"vm_stat\": VM_TEXT, \"ps\": PS_TEXT.replace(\"{SELF}\", str(me)), \"batt\": \"Now drawing from 'AC Power'\\n\","
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1138,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "\"thermal\": \"com.apple.system.thermalpressurelevel 0\\n\", \"pressure\": \"1\\n\"}, self_pid=me)"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1142,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"power_thermal_pressure\": (rd[\"power\"], rd[\"thermal_level\"], rd[\"memory_pressure\"]) == (\"AC Power\", 0, 1),"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1143,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "\"kept_processes\": set(comms) == {\"somed\", \"Planted\", \"Other\"} and comms[\"somed\"][\"pcpu\"] == \"30.5\" and"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1144,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "comms[\"Planted\"][\"hosting_app\"] is True and comms[\"Planted\"][\"pcpu\"] == \"12.0\" and"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1147,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "bad = MEAS.reading(fmb, [], texts={\"vm_stat\": \"garbage\", \"ps\": \"\", \"batt\": \"\", \"thermal\": \"\", \"pressure\": \"\"},"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1162,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "chain = {10: (\"/bin/zsh\", 9), 9: (\"/Applications/Host.app/Contents/Frameworks/Helper.app/Contents/MacOS/Helper\", 8),"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1163,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "8: (\"/Applications/Host.app/Contents/MacOS/Host\", 1)}"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1166,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "r[\"hosting_app_reading_12\"] = ha[\"paths\"] == [\"/Applications/Host.app/\"] and len(ha[\"chain\"]) == 3 and \\"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1167,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "none[\"paths\"] == [] and MEAS.bundle_of(\"/Applications/A.app/Contents/MacOS/A\") == \"/Applications/A.app\" and \\"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1174,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "battery, a sleep on channel K, an unavailable power log, a ThermalEvent entry in the run (and an unreadable one),"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1176,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "sampler record whose OBSERVED spacing is above 0.5 s or not stated (exactly 0.5 s is valid), not under the launchd"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1187,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "\"thermal_event\": rr(run_of(297, host=dict(clean_host(), thermal_events=[{\"type\": \"ThermalEvent\"}]))) =="
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1202,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"not_under_launchd\": has(run_of(297, launched=False), \"NOT_UNDER_LAUNCHD_LAUNCHER\"),"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1215,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "busy = [{\"pid\": 9, \"comm\": \"/Applications/Busy.app/Contents/MacOS/Busy\", \"pcpu\": \"80.0\", \"hosting_app\": False},"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1216,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "{\"pid\": 8, \"comm\": \"/private/var/x/oddd\", \"pcpu\": \"70.0\", \"hosting_app\": False}, SIP_PROC]"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1222,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "{\"name\": \"Busy\", \"path_class\": \"NEVER_ADDED_PATH_CLASS /Applications/\"},"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1252,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "left = sorted(p.name for p in (work / \"launch\").glob(\"*.plist\"))"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1253,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "jobs = subprocess.run([\"/bin/launchctl\", \"list\"], capture_output=True, text=True).stdout"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1258,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "def t_measure_synthetic_payload_under_launchd():"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1260,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "prepared-host readings, then one launchd job per planned decoy through the launcher's own `launch` (detached, the"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1261,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "payload's own launchd check true), waited for, booted out, the plist removed; the compact evidence carries every"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1274,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"payload_ran_as_the_launchd_job\": all(x[\"rmem_run\"][\"launched_by_launchd\"] is True for x in runs.values()),"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1312,
+   "categories": [
+    "PS_SEMANTICS",
+    "MACOS_PATHS"
+   ],
+   "text": "busy = {\"pid\": 9, \"comm\": \"/Applications/Busy.app/Contents/MacOS/Busy\", \"pcpu\": \"80.0\", \"hosting_app\": False}"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1322,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "a[\"host_not_prepared\"] == [{\"name\": \"Busy\", \"path_class\": \"NEVER_ADDED_PATH_CLASS /Applications/\"}] and"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1470,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"The verifier EXECUTES real science (the official decoys under launchd, MB r1's children, the rehearsal on cell"
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1608,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "\"CLOCK_UPTIME_RAW\", \"1800 / 4200 / 8700 s\", \"1800 / 1800 / 2700 s\","
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1643,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"thermal_level_0\", \"lowpowermode_0\", \"disk_execution\", \"disk_qualification\","
+  },
+  {
+   "file": "tests/test_mbs308_cases.py",
+   "line": 1860,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "MEAS.run_under_launchd = refuse(\"run_under_launchd\")"
+  },
+  {
+   "file": "tests/test_mbs308_crash.py",
+   "line": 5,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "process group / session and caffeinate death are in test_mbs308_launch.py.) For every case the test asserts the"
+  },
+  {
+   "file": "tests/test_mbs308_crash.py",
+   "line": 352,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "and rec[\"lifecycle\"][\"eval_cap\"][\"clock\"] == \"CLOCK_UPTIME_RAW\" and status() == \"INDETERMINATE\""
+  },
+  {
+   "file": "tests/test_mbs308_decoy.py",
+   "line": 128,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "input). The dev decoy's record carries the R-MEM inputs and its host provenance; it was NOT launched by launchd.\"\"\""
+  },
+  {
+   "file": "tests/test_mbs308_decoy.py",
+   "line": 151,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "record = dec[\"blocks_run\"] == [0] and dec[\"dev_ladder\"] is True and lc[\"rmem_run\"][\"launched_by_launchd\"] is False \\"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 34,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "GOOD_HOST = {\"batt\": \"Now drawing from 'AC Power'\\n\", \"pmset\": \" lowpowermode         0\\n\","
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 35,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "\"thermal\": \"com.apple.system.thermalpressurelevel 0\\n\", \"free\": 10 * GIB, \"memory\": \"1\\n\","
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 39,
+   "categories": [
+    "LAUNCHD",
+    "MACOS_PATHS"
+   ],
+   "text": "PS_QUIET = \"    1     0   0.4 /sbin/launchd\\n  300     1   1.2 /usr/libexec/somed\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 56,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"Pages inactive:                                0.\\nPages speculative:                0.\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 57,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"Pages throttled:                                0.\\nPages wired down:            1000.\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 58,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"Pages purgeable:                                0.\\n\")"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 289,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "return {\"host\": dict(GOOD_HOST, free=free), \"su\": SU_OFF, \"vm_stat\": _vm(_big_memory()), \"ps\": PS_QUIET}"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 728,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"thermal_level_0\", \"lowpowermode_0\", \"disk_execution\", \"disk_qualification\", \"memory_pressure_normal\","
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 733,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\"\"\"The host settings the report reads, read here independently (read-only): pmset -g values and the"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 734,
+   "categories": [
+    "SOFTWARE_UPDATE"
+   ],
+   "text": "SoftwareUpdate keys.\"\"\""
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 735,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "pm = subprocess.run([\"/usr/bin/pmset\", \"-g\"], capture_output=True, text=True, env=T.GENV).stdout"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 739,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "if len(parts) >= 2 and parts[0] in (\"autorestart\", \"sleep\", \"displaysleep\", \"disksleep\", \"lowpowermode\"):"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 742,
+   "categories": [
+    "SOFTWARE_UPDATE",
+    "MACOS_PATHS"
+   ],
+   "text": "vals[k] = subprocess.run([\"/usr/bin/defaults\", \"read\", \"/Library/Preferences/com.apple.SoftwareUpdate\", k],"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 783,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "queries_only = sorted(cmds) == [[\"/usr/bin/pmset\", \"-g\"], [\"/usr/bin/pmset\", \"-g\", \"sched\"],"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 837,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "drv.write_text(b1.replace('\"os_build\": \"', '\"os_build\": \"PLANTED', 1))"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 840,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "out[\"mismatch_reported_not_written\"] = rc4 == 1 and r4.get(\"differs\") == [\"os_build\"] and drv.read_bytes() == b2"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 846,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "len(ch) == 1 and '\"os_build\"' in ch[0][1] and drv.read_text() == b1"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1449,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "PMSET_G = \"/usr/bin/pmset -g\""
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1450,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "PMSET_SCHED = \"/usr/bin/pmset -g sched\""
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1451,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "PS_ALL = \"/bin/ps -A -o pid=,ppid=,pcpu=,comm=\""
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1453,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "\" disksleep            10\\n lowpowermode         0\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1459,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "command reader and the pidfile reader are planted; nothing is written): with `pmset -g`, `pmset -g sched` and"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1460,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "`ps` read and no pidfile, automatic_restart is RECORDED (also where `pmset -g` lists no autorestart, as on this"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1461,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "host), host_exclusive and no_other_campaign_job are READY; a failed `pmset -g`, or a failed `pmset -g sched`,"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1478,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"ps_busy\": {\"run\": dict(good, **{PS_ALL: PS_QUIET + \" 4242     1  90.0 /Applications/Busy.app/Busy\\n\"}),"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1514,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"\"\"G-11 (reviewQ6, YRP1): PLATFORM_PINS are never rewritten from a FAILED reading. On a copy of the code whose"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1515,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "pinned libpython path does not exist (so its sha256 cannot be read) and whose OS-build pin differs: the dry run"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1523,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "lib = (r0.get(\"pins\") or {}).get(\"libpython\", {}).get(\"pinned\")"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1525,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "planted = src.replace(f'\"libpython\": \"{lib}\"', '\"libpython\": \"/nonexistent/mbs308/libpython\"', 1) \\"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1526,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": ".replace('\"os_build\": \"', '\"os_build\": \"PLANTED', 1) if lib else src"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1533,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"dry_run_names_the_failed_reading\": rc1 == 1 and r1.get(\"unreadable\") == [\"libpython_sha256\"] and"
+  },
+  {
+   "file": "tests/test_mbs308_disk.py",
+   "line": 1534,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "r1.get(\"differs\") == [\"libpython_sha256\", \"os_build\"] and drv.read_bytes() == b0,"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 1,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"MB-S r1: the launchd launcher and the host contract (architecture sections 5, 6). A REAL launchd integration test with"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 3,
+   "categories": [
+    "LAUNCHD",
+    "MACOS_PATHS"
+   ],
+   "text": "transient LaunchAgent (unique label org.rebaseguard.mbs308.test.<utc>, plist in scratch, never ~/Library/LaunchAgents,"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 4,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "logs under ~/Library/Logs/ReBaseGuard/mbs308-test/); the test then KILLS the launching shell's process group AND every"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 5,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "process of its session (the \"hosting app Force Quit\" analogue) and asserts the job survives; kills the job's caffeinate"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 57,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "ps = subprocess.run([\"/bin/ps\", \"-A\", \"-o\", \"pid=\"], capture_output=True, text=True).stdout.split()"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 67,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "def t_launchd_integration():"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 90,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "st0 = wait_for(lambda: (read_json(state) or {}).get(\"caffeinate_pid\") and read_json(state), 20)"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 92,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"launched_by_launchd\", \"preferred_encoding\")} if st0 else None"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 110,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "res[\"job_survives\"] = H.pid_alive(job) and H.launchd_job_pid(label) == job and hb2 and hb1 and hb2 > hb1"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 112,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "# --- kill the job's caffeinate; the supervisor must re-spawn it"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 113,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "c1 = (read_json(state) or {}).get(\"caffeinate_pid\")"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 115,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "st2 = wait_for(lambda: (lambda s: s if s and s.get(\"caffeinate_pid\") not in (None, c1) else None)("
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 117,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "c2 = st2.get(\"caffeinate_pid\") if st2 else None"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 118,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "cmd2 = subprocess.run([\"/bin/ps\", \"-ww\", \"-p\", str(c2 or 0), \"-o\", \"command=\"], capture_output=True,"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 121,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "res[\"caffeinate\"] = {\"killed\": c1, \"respawned\": c2, \"command\": cmd2, \"deaths\": sup.get(\"deaths\"),"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 133,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "and res[\"payload\"][\"launched_by_launchd\"][\"pass\"] and res[\"payload\"][\"ppid\"] == 1"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 143,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "booted = subprocess.run([\"/bin/launchctl\", \"bootout\", f\"gui/{os.getuid()}/{label}\"], capture_output=True)"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 144,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "for p in (run / \"plists\").glob(\"*.plist\"):"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 147,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"still_loaded\": subprocess.run([\"/bin/launchctl\", \"print\", f\"gui/{os.getuid()}/{label}\"],"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 176,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "alive = bool(job) and H.pid_alive(job) and H.launchd_job_pid(label) == job"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 180,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "subprocess.run([\"/bin/launchctl\", \"bootout\", f\"gui/{os.getuid()}/{label}\"], capture_output=True)"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 181,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "for f in (run / \"plists\").glob(\"*.plist\"):"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 186,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "return subprocess.run([\"/bin/launchctl\", \"print\", f\"gui/{os.getuid()}/{label}\"], capture_output=True).returncode == 0"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 208,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "b = subprocess.run([\"/bin/launchctl\", \"bootout\", f\"gui/{os.getuid()}/{label}\"], capture_output=True)"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 209,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "for f in (run / \"plists\").glob(\"*.plist\"):"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 215,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"R2: with `launchctl print` failing (planted: launchd_job_pid returns nothing), neither `cleanup` nor"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 221,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "real = H.launchd_job_pid"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 224,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "H.launchd_job_pid = lambda *a, **k: None                 # planted failing / negative `launchctl print`"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 239,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "H.launchd_job_pid = real"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 247,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "it may already have passed the marker; the driver's own launchd check governs.\"\"\""
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 275,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"A process orphaned INSIDE the launcher's session (PPID 1, same SID, not a launchd job) is NOT detached.\"\"\""
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 320,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "good = {\"batt\": \"Now drawing from 'AC Power'\\n\", \"pmset\": \" lowpowermode         0\\n\","
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 321,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "\"thermal\": \"com.apple.system.thermalpressurelevel 0\\n\", \"free\": 10 * 2 ** 30, \"memory\": \"1\\n\","
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 326,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "cases = {\"batt\": (\"Now drawing from 'Battery Power'\\n\", \"ac_power\"), \"pmset\": (\" lowpowermode 1\\n\", \"lowpowermode_0\"),"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 327,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "\"thermal\": (\"com.apple.system.thermalpressurelevel 1\\n\", \"thermal_pressure_0\"),"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 336,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "out[\"job_and_launcher\"] = sorted(x for x, v in g[\"gates\"].items() if not v) == [\"launched_by_launchd\","
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 351,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "before = subprocess.run([\"/bin/launchctl\", \"list\"], capture_output=True, text=True).stdout.count(\"org.rebaseguard\")"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 357,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "after = subprocess.run([\"/bin/launchctl\", \"list\"], capture_output=True, text=True).stdout.count(\"org.rebaseguard\")"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 411,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "of the system zone). Control (non-vacuous): a raw `ps -o lstart=` under the two planted zones prints two different"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 422,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "raw[z] = H._run([H.PS, \"-p\", str(h.p.pid), \"-o\", \"lstart=\"])"
+  },
+  {
+   "file": "tests/test_mbs308_launch.py",
+   "line": 452,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"/usr/libexec/UserEventAgent (System)\\n\", \"<defunct>\\n\")]"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 70,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "\"no caffeinate re-spawn\"),"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 113,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "'    pre[\"host_gates\"] = host_preflight({\"pass\": True})', \"state::t_execute_refuses_outside_launchd\","
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 114,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"execute without the launchd launcher\"),"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 139,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "'    while HOST.launchd_job_pid(label) is not None:', \"launch::t_wait_cleanup_ignores_failing_print\","
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 140,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"R2 undone: the launcher boots out on one negative `launchctl print`\"),"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 152,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "\"M44\": (\"mbs308_driver.py\", '    bad = [k for k, v in PLATFORM_PINS.items() if got.get(k) != v]', '    bad = []',"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 462,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "'disk::t_repin_helpers_and_platform', 'PLATFORM_PINS are rewritten without --write-platform'),"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 534,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "'cases::t_q12_decision_and_planted_controls', 'Q12 reads runtimes of a run outside the launchd launcher (RC6)'),"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 563,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "'    r[\"eval_cap_clock_is_clock_uptime_raw\"] = len(cls) == 1 and clocks == {\"CLOCK_UPTIME_RAW\"} and not other and \\\\',"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 564,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "'    r[\"eval_cap_clock_is_clock_uptime_raw\"] = len(cls) == 1 and \"CLOCK_UPTIME_RAW\" in clocks and not other and \\\\',"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 565,
+   "categories": [
+    "MACOS_CLOCKS"
+   ],
+   "text": "'cases::t_section4_values_and_planted_mismatches', 'the section-4 check accepts another clock beside CLOCK_UPTIME_RAW'),"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 587,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "'cases::t_science_case_summaries', 'QC02 / QC03 pass although the launchd job was not detached / finished'),"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 741,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "'cases::t_measure_synthetic_payload_under_launchd', 'a planted measurement can be marked DESIGNATED'),"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 748,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "'        if host or RR.pct(r[\"pcpu\"]) > RR.EXCL_BASE_PCT:',"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 749,
+   "categories": [
+    "PS_SEMANTICS"
+   ],
+   "text": "'        if RR.pct(r[\"pcpu\"]) > RR.EXCL_BASE_PCT:',"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 758,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "'    (\"required lid/sleep state\", \"RECORDED_READING\", \"no accepted text makes the lid a gate (protocol 8.1: caffeinate \"',"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 759,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "'    (\"required lid / sleep state\", \"RECORDED_READING\", \"no accepted text makes the lid a gate (protocol 8.1: caffeinate \"',"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 973,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "'R7 / F-7: the host report says RECORDED although `pmset` could not be read'),"
+  },
+  {
+   "file": "tests/test_mbs308_mutants.py",
+   "line": 1078,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "'G-11 (YRP1): PLATFORM_PINS are written after a failed reading'),"
+  },
+  {
+   "file": "tests/test_mbs308_qualify.py",
+   "line": 175,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "RR.basename(\"/a/b/c.d\") == \"c.d\" and RR.under(\"/usr/libexec\", \"/usr/libexec/\") and \\"
+  },
+  {
+   "file": "tests/test_mbs308_qualify.py",
+   "line": 176,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "not RR.under(\"/usr/libexecX/y\", \"/usr/libexec/\") and RR.pct(\"25.1\") == F(251, 10)"
+  },
+  {
+   "file": "tests/test_mbs308_qualify.py",
+   "line": 192,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"min(50, roundup_5(1.25 \u00d7 its maximum reading))\", \"`/System/`, `/usr/libexec/`, `/usr/sbin/`, `/sbin/` \""
+  },
+  {
+   "file": "tests/test_mbs308_qualify.py",
+   "line": 193,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"or `/Library/Apple/`\", \"`/Applications`, `/Users`, `/opt`, `/usr/local`, `/Library/Frameworks`, \""
+  },
+  {
+   "file": "tests/test_mbs308_qualify.py",
+   "line": 203,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "RR.SIP_PREFIXES == (\"/System/\", \"/usr/libexec/\", \"/usr/sbin/\", \"/sbin/\", \"/Library/Apple/\") and \\"
+  },
+  {
+   "file": "tests/test_mbs308_qualify.py",
+   "line": 205,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"/Library/Frameworks\", \"/usr/bin\", \"/bin\"]"
+  },
+  {
+   "file": "tests/test_mbs308_qualify.py",
+   "line": 1061,
+   "categories": [
+    "SYSCTL"
+   ],
+   "text": "def host(rhs):                                  # hw.memsize - W_idle = rhs (W_idle = 1000 pages of 16384 bytes)"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 247,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "other = {\"platform_override\": {\"os_build\": \"25Z999\"}}"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 542,
+   "categories": [
+    "SLEEP_PREVENTION"
+   ],
+   "text": "and all(e.get(\"source\") == \"caffeinate_supervisor\" for e in host_log) and len(host_log) >= 2,"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 678,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "def t_execute_refuses_outside_launchd():"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 679,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"execute outside the launchd job (the real check, not stubbed) refuses before the marker; nothing consumed.\"\"\""
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 764,
+   "categories": [
+    "POWER_PMSET"
+   ],
+   "text": "GOOD_HOST = {\"batt\": \"Now drawing from 'AC Power'\\n\", \"pmset\": \" lowpowermode         0\\n\","
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 765,
+   "categories": [
+    "THERMAL"
+   ],
+   "text": "\"thermal\": \"com.apple.system.thermalpressurelevel 0\\n\", \"free\": 10 * 2 ** 30, \"memory\": \"1\\n\","
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 775,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"Pages inactive:                                0.\\nPages speculative:                0.\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 776,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"Pages throttled:                                0.\\nPages wired down:            1000.\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 777,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"Pages purgeable:                                0.\\n\")"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 780,
+   "categories": [
+    "LAUNCHD",
+    "MACOS_PATHS"
+   ],
+   "text": "PS_QUIET = \"    1     0   0.4 /sbin/launchd\\n  300     1   1.2 /usr/libexec/somed\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 784,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "return T.child(sb(), \"host_gates\", {\"planted\": {\"host\": GOOD_HOST, \"su\": SU_OFF, \"vm_stat\": vm, \"ps\": ps}})[\"out\"]"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 801,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "\"\"\"The DRIVER's GC-10 start gates on planted readings: free memory (vm_stat) and host exclusivity (ps); each failing"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 806,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "busy_other = PS_QUIET + \" 4242     1  90.0 /Applications/Busy.app/Contents/MacOS/Busy\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 807,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "busy_ui = PS_QUIET + \" 4243     1  90.0 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 822,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"spotlightknowledged.updater\": \"/usr/libexec/spotlightknowledged.updater\","
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 823,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"cloudd\": \"/System/Library/PrivateFrameworks/CloudKitDaemon.framework/Support/cloudd\","
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 824,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"BackgroundShortcutRunner\": \"/System/Library/PrivateFrameworks/WorkflowKit.framework/XPCServices/\""
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 826,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "\"modelcatalogd\": \"/System/Library/PrivateFrameworks/ModelCatalogRuntime.framework/Support/modelcatalogd\","
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 846,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "out[\"unlisted_os_daemon\"] = _gates(_vm(big), PS_QUIET + \" 4320     1  70.0 /usr/libexec/notratifiedd\\n\")"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 854,
+   "categories": [
+    "PLATFORM_PIN"
+   ],
+   "text": "PIN_OVERRIDE = {\"pin_override\": {\"os_build\": \"25Z999\"}}"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 1016,
+   "categories": [
+    "FULLFSYNC"
+   ],
+   "text": "\"\"\"Section 3: O_CREAT|O_EXCL|O_NOFOLLOW tmp, full write, fsync(fd) + F_FULLFSYNC, rename, dir fsync + F_FULLFSYNC,"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 1056,
+   "categories": [
+    "FULLFSYNC"
+   ],
+   "text": "full_file = any(c[0] == \"fcntl\" and c[1] == fd and c[2] == fcntl.F_FULLFSYNC for c in calls[:i_rn or 0])"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 1296,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "launchd launcher.\"\"\""
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 1312,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "run = {\"id\": \"synthetic\", \"cell\": 297, \"launcher\": run_cfg.get(\"launched_by_launchd\"),"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 1397,
+   "categories": [
+    "VM_STAT_MEMORY"
+   ],
+   "text": "planted = {\"host\": GOOD_HOST, \"su\": SU_OFF, \"vm_stat\": _vm(big_memory())}"
+  },
+  {
+   "file": "tests/test_mbs308_state.py",
+   "line": 1412,
+   "categories": [
+    "MACOS_PATHS"
+   ],
+   "text": "busy = PS_QUIET + \" 4242     1  90.0 /Applications/Busy.app/Contents/MacOS/Busy\\n\""
+  },
+  {
+   "file": "tests/test_mbs308_static.py",
+   "line": 223,
+   "categories": [
+    "LAUNCHD"
+   ],
+   "text": "\"\"\"execute and resume both pass through pre_marker_common, which calls check_launched (launchd), check_platform"
+  }
+ ],
+ "limits": "regex scan of source text; dynamically built names and transitive platform behaviour (e.g. RSS semantics of a portable call) are not detected"
+}
