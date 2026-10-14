@@ -1,0 +1,39 @@
+"""Unchanged relevant synthetic methods only; explicitly negative mocked default launch reader."""
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import unittest
+from unittest import mock
+
+here=Path(__file__).resolve().parent
+spec=importlib.util.spec_from_file_location("tests63",here/"base/tests/test_lx_platform.py")
+T=importlib.util.module_from_spec(spec)
+spec.loader.exec_module(T)
+L=T.L
+loader=unittest.TestLoader()
+suite=unittest.TestSuite()
+names=[]
+excluded={"test_constants_equal_the_candidates","test_live_host_is_never_clean","test_live_snapshot"}
+for cls in (T.TestAssess,T.TestBusy):
+    for name in loader.getTestCaseNames(cls):
+        if name not in excluded:
+            suite.addTest(cls(name));names.append(cls.__name__+"."+name)
+for name in ("test_root_attestation_must_be_true","test_host_memtotal_caps_every_cgroup_limit"):
+    suite.addTest(T.TestMemory(name));names.append("TestMemory."+name)
+for name in ("test_lifetime_gates_open_while_undecided","test_all_favourable_still_blocked",
+             "test_boot_id_must_be_valid","test_unknowns_never_pass_and_are_reported",
+             "test_launch_record_fields_are_verified","test_supplied_launch_requires_independent_matching_observation",
+             "test_default_preflight_observes_live_launch_context"):
+    suite.addTest(T.TestAttestationPreflight(name));names.append("TestAttestationPreflight."+name)
+with mock.patch.object(L,"launched_by_systemd",return_value={"pass":False,"systemd_pid1":False}):
+    result=unittest.TextTestRunner(verbosity=2).run(suite)
+record={"actual_import":str(Path(L.__file__).resolve()),
+        "actual_import_sha256":hashlib.sha256(Path(L.__file__).read_bytes()).hexdigest(),
+        "selection":names,"test_count":result.testsRun,"failures":len(result.failures),
+        "errors":len(result.errors),"skips":len(result.skipped),"pass":result.wasSuccessful(),
+        "native_linux":False,"default_launcher_reader":"synthetic negative outer mock; nested test mocks preserved"}
+Path(os.environ.get("REVIEW_RESULT_PATH",here/"selected_base_result.json")).write_text(json.dumps(record,indent=2)+"\n")
+sys.exit(0 if result.wasSuccessful() else 1)

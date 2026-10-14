@@ -1,0 +1,107 @@
+test_clean_needs_every_channel (tests63.TestAssess.test_clean_needs_every_channel) ... ok
+test_intermediate_boottime_excursion_never_clean (tests63.TestAssess.test_intermediate_boottime_excursion_never_clean)
+F1: recognised intermediate K' evidence must be checked even when the endpoint difference is zero. ... ok
+test_intermediate_realtime_excursion_never_clean (tests63.TestAssess.test_intermediate_realtime_excursion_never_clean)
+F1: 0 -> (mono 60, real 90) -> 120 supplies divergence that aligned endpoints cannot erase. ... ok
+test_intermediate_suspend_counter_reset_is_ambiguous (tests63.TestAssess.test_intermediate_suspend_counter_reset_is_ambiguous)
+F2: supplied 0 -> 1 -> 0 counter evidence is inconsistent, despite matching endpoints. ... ok
+test_invalid_sample_suspend_counter_never_clean (tests63.TestAssess.test_invalid_sample_suspend_counter_never_clean) ... ok
+test_invalid_suspend_counter_readings_never_clean (tests63.TestAssess.test_invalid_suspend_counter_readings_never_clean) ... ok
+test_malformed_boot_readings_never_clean (tests63.TestAssess.test_malformed_boot_readings_never_clean)
+P3: matching malformed boot strings do not become positive interval evidence. ... ok
+test_malformed_interval_records_never_clean (tests63.TestAssess.test_malformed_interval_records_never_clean) ... ok
+test_missing_channels_never_clean (tests63.TestAssess.test_missing_channels_never_clean) ... ok
+test_monotonic_ahead_of_boottime_and_absent_samples (tests63.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples)
+X04 / X06: monotonic advancing more than boottime, or samples absent, is AMBIGUOUS, never CLEAN. ... ok
+test_nondecreasing_suspend_counter_increase_is_contaminated (tests63.TestAssess.test_nondecreasing_suspend_counter_increase_is_contaminated)
+F2 control: a recognised 0 -> 1 -> 1 increase is positive suspend evidence, not a reset. ... ok
+test_nonfinite_or_boolean_clock_readings_never_clean (tests63.TestAssess.test_nonfinite_or_boolean_clock_readings_never_clean) ... ok
+test_pause_channel_is_ambiguous (tests63.TestAssess.test_pause_channel_is_ambiguous) ... ok
+test_power_checked_at_every_sample (tests63.TestAssess.test_power_checked_at_every_sample)
+R10: a battery reading in the middle of the interval contaminates it. ... ok
+test_reboot_battery_suspendcount_journal (tests63.TestAssess.test_reboot_battery_suspendcount_journal) ... ok
+test_sample_spacing_boundary (tests63.TestAssess.test_sample_spacing_boundary)
+R09: 180 s spacing is covered, 181 s is not. ... ok
+test_samples_out_of_order_never_clean (tests63.TestAssess.test_samples_out_of_order_never_clean)
+P6/Y03: each spacing is small, but the sample occurs after the end. ... ok
+test_suspend_detected_just_above_tolerance (tests63.TestAssess.test_suspend_detected_just_above_tolerance) ... ok
+test_counter_regression_is_no_reading (tests63.TestBusy.test_counter_regression_is_no_reading) ... ok
+test_duplicate_pid_identities_in_end_snapshot_are_no_reading (tests63.TestBusy.test_duplicate_pid_identities_in_end_snapshot_are_no_reading)
+F5: a supplied snapshot cannot establish parent ownership with both old and reused PID identities. ... ok
+test_duplicate_pid_identities_in_start_snapshot_are_no_reading (tests63.TestBusy.test_duplicate_pid_identities_in_start_snapshot_are_no_reading)
+F5: ambiguity in either supplied snapshot invalidates the interval; cpu_ticks itself emits unique PIDs. ... ok
+test_exited_in_window_is_reported (tests63.TestBusy.test_exited_in_window_is_reported)
+N7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok
+test_invalid_cpu_threshold_is_no_reading (tests63.TestBusy.test_invalid_cpu_threshold_is_no_reading) ... ok
+test_invalid_tick_frequency_is_no_reading (tests63.TestBusy.test_invalid_tick_frequency_is_no_reading) ... ok
+test_invalid_tick_values_are_no_reading (tests63.TestBusy.test_invalid_tick_values_are_no_reading) ... ok
+test_invalid_window_duration_is_no_reading (tests63.TestBusy.test_invalid_window_duration_is_no_reading) ... ok
+test_newer_verified_parent_does_not_exempt_older_child (tests63.TestBusy.test_newer_verified_parent_does_not_exempt_older_child)
+Parent identity must match AND precede the child; the new identity check does not replace the age check. ... ok
+test_no_name_or_path_allowlist (tests63.TestBusy.test_no_name_or_path_allowlist)
+R05 / D-ALLOW-PATHS: no process is exempt by name or path, including the Cloud session controller. ... ok
+test_no_reading_or_unsafe_inputs_fail_closed (tests63.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed) ... ok
+test_proc_view (tests63.TestBusy.test_proc_view)
+N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok
+test_proc_view_rejects_duplicate_mounts (tests63.TestBusy.test_proc_view_rejects_duplicate_mounts) ... ok
+test_proc_view_rejects_duplicate_nspid_fields (tests63.TestBusy.test_proc_view_rejects_duplicate_nspid_fields)
+F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view. ... 
+  test_proc_view_rejects_duplicate_nspid_fields (tests63.TestBusy.test_proc_view_rejects_duplicate_nspid_fields) (status='NSpid:\t77\nNSpid:\t77 88\n')
+F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view. ... FAIL
+  test_proc_view_rejects_duplicate_nspid_fields (tests63.TestBusy.test_proc_view_rejects_duplicate_nspid_fields) (status='NSpid:\t77\nNSpid:\t77\n')
+F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view. ... FAIL
+test_proc_view_rejects_malformed_mount_metadata (tests63.TestBusy.test_proc_view_rejects_malformed_mount_metadata)
+F3: malformed supplied mount IDs/device fields are not recognised mountinfo evidence. ... ok
+test_proc_view_rejects_malformed_nspid (tests63.TestBusy.test_proc_view_rejects_malformed_nspid) ... ok
+test_proc_view_rejects_nonproc_filesystem (tests63.TestBusy.test_proc_view_rejects_nonproc_filesystem) ... ok
+test_reused_campaign_pid_does_not_exempt_children (tests63.TestBusy.test_reused_campaign_pid_does_not_exempt_children)
+N7: own is keyed by (pid, starttime); a child of a reused pid (older than the campaign process) counts. ... ok
+test_reused_campaign_pid_exited_child_is_external (tests63.TestBusy.test_reused_campaign_pid_exited_child_is_external)
+P1: the t0-only child belongs to the reused parent, so its unknown window usage must not vanish. ... ok
+test_reused_campaign_pid_new_children_are_external (tests63.TestBusy.test_reused_campaign_pid_new_children_are_external)
+P1: a new unrelated child of a later PID reuse cannot inherit the old campaign's ownership. ... ok
+test_unobserved_parent_identity_does_not_exempt_child (tests63.TestBusy.test_unobserved_parent_identity_does_not_exempt_child) ... ok
+test_unreadable_existing_process_fails_the_snapshot (tests63.TestBusy.test_unreadable_existing_process_fails_the_snapshot)
+N7: a /proc/<pid> that exists but cannot be read makes the whole snapshot None. ... ok
+test_verified_parent_identity_exempts_its_child (tests63.TestBusy.test_verified_parent_identity_exempts_its_child) ... ok
+test_window_not_lifetime_and_reuse_and_birth (tests63.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok
+test_root_attestation_must_be_true (tests63.TestMemory.test_root_attestation_must_be_true)
+N3: a rejected or merely truthy attestation never yields a number. ... ok
+test_host_memtotal_caps_every_cgroup_limit (tests63.TestMemory.test_host_memtotal_caps_every_cgroup_limit)
+P6/Y01: a fully readable chain cannot grant more than the host's MemTotal. ... ok
+test_lifetime_gates_open_while_undecided (tests63.TestAttestationPreflight.test_lifetime_gates_open_while_undecided)
+N1: with D-HOST-LIFETIME open, even a valid attestation leaves both dependent gates OPEN_DECISION. ... ok
+test_all_favourable_still_blocked (tests63.TestAttestationPreflight.test_all_favourable_still_blocked) ... ok
+test_boot_id_must_be_valid (tests63.TestAttestationPreflight.test_boot_id_must_be_valid)
+N6: the boot-id gate validates the value, not just its presence. ... ok
+test_unknowns_never_pass_and_are_reported (tests63.TestAttestationPreflight.test_unknowns_never_pass_and_are_reported) ... ok
+test_launch_record_fields_are_verified (tests63.TestAttestationPreflight.test_launch_record_fields_are_verified)
+F15 / N12 / A2: execute / resume need valid fields matching independent observation of this process. ... ok
+test_supplied_launch_requires_independent_matching_observation (tests63.TestAttestationPreflight.test_supplied_launch_requires_independent_matching_observation)
+A2: supplied flags and systemctl fields cannot substitute for separately observed launch context. ... ok
+test_default_preflight_observes_live_launch_context (tests63.TestAttestationPreflight.test_default_preflight_observes_live_launch_context) ... ok
+
+======================================================================
+FAIL: test_proc_view_rejects_duplicate_nspid_fields (tests63.TestBusy.test_proc_view_rejects_duplicate_nspid_fields) (status='NSpid:\t77\nNSpid:\t77 88\n')
+F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/cell308-codex-review63/code/base/tests/test_lx_platform.py", line 746, in test_proc_view_rejects_duplicate_nspid_fields
+    self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly identical: True
+
+======================================================================
+FAIL: test_proc_view_rejects_duplicate_nspid_fields (tests63.TestBusy.test_proc_view_rejects_duplicate_nspid_fields) (status='NSpid:\t77\nNSpid:\t77\n')
+F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/cell308-codex-review63/code/base/tests/test_lx_platform.py", line 746, in test_proc_view_rejects_duplicate_nspid_fields
+    self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly identical: True
+
+----------------------------------------------------------------------
+Ran 51 tests in 0.006s
+
+FAILED (failures=2)

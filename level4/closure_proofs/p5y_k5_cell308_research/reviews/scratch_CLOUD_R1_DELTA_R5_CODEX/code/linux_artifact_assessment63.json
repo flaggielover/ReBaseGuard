@@ -1,0 +1,1072 @@
+{
+  "artifact_dir": "/tmp/cell308-codex-review61/linux-r5-38639066841",
+  "commit": "13047bbebe509c1c04cd25ea90651c853cc61b03",
+  "artifact_hashes": {
+    "input-commit.txt": "e607a27a71d9da071f0df44dcf66fb53df69b673c340bc0a3144b9cf936836b9",
+    "validation.json": "d46587398f7807b8e11c2dce7c68b889fa3d2a8a29daac5947092d80a29b349a",
+    "full-output.json": "d46587398f7807b8e11c2dce7c68b889fa3d2a8a29daac5947092d80a29b349a"
+  },
+  "source_hashes_match_reviewed_copy": true,
+  "source_hashes_unchanged": true,
+  "full_output_equals_validation": true,
+  "python": {
+    "executable": "/usr/bin/python3",
+    "real_executable": "/usr/bin/python3.12",
+    "version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "implementation": "CPython"
+  },
+  "kernel": "6.17.0-1022-azure",
+  "machine": "x86_64",
+  "system": "Linux",
+  "utc": "2026-10-14T21:22:43Z",
+  "baseline_command": [
+    "/usr/bin/python3",
+    "-B",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/home/runner/work/ReBaseGuard/ReBaseGuard/snapshot/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+    "-v"
+  ],
+  "baseline_environment": {
+    "LX_PLATFORM_DIR": null,
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "baseline": {
+    "ran": 111,
+    "returncode": 0,
+    "assertion_failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "mutant_count": 78,
+  "all_mutant_transformed_hashes_match": true,
+  "all_full_suite_assertion_kills_valid": true,
+  "new_target_evaluations": 0,
+  "mutants": [
+    {
+      "id": "M01",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 8,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_failed_readings_are_unknown_never_dead (test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead)",
+        "test_malformed_current_boot_never_proves_death (test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death) (boot='garbage')",
+        "test_malformed_current_boot_never_proves_death (test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death) (boot='0F1E2D3C-4B5A-6978-8796-A5B4C3D2E1F0')",
+        "test_malformed_current_boot_never_proves_death (test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death) (boot=0)",
+        "test_malformed_current_boot_never_proves_death (test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death) (boot=False)",
+        "test_malformed_current_boot_never_proves_death (test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death) (boot=[])",
+        "test_malformed_current_boot_never_proves_death (test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death) (boot={})",
+        "test_malformed_current_boot_never_proves_death (test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death) (boot=nan)"
+      ]
+    },
+    {
+      "id": "M02",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_failed_readings_are_unknown_never_dead (test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead)"
+      ]
+    },
+    {
+      "id": "M03",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_unrecorded_fields (test_lx_platform.TestIdentity.test_unrecorded_fields)"
+      ]
+    },
+    {
+      "id": "M04",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_zombie_is_never_proof_of_death (test_lx_platform.TestIdentity.test_zombie_is_never_proof_of_death)",
+        "test_zombie_leader_with_live_thread_is_not_dead (test_lx_platform.TestIdentity.test_zombie_leader_with_live_thread_is_not_dead)"
+      ]
+    },
+    {
+      "id": "M05",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_positive_death_evidence (test_lx_platform.TestIdentity.test_positive_death_evidence)"
+      ]
+    },
+    {
+      "id": "M06",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_live_host_is_never_clean (test_lx_platform.TestAssess.test_live_host_is_never_clean)",
+        "test_power_classes (test_lx_platform.TestPowerThermal.test_power_classes)"
+      ]
+    },
+    {
+      "id": "M07",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_partial_chain_never_numeric (test_lx_platform.TestMemory.test_partial_chain_never_numeric)",
+        "test_v2_root_and_memory_high (test_lx_platform.TestMemory.test_v2_root_and_memory_high)"
+      ]
+    },
+    {
+      "id": "M08",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_missing_channels_never_clean (test_lx_platform.TestAssess.test_missing_channels_never_clean)"
+      ]
+    },
+    {
+      "id": "M09",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_intermediate_realtime_excursion_never_clean (test_lx_platform.TestAssess.test_intermediate_realtime_excursion_never_clean)",
+        "test_pause_channel_is_ambiguous (test_lx_platform.TestAssess.test_pause_channel_is_ambiguous)"
+      ]
+    },
+    {
+      "id": "M10",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_intermediate_boottime_excursion_never_clean (test_lx_platform.TestAssess.test_intermediate_boottime_excursion_never_clean)",
+        "test_suspend_detected_just_above_tolerance (test_lx_platform.TestAssess.test_suspend_detected_just_above_tolerance)"
+      ]
+    },
+    {
+      "id": "M11",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_all_favourable_still_blocked (test_lx_platform.TestAttestationPreflight.test_all_favourable_still_blocked)"
+      ]
+    },
+    {
+      "id": "M12",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)"
+      ]
+    },
+    {
+      "id": "M13",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_lifetime_gates_open_while_undecided (test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided)"
+      ]
+    },
+    {
+      "id": "M14",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_positive_evidence_only (test_lx_platform.TestUpdatesLaunch.test_positive_evidence_only)"
+      ]
+    },
+    {
+      "id": "M15",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_launched_by_systemd_requires_everything (test_lx_platform.TestUpdatesLaunch.test_launched_by_systemd_requires_everything)"
+      ]
+    },
+    {
+      "id": "M16",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 3,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_crash_injection_old_or_new_never_partial (test_lx_platform.TestDurableWrite.test_crash_injection_old_or_new_never_partial)",
+        "test_stale_tmp_is_a_named_state (test_lx_platform.TestDurableWrite.test_stale_tmp_is_a_named_state)",
+        "test_tmp_symlink_refused (test_lx_platform.TestDurableWrite.test_tmp_symlink_refused)"
+      ]
+    },
+    {
+      "id": "M17",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_unknown_interpreter_package_never_matches (test_lx_platform.TestPins.test_unknown_interpreter_package_never_matches)",
+        "test_unreadable_pins_never_match (test_lx_platform.TestPins.test_unreadable_pins_never_match)"
+      ]
+    },
+    {
+      "id": "M18",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_counter_regression_is_no_reading (test_lx_platform.TestBusy.test_counter_regression_is_no_reading)",
+        "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)"
+      ]
+    },
+    {
+      "id": "M19",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_empty_cmdline_is_a_failed_read (test_lx_platform.TestIdentity.test_empty_cmdline_is_a_failed_read)"
+      ]
+    },
+    {
+      "id": "M20",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_unknowns_never_pass_and_are_reported (test_lx_platform.TestAttestationPreflight.test_unknowns_never_pass_and_are_reported)"
+      ]
+    },
+    {
+      "id": "M21",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_partial_chain_never_numeric (test_lx_platform.TestMemory.test_partial_chain_never_numeric)"
+      ]
+    },
+    {
+      "id": "M22",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 4,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_invalid_identity_schema_is_unknown (test_lx_platform.TestIdentity.test_invalid_identity_schema_is_unknown) (record={'pid': 4242, 'starttime_ticks': 777, 'boot_id': '0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0', 'cmdline_sha256': 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc', 'pidns': False, 'timens': 4026531834})",
+        "test_invalid_identity_schema_is_unknown (test_lx_platform.TestIdentity.test_invalid_identity_schema_is_unknown) (record={'pid': 4242, 'starttime_ticks': 777, 'boot_id': '0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0', 'cmdline_sha256': 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc', 'pidns': 4026531836, 'timens': '4026531834'})",
+        "test_namespace_mismatch_is_unknown (test_lx_platform.TestIdentity.test_namespace_mismatch_is_unknown)",
+        "test_unrecorded_namespace_never_proves_death (test_lx_platform.TestIdentity.test_unrecorded_namespace_never_proves_death)"
+      ]
+    },
+    {
+      "id": "M23",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_failed_or_unknown_supplies_are_unknown (test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown)"
+      ]
+    },
+    {
+      "id": "M24",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_reused_campaign_pid_new_children_are_external (test_lx_platform.TestBusy.test_reused_campaign_pid_new_children_are_external)",
+        "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)"
+      ]
+    },
+    {
+      "id": "M25",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)"
+      ]
+    },
+    {
+      "id": "M26",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)"
+      ]
+    },
+    {
+      "id": "M27",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_v2_root_and_memory_high (test_lx_platform.TestMemory.test_v2_root_and_memory_high)"
+      ]
+    },
+    {
+      "id": "M28",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 3,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_root_attestation_must_be_true (test_lx_platform.TestMemory.test_root_attestation_must_be_true)",
+        "test_v1_needs_root_attestation_for_a_number (test_lx_platform.TestMemory.test_v1_needs_root_attestation_for_a_number)",
+        "test_v2_root_and_memory_high (test_lx_platform.TestMemory.test_v2_root_and_memory_high)"
+      ]
+    },
+    {
+      "id": "M29",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_launch_record_fields_are_verified (test_lx_platform.TestAttestationPreflight.test_launch_record_fields_are_verified)"
+      ]
+    },
+    {
+      "id": "M30",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 3,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_libm_change_with_same_glibc_string (test_lx_platform.TestPins.test_libm_change_with_same_glibc_string)",
+        "test_pin_set_covers_libm_libc_loader (test_lx_platform.TestPins.test_pin_set_covers_libm_libc_loader)",
+        "test_unreadable_pins_never_match (test_lx_platform.TestPins.test_unreadable_pins_never_match)"
+      ]
+    },
+    {
+      "id": "M31",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_no_reading_or_unsafe_inputs_fail_closed (test_lx_platform.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed)"
+      ]
+    },
+    {
+      "id": "M32",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_no_reading_or_unsafe_inputs_fail_closed (test_lx_platform.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed)"
+      ]
+    },
+    {
+      "id": "R01",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_failed_or_unknown_supplies_are_unknown (test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown)",
+        "test_unrecognised_battery_status_is_unknown (test_lx_platform.TestPowerThermal.test_unrecognised_battery_status_is_unknown)"
+      ]
+    },
+    {
+      "id": "R02",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)"
+      ]
+    },
+    {
+      "id": "R03",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_fsyncs_file_then_directory (test_lx_platform.TestDurableWrite.test_fsyncs_file_then_directory)"
+      ]
+    },
+    {
+      "id": "R04",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 4,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_constants_equal_the_candidates (test_lx_platform.TestAssess.test_constants_equal_the_candidates)",
+        "test_monotonic_ahead_of_boottime_and_absent_samples (test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples)",
+        "test_pause_channel_is_ambiguous (test_lx_platform.TestAssess.test_pause_channel_is_ambiguous)",
+        "test_suspend_detected_just_above_tolerance (test_lx_platform.TestAssess.test_suspend_detected_just_above_tolerance)"
+      ]
+    },
+    {
+      "id": "R05",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 3,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_no_name_or_path_allowlist (test_lx_platform.TestBusy.test_no_name_or_path_allowlist)",
+        "test_verified_parent_identity_exempts_its_child (test_lx_platform.TestBusy.test_verified_parent_identity_exempts_its_child)",
+        "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)"
+      ]
+    },
+    {
+      "id": "R06",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 4,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_libm_change_with_same_glibc_string (test_lx_platform.TestPins.test_libm_change_with_same_glibc_string)",
+        "test_pin_set_covers_libm_libc_loader (test_lx_platform.TestPins.test_pin_set_covers_libm_libc_loader)",
+        "test_unknown_interpreter_package_never_matches (test_lx_platform.TestPins.test_unknown_interpreter_package_never_matches)",
+        "test_unreadable_pins_never_match (test_lx_platform.TestPins.test_unreadable_pins_never_match)"
+      ]
+    },
+    {
+      "id": "R07",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_live_task_states_are_alive (test_lx_platform.TestIdentity.test_live_task_states_are_alive)"
+      ]
+    },
+    {
+      "id": "R08",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_fsyncs_file_then_directory (test_lx_platform.TestDurableWrite.test_fsyncs_file_then_directory)"
+      ]
+    },
+    {
+      "id": "R09",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_constants_equal_the_candidates (test_lx_platform.TestAssess.test_constants_equal_the_candidates)",
+        "test_sample_spacing_boundary (test_lx_platform.TestAssess.test_sample_spacing_boundary)"
+      ]
+    },
+    {
+      "id": "R10",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_power_checked_at_every_sample (test_lx_platform.TestAssess.test_power_checked_at_every_sample)"
+      ]
+    },
+    {
+      "id": "X01",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_proc_view (test_lx_platform.TestBusy.test_proc_view)"
+      ]
+    },
+    {
+      "id": "X02",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_proc_view (test_lx_platform.TestBusy.test_proc_view)"
+      ]
+    },
+    {
+      "id": "X03",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_positive_evidence_only (test_lx_platform.TestUpdatesLaunch.test_positive_evidence_only)"
+      ]
+    },
+    {
+      "id": "X04",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_monotonic_ahead_of_boottime_and_absent_samples (test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples)"
+      ]
+    },
+    {
+      "id": "X05",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_read_back_mismatch_is_detected (test_lx_platform.TestDurableWrite.test_read_back_mismatch_is_detected)"
+      ]
+    },
+    {
+      "id": "X06",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_monotonic_ahead_of_boottime_and_absent_samples (test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples)"
+      ]
+    },
+    {
+      "id": "X07",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_launched_by_systemd_requires_everything (test_lx_platform.TestUpdatesLaunch.test_launched_by_systemd_requires_everything)"
+      ]
+    },
+    {
+      "id": "X08",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_large_v1_limit_is_a_limit (test_lx_platform.TestMemory.test_large_v1_limit_is_a_limit)"
+      ]
+    },
+    {
+      "id": "X09",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_unknown_interpreter_package_never_matches (test_lx_platform.TestPins.test_unknown_interpreter_package_never_matches)"
+      ]
+    },
+    {
+      "id": "N01",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 3,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_all_favourable_still_blocked (test_lx_platform.TestAttestationPreflight.test_all_favourable_still_blocked)",
+        "test_lifetime_gates_open_while_undecided (test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided)",
+        "test_live_preflight_fails_closed_here (test_lx_platform.TestAttestationPreflight.test_live_preflight_fails_closed_here)"
+      ]
+    },
+    {
+      "id": "N02",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)"
+      ]
+    },
+    {
+      "id": "N03",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)"
+      ]
+    },
+    {
+      "id": "N04",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)"
+      ]
+    },
+    {
+      "id": "N05",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_root_attestation_must_be_true (test_lx_platform.TestMemory.test_root_attestation_must_be_true)"
+      ]
+    },
+    {
+      "id": "N06",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_proc_view (test_lx_platform.TestBusy.test_proc_view)"
+      ]
+    },
+    {
+      "id": "N07",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_boot_id_must_be_valid (test_lx_platform.TestAttestationPreflight.test_boot_id_must_be_valid)"
+      ]
+    },
+    {
+      "id": "N08",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)",
+        "test_reused_campaign_pid_exited_child_is_external (test_lx_platform.TestBusy.test_reused_campaign_pid_exited_child_is_external)"
+      ]
+    },
+    {
+      "id": "N09",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_unreadable_existing_process_fails_the_snapshot (test_lx_platform.TestBusy.test_unreadable_existing_process_fails_the_snapshot)"
+      ]
+    },
+    {
+      "id": "N10",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 5,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_newer_verified_parent_does_not_exempt_older_child (test_lx_platform.TestBusy.test_newer_verified_parent_does_not_exempt_older_child)",
+        "test_reused_campaign_pid_does_not_exempt_children (test_lx_platform.TestBusy.test_reused_campaign_pid_does_not_exempt_children)",
+        "test_reused_campaign_pid_exited_child_is_external (test_lx_platform.TestBusy.test_reused_campaign_pid_exited_child_is_external)",
+        "test_reused_campaign_pid_new_children_are_external (test_lx_platform.TestBusy.test_reused_campaign_pid_new_children_are_external)",
+        "test_unobserved_parent_identity_does_not_exempt_child (test_lx_platform.TestBusy.test_unobserved_parent_identity_does_not_exempt_child)"
+      ]
+    },
+    {
+      "id": "N11",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_unrecorded_namespace_never_proves_death (test_lx_platform.TestIdentity.test_unrecorded_namespace_never_proves_death)"
+      ]
+    },
+    {
+      "id": "N12",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_required_members_and_pin_point (test_lx_platform.TestPins.test_required_members_and_pin_point)"
+      ]
+    },
+    {
+      "id": "N13",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 10,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_default_preflight_observes_live_launch_context (test_lx_platform.TestAttestationPreflight.test_default_preflight_observes_live_launch_context) (observed={'systemd_pid1': False, 'unit': 'rebaseguard-mbs308-exec.service', 'invocation_id': 'abc', 'systemctl': {'MainPID': 10774, 'InvocationID': 'abc'}, 'pass': False})",
+        "test_default_preflight_observes_live_launch_context (test_lx_platform.TestAttestationPreflight.test_default_preflight_observes_live_launch_context) (observed={'systemd_pid1': True, 'unit': 'rebaseguard-mbs308-other.service', 'invocation_id': 'abc', 'systemctl': {'MainPID': 10774, 'InvocationID': 'abc'}, 'pass': True})",
+        "test_launch_record_fields_are_verified (test_lx_platform.TestAttestationPreflight.test_launch_record_fields_are_verified)",
+        "test_supplied_launch_requires_independent_matching_observation (test_lx_platform.TestAttestationPreflight.test_supplied_launch_requires_independent_matching_observation) (observed=None)",
+        "test_supplied_launch_requires_independent_matching_observation (test_lx_platform.TestAttestationPreflight.test_supplied_launch_requires_independent_matching_observation) (observed=True)",
+        "test_supplied_launch_requires_independent_matching_observation (test_lx_platform.TestAttestationPreflight.test_supplied_launch_requires_independent_matching_observation) (observed={'pass': True})",
+        "test_supplied_launch_requires_independent_matching_observation (test_lx_platform.TestAttestationPreflight.test_supplied_launch_requires_independent_matching_observation) (observed={'systemd_pid1': False, 'unit': 'rebaseguard-mbs308-exec.service', 'invocation_id': 'abc', 'systemctl': {'MainPID': 10774, 'InvocationID': 'abc'}, 'pass': False})",
+        "test_supplied_launch_requires_independent_matching_observation (test_lx_platform.TestAttestationPreflight.test_supplied_launch_requires_independent_matching_observation) (observed={'systemd_pid1': True, 'unit': 'rebaseguard-mbs308-other.service', 'invocation_id': 'abc', 'systemctl': {'MainPID': 10774, 'InvocationID': 'abc'}, 'pass': True})",
+        "test_supplied_launch_requires_independent_matching_observation (test_lx_platform.TestAttestationPreflight.test_supplied_launch_requires_independent_matching_observation) (observed={'systemd_pid1': True, 'unit': 'rebaseguard-mbs308-exec.service', 'invocation_id': 'other', 'systemctl': {'MainPID': 10774, 'InvocationID': 'other'}, 'pass': True})",
+        "test_supplied_launch_requires_independent_matching_observation (test_lx_platform.TestAttestationPreflight.test_supplied_launch_requires_independent_matching_observation) (observed={'systemd_pid1': True, 'unit': 'rebaseguard-mbs308-exec.service', 'invocation_id': 'abc', 'systemctl': {'MainPID': 1, 'InvocationID': 'abc'}, 'pass': True})"
+      ]
+    },
+    {
+      "id": "N14",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_failed_or_unknown_supplies_are_unknown (test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown)",
+        "test_unrecognised_battery_status_is_unknown (test_lx_platform.TestPowerThermal.test_unrecognised_battery_status_is_unknown)"
+      ]
+    },
+    {
+      "id": "Y01",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_host_memtotal_caps_every_cgroup_limit (test_lx_platform.TestMemory.test_host_memtotal_caps_every_cgroup_limit)"
+      ]
+    },
+    {
+      "id": "Y02",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_v2_root_and_memory_high (test_lx_platform.TestMemory.test_v2_root_and_memory_high)"
+      ]
+    },
+    {
+      "id": "Y03",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_samples_out_of_order_never_clean (test_lx_platform.TestAssess.test_samples_out_of_order_never_clean)"
+      ]
+    },
+    {
+      "id": "P01",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 3,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_reused_campaign_pid_exited_child_is_external (test_lx_platform.TestBusy.test_reused_campaign_pid_exited_child_is_external)",
+        "test_reused_campaign_pid_new_children_are_external (test_lx_platform.TestBusy.test_reused_campaign_pid_new_children_are_external)",
+        "test_unobserved_parent_identity_does_not_exempt_child (test_lx_platform.TestBusy.test_unobserved_parent_identity_does_not_exempt_child)"
+      ]
+    },
+    {
+      "id": "P02",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 3,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_failed_readings_are_unknown_never_dead (test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead)",
+        "test_malformed_current_boot_never_proves_death (test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death) (boot='garbage')",
+        "test_malformed_current_boot_never_proves_death (test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death) (boot='0F1E2D3C-4B5A-6978-8796-A5B4C3D2E1F0')"
+      ]
+    },
+    {
+      "id": "P03",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_malformed_boot_readings_never_clean (test_lx_platform.TestAssess.test_malformed_boot_readings_never_clean) (boot='garbage')",
+        "test_malformed_boot_readings_never_clean (test_lx_platform.TestAssess.test_malformed_boot_readings_never_clean) (boot='0F1E2D3C-4B5A-6978-8796-A5B4C3D2E1F0')"
+      ]
+    },
+    {
+      "id": "P04",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_invalid_window_duration_is_no_reading (test_lx_platform.TestBusy.test_invalid_window_duration_is_no_reading) (duration=nan)",
+        "test_invalid_window_duration_is_no_reading (test_lx_platform.TestBusy.test_invalid_window_duration_is_no_reading) (duration=inf)"
+      ]
+    },
+    {
+      "id": "P05",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 5,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_proc_view_rejects_malformed_nspid (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid) (nspid='')",
+        "test_proc_view_rejects_malformed_nspid (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid) (nspid='garbage')",
+        "test_proc_view_rejects_malformed_nspid (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid) (nspid='0')",
+        "test_proc_view_rejects_malformed_nspid (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid) (nspid='-1')",
+        "test_proc_view_rejects_malformed_nspid (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid) (nspid='1.5')"
+      ]
+    },
+    {
+      "id": "F01",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_intermediate_boottime_excursion_never_clean (test_lx_platform.TestAssess.test_intermediate_boottime_excursion_never_clean)",
+        "test_intermediate_realtime_excursion_never_clean (test_lx_platform.TestAssess.test_intermediate_realtime_excursion_never_clean)"
+      ]
+    },
+    {
+      "id": "F02",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 5,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_intermediate_suspend_counter_reset_is_ambiguous (test_lx_platform.TestAssess.test_intermediate_suspend_counter_reset_is_ambiguous)",
+        "test_invalid_sample_suspend_counter_never_clean (test_lx_platform.TestAssess.test_invalid_sample_suspend_counter_never_clean) (count=False)",
+        "test_invalid_sample_suspend_counter_never_clean (test_lx_platform.TestAssess.test_invalid_sample_suspend_counter_never_clean) (count='0')",
+        "test_invalid_sample_suspend_counter_never_clean (test_lx_platform.TestAssess.test_invalid_sample_suspend_counter_never_clean) (count=-1)",
+        "test_invalid_sample_suspend_counter_never_clean (test_lx_platform.TestAssess.test_invalid_sample_suspend_counter_never_clean) (count=None)"
+      ]
+    },
+    {
+      "id": "F03",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 16,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='garbage', parent_id='garbage', device='garbage')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='garbage', parent_id='28', device='0:22')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='garbage', device='0:22')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='28', device='garbage')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='0', parent_id='28', device='0:22')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='0', device='0:22')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='-1', parent_id='28', device='0:22')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='-1', device='0:22')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='28', device='0')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='28', device='0:')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='28', device=':22')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='28', device='0:22:1')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='28', device='x:22')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='28', device='0:x')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='28', device='-1:22')",
+        "test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata) (mount_id='23', parent_id='28', device='0:-1')"
+      ]
+    },
+    {
+      "id": "F04",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_proc_view_rejects_duplicate_nspid_fields (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields) (status='NSpid:\\t77\\nNSpid:\\t77 88\\n')",
+        "test_proc_view_rejects_duplicate_nspid_fields (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields) (status='NSpid:\\t77\\nNSpid:\\t77\\n')"
+      ]
+    },
+    {
+      "id": "F05",
+      "transformed_hash_matches": true,
+      "ran": 111,
+      "returncode": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "failure_names": [
+        "test_duplicate_pid_identities_in_end_snapshot_are_no_reading (test_lx_platform.TestBusy.test_duplicate_pid_identities_in_end_snapshot_are_no_reading)",
+        "test_duplicate_pid_identities_in_start_snapshot_are_no_reading (test_lx_platform.TestBusy.test_duplicate_pid_identities_in_start_snapshot_are_no_reading)"
+      ]
+    }
+  ],
+  "remote_replay_by_this_reviewer": false,
+  "parent_reported_ci_status": "SUCCESS"
+}

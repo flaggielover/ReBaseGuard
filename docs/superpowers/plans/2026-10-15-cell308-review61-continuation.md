@@ -21,17 +21,17 @@
 
 - [x] Fetch and verify GitHub baseline; create isolated managed worktree.
 - [x] Dispatch fresh independent code, amendment, and provenance reviewers against the immutable baseline.
-- [ ] Add `.github/workflows/cell308-dev-review.yml` and `.github/scripts/cell308_dev_review.py` to run only the isolated development suite on a pinned input revision. The runner records complete per-mutant output, counts, return codes and source/test/harness hashes.
-- [ ] Establish the unmodified suite passes before mutations. Classify assertion failures, execution errors, survivors and invalid anchors separately; keep an error-classification case for explicit reviewer adjudication.
-- [ ] Preserve reviewer reports verbatim with disclosures, reviewed SHA, scope and environment limitations; do not impersonate the unavailable Claude reviewer.
+- [x] Add `.github/workflows/cell308-dev-review.yml` and `.github/scripts/cell308_dev_review.py` to run only the isolated development suite on a pinned input revision. The runner records complete per-mutant output, counts, return codes and source/test/harness hashes.
+- [x] Establish the unmodified suite passes before mutations. Classify assertion failures, execution errors, survivors and invalid anchors separately; keep an error-classification case for explicit reviewer adjudication.
+- [x] Preserve reviewer reports verbatim with disclosures, reviewed SHA, scope and environment limitations; do not impersonate the unavailable Claude reviewer.
 
 ## Task 2: bounded repairs from the independent review
 
-- [ ] Reproduce each actionable finding before repair. Known code lead: `busy_processes` must not exempt a child merely because its parent PID was once owned; validate the parent identity in the relevant snapshot.
-- [ ] Validate finite ordered clock observations, recognised process states and valid boot identifiers; malformed observations must remain UNKNOWN/AMBIGUOUS rather than prove ALIVE/DEAD/CLEAN.
-- [ ] Add isolated regression tests and semantic mutants for each verified repair in `streams/CLOUD_R1_LINUX_DEV/tests/`.
-- [ ] Correct document claims with an additive amendment/owner-brief revision and update active development documentation accurately (75 baseline tests, not 74). Carry genuinely undecided semantics as conditions.
-- [ ] Run the baseline and mutation suite on final input hashes. Preserve complete failure evidence; no automatic kill credit for unrelated process errors.
+- [x] Reproduce each actionable finding before repair. Known code lead: `busy_processes` must not exempt a child merely because its parent PID was once owned; validate the parent identity in the relevant snapshot.
+- [x] Validate finite ordered clock observations, recognised process states and valid boot identifiers; malformed observations must remain UNKNOWN/AMBIGUOUS rather than prove ALIVE/DEAD/CLEAN.
+- [x] Add isolated regression tests and semantic mutants for each verified repair in `streams/CLOUD_R1_LINUX_DEV/tests/`.
+- [x] Correct document claims with an additive amendment/owner-brief revision and update active development documentation accurately (75 baseline tests, not 74). Carry genuinely undecided semantics as conditions.
+- [x] Run the baseline and mutation suite on final input hashes. Preserve complete failure evidence; no automatic kill credit for unrelated process errors.
 
 ## Task 3: independent follow-up and delivery
 
@@ -39,6 +39,17 @@
 - [ ] Verify historical source/evidence preservation and the changed-path allowlist.
 - [ ] Record integrity-ledger bindings and additive review/validation artifacts behind the scoped scan gate.
 - [ ] Commit and push only the continuation branch; prepare a concrete next-step packet without claiming acceptance of proposed governance.
+
+## Task 4: trusted-boundary development prototype
+
+The r4 A1/A2 integration conditions already require a caller boundary deriving root provenance from committed/current-host attestation and restricting favorable reader/checker/observer/decision seams. The later owner authorization permits this target-free development; no new policy choice is needed. This task follows the fresh revision-5 review and its concrete NSpid payload correction.
+
+- [ ] Preserve the revision-5 independent reports and exact-commit Linux 111-test/78-mutant record; reproduce and repair the newly demonstrated NSpid delimiter defect with a refusal test and F06 weakening mutant.
+- [ ] Add an observation-only `lx_verified.py` API accepting only an attestation reference and validated observation mode. Bind repository internally; use canonical current-machine verification and default live readers/observer. Derive root evidence only from a verified record with a strict boolean True.
+- [ ] Keep decisions empty and the unavailable campaign detector UNKNOWN. Import no science and expose no pin-point completion, campaign launch, caller-supplied readings, checker, observer, repository or root flags.
+- [ ] Label memory data RAW; withhold unresolved effective-limit/headroom quantities as operational allowances and return development-only / operational-ready False. Keep A5 and all20 policy decisions unmet.
+- [ ] Add synthetic committed-fixture provenance/refusal and public-seam tests; bind both new files in the full-suite input hashes and trigger exact-source Linux CI.
+- [ ] Obtain fresh independent code and evidence review, repair findings, preserve final records and prepare a concrete handoff packet.
 
 ## Validation commands
 

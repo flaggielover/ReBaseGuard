@@ -1,0 +1,60 @@
+"""Static whole-registry checks and selected synthetic tests for F01-F05/Y03 only."""
+import ast
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+here=Path(__file__).resolve().parent
+source=(here/"base/lx_platform.py").read_text()
+harness_ast=ast.parse((here/"base/tests/run_mutants.py").read_text())
+tests_ast=ast.parse((here/"base/tests/test_lx_platform.py").read_text())
+constants={}
+for node in harness_ast.body:
+    if isinstance(node,ast.Assign):
+        for target in node.targets:
+            if isinstance(target,ast.Name) and target.id in ("MUTANTS","MUTANT_GROUP_SIZES"):
+                constants[target.id]=ast.literal_eval(node.value)
+entries=constants["MUTANTS"]
+static=[]
+results=[]
+for mid,what,edits in entries:
+    mutated=source
+    anchors=[]
+    for old,new in edits:
+        count=mutated.count(old);anchors.append(count)
+        assert count == 1,(mid,anchors)
+        mutated=mutated.replace(old,new)
+    ast.parse(mutated)
+    static.append({"id":mid,"anchor_counts":anchors,"syntax_valid":True})
+    if mid not in {"F01","F02","F03","F04","F05","Y03"}:
+        continue
+    out=here/"mutants"/mid
+    out.mkdir(parents=True,exist_ok=True)
+    (out/"lx_platform.py").write_text(mutated)
+    env=dict(os.environ,LX_PLATFORM_DIR=str(out),TMPDIR=str(here),PYTHONDONTWRITEBYTECODE="1",
+             REVIEW_RESULT_PATH=str(out/"selected_result.json"))
+    command=[sys.executable,"-B","-W","error::ResourceWarning",str(here/"run_selected63.py")]
+    proc=subprocess.run(command,env=env,capture_output=True,text=True,timeout=30)
+    (out/"stdout.txt").write_text(proc.stdout)
+    (out/"stderr.txt").write_text(proc.stderr)
+    suite=json.loads((out/"selected_result.json").read_text())
+    failure_names=[line[6:] for line in proc.stderr.splitlines() if line.startswith("FAIL: ")]
+    valid=(proc.returncode==1 and suite["test_count"]==51 and suite["failures"]>0
+           and suite["errors"]==0 and suite["skips"]==0)
+    results.append({"id":mid,"property":what,"command":command,"returncode":proc.returncode,
+                    "synthetic_selected_test_count":suite["test_count"],"failures":suite["failures"],
+                    "errors":suite["errors"],"skips":suite["skips"],"failure_names":failure_names,
+                    "valid_selected_assertion_kill":valid,"import_sha256":suite["actual_import_sha256"]})
+ids=[row[0] for row in entries]
+expected={f"{prefix}{n:02d}" for prefix,count in constants["MUTANT_GROUP_SIZES"].items() for n in range(1,count+1)}
+assert len(ids)==len(set(ids)) and set(ids)==expected
+test_count=sum(isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef)) and n.name.startswith("test_")
+               for n in ast.walk(tests_ast))
+record={"test_method_count":test_count,"registered_mutant_count":len(entries),"group_sizes":constants["MUTANT_GROUP_SIZES"],
+        "static":static,"selected_behavioral_mutants":results,"native_linux":False,
+        "full_suite_or_full_harness_run":False}
+(here/"harness_checks63.json").write_text(json.dumps(record,indent=2)+"\n")
+print(json.dumps({"test_methods":test_count,"mutants":len(entries),"targeted":results},indent=2))

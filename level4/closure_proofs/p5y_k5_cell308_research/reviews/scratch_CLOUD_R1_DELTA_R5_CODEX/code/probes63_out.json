@@ -1,0 +1,620 @@
+{
+  "actual_import": "/private/tmp/cell308-codex-review63/code/base/lx_platform.py",
+  "actual_import_sha256": "e4f30c816a31a2f36fe7fab88fb4af957457d817b88fc2a8b75324cdb7ef705e",
+  "probe_count": 27,
+  "met_expectation": 25,
+  "rows": [
+    {
+      "name": "C01_aligned_clock_unchanged_count_control",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 60000000000,
+            "realtime_ns": 60000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "CLEAN",
+        "clean": true,
+        "reasons": []
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "F1_original_intermediate_realtime_excursion",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 60000000000,
+            "realtime_ns": 90000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "AMBIGUOUS",
+        "clean": false,
+        "reasons": [
+          "AMBIGUOUS: P wall time diverged from monotonic by 30000 ms",
+          "AMBIGUOUS: P wall time diverged from monotonic by -30000 ms"
+        ]
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "F2_original_suspend_counter_0_1_0",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 60000000000,
+            "realtime_ns": 60000000000
+          },
+          "suspend_success": 1,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "AMBIGUOUS",
+        "clean": false,
+        "reasons": [
+          "AMBIGUOUS: S' suspend count decreased or reset"
+        ]
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "F3_original_garbage_mount_header",
+      "input": "garbage garbage garbage / /proc rw,relatime - proc proc rw\n",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "F4_original_conflicting_duplicate_nspid",
+      "input": "NSpid:\t77\nNSpid:\t77 88\n",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "F5_original_duplicate_end_snapshot_parent_identity",
+      "input": {
+        "t0": "{(99, 2): (1, 0, 'old_campaign', None)}",
+        "t1": "{(99, 2): (1, 0, 'old_campaign', None), (99, 50): (1, 0, 'new_parent', None), (40, 51): (99, 500, 'external_child', None)}"
+      },
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "C02_valid_single_proc_record_control",
+      "input": {
+        "status": "NSpid:\t77\n",
+        "mountinfo": "23 28 0:22 / /proc rw,relatime - proc proc rw\n"
+      },
+      "result": true,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "C03_valid_forward_reuse_reports_external_child",
+      "input": "{(99, 50): (1, 0, 'new_parent', None), (40, 51): (99, 500, 'external_child', None)}",
+      "result": [
+        {
+          "pid": 40,
+          "comm": "external_child",
+          "exe": null,
+          "pct": 100.0,
+          "born_in_window": true
+        }
+      ],
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "C04_valid_parent_identity_exempts_child_control",
+      "input": "{(99, 2): (1, 0, 'campaign', None), (40, 3): (99, 500, 'child', None)}",
+      "result": [],
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A01_intermediate_boottime_excursion",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 90000000000,
+            "realtime_ns": 60000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "CONTAMINATED",
+        "clean": false,
+        "reasons": [
+          "CONTAMINATED: K' suspended 30 s",
+          "AMBIGUOUS: K' monotonic advanced more than boottime"
+        ]
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A02_exact_2s_realtime_tolerance_control",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 60000000000,
+            "realtime_ns": 62000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "CLEAN",
+        "clean": true,
+        "reasons": []
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A03_realtime_2s_plus_1ns",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 60000000000,
+            "realtime_ns": 62000000001
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "AMBIGUOUS",
+        "clean": false,
+        "reasons": [
+          "AMBIGUOUS: P wall time diverged from monotonic by 2000 ms",
+          "AMBIGUOUS: P wall time diverged from monotonic by -2001 ms"
+        ]
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A04_each_adjacent_1_5s_endpoint_3s_still_contaminated",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 61500000000,
+            "realtime_ns": 60000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 123000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "CONTAMINATED",
+        "clean": false,
+        "reasons": [
+          "CONTAMINATED: K' suspended 3 s"
+        ]
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A05_nondecreasing_counter_increase",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 60000000000,
+            "realtime_ns": 60000000000
+          },
+          "suspend_success": 1,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 1,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "CONTAMINATED",
+        "clean": false,
+        "reasons": [
+          "CONTAMINATED: S' suspend count changed"
+        ]
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A06_counter_decrease_before_increase_is_ambiguous",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 5,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 60000000000,
+            "realtime_ns": 60000000000
+          },
+          "suspend_success": 4,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 5,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "AMBIGUOUS",
+        "clean": false,
+        "reasons": [
+          "AMBIGUOUS: S' suspend count decreased or reset"
+        ]
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A07_independent_clock_contamination_dominates_ambiguous_counter",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 90000000000,
+            "realtime_ns": 60000000000
+          },
+          "suspend_success": 1,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "CONTAMINATED",
+        "clean": false,
+        "reasons": [
+          "CONTAMINATED: K' suspended 30 s",
+          "AMBIGUOUS: K' monotonic advanced more than boottime",
+          "AMBIGUOUS: S' suspend count decreased or reset"
+        ]
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A08_bool_middle_counter_is_ambiguous",
+      "input": [
+        {
+          "clocks": {
+            "monotonic_ns": 0,
+            "boottime_ns": 0,
+            "realtime_ns": 0
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 60000000000,
+            "boottime_ns": 60000000000,
+            "realtime_ns": 60000000000
+          },
+          "suspend_success": true,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        },
+        {
+          "clocks": {
+            "monotonic_ns": 120000000000,
+            "boottime_ns": 120000000000,
+            "realtime_ns": 120000000000
+          },
+          "suspend_success": 0,
+          "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+          "power": "AC"
+        }
+      ],
+      "result": {
+        "status": "AMBIGUOUS",
+        "clean": false,
+        "reasons": [
+          "AMBIGUOUS: S' suspend_stats absent",
+          "AMBIGUOUS: a suspend counter reading is malformed"
+        ]
+      },
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A09_duplicate_nspid_order_or_identical_1",
+      "input": "NSpid:\t77 88\nNSpid:\t77\n",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A09_duplicate_nspid_order_or_identical_2",
+      "input": "NSpid:\t77\nNSpid:\t77\n",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A10_bad_numeric_mount_metadata_1",
+      "input": "0 28 0:22 / /proc rw - proc proc rw\n",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A10_bad_numeric_mount_metadata_2",
+      "input": "23 0 0:22 / /proc rw - proc proc rw\n",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A10_bad_numeric_mount_metadata_3",
+      "input": "23 28 -1:22 / /proc rw - proc proc rw\n",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A10_bad_numeric_mount_metadata_4",
+      "input": "23 28 0:-22 / /proc rw - proc proc rw\n",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A11_duplicate_start_snapshot_identity",
+      "input": "{(99, 2): (1, 0, 'old_campaign', None), (99, 50): (1, 0, 'new_parent', None)}",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "A12_duplicate_noncampaign_snapshot_identity",
+      "input": "{(40, 3): (1, 0, 'external', None), (40, 4): (1, 0, 'external_reuse', None)}",
+      "result": null,
+      "expected_outcome_met": true,
+      "residual_defect_probe": false
+    },
+    {
+      "name": "D01_malformed_nspid_header_false_complete_1",
+      "input": "NSpid:garbage\t77\n",
+      "result": true,
+      "expected_outcome_met": false,
+      "residual_defect_probe": true
+    },
+    {
+      "name": "D01_malformed_nspid_header_false_complete_2",
+      "input": "NSpid:77 88\n",
+      "result": true,
+      "expected_outcome_met": false,
+      "residual_defect_probe": true
+    }
+  ]
+}
