@@ -1,4 +1,4 @@
-"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 4).
+"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 5).
 
 STATUS: DEV_ONLY · NOT ACCEPTED BY ANY GOVERNANCE REVIEW · NOT FROZEN · NOT A CAMPAIGN NAMESPACE · NOT USABLE FOR ANY
 DESIGNATED SERIES, QUALIFICATION, FREEZE, GRANT OR TARGET STEP. Nothing in the historical candidate (142d97a9) imports
@@ -274,25 +274,31 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     try:
         if not valid_clocks:
             raise TypeError("invalid clock record")
-        c0, c1 = start["clocks"], end["clocks"]
-        dm = c1["monotonic_ns"] - c0["monotonic_ns"]
-        db = c1["boottime_ns"] - c0["boottime_ns"]
-        dr = c1["realtime_ns"] - c0["realtime_ns"]
-        if dm <= 0 or db <= 0:
-            reasons.append("AMBIGUOUS: K' clocks not increasing")
-        else:
-            if db - dm > SLEEP_GAP_TOL_NS:
-                reasons.append(f"CONTAMINATED: K' suspended {(db - dm) // 10 ** 9} s")
-            elif db - dm < -SLEEP_GAP_TOL_NS:
-                reasons.append("AMBIGUOUS: K' monotonic advanced more than boottime")
-            if abs(dr - dm) > SLEEP_GAP_TOL_NS:
-                reasons.append(f"AMBIGUOUS: P wall time diverged from monotonic by {(dr - dm) // 10 ** 6} ms")
+        pairs = list(zip(seq, seq[1:]))
+        if len(seq) > 2:
+            pairs.append((start, end))
+        for before, after in pairs:
+            c0, c1 = before["clocks"], after["clocks"]
+            dm = c1["monotonic_ns"] - c0["monotonic_ns"]
+            db = c1["boottime_ns"] - c0["boottime_ns"]
+            dr = c1["realtime_ns"] - c0["realtime_ns"]
+            if dm <= 0 or db <= 0:
+                reasons.append("AMBIGUOUS: K' clocks not increasing")
+            else:
+                if db - dm > SLEEP_GAP_TOL_NS:
+                    reasons.append(f"CONTAMINATED: K' suspended {(db - dm) // 10 ** 9} s")
+                elif db - dm < -SLEEP_GAP_TOL_NS:
+                    reasons.append("AMBIGUOUS: K' monotonic advanced more than boottime")
+                if abs(dr - dm) > SLEEP_GAP_TOL_NS:
+                    reasons.append(f"AMBIGUOUS: P wall time diverged from monotonic by {(dr - dm) // 10 ** 6} ms")
     except (KeyError, TypeError):
         reasons.append("AMBIGUOUS: K'/P clocks absent")
-    s0, s1 = (start or {}).get("suspend_success"), (end or {}).get("suspend_success")
-    if type(s0) is not int or type(s1) is not int or s0 < 0 or s1 < 0:
+    counts = [x.get("suspend_success") if isinstance(x, dict) else None for x in seq]
+    if any(type(count) is not int or count < 0 for count in counts):
         reasons.append("AMBIGUOUS: S' suspend_stats absent")
-    elif s0 != s1:
+    elif any(before > after for before, after in zip(counts, counts[1:])):
+        reasons.append("AMBIGUOUS: S' suspend count decreased or reset")
+    elif any(before != after for before, after in zip(counts, counts[1:])):
         reasons.append("CONTAMINATED: S' suspend count changed")
     if any(not isinstance(x, dict) or type(x.get("suspend_success")) is not int
            or x["suspend_success"] < 0 for x in seq):
@@ -586,9 +592,10 @@ def proc_view_complete(status_text: str | None = None, mountinfo_text: str | Non
         return None
     if ino != INIT_PID_NS:
         return False
-    nspid = next((ln.split()[1:] for ln in st.splitlines() if ln.startswith("NSpid:")), None)
-    if nspid is None:
+    nspid_fields = [ln.split()[1:] for ln in st.splitlines() if ln.startswith("NSpid:")]
+    if len(nspid_fields) != 1:
         return None
+    nspid = nspid_fields[0]
     if len(nspid) > 1:
         return False
     if len(nspid) != 1 or not nspid[0].isdigit() or int(nspid[0]) <= 0:
@@ -599,6 +606,9 @@ def proc_view_complete(status_text: str | None = None, mountinfo_text: str | Non
     if len(candidates) != 1:
         return False
     f = candidates[0]
+    if not f[0].isdigit() or int(f[0]) <= 0 or not f[1].isdigit() or int(f[1]) <= 0 \
+            or not re.fullmatch(r"[0-9]+:[0-9]+", f[2]):
+        return None
     if "-" not in f:
         return None
     separator = f.index("-")
@@ -663,6 +673,8 @@ def busy_processes(t0: dict | None, t1: dict | None, dt_s: float, threshold_pct:
                 return None
             if type(record[0]) is not int or record[0] < 0 or type(record[1]) is not int or record[1] < 0:
                 return None
+        if len({key[0] for key in snapshot}) != len(snapshot):
+            return None
     own_start = {pid: start for pid, start in own}
     def owned(key, ppid, snapshot):
         return key in own or (ppid in own_start and (ppid, own_start[ppid]) in snapshot

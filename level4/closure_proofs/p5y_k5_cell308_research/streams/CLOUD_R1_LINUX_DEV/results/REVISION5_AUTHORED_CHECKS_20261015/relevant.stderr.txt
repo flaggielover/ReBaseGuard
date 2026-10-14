@@ -1,0 +1,68 @@
+test_clean_needs_every_channel (test_lx_platform.TestAssess.test_clean_needs_every_channel) ... ok
+test_intermediate_boottime_excursion_never_clean (test_lx_platform.TestAssess.test_intermediate_boottime_excursion_never_clean)
+F1: recognised intermediate K' evidence must be checked even when the endpoint difference is zero. ... ok
+test_intermediate_realtime_excursion_never_clean (test_lx_platform.TestAssess.test_intermediate_realtime_excursion_never_clean)
+F1: 0 -> (mono 60, real 90) -> 120 supplies divergence that aligned endpoints cannot erase. ... ok
+test_intermediate_suspend_counter_reset_is_ambiguous (test_lx_platform.TestAssess.test_intermediate_suspend_counter_reset_is_ambiguous)
+F2: supplied 0 -> 1 -> 0 counter evidence is inconsistent, despite matching endpoints. ... ok
+test_invalid_sample_suspend_counter_never_clean (test_lx_platform.TestAssess.test_invalid_sample_suspend_counter_never_clean) ... ok
+test_invalid_suspend_counter_readings_never_clean (test_lx_platform.TestAssess.test_invalid_suspend_counter_readings_never_clean) ... ok
+test_malformed_boot_readings_never_clean (test_lx_platform.TestAssess.test_malformed_boot_readings_never_clean)
+P3: matching malformed boot strings do not become positive interval evidence. ... ok
+test_malformed_interval_records_never_clean (test_lx_platform.TestAssess.test_malformed_interval_records_never_clean) ... ok
+test_missing_channels_never_clean (test_lx_platform.TestAssess.test_missing_channels_never_clean) ... ok
+test_monotonic_ahead_of_boottime_and_absent_samples (test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples)
+X04 / X06: monotonic advancing more than boottime, or samples absent, is AMBIGUOUS, never CLEAN. ... ok
+test_nondecreasing_suspend_counter_increase_is_contaminated (test_lx_platform.TestAssess.test_nondecreasing_suspend_counter_increase_is_contaminated)
+F2 control: a recognised 0 -> 1 -> 1 increase is positive suspend evidence, not a reset. ... ok
+test_nonfinite_or_boolean_clock_readings_never_clean (test_lx_platform.TestAssess.test_nonfinite_or_boolean_clock_readings_never_clean) ... ok
+test_pause_channel_is_ambiguous (test_lx_platform.TestAssess.test_pause_channel_is_ambiguous) ... ok
+test_power_checked_at_every_sample (test_lx_platform.TestAssess.test_power_checked_at_every_sample)
+R10: a battery reading in the middle of the interval contaminates it. ... ok
+test_reboot_battery_suspendcount_journal (test_lx_platform.TestAssess.test_reboot_battery_suspendcount_journal) ... ok
+test_sample_spacing_boundary (test_lx_platform.TestAssess.test_sample_spacing_boundary)
+R09: 180 s spacing is covered, 181 s is not. ... ok
+test_samples_out_of_order_never_clean (test_lx_platform.TestAssess.test_samples_out_of_order_never_clean)
+P6/Y03: each spacing is small, but the sample occurs after the end. ... ok
+test_suspend_detected_just_above_tolerance (test_lx_platform.TestAssess.test_suspend_detected_just_above_tolerance) ... ok
+test_counter_regression_is_no_reading (test_lx_platform.TestBusy.test_counter_regression_is_no_reading) ... ok
+test_duplicate_pid_identities_in_end_snapshot_are_no_reading (test_lx_platform.TestBusy.test_duplicate_pid_identities_in_end_snapshot_are_no_reading)
+F5: a supplied snapshot cannot establish parent ownership with both old and reused PID identities. ... ok
+test_duplicate_pid_identities_in_start_snapshot_are_no_reading (test_lx_platform.TestBusy.test_duplicate_pid_identities_in_start_snapshot_are_no_reading)
+F5: ambiguity in either supplied snapshot invalidates the interval; cpu_ticks itself emits unique PIDs. ... ok
+test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)
+N7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok
+test_invalid_cpu_threshold_is_no_reading (test_lx_platform.TestBusy.test_invalid_cpu_threshold_is_no_reading) ... ok
+test_invalid_tick_frequency_is_no_reading (test_lx_platform.TestBusy.test_invalid_tick_frequency_is_no_reading) ... ok
+test_invalid_tick_values_are_no_reading (test_lx_platform.TestBusy.test_invalid_tick_values_are_no_reading) ... ok
+test_invalid_window_duration_is_no_reading (test_lx_platform.TestBusy.test_invalid_window_duration_is_no_reading) ... ok
+test_newer_verified_parent_does_not_exempt_older_child (test_lx_platform.TestBusy.test_newer_verified_parent_does_not_exempt_older_child)
+Parent identity must match AND precede the child; the new identity check does not replace the age check. ... ok
+test_no_name_or_path_allowlist (test_lx_platform.TestBusy.test_no_name_or_path_allowlist)
+R05 / D-ALLOW-PATHS: no process is exempt by name or path, including the Cloud session controller. ... ok
+test_no_reading_or_unsafe_inputs_fail_closed (test_lx_platform.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed) ... ok
+test_proc_view (test_lx_platform.TestBusy.test_proc_view)
+N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok
+test_proc_view_rejects_duplicate_mounts (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_mounts) ... ok
+test_proc_view_rejects_duplicate_nspid_fields (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields)
+F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view. ... ok
+test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata)
+F3: malformed supplied mount IDs/device fields are not recognised mountinfo evidence. ... ok
+test_proc_view_rejects_malformed_nspid (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid) ... ok
+test_proc_view_rejects_nonproc_filesystem (test_lx_platform.TestBusy.test_proc_view_rejects_nonproc_filesystem) ... ok
+test_reused_campaign_pid_does_not_exempt_children (test_lx_platform.TestBusy.test_reused_campaign_pid_does_not_exempt_children)
+N7: own is keyed by (pid, starttime); a child of a reused pid (older than the campaign process) counts. ... ok
+test_reused_campaign_pid_exited_child_is_external (test_lx_platform.TestBusy.test_reused_campaign_pid_exited_child_is_external)
+P1: the t0-only child belongs to the reused parent, so its unknown window usage must not vanish. ... ok
+test_reused_campaign_pid_new_children_are_external (test_lx_platform.TestBusy.test_reused_campaign_pid_new_children_are_external)
+P1: a new unrelated child of a later PID reuse cannot inherit the old campaign's ownership. ... ok
+test_unobserved_parent_identity_does_not_exempt_child (test_lx_platform.TestBusy.test_unobserved_parent_identity_does_not_exempt_child) ... ok
+test_unreadable_existing_process_fails_the_snapshot (test_lx_platform.TestBusy.test_unreadable_existing_process_fails_the_snapshot)
+N7: a /proc/<pid> that exists but cannot be read makes the whole snapshot None. ... ok
+test_verified_parent_identity_exempts_its_child (test_lx_platform.TestBusy.test_verified_parent_identity_exempts_its_child) ... ok
+test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok
+
+----------------------------------------------------------------------
+Ran 42 tests in 0.002s
+
+OK

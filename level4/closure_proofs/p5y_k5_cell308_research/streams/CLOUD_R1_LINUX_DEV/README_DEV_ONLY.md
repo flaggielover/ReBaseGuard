@@ -1,4 +1,4 @@
-# Stream CLOUD_R1_LINUX_DEV — development-only Linux platform layer (Cloud route r1), revision 4
+# Stream CLOUD_R1_LINUX_DEV — development-only Linux platform layer (Cloud route r1), revision 5
 
 **Status: DEV_ONLY · NOT ACCEPTED BY ANY GOVERNANCE REVIEW · NOT FROZEN · NOT A CAMPAIGN NAMESPACE.**
 Nothing here may be used for a designated series, a derivation, an apply, a freeze, an official qualification, a
@@ -26,18 +26,23 @@ live supervisor observation. Explicit observer/checker/reading injection is for 
 wrapper must independently pin and restrict those seams. Raw memory helpers still accept a strict boolean and do
 not prove its attestation provenance; the reviewed wrapper and fixed science-import list remain conditions.
 
-Native Linux validation and fresh independent review of these repairs are pending. Historical evidence does not
+Revision 4 passed exact-input Linux validation (103 tests, 73 mutation kills), but the independent follow-up found
+five adjacent supplied-record/assessment defects. Revision 5 checks clock and suspend observations throughout the
+interval, requires recognised mount metadata and one namespace field, and refuses duplicate PID identities within
+one snapshot. Erratum E1 adds the corresponding proposed-contract clarification without changing earlier drafts.
+
+Native Linux validation and fresh independent review of revision 5 are pending. Historical evidence does not
 establish the current code's behavior. Neither this continuation nor a successful test authorizes an official step.
 
 ## Contents
 
 | file | what |
 |---|---|
-| `lx_platform.py` | Linux counterparts of the `mbs308_host` / driver host facilities (amendment r3 §3). Target property: a failed, absent or unrecognised reading is UNKNOWN; a rule quantity without a Linux identity, or a gate whose D-* decision is open, is `OPEN_DECISION`; neither passes. A zombie is never proof of death. Pins must contain libm, libc and the loader, plus package versions and livepatch. Attestation facts are read from a committed file accepted by a committed review line naming its sha256. |
+| `lx_platform.py` | Linux counterparts of the `mbs308_host` / driver host facilities (amendment r4 §3 and erratum E1). Target property: a failed, absent or unrecognised reading is UNKNOWN; a rule quantity without a Linux identity, or a gate whose D-* decision is open, is `OPEN_DECISION`; neither passes. A zombie is never proof of death. Pins must contain libm, libc and the loader, plus package versions and livepatch. Attestation facts are read from a committed file accepted by a committed review line naming its sha256. |
 | `lx_inventory.py` | Read-only host inventory; revision 2 compares with r1 after normalisation (`governance/new_host_route_cloud_r1/CLOUD_HOST_INVENTORY_R2B_20261014.json`). The earlier `CLOUD_HOST_INVENTORY_R2_20261014.json` was produced by revision 1 of both tools and is kept unchanged. |
 | `lx_portmap.py` | Read-only scan of the candidate's macOS dependencies via `git show` (`results/PORT_MAP_142D97A9.json`). |
-| `tests/test_lx_platform.py` | 103 isolated tests: synthetic `/proc` and `/sys` trees, child processes (incl. a zombie leader with a live thread, and a detached grandchild), temporary files and git repositories, SIGKILL crash injection, an fsync-order spy, and two constants pinned to the candidate's values via `git show`. |
-| `tests/run_mutants.py` | 73 mutants (M01–M32 coordinator, R01–R10 from review 59, X01–X09 from review 60, N01–N14 weakening the revision-3 repairs; Y01–Y03 from review61 and P01–P05 for the takeover repairs); the passing unmodified suite must detect their intended weakening; full failure traces are preserved and execution errors are never automatic kills. |
+| `tests/test_lx_platform.py` | 111 isolated tests: synthetic `/proc` and `/sys` trees, child processes (incl. a zombie leader with a live thread, and a detached grandchild), temporary files and git repositories, SIGKILL crash injection, an fsync-order spy, and two constants pinned to the candidate's values via `git show`. |
+| `tests/run_mutants.py` | 78 mutants (M01–M32 coordinator, R01–R10 from review 59, X01–X09 from review 60, N01–N14 weakening the revision-3 repairs; Y01–Y03 from review61 and P01–P05 for the takeover repairs; F01–F05 for the adjacent record checks); the passing unmodified suite must detect their intended weakening; full failure traces are preserved and execution errors are never automatic kills. |
 | `results/TEST_RUN.json`, `results/MUTANTS_RUN.json` | historical revision-3 records, preserved unchanged. Revision-4 evidence is filed separately and must match current input hashes. |
 
 ## Run

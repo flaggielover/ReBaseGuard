@@ -3,7 +3,9 @@ copy of lx_platform.py. A KILLED case must run the baseline's full test count an
 errors or skips. Import failures, malformed reports, timeouts and other invalid runs are ERROR, never kills.
 M01-M32 are the coordinator's; R01-R10 are review 59's mutants and X01-X09 are review 60's surviving mutants, each
 re-anchored with the same weakening; N01-N14 weaken the revision-3 repairs. Y01-Y03 are review 61's fresh semantic
-mutants; P01-P05 cover its discovered regressions. The baseline runs first with an inherited
+mutants; P01-P05 cover its discovered regressions. F01-F05 weaken review 62's bounded follow-up repairs.
+Y03 removes both the sample-order and pairwise non-increase rejection routes for the same ordering property.
+The baseline runs first with an inherited
 LX_PLATFORM_DIR removed. Every suite subprocess uses strict ResourceWarning handling and keeps its complete output.
 Target-free; repository results are written only when an explicit output argument is supplied.
 
@@ -130,7 +132,7 @@ MUTANTS = [
      [('    if not candidates:\n        return None\n', '    if not candidates:\n        return True\n')]),
     ("X03", "unreadable livepatch counts as none applied", [("livepatch == [])", "livepatch in ([], None))")]),
     ("X04", "K' monotonic-ahead-of-boottime channel removed",
-     [("            elif db - dm < -SLEEP_GAP_TOL_NS:\n                reasons.append(\"AMBIGUOUS: K' monotonic advanced more "
+     [("                elif db - dm < -SLEEP_GAP_TOL_NS:\n                    reasons.append(\"AMBIGUOUS: K' monotonic advanced more "
        "than boottime\")\n", "")]),
     ("X05", "durable_write read-back verification removed", [("    if got != want:", "    if False:")]),
     ("X06", "absent samples no longer AMBIGUOUS",
@@ -185,10 +187,11 @@ MUTANTS = [
        "def visible_limit_upper_bound")]),
     ("Y02", "cgroup headroom uses the maximum instead of the minimum",
      [("    return min(hs) if hs else None", "    return max(hs) if hs else None")]),
-    ("Y03", "sample order is ignored when each individual positive spacing is small",
+    ("Y03", "sample order is ignored (both sample-order and pairwise non-increase guards removed)",
      [('        if any(d < 0 for d in steps):\n            reasons.append("AMBIGUOUS: samples out of order")\n'
        '        elif not steps or max(steps) > MAX_SAMPLE_GAP_S * 10 ** 9:',
-       '        if not steps or max(steps) > MAX_SAMPLE_GAP_S * 10 ** 9:')]),
+       '        if not steps or max(steps) > MAX_SAMPLE_GAP_S * 10 ** 9:'),
+      ('            if dm <= 0 or db <= 0:', '            if False:')]),
     ("P01", "campaign child ownership ignores the parent's observed starttime identity",
      [("ppid in own_start and (ppid, own_start[ppid]) in snapshot", "ppid in own_start")]),
     ("P02", "a malformed current boot id counts as positive identity evidence",
@@ -202,9 +205,27 @@ MUTANTS = [
        'or isinstance(dt_s, bool) or dt_s <= 0')]),
     ("P05", "malformed NSpid entries count as a complete proc view",
      [('    if len(nspid) != 1 or not nspid[0].isdigit() or int(nspid[0]) <= 0:\n        return None\n', '')]),
+    # ---- review 62's bounded intermediate-reading and ambiguity repairs
+    ("F01", "clock-pair checks ignore intermediate observations and use only the endpoints",
+     [('        pairs = list(zip(seq, seq[1:]))\n        if len(seq) > 2:\n            pairs.append((start, end))\n',
+       '        pairs = [(start, end)]\n')]),
+    ("F02", "suspend counter checks ignore intermediate observations and use only the endpoints",
+     [('    counts = [x.get("suspend_success") if isinstance(x, dict) else None for x in seq]',
+       '    counts = [x.get("suspend_success") if isinstance(x, dict) else None for x in (start, end)]'),
+      ('    if any(not isinstance(x, dict) or type(x.get("suspend_success")) is not int\n'
+       '           or x["suspend_success"] < 0 for x in seq):',
+       '    if any(not isinstance(x, dict) or type(x.get("suspend_success")) is not int\n'
+       '           or x["suspend_success"] < 0 for x in (start, end)):')]),
+    ("F03", "malformed mount IDs and device numbers bypass numeric metadata validation",
+     [('    if not f[0].isdigit() or int(f[0]) <= 0 or not f[1].isdigit() or int(f[1]) <= 0 \\\n'
+       '            or not re.fullmatch(r"[0-9]+:[0-9]+", f[2]):\n        return None\n', '')]),
+    ("F04", "the first NSpid field is trusted when duplicate NSpid records disagree",
+     [('    if len(nspid_fields) != 1:', '    if not nspid_fields:')]),
+    ("F05", "multiple starttime identities for one PID are accepted in a single CPU snapshot",
+     [('        if len({key[0] for key in snapshot}) != len(snapshot):\n            return None\n', '')]),
 ]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 3, "P": 5}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 3, "P": 5, "F": 5}
 
 
 def _text(value) -> str:

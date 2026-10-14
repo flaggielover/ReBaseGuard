@@ -1,4 +1,4 @@
-"""Isolated, target-free tests of the DEV-ONLY Linux platform layer (lx_platform), revision 4.
+"""Isolated, target-free tests of the DEV-ONLY Linux platform layer (lx_platform), revision 5.
 
 Synthetic inputs only: planted /proc and /sys text in temporary directories, ``sleep`` / busy-loop child processes,
 temporary files and a temporary git repository. No cell, no drift, no science module, no decoy is imported or run;
@@ -8,6 +8,9 @@ Revision 3 added tests for the delta review 60's findings N1-N8, N11-N13 and kil
 (tests/run_mutants.py carries all of them).
 Revision 4 adds independent regression cases for review 61's ownership, record-schema, arithmetic, completeness,
 host-cap and sample-order findings, and requires independently observed launch evidence at the public preflight.
+Revision 5 adds bounded fixtures for intermediate clock/counter evidence and ambiguous supplied proc/snapshot
+records (review 62, F1-F5). These helper-input tests do not establish native Linux or operational acceptance;
+trusted-wrapper provenance for raw memory flags, decision/checker/reading seams and fixed imports remains required.
 
 usage: python3 -m unittest discover -s tests -v      (from streams/CLOUD_R1_LINUX_DEV)
 """
@@ -296,6 +299,42 @@ class TestAssess(unittest.TestCase):
         r = L.assess(a, b, s, j)
         self.assertEqual(r["status"], "AMBIGUOUS")
         self.assertTrue(any(x.startswith("AMBIGUOUS: P") for x in r["reasons"]))
+
+    def test_intermediate_realtime_excursion_never_clean(self):
+        """F1: 0 -> (mono 60, real 90) -> 120 supplies divergence that aligned endpoints cannot erase."""
+        a, b, s, j = self.clean_case()
+        s[0]["clocks"]["realtime_ns"] = 90 * S
+        r = L.assess(a, b, s, j)
+        self.assertEqual(r["status"], "AMBIGUOUS")
+        self.assertIs(r["clean"], False)
+        self.assertTrue(any(x.startswith("AMBIGUOUS: P") for x in r["reasons"]), r)
+
+    def test_intermediate_boottime_excursion_never_clean(self):
+        """F1: recognised intermediate K' evidence must be checked even when the endpoint difference is zero."""
+        a, b, s, j = self.clean_case()
+        s[0]["clocks"]["boottime_ns"] = 90 * S
+        r = L.assess(a, b, s, j)
+        self.assertEqual(r["status"], "CONTAMINATED")
+        self.assertIs(r["clean"], False)
+        self.assertTrue(any(x.startswith("CONTAMINATED: K'") for x in r["reasons"]), r)
+
+    def test_intermediate_suspend_counter_reset_is_ambiguous(self):
+        """F2: supplied 0 -> 1 -> 0 counter evidence is inconsistent, despite matching endpoints."""
+        a, b, s, j = self.clean_case()
+        s[0]["suspend_success"] = 1
+        r = L.assess(a, b, s, j)
+        self.assertEqual(r["status"], "AMBIGUOUS")
+        self.assertIs(r["clean"], False)
+        self.assertTrue(any(x.startswith("AMBIGUOUS: S'") for x in r["reasons"]), r)
+
+    def test_nondecreasing_suspend_counter_increase_is_contaminated(self):
+        """F2 control: a recognised 0 -> 1 -> 1 increase is positive suspend evidence, not a reset."""
+        a, b, s, j = self.clean_case()
+        s[0]["suspend_success"] = b["suspend_success"] = 1
+        r = L.assess(a, b, s, j)
+        self.assertEqual(r["status"], "CONTAMINATED")
+        self.assertIs(r["clean"], False)
+        self.assertTrue(any(x.startswith("CONTAMINATED: S'") for x in r["reasons"]), r)
 
     def test_missing_channels_never_clean(self):
         a, b, s, j = self.clean_case()
@@ -616,6 +655,23 @@ class TestBusy(unittest.TestCase):
         out = L.busy_processes(t0, t1, 5.0, 25, own={(99, 2)}, hz=100)
         self.assertTrue(out is None or any(row["comm"] == "unproven_child" for row in out), out)
 
+    def test_duplicate_pid_identities_in_end_snapshot_are_no_reading(self):
+        """F5: a supplied snapshot cannot establish parent ownership with both old and reused PID identities."""
+        t0 = {(99, 2): (1, 0, "old_campaign", None)}
+        t1 = {(99, 2): (1, 0, "old_campaign", None),
+              (99, 50): (1, 0, "unrelated_parent", None),
+              (40, 51): (99, 500, "external_child", None)}
+        self.assertIsNone(L.busy_processes(t0, t1, 5, 25, own={(99, 2)}, hz=100))
+
+    def test_duplicate_pid_identities_in_start_snapshot_are_no_reading(self):
+        """F5: ambiguity in either supplied snapshot invalidates the interval; cpu_ticks itself emits unique PIDs."""
+        t0 = {(99, 2): (1, 0, "old_campaign", None),
+              (99, 50): (1, 0, "unrelated_parent", None),
+              (40, 51): (99, 0, "external_child", None)}
+        t1 = {(99, 50): (1, 0, "unrelated_parent", None),
+              (40, 51): (99, 500, "external_child", None)}
+        self.assertIsNone(L.busy_processes(t0, t1, 5, 25, own={(99, 2)}, hz=100))
+
     def test_invalid_window_duration_is_no_reading(self):
         t0, t1 = {(40, 1): (1, 0, "hog", None)}, {(40, 1): (1, 500, "hog", None)}
         for bad in (float("nan"), float("inf"), -float("inf"), True, False, "5", None):
@@ -680,6 +736,28 @@ class TestBusy(unittest.TestCase):
         for value in ("", "garbage", "0", "-1", "1.5"):
             with self.subTest(nspid=value):
                 self.assertIsNot(L.proc_view_complete(f"NSpid:\t{value}\n", mi, pidns=L.INIT_PID_NS), True)
+
+    def test_proc_view_rejects_duplicate_nspid_fields(self):
+        """F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view."""
+        mi = "23 28 0:22 / /proc rw,relatime - proc proc rw\n"
+        single, nested = "NSpid:\t77\n", "NSpid:\t77 88\n"
+        for status in (single + nested, nested + single, single + single):
+            with self.subTest(status=status):
+                self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)
+
+    def test_proc_view_rejects_malformed_mount_metadata(self):
+        """F3: malformed supplied mount IDs/device fields are not recognised mountinfo evidence."""
+        cases = (("garbage", "garbage", "garbage"),
+                 ("garbage", "28", "0:22"), ("23", "garbage", "0:22"), ("23", "28", "garbage"),
+                 ("0", "28", "0:22"), ("23", "0", "0:22"),
+                 ("-1", "28", "0:22"), ("23", "-1", "0:22"),
+                 ("23", "28", "0"), ("23", "28", "0:"), ("23", "28", ":22"),
+                 ("23", "28", "0:22:1"), ("23", "28", "x:22"), ("23", "28", "0:x"),
+                 ("23", "28", "-1:22"), ("23", "28", "0:-1"))
+        for mount_id, parent_id, device in cases:
+            with self.subTest(mount_id=mount_id, parent_id=parent_id, device=device):
+                mi = f"{mount_id} {parent_id} {device} / /proc rw,relatime - proc proc rw\n"
+                self.assertIsNot(L.proc_view_complete("NSpid:\t77\n", mi, pidns=L.INIT_PID_NS), True)
 
     def test_proc_view_rejects_nonproc_filesystem(self):
         mi = "23 28 0:22 / /proc rw,relatime - tmpfs tmpfs rw\n"
