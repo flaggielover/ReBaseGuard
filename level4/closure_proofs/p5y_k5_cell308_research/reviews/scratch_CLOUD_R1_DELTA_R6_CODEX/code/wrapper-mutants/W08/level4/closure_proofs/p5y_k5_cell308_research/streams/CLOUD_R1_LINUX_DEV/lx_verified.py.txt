@@ -1,0 +1,76 @@
+"""DEV_ONLY observation composition for proposed Cell-308 integration conditions A1/A2.
+
+This prototype binds attestation reads to its own checkout and current machine,
+derives the raw memory root contract only from the canonical committed verifier,
+and composes the canonical live launch observations. Its sole public function
+accepts a reference and observation mode, with no caller-selected root, repository,
+machine, reader, checker, observer, launch record or decision configuration.
+
+It supplies development composition only, not operational A1/A2 acceptance.
+Every policy decision remains open, the other-campaign detector is unavailable,
+and operational_ready is always False. Effective-limit/headroom quantities are
+withheld; returned memory observations are RAW and establish no R-FREE/R-MEM
+quantity or operational allowance. A5's complete static science import list and
+pin-point wrapper remain unmet. No science, evaluator, qualification or campaign
+is imported or executed. Observation mode names describe proposed gate checks;
+they launch nothing and authorize no step.
+"""
+from __future__ import annotations
+
+from pathlib import Path
+
+import lx_platform as L
+
+__all__ = ("observe",)
+
+_REPO_ROOT = Path(__file__).resolve().parents[5]
+_UNDECIDED = frozenset()
+
+
+def _committed_attestation(ref):
+    """Internal binding: the verifier observes the current machine itself."""
+    return L.attestation_valid(ref, repo_root=_REPO_ROOT)
+
+
+def observe(attestation_ref=None, *, mode="execute") -> dict:
+    """Read DEV_ONLY infrastructure observations without accepting public seams.
+
+    A mechanically verified fixture can establish the raw helper's strict root
+    input. It cannot establish real owner/reviewer authority or pass an open gate.
+    The independent launch observer remains preflight's canonical default.
+    """
+    if mode not in L.MODES:
+        raise ValueError(f"mode must be one of {L.MODES}")
+
+    attestation, reasons = _committed_attestation(attestation_ref)
+    verified = isinstance(attestation, dict)
+    root_attested = verified and attestation.get("root_cgroup_is_real") is True
+    memory = dict(L.memory_readings(root_attested=root_attested))
+    # These are never returned as usable allowances, even for a verified fixture.
+    memory.pop("effective_limit", None)
+    memory.pop("cgroup_min_headroom", None)
+
+    launched = L.launched_by_systemd()
+    preflight = L.preflight(
+        _REPO_ROOT, mode=mode, other_job_running=None, launched=launched,
+        attestation_ref=attestation_ref, decided=_UNDECIDED,
+        attestation_check=_committed_attestation,
+    )
+    return {
+        "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.dev-observation.v1",
+        "development_only": True,
+        "operational_ready": False,
+        "attestation": {"verified": verified, "root_cgroup_is_real": root_attested, "reasons": reasons},
+        "raw_memory": {
+            "classification": "RAW_LINUX_READINGS",
+            "readings": memory,
+            "withheld_quantities": ["effective_limit", "cgroup_min_headroom"],
+            "note": "No R-FREE/R-MEM rule quantity or operational allowance is established.",
+        },
+        "preflight": preflight,
+        "conditions": {
+            "A1": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+            "A2": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+            "A5": "MET",
+        },
+    }

@@ -1,0 +1,16 @@
+from pathlib import Path
+import hashlib,importlib.util,json,sys,unittest
+ROOT=Path('/tmp/cell308-codex-review64/code')
+DEV=ROOT/'level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+sys.path[:0]=[str(DEV),str(DEV/'tests')]
+import lx_platform as L
+source=Path(sys.argv[1]);spec=importlib.util.spec_from_file_location('lx_verified',source)
+V=importlib.util.module_from_spec(spec);sys.modules['lx_verified']=V;spec.loader.exec_module(V)
+import test_lx_platform as P
+import test_lx_verified as T
+suite=unittest.TestSuite()
+for name in ['test_proc_view','test_proc_view_rejects_malformed_nspid','test_proc_view_rejects_duplicate_nspid_fields','test_proc_view_preserves_the_whole_nspid_payload','test_proc_view_rejects_malformed_mount_metadata','test_proc_view_rejects_nonproc_filesystem','test_proc_view_rejects_duplicate_mounts']:suite.addTest(P.TestBusy(name))
+suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(T.TestVerifiedObservation))
+result=unittest.TextTestRunner(verbosity=2).run(suite)
+print(json.dumps({'tests':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),'failure_names':[str(case) for case,_ in result.failures],'wrapper_source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'platform_source_sha256':hashlib.sha256(Path(L.__file__).read_bytes()).hexdigest()}))
+raise SystemExit(0 if result.wasSuccessful() else 1)

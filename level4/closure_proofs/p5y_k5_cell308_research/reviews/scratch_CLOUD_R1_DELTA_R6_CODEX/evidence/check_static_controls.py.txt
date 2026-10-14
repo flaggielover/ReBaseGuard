@@ -1,0 +1,135 @@
+from __future__ import annotations
+import ast, contextlib, hashlib, importlib.util, io, json, os, subprocess
+from collections import Counter
+from pathlib import Path
+from unittest import mock
+
+ROOT = Path('/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard')
+OUT = Path('/tmp/cell308-codex-review64/evidence')
+REV = '875eb95575fa9dc137083667bf30cc4a5a228fe6'
+OLD = '1c2ab8f7'
+NS = 'level4/closure_proofs/p5y_k5_cell308_research'
+DEV = NS + '/streams/CLOUD_R1_LINUX_DEV'
+IMM = OUT / 'immutable'
+def blob(rev, path):
+    return subprocess.check_output(['git', 'show', rev + ':' + path], cwd=ROOT)
+def sha(data): return hashlib.sha256(data).hexdigest()
+def save(name, value): (OUT/name).write_text(json.dumps(value, indent=2)+'\n')
+spec = importlib.util.spec_from_file_location('r6_independent_harness', IMM/'tests/run_mutants.py')
+H = importlib.util.module_from_spec(spec); spec.loader.exec_module(H)
+src = (IMM/'lx_platform.py').read_text()
+ids = [mid for mid,_,_ in H.MUTANTS]
+expected = [f'{p}{i:02d}' for p,n in H.MUTANT_GROUP_SIZES.items() for i in range(1,n+1)]
+assert ids == expected and len(ids) == len(set(ids)) == 79
+mutations = []
+for mid, prop, edits in H.MUTANTS:
+    changed, counts, error = H.apply_mutation(src, edits)
+    assert error is None and all(n == 1 for n in counts)
+    ast.parse(changed)
+    mutations.append({'id':mid,'property':prop,'anchor_counts':counts,'mutated_lx_platform_sha256':sha(changed.encode())})
+counts={}; tests={}
+for rel in ['tests/test_lx_platform.py','tests/test_lx_verified.py']:
+    tree=ast.parse((IMM/rel).read_text()); module=Path(rel).stem
+    methods={module+'.'+c.name+'.'+f.name:{'line':f.lineno,'end_line':f.end_lineno,'ast':ast.dump(f)}
+             for c in tree.body if isinstance(c,ast.ClassDef)
+             for f in c.body if isinstance(f,ast.FunctionDef) and f.name.startswith('test_')}
+    counts[rel]=len(methods); tests.update(methods)
+assert list(counts.values()) == [112,22] and len(tests) == 134
+old_ast=ast.parse(blob(OLD,DEV+'/tests/run_mutants.py'))
+new_ast=ast.parse((IMM/'tests/run_mutants.py').read_text())
+old_funcs={x.name:ast.dump(x) for x in old_ast.body if isinstance(x,ast.FunctionDef)}
+new_funcs={x.name:ast.dump(x) for x in new_ast.body if isinstance(x,ast.FunctionDef)}
+changed_functions=[k for k in old_funcs if old_funcs[k]!=new_funcs.get(k)]
+assert changed_functions == ['input_hashes']
+old_registry=ast.literal_eval(next(x.value for x in old_ast.body if isinstance(x,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='MUTANTS' for t in x.targets)))
+registry_changes=[m[0] for m,o in zip(H.MUTANTS,old_registry) if m!=o]
+assert registry_changes == ['P05','F03'] and len(old_registry)==78
+old_tests=ast.parse(blob(OLD,DEV+'/tests/test_lx_platform.py'))
+old_methods={'test_lx_platform.'+c.name+'.'+f.name:ast.dump(f) for c in old_tests.body if isinstance(c,ast.ClassDef) for f in c.body if isinstance(f,ast.FunctionDef) and f.name.startswith('test_')}
+test_changes=[k for k,v in old_methods.items() if tests[k]['ast']!=v]
+assert test_changes == ['test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata']
+test_additions=sorted(set(tests)-set(old_methods))
+inputs=H.input_hashes()
+assert len(inputs)==6
+authored_static=json.loads((OUT/'authored_or_historical/static_checks.json').read_text())
+assert authored_static['input_sha256']==inputs
+for row,other in zip(mutations,authored_static['anchors']):
+    assert row['id']==other['id'] and row['anchor_counts']==other['anchor_counts'] and row['mutated_lx_platform_sha256']==other['mutated_sha256']
+save('static_checks.json',{'commit':REV,'test_counts':counts,'total_tests':len(tests),'test_methods':{k:{a:b for a,b in v.items() if a!='ast'} for k,v in tests.items()},'groups':H.MUTANT_GROUP_SIZES,'mutants':mutations,'input_sha256':inputs,'harness_function_names':list(old_funcs),'changed_harness_functions':changed_functions,'registry_changes':registry_changes,'old_registry_ids_and_order_preserved':ids[:-1]==[m[0] for m in old_registry],'prior_test_method_changes':test_changes,'new_test_methods':test_additions,'authored_static_hashes_and_mutations_match':True})
+
+def record(stderr, rc=1, **kw):
+    return H._suite_record(['SYNTHETIC'],{},returncode=rc,stdout='',stderr=stderr,elapsed_s=0.01,**kw)
+ok='Ran 134 tests in 0.01s\n\nOK\n'
+fail='FAIL: test_property (synthetic.Test.test_property)\nAssertionError: synthetic property\nRan 134 tests in 0.01s\n\nFAILED (failures=1)\n'
+base=record(ok,0); killed=record(fail)
+cases=[('valid_assertion',killed,base,'KILLED'),('valid_survivor',base,base,'SURVIVED'),
+ ('failed_baseline',killed,killed,'ERROR'),('short_count',record(fail.replace('134','133')),base,'ERROR'),
+ ('runtime_error',record(fail.replace('FAIL:','ERROR:').replace('failures=1','errors=1')),base,'ERROR'),
+ ('missing_summary',record('FAIL: test_property\n'),base,'ERROR'),('skips',record(fail.replace('failures=1','failures=1, skipped=1')),base,'ERROR'),
+ ('expected_failure',record(fail.replace('failures=1','failures=1, expected failures=1')),base,'ERROR'),
+ ('unexpected_success',record(fail.replace('failures=1','failures=1, unexpected successes=1')),base,'ERROR'),
+ ('timeout',record(fail,rc=None,timed_out=True),base,'ERROR'),('signal_exit',record(fail,-9),base,'ERROR'),
+ ('launch_error',record(fail,rc=None,launch_error='SYNTHETIC'),base,'ERROR'),
+ ('resource_warning',record(fail+'ResourceWarning: synthetic\n'),base,'ERROR'),
+ ('unraisable',record(fail+'Exception ignored in: synthetic\n'),base,'ERROR'),
+ ('missing_failure_name',record(fail.replace('FAIL: test_property (synthetic.Test.test_property)\n','')),base,'ERROR'),
+ ('duplicate_summary',record(fail+'FAILED (failures=1)\n'),base,'ERROR'),
+ ('duplicate_count',record(fail+'Ran 134 tests in 0.01s\n'),base,'ERROR'),
+ ('zero_exit_assertion',record(fail,0),base,'ERROR'),('nonzero_exit_ok',record(ok),base,'ERROR')]
+control=[]
+for name,s,b,want in cases:
+    status,reasons=H.classify_mutant(s,b); assert status==want,(name,status,reasons)
+    control.append({'name':name,'status':status,'reasons':reasons})
+
+def main_case(name, outcomes, after=None, registry=None):
+    calls=[]
+    original_temporary_directory=H.tempfile.TemporaryDirectory
+    temp_root=OUT/'mock_main_temporary'
+    temp_root.mkdir(exist_ok=True)
+    def fake_run(env): calls.append(dict(env)); return outcomes[len(calls)-1]
+    with mock.patch.object(H.tempfile,'TemporaryDirectory',side_effect=lambda:original_temporary_directory(dir=temp_root)), mock.patch.object(H,'run_suite',side_effect=fake_run), mock.patch.object(H,'input_hashes',side_effect=[inputs,inputs if after is None else after]), mock.patch.dict(os.environ,{'LX_PLATFORM_DIR':'/SYNTHETIC_POISONED_DIR'}), contextlib.redirect_stdout(io.StringIO()) as stdout:
+        with mock.patch.object(H,'MUTANTS',H.MUTANTS if registry is None else registry):
+            try: rc=H.main(None); err=None
+            except ValueError as e: rc=None;err=str(e)
+    temp_root.rmdir()
+    result={'name':name,'returncode':rc,'error':err,'suite_calls':len(calls),'baseline_LX_PLATFORM_DIR':calls[0].get('LX_PLATFORM_DIR'),'baseline_bytecode':calls[0].get('PYTHONDONTWRITEBYTECODE'),'temporary_mutant_directory_explicit_scratch_root':str(temp_root),'temporary_mutant_directories_removed':True}
+    if stdout.getvalue():
+        rec=json.loads(stdout.getvalue()); result['status_counts']=rec['status_counts'];result['inputs_unchanged']=rec['inputs_unchanged']
+    assert result['baseline_LX_PLATFORM_DIR'] is None and result['baseline_bytecode']=='1'
+    return result
+main_controls=[]
+r=main_case('all_assertions',[base]+[killed]*79); assert r['returncode']==0 and r['suite_calls']==80;main_controls.append(r)
+r=main_case('one_short',[base,record(fail.replace('134','133'))]+[killed]*78);assert r['returncode']==1;main_controls.append(r)
+r=main_case('one_survivor',[base,base]+[killed]*78);assert r['returncode']==1;main_controls.append(r)
+r=main_case('failed_baseline',[killed]);assert r['returncode']==1 and r['suite_calls']==1 and r['status_counts']['ERROR']==79;main_controls.append(r)
+r=main_case('input_change',[base]+[killed]*79,after=dict(inputs,**{'lx_verified.py':'0'*64}));assert r['returncode']==1;main_controls.append(r)
+r=main_case('missing_registry_id',[base],registry=H.MUTANTS[:-1]);assert r['error']=='mutation registry must contain exactly the expected unique IDs';main_controls.append(r)
+save('harness_controls.json',{'commit':REV,'synthetic_only':True,'classifier_cases':control,'mocked_main_cases':main_controls,'no_real_suite_launched':True})
+
+historic=json.loads((OUT/'authored_or_historical/record_checks.json').read_text())
+drafts=[]
+for row in historic['previous_drafts_identical_git_blobs']:
+    data=blob(REV,row['path']); actual=subprocess.check_output(['git','rev-parse',REV+':'+row['path']],cwd=ROOT,text=True).strip()
+    assert actual==row['git_blob'] and sha(data)==row['sha256']
+    drafts.append(dict(row,verified_current=True))
+e1=NS+'/governance/new_host_route_cloud_r1/PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R4_ERRATUM_E1.md'
+assert sha(blob(REV,e1))==historic['current_document_hashes'][e1]
+paths={p for v in historic['historical_results_preserved'].values() for p in v['paths_and_blobs']}
+paths.update(DEV+'/results/REVIEW63_LINUX_REVISION5_20261015/'+p for p in ['validation.json','input-commit.txt','run-metadata.json'])
+paths.update(DEV+'/results/REVISION5_AUTHORED_CHECKS_20261015/'+p for p in ['harness_static.json','relevant.stderr.txt','relevant_result.json'])
+paths.update(NS+'/reviews/'+p for p in ['REVIEW_CLOUD_R1_DELTA_R5_CODEX_EVIDENCE.md','REVIEW_CLOUD_R1_DELTA_R5_CODEX.md','scratch_CLOUD_R1_DELTA_R5_CODEX/record_checks.json','scratch_CLOUD_R1_DELTA_R5_CODEX/current_adjudication_checks.json'])
+preservation=[]
+for p in sorted(paths):
+    old=blob(OLD,p);new=blob(REV,p);assert old==new
+    preservation.append({'path':p,'sha256':sha(new),'unchanged_from':OLD})
+delta=subprocess.check_output(['git','diff','--unified=0',OLD+'..'+REV,'--',NS+'/ledger/TARGET_INTEGRITY_LEDGER.jsonl'],cwd=ROOT,text=True)
+(OUT/'latest_ledger_zero_context.diff').write_text(delta)
+adds=[x[1:] for x in delta.splitlines() if x.startswith('+') and not x.startswith('+++')]
+removes=[x for x in delta.splitlines() if x.startswith('-') and not x.startswith('---')]
+assert len(adds)==1 and not removes
+ledger=json.loads(adds[0]);assert ledger['event']=='CODEX_REVISION6_TRUSTED_BOUNDARY_AND_PROC_PAYLOAD_REPAIR'
+bindings=[]
+for p,want in ledger['bindings_sha256'].items():
+    got=sha(blob(REV,p));assert got==want;bindings.append({'path':p,'sha256':got,'matches':True})
+save('record_checks.json',{'commit':REV,'eight_prior_drafts_preserved':drafts,'r4_erratum_e1_preserved':True,'historical_records_preserved':preservation,'latest_ledger':{'event':ledger['event'],'added_lines':1,'removed_lines':0,'bindings':bindings,'authored_subset':ledger['authored_subset'],'current_native_linux':ledger['current_native_linux'],'static_counts':ledger['static_counts']}})
+print(json.dumps({'static_tests':counts,'mutants':len(mutations),'classifier_checks':len(control),'main_checks':len(main_controls),'old_drafts':len(drafts),'historical_records':len(preservation),'ledger_bindings':len(bindings)}))

@@ -1,0 +1,102 @@
+from __future__ import annotations
+import ast, collections, hashlib, importlib.util, json, re, subprocess, sys
+from pathlib import Path
+OUT=Path('/tmp/cell308-codex-review64/evidence');IMM=OUT/'immutable'
+REV='875eb95575fa9dc137083667bf30cc4a5a228fe6'
+ROOT=Path('/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard')
+ART=Path(sys.argv[1])
+spec=importlib.util.spec_from_file_location('r6_harness',IMM/'tests/run_mutants.py');H=importlib.util.module_from_spec(spec);spec.loader.exec_module(H)
+static=json.loads((OUT/'static_checks.json').read_text())
+expected_methods=set(static['test_methods']);assert len(expected_methods)==134
+manifest=json.loads((OUT/'immutable_manifest.json').read_text())
+dev='level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+hashes={}
+for rel,want in static['input_sha256'].items():
+    data=subprocess.check_output(['git','show',REV+':'+dev+'/'+rel],cwd=ROOT)
+    got=hashlib.sha256(data).hexdigest();assert got==want;hashes[rel]=got
+for name in ['validation.json','full-output.json','input-commit.txt']:
+    assert (ART/name).is_file(),name
+raw=(ART/'validation.json').read_bytes();assert raw==(ART/'full-output.json').read_bytes()
+assert (ART/'input-commit.txt').read_text().strip()==REV
+record=json.loads(raw)
+assert record['schema']=='CLOUD_R1_LINUX_DEV_MUTATION_RUN_V2'
+assert record['class']=='SYNTHETIC_VALIDATION' and record['dev_only'] is True
+assert record['system']=='Linux' and record['new_target_evaluations']==0
+assert record['input_sha256']==record['input_sha256_after']==hashes and record['inputs_unchanged'] is True
+assert record['lx_platform_sha256']==hashes['lx_platform.py'] and record['tests_sha256']==hashes['tests/test_lx_platform.py'] and record['harness_sha256']==hashes['tests/run_mutants.py']
+def verify_suite(s):
+    assert s['cwd'].endswith('/snapshot/'+dev)
+    prior_here=H.HERE
+    H.HERE=Path(s['cwd'])/'tests'
+    try:
+        got=H._suite_record(s['command'],s['environment_controls'],returncode=s['returncode'],stdout=s['stdout'],stderr=s['stderr'],elapsed_s=s['elapsed_s'],timed_out=s['timed_out'],launch_error=s['launch_error'])
+    finally:
+        H.HERE=prior_here
+    assert got==s,(got,s)
+    assert s['ran']==134 and s['skipped']==0
+    assert not s['timed_out'] and s['launch_error'] is None
+    names=re.findall(r'^test_\w+ \((test_lx_\w+\.\w+\.test_\w+)\)',s['stderr'],re.M)
+    assert len(names)==134 and len(set(names))==134 and set(names)==expected_methods
+    cmd=s['command'];assert cmd[1:]==['-B','-W','error::ResourceWarning','-m','unittest','discover','-s',s['cwd']+'/tests','-v']
+    assert s['environment_controls']['PYTHONDONTWRITEBYTECODE']=='1'
+    return {'ran':s['ran'],'summary':s['summary'],'returncode':s['returncode'],'failures':s['failures'],'errors':s['errors'],'skipped':s['skipped'],'invalid_reasons':s['invalid_reasons'],'exact_134_method_names':True,'full_record_reconstruction_matches':True}
+baseline=record['baseline'];base=verify_suite(baseline)
+assert H.suite_passed(baseline) and baseline['returncode']==0 and baseline['failures']==0 and baseline['summary']=='OK'
+assert baseline['environment_controls']['LX_PLATFORM_DIR'] is None
+assert record['unmutated_suite']=='PASS' and record['unmutated_tail']==baseline['suite_tail']=='OK'
+expected_registry={x['id']:x for x in static['mutants']}
+expected_witnesses={x['id']:x for x in json.loads((OUT/'expected_property_witnesses.json').read_text())['witnesses']}
+assert [r['id'] for r in record['mutants']]==[r['id'] for r in static['mutants']]
+assert len(record['mutants'])==record['expected_mutants']==record['total']==79
+assert record['killed']==78 and record['status_counts']=={'KILLED':78,'SURVIVED':0,'ERROR':1,'NOT_APPLIED':0}
+for key,want in [('reviewer_mutants_killed',10),('review60_mutants_killed',9),('review61_mutants_killed',3),('regression_mutants_killed',5)]:assert record[key]==want
+rows=[];frames_count=0;statuses=collections.Counter()
+source_lines={m:(IMM/'tests'/f'{m}.py').read_text().splitlines() for m in ['test_lx_platform','test_lx_verified']}
+all_test_functions={module+'.'+c.name+'.'+f.name:{'line':f.lineno,'end_line':f.end_lineno}
+                    for module in source_lines for c in ast.parse((IMM/'tests'/f'{module}.py').read_text()).body
+                    if isinstance(c,ast.ClassDef) for f in c.body if isinstance(f,ast.FunctionDef)}
+for row in record['mutants']:
+    mid=row['id'];exp=expected_registry[mid];witness=expected_witnesses[mid]
+    assert row['property']==exp['property'] and row['anchor_counts']==exp['anchor_counts']
+    assert row['mutated_lx_platform_sha256']==exp['mutated_lx_platform_sha256']
+    suite=row['suite'];suitecheck=verify_suite(suite)
+    assert suite['command']==baseline['command'] and suite['cwd']==baseline['cwd']
+    assert suite['environment_controls']['LX_PLATFORM_DIR'] is not None
+    assert suite['returncode']==1 and suite['failures']>0
+    status,reasons=H.classify_mutant(suite,baseline)
+    assert row['status']==status and row['reasons']==reasons
+    if mid=='M25':
+        assert status=='ERROR' and reasons==['UNITTEST_ERRORS'] and suite['errors']==1
+    else:
+        assert status=='KILLED' and reasons==[] and not suite['invalid_reasons'] and suite['errors']==0
+    assert row['suite_tail']==suite['suite_tail']
+    statuses[status]+=1
+    frames=[]
+    for match in re.finditer(r'  File "([^"\n]+/(test_lx_platform|test_lx_verified)\.py)", line (\d+), in (\w+)\n\s+([^\n]+)',suite['stderr']):
+        path,module,number,method,statement=match.groups();line=int(number)
+        assert source_lines[module][line-1].strip()==statement.strip(),(mid,module,line,statement)
+        qualified=[name for name,v in all_test_functions.items() if name.startswith(module+'.') and name.endswith('.'+method) and v['line']<=line<=v['end_line']]
+        assert len(qualified)==1,(mid,line,qualified)
+        frames.append({'test':qualified[0],'line':line,'statement':statement.strip(),'path':path})
+    assert frames;frames_count+=len(frames)
+    sections=re.split(r'^======================================================================\n',suite['stderr'],flags=re.M)
+    failures=[section for section in sections if section.startswith('FAIL: ')]
+    assert len(failures)==suite['failures']
+    for failure in failures:assert '\nAssertionError' in failure,(mid,failure)
+    matches=[x for x in failures if '('+witness['expected_witness_test']+')' in x.splitlines()[0]]
+    assert matches,(mid,witness['expected_witness_test'],suite['failure_names'])
+    chosen=matches[0]
+    assert any(f['test']==witness['expected_witness_test'] for f in frames)
+    obs=re.search(r'^AssertionError[^\n]*(?:\n(?!\n)[^\n]+)*',chosen,re.M)
+    assert obs,(mid,chosen)
+    error_sections=[section for section in sections if section.startswith('ERROR: ')]
+    assert len(error_sections)==suite['errors']
+    rows.append({'id':mid,'property':row['property'],'status':status,'valid_assertion_kill':status=='KILLED','suite':suitecheck,'anchor_counts':row['anchor_counts'],'mutated_lx_platform_sha256':row['mutated_lx_platform_sha256'],'direct_property_witness':{'test':witness['expected_witness_test'],'rationale':witness['rationale'],'assertion_observation':obs.group(0),'failure_section':chosen,'fixture_source':witness['fixture_source']},'runtime_error_sections':error_sections,'all_failure_names':suite['failure_names'],'test_traceback_frames':frames})
+meta=json.loads((OUT/'ci_metadata.json').read_text())
+assert meta['databaseId']==38641842326 and meta['headSha']==REV and meta['status']=='completed' and meta['conclusion']=='failure'
+assert meta['workflowName']=='Cell-308 development review'
+assert statuses=={'KILLED':78,'ERROR':1}
+result={'commit':REV,'ci':meta,'artifact_directory':str(ART),'artifact_sha256':{n:hashlib.sha256((ART/n).read_bytes()).hexdigest() for n in ['validation.json','full-output.json','input-commit.txt']},'files_byte_identical':True,'input_hashes_match_immutable_git_before_and_after':True,'input_sha256':hashes,'metadata':{k:record[k] for k in ['schema','class','dev_only','utc','python','kernel','machine','system','new_target_evaluations']},'baseline':base,'all_80_suites_have_exact_134_current_methods':True,'mutants':79,'independent_classifier_counts':dict(statuses),'verified_test_traceback_frames':frames_count,'valid_property_assertion_kills':78,'M25_runtime_error_invalidates_kill':True,'wrapper_mutation_coverage_complete_inferred':False,'global_code_verdict_inferred':False,'adjudication':rows}
+(OUT/'current_adjudication_checks.json').write_text(json.dumps(result,indent=2)+'\n')
+(OUT/'property_observations.txt').write_text('\n'.join(f"{r['id']} | {r['direct_property_witness']['test']} | {r['direct_property_witness']['assertion_observation']}" for r in rows)+'\n')
+print(json.dumps({k:v for k,v in result.items() if k not in ['adjudication','metadata','input_sha256']},indent=2))

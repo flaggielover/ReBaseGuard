@@ -1,0 +1,502 @@
+test_proc_view (test_lx_platform.TestBusy.test_proc_view)
+N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok
+test_proc_view_rejects_malformed_nspid (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid) ... ok
+test_proc_view_rejects_duplicate_nspid_fields (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields)
+F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view. ... ok
+test_proc_view_preserves_the_whole_nspid_payload (test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload)
+R5-C1/F06: a value adjoining the colon cannot be silently discarded; numeric tokens are ASCII. ... ok
+test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata)
+F3: malformed supplied mount IDs/device fields are not recognised mountinfo evidence. ... ok
+test_proc_view_rejects_nonproc_filesystem (test_lx_platform.TestBusy.test_proc_view_rejects_nonproc_filesystem) ... ok
+test_proc_view_rejects_duplicate_mounts (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_mounts) ... ok
+test_canonical_verifier_has_internal_repository_and_default_machine (test_lx_verified.TestVerifiedObservation.test_canonical_verifier_has_internal_repository_and_default_machine) ... ok
+test_changed_live_launch_observation_refuses_corroboration (test_lx_verified.TestVerifiedObservation.test_changed_live_launch_observation_refuses_corroboration) ... ok
+test_default_launch_record_is_independently_corroborated (test_lx_verified.TestVerifiedObservation.test_default_launch_record_is_independently_corroborated) ... ok
+test_invalid_mode_is_refused_before_any_observation (test_lx_verified.TestVerifiedObservation.test_invalid_mode_is_refused_before_any_observation) ... ok
+test_machine_id_without_hardware_binding_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_machine_id_without_hardware_binding_withholds_root_contract) ... FAIL
+test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) ... 
+  test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref={}) ... FAIL
+  test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref=[]) ... FAIL
+  test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref='caller facts') ... FAIL
+  test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref={'path': 'fixtures/host.json', 'sha256': 'invalid'}) ... FAIL
+  test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref={'path': 'fixtures/host.json', 'sha256': '7e5452ebd80171324dbb6e38e540a835c65024fb45a8a78192803c3637672a11', 'root_cgroup_is_real': True}) ... FAIL
+  test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref={'path': 'fixtures/host.json', 'sha256': '7e5452ebd80171324dbb6e38e540a835c65024fb45a8a78192803c3637672a11', 'reviewed': True, 'accepted': True}) ... FAIL
+test_missing_acceptance_line_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_acceptance_line_withholds_root_contract) ... FAIL
+test_missing_live_launch_observation_refuses_corroboration (test_lx_verified.TestVerifiedObservation.test_missing_live_launch_observation_refuses_corroboration) ... ok
+test_missing_reference_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_reference_withholds_root_contract) ... FAIL
+test_missing_root_claim_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_root_claim_withholds_root_contract) ... FAIL
+test_non_json_committed_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_non_json_committed_fixture_withholds_root_contract) ... FAIL
+test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked (test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked) ... 
+  test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked (test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked) (mode='launcher_preflight') ... FAIL
+  test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked (test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked) (mode='execute') ... FAIL
+  test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked (test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked) (mode='resume') ... FAIL
+test_preflight_composition_has_no_caller_reading_launch_or_policy_seam (test_lx_verified.TestVerifiedObservation.test_preflight_composition_has_no_caller_reading_launch_or_policy_seam) ... ok
+test_public_api_refuses_caller_selected_seams (test_lx_verified.TestVerifiedObservation.test_public_api_refuses_caller_selected_seams) ... ok
+test_unaccepted_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_unaccepted_fixture_withholds_root_contract) ... FAIL
+test_uncommitted_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_uncommitted_fixture_withholds_root_contract) ... FAIL
+test_unreviewed_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_unreviewed_fixture_withholds_root_contract) ... FAIL
+test_verified_committed_fixture_supplies_raw_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_committed_fixture_supplies_raw_root_contract) ... FAIL
+test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) ... 
+  test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value=False) ... FAIL
+  test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value=None) ... FAIL
+  test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value=1) ... FAIL
+  test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value='True') ... FAIL
+  test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value=[]) ... FAIL
+  test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value={'asserted': True}) ... FAIL
+test_wrapper_uses_the_same_platform_module_selected_by_harness (test_lx_verified.TestVerifiedObservation.test_wrapper_uses_the_same_platform_module_selected_by_harness) ... ok
+test_wrong_host_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_wrong_host_withholds_root_contract) ... FAIL
+test_wrong_sha_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_wrong_sha_withholds_root_contract) ... FAIL
+
+======================================================================
+FAIL: test_machine_id_without_hardware_binding_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_machine_id_without_hardware_binding_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 161, in test_machine_id_without_hardware_binding_withholds_root_contract
+    self.assertIs(self.assert_no_root(ref)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 133, in test_malformed_references_withhold_root_contract
+    self.assertIs(self.assert_no_root(ref)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 133, in test_malformed_references_withhold_root_contract
+    self.assertIs(self.assert_no_root(ref)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref='caller facts')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 133, in test_malformed_references_withhold_root_contract
+    self.assertIs(self.assert_no_root(ref)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref={'path': 'fixtures/host.json', 'sha256': 'invalid'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 133, in test_malformed_references_withhold_root_contract
+    self.assertIs(self.assert_no_root(ref)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref={'path': 'fixtures/host.json', 'sha256': '7e5452ebd80171324dbb6e38e540a835c65024fb45a8a78192803c3637672a11', 'root_cgroup_is_real': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 133, in test_malformed_references_withhold_root_contract
+    self.assertIs(self.assert_no_root(ref)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) (ref={'path': 'fixtures/host.json', 'sha256': '7e5452ebd80171324dbb6e38e540a835c65024fb45a8a78192803c3637672a11', 'reviewed': True, 'accepted': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 133, in test_malformed_references_withhold_root_contract
+    self.assertIs(self.assert_no_root(ref)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_missing_acceptance_line_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_acceptance_line_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 148, in test_missing_acceptance_line_withholds_root_contract
+    self.assertIs(self.assert_no_root(self.fixture(acceptance=False))["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_missing_reference_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_reference_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 126, in test_missing_reference_withholds_root_contract
+    self.assertIs(self.assert_no_root(None)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_missing_root_claim_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_root_claim_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 172, in test_missing_root_claim_withholds_root_contract
+    result = self.assert_no_root(self.fixture(raw=json.dumps(data).encode()))
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_non_json_committed_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_non_json_committed_fixture_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 139, in test_non_json_committed_fixture_withholds_root_contract
+    self.assertIs(self.assert_no_root(self.fixture(raw=b"not-json\n"))["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked (test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked) (mode='launcher_preflight')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 213, in test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked (test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked) (mode='execute')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 213, in test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked (test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked) (mode='resume')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 213, in test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_unaccepted_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_unaccepted_fixture_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 145, in test_unaccepted_fixture_withholds_root_contract
+    self.assertIs(self.assert_no_root(self.fixture(accepted=False))["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_uncommitted_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_uncommitted_fixture_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 136, in test_uncommitted_fixture_withholds_root_contract
+    self.assertIs(self.assert_no_root(self.fixture(commit=False))["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_unreviewed_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_unreviewed_fixture_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 142, in test_unreviewed_fixture_withholds_root_contract
+    self.assertIs(self.assert_no_root(self.fixture(reviewed=False))["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_verified_committed_fixture_supplies_raw_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_committed_fixture_supplies_raw_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 110, in test_verified_committed_fixture_supplies_raw_root_contract
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 166, in test_verified_non_boolean_root_claims_withhold_root_contract
+    result = self.assert_no_root(self.fixture(root_cgroup_is_real=value))
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 166, in test_verified_non_boolean_root_claims_withhold_root_contract
+    result = self.assert_no_root(self.fixture(root_cgroup_is_real=value))
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 166, in test_verified_non_boolean_root_claims_withhold_root_contract
+    result = self.assert_no_root(self.fixture(root_cgroup_is_real=value))
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value='True')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 166, in test_verified_non_boolean_root_claims_withhold_root_contract
+    result = self.assert_no_root(self.fixture(root_cgroup_is_real=value))
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 166, in test_verified_non_boolean_root_claims_withhold_root_contract
+    result = self.assert_no_root(self.fixture(root_cgroup_is_real=value))
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) (value={'asserted': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 166, in test_verified_non_boolean_root_claims_withhold_root_contract
+    result = self.assert_no_root(self.fixture(root_cgroup_is_real=value))
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_wrong_host_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_wrong_host_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 156, in test_wrong_host_withholds_root_contract
+    self.assertIs(self.assert_no_root(ref)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+======================================================================
+FAIL: test_wrong_sha_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_wrong_sha_withholds_root_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 152, in test_wrong_sha_withholds_root_contract
+    self.assertIs(self.assert_no_root(ref)["attestation"]["verified"], False)
+                  ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 97, in assert_no_root
+    self.assert_withheld(result)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 91, in assert_withheld
+    self.assertEqual(result["conditions"]["A5"], "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'MET' != 'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'
+- MET
++ UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT
+
+
+----------------------------------------------------------------------
+Ran 29 tests in 1.537s
+
+FAILED (failures=26)

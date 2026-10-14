@@ -1,0 +1,80 @@
+test_proc_view (test_lx_platform.TestBusy.test_proc_view)
+N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok
+test_proc_view_rejects_malformed_nspid (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid) ... ok
+test_proc_view_rejects_duplicate_nspid_fields (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields)
+F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view. ... ok
+test_proc_view_preserves_the_whole_nspid_payload (test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload)
+R5-C1/F06: a value adjoining the colon cannot be silently discarded; numeric tokens are ASCII. ... ok
+test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata)
+F3: malformed supplied mount IDs/device fields are not recognised mountinfo evidence. ... ok
+test_proc_view_rejects_nonproc_filesystem (test_lx_platform.TestBusy.test_proc_view_rejects_nonproc_filesystem) ... ok
+test_proc_view_rejects_duplicate_mounts (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_mounts) ... ok
+test_canonical_verifier_has_internal_repository_and_default_machine (test_lx_verified.TestVerifiedObservation.test_canonical_verifier_has_internal_repository_and_default_machine) ... ok
+test_changed_live_launch_observation_refuses_corroboration (test_lx_verified.TestVerifiedObservation.test_changed_live_launch_observation_refuses_corroboration) ... FAIL
+test_default_launch_record_is_independently_corroborated (test_lx_verified.TestVerifiedObservation.test_default_launch_record_is_independently_corroborated) ... FAIL
+test_invalid_mode_is_refused_before_any_observation (test_lx_verified.TestVerifiedObservation.test_invalid_mode_is_refused_before_any_observation) ... ok
+test_machine_id_without_hardware_binding_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_machine_id_without_hardware_binding_withholds_root_contract) ... ok
+test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) ... ok
+test_missing_acceptance_line_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_acceptance_line_withholds_root_contract) ... ok
+test_missing_live_launch_observation_refuses_corroboration (test_lx_verified.TestVerifiedObservation.test_missing_live_launch_observation_refuses_corroboration) ... FAIL
+test_missing_reference_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_reference_withholds_root_contract) ... ok
+test_missing_root_claim_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_root_claim_withholds_root_contract) ... ok
+test_non_json_committed_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_non_json_committed_fixture_withholds_root_contract) ... ok
+test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked (test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked) ... ok
+test_preflight_composition_has_no_caller_reading_launch_or_policy_seam (test_lx_verified.TestVerifiedObservation.test_preflight_composition_has_no_caller_reading_launch_or_policy_seam) ... FAIL
+test_public_api_refuses_caller_selected_seams (test_lx_verified.TestVerifiedObservation.test_public_api_refuses_caller_selected_seams) ... ok
+test_unaccepted_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_unaccepted_fixture_withholds_root_contract) ... ok
+test_uncommitted_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_uncommitted_fixture_withholds_root_contract) ... ok
+test_unreviewed_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_unreviewed_fixture_withholds_root_contract) ... ok
+test_verified_committed_fixture_supplies_raw_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_committed_fixture_supplies_raw_root_contract) ... ok
+test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) ... ok
+test_wrapper_uses_the_same_platform_module_selected_by_harness (test_lx_verified.TestVerifiedObservation.test_wrapper_uses_the_same_platform_module_selected_by_harness) ... ok
+test_wrong_host_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_wrong_host_withholds_root_contract) ... ok
+test_wrong_sha_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_wrong_sha_withholds_root_contract) ... ok
+
+======================================================================
+FAIL: test_changed_live_launch_observation_refuses_corroboration (test_lx_verified.TestVerifiedObservation.test_changed_live_launch_observation_refuses_corroboration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 192, in test_changed_live_launch_observation_refuses_corroboration
+    self.assertEqual(result["preflight"]["gates"]["launched_by_systemd"], L.FAIL)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PASS' != 'FAIL'
+- PASS
++ FAIL
+
+
+======================================================================
+FAIL: test_default_launch_record_is_independently_corroborated (test_lx_verified.TestVerifiedObservation.test_default_launch_record_is_independently_corroborated)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 184, in test_default_launch_record_is_independently_corroborated
+    self.assertEqual(self.launch.call_count, 2)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_missing_live_launch_observation_refuses_corroboration (test_lx_verified.TestVerifiedObservation.test_missing_live_launch_observation_refuses_corroboration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 198, in test_missing_live_launch_observation_refuses_corroboration
+    self.assertEqual(result["preflight"]["gates"]["launched_by_systemd"], L.FAIL)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PASS' != 'FAIL'
+- PASS
++ FAIL
+
+
+======================================================================
+FAIL: test_preflight_composition_has_no_caller_reading_launch_or_policy_seam (test_lx_verified.TestVerifiedObservation.test_preflight_composition_has_no_caller_reading_launch_or_policy_seam)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py", line 224, in test_preflight_composition_has_no_caller_reading_launch_or_policy_seam
+    self.assertNotIn("launch_observer", call.kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'launch_observer' unexpectedly found in {'mode': 'execute', 'other_job_running': None, 'launched': {'systemd_pid1': True, 'unit': 'rebaseguard-mbs308-synthetic.service', 'invocation_id': 'synthetic-invocation', 'systemctl': {'MainPID': 44324, 'InvocationID': 'synthetic-invocation'}, 'pass': True}, 'attestation_ref': {'path': 'fixtures/host.json', 'sha256': '7e5452ebd80171324dbb6e38e540a835c65024fb45a8a78192803c3637672a11'}, 'decided': frozenset(), 'attestation_check': <function _committed_attestation at 0x10a1696f0>, 'launch_observer': <function observe.<locals>.<lambda> at 0x10a77efb0>}
+
+----------------------------------------------------------------------
+Ran 29 tests in 1.508s
+
+FAILED (failures=4)
