@@ -1,0 +1,130 @@
+{
+ "lx_platform_sha256": "b2c6406310f9223d5159a6387d472b71dbf1dbf37cea3ce0ca598ec74d5349ef",
+ "tests_sha256": "059e017c66b8a19925e8670dcec5596306982a0eb76aca2301fa135f79f69dff",
+ "unmutated_suite": "PASS",
+ "unmutated_tail": "OK",
+ "killed": 20,
+ "total": 20,
+ "mutants": [
+  {
+   "id": "M01",
+   "property": "failed boot-id read treated as a reboot (DEAD)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M02",
+   "property": "unreadable /proc/<pid>/stat treated as DEAD",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M03",
+   "property": "incomplete identity record reported ALIVE",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M04",
+   "property": "zombie not recognised as dead",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M05",
+   "property": "pid reuse (other starttime) not detected",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M06",
+   "property": "no power supply exposed read as AC",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M07",
+   "property": "unreadable cgroup ancestor treated as unlimited",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "M08",
+   "property": "missing journal channel ignored in assess",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M09",
+   "property": "pause channel P removed",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M10",
+   "property": "suspend (boottime - monotonic) ignored",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M11",
+   "property": "D-MEM-FREE gate silently passes",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M12",
+   "property": "unreviewed host attestation accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M13",
+   "property": "provider image updates UNKNOWN ignored",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M14",
+   "property": "missing update setting counts as disabled",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M15",
+   "property": "launched_by_systemd skips the MainPID check",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M16",
+   "property": "durable_write without fsync / tmp+rename (in-place write)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=3)"
+  },
+  {
+   "id": "M17",
+   "property": "unreadable pin counts as a match",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M18",
+   "property": "busy_processes uses lifetime ticks instead of the window",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M19",
+   "property": "empty cmdline (failed read) hashed as a command",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M20",
+   "property": "preflight pass ignores non-PASS gates of state UNKNOWN",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  }
+ ]
+}

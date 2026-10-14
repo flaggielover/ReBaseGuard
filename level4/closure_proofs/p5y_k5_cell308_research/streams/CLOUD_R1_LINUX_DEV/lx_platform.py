@@ -642,7 +642,7 @@ def preflight(repo_path, *, other_job_running: bool | None, launched: dict | Non
         "free_disk_ge_2GiB": _g(None if free is None else free >= MIN_FREE_DISK),
         "memory_pressure_normal": OPEN_DECISION,
         "free_memory_ge_min": OPEN_DECISION,
-        "boot_id_recorded": _g(boot is not None),
+        "boot_id_recorded": _g(None if boot is None else True),
         "no_other_campaign_job": _g(None if other_job_running is None else not other_job_running),
         "no_automatic_os_install": (FAIL if upd.get("guest_auto_install_enabled") else
                                     (UNKNOWN if upd.get("provider_image_updates") == UNKNOWN else PASS)),
