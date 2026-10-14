@@ -1,4 +1,4 @@
-"""Isolated, target-free tests of the DEV-ONLY Linux platform layer (lx_platform), revision 5.
+"""Isolated, target-free tests of the DEV-ONLY Linux platform layer (lx_platform), revision 6.
 
 Synthetic inputs only: planted /proc and /sys text in temporary directories, ``sleep`` / busy-loop child processes,
 temporary files and a temporary git repository. No cell, no drift, no science module, no decoy is imported or run;
@@ -11,6 +11,9 @@ host-cap and sample-order findings, and requires independently observed launch e
 Revision 5 adds bounded fixtures for intermediate clock/counter evidence and ambiguous supplied proc/snapshot
 records (review 62, F1-F5). These helper-input tests do not establish native Linux or operational acceptance;
 trusted-wrapper provenance for raw memory flags, decision/checker/reading seams and fixed imports remains required.
+
+Revision 6 adds delimiter/ASCII refusal evidence for R5-C1; the separate wrapper tests verify synthetic provenance
+and restricted public composition without completing any operational condition.
 
 usage: python3 -m unittest discover -s tests -v      (from streams/CLOUD_R1_LINUX_DEV)
 """
@@ -745,12 +748,24 @@ class TestBusy(unittest.TestCase):
             with self.subTest(status=status):
                 self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)
 
+    def test_proc_view_preserves_the_whole_nspid_payload(self):
+        """R5-C1/F06: a value adjoining the colon cannot be silently discarded; numeric tokens are ASCII."""
+        mi = "23 28 0:22 / /proc rw,relatime - proc proc rw\n"
+        for status in ("NSpid:garbage\t77\n", "NSpid:77 88\n", "NSpid:\t²\n", "NSpid:\t７７\n"):
+            with self.subTest(status=status):
+                self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)
+        for status in ("NSpid:\t77\n", "NSpid: 77\n", "NSpid:77\n"):
+            with self.subTest(control=status):
+                self.assertIs(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)
+
     def test_proc_view_rejects_malformed_mount_metadata(self):
         """F3: malformed supplied mount IDs/device fields are not recognised mountinfo evidence."""
         cases = (("garbage", "garbage", "garbage"),
                  ("garbage", "28", "0:22"), ("23", "garbage", "0:22"), ("23", "28", "garbage"),
                  ("0", "28", "0:22"), ("23", "0", "0:22"),
                  ("-1", "28", "0:22"), ("23", "-1", "0:22"),
+                 ("²", "28", "0:22"), ("23", "²", "0:22"),
+                 ("２３", "28", "0:22"), ("23", "２８", "0:22"),
                  ("23", "28", "0"), ("23", "28", "0:"), ("23", "28", ":22"),
                  ("23", "28", "0:22:1"), ("23", "28", "x:22"), ("23", "28", "0:x"),
                  ("23", "28", "-1:22"), ("23", "28", "0:-1"))

@@ -1,4 +1,4 @@
-"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 5).
+"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 6).
 
 STATUS: DEV_ONLY · NOT ACCEPTED BY ANY GOVERNANCE REVIEW · NOT FROZEN · NOT A CAMPAIGN NAMESPACE · NOT USABLE FOR ANY
 DESIGNATED SERIES, QUALIFICATION, FREEZE, GRANT OR TARGET STEP. Nothing in the historical candidate (142d97a9) imports
@@ -592,13 +592,13 @@ def proc_view_complete(status_text: str | None = None, mountinfo_text: str | Non
         return None
     if ino != INIT_PID_NS:
         return False
-    nspid_fields = [ln.split()[1:] for ln in st.splitlines() if ln.startswith("NSpid:")]
+    nspid_fields = [ln.partition(":")[2].split() for ln in st.splitlines() if ln.startswith("NSpid:")]
     if len(nspid_fields) != 1:
         return None
     nspid = nspid_fields[0]
     if len(nspid) > 1:
         return False
-    if len(nspid) != 1 or not nspid[0].isdigit() or int(nspid[0]) <= 0:
+    if len(nspid) != 1 or not re.fullmatch(r"0*[1-9][0-9]*", nspid[0]):
         return None
     candidates = [ln.split() for ln in mi.splitlines() if len(ln.split()) > 4 and ln.split()[4] == "/proc"]
     if not candidates:
@@ -606,7 +606,7 @@ def proc_view_complete(status_text: str | None = None, mountinfo_text: str | Non
     if len(candidates) != 1:
         return False
     f = candidates[0]
-    if not f[0].isdigit() or int(f[0]) <= 0 or not f[1].isdigit() or int(f[1]) <= 0 \
+    if not re.fullmatch(r"0*[1-9][0-9]*", f[0]) or not re.fullmatch(r"0*[1-9][0-9]*", f[1]) \
             or not re.fullmatch(r"[0-9]+:[0-9]+", f[2]):
         return None
     if "-" not in f:

@@ -44,11 +44,11 @@
 
 The r4 A1/A2 integration conditions already require a caller boundary deriving root provenance from committed/current-host attestation and restricting favorable reader/checker/observer/decision seams. The later owner authorization permits this target-free development; no new policy choice is needed. This task follows the fresh revision-5 review and its concrete NSpid payload correction.
 
-- [ ] Preserve the revision-5 independent reports and exact-commit Linux 111-test/78-mutant record; reproduce and repair the newly demonstrated NSpid delimiter defect with a refusal test and F06 weakening mutant.
-- [ ] Add an observation-only `lx_verified.py` API accepting only an attestation reference and validated observation mode. Bind repository internally; use canonical current-machine verification and default live readers/observer. Derive root evidence only from a verified record with a strict boolean True.
-- [ ] Keep decisions empty and the unavailable campaign detector UNKNOWN. Import no science and expose no pin-point completion, campaign launch, caller-supplied readings, checker, observer, repository or root flags.
-- [ ] Label memory data RAW; withhold unresolved effective-limit/headroom quantities as operational allowances and return development-only / operational-ready False. Keep A5 and all20 policy decisions unmet.
-- [ ] Add synthetic committed-fixture provenance/refusal and public-seam tests; bind both new files in the full-suite input hashes and trigger exact-source Linux CI.
+- [x] Preserve the revision-5 independent reports and exact-commit Linux 111-test/78-mutant record; reproduce and repair the newly demonstrated NSpid delimiter defect with a refusal test and F06 weakening mutant.
+- [x] Add an observation-only `lx_verified.py` API accepting only an attestation reference and validated observation mode. Bind repository internally; use canonical current-machine verification and default live readers/observer. Derive root evidence only from a verified record with a strict boolean True.
+- [x] Keep decisions empty and the unavailable campaign detector UNKNOWN. Import no science and expose no pin-point completion, campaign launch, caller-supplied readings, checker, observer, repository or root flags.
+- [x] Label memory data RAW; withhold unresolved effective-limit/headroom quantities as operational allowances and return development-only / operational-ready False. Keep A5 and all20 policy decisions unmet.
+- [x] Add synthetic committed-fixture provenance/refusal and public-seam tests; bind both new files in the full-suite input hashes and trigger exact-source Linux CI.
 - [ ] Obtain fresh independent code and evidence review, repair findings, preserve final records and prepare a concrete handoff packet.
 
 ## Validation commands

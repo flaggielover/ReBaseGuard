@@ -3,7 +3,7 @@ copy of lx_platform.py. A KILLED case must run the baseline's full test count an
 errors or skips. Import failures, malformed reports, timeouts and other invalid runs are ERROR, never kills.
 M01-M32 are the coordinator's; R01-R10 are review 59's mutants and X01-X09 are review 60's surviving mutants, each
 re-anchored with the same weakening; N01-N14 weaken the revision-3 repairs. Y01-Y03 are review 61's fresh semantic
-mutants; P01-P05 cover its discovered regressions. F01-F05 weaken review 62's bounded follow-up repairs.
+mutants; P01-P05 cover its discovered regressions. F01-F05 weaken review 62's bounded follow-up repairs; F06 restores review 63's payload-dropping defect.
 Y03 removes both the sample-order and pairwise non-increase rejection routes for the same ordering property.
 The baseline runs first with an inherited
 LX_PLATFORM_DIR removed. Every suite subprocess uses strict ResourceWarning handling and keeps its complete output.
@@ -204,7 +204,7 @@ MUTANTS = [
      [('or isinstance(dt_s, bool) or not math.isfinite(dt_s) or dt_s <= 0',
        'or isinstance(dt_s, bool) or dt_s <= 0')]),
     ("P05", "malformed NSpid entries count as a complete proc view",
-     [('    if len(nspid) != 1 or not nspid[0].isdigit() or int(nspid[0]) <= 0:\n        return None\n', '')]),
+     [('    if len(nspid) != 1 or not re.fullmatch(r"0*[1-9][0-9]*", nspid[0]):\n        return None\n', '')]),
     # ---- review 62's bounded intermediate-reading and ambiguity repairs
     ("F01", "clock-pair checks ignore intermediate observations and use only the endpoints",
      [('        pairs = list(zip(seq, seq[1:]))\n        if len(seq) > 2:\n            pairs.append((start, end))\n',
@@ -217,15 +217,18 @@ MUTANTS = [
        '    if any(not isinstance(x, dict) or type(x.get("suspend_success")) is not int\n'
        '           or x["suspend_success"] < 0 for x in (start, end)):')]),
     ("F03", "malformed mount IDs and device numbers bypass numeric metadata validation",
-     [('    if not f[0].isdigit() or int(f[0]) <= 0 or not f[1].isdigit() or int(f[1]) <= 0 \\\n'
+     [('    if not re.fullmatch(r"0*[1-9][0-9]*", f[0]) or not re.fullmatch(r"0*[1-9][0-9]*", f[1]) \\\n'
        '            or not re.fullmatch(r"[0-9]+:[0-9]+", f[2]):\n        return None\n', '')]),
     ("F04", "the first NSpid field is trusted when duplicate NSpid records disagree",
      [('    if len(nspid_fields) != 1:', '    if not nspid_fields:')]),
     ("F05", "multiple starttime identities for one PID are accepted in a single CPU snapshot",
      [('        if len({key[0] for key in snapshot}) != len(snapshot):\n            return None\n', '')]),
+    ("F06", "payload adjoining NSpid's colon is discarded before validation",
+     [('    nspid_fields = [ln.partition(":")[2].split() for ln in st.splitlines() if ln.startswith("NSpid:")]',
+       '    nspid_fields = [ln.split()[1:] for ln in st.splitlines() if ln.startswith("NSpid:")]')]),
 ]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 3, "P": 5, "F": 5}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 3, "P": 5, "F": 6}
 
 
 def _text(value) -> str:
@@ -331,7 +334,8 @@ def apply_mutation(src: str, edits: list[tuple[str, str]]) -> tuple[str | None, 
 
 def input_hashes() -> dict[str, str]:
     return {str(path.relative_to(HERE.parent)): hashlib.sha256(path.read_bytes()).hexdigest()
-            for path in (SRC, HERE.parent / "lx_inventory.py", HERE / "test_lx_platform.py", Path(__file__).resolve())}
+            for path in (SRC, HERE.parent / "lx_inventory.py", HERE.parent / "lx_verified.py",
+                         HERE / "test_lx_platform.py", HERE / "test_lx_verified.py", Path(__file__).resolve())}
 
 
 def main(out: str | None) -> int:
