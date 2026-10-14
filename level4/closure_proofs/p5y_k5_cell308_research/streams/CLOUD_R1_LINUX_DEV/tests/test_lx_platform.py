@@ -784,6 +784,20 @@ class TestAttestationPreflight(unittest.TestCase):
         for ref in (None, {}, {"path": "att/HOST.json"}, {"path": 1, "sha256": "x"}):
             self.assertIsNone(L.attestation_valid(ref)[0], ref)
 
+    def test_reference_digest_must_match_the_committed_file(self):
+        """M25: a review accepting digest X does not make a DIFFERENT committed file pass when the reference quotes X."""
+        with tempfile.TemporaryDirectory() as d:
+            accepted = self.attestation()
+            other = self.attestation(provider_image_updates="anything")
+            x = hashlib.sha256(accepted).hexdigest()
+            self.repo(d, {"att/HOST.json": other, "att/ACCEPTED.json": accepted,
+                          "reviews/ACCEPT.md": f"{L.ACCEPTANCE_LINE}{x}\n".encode()})
+            rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": x}, repo_root=d, machine=self.HW)
+            self.assertIsNone(rec)
+            self.assertIn("sha256 mismatch", " ".join(why))
+            self.assertIsNotNone(L.attestation_valid({"path": "att/ACCEPTED.json", "sha256": x}, repo_root=d,
+                                                     machine=self.HW)[0])
+
     def test_uncommitted_edit_is_not_the_record(self):
         with tempfile.TemporaryDirectory() as d:
             att = self.attestation()
