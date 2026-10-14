@@ -14,6 +14,14 @@ update vectors; F13 exclusivity keyed by (pid, starttime), births counted, names
 records the PID and time namespaces; F15 `launched=None` only for the launcher's own preflight; F23 a stale tmp is a
 named state.
 
+Revision 3 repairs the findings of the fresh delta review 60 (reviews/REVIEW_CLOUD_R1_DELTA_R2.md): N1 attestations
+are parsed from the committed file and accepted only by a committed review naming their sha256, and the gates that
+depend on D-HOST-LIFETIME stay OPEN_DECISION while it is open; N2 only known battery statuses count; N3 root
+attestation must be ``is True`` and comes from a verified attestation; N4 the /proc view must be the initial PID
+namespace's; N6 the boot id is validated; N7 exited / unreadable processes are not silently dropped and the campaign
+tree is keyed by (pid, starttime); N8 pid-based death evidence needs recorded, matching namespaces; N11 the pin set
+requires libm, libc and the loader; N12 execute / resume verify the launch record's fields.
+
 Design rules (all fail-closed):
 
 * A reader returns ``None`` when its source is absent, unreadable or of a kind it does not recognise. ``None`` is
@@ -29,6 +37,7 @@ Every reader accepts injected text / paths for the tests. Stdlib only; Python >=
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import platform as _platform
 import re
@@ -46,6 +55,11 @@ MAX_SAMPLE_GAP_S = 180                          # == mbs308_host.MAX_SAMPLE_GAP_
 MIN_FREE_DISK = 2 * 1024 ** 3                   # == mbs308_host.MIN_FREE_DISK
 CAMPAIGN_UNIT_PREFIX = "rebaseguard-mbs308-"    # PROPOSED systemd unit-name prefix (amendment row L-LAUNCH)
 NO_IMAGE_CHANGE = "ATTESTED_NO_IMAGE_OR_OS_CHANGE"   # the only provider-image token that can pass (F8)
+KNOWN_NOT_DISCHARGING = ("Charging", "Full", "Not charging")   # N2: the only battery statuses read as not discharging
+INIT_PID_NS, INIT_CGROUP_NS = 0xEFFFFFFC, 0xEFFFFFFB          # proc_ns_init_ino / cgroup init ns inode (kernel consts)
+ATTESTATION_SCHEMA = "rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1"
+ACCEPTANCE_LINE = "HOST_ATTESTATION_ACCEPTED sha256="          # a committed review accepts an attestation by this line
+DECIDED: frozenset = frozenset()   # the D-* decisions taken by an accepted review and the owner: NONE in development
 
 OPEN_DECISIONS = {
     "D-MEM-FREE": "R-FREE quantity on Linux (macOS vm_stat free+inactive+speculative+purgeable has no Linux identity)",
@@ -153,11 +167,12 @@ def identity_state(ident, *, current_boot: str | None = None, exists=None, stat=
     """ALIVE / DEAD / UNKNOWN.
 
     DEAD only on POSITIVE evidence: the boot id changed; ESRCH; or the RECORDED starttime / cmdline differs.
-    UNKNOWN on any failed reading, on a namespace mismatch between recorder and reader (pid numbers and starttimes are
-    namespace-relative, F14), and for a zombie / dead task (state Z or X): a zombie leader can carry live threads
-    (review 59 probe P6), and macOS O-4 reads a zombie as UNKNOWN, so it is never proof of death (F2). Other states
-    (R, S, D, T, t, ...) are a live task. A field never recorded is never compared; ALIVE needs every field recorded
-    and matching. Injection (tests): ``current_boot`` (``""`` = read failed), ``exists``, ``stat``, ``cmd``,
+    UNKNOWN on any failed reading; on an unrecorded namespace or a namespace mismatch between recorder and reader
+    (pid numbers and starttimes are namespace-relative, F14 / N8); and for a zombie / dead task (state Z or X): a
+    zombie leader can carry live threads (review 59 probe P6), and macOS O-4 reads a zombie as UNKNOWN, so it is
+    never proof of death (F2). Other states (R, S, D, T, t, ...) are a live task. A field never recorded is never
+    compared; ALIVE needs every field recorded and matching. Injection (tests): ``current_boot`` (``""`` = read
+    failed), ``exists``, ``stat``, ``cmd``,
     ``current_ns`` ({"pidns": int|None, "timens": int|None})."""
     if not isinstance(ident, dict) or not ident.get("pid"):
         return UNKNOWN
@@ -168,7 +183,9 @@ def identity_state(ident, *, current_boot: str | None = None, exists=None, stat=
         return DEAD
     ns = current_ns if current_ns is not None else {"pidns": ns_inode("pid"), "timens": ns_inode("time")}
     for k in ("pidns", "timens"):
-        if ident.get(k) is not None and ns.get(k) != ident[k]:
+        # N8: pid numbers, ESRCH and starttimes mean something only in the recorder's namespaces; an unrecorded or
+        # different namespace makes every pid-based reading UNKNOWN (a boot-id change, above, stays positive evidence)
+        if ident.get(k) is None or ns.get(k) != ident[k]:
             return UNKNOWN
     pid = ident["pid"]
     ex = (exists or _pid_exists)(pid)
@@ -276,7 +293,8 @@ def power_source(root="/sys/class/power_supply") -> str | None:
     """"AC": at least one Mains online, no Battery / UPS discharging, every supply readable and of a known type.
     "BATTERY": a Battery or UPS discharges. "NO_MAINS": readable supplies, no online Mains. "ABSENT": no supply at
     all (D-POWER-ABSENT). None (UNKNOWN): any unreadable type / online / status, or a type other than Mains, Battery,
-    UPS (e.g. USB-C or wireless chargers: whether they count as AC is D-POWER-ABSENT) (F9)."""
+    UPS (e.g. USB-C or wireless chargers: whether they count as AC is D-POWER-ABSENT) (F9); a Battery / UPS status
+    other than Discharging or one of KNOWN_NOT_DISCHARGING (e.g. the kernel's "Unknown") is UNKNOWN (N2)."""
     try:
         entries = sorted(Path(root).iterdir())
     except OSError:
@@ -293,9 +311,10 @@ def power_source(root="/sys/class/power_supply") -> str | None:
             mains_online |= on == "1"
         elif typ in ("Battery", "UPS"):
             st = (_read(e / "status") or "").strip()
-            if not st:
-                return None
-            discharging |= st == "Discharging"
+            if st == "Discharging":
+                discharging = True
+            elif st not in KNOWN_NOT_DISCHARGING:
+                return None                                         # N2: "Unknown", garbage, unreadable: UNKNOWN
         else:
             return None
     if discharging:
@@ -398,7 +417,7 @@ def _chain_values(chain_rec: dict, *, root_attested: bool):
     lims, uses = [], []
     for lvl in chain_rec.get("chain") or []:
         if lvl["root"] and chain_rec.get("version") == "v2":
-            if not root_attested:
+            if root_attested is not True:
                 return None
             continue
         if lvl["limit"] is None:
@@ -411,7 +430,7 @@ def _chain_values(chain_rec: dict, *, root_attested: bool):
 def effective_memory_limit(chain_rec: dict, mem: dict | None, *, root_attested: bool = False) -> int | None:
     """min(MemTotal, every limit on the chain), NUMERIC ONLY if every level is readable AND the root is attested:
     ancestors hidden by a cgroup namespace cannot be seen by any reader (F10). Otherwise None (UNKNOWN)."""
-    if not root_attested or not mem or "MemTotal" not in mem or not chain_rec.get("chain"):
+    if root_attested is not True or not mem or "MemTotal" not in mem or not chain_rec.get("chain"):
         return None
     vals = _chain_values(chain_rec, root_attested=True)
     if vals is None:
@@ -433,7 +452,7 @@ def visible_limit_upper_bound(chain_rec: dict, mem: dict | None) -> int | None:
 def cgroup_min_headroom(chain_rec: dict, *, root_attested: bool = False) -> int | None:
     """min over limited levels of (limit − usage). None if the root is not attested or ANY level's limit, or any
     limited level's usage, is unreadable (F10: a partial chain never yields a number)."""
-    if not root_attested:
+    if root_attested is not True:
         return None
     vals = _chain_values(chain_rec, root_attested=True)
     if vals is None:
@@ -448,45 +467,50 @@ def cgroup_min_headroom(chain_rec: dict, *, root_attested: bool = False) -> int 
 
 
 def cgroup_resources(proc_cgroup_text: str | None = None, root="/sys/fs/cgroup") -> dict:
-    """RAW cpu / cpuset / pids limits of this process's cgroups (ROUTE_PREPARATION Phase 1 list; F10)."""
+    """RAW cpu / cpuset / pids limits along the WHOLE chain of this process's cgroups, leaf to root (ROUTE_PREPARATION
+    Phase 1 list; F10 / N3). v2: cpu.max, cpuset.cpus.effective, pids.max per level; v1: cpu.cfs_quota_us /
+    cpu.cfs_period_us, cpuset.effective_cpus, pids.max per level. Unreadable values are None, never 'unlimited'."""
     text = _read("/proc/self/cgroup") if proc_cgroup_text is None else proc_cgroup_text
-    out = {"cpu.max": None, "cpu.cfs_quota_us": None, "cpu.cfs_period_us": None, "cpuset.cpus.effective": None,
-           "pids.max": None}
+    out = {"v2": None, "v1": {}}
     if not text:
         return out
     ctl = {}
     for ln in text.splitlines():
-        p = ln.split(":", 2)
-        if len(p) == 3:
-            for c in (p[1].split(",") if p[1] else ["unified"]):
-                ctl[c] = p[2].lstrip("/")
+        q = ln.split(":", 2)
+        if len(q) == 3:
+            for c in (q[1].split(",") if q[1] else ["unified"]):
+                ctl[c] = q[2]
     rp = Path(root)
-    if "unified" in ctl and (rp / ctl["unified"] / "cgroup.controllers").exists():
-        d = rp / ctl["unified"]
-        out["cpu.max"] = (_read(d / "cpu.max") or "").strip() or None
-        out["cpuset.cpus.effective"] = (_read(d / "cpuset.cpus.effective") or "").strip() or None
-        out["pids.max"] = (_read(d / "pids.max") or "").strip() or None
-    if "cpu" in ctl:
-        d = rp / "cpu" / ctl["cpu"]
-        out["cpu.cfs_quota_us"] = (_read(d / "cpu.cfs_quota_us") or "").strip() or None
-        out["cpu.cfs_period_us"] = (_read(d / "cpu.cfs_period_us") or "").strip() or None
-    if "cpuset" in ctl and out["cpuset.cpus.effective"] is None:
-        out["cpuset.cpus.effective"] = (_read(rp / "cpuset" / ctl["cpuset"] / "cpuset.effective_cpus") or "").strip() \
-            or None
-    if "pids" in ctl and out["pids.max"] is None:
-        out["pids.max"] = (_read(rp / "pids" / ctl["pids"] / "pids.max") or "").strip() or None
+
+    def chain(base: Path, rel: str, names: tuple) -> list:
+        parts = [x for x in rel.split("/") if x]
+        rows = []
+        for i in range(len(parts), -1, -1):
+            d = base.joinpath(*parts[:i])
+            rows.append({"path": "/" + "/".join(parts[:i]),
+                         **{n: (_read(d / n) or "").strip() or None for n in names}})
+        return rows
+    if "unified" in ctl and (rp / ctl["unified"].lstrip("/") / "cgroup.controllers").exists():
+        out["v2"] = chain(rp, ctl["unified"], ("cpu.max", "cpuset.cpus.effective", "pids.max"))
+    for c, names in (("cpu", ("cpu.cfs_quota_us", "cpu.cfs_period_us")), ("cpuset", ("cpuset.effective_cpus",)),
+                     ("pids", ("pids.max",))):
+        if c in ctl and (rp / c).is_dir():
+            out["v1"][c] = chain(rp / c, ctl[c], names)
     return out
 
 
 def memory_readings(mem_text: str | None = None, proc_cgroup_text: str | None = None, root="/sys/fs/cgroup",
                     *, root_attested: bool = False) -> dict:
-    """Every Linux candidate quantity side by side, none labelled as the R-FREE quantity (D-MEM-FREE, D-MEM-WIRED)."""
+    """Every Linux candidate quantity side by side, none labelled as the R-FREE quantity (D-MEM-FREE, D-MEM-WIRED).
+    ``root_attested`` counts only if it is the boolean True (N3); the caller derives it from attestation_valid()'s
+    verified record (field ``root_cgroup_is_real``), never from a flag of its own."""
     mem = meminfo(mem_text)
     ch = memory_cgroup_chain(proc_cgroup_text, root)
+    root_attested = root_attested is True
     return {"meminfo_MemTotal": (mem or {}).get("MemTotal"), "meminfo_MemAvailable": (mem or {}).get("MemAvailable"),
             "meminfo_MemFree": (mem or {}).get("MemFree"), "meminfo_Inactive_file": (mem or {}).get("Inactive(file)"),
             "meminfo_SwapTotal": (mem or {}).get("SwapTotal"), "cgroup": ch,
-            "root_attested": root_attested,
+            "root_attested": root_attested, "cgroup_ns_initial": ns_inode("cgroup") == INIT_CGROUP_NS,
             "effective_limit": effective_memory_limit(ch, mem, root_attested=root_attested),
             "visible_limit_upper_bound": visible_limit_upper_bound(ch, mem),
             "cgroup_min_headroom": cgroup_min_headroom(ch, root_attested=root_attested),
@@ -507,13 +531,19 @@ def psi_memory(text: str | None = None) -> dict | None:
 
 
 # ====================================================================== CPU exclusivity (windowed, from /proc)
-def proc_view_complete(status_text: str | None = None, mountinfo_text: str | None = None) -> bool | None:
-    """False if this reader sits in a nested PID namespace (NSpid has more than one id) or /proc is mounted with
-    hidepid / subset (a partial process set); None if unreadable (F13)."""
+def proc_view_complete(status_text: str | None = None, mountinfo_text: str | None = None,
+                       pidns: int | None = -1) -> bool | None:
+    """True only if this reader's PID namespace is the INITIAL one (inode INIT_PID_NS; N4: inside a nested namespace
+    with its own /proc, NSpid shows one id and the view is partial), NSpid has one id, and /proc is mounted without
+    hidepid / subset. False if any of these is positively violated; None if a reading fails or no /proc mount line is
+    found (F13, N4). ``pidns`` (tests): the namespace inode; -1 = read it."""
     st = _read("/proc/self/status") if status_text is None else status_text
     mi = _read("/proc/self/mountinfo") if mountinfo_text is None else mountinfo_text
-    if not st or not mi:
+    ino = ns_inode("pid") if pidns == -1 else pidns
+    if not st or not mi or ino is None:
         return None
+    if ino != INIT_PID_NS:
+        return False
     nspid = next((ln.split()[1:] for ln in st.splitlines() if ln.startswith("NSpid:")), None)
     if nspid is None:
         return None
@@ -529,15 +559,18 @@ def proc_view_complete(status_text: str | None = None, mountinfo_text: str | Non
 
 def cpu_ticks(proc_root="/proc") -> dict | None:
     """{(pid, starttime): (ppid, utime + stime ticks, comm, exe-or-None)}. Keyed by (pid, starttime) so pid reuse is a
-    different process (F13). None if /proc is unreadable."""
+    different process (F13). None if /proc is unreadable, or if a process that still exists cannot be read (N7: an
+    unreadable process is never silently dropped). A process that vanished between listing and reading is skipped."""
     try:
-        pids = [int(p.name) for p in Path(proc_root).iterdir() if p.name.isdigit()]
+        pids = [int(q.name) for q in Path(proc_root).iterdir() if q.name.isdigit()]
     except OSError:
         return None
     out = {}
     for pid in pids:
         st = proc_stat(pid, _read(f"{proc_root}/{pid}/stat") or "")
         if st is None:
+            if Path(f"{proc_root}/{pid}").exists():
+                return None
             continue
         try:
             exe = os.readlink(f"{proc_root}/{pid}/exe")
@@ -547,25 +580,34 @@ def cpu_ticks(proc_root="/proc") -> dict | None:
     return out
 
 
-def busy_processes(t0: dict | None, t1: dict | None, dt_s: float, threshold_pct: float, own_pids: set,
+def busy_processes(t0: dict | None, t1: dict | None, dt_s: float, threshold_pct: float, own: set,
                    hz: int | None = None, view_complete: bool | None = True) -> list | None:
-    """Processes whose CPU use within the window exceeds ``threshold_pct`` (100 = one CPU). A process absent from t0
-    (born in the window, or a reused pid) is charged ALL its ticks to the window (conservative). ``own_pids`` (the
-    campaign tree) is excluded; it may not contain 0 or 1. Nothing is allowed by name or path (D-ALLOW-PATHS).
-    None (no reading, gate fails closed) if a snapshot is missing, dt <= 0, own_pids is unsafe or the /proc view is not
-    known to be complete."""
-    if t0 is None or t1 is None or dt_s <= 0 or view_complete is not True or own_pids & {0, 1}:
+    """Processes whose CPU use within the window exceeds ``threshold_pct`` (100 = one CPU), plus every process present
+    at t0 that EXITED before t1 (its usage in the window is unknown, so it is reported with pct None, N7). A process
+    absent from t0 (born in the window, or a reused pid) is charged ALL its ticks to the window. ``own`` (the campaign
+    tree) is a set of (pid, starttime) keys (N7); a child is exempt only if its parent key is in ``own`` and it started
+    no earlier than that parent. Pid 0 / 1 may not be in ``own``. Nothing is allowed by name or path (D-ALLOW-PATHS).
+    None (no reading) if a snapshot is missing, dt <= 0, ``own`` is malformed or unsafe, or the /proc view is not known
+    to be complete."""
+    if t0 is None or t1 is None or dt_s <= 0 or view_complete is not True:
+        return None
+    if not isinstance(own, (set, frozenset)) or not all(isinstance(k, tuple) and len(k) == 2 for k in own) \
+            or any(k[0] in (0, 1) for k in own):
         return None
     hz = hz or os.sysconf("SC_CLK_TCK")
+    own_start = {pid: start for pid, start in own}
     out = []
     for (pid, start), (ppid, ticks1, comm, exe) in t1.items():
-        if pid in own_pids or ppid in own_pids:
+        if (pid, start) in own or (ppid in own_start and start >= own_start[ppid]):
             continue
         prev = t0.get((pid, start))
         used = ticks1 - prev[1] if prev is not None else ticks1
         pct = 100.0 * used / hz / dt_s
         if pct > threshold_pct:
             out.append({"pid": pid, "comm": comm, "exe": exe, "pct": round(pct, 1), "born_in_window": prev is None})
+    for (pid, start), (ppid, _t, comm, exe) in t0.items():
+        if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start and start >= own_start[ppid]):
+            out.append({"pid": pid, "comm": comm, "exe": exe, "pct": None, "exited_in_window": True})
     return out
 
 
@@ -727,7 +769,13 @@ def mapped_objects(maps_text: str | None = None) -> dict | None:
         if h is None:
             return None
         out[p] = h
+    names = {Path(k).name for k in out}
+    if not all(any(n == r or n.startswith(r) for n in names) for r in REQUIRED_MAPPED):
+        return None                          # N11: a pin without libm, libc and the loader is not a pin
     return out
+
+
+REQUIRED_MAPPED = ("libm.so.6", "libc.so.6", "ld-linux")   # N11: members every Linux pin must contain
 
 
 def dpkg_versions(packages=("libc6",), query=None) -> dict:
@@ -746,11 +794,14 @@ def dpkg_versions(packages=("libc6",), query=None) -> dict:
     return out
 
 
-def _python_packages() -> tuple:
+def _python_packages(owner_query=None) -> tuple:
     """dpkg packages of the running interpreter: the package owning the executable (`dpkg -S`, read-only) and
-    ``libpython<v>-stdlib``. An unknown owner gives a None entry, so the pin never matches (fail closed)."""
+    ``libpython<v>-stdlib``. An unknown owner is kept as a placeholder whose version reads None, so the pin never
+    matches (fail closed; X09). ``owner_query()`` (tests) replaces the dpkg lookup."""
     v = f"{sys.version_info.major}.{sys.version_info.minor}"
     owner = None
+    if owner_query is not None:
+        return (owner_query() or UNKNOWN_PACKAGE, f"libpython{v}-stdlib")
     try:
         p = subprocess.run(["dpkg", "-S", os.path.realpath(sys.executable)], capture_output=True, text=True,
                            timeout=30, stdin=subprocess.DEVNULL)
@@ -758,7 +809,21 @@ def _python_packages() -> tuple:
             owner = p.stdout.split(":", 1)[0].strip() or None
     except (OSError, subprocess.SubprocessError):
         owner = None
-    return (owner or "<unknown-interpreter-package>", f"libpython{v}-stdlib")
+    return (owner or UNKNOWN_PACKAGE, f"libpython{v}-stdlib")
+
+
+UNKNOWN_PACKAGE = "<unknown-interpreter-package>"
+
+
+def pin_point(modules: tuple) -> dict:
+    """N11: read the pins at a fixed PIN POINT: every module of a fixed list (the science's imports, fixed in the
+    accepted amendment) must already be imported by the caller with static ``import`` statements, so the mapped set
+    does not depend on chance. This function imports nothing itself (the research quarantine scanner refuses dynamic
+    imports it cannot resolve); a module of the list that is not loaded raises."""
+    missing = [m for m in modules if m not in sys.modules]
+    if missing:
+        raise RuntimeError(f"PIN_POINT_NOT_REACHED: not imported: {', '.join(missing)}")
+    return platform_readings()
 
 
 def platform_readings(maps_text: str | None = None) -> dict:
@@ -809,36 +874,50 @@ def free_disk_bytes(path) -> int | None:
     return s.f_bavail * s.f_frsize
 
 
-# ====================================================================== host attestation (F8, F20)
-def attestation_valid(att, *, repo_root=None, machine=None) -> tuple:
-    """(ok, reasons). A host attestation passes only if ALL hold: a dict; ``reviewed is True`` and ``accepted is
-    True``; ``path`` names a file COMMITTED at HEAD of the repository at ``repo_root`` whose sha256 equals
-    ``sha256``; ``acceptance_record`` names the review that accepted it; ``machine`` equals the current
-    machine_identity() and is hardware-bound. In development no such record exists, so this is always False here."""
+# ====================================================================== host attestation (F8, F20, N1)
+def _git_blob(repo_root, path: str) -> bytes | None:
+    try:
+        r = subprocess.run(["git", "-C", str(repo_root), "show", f"HEAD:{path}"], capture_output=True, timeout=60,
+                           stdin=subprocess.DEVNULL)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return r.stdout if r.returncode == 0 else None
+
+
+def attestation_valid(ref, *, repo_root=None, machine=None) -> tuple:
+    """(record or None, reasons). ``ref`` = {"path", "sha256"} only: every asserted fact is read from the COMMITTED
+    attestation file, never from the caller (N1). It passes only if: the file is committed at HEAD with that sha256;
+    it is JSON with schema ATTESTATION_SCHEMA, ``reviewed is True``, ``accepted is True``, a ``machine`` equal to the
+    current hardware-bound machine_identity(), and an ``acceptance_record`` path; that review file is committed at HEAD
+    and contains the line ``HOST_ATTESTATION_ACCEPTED sha256=<the attestation's sha256>``. Returns the parsed record
+    (fields such as provider_image_updates, root_cgroup_is_real) on success. Passing this check does not pass a gate
+    while D-HOST-LIFETIME is open (preflight)."""
+    if not isinstance(ref, dict) or set(ref) != {"path", "sha256"}:
+        return None, ["reference must be exactly {path, sha256}"]
+    path, want = ref["path"], ref["sha256"]
+    if not isinstance(path, str) or not isinstance(want, str) or not re.fullmatch(r"[0-9a-f]{64}", want):
+        return None, ["malformed reference"]
+    base = Path(repo_root) if repo_root else Path(__file__).resolve().parents[5]
+    data = _git_blob(base, path)
+    if _sha(data) != want:
+        return None, ["attestation not committed at HEAD, or sha256 mismatch"]
+    try:
+        rec = json.loads(data)
+    except (ValueError, UnicodeDecodeError):
+        return None, ["attestation is not JSON"]
     reasons = []
-    if not isinstance(att, dict):
-        return False, ["not a record"]
-    if att.get("reviewed") is not True or att.get("accepted") is not True:
-        reasons.append("not reviewed and accepted (strict True)")
-    path, want = att.get("path"), att.get("sha256")
-    if not isinstance(path, str) or not isinstance(want, str) or not re.fullmatch(r"[0-9a-f]{64}", want or ""):
-        reasons.append("no path / sha256")
-    else:
-        base = Path(repo_root) if repo_root else Path(__file__).resolve().parents[5]
-        try:
-            blob = subprocess.run(["git", "-C", str(base), "show", f"HEAD:{path}"], capture_output=True, timeout=60,
-                                  stdin=subprocess.DEVNULL)
-            data = blob.stdout if blob.returncode == 0 else None
-        except (OSError, subprocess.SubprocessError):
-            data = None
-        if _sha(data) != want:
-            reasons.append("attestation file not committed at HEAD, or sha256 mismatch")
-    if not isinstance(att.get("acceptance_record"), str) or not att.get("acceptance_record"):
-        reasons.append("no acceptance record")
+    if not isinstance(rec, dict) or rec.get("schema") != ATTESTATION_SCHEMA:
+        return None, ["wrong or missing schema"]
+    if rec.get("reviewed") is not True or rec.get("accepted") is not True:
+        reasons.append("not reviewed and accepted (strict True, read from the file)")
     cur = machine_identity() if machine is None else machine
-    if not cur.get("hardware_bound") or att.get("machine") != cur:
+    if not cur.get("hardware_bound") or rec.get("machine") != cur:
         reasons.append("not bound to this hardware identity")
-    return not reasons, reasons
+    acc = rec.get("acceptance_record")
+    review = _git_blob(base, acc) if isinstance(acc, str) and acc else None
+    if review is None or f"{ACCEPTANCE_LINE}{want}".encode() not in review.splitlines():
+        reasons.append("no committed acceptance record naming this attestation's sha256")
+    return (rec if not reasons else None), reasons
 
 
 # ====================================================================== preflight (PROPOSED Linux gate set)
@@ -848,15 +927,30 @@ def _g(v: bool | None) -> str:
 
 _GATE_DECISION = {"ac_power": "D-POWER-ABSENT", "lowpowermode_0": "D-LPM", "thermal_pressure_0": "D-THERMAL",
                   "memory_pressure_normal": "D-MEM-PRESSURE", "free_memory_ge_min": "D-MEM-FREE",
-                  "host_exclusive": "D-EXCL-WINDOW", "host_lifetime_attested": "D-HOST-LIFETIME"}
+                  "host_exclusive": "D-EXCL-WINDOW", "host_lifetime_attested": "D-HOST-LIFETIME",
+                  "no_automatic_os_install": "D-HOST-LIFETIME"}
 MODES = ("launcher_preflight", "execute", "resume")
 
 
+def launch_record_ok(rec) -> bool:
+    """N12: a launch record counts only if every field shows a systemd launch of THIS process (not a 'pass' flag)."""
+    if not isinstance(rec, dict):
+        return False
+    sc = rec.get("systemctl")
+    unit = rec.get("unit")
+    return bool(rec.get("systemd_pid1") is True and isinstance(unit, str) and unit.startswith(CAMPAIGN_UNIT_PREFIX)
+                and unit.endswith(".service") and isinstance(rec.get("invocation_id"), str) and rec["invocation_id"]
+                and isinstance(sc, dict) and sc.get("MainPID") == os.getpid()
+                and sc.get("InvocationID") == rec["invocation_id"] and rec.get("pass") is True)
+
+
 def preflight(repo_path, *, mode: str, other_job_running: bool | None, launched: dict | None,
-              host_attestation: dict | None, readings: dict | None = None, attestation_check=None) -> dict:
-    """The Linux gate set (amendment §3). ``mode`` "launcher_preflight" (the launcher's own check, before it starts
-    the service) may pass ``launched=None``; "execute" and "resume" must pass launched_by_systemd()'s record, else the
-    launch gate FAILs (F15). pass == every gate PASS."""
+              attestation_ref: dict | None, readings: dict | None = None, decided: frozenset = DECIDED,
+              attestation_check=None) -> dict:
+    """The Linux gate set (amendment §3). ``mode`` "launcher_preflight" may omit the launch record; "execute" and
+    "resume" need a record that launch_record_ok() accepts, else FAIL (F15, N12). Gates that depend on an open D-*
+    decision are OPEN_DECISION while it is not in ``decided`` (DECIDED is empty in development), including
+    host_lifetime_attested and the provider-image half of no_automatic_os_install (N1). pass == every gate PASS."""
     if mode not in MODES:
         raise ValueError(f"mode must be one of {MODES}")
     r = dict(readings or {})
@@ -864,31 +958,30 @@ def preflight(repo_path, *, mode: str, other_job_running: bool | None, launched:
     free = r["free_disk"] if "free_disk" in r else free_disk_bytes(repo_path)
     boot = r["boot_id"] if "boot_id" in r else boot_id()
     upd = r["updates"] if "updates" in r else auto_update_settings()
-    att_ok, att_reasons = (attestation_check or attestation_valid)(host_attestation)
+    att, att_reasons = (attestation_check or attestation_valid)(attestation_ref)
+    lifetime_open = "D-HOST-LIFETIME" not in decided
     if not isinstance(upd, dict) or upd.get("guest_updates_shown_disabled") is not True:
-        upd_gate = UNKNOWN                                      # not shown disabled (or no reading)
-    elif att_ok and isinstance(host_attestation, dict) and host_attestation.get("provider_image_updates") == \
-            NO_IMAGE_CHANGE:
-        upd_gate = PASS
+        upd_gate = UNKNOWN                                      # guest vectors not shown disabled (or no reading)
+    elif lifetime_open:
+        upd_gate = OPEN_DECISION                                # provider image half: D-HOST-LIFETIME open (N1)
     else:
-        upd_gate = UNKNOWN                                      # provider image updates not attested
+        upd_gate = PASS if isinstance(att, dict) and att.get("provider_image_updates") == NO_IMAGE_CHANGE else UNKNOWN
     gates = {
         "ac_power": OPEN_DECISION if power == "ABSENT" else _g(None if power is None else power == AC),
         "lowpowermode_0": OPEN_DECISION,
         "thermal_pressure_0": OPEN_DECISION,
-        "free_disk_ge_2GiB": _g(None if not isinstance(free, int) else free >= MIN_FREE_DISK),
+        "free_disk_ge_2GiB": _g(None if not isinstance(free, int) or isinstance(free, bool)
+                                else free >= MIN_FREE_DISK),
         "memory_pressure_normal": OPEN_DECISION,
         "free_memory_ge_min": OPEN_DECISION,
-        "boot_id_recorded": _g(None if boot is None else True),
+        "boot_id_recorded": _g(None if not isinstance(boot, str) or boot_id(boot) is None else True),
         "no_other_campaign_job": _g(None if other_job_running is None else other_job_running is False),
         "no_automatic_os_install": upd_gate,
         "host_exclusive": OPEN_DECISION,
-        "host_lifetime_attested": PASS if att_ok else UNKNOWN,
+        "host_lifetime_attested": OPEN_DECISION if lifetime_open else (PASS if isinstance(att, dict) else UNKNOWN),
     }
-    if mode in ("execute", "resume"):
-        gates["launched_by_systemd"] = PASS if isinstance(launched, dict) and launched.get("pass") is True else FAIL
-    elif launched is not None:
-        gates["launched_by_systemd"] = PASS if launched.get("pass") is True else FAIL
+    if mode in ("execute", "resume") or launched is not None:
+        gates["launched_by_systemd"] = PASS if launch_record_ok(launched) else FAIL
     blocked = {k: v for k, v in gates.items() if v != PASS}
     return {"mode": mode, "gates": gates, "pass": not blocked, "blocked": blocked,
             "readings": {"power": power, "free_disk_bytes": free, "boot_id": boot, "updates": upd,

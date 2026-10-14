@@ -113,7 +113,7 @@ def main(out: str) -> int:
         "linux_platform_pins_as_proposed": pins,
         "co_resident_processes_rss_ge_20MiB": co_resident(),
         "dev_preflight_PROPOSED_gate_set": L.preflight("/", mode="execute", other_job_running=None,
-                                                       launched=L.launched_by_systemd(), host_attestation=None),
+                                                       launched=L.launched_by_systemd(), attestation_ref=None),
     }
     # ---- field-by-field comparison with the 2026-10-04 inventory (same provider, a different session)
     old = json.loads(R1.read_text())
