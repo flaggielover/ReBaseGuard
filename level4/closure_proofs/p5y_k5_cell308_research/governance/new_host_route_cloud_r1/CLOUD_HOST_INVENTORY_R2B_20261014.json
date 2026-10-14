@@ -1,0 +1,402 @@
+{
+ "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.host-inventory.v3",
+ "class": "INFRASTRUCTURE",
+ "not_designated_evidence": true,
+ "new_target_evaluations": 0,
+ "proxy_evaluations": 0,
+ "cell309_activity": "none",
+ "benchmarks_run": false,
+ "decoys_run": false,
+ "packages_installed": false,
+ "system_changed": false,
+ "collected_utc": {
+  "first": "2026-10-14T19:41:19Z",
+  "last": "2026-10-14T19:41:19Z"
+ },
+ "tool": {
+  "path": "streams/CLOUD_R1_LINUX_DEV/lx_inventory.py",
+  "sha256": "8b6cb394249dd0ad2a92ea4a349d8f581eb60cc1d458d92820ad224aa2658cb9",
+  "lx_platform_sha256": "7561c36494ebc6db8edb3fb4526f8312f68fdb152833eedde31b28fb26fadbe5"
+ },
+ "platform": {
+  "kernel_release": "6.18.44-fc-v114",
+  "machine": "x86_64",
+  "glibc": "glibc 2.39",
+  "os": "Ubuntu 24.04.5 LTS",
+  "pid1": "/process_api --firecracker-init --addr 0.0.0.0:2024 --max-ws-buffer-size 32768 --block-local-connections --listen-vsock-port 2024 --log-vsock-port 5002"
+ },
+ "python": {
+  "default_python3": "/usr/bin/python3.13",
+  "interpreters": [
+   {
+    "path": "/usr/bin/python3.11",
+    "resolves_to": "/usr/bin/python3.11",
+    "version": "3.11.17",
+    "sha256": "73bf4b06fad87996a59b3c0810eb127b91e84846d21e563862fb4acf74fbcb99"
+   },
+   {
+    "path": "/usr/bin/python3.12",
+    "resolves_to": "/usr/bin/python3.12",
+    "version": "3.12.3",
+    "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+   },
+   {
+    "path": "/usr/bin/python3.13",
+    "resolves_to": "/usr/bin/python3.13",
+    "version": "3.13.16",
+    "sha256": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446"
+   }
+  ],
+  "python3.14_present": false
+ },
+ "cpu": {
+  "model": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "online_vcpus": 4,
+  "affinity": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "cgroup_v1_cfs_quota_us_root": "-1",
+  "host_side_quota_or_overcommit": "UNKNOWN"
+ },
+ "memory": {
+  "meminfo_MemTotal": 16874930176,
+  "meminfo_MemAvailable": 16214290432,
+  "meminfo_MemFree": 16178790400,
+  "meminfo_Inactive_file": 153554944,
+  "meminfo_SwapTotal": 0,
+  "cgroup": {
+   "version": "v1",
+   "chain": [
+    {
+     "path": "/process_api/01a13bbb-f182-7449-9aea-23494b962ae6/claude-code-bash",
+     "limit": 14343688192,
+     "usage": 108765184,
+     "root": false
+    },
+    {
+     "path": "/process_api/01a13bbb-f182-7449-9aea-23494b962ae6",
+     "limit": "max",
+     "usage": 552599552,
+     "root": false
+    },
+    {
+     "path": "/process_api",
+     "limit": "max",
+     "usage": 608526336,
+     "root": false
+    },
+    {
+     "path": "/",
+     "limit": "max",
+     "usage": 565116928,
+     "root": true
+    }
+   ]
+  },
+  "root_attested": false,
+  "effective_limit": null,
+  "visible_limit_upper_bound": 14343688192,
+  "cgroup_min_headroom": null,
+  "note": "RAW Linux readings; none is the macOS vm_stat free+inactive+speculative+purgeable quantity of R-FREE, and none is substituted for it (D-MEM-FREE, D-MEM-WIRED). effective_limit and headroom are numeric only with an attested root (hidden cgroup ancestors, H6)."
+ },
+ "cgroup_resources": {
+  "cpu.max": null,
+  "cpu.cfs_quota_us": "-1",
+  "cpu.cfs_period_us": "100000",
+  "cpuset.cpus.effective": "0-3",
+  "pids.max": null
+ },
+ "dpkg_versions": {
+  "libc6": "2.39-0ubuntu8.9",
+  "python3.13": "3.13.16-1+noble1",
+  "libpython3.13-stdlib": "3.13.16-1+noble1"
+ },
+ "machine_identity_hashed": {
+  "machine_id_sha256": "801452e4fd3b9a26f8e6f02cfc938d7609be1bf6cbec059d7279359c005e367d",
+  "product_uuid_sha256": null,
+  "hardware_bound": false
+ },
+ "proc_view_complete": true,
+ "root_mount": {
+  "mount_options": "rw,relatime",
+  "fstype": "ext4",
+  "source": "/dev/vda",
+  "super_options": "rw,discard,no_prefetch_block_bitmaps,resv_strict,resuid=65534,resgid=65534"
+ },
+ "psi_memory": {
+  "some": {
+   "avg10": "0.00",
+   "avg60": "0.00",
+   "avg300": "0.00",
+   "total": "0"
+  },
+  "full": {
+   "avg10": "0.00",
+   "avg60": "0.00",
+   "avg300": "0.00",
+   "total": "0"
+  }
+ },
+ "storage": {
+  "root_free_bytes_statvfs": 29027893248,
+  "block_queue_write_cache": "write back"
+ },
+ "boot": {
+  "boot_id": "00661362-b613-4a17-a851-822cb096bdf3",
+  "uptime_s": 3346.67
+ },
+ "supervisor": {
+  "systemd_pid1": false,
+  "launched_by_systemd": {
+   "systemd_pid1": false,
+   "unit": null,
+   "invocation_id": null,
+   "systemctl": null,
+   "pass": false
+  }
+ },
+ "power_source": "ABSENT",
+ "thermal_zones": [],
+ "suspend_success_count": null,
+ "clocksource": "tsc",
+ "auto_update": {
+  "apt_config_readable": true,
+  "apt_periodic": {
+   "Enable": "0"
+  },
+  "unattended_automatic_reboot": null,
+  "apt_daily_upgrade_timer_enabled": true,
+  "unattended_upgrade_present": false,
+  "snapd_present": false,
+  "cloud_init_present": true,
+  "livepatch_applied": [],
+  "guest_updates_shown_disabled": false,
+  "provider_image_updates": "UNKNOWN"
+ },
+ "linux_platform_pins_as_proposed": {
+  "python_executable": "/usr/bin/python3.13",
+  "python_sha256": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446",
+  "python_sys_version": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+  "mapped_objects": {
+   "/usr/lib/python3.13/lib-dynload/_hashlib.cpython-313-x86_64-linux-gnu.so": "95e579cf9fbbd3b56765e383e033968e16b02f358a1ea8d1229ad2d398202441",
+   "/usr/lib/python3.13/lib-dynload/_json.cpython-313-x86_64-linux-gnu.so": "7beabd3816f2e5a8d0648af6a45dbd6a75b2835e7f6bde5b4f825ded3d86bd21",
+   "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": "c20a2dc8917c755f02b94049356320fe1f62ac7d9f8994731f807d9df39302da",
+   "/usr/lib/x86_64-linux-gnu/libc.so.6": "3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf",
+   "/usr/lib/x86_64-linux-gnu/libcrypto.so.3": "6866ed711dab8927e1bf82bf1cd30e828bdfc34f3cc1e83b1c9eb01ce6c37d9a",
+   "/usr/lib/x86_64-linux-gnu/libexpat.so.1.9.1": "286682ecbc5e59a638963b1a4e6351e65eb32fcf4bdcb9cb7569b6a61fe06a8d",
+   "/usr/lib/x86_64-linux-gnu/libm.so.6": "fce00b6f25f459cf4ae0b7fae4257909a1a8a86f9149e7c029a5d617baf1ccd0",
+   "/usr/lib/x86_64-linux-gnu/libz.so.1.3": "86200da370f20476a2507e9097a789b5ef97269b4ca8d5e164ad82dab9d99892"
+  },
+  "libpython_mapped": false,
+  "dpkg_versions": {
+   "libc6": "2.39-0ubuntu8.9",
+   "python3.13": "3.13.16-1+noble1",
+   "libpython3.13-stdlib": "3.13.16-1+noble1"
+  },
+  "livepatch": [],
+  "os_id": "ubuntu",
+  "os_version_id": "24.04",
+  "os_version": "24.04.5 LTS (Noble Numbat)",
+  "kernel_release": "6.18.44-fc-v114",
+  "machine": "x86_64",
+  "glibc": "glibc 2.39",
+  "recorded_cpu_model": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "recorded_vcpus": 4
+ },
+ "co_resident_processes_rss_ge_20MiB": [
+  {
+   "comm": "claude",
+   "pid": 87,
+   "rss_bytes": 396296192
+  },
+  {
+   "comm": "environment-man",
+   "pid": 103,
+   "rss_bytes": 43843584
+  },
+  {
+   "comm": "python3",
+   "pid": 9977,
+   "rss_bytes": 24604672
+  },
+  {
+   "comm": "python3",
+   "pid": 10005,
+   "rss_bytes": 24244224
+  },
+  {
+   "comm": "python3",
+   "pid": 268,
+   "rss_bytes": 22401024
+  }
+ ],
+ "dev_preflight_PROPOSED_gate_set": {
+  "mode": "execute",
+  "gates": {
+   "ac_power": "OPEN_DECISION",
+   "lowpowermode_0": "OPEN_DECISION",
+   "thermal_pressure_0": "OPEN_DECISION",
+   "free_disk_ge_2GiB": "PASS",
+   "memory_pressure_normal": "OPEN_DECISION",
+   "free_memory_ge_min": "OPEN_DECISION",
+   "boot_id_recorded": "PASS",
+   "no_other_campaign_job": "UNKNOWN",
+   "no_automatic_os_install": "UNKNOWN",
+   "host_exclusive": "OPEN_DECISION",
+   "host_lifetime_attested": "UNKNOWN",
+   "launched_by_systemd": "FAIL"
+  },
+  "pass": false,
+  "blocked": {
+   "ac_power": "OPEN_DECISION",
+   "lowpowermode_0": "OPEN_DECISION",
+   "thermal_pressure_0": "OPEN_DECISION",
+   "memory_pressure_normal": "OPEN_DECISION",
+   "free_memory_ge_min": "OPEN_DECISION",
+   "no_other_campaign_job": "UNKNOWN",
+   "no_automatic_os_install": "UNKNOWN",
+   "host_exclusive": "OPEN_DECISION",
+   "host_lifetime_attested": "UNKNOWN",
+   "launched_by_systemd": "FAIL"
+  },
+  "readings": {
+   "power": "ABSENT",
+   "free_disk_bytes": 29027893248,
+   "boot_id": "00661362-b613-4a17-a851-822cb096bdf3",
+   "updates": {
+    "apt_config_readable": true,
+    "apt_periodic": {
+     "Enable": "0"
+    },
+    "unattended_automatic_reboot": null,
+    "apt_daily_upgrade_timer_enabled": true,
+    "unattended_upgrade_present": false,
+    "snapd_present": false,
+    "cloud_init_present": true,
+    "livepatch_applied": [],
+    "guest_updates_shown_disabled": false,
+    "provider_image_updates": "UNKNOWN"
+   },
+   "launched": {
+    "systemd_pid1": false,
+    "unit": null,
+    "invocation_id": null,
+    "systemctl": null,
+    "pass": false
+   },
+   "attestation_reasons": [
+    "not a record"
+   ]
+  },
+  "open_decisions": [
+   "D-EXCL-WINDOW",
+   "D-LPM",
+   "D-MEM-FREE",
+   "D-MEM-PRESSURE",
+   "D-POWER-ABSENT",
+   "D-THERMAL"
+  ]
+ },
+ "comparison_normalised": true,
+ "comparison_with_r1_20261004": [
+  {
+   "field": "cpu model",
+   "r1_20261004": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+   "r2_now": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+   "same": false
+  },
+  {
+   "field": "online vCPUs",
+   "r1_20261004": 4,
+   "r2_now": 4,
+   "same": true
+  },
+  {
+   "field": "kernel release",
+   "r1_20261004": "6.18.44-fc-v64",
+   "r2_now": "6.18.44-fc-v114",
+   "same": false
+  },
+  {
+   "field": "OS",
+   "r1_20261004": "Ubuntu 24.04.4 LTS",
+   "r2_now": "Ubuntu 24.04.5 LTS",
+   "same": false
+  },
+  {
+   "field": "libc6 package",
+   "r1_20261004": "2.39-0ubuntu8.7",
+   "r2_now": "2.39-0ubuntu8.9",
+   "same": false
+  },
+  {
+   "field": "MemTotal bytes",
+   "r1_20261004": 16876515328,
+   "r2_now": 16874930176,
+   "same": false
+  },
+  {
+   "field": "leaf cgroup memory limit bytes (raw)",
+   "r1_20261004": 14345035776,
+   "r2_now": 14343688192,
+   "same": false
+  },
+  {
+   "field": "default python3",
+   "r1_20261004": "/usr/bin/python3.11",
+   "r2_now": "/usr/bin/python3.13",
+   "same": false
+  },
+  {
+   "field": "python 3.10 version",
+   "r1_20261004": "3.10.20",
+   "r2_now": null,
+   "same": false
+  },
+  {
+   "field": "python 3.11 version",
+   "r1_20261004": "3.11.15",
+   "r2_now": "3.11.17",
+   "same": false
+  },
+  {
+   "field": "python 3.12 version",
+   "r1_20261004": "3.12.3",
+   "r2_now": "3.12.3",
+   "same": true
+  },
+  {
+   "field": "python 3.13 version",
+   "r1_20261004": "3.13.14",
+   "r2_now": "3.13.16",
+   "same": false
+  },
+  {
+   "field": "python 3.11 executable sha256",
+   "r1_20261004": "f56a588548dd013906ae1dcd1b6faa417f4e204da634ff354840d9643e78ff9e",
+   "r2_now": "73bf4b06fad87996a59b3c0810eb127b91e84846d21e563862fb4acf74fbcb99",
+   "same": false
+  },
+  {
+   "field": "python 3.12 executable sha256",
+   "r1_20261004": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+   "r2_now": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+   "same": false
+  },
+  {
+   "field": "python 3.13 executable sha256",
+   "r1_20261004": "c75c3b4fca886a3652ec0586d49d4b12e3411c0774048e3b7b7466d29e4a02d9",
+   "r2_now": "a35753ccb97941cce1467786cce892e608141f09d717188a3235d4f51a754446",
+   "same": false
+  },
+  {
+   "field": "boot_id",
+   "r1_20261004": "f2d36d2c-76e0-424a-a332-0d6dab2d6412",
+   "r2_now": "00661362-b613-4a17-a851-822cb096bdf3",
+   "same": false
+  }
+ ]
+}

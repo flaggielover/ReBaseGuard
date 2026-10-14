@@ -1,4 +1,8 @@
-"""Cell-308 new-host route (Claude Cloud, r1) -- read-only host inventory, r2 (DEV stream; INFRASTRUCTURE class).
+"""Cell-308 new-host route (Claude Cloud, r1) -- read-only host inventory (DEV stream; INFRASTRUCTURE class).
+
+Revision 2 (review 59, F19): the comparison with r1 is NORMALISED (model / kernel / OS strings stripped of suffixes,
+interpreters compared per minor version through their resolved paths); adds the libc6 package version, the cgroup
+cpu / cpuset / pids limits, the root mount, the hashed machine identity and the /proc-view check.
 
 Reads /proc, /sys, /etc and interpreter files only, through lx_platform's readers, and compares the result field by
 field with the 2026-10-04 inventory (governance/new_host_route_cloud_r1/CLOUD_HOST_INVENTORY.json). Runs no workload,
@@ -12,6 +16,7 @@ import datetime
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -57,6 +62,15 @@ def co_resident() -> list:
     return sorted(rows, key=lambda r: -r["rss_bytes"])
 
 
+def root_mount() -> dict | None:
+    for ln in (L._read("/proc/self/mountinfo") or "").splitlines():
+        f = ln.split()
+        if len(f) > 9 and f[4] == "/":
+            sep = f.index("-")
+            return {"mount_options": f[5], "fstype": f[sep + 1], "source": f[sep + 2], "super_options": f[sep + 3]}
+    return None
+
+
 def main(out: str) -> int:
     t0 = utc()
     mem = L.memory_readings()
@@ -65,7 +79,7 @@ def main(out: str) -> int:
                       if ln.startswith("model name")), None)
     pins = L.platform_readings()
     inv = {
-        "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.host-inventory.v2",
+        "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.host-inventory.v3",
         "class": "INFRASTRUCTURE", "not_designated_evidence": True,
         "new_target_evaluations": 0, "proxy_evaluations": 0, "cell309_activity": "none",
         "benchmarks_run": False, "decoys_run": False, "packages_installed": False, "system_changed": False,
@@ -82,6 +96,11 @@ def main(out: str) -> int:
                 "cgroup_v1_cfs_quota_us_root": (L._read("/sys/fs/cgroup/cpu/cpu.cfs_quota_us") or "").strip() or None,
                 "host_side_quota_or_overcommit": "UNKNOWN"},
         "memory": mem,
+        "cgroup_resources": L.cgroup_resources(),
+        "dpkg_versions": pins["dpkg_versions"],
+        "machine_identity_hashed": L.machine_identity(),
+        "proc_view_complete": L.proc_view_complete(),
+        "root_mount": root_mount(),
         "psi_memory": L.psi_memory(),
         "storage": {"root_free_bytes_statvfs": L.free_disk_bytes("/"),
                     "block_queue_write_cache": (L._read("/sys/block/vda/queue/write_cache") or "").strip() or None},
@@ -93,25 +112,37 @@ def main(out: str) -> int:
         "auto_update": L.auto_update_settings(),
         "linux_platform_pins_as_proposed": pins,
         "co_resident_processes_rss_ge_20MiB": co_resident(),
-        "dev_preflight_PROPOSED_gate_set": L.preflight("/", other_job_running=None, launched=L.launched_by_systemd(),
-                                                       host_attestation=None),
+        "dev_preflight_PROPOSED_gate_set": L.preflight("/", mode="execute", other_job_running=None,
+                                                       launched=L.launched_by_systemd(), host_attestation=None),
     }
     # ---- field-by-field comparison with the 2026-10-04 inventory (same provider, a different session)
     old = json.loads(R1.read_text())
-    old_py = {i["path"]: i for i in old["python"]["interpreters"]}
-    new_py = {i["path"]: i for i in inv["python"]["interpreters"]}
+    def by_minor(rows):        # {"3.11": (version, sha256)} through the resolved path, so python3 -> 3.11 counts once
+        out = {}
+        for i in rows:
+            m = re.search(r"python(3\.\d+)$", i.get("resolves_to") or i["path"])
+            if m:
+                out[m.group(1)] = (i["version"], i["sha256"])
+        return out
+    old_py, new_py = by_minor(old["python"]["interpreters"]), by_minor(inv["python"]["interpreters"])
+    leaf = (mem["cgroup"].get("chain") or [{}])[0].get("limit")
     cmp_rows = [
-        ("cpu model", old["cpu"]["model"], cpu_model),
+        ("cpu model", old["cpu"]["model"].split(" (")[0], (cpu_model or "").split(" (")[0]),
         ("online vCPUs", old["cpu"]["online_vcpus"], os.cpu_count()),
-        ("kernel", old["platform"]["kernel"], pins["kernel_release"]),
-        ("OS", old["platform"]["os"], osr.get("PRETTY_NAME")),
+        ("kernel release", old["platform"]["kernel"].split()[1], pins["kernel_release"]),
+        ("OS", old["platform"]["os"].split(" (")[0], osr.get("PRETTY_NAME")),
+        ("libc6 package", old["platform"]["glibc"], pins["dpkg_versions"].get("libc6")),
         ("MemTotal bytes", old["memory"]["MemTotal_bytes"], mem["meminfo_MemTotal"]),
-        ("leaf cgroup memory limit bytes", old["memory"]["effective_allowance_for_processes_started_from_this_shell"
-                                                          "_bytes"], mem["effective_limit"]),
-        ("python interpreters", sorted(f"{p}={i['version']}" for p, i in old_py.items()),
-         sorted(f"{p}={i['version']}" for p, i in new_py.items())),
+        ("leaf cgroup memory limit bytes (raw)",
+         old["memory"]["effective_allowance_for_processes_started_from_this_shell_bytes"], leaf),
+        ("default python3", next((i["resolves_to"] for i in old["python"]["interpreters"]
+                                  if i["path"] == "/usr/bin/python3"), None), inv["python"]["default_python3"]),
+        *[(f"python {k} version", old_py.get(k, (None,))[0], new_py.get(k, (None,))[0])
+          for k in sorted(set(old_py) | set(new_py))],
+        *[(f"python {k} executable sha256", old_py[k][1], new_py[k][1]) for k in sorted(set(old_py) & set(new_py))],
         ("boot_id", old["boot_and_lifetime"]["boot_id"], inv["boot"]["boot_id"]),
     ]
+    inv["comparison_normalised"] = True
     inv["comparison_with_r1_20261004"] = [{"field": f, "r1_20261004": a, "r2_now": b, "same": a == b}
                                           for f, a, b in cmp_rows]
     inv["collected_utc"]["last"] = utc()

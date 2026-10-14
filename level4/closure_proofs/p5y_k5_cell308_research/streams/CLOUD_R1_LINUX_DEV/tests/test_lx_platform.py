@@ -1,9 +1,10 @@
-"""Isolated, target-free tests of the DEV-ONLY Linux platform layer (lx_platform).
+"""Isolated, target-free tests of the DEV-ONLY Linux platform layer (lx_platform), revision 2.
 
-Synthetic inputs only: planted /proc and /sys text in temporary directories, ``sleep`` / ``python -c pass`` child
-processes, and temporary files. No cell, no drift, no science module, no decoy, no candidate code is imported or run.
-Each fail-closed property has a NEGATIVE CONTROL: a deliberately broken variant (``_Mutant``) that the same test
-must reject, so a test that cannot fail is detected.
+Synthetic inputs only: planted /proc and /sys text in temporary directories, ``sleep`` / busy-loop child processes,
+temporary files and a temporary git repository. No cell, no drift, no science module, no decoy is imported or run;
+the historical candidate is only READ (``git show 142d97a9:...``) to pin two constants.
+Revision 2 adds tests for every code finding of review 59 (F1, F2, F8-F15, F22, F23) and kills the reviewer's mutants
+R01-R10 (tests/run_mutants.py carries them).
 
 usage: python3 -m unittest discover -s tests -v      (from streams/CLOUD_R1_LINUX_DEV)
 """
@@ -12,7 +13,9 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import signal
+import stat as _stat
 import subprocess
 import sys
 import tempfile
@@ -25,13 +28,15 @@ LXDIR = os.environ.get("LX_PLATFORM_DIR", str(HERE.parent))     # the mutation h
 sys.path.insert(0, LXDIR)
 import lx_platform as L  # noqa: E402
 
+REPO = HERE.parents[5]
+CAND_HOST = "level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_host.py"
+CAND_COMMIT = "142d97a90a1c3fafff394044aa1448674f7a633c"
 BOOT = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
 OTHER_BOOT = "11111111-2222-3333-4444-555555555555"
+NS = {"pidns": 4026531836, "timens": 4026531834}
 
 
 def stat_text(pid=4242, comm="py (x) y", state="S", ppid=1, utime=10, stime=5, start=777):
-    # fields 3..22: state ppid pgrp session tty tpgid flags minflt cminflt majflt cmajflt utime stime cutime cstime
-    #               priority nice num_threads itrealvalue starttime
     rest = [state, ppid, 1, 1, 0, -1, 0, 0, 0, 0, 0, utime, stime, 0, 0, 20, 0, 1, 0, start, 0, 0]
     return f"{pid} ({comm}) " + " ".join(map(str, rest)) + "\n"
 
@@ -44,69 +49,120 @@ def mkfiles(root: Path, files: dict) -> Path:
     return root
 
 
+def wait_not_alive(ident, timeout=5.0) -> list:
+    seen, deadline = [], time.time() + timeout
+    while time.time() < deadline:
+        s = L.identity_state(ident)
+        seen.append(s)
+        if s == L.DEAD:
+            break
+        time.sleep(0.02)
+    return seen
+
+
 # ====================================================================== identity
 class TestIdentity(unittest.TestCase):
-    ident = {"pid": 4242, "starttime_ticks": 777, "boot_id": BOOT, "cmdline_sha256": "c" * 64}
+    ident = {"pid": 4242, "starttime_ticks": 777, "boot_id": BOOT, "cmdline_sha256": "c" * 64, **NS}
 
-    def state(self, ident=None, boot=BOOT, exists=True, stat=None, cmd="c" * 64):
+    def state(self, ident=None, boot=BOOT, exists=True, stat=None, cmd="c" * 64, ns=NS):
         st = stat if stat is not None else L.proc_stat(4242, stat_text())
         return L.identity_state(ident or self.ident, current_boot=boot, exists=lambda p: exists,
-                                stat=lambda p: st, cmd=lambda p: cmd)
+                                stat=lambda p: st, cmd=lambda p: cmd, current_ns=ns)
 
     def test_parse_comm_with_spaces_and_parens(self):
         st = L.proc_stat(4242, stat_text(comm="a ) b (c"))
-        self.assertEqual((st["comm"], st["state"], st["ppid"], st["starttime"], st["utime"]), ("a ) b (c", "S", 1, 777, 10))
-
-    def test_empty_cmdline_is_a_failed_read(self):
-        self.assertIsNone(L.cmdline_sha256(1, b""))                   # kernel thread / exiting task: not a command
-        self.assertEqual(L.cmdline_sha256(1, b"a\0b\0"), hashlib.sha256(b"a\0b\0").hexdigest())
+        self.assertEqual((st["comm"], st["state"], st["ppid"], st["starttime"], st["utime"]),
+                         ("a ) b (c", "S", 1, 777, 10))
 
     def test_malformed_stat_is_none(self):
         for t in ("", "garbage", "12 (x", "12 (x) S"):
             self.assertIsNone(L.proc_stat(1, t), t)
 
+    def test_empty_cmdline_is_a_failed_read(self):
+        self.assertIsNone(L.cmdline_sha256(1, b""))
+        self.assertEqual(L.cmdline_sha256(1, b"a\0b\0"), hashlib.sha256(b"a\0b\0").hexdigest())
+
     def test_alive_only_when_all_fields_match(self):
         self.assertEqual(self.state(), L.ALIVE)
+
+    def test_live_task_states_are_alive(self):
+        """R07: stopped (T, t), uninterruptible (D), running (R), idle (I) tasks are live."""
+        for s in ("R", "S", "D", "T", "t", "I"):
+            self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.ALIVE, s)
 
     def test_positive_death_evidence(self):
         self.assertEqual(self.state(boot=OTHER_BOOT), L.DEAD)                       # reboot
         self.assertEqual(self.state(exists=False), L.DEAD)                           # ESRCH
         self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(start=778))), L.DEAD)   # pid reuse
         self.assertEqual(self.state(cmd="d" * 64), L.DEAD)                           # another command
-        self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state="Z"))), L.DEAD)   # zombie (L-ID-1)
+
+    def test_zombie_is_never_proof_of_death(self):
+        """F2: a zombie / dead task reads UNKNOWN (macOS O-4 outcome), never DEAD."""
+        for s in ("Z", "X"):
+            self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.UNKNOWN, s)
 
     def test_failed_readings_are_unknown_never_dead(self):
-        self.assertEqual(self.state(boot=""), L.UNKNOWN)                             # boot_id unreadable
+        self.assertEqual(self.state(boot=""), L.UNKNOWN)
         self.assertEqual(self.state(exists=None), L.UNKNOWN)
         self.assertEqual(L.identity_state(self.ident, current_boot=BOOT, exists=lambda p: True,
-                                          stat=lambda p: None, cmd=lambda p: "c" * 64), L.UNKNOWN)
-        self.assertEqual(self.state(cmd=None), L.UNKNOWN)                            # empty cmdline = failed read
+                                          stat=lambda p: None, cmd=lambda p: "c" * 64, current_ns=NS), L.UNKNOWN)
+        self.assertEqual(self.state(cmd=None), L.UNKNOWN)
 
-    def test_unrecorded_fields_never_compared_never_alive(self):
-        for k in ("boot_id", "starttime_ticks", "cmdline_sha256"):
+    def test_namespace_mismatch_is_unknown(self):
+        """F14: a reader in another PID / time namespace cannot prove anything about the recorded pid."""
+        self.assertEqual(self.state(ns=dict(NS, pidns=1)), L.UNKNOWN)
+        self.assertEqual(self.state(ns=dict(NS, timens=None)), L.UNKNOWN)
+        self.assertEqual(self.state(ns=dict(NS, pidns=1), exists=False), L.UNKNOWN)   # ESRCH there proves nothing
+
+    def test_unrecorded_fields(self):
+        """N-2: a field never recorded is never compared (cannot prove death) and blocks ALIVE."""
+        for k in ("boot_id", "starttime_ticks", "cmdline_sha256", "pidns", "timens"):
             partial = dict(self.ident, **{k: None})
             self.assertEqual(self.state(ident=partial), L.UNKNOWN, k)
-            # ...and an unrecorded field cannot prove death either
-            self.assertNotEqual(self.state(ident=partial, cmd="d" * 64 if k == "cmdline_sha256" else "c" * 64),
-                                L.DEAD if k == "cmdline_sha256" else "never", k)
+        no_cmd = dict(self.ident, cmdline_sha256=None)
+        self.assertEqual(self.state(ident=no_cmd, cmd="d" * 64), L.UNKNOWN)
+        no_start = dict(self.ident, starttime_ticks=None)
+        self.assertEqual(self.state(ident=no_start, stat=L.proc_stat(4242, stat_text(start=1))), L.UNKNOWN)
 
     def test_real_process_lifecycle(self):
-        """A real child: ALIVE while running; DEAD after it is killed and reaped."""
         p = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"], start_new_session=True)
         try:
             time.sleep(0.3)
             ident = L.identity(p.pid)
             self.assertEqual(L.identity_state(ident), L.ALIVE)
-            self.assertNotEqual(ident, L.identity(os.getpid()))
         finally:
             p.kill()
             p.wait()
         self.assertEqual(L.identity_state(ident), L.DEAD)
 
+    def test_zombie_leader_with_live_thread_is_not_dead(self):
+        """Review 59 probe P6 as a test: the main thread exits (pthread_exit) while a worker thread computes; the
+        leader shows state Z although the process lives and uses CPU. It must never read DEAD."""
+        child = ("import ctypes,threading,time,sys\n"
+                 "def w():\n t=time.time()+4\n while time.time()<t: pass\n"
+                 "threading.Thread(target=w).start()\n"
+                 "sys.stdout.write('ready\\n');sys.stdout.flush()\n"
+                 "ctypes.CDLL(None).pthread_exit(None)\n")
+        p = subprocess.Popen([sys.executable, "-c", child], stdout=subprocess.PIPE, text=True)
+        try:
+            ident = L.identity(p.pid)
+            self.assertEqual(p.stdout.readline().strip(), "ready")
+            time.sleep(0.4)
+            states = []
+            for _ in range(5):
+                st = L.proc_stat(p.pid)
+                states.append((st and st["state"], L.identity_state(ident)))
+                time.sleep(0.1)
+            self.assertTrue(any(s == "Z" for s, _ in states), states)     # the probe really reached a zombie leader
+            self.assertTrue(all(v != L.DEAD for _, v in states), states)
+        finally:
+            p.kill()
+            p.wait()
+            p.stdout.close()
+
     def test_detached_child_survives_parent_death(self):
-        """Target-free detachment check: a grandchild started in a new session survives SIGKILL of its parent and
-        its recorded identity stays ALIVE; this is what a double-fork can do, and NOT what S6 needs (survival of the
-        host's / VM's reclaim), which no in-guest test can show."""
+        """A new-session grandchild survives SIGKILL of its parent (ALIVE); after its own kill it is never ALIVE again
+        (DEAD once reaped; UNKNOWN while an unreaped zombie). This is NOT what S6 needs (survival of the host)."""
         code = ("import subprocess,sys,time;"
                 "c=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True);"
                 "print(c.pid,flush=True);time.sleep(60)")
@@ -116,40 +172,33 @@ class TestIdentity(unittest.TestCase):
         ident = L.identity(gpid)
         parent.kill()
         parent.wait()
+        parent.stdout.close()
         time.sleep(0.3)
         try:
             self.assertEqual(L.identity_state(ident), L.ALIVE)
         finally:
             os.kill(gpid, signal.SIGKILL)
-        # An exiting task can read UNKNOWN for a moment (empty cmdline before it is a zombie): UNKNOWN is never DEAD,
-        # so wait for positive evidence; a reading of ALIVE after the kill would be a defect.
-        seen, deadline = [], time.time() + 5
-        while time.time() < deadline:
-            s = L.identity_state(ident)
-            seen.append(s)
-            if s == L.DEAD:
-                break
-            time.sleep(0.02)
-        self.assertEqual(seen[-1], L.DEAD, seen)                    # reaped by the new parent, or a zombie (Z)
-
-    def test_negative_control_mutant_trusting_failed_reads(self):
-        """A mutant that treats a failed reading as death must be caught by the same assertion."""
-        def mutant(ident, **kw):
-            r = L.identity_state(ident, **kw)
-            return L.DEAD if r == L.UNKNOWN else r
-        got = mutant(self.ident, current_boot="", exists=lambda p: True, stat=lambda p: None, cmd=lambda p: None)
-        self.assertNotEqual(got, L.UNKNOWN, "control must differ from the real function")
+        seen = wait_not_alive(ident, 3.0)
+        self.assertNotEqual(seen[-1], L.ALIVE, seen)
+        self.assertIn(seen[-1], (L.DEAD, L.UNKNOWN))
 
 
-# ====================================================================== boot id
-class TestBootId(unittest.TestCase):
-    def test_valid_and_invalid(self):
+class TestBootMachine(unittest.TestCase):
+    def test_boot_id(self):
         self.assertEqual(L.boot_id(BOOT + "\n"), BOOT)
         for bad in ("", "nope", BOOT.upper(), BOOT[:-1]):
             self.assertIsNone(L.boot_id(bad), bad)
-
-    def test_live_reading(self):
         self.assertIsNotNone(L.boot_id())
+
+    def test_machine_identity_hashes_and_hardware_binding(self):
+        with tempfile.TemporaryDirectory() as d:
+            mid, dmi = Path(d, "mid"), Path(d, "dmi")
+            mid.write_text("abc\n")
+            r = L.machine_identity(mid, dmi)
+            self.assertEqual(r["machine_id_sha256"], hashlib.sha256(b"abc").hexdigest())
+            self.assertFalse(r["hardware_bound"])
+            dmi.write_text("UUID\n")
+            self.assertTrue(L.machine_identity(mid, dmi)["hardware_bound"])
 
 
 # ====================================================================== interval assessment
@@ -161,35 +210,52 @@ def snap(mono, boot, real, *, susp=0, bid=BOOT, power=L.AC):
 S = 10 ** 9
 
 
+def git_show(rel: str) -> str:
+    return subprocess.run(["git", "-C", str(REPO), "show", f"{CAND_COMMIT}:{rel}"], capture_output=True, text=True,
+                          check=True).stdout
+
+
 class TestAssess(unittest.TestCase):
     def clean_case(self):
         return snap(0, 0, 0), snap(120 * S, 120 * S, 120 * S), [snap(60 * S, 60 * S, 60 * S)], []
+
+    def test_constants_equal_the_candidates(self):
+        """R04 / R09: the tolerance and spacing are the accepted mbs308_host values (read from 142d97a9)."""
+        src = git_show(CAND_HOST)
+        tol = int(re.search(r"^SLEEP_GAP_TOL_NS = ([\d_]+)", src, re.M).group(1).replace("_", ""))
+        gap = int(re.search(r"^MAX_SAMPLE_GAP_S = (\d+)", src, re.M).group(1))
+        self.assertEqual((L.SLEEP_GAP_TOL_NS, L.MAX_SAMPLE_GAP_S), (tol, gap))
 
     def test_clean_needs_every_channel(self):
         a, b, s, j = self.clean_case()
         self.assertEqual(L.assess(a, b, s, j)["status"], "CLEAN")
 
-    def test_suspend_detected(self):
+    def test_suspend_detected_just_above_tolerance(self):
         a, b, s, j = self.clean_case()
-        b["clocks"]["boottime_ns"] += 30 * S
+        b["clocks"]["boottime_ns"] += 3 * S
         self.assertEqual(L.assess(a, b, s, j)["status"], "CONTAMINATED")
 
     def test_pause_channel_is_ambiguous(self):
         a, b, s, j = self.clean_case()
-        b["clocks"]["realtime_ns"] += 600 * S                         # wall clock jumped (VM pause or a clock step)
+        b["clocks"]["realtime_ns"] += 3 * S
         r = L.assess(a, b, s, j)
         self.assertEqual(r["status"], "AMBIGUOUS")
         self.assertTrue(any(x.startswith("AMBIGUOUS: P") for x in r["reasons"]))
 
     def test_missing_channels_never_clean(self):
         a, b, s, j = self.clean_case()
-        self.assertEqual(L.assess(a, b, s, None)["status"], "AMBIGUOUS")             # no journal
-        a2 = dict(a, suspend_success=None)
-        self.assertEqual(L.assess(a2, b, s, j)["status"], "AMBIGUOUS")               # no suspend_stats
-        b2 = dict(b, power="ABSENT")
-        self.assertEqual(L.assess(a, b2, s, j)["status"], "AMBIGUOUS")               # no power supply exposed
-        b3 = dict(b, power=None)
-        self.assertEqual(L.assess(a, b3, s, j)["status"], "AMBIGUOUS")
+        self.assertEqual(L.assess(a, b, s, None)["status"], "AMBIGUOUS")
+        self.assertEqual(L.assess(dict(a, suspend_success=None), b, s, j)["status"], "AMBIGUOUS")
+        self.assertEqual(L.assess(a, dict(b, power="ABSENT"), s, j)["status"], "AMBIGUOUS")
+        self.assertEqual(L.assess(a, dict(b, power=None), s, j)["status"], "AMBIGUOUS")
+        self.assertEqual(L.assess(a, dict(b, boot_id=None), s, j)["status"], "AMBIGUOUS")
+
+    def test_power_checked_at_every_sample(self):
+        """R10: a battery reading in the middle of the interval contaminates it."""
+        a, b, _, j = self.clean_case()
+        mid = snap(60 * S, 60 * S, 60 * S, power="BATTERY")
+        self.assertEqual(L.assess(a, b, [mid], j)["status"], "CONTAMINATED")
+        self.assertEqual(L.assess(a, b, [dict(mid, power=None)], j)["status"], "AMBIGUOUS")
 
     def test_reboot_battery_suspendcount_journal(self):
         a, b, s, j = self.clean_case()
@@ -198,16 +264,14 @@ class TestAssess(unittest.TestCase):
         self.assertEqual(L.assess(a, dict(b, suspend_success=1), s, j)["status"], "CONTAMINATED")
         self.assertEqual(L.assess(a, b, s, [{"t": 1}])["status"], "CONTAMINATED")
 
-    def test_sample_coverage(self):
-        a, b, s, j = self.clean_case()
-        far = snap(400 * S, 400 * S, 400 * S)
-        self.assertEqual(L.assess(a, far, [], j)["status"], "AMBIGUOUS")             # 400 s without a sample
+    def test_sample_spacing_boundary(self):
+        """R09: 180 s spacing is covered, 181 s is not."""
+        a = snap(0, 0, 0)
+        self.assertEqual(L.assess(a, snap(180 * S, 180 * S, 180 * S), [], [])["status"], "CLEAN")
+        self.assertEqual(L.assess(a, snap(181 * S, 181 * S, 181 * S), [], [])["status"], "AMBIGUOUS")
 
     def test_live_host_is_never_clean(self):
-        """On this Cloud VM (no power supply, no suspend_stats, no journal) a real interval cannot be CLEAN."""
-        a = L.snapshot()
-        b = L.snapshot()
-        self.assertNotEqual(L.assess(a, b, [], None)["status"], "CLEAN")
+        self.assertNotEqual(L.assess(L.snapshot(), L.snapshot(), [], None)["status"], "CLEAN")
 
 
 # ====================================================================== power, thermal
@@ -225,6 +289,23 @@ class TestPowerThermal(unittest.TestCase):
             self.assertIsNone(L.power_source(d))
         self.assertIsNone(L.power_source("/nonexistent/power_supply"))
 
+    def test_failed_or_unknown_supplies_are_unknown(self):
+        """F9 / R01: an unreadable type, an unreadable battery status, or an unknown supply type is never AC."""
+        base = {"AC/type": "Mains\n", "AC/online": "1\n"}
+        with tempfile.TemporaryDirectory() as d:
+            mkfiles(Path(d), dict(base, **{"BAT0/type": "Battery\n"}))          # status file missing
+            self.assertIsNone(L.power_source(d))
+        with tempfile.TemporaryDirectory() as d:
+            mkfiles(Path(d), base)
+            (Path(d) / "BAT1" / "type").mkdir(parents=True)                   # type unreadable (a directory)
+            self.assertIsNone(L.power_source(d))
+        with tempfile.TemporaryDirectory() as d:
+            mkfiles(Path(d), dict(base, **{"ups/type": "UPS\n", "ups/status": "Discharging\n"}))
+            self.assertEqual(L.power_source(d), "BATTERY")
+        with tempfile.TemporaryDirectory() as d:
+            mkfiles(Path(d), dict(base, **{"usb/type": "USB\n", "usb/online": "1\n"}))
+            self.assertIsNone(L.power_source(d))
+
     def test_thermal_raw_only(self):
         with tempfile.TemporaryDirectory() as d:
             self.assertEqual(L.thermal_zones(d), [])
@@ -237,18 +318,19 @@ class TestPowerThermal(unittest.TestCase):
         self.assertIsNone(L.thermal_zones("/nonexistent/thermal"))
 
 
-# ====================================================================== memory (raw only)
+# ====================================================================== memory and cgroups
 MEMINFO = "MemTotal:       16479424 kB\nMemFree:        12000000 kB\nMemAvailable:   15000000 kB\n" \
           "Inactive(file):  2000000 kB\nSwapTotal:             0 kB\nHugePages_Total:       0\n"
+BIG = "9223372036854771712"
 
 
 class TestMemory(unittest.TestCase):
-    def cgroot(self, d, leaf_limit="1000000000", mid_limit="9223372036854771712", unreadable_mid=False):
-        files = {"memory/a/b/memory.limit_in_bytes": leaf_limit + "\n", "memory/a/b/memory.usage_in_bytes": "400\n",
-                 "memory/a/memory.usage_in_bytes": "500\n", "memory/memory.limit_in_bytes": "9223372036854771712\n",
-                 "memory/memory.usage_in_bytes": "600\n"}
-        if not unreadable_mid:
-            files["memory/a/memory.limit_in_bytes"] = mid_limit + "\n"
+    def v1(self, d, leaf="1000000000", mid=BIG, leaf_use="400\n", drop=()):
+        files = {"memory/a/b/memory.limit_in_bytes": leaf + "\n", "memory/a/b/memory.usage_in_bytes": leaf_use,
+                 "memory/a/memory.limit_in_bytes": mid + "\n", "memory/a/memory.usage_in_bytes": "500\n",
+                 "memory/memory.limit_in_bytes": BIG + "\n", "memory/memory.usage_in_bytes": "600\n"}
+        for k in drop:
+            files.pop(k)
         return mkfiles(Path(d), files)
 
     def test_meminfo_units(self):
@@ -256,96 +338,153 @@ class TestMemory(unittest.TestCase):
         self.assertEqual(m["MemTotal"], 16479424 * 1024)
         self.assertEqual(m["HugePages_Total"], 0)
 
-    def test_chain_and_effective_limit(self):
+    def test_v1_needs_root_attestation_for_a_number(self):
         with tempfile.TemporaryDirectory() as d:
-            self.cgroot(d)
+            self.v1(d)
             r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d)
-            self.assertEqual(r["cgroup"]["version"], "v1")
             self.assertEqual([x["path"] for x in r["cgroup"]["chain"]], ["/a/b", "/a", "/"])
-            self.assertEqual(r["effective_limit"], 1000000000)
-            self.assertEqual(r["cgroup_min_headroom"], 1000000000 - 400)
-
-    def test_unreadable_ancestor_is_unknown_not_unlimited(self):
-        with tempfile.TemporaryDirectory() as d:
-            self.cgroot(d, unreadable_mid=True)
-            r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d)
             self.assertIsNone(r["effective_limit"])
+            self.assertIsNone(r["cgroup_min_headroom"])
+            self.assertEqual(r["visible_limit_upper_bound"], 1000000000)
+            ra = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+            self.assertEqual((ra["effective_limit"], ra["cgroup_min_headroom"]), (1000000000, 1000000000 - 400))
+
+    def test_partial_chain_never_numeric(self):
+        """F10: an unreadable limit anywhere, or an unreadable usage at a limited level, gives no number."""
+        with tempfile.TemporaryDirectory() as d:
+            self.v1(d, drop=("memory/a/memory.limit_in_bytes",))
+            r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+            self.assertEqual((r["effective_limit"], r["cgroup_min_headroom"], r["visible_limit_upper_bound"]),
+                             (None, None, None))
+        with tempfile.TemporaryDirectory() as d:
+            self.v1(d, leaf_use="?\n", mid="2000000000")      # another limited level exists: a partial min is possible
+            r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+            self.assertIsNone(r["cgroup_min_headroom"])
 
     def test_ancestor_tighter_than_leaf(self):
         with tempfile.TemporaryDirectory() as d:
-            self.cgroot(d, leaf_limit="9223372036854771712", mid_limit="500000000")
-            self.assertEqual(L.memory_readings(MEMINFO, "4:memory:/a/b\n", d)["effective_limit"], 500000000)
+            self.v1(d, leaf=BIG, mid="500000000")
+            r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+            self.assertEqual(r["effective_limit"], 500000000)
 
-    def test_v2(self):
+    def test_v2_root_and_memory_high(self):
         with tempfile.TemporaryDirectory() as d:
-            mkfiles(Path(d), {"x/y/memory.max": "max\n", "x/y/memory.current": "10\n", "x/memory.max": "2048\n",
-                              "x/memory.current": "20\n"})
-            r = L.memory_readings(MEMINFO, "0::/x/y\n", d)
+            mkfiles(Path(d), {"x/y/memory.max": "max\n", "x/y/memory.high": "3000\n", "x/y/memory.current": "10\n",
+                              "x/memory.max": "8000\n", "x/memory.high": "max\n", "x/memory.current": "20\n"})
+            cg = "0::/x/y\n"
+            self.assertIsNone(L.memory_readings(MEMINFO, cg, d)["effective_limit"])        # root not attested
+            r = L.memory_readings(MEMINFO, cg, d, root_attested=True)
             self.assertEqual(r["cgroup"]["version"], "v2")
-            self.assertEqual(r["effective_limit"], None)   # the root level has no memory.max: unreadable -> UNKNOWN
+            self.assertEqual(r["effective_limit"], 3000)                                  # memory.high binds
+            self.assertEqual(r["cgroup_min_headroom"], 2990)
+            ch = L.memory_cgroup_chain(cg, d)
+            self.assertIsNone(L._chain_values(ch, root_attested=False))                    # helper refuses directly
+            self.assertIsNotNone(L._chain_values(ch, root_attested=True))
+            Path(d, "x/memory.high").unlink()                                              # unreadable high
+            self.assertIsNone(L.memory_readings(MEMINFO, cg, d, root_attested=True)["effective_limit"])
 
     def test_no_rfree_quantity_is_produced(self):
         r = L.memory_readings(MEMINFO, "4:memory:/\n", "/nonexistent")
         self.assertNotIn("free_memory_bytes", r)
         self.assertIn("D-MEM-FREE", r["note"])
 
+    def test_cgroup_resources_raw(self):
+        with tempfile.TemporaryDirectory() as d:
+            mkfiles(Path(d), {"x/cgroup.controllers": "cpu pids\n", "x/cpu.max": "200000 100000\n",
+                              "x/cpuset.cpus.effective": "0-1\n", "x/pids.max": "max\n"})
+            r = L.cgroup_resources("0::/x\n", d)
+            self.assertEqual((r["cpu.max"], r["cpuset.cpus.effective"], r["pids.max"]),
+                             ("200000 100000", "0-1", "max"))
+
 
 # ====================================================================== CPU exclusivity
 class TestBusy(unittest.TestCase):
-    def test_instantaneous_not_lifetime(self):
+    def test_window_not_lifetime_and_reuse_and_birth(self):
         hz = 100
-        t0 = {10: (1, 1000, "old_hog", "/usr/bin/x"), 11: (1, 0, "spiker", "/opt/y"), 12: (99, 0, "mine", None)}
-        t1 = {10: (1, 1000, "old_hog", "/usr/bin/x"), 11: (1, 300, "spiker", "/opt/y"), 12: (99, 900, "mine", None),
-              13: (1, 50, "newborn", None)}
-        busy = L.busy_processes(t0, t1, 5.0, 25, own_pids={99}, hz=hz)
-        # old_hog: large lifetime CPU but idle in the window -> not busy; spiker: 300 ticks / 100 Hz / 5 s = 60 %
-        self.assertEqual([b["comm"] for b in busy], ["spiker"])
-        self.assertEqual(busy[0]["pct"], 60.0)
+        t0 = {(10, 1): (1, 1000, "old_hog", "/usr/bin/x"), (11, 2): (1, 0, "spiker", "/opt/y"),
+              (12, 3): (99, 0, "mine", None), (20, 5): (1, 0, "gone", None)}
+        t1 = {(10, 1): (1, 1000, "old_hog", "/usr/bin/x"), (11, 2): (1, 300, "spiker", "/opt/y"),
+              (12, 3): (99, 900, "mine", None), (13, 50): (1, 200, "newborn", None),
+              (20, 60): (1, 150, "reused_pid", None)}
+        busy = {b["comm"]: b for b in L.busy_processes(t0, t1, 5.0, 25, own_pids={99}, hz=hz)}
+        self.assertEqual(set(busy), {"spiker", "newborn", "reused_pid"})
+        self.assertEqual(busy["spiker"]["pct"], 60.0)
+        self.assertTrue(busy["newborn"]["born_in_window"])
 
-    def test_no_reading_fails_closed(self):
+    def test_no_reading_or_unsafe_inputs_fail_closed(self):
         self.assertIsNone(L.busy_processes(None, {}, 5, 25, set()))
         self.assertIsNone(L.busy_processes({}, {}, 0, 25, set()))
+        self.assertIsNone(L.busy_processes({}, {}, 5, 25, {1}))                 # own_pids may not contain init
+        self.assertIsNone(L.busy_processes({}, {}, 5, 25, set(), view_complete=False))
+        self.assertIsNone(L.busy_processes({}, {}, 5, 25, set(), view_complete=None))
+
+    def test_no_name_or_path_allowlist(self):
+        """R05 / D-ALLOW-PATHS: no process is exempt by name or path, including the Cloud session controller."""
+        for comm, exe in (("claude", "/opt/claude-code/bin/claude"), ("process_api", "/process_api"),
+                          ("systemd-journald", "/usr/lib/systemd/systemd-journald")):
+            t0 = {(5, 1): (2, 0, comm, exe)}
+            t1 = {(5, 1): (2, 100, comm, exe)}
+            self.assertEqual(len(L.busy_processes(t0, t1, 1.0, 25, set(), hz=100)), 1, comm)
+
+    def test_proc_view(self):
+        mi = "23 28 0:22 / /proc rw,relatime - proc proc rw\n"
+        self.assertTrue(L.proc_view_complete("NSpid:\t77\n", mi))
+        self.assertFalse(L.proc_view_complete("NSpid:\t77\t3\n", mi))
+        self.assertFalse(L.proc_view_complete("NSpid:\t77\n", "23 28 0:22 / /proc rw,hidepid=2 - proc proc rw\n"))
+        self.assertIsNone(L.proc_view_complete("Name: x\n", mi))
 
     def test_live_snapshot(self):
         a = L.cpu_ticks()
         time.sleep(0.2)
         b = L.cpu_ticks()
-        self.assertIsInstance(L.busy_processes(a, b, 0.2, 25, {os.getpid()}), list)
-
-    def test_no_path_allowlist(self):
-        t0 = {5: (1, 0, "systemd-journald", "/usr/lib/systemd/systemd-journald")}
-        t1 = {5: (1, 100, "systemd-journald", "/usr/lib/systemd/systemd-journald")}
-        self.assertEqual(len(L.busy_processes(t0, t1, 1.0, 25, set(), hz=100)), 1)  # D-ALLOW-PATHS open: not allowed
+        self.assertIsInstance(L.busy_processes(a, b, 0.2, 25, {os.getpid()}, view_complete=L.proc_view_complete()),
+                              list)
 
 
 # ====================================================================== updates, launch context
 class TestUpdatesLaunch(unittest.TestCase):
-    def test_update_positive_evidence_only(self):
-        with tempfile.TemporaryDirectory() as d:
-            apt, tim = Path(d, "apt"), Path(d, "timers")
-            apt.mkdir()
-            tim.mkdir()
-            ub = str(Path(d, "uu"))
-            self.assertTrue(L.auto_update_settings(apt, tim, ub)["guest_auto_install_enabled"])   # nothing: enabled
-            (apt / "50x").write_text('APT::Periodic::Unattended-Upgrade "0";\n')
-            self.assertFalse(L.auto_update_settings(apt, tim, ub)["guest_auto_install_enabled"])
-            (tim / "apt-daily-upgrade.timer").write_text("")
-            self.assertTrue(L.auto_update_settings(apt, tim, ub)["guest_auto_install_enabled"])   # timer enabled
-            (tim / "apt-daily-upgrade.timer").unlink()
-            (apt / "99y").write_text('APT::Periodic::Unattended-Upgrade "1";\n')                 # later file wins
-            self.assertTrue(L.auto_update_settings(apt, tim, ub)["guest_auto_install_enabled"])
-        self.assertTrue(L.auto_update_settings("/nonexistent", "/nonexistent", "/nonexistent")
-                        ["guest_auto_install_enabled"])
-        self.assertEqual(L.auto_update_settings()["provider_image_updates"], L.UNKNOWN)
+    def settings(self, dump, **mk):
+        d = tempfile.mkdtemp()
+        paths = {"timers_dir": Path(d, "timers"), "uu_binary": str(Path(d, "uu")),
+                 "snapd_paths": (str(Path(d, "snapd")),), "cloud_dir": str(Path(d, "cloud")),
+                 "livepatch_dir": str(Path(d, "livepatch"))}
+        Path(paths["timers_dir"]).mkdir()
+        if mk.get("timer"):
+            Path(paths["timers_dir"], "apt-daily-upgrade.timer").write_text("")
+        for k in ("snapd", "cloud"):
+            if mk.get(k):
+                Path(d, k).mkdir()
+        if mk.get("livepatch") is not None:
+            Path(d, "livepatch").mkdir()
+            for n in mk["livepatch"]:
+                Path(d, "livepatch", n).mkdir()
+        return L.auto_update_settings(dump, use_live_apt=False, **paths)
+
+    def test_positive_evidence_only(self):
+        off = 'APT::Periodic "";\nAPT::Periodic::Enable "0";\n'
+        self.assertTrue(self.settings(off)["guest_updates_shown_disabled"])
+        self.assertTrue(self.settings('APT::Periodic::Unattended-Upgrade "0";\n')["guest_updates_shown_disabled"])
+        for kw in ({"timer": True}, {"snapd": True}, {"cloud": True}, {"livepatch": ["kpatch_1"]}):
+            self.assertFalse(self.settings(off, **kw)["guest_updates_shown_disabled"], kw)
+        self.assertFalse(self.settings('APT::Periodic::Unattended-Upgrade "1";\n')["guest_updates_shown_disabled"])
+        self.assertFalse(self.settings("")["guest_updates_shown_disabled"])                 # nothing positive
+        self.assertFalse(L.auto_update_settings(None, use_live_apt=False)["guest_updates_shown_disabled"])
+
+    def test_dump_lines_only(self):
+        """apt-config dump never prints comments; a commented-out key in raw text is not a dump line."""
+        self.assertFalse(self.settings('// APT::Periodic::Enable "0";\n')["guest_updates_shown_disabled"])
+
+    def test_reboot_vector_recorded_and_provider_unknown(self):
+        r = self.settings('APT::Periodic::Enable "0";\nUnattended-Upgrade::Automatic-Reboot "true";\n')
+        self.assertEqual(r["unattended_automatic_reboot"], "true")
+        self.assertEqual(r["provider_image_updates"], L.UNKNOWN)
 
     def test_launched_by_systemd_requires_everything(self):
         cg = "1:name=systemd:/system.slice/rebaseguard-mbs308-exec.service\n"
         env = {"INVOCATION_ID": "abc"}
         good = {"MainPID": os.getpid(), "InvocationID": "abc"}
-        ok = L.launched_by_systemd(env=env, proc_cgroup_text=cg, show=lambda u: good, pid1=True)
-        self.assertTrue(ok["pass"])
-        self.assertEqual(ok["unit"], "rebaseguard-mbs308-exec.service")
-        for kw in ({"pid1": False}, {"pid1": None}, {"env": {}},
+        self.assertTrue(L.launched_by_systemd(env=env, proc_cgroup_text=cg, show=lambda u: good, pid1=True)["pass"])
+        for kw in ({"pid1": False}, {"env": {}},
                    {"proc_cgroup_text": "1:name=systemd:/user.slice/other.service\n"},
                    {"show": lambda u: None}, {"show": lambda u: dict(good, MainPID=1)},
                    {"show": lambda u: dict(good, InvocationID="zzz")}):
@@ -374,15 +513,31 @@ class TestDurableWrite(unittest.TestCase):
     def test_roundtrip(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d, "result.json")
-            h = L.durable_write(p, b"{}")
-            self.assertEqual(h, hashlib.sha256(b"{}").hexdigest())
+            self.assertEqual(L.durable_write(p, b"{}"), hashlib.sha256(b"{}").hexdigest())
             self.assertFalse(Path(d, "result.json.tmp").exists())
 
-    def test_existing_tmp_refuses(self):
+    def test_fsyncs_file_then_directory(self):
+        """R03 / R08: the data and the directory are both fsync'd, in that order."""
+        calls, real = [], os.fsync
+
+        def spy(fd):
+            calls.append("dir" if _stat.S_ISDIR(os.fstat(fd).st_mode) else "file")
+            return real(fd)
+        os.fsync = spy
+        try:
+            with tempfile.TemporaryDirectory() as d:
+                L.durable_write(Path(d, "r"), b"x")
+        finally:
+            os.fsync = real
+        self.assertEqual(calls, ["file", "dir"])
+
+    def test_stale_tmp_is_a_named_state(self):
+        """F23: a stale tmp raises StaleTmp and is left in place."""
         with tempfile.TemporaryDirectory() as d:
             Path(d, "r.tmp").write_text("stale")
-            with self.assertRaises(FileExistsError):
+            with self.assertRaises(L.StaleTmp):
                 L.durable_write(Path(d, "r"), b"x")
+            self.assertEqual(Path(d, "r.tmp").read_text(), "stale")
 
     def test_tmp_symlink_refused(self):
         with tempfile.TemporaryDirectory() as d:
@@ -392,77 +547,153 @@ class TestDurableWrite(unittest.TestCase):
             self.assertFalse(Path(d, "elsewhere").exists())
 
     def test_crash_injection_old_or_new_never_partial(self):
-        """SIGKILL at each stage: the target holds the complete OLD bytes or the complete NEW bytes, never a mix.
-        (SIGKILL is not a power loss; the disk-level guarantee is a provider fact, D-HOST-LIFETIME.)"""
-        old, new = b"OLD" * 100000, b"NEW" * 100000
-        expect = {"written": old, "fsynced": old, "renamed": new}
-        for stage, want in expect.items():
+        """SIGKILL at each stage: complete OLD or complete NEW bytes, never a mix (SIGKILL is not a power loss)."""
+        old = b"OLD" * 100000
+        for stage, want in {"written": old, "fsynced": old, "renamed": b"NEW" * 100000}.items():
             with tempfile.TemporaryDirectory() as d:
                 p = Path(d, "result.json")
                 p.write_bytes(old)
                 rc = subprocess.run([sys.executable, "-c", _CHILD, LXDIR, str(p), stage]).returncode
                 self.assertEqual(rc, -signal.SIGKILL, stage)
                 self.assertEqual(p.read_bytes(), want, stage)
-                leftover = Path(d, "result.json.tmp").exists()
-                self.assertEqual(leftover, stage != "renamed", stage)   # a stale tmp is left for recovery to report
-
-    def test_negative_control_non_atomic_writer(self):
-        """A mutant that writes the target in place is caught by the same partial-write check."""
-        with tempfile.TemporaryDirectory() as d:
-            p = Path(d, "result.json")
-            p.write_bytes(b"OLD" * 100000)
-            code = ("import os,signal,sys;fd=os.open(sys.argv[1],os.O_WRONLY|os.O_TRUNC);"
-                    "os.write(fd,b'NEW'*1000);os.kill(os.getpid(),signal.SIGKILL)")
-            subprocess.run([sys.executable, "-c", code, str(p)])
-            self.assertNotIn(p.read_bytes(), (b"OLD" * 100000, b"NEW" * 100000))
+                self.assertEqual(Path(d, "result.json.tmp").exists(), stage != "renamed", stage)
 
 
-# ====================================================================== pins and preflight
-class TestPinsPreflight(unittest.TestCase):
-    def test_pins(self):
+# ====================================================================== pins
+class TestPins(unittest.TestCase):
+    def test_pin_set_covers_libm_libc_loader(self):
+        """F1: the mapped shared objects (incl. libm.so.6, libc.so.6, the loader) and package versions are pinned."""
+        self.assertEqual(set(L.PIN_KEYS), {"python_executable", "python_sha256", "python_sys_version",
+                                           "mapped_objects", "dpkg_versions", "livepatch", "os_id", "os_version_id",
+                                           "os_version", "kernel_release", "machine", "glibc"})
+        got = L.platform_readings()
+        names = {Path(k).name for k in got["mapped_objects"]}
+        for lib in ("libm.so.6", "libc.so.6"):
+            self.assertIn(lib, names)
+        self.assertTrue(any(n.startswith("ld-linux") for n in names))
+        self.assertIn("libc6", got["dpkg_versions"])
+
+    def test_every_pin_key_is_compared(self):
+        """R06: changing any one pinned value is a mismatch."""
         got = L.platform_readings()
         self.assertEqual(L.pin_mismatches(got, got), [])
-        changed = dict(got, kernel_release="6.18.44-fc-v64")
-        self.assertEqual(L.pin_mismatches(changed, got), ["kernel_release"])
-        unread = dict(got, python_sha256=None)
-        self.assertIn("python_sha256", L.pin_mismatches(unread, unread))    # an unreadable pin is not a pin
+        for k in L.PIN_KEYS:
+            v = got[k]
+            changed = (dict(v, **{next(iter(v)): "different"}) if isinstance(v, dict) and v else
+                       (["x"] if isinstance(v, list) else f"{v}-different"))
+            self.assertEqual(L.pin_mismatches(dict(got, **{k: changed}), got), [k], k)
+
+    def test_libm_change_with_same_glibc_string(self):
+        """The review-59 case: libc6 8.7 vs 8.9 both report 'glibc 2.39'; the package version and libm digest differ."""
+        got = L.platform_readings()
+        libm = next(k for k in got["mapped_objects"] if k.endswith("libm.so.6"))
+        other = dict(got, mapped_objects=dict(got["mapped_objects"], **{libm: "0" * 64}))
+        self.assertEqual(L.pin_mismatches(other, got), ["mapped_objects"])
+        other = dict(got, dpkg_versions=dict(got["dpkg_versions"], libc6="2.39-0ubuntu8.7"))
+        self.assertEqual(L.pin_mismatches(other, got), ["dpkg_versions"])
+
+    def test_unreadable_pins_never_match(self):
+        got = L.platform_readings()
+        for bad in ({"python_sha256": None}, {"mapped_objects": None}, {"mapped_objects": {}},
+                    {"dpkg_versions": dict(got["dpkg_versions"], libc6=None)}):
+            pins = dict(got, **bad)
+            self.assertIn(next(iter(bad)), L.pin_mismatches(pins, pins), bad)
+        self.assertIsNone(L.mapped_objects("7f00-7f01 r-xp 0 08:01 1 /nonexistent/libx.so.1\n"))
 
     def test_r1_vs_r2_hosts_would_mismatch(self):
-        """The 2026-10-04 host's recorded kernel and OS differ from this host: pins taken there fail here."""
-        inv = json.loads((HERE.parent.parent.parent / "governance" / "new_host_route_cloud_r1" /
+        inv = json.loads((HERE.parents[2] / "governance" / "new_host_route_cloud_r1" /
                           "CLOUD_HOST_INVENTORY.json").read_text())
         r1 = dict(L.platform_readings(), kernel_release=inv["platform"]["kernel"].split()[1])
         self.assertIn("kernel_release", L.pin_mismatches(r1, L.platform_readings()))
 
-    def test_preflight_all_pass_requires_every_gate(self):
-        attest = {"reviewed": True, "accepted": True}
-        rd = {"power": L.AC, "free_disk": 10 * 2 ** 30, "boot_id": BOOT,
-              "updates": {"guest_auto_install_enabled": False, "provider_image_updates": "ATTESTED_FROZEN"}}
-        r = L.preflight("/", other_job_running=False, launched={"pass": True}, host_attestation=attest, readings=rd)
-        # even with every reading favourable, the OPEN_DECISION gates keep it from passing
-        self.assertFalse(r["pass"])
-        self.assertEqual({k for k, v in r["gates"].items() if v != L.PASS},
-                         {"lowpowermode_0", "thermal_pressure_0", "memory_pressure_normal", "free_memory_ge_min",
-                          "host_exclusive"})
-        self.assertTrue(all(r["gates"][k] == L.OPEN_DECISION for k in r["blocked"]))
 
-    def test_preflight_unknowns_never_pass(self):
-        rd = {"power": None, "free_disk": None, "boot_id": None,
-              "updates": {"guest_auto_install_enabled": False, "provider_image_updates": L.UNKNOWN}}
-        r = L.preflight("/", other_job_running=None, launched=None, host_attestation=None, readings=rd)
+# ====================================================================== attestation and preflight
+class TestAttestationPreflight(unittest.TestCase):
+    HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+
+    def repo_with(self, d, rel, data: bytes):
+        subprocess.run(["git", "init", "-q", d], check=True)
+        Path(d, rel).parent.mkdir(parents=True, exist_ok=True)
+        Path(d, rel).write_bytes(data)
+        subprocess.run(["git", "-C", d, "add", rel], check=True)
+        subprocess.run(["git", "-C", d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
+                        "commit", "-q", "-m", "a"], check=True)
+
+    def test_attestation_strict(self):
+        """F8 / F20 / R02: only a reviewed, accepted, committed, sha-bound, hardware-bound record passes."""
+        with tempfile.TemporaryDirectory() as d:
+            self.repo_with(d, "att/HOST.md", b"attest")
+            good = {"reviewed": True, "accepted": True, "path": "att/HOST.md",
+                    "sha256": hashlib.sha256(b"attest").hexdigest(), "acceptance_record": "reviews/X.md",
+                    "machine": self.HW}
+            self.assertEqual(L.attestation_valid(good, repo_root=d, machine=self.HW), (True, []))
+            bad = [None, {}, dict(good, accepted="REJECTED"), dict(good, reviewed="false"), dict(good, accepted=1),
+                   dict(good, sha256="0" * 64), dict(good, path="att/MISSING.md"), dict(good, acceptance_record=""),
+                   dict(good, machine=dict(self.HW, machine_id_sha256="c" * 64))]
+            for b in bad:
+                self.assertFalse(L.attestation_valid(b, repo_root=d, machine=self.HW)[0], b)
+            soft = dict(self.HW, hardware_bound=False, product_uuid_sha256=None)
+            self.assertFalse(L.attestation_valid(dict(good, machine=soft), repo_root=d, machine=soft)[0])
+            Path(d, "att/HOST.md").write_bytes(b"edited, not committed")
+            self.assertTrue(L.attestation_valid(good, repo_root=d, machine=self.HW)[0])   # HEAD blob, not worktree
+
+    def rd(self, **kw):
+        base = {"power": L.AC, "free_disk": 10 * 2 ** 30, "boot_id": BOOT,
+                "updates": {"guest_updates_shown_disabled": True, "provider_image_updates": L.UNKNOWN}}
+        base.update(kw)
+        return base
+
+    def test_all_favourable_still_blocked_by_open_decisions(self):
+        att = {"provider_image_updates": L.NO_IMAGE_CHANGE}
+        r = L.preflight("/", mode="execute", other_job_running=False, launched={"pass": True},
+                        host_attestation=att, readings=self.rd(), attestation_check=lambda a: (True, []))
+        self.assertFalse(r["pass"])
+        self.assertEqual(set(r["blocked"]), {"lowpowermode_0", "thermal_pressure_0", "memory_pressure_normal",
+                                             "free_memory_ge_min", "host_exclusive"})
+
+    def test_update_gate(self):
+        """F8: PASS only with shown-disabled guest updates AND an accepted attestation carrying the token."""
+        tok = {"provider_image_updates": L.NO_IMAGE_CHANGE}
+
+        def gate(upd, att, ok):
+            return L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None,
+                               host_attestation=att, readings=self.rd(updates=upd),
+                               attestation_check=lambda a: (ok, []))["gates"]["no_automatic_os_install"]
+        shown = {"guest_updates_shown_disabled": True}
+        self.assertEqual(gate(shown, tok, True), L.PASS)
+        self.assertEqual(gate(shown, tok, False), L.UNKNOWN)
+        self.assertEqual(gate(shown, {"provider_image_updates": "unknown"}, True), L.UNKNOWN)
+        self.assertEqual(gate(shown, None, True), L.UNKNOWN)
+        for upd in ({}, None, {"guest_updates_shown_disabled": "true"}, {"guest_updates_shown_disabled": False}):
+            self.assertEqual(gate(upd, tok, True), L.UNKNOWN, upd)
+
+    def test_unknowns_never_pass_and_are_reported(self):
+        rd = self.rd(power=None, free_disk=None, boot_id=None, updates={})
+        r = L.preflight("/", mode="launcher_preflight", other_job_running=None, launched=None,
+                        host_attestation=None, readings=rd)
         for k in ("ac_power", "free_disk_ge_2GiB", "boot_id_recorded", "no_other_campaign_job",
                   "no_automatic_os_install", "host_lifetime_attested"):
             self.assertEqual(r["gates"][k], L.UNKNOWN, k)
-            self.assertEqual(r["blocked"].get(k), L.UNKNOWN, k)      # an UNKNOWN gate is reported as blocking
-        rd["power"] = "ABSENT"
-        self.assertEqual(L.preflight("/", other_job_running=False, launched=None, host_attestation=None,
-                                     readings=rd)["gates"]["ac_power"], L.OPEN_DECISION)
-        unreviewed = {"reviewed": False, "accepted": True}
-        self.assertEqual(L.preflight("/", other_job_running=False, launched=None, host_attestation=unreviewed,
-                                     readings=rd)["gates"]["host_lifetime_attested"], L.UNKNOWN)
+            self.assertEqual(r["blocked"].get(k), L.UNKNOWN, k)
+        self.assertEqual(L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None,
+                                     host_attestation=None, readings=self.rd(power="ABSENT"))["gates"]["ac_power"],
+                         L.OPEN_DECISION)
+
+    def test_launch_gate_modes(self):
+        """F15: execute / resume without the launch record FAIL; an unknown mode is refused."""
+        for mode in ("execute", "resume"):
+            r = L.preflight("/", mode=mode, other_job_running=False, launched=None, host_attestation=None,
+                            readings=self.rd())
+            self.assertEqual(r["gates"]["launched_by_systemd"], L.FAIL, mode)
+        r = L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None,
+                        host_attestation=None, readings=self.rd())
+        self.assertNotIn("launched_by_systemd", r["gates"])
+        with self.assertRaises(ValueError):
+            L.preflight("/", mode=None, other_job_running=False, launched=None, host_attestation=None)
 
     def test_live_preflight_fails_closed_here(self):
-        r = L.preflight("/", other_job_running=False, launched=L.launched_by_systemd(), host_attestation=None)
+        r = L.preflight("/", mode="execute", other_job_running=False, launched=L.launched_by_systemd(),
+                        host_attestation=None)
         self.assertFalse(r["pass"])
         self.assertEqual(r["gates"]["launched_by_systemd"], L.FAIL)
         self.assertEqual(r["gates"]["host_lifetime_attested"], L.UNKNOWN)
