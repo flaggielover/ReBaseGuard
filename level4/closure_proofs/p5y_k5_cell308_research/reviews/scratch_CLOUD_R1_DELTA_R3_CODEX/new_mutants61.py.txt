@@ -1,0 +1,54 @@
+"""Create three new semantic mutants against COPY; optionally run selected unchanged synthetic suite tests."""
+import difflib
+import hashlib
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+SOURCE = (ROOT / "base/lx_platform.py").read_text()
+TESTDIR = Path("/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests")
+MUTANTS = [
+    ("Y01", "effective_memory_limit ignores MemTotal host cap", 
+     '    return min([mem["MemTotal"], *[v for v in vals[0] if isinstance(v, int)]])',
+     '    return min([v for v in vals[0] if isinstance(v, int)], default=mem["MemTotal"])', "TestMemory"),
+    ("Y02", "headroom uses largest ancestor allowance instead of minimum",
+     "    return min(hs) if hs else None", "    return max(hs) if hs else None", "TestMemory"),
+    ("Y03", "out-of-order samples ignored by assessment",
+     "        if any(d < 0 for d in steps):", "        if False:", "TestAssess"),
+]
+rows = []
+for mid, desc, old, new, cls in MUTANTS:
+    # Y01 touches only the first occurrence, in effective_memory_limit; the second is raw upper bound.
+    expected = 2 if mid == "Y01" else 1
+    assert SOURCE.count(old) == expected, (mid, SOURCE.count(old))
+    mutated = SOURCE.replace(old, new, 1)
+    d = ROOT / "mutants" / mid
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "lx_platform.py").write_text(mutated)
+    diff = "".join(difflib.unified_diff(SOURCE.splitlines(True), mutated.splitlines(True),
+                                     fromfile="base/lx_platform.py", tofile=f"{mid}/lx_platform.py"))
+    (d / "mutation.diff").write_text(diff)
+    row = {"id": mid, "property": desc, "selected_suite_class": cls, "status": "UNVERIFIED_RUNTIME"}
+    if "--run-selected" in sys.argv:
+        # Exclude Linux-native TestAssess tests and historical candidate reads; these do not touch either Y03 site.
+        tests = (["test_lx_platform.TestMemory"] if cls == "TestMemory" else [
+            "test_lx_platform.TestAssess." + n for n in ["test_clean_needs_every_channel",
+            "test_suspend_detected_just_above_tolerance", "test_pause_channel_is_ambiguous",
+            "test_missing_channels_never_clean", "test_power_checked_at_every_sample",
+            "test_reboot_battery_suspendcount_journal", "test_sample_spacing_boundary",
+            "test_monotonic_ahead_of_boottime_and_absent_samples"]])
+        env = dict(os.environ, LX_PLATFORM_DIR=str(d), PYTHONDONTWRITEBYTECODE="1")
+        p = subprocess.run([sys.executable, "-B", "-m", "unittest", "-v", *tests], cwd=TESTDIR,
+                           env=env, capture_output=True, text=True, timeout=60)
+        (d / "selected_suite.stdout.txt").write_text(p.stdout)
+        (d / "selected_suite.stderr.txt").write_text(p.stderr)
+        row.update(status="KILLED_BY_SELECTED_TESTS" if p.returncode else "SURVIVED_SELECTED_TESTS",
+                   returncode=p.returncode, tail=p.stderr.strip().splitlines()[-1])
+    rows.append(row)
+out = {"base_sha256": hashlib.sha256(SOURCE.encode()).hexdigest(), "platform": sys.platform,
+       "full_Linux_suite": "UNVERIFIED_RUNTIME", "mutants": rows}
+(ROOT / "new_mutants61_result.json").write_text(json.dumps(out, indent=2) + "\n")
+print(json.dumps(out, indent=2))

@@ -1,0 +1,59 @@
+import ast, collections, hashlib, importlib.util, json, re, subprocess, sys
+from pathlib import Path
+sys.dont_write_bytecode=True
+R=Path('/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard'); O=Path('/tmp/cell308-codex-review65/evidence')
+H='7eb3ba4d03f3b7898109073c83eb9b08f4589354'; B='af55168c'; NS='level4/closure_proofs/p5y_k5_cell308_research'; DEV=NS+'/streams/CLOUD_R1_LINUX_DEV'; I=O/'immutable'
+def blob(p,rev=H): return subprocess.check_output(['git','show',rev+':'+p],cwd=R)
+def sha(b): return hashlib.sha256(b).hexdigest()
+def load(p): return json.loads((I/p).read_text())
+static=json.loads((O/'static_checks.json').read_text()); methods=json.loads((O/'test_methods.json').read_text())
+spec=importlib.util.spec_from_file_location('review_harness',I/DEV/'tests/run_mutants.py'); h=importlib.util.module_from_spec(spec); spec.loader.exec_module(h)
+def names(text): return re.findall(r'^test_[^\n (]+ \((test_lx_(?:platform|verified)\.[^\n ()]+)\)',text,re.M)
+def sections(text): return re.findall(r'^(?:FAIL|ERROR): .*?(?=^=+\n|^-+\nRan |\Z)',text,re.M|re.S)
+def frames(text):
+ out=[]
+ for f,line,fun,statement in re.findall(r'  File "([^\n]+test_lx_(?:platform|verified)\.py)", line (\d+), in ([^\n]+)\n    ([^\n]+)',text):
+  rel='tests/'+Path(f).name; lines=(I/DEV/rel).read_text().splitlines(); n=int(line); assert lines[n-1].strip()==statement.strip(),(n,statement,lines[n-1]); out.append({'file':rel,'line':n,'function':fun,'statement':statement})
+ return out
+A=DEV+'/results/REVISION7_AUTHORED_CHECKS_20261015'; authored=load(A+'/validation.json')
+assert authored['input_sha256']==static['input_sha256']; assert authored['selected_test_count']==32
+assert authored['native_linux_full_suite']=='UNVERIFIED' and authored['new_target_evaluations']==0
+selected=sorted(n for n in methods if n.startswith('test_lx_verified.') or n.startswith('test_lx_platform.TestBusy.test_proc_view') or n=='test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file')
+assert len(selected)==32
+check=[]; base=None
+for r in authored['runs']:
+ label=r['label']; assert r['stdout'].encode()==(I/A/(label+'.stdout.txt')).read_bytes(); assert r['stderr'].encode()==(I/A/(label+'.stderr.txt')).read_bytes(); assert sorted(names(r['stderr']))==selected
+ modulehash=static['input_sha256']['lx_platform.py'] if label=='BASELINE' else next(x['mutated_lx_platform_sha256'] for x in static['mutants'] if x['id']==label)
+ assert r['module_sha256']==modulehash
+ suite=h._suite_record(r['command'],{'LX_PLATFORM_DIR':r['LX_PLATFORM_DIR'],'PYTHONDONTWRITEBYTECODE':'1'},returncode=r['returncode'],stdout=r['stdout'],stderr=r['stderr'],elapsed_s=0)
+ assert suite['ran']==32 and suite['errors']==suite['skipped']==0 and not suite['invalid_reasons']
+ if label=='BASELINE': assert h.suite_passed(suite); base=suite; status='PASS'
+ else: status,reasons=h.classify_mutant(suite,base); assert status=='KILLED' and not reasons
+ assert suite['failures']=={'BASELINE':0,'M25':1,'F06':3,'F07':4}[label]
+ check.append({'label':label,'status':status,'module_sha256':modulehash,'exact_32_test_names':True,'suite':{k:suite[k] for k in ['ran','summary','returncode','failures','errors','skipped','invalid_reasons']},'failure_sections':sections(r['stderr']),'verified_test_frames':frames(r['stderr'])})
+assert [r['label'] for r in check]==['BASELINE','M25','F06','F07']
+(O/'authored_subset_checks.json').write_text(json.dumps({'head':H,'platform':authored['platform'],'python':authored['python'],'selected_names':selected,'runner_source_sha256':sha((I/A/'run_selected.py.txt').read_bytes()),'native_linux_full_suite':'UNVERIFIED','input_hashes_match':True,'raw_reports_match_separate_git_files':True,'runs':check},indent=2)+'\n')
+prior=load(NS+'/reviews/scratch_CLOUD_R1_DELTA_R6_CODEX/evidence/record_checks.json'); preserved=[]
+for row in prior['eight_prior_drafts_preserved']+prior['historical_records_preserved']:
+ p=row['path']; d=blob(p); assert sha(d)==row['sha256']; assert d==blob(p,B); preserved.append({'path':p,'sha256':sha(d),'byte_identical_to_base':True})
+for n in ['E1','E2']:
+ p=NS+'/governance/new_host_route_cloud_r1/PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R4_ERRATUM_'+n+'.md'; d=blob(p); assert d==blob(p,B); preserved.append({'path':p,'sha256':sha(d),'byte_identical_to_base':True})
+for p in [NS+'/reviews/REVIEW_CLOUD_R1_DELTA_R6_CODEX_EVIDENCE.md', NS+'/reviews/scratch_CLOUD_R1_DELTA_R6_CODEX/evidence/record_checks.json', NS+'/reviews/scratch_CLOUD_R1_DELTA_R6_CODEX/evidence/current_adjudication_checks.json', NS+'/reviews/scratch_CLOUD_R1_DELTA_R6_CODEX/evidence/expected_property_witnesses.json']+[DEV+'/results/REVIEW64_LINUX_REVISION6_20261015/'+x for x in ['validation.json','input-commit.txt','run-metadata.json','M25.json']]:
+ d=blob(p); assert d==blob(p,B); preserved.append({'path':p,'sha256':sha(d),'byte_identical_to_base':True})
+ledger=NS+'/ledger/TARGET_INTEGRITY_LEDGER.jsonl'; diff=subprocess.check_output(['git','diff','--unified=0',B,H,'--',ledger],cwd=R,text=True); (O/'latest_ledger_zero_context.diff').write_text(diff)
+added=[ln[1:] for ln in diff.splitlines() if ln.startswith('+') and not ln.startswith('+++')]; removed=[ln for ln in diff.splitlines() if ln.startswith('-') and not ln.startswith('---')]; assert len(added)==1 and not removed
+entry=json.loads(added[0]); assert entry['event']=='CODEX_REVISION7_MALFORMED_PATH_AND_ABSENT_BLOB_REFUSAL'
+bindings=[]
+for p,expected in entry['bindings_sha256'].items():
+ d=blob(p); assert sha(d)==expected; bindings.append({'path':p,'sha256':expected,'matches':True})
+assert entry['authored_subset']=={'baseline_tests':32,'baseline':'PASS','M25_assertion_failures':1,'F06_assertion_failures':3,'F07_assertion_failures':4,'errors':0,'platform':'macOS','native_linux_full_suite':'UNVERIFIED'}
+R6=DEV+'/results/REVIEW64_LINUX_REVISION6_20261015'; r6=load(R6+'/validation.json'); m25=next(x for x in r6['mutants'] if x['id']=='M25')
+assert (I/R6/'input-commit.txt').read_text().strip()=='875eb95575fa9dc137083667bf30cc4a5a228fe6'
+assert r6['baseline']['ran']==134 and h.suite_passed(r6['baseline'])
+assert r6['status_counts']=={'KILLED':78,'SURVIVED':0,'ERROR':1,'NOT_APPLIED':0}; assert m25['status']=='ERROR' and m25['suite']['errors']==1 and m25['suite']['failures']==1 and m25['reasons']==['UNITTEST_ERRORS']
+assert h.classify_mutant(m25['suite'],r6['baseline'])==('ERROR',['UNITTEST_ERRORS'])
+saved=load(R6+'/M25.json'); assert saved==m25 or (isinstance(saved,dict) and saved.get('id')=='M25')
+meta=load(R6+'/run-metadata.json'); assert meta['headSha']=='875eb95575fa9dc137083667bf30cc4a5a228fe6' and meta['status']=='completed' and meta['conclusion']=='failure'
+record={'head':H,'base':B,'preserved':preserved,'latest_ledger':{'event':entry['event'],'added_lines':1,'removed_lines':0,'bindings':bindings,'authored_subset':entry['authored_subset'],'current_native_linux_at_append':entry['current_native_linux']},'historical_r6':{'head':'875eb95575fa9dc137083667bf30cc4a5a228fe6','baseline_tests':134,'baseline':'PASS','valid_kills':78,'M25':'ERROR','M25_failures':1,'M25_unittest_errors':1,'server_conclusion':'failure','record_not_reinterpreted':True}}
+(O/'record_checks.json').write_text(json.dumps(record,indent=2)+'\n')
+print(json.dumps({'authored':[{'label':x['label'],'status':x['status'],**x['suite']} for x in check],'preserved_count':len(preserved),'ledger_bindings':len(bindings),'historical_r6':record['historical_r6']},indent=2))

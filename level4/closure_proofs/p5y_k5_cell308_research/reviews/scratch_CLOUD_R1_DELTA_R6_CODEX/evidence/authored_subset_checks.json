@@ -1,0 +1,109 @@
+{
+  "commit": "875eb95575fa9dc137083667bf30cc4a5a228fe6",
+  "source_hashes_match": true,
+  "selected_29_methods_complete": true,
+  "selected_tests": [
+    "test_lx_platform.TestBusy.test_proc_view",
+    "test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_mounts",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_nonproc_filesystem",
+    "test_lx_verified.TestVerifiedObservation.test_canonical_verifier_has_internal_repository_and_default_machine",
+    "test_lx_verified.TestVerifiedObservation.test_changed_live_launch_observation_refuses_corroboration",
+    "test_lx_verified.TestVerifiedObservation.test_default_launch_record_is_independently_corroborated",
+    "test_lx_verified.TestVerifiedObservation.test_invalid_mode_is_refused_before_any_observation",
+    "test_lx_verified.TestVerifiedObservation.test_machine_id_without_hardware_binding_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_missing_acceptance_line_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_missing_live_launch_observation_refuses_corroboration",
+    "test_lx_verified.TestVerifiedObservation.test_missing_reference_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_missing_root_claim_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_non_json_committed_fixture_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked",
+    "test_lx_verified.TestVerifiedObservation.test_preflight_composition_has_no_caller_reading_launch_or_policy_seam",
+    "test_lx_verified.TestVerifiedObservation.test_public_api_refuses_caller_selected_seams",
+    "test_lx_verified.TestVerifiedObservation.test_unaccepted_fixture_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_uncommitted_fixture_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_unreviewed_fixture_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_verified_committed_fixture_supplies_raw_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_wrapper_uses_the_same_platform_module_selected_by_harness",
+    "test_lx_verified.TestVerifiedObservation.test_wrong_host_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_wrong_sha_withholds_root_contract"
+  ],
+  "raw_embedded_reports_match_git_files": true,
+  "runs": [
+    {
+      "label": "BASELINE",
+      "module_sha256": "e8e33df59f3edd9f187db149cf77d1cca024403ffda5e21eb1c1d66980ec2074",
+      "record": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error::ResourceWarning",
+          "/tmp/cell308-codex-review61/r6-authored/run_selected.py"
+        ],
+        "cwd": "/private/tmp/cell308-codex-review64/evidence/immutable",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+          "PYTHONDONTWRITEBYTECODE": null
+        },
+        "returncode": 0,
+        "elapsed_s": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 29,
+        "summary": "OK",
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [],
+        "error_names": [],
+        "invalid_reasons": [],
+        "suite_tail": "OK"
+      }
+    },
+    {
+      "label": "F06",
+      "module_sha256": "0531b5c69ff6c040d2a7d92c40154cc4076e5743031fe9f52d3e5c5940ddaeb8",
+      "record": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error::ResourceWarning",
+          "/tmp/cell308-codex-review61/r6-authored/run_selected.py"
+        ],
+        "cwd": "/private/tmp/cell308-codex-review64/evidence/immutable",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/tmp/cell308-codex-review61/r6-authored/mutant",
+          "PYTHONDONTWRITEBYTECODE": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 29,
+        "summary": "FAILED (failures=3)",
+        "failures": 3,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_proc_view_preserves_the_whole_nspid_payload (test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload) (status='NSpid:garbage\\t77\\n')",
+          "test_proc_view_preserves_the_whole_nspid_payload (test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload) (status='NSpid:77 88\\n')",
+          "test_proc_view_preserves_the_whole_nspid_payload (test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload) (control='NSpid:77\\n')"
+        ],
+        "error_names": [],
+        "invalid_reasons": [],
+        "suite_tail": "FAILED (failures=3)"
+      }
+    }
+  ],
+  "native_linux_full_suite": "UNVERIFIED",
+  "authored_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "new_target_evaluations": 0,
+  "replayed_by_this_reviewer": false
+}

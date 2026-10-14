@@ -1,0 +1,730 @@
+{
+  "head": "64c0909d0ae4c14fd09cbb34ca9e4a72eae3fc98",
+  "source_sha256": "e4f30c816a31a2f36fe7fab88fb4af957457d817b88fc2a8b75324cdb7ef705e",
+  "harness_sha256": "ddf24e5db7031ed6074b14949497d32561bf0304919d43c4703f19585e4417fa",
+  "test_methods": 111,
+  "groups": {
+    "M": 32,
+    "R": 10,
+    "X": 9,
+    "N": 14,
+    "Y": 3,
+    "P": 5,
+    "F": 5
+  },
+  "total_mutants": 78,
+  "strict_core_byte_identical_to_aef3bead": true,
+  "unchanged_old_mutants_except_X04_and_Y03": true,
+  "old_X04_change": "indentation-only reanchor for the nested pair loop",
+  "old_Y03_change": "same ordering property; removes both sample-order and pairwise non-increase rejection routes",
+  "checks": [
+    {
+      "id": "M01",
+      "property": "failed boot-id read treated as a reboot (DEAD)",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "2e73d04c89a8c11d23059656f45af8ee9450fefd5a61c4d292a5b7cae5015980"
+    },
+    {
+      "id": "M02",
+      "property": "unreadable /proc/<pid>/stat treated as DEAD",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "b2f99942641de9ec51bf61fa63fb1c9d832094016f0dfcbe08fb1096c4823d4b"
+    },
+    {
+      "id": "M03",
+      "property": "incomplete identity record reported ALIVE",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "9b0ed861ea2fb7b5512800d7e526811b5028200bfab96543f0d6f816a1769bdd"
+    },
+    {
+      "id": "M04",
+      "property": "zombie read as DEAD again (the withdrawn L-ID-1)",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "aa4701c29ad4012bff3a15be07cc172352dd6afde4be5db3454cb50479e5fef5"
+    },
+    {
+      "id": "M05",
+      "property": "pid reuse (other starttime) not detected",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "2d93fa0fcbb0254c9a4b946e46d7996a88216e71a2af9438a7ddb46b52c297af"
+    },
+    {
+      "id": "M06",
+      "property": "no power supply exposed read as AC",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "38231916139e93b96aee833c991f6740fe0c4c87fbf944923c493b63be96f3fa"
+    },
+    {
+      "id": "M07",
+      "property": "unreadable cgroup limit skipped",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "14adbcc839bd14ae3546c36cbe1a6f2518d2fb16b87513e1b35529d200d5aa67"
+    },
+    {
+      "id": "M08",
+      "property": "missing journal channel ignored in assess",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "b0046fcf9bee759c667c360aa94acb9804cc201bc66189fb7db606b733b54917"
+    },
+    {
+      "id": "M09",
+      "property": "pause channel P removed",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "81b18130aa1cdb26b38c276395bff0467bb335f1b1ef986ad460d0a9858cec10"
+    },
+    {
+      "id": "M10",
+      "property": "suspend (boottime - monotonic) ignored",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "9a7f9c234f37060959fa80b1053bc7d116bb1515cf143dc1500cb6727872a3d2"
+    },
+    {
+      "id": "M11",
+      "property": "D-MEM-FREE gate silently passes",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "cf87f88074609663a49445a414d04b07e913e77b38f5a5c36b844feb8fb73c90"
+    },
+    {
+      "id": "M12",
+      "property": "attestation 'reviewed' not required",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "f8b3d349b9a227df0543900bfc0eb5166856f0f0325505d65be54a468d4d37ae"
+    },
+    {
+      "id": "M13",
+      "property": "provider image updates pass without an attested token",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "91d12dc114abcab0b043cd59ea1a267124a4b3d0ffc7df51747c73345862455f"
+    },
+    {
+      "id": "M14",
+      "property": "update vectors other than apt ignored",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "18f2542e0aa8b8cc6eb80992b55ee909c80e00ac43c72b684060b89396c9b035"
+    },
+    {
+      "id": "M15",
+      "property": "launched_by_systemd skips the MainPID check",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "362177dde35219f17af91ea7a97391ce35f6379f90da3607cf926e8633734749"
+    },
+    {
+      "id": "M16",
+      "property": "durable_write writes the target in place",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "c6af3b2cfae718e42b2afb16f38ef55039ff04718507fa1268a57f21dc8b322a"
+    },
+    {
+      "id": "M17",
+      "property": "unreadable pin counts as a match",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "0810e7a3a9057d0eda8fb2e29350cefd99b836877606ad5d6351f19bf1923e82"
+    },
+    {
+      "id": "M18",
+      "property": "busy_processes uses lifetime ticks instead of the window",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "f31b3486249df9ea73c942725b47cffee7167f6070611b2bd05b3be9d833fa60"
+    },
+    {
+      "id": "M19",
+      "property": "empty cmdline (failed read) hashed as a command",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "ba4784b22de5f335cfc8f8bd4e3d0dab171a4689d9f535e2a957a72df1e2ddbb"
+    },
+    {
+      "id": "M20",
+      "property": "UNKNOWN gates not reported as blocking",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "8238380813d4255e7b17b8bb56b9a9fc09ab081a5c39fb7bbe95de9023feff96"
+    },
+    {
+      "id": "M21",
+      "property": "headroom computed over levels with unreadable usage",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "991729daab80ee36697090472729f2a3e1b3a16e4b1cf7000d9111834073e8ad"
+    },
+    {
+      "id": "M22",
+      "property": "namespace mismatch ignored",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "15da029126cf611d0f4dfd85d66f70b496fcdafa694d41bc33a8d1771403a8de"
+    },
+    {
+      "id": "M23",
+      "property": "unknown power-supply type skipped",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "e671cc95f41d1cfddec0a689add8fd6f84c99b1dc4e064434287c584f2da8b1a"
+    },
+    {
+      "id": "M24",
+      "property": "process born in the window not counted",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "c12329d35e0b0ceb0a5a39bb2bff58ad9ea6ae0dcbca9ff591804b8f1c671652"
+    },
+    {
+      "id": "M25",
+      "property": "attestation file sha256 not verified",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "96e1d6c5050d58aec5aeb5c45dfb74579918dd7c09bad3d2fcf70eb99f432742"
+    },
+    {
+      "id": "M26",
+      "property": "attestation not bound to the hardware identity",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "138f8c3f9983080a51c4d46c93cffbe1da11724ee69ae2c0bbd9e61250ce875d"
+    },
+    {
+      "id": "M27",
+      "property": "v2 root accepted as unlimited without attestation",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "01ddd6b8fe74e9caaa1f13101d737932811108edea39c035dc568477c66e4a72"
+    },
+    {
+      "id": "M28",
+      "property": "effective_limit numeric without root attestation",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "608a70a39e9ac9efc6a7adfc9d3d78835abde2cb82080120568e9214ee42e0e0"
+    },
+    {
+      "id": "M29",
+      "property": "execute / resume pass the launch gate without a launch record",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "8af873ec05c097625cd43b98035e0497453ba2b55bbabc5d7049c8c1942260fc"
+    },
+    {
+      "id": "M30",
+      "property": "mapped shared objects (libm) not pinned",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "59e6a55ccd84279793d7f62f62a942b4e885649ef393a7603c604b5577bf1df6"
+    },
+    {
+      "id": "M31",
+      "property": "incomplete /proc view accepted",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "01d4f69ce70e517a2a4ce1e59d34e57b4dbd17e319e35623392859a226c5360a"
+    },
+    {
+      "id": "M32",
+      "property": "own may contain init",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "0d8ab0411401ad6fcafd9822fbfcd574fa260547a9d49f2adbf4b8b7ad2da7a8"
+    },
+    {
+      "id": "R01",
+      "property": "unreadable Battery status skipped (a failed read can yield AC)",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "607e45399799072ac284b609364e2e7c188688441270b39b408cb513d749fefb"
+    },
+    {
+      "id": "R02",
+      "property": "host attestation accepted when the 'accepted' key is merely present (e.g. 'REJECTED')",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "db92d903de26b9804519bca73e1c558f98435905c5bd2d0b4b4a4d3aed1e9a77"
+    },
+    {
+      "id": "R03",
+      "property": "durable_write never fsyncs the data",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "b712c8bd4a3c81fecb285edbdfdf71aac42e4ea6ea29f116a96246d496f0941d"
+    },
+    {
+      "id": "R04",
+      "property": "suspend / pause tolerance raised from 2 s to 25 s",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "3bcf202b0abe73d58b8888f1f683e17fe82690b2d1eb93272fdb606c1844424e"
+    },
+    {
+      "id": "R05",
+      "property": "hidden name allow-list for the Cloud session controller in busy_processes",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "19c8c73ea258e89f633ef075c03939ac40792e1e9d3615dc60066ff476b65980"
+    },
+    {
+      "id": "R06",
+      "property": "package versions and glibc dropped from PIN_KEYS",
+      "anchor_counts": [
+        1,
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "78a22aeea3e8f5575ab6013824e5708a34c993aaae77e961a92013ff8129307c"
+    },
+    {
+      "id": "R07",
+      "property": "stopped (T/t) and uninterruptible (D) tasks read as DEAD",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "21ff28996b4c3cad090b49af64814ebffe8d986e5ae666041c7147d41e873eca"
+    },
+    {
+      "id": "R08",
+      "property": "durable_write never fsyncs the directory after the rename",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "e0a4b03ee08543827513cddc426ae5ffe14fe94a4c414ff04595e37c6cc27ae8"
+    },
+    {
+      "id": "R09",
+      "property": "maximum sample spacing raised from 180 s to 390 s",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "57ecdc57546fa7285ac319f6a81b271a8e8b206ae95bc8a921aaecb429c20b43"
+    },
+    {
+      "id": "R10",
+      "property": "assess checks power only at start and end, not at the samples",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "5f28e882eca3e1b67c7fdb4d6c67469c677241ee0a6f9ecdd4792d89ab611dd2"
+    },
+    {
+      "id": "X01",
+      "property": "/proc 'subset=' no longer refused",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "6b2045d0e21a8f4280ae59c06424be08c4d15f8783c62c1b1e59a0109a31b1bf"
+    },
+    {
+      "id": "X02",
+      "property": "no /proc mount line counts as a complete view",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "a63ef3c05b5f44ba3595013993c8253ba90db938e4aaad2594946c835d6aa8bd"
+    },
+    {
+      "id": "X03",
+      "property": "unreadable livepatch counts as none applied",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "92960be7c20d2100e4eb30c8346f64e05891bdd1c7358951ba4a9928fe7bedc7"
+    },
+    {
+      "id": "X04",
+      "property": "K' monotonic-ahead-of-boottime channel removed",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "ab9b87ec5d1371431b2b05bbefa8a896ee094b46f0344ffb010ecb35f7fc66e3"
+    },
+    {
+      "id": "X05",
+      "property": "durable_write read-back verification removed",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "bdd8494dd99fccb75ce89c339b1e90c64e50d5f3394bbdfb2af4ddd8e44d861a"
+    },
+    {
+      "id": "X06",
+      "property": "absent samples no longer AMBIGUOUS",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "64402a05b05ab2b5a90e70de63580fcd3dc93db80c2a9713bc263cb5d8f010e7"
+    },
+    {
+      "id": "X07",
+      "property": "a transient .scope accepted as the campaign unit",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "e4bbb67fd81b8ffa9eb6d43305dcad3b87fca49d5e46e83a26e59acd38fc4463"
+    },
+    {
+      "id": "X08",
+      "property": "v1 'unlimited' sentinel lowered to 1 GiB",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "8f446f0e6a40adda9ff91ba543be907b68c31c9af2a90aacd92803b5172f47b2"
+    },
+    {
+      "id": "X09",
+      "property": "unknown interpreter package drops out of the pin",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "f6f562006a283ac456f3cb82d8256ec167a12dcb7580c9b6ed7132e4c53d35b5"
+    },
+    {
+      "id": "N01",
+      "property": "D-HOST-LIFETIME treated as decided",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "c2b16a8fbff56757c0369e8edc00efebf19420aec285b3372ec665095541d2e4"
+    },
+    {
+      "id": "N02",
+      "property": "attestation acceptance line not required",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "63260198b2834c1f7390f0a8c67e9a1e2a167835c947143e79d598c29aabec90"
+    },
+    {
+      "id": "N03",
+      "property": "attestation schema not checked",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "ead6befbdfd1a4454bbc4ea9af1c91a3b8aeda51c6315940ebe78392a132128b"
+    },
+    {
+      "id": "N04",
+      "property": "caller-asserted fields accepted in the attestation reference",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "6f44912ab57b77d5a1913c9d8d61a0448ff1516afc829ffb27962c40663bf734"
+    },
+    {
+      "id": "N05",
+      "property": "root attestation truthy again",
+      "anchor_counts": [
+        1,
+        1,
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "e056a6cd3d2c04a8d75a93cf97b37a4cfc1202ff112b38d5a20b91378d4cf9b1"
+    },
+    {
+      "id": "N06",
+      "property": "nested PID namespace view accepted",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "0416c55ecca17b7244219dfd10f09de85407a28ecffb3334f1562620d2ca742a"
+    },
+    {
+      "id": "N07",
+      "property": "boot id not validated",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "f5f13fb663639c099908d11a57a1609f6d392a77ed1c44e76db009550b5a2b32"
+    },
+    {
+      "id": "N08",
+      "property": "exited processes not reported",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "e9375708cc21dc08dbd618c61b2757cbb9db558500cdc53f060aa76c1bbf8300"
+    },
+    {
+      "id": "N09",
+      "property": "unreadable existing process skipped",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "fc26b982d210c4954a9203a7334b984bb34f4f306f598184241db63fdce93a83"
+    },
+    {
+      "id": "N10",
+      "property": "campaign children exempt by pid alone",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "6de4e49eee174dd2912a3fa1698962fc29be56d18706d227f197d94da0603f20"
+    },
+    {
+      "id": "N11",
+      "property": "unrecorded namespace lets pid evidence count (revision-2 behaviour)",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "6ecb25728bbbc50242593181fe2a9bd7c9ab0f34270d11b542174738fe673c54"
+    },
+    {
+      "id": "N12",
+      "property": "pin without libm / libc / loader accepted",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "0f7e3839cf3b946d63542493ef99af1ad6311b2407365fb1d33af6e8e4691e82"
+    },
+    {
+      "id": "N13",
+      "property": "launch record trusted on its 'pass' flag",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "6cc23f5b3f3022d752fd58632828ad8f1639e92286fdf9b8095e6a4ce4db11a5"
+    },
+    {
+      "id": "N14",
+      "property": "unrecognised battery status read as not discharging",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "0a68e7fe8ef73553bfdecfc7f500053c5ff7610ec0db6ffaba4a7e6dc3ae636a"
+    },
+    {
+      "id": "Y01",
+      "property": "effective memory minimum omits the host MemTotal cap",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "cdc2f9290c1dcea6d6b8dd1a32475814b92f284dd587673819be581218f58c5e"
+    },
+    {
+      "id": "Y02",
+      "property": "cgroup headroom uses the maximum instead of the minimum",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "26bea3340290dd62c8f486588cae56d781ab6c950de6b4b05de49ff78d73a451"
+    },
+    {
+      "id": "Y03",
+      "property": "sample order is ignored (both sample-order and pairwise non-increase guards removed)",
+      "anchor_counts": [
+        1,
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "bcfa858201a95ff83fc7a2d387af1e0c424c42e4f1f3c715f3257b4e1d685404"
+    },
+    {
+      "id": "P01",
+      "property": "campaign child ownership ignores the parent's observed starttime identity",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "73a39743f606da12b236d95ed5f4d63205f57633d795b21f916e901e4e97d1fc"
+    },
+    {
+      "id": "P02",
+      "property": "a malformed current boot id counts as positive identity evidence",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "5e2febbe3c90f0379fdea2c054d1b47937f64de276fdb63754c4c5454920e746"
+    },
+    {
+      "id": "P03",
+      "property": "matching malformed boot ids count as positive interval evidence",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "bce83f6836978fb6ee6c3ffee71d8503aae2b8f132e09e7dc8b9191ff392d99f"
+    },
+    {
+      "id": "P04",
+      "property": "nonfinite CPU window duration is accepted",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "8f2c3139ebe0514bfe02b48f13ab0998cbb7ddeb2852fed5571b9274916b701d"
+    },
+    {
+      "id": "P05",
+      "property": "malformed NSpid entries count as a complete proc view",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "ae45e41b00e2024778b6316a905550e2c360399e8f843921639ca90adf3a27eb"
+    },
+    {
+      "id": "F01",
+      "property": "clock-pair checks ignore intermediate observations and use only the endpoints",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "a7a03a5692251fc9d9406e00b38a45d729591b02639464d81ae4c017e04fc5ad"
+    },
+    {
+      "id": "F02",
+      "property": "suspend counter checks ignore intermediate observations and use only the endpoints",
+      "anchor_counts": [
+        1,
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "26fa8715d92bb6bdf97f80b73aa6b0c3efba66054583a0225d4e8e6cc3d45a7b"
+    },
+    {
+      "id": "F03",
+      "property": "malformed mount IDs and device numbers bypass numeric metadata validation",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "fc42665a67ca6105b6d71b76e66f76767318a2aac1334200728f93fb66bb845f"
+    },
+    {
+      "id": "F04",
+      "property": "the first NSpid field is trusted when duplicate NSpid records disagree",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "c1bc90a33ffc6d38717f74c2b6a1b78905c8f1b6baf1e355ec7f69501fb12b87"
+    },
+    {
+      "id": "F05",
+      "property": "multiple starttime identities for one PID are accepted in a single CPU snapshot",
+      "anchor_counts": [
+        1
+      ],
+      "error": null,
+      "mutated_sha256": "57c554de840171d5423b56507aee189aeeec7974fa670fc09134839234db75f6"
+    }
+  ],
+  "execution": "AST/anchor/hash checks only; no platform/test module imported, no suite launched"
+}

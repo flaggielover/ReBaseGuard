@@ -1,0 +1,437 @@
+M01 failed boot-id read treated as a reboot (DEAD)
+test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead:115 self.assertEqual(self.state(boot=""), L.UNKNOWN)
+AssertionError: 'DEAD' != 'UNKNOWN'
+- DEAD
++ UNKNOWN
+
+M02 unreadable /proc/<pid>/stat treated as DEAD
+test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead:117 self.assertEqual(L.identity_state(self.ident, current_boot=BOOT, exists=lambda p: True,
+AssertionError: 'DEAD' != 'UNKNOWN'
+- DEAD
++ UNKNOWN
+
+M03 incomplete identity record reported ALIVE
+test_lx_platform.TestIdentity.test_unrecorded_fields:131 self.assertEqual(self.state(ident=partial), L.UNKNOWN, k)
+AssertionError: 'ALIVE' != 'UNKNOWN'
+- ALIVE
++ UNKNOWN
+ : boot_id
+
+M04 zombie read as DEAD again (the withdrawn L-ID-1)
+test_lx_platform.TestIdentity.test_zombie_is_never_proof_of_death:112 self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.UNKNOWN, s)
+AssertionError: 'DEAD' != 'UNKNOWN'
+- DEAD
++ UNKNOWN
+ : Z
+
+M05 pid reuse (other starttime) not detected
+test_lx_platform.TestIdentity.test_positive_death_evidence:106 self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(start=778))), L.DEAD)   # pid reuse
+AssertionError: 'ALIVE' != 'DEAD'
+- ALIVE
++ DEAD
+
+M06 no power supply exposed read as AC
+test_lx_platform.TestPowerThermal.test_power_classes:446 self.assertEqual(L.power_source(d), "ABSENT")
+AssertionError: 'AC' != 'ABSENT'
+- AC
++ ABSENT
+
+M07 unreadable cgroup limit skipped
+test_lx_platform.TestMemory.test_partial_chain_never_numeric:534 self.assertEqual((r["effective_limit"], r["cgroup_min_headroom"], r["visible_limit_upper_bound"]),
+AssertionError: Tuples differ: (1000000000, 999999600, 1000000000) != (None, None, None)
+
+First differing element 0:
+1000000000
+None
+
+- (1000000000, 999999600, 1000000000)
++ (None, None, None)
+
+M08 missing journal channel ignored in assess
+test_lx_platform.TestAssess.test_missing_channels_never_clean:344 self.assertEqual(L.assess(a, b, s, None)["status"], "AMBIGUOUS")
+AssertionError: 'CLEAN' != 'AMBIGUOUS'
+- CLEAN
++ AMBIGUOUS
+
+M09 pause channel P removed
+test_lx_platform.TestAssess.test_pause_channel_is_ambiguous:303 self.assertEqual(r["status"], "AMBIGUOUS")
+AssertionError: 'CLEAN' != 'AMBIGUOUS'
+- CLEAN
++ AMBIGUOUS
+
+M10 suspend (boottime - monotonic) ignored
+test_lx_platform.TestAssess.test_suspend_detected_just_above_tolerance:297 self.assertEqual(L.assess(a, b, s, j)["status"], "CONTAMINATED")
+AssertionError: 'CLEAN' != 'CONTAMINATED'
+- CLEAN
++ CONTAMINATED
+
+M11 D-MEM-FREE gate silently passes
+test_lx_platform.TestAttestationPreflight.test_all_favourable_still_blocked:1133 self.assertEqual(set(r["blocked"]), {"lowpowermode_0", "thermal_pressure_0", "memory_pressure_normal",
+AssertionError: Items in the second set but not the first:
+'free_memory_ge_min'
+
+M12 attestation 'reviewed' not required
+test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused:1060 self.assertIsNone(rec, (att[:40], review, extra))
+AssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': 'true', 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'acceptance_record': 'reviews/ACCEPT.md', 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : (b'{"schema": "rebaseguard.p5y.k5.newhost-c', None, None)
+
+M13 provider image updates pass without an attested token
+test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided:1118 self.assertEqual((g["host_lifetime_attested"], g["no_automatic_os_install"]), (L.UNKNOWN, L.UNKNOWN))
+AssertionError: Tuples differ: ('UNKNOWN', 'PASS') != ('UNKNOWN', 'UNKNOWN')
+
+First differing element 1:
+'PASS'
+'UNKNOWN'
+
+- ('UNKNOWN', 'PASS')
++ ('UNKNOWN', 'UNKNOWN')
+
+M14 update vectors other than apt ignored
+test_lx_platform.TestUpdatesLaunch.test_positive_evidence_only:831 self.assertFalse(self.settings(off, **kw)["guest_updates_shown_disabled"], kw)
+AssertionError: True is not false : {'timer': True}
+
+M15 launched_by_systemd skips the MainPID check
+test_lx_platform.TestUpdatesLaunch.test_launched_by_systemd_requires_everything:858 self.assertFalse(L.launched_by_systemd(**args)["pass"], kw)
+AssertionError: True is not false : {'show': <function TestUpdatesLaunch.test_launched_by_systemd_requires_everything.<locals>.<lambda> at 0x7f3f4cde1300>}
+
+M16 durable_write writes the target in place
+test_lx_platform.TestDurableWrite.test_stale_tmp_is_a_named_state:914 with self.assertRaises(L.StaleTmp):
+AssertionError: StaleTmp not raised
+
+M17 unreadable pin counts as a match
+test_lx_platform.TestPins.test_unreadable_pins_never_match:976 self.assertIn(next(iter(bad)), L.pin_mismatches(pins, pins), bad)
+AssertionError: 'python_sha256' not found in [] : {'python_sha256': None}
+
+M18 busy_processes uses lifetime ticks instead of the window
+test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth:612 self.assertEqual(set(busy), {"spiker", "newborn", "reused_pid"})
+AssertionError: Items in the first set but not the second:
+'old_hog'
+
+M19 empty cmdline (failed read) hashed as a command
+test_lx_platform.TestIdentity.test_empty_cmdline_is_a_failed_read:92 self.assertIsNone(L.cmdline_sha256(1, b""))
+AssertionError: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' is not None
+
+M20 UNKNOWN gates not reported as blocking
+test_lx_platform.TestAttestationPreflight.test_unknowns_never_pass_and_are_reported:1150 self.assertEqual(r["blocked"].get(k), L.UNKNOWN, k)
+AssertionError: None != 'UNKNOWN' : ac_power
+
+M21 headroom computed over levels with unreadable usage
+test_lx_platform.TestMemory.test_partial_chain_never_numeric:539 self.assertIsNone(r["cgroup_min_headroom"])
+AssertionError: 1999999500 is not None
+
+M22 namespace mismatch ignored
+test_lx_platform.TestIdentity.test_namespace_mismatch_is_unknown:123 self.assertEqual(self.state(ns=dict(NS, pidns=1)), L.UNKNOWN)
+AssertionError: 'ALIVE' != 'UNKNOWN'
+- ALIVE
++ UNKNOWN
+
+M23 unknown power-supply type skipped
+test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown:466 self.assertIsNone(L.power_source(d))
+AssertionError: 'AC' is not None
+
+M24 process born in the window not counted
+test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth:612 self.assertEqual(set(busy), {"spiker", "newborn", "reused_pid"})
+AssertionError: Items in the second set but not the first:
+'newborn'
+'reused_pid'
+
+M25 attestation file sha256 not verified
+test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file:1076 self.assertIsNone(rec)
+AssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'acceptance_record': 'reviews/ACCEPT.md', 'provider_image_updates': 'anything', 'root_cgroup_is_real': True} is not None
+
+M26 attestation not bound to the hardware identity
+test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused:1060 self.assertIsNone(rec, (att[:40], review, extra))
+AssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'acceptance_record': 'reviews/ACCEPT.md', 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : (b'{"schema": "rebaseguard.p5y.k5.newhost-c', None, None)
+
+M27 v2 root accepted as unlimited without attestation
+test_lx_platform.TestMemory.test_v2_root_and_memory_high:566 self.assertIsNone(L._chain_values(ch, root_attested=False))                    # helper refuses directly
+AssertionError: ([3000, 8000], [10, 20]) is not None
+
+M28 effective_limit numeric without root attestation
+test_lx_platform.TestMemory.test_v1_needs_root_attestation_for_a_number:523 self.assertIsNone(r["effective_limit"])
+AssertionError: 1000000000 is not None
+
+M29 execute / resume pass the launch gate without a launch record
+test_lx_platform.TestAttestationPreflight.test_launch_record_fields_are_verified:1165 self.assertIn("launched_by_systemd", g)
+AssertionError: 'launched_by_systemd' not found in {'ac_power': 'PASS', 'lowpowermode_0': 'OPEN_DECISION', 'thermal_pressure_0': 'OPEN_DECISION', 'free_disk_ge_2GiB': 'PASS', 'memory_pressure_normal': 'OPEN_DECISION', 'free_memory_ge_min': 'OPEN_DECISION', 'boot_id_recorded': 'PASS', 'no_other_campaign_job': 'PASS', 'no_automatic_os_install': 'OPEN_DECISION', 'host_exclusive': 'OPEN_DECISION', 'host_lifetime_attested': 'OPEN_DECISION'}
+
+M30 mapped shared objects (libm) not pinned
+test_lx_platform.TestPins.test_pin_set_covers_libm_libc_loader:942 self.assertEqual(set(L.PIN_KEYS), {"python_executable", "python_sha256", "python_sys_version",
+AssertionError: Items in the second set but not the first:
+'mapped_objects'
+
+M31 incomplete /proc view accepted
+test_lx_platform.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed:711 self.assertIsNone(L.busy_processes({}, {}, 5, 25, set(), view_complete=False))
+AssertionError: [] is not None
+
+M32 own may contain init
+test_lx_platform.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed:709 self.assertIsNone(L.busy_processes({}, {}, 5, 25, {(1, 1)}))             # own may not contain init
+AssertionError: [] is not None
+
+R01 unreadable Battery status skipped (a failed read can yield AC)
+test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown:462 self.assertIsNone(L.power_source(d))
+AssertionError: 'AC' is not None
+
+R02 host attestation accepted when the 'accepted' key is merely present (e.g. 'REJECTED')
+test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused:1060 self.assertIsNone(rec, (att[:40], review, extra))
+AssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': 'REJECTED', 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'acceptance_record': 'reviews/ACCEPT.md', 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : (b'{"schema": "rebaseguard.p5y.k5.newhost-c', None, None)
+
+R03 durable_write never fsyncs the data
+test_lx_platform.TestDurableWrite.test_fsyncs_file_then_directory:897 self.assertEqual(calls, ["file", "dir"])
+AssertionError: Lists differ: ['dir'] != ['file', 'dir']
+
+First differing element 0:
+'dir'
+'file'
+
+Second list contains 1 additional elements.
+First extra element 1:
+'dir'
+
+- ['dir']
++ ['file', 'dir']
+
+R04 suspend / pause tolerance raised from 2 s to 25 s
+test_lx_platform.TestAssess.test_suspend_detected_just_above_tolerance:297 self.assertEqual(L.assess(a, b, s, j)["status"], "CONTAMINATED")
+AssertionError: 'CLEAN' != 'CONTAMINATED'
+- CLEAN
++ CONTAMINATED
+
+R05 hidden name allow-list for the Cloud session controller in busy_processes
+test_lx_platform.TestBusy.test_no_name_or_path_allowlist:720 self.assertEqual(len(L.busy_processes(t0, t1, 1.0, 25, set(), hz=100)), 1, comm)
+AssertionError: 0 != 1 : claude
+
+R06 package versions and glibc dropped from PIN_KEYS
+test_lx_platform.TestPins.test_pin_set_covers_libm_libc_loader:942 self.assertEqual(set(L.PIN_KEYS), {"python_executable", "python_sha256", "python_sys_version",
+AssertionError: Items in the second set but not the first:
+'dpkg_versions'
+'glibc'
+
+R07 stopped (T/t) and uninterruptible (D) tasks read as DEAD
+test_lx_platform.TestIdentity.test_live_task_states_are_alive:101 self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.ALIVE, s)
+AssertionError: 'DEAD' != 'ALIVE'
+- DEAD
++ ALIVE
+ : D
+
+R08 durable_write never fsyncs the directory after the rename
+test_lx_platform.TestDurableWrite.test_fsyncs_file_then_directory:897 self.assertEqual(calls, ["file", "dir"])
+AssertionError: Lists differ: ['file'] != ['file', 'dir']
+
+Second list contains 1 additional elements.
+First extra element 1:
+'dir'
+
+- ['file']
++ ['file', 'dir']
+
+R09 maximum sample spacing raised from 180 s to 390 s
+test_lx_platform.TestAssess.test_sample_spacing_boundary:368 self.assertEqual(L.assess(a, snap(181 * S, 181 * S, 181 * S), [], [])["status"], "AMBIGUOUS")
+AssertionError: 'CLEAN' != 'AMBIGUOUS'
+- CLEAN
++ AMBIGUOUS
+
+R10 assess checks power only at start and end, not at the samples
+test_lx_platform.TestAssess.test_power_checked_at_every_sample:354 self.assertEqual(L.assess(a, b, [mid], j)["status"], "CONTAMINATED")
+AssertionError: 'CLEAN' != 'CONTAMINATED'
+- CLEAN
++ CONTAMINATED
+
+X01 /proc 'subset=' no longer refused
+test_lx_platform.TestBusy.test_proc_view:731 self.assertFalse(L.proc_view_complete(st, f"23 28 0:22 / /proc rw,{opt} - proc proc rw\n",
+AssertionError: True is not false : subset=pid
+
+X02 no /proc mount line counts as a complete view
+test_lx_platform.TestBusy.test_proc_view:733 self.assertIsNone(L.proc_view_complete(st, "23 28 0:22 / /sys rw - sysfs sysfs rw\n", pidns=L.INIT_PID_NS))
+AssertionError: True is not None
+
+X03 unreadable livepatch counts as none applied
+test_lx_platform.TestUpdatesLaunch.test_positive_evidence_only:831 self.assertFalse(self.settings(off, **kw)["guest_updates_shown_disabled"], kw)
+AssertionError: True is not false : {'livepatch': 'unreadable'}
+
+X04 K' monotonic-ahead-of-boottime channel removed
+test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples:375 self.assertEqual(L.assess(a, b, s, j)["status"], "AMBIGUOUS")
+AssertionError: 'CLEAN' != 'AMBIGUOUS'
+- CLEAN
++ AMBIGUOUS
+
+X05 durable_write read-back verification removed
+test_lx_platform.TestDurableWrite.test_read_back_mismatch_is_detected:907 with self.assertRaises(OSError):
+AssertionError: OSError not raised
+
+X06 absent samples no longer AMBIGUOUS
+test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples:377 self.assertEqual(L.assess(a, b, None, j)["status"], "AMBIGUOUS")
+AssertionError: 'CLEAN' != 'AMBIGUOUS'
+- CLEAN
++ AMBIGUOUS
+
+X07 a transient .scope accepted as the campaign unit
+test_lx_platform.TestUpdatesLaunch.test_launched_by_systemd_requires_everything:858 self.assertFalse(L.launched_by_systemd(**args)["pass"], kw)
+AssertionError: True is not false : {'proc_cgroup_text': '0::/system.slice/rebaseguard-mbs308-exec.scope\n'}
+
+X08 v1 'unlimited' sentinel lowered to 1 GiB
+test_lx_platform.TestMemory.test_large_v1_limit_is_a_limit:590 self.assertEqual(r["effective_limit"], 2000000000)
+AssertionError: 16874930176 != 2000000000
+
+X09 unknown interpreter package drops out of the pin
+test_lx_platform.TestPins.test_unknown_interpreter_package_never_matches:1001 self.assertIn(L.UNKNOWN_PACKAGE, pk)
+AssertionError: '<unknown-interpreter-package>' not found in ('libpython3.12-stdlib',)
+
+N01 D-HOST-LIFETIME treated as decided
+test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided:1113 self.assertEqual((g["host_lifetime_attested"], g["no_automatic_os_install"]),
+AssertionError: Tuples differ: ('PASS', 'PASS') != ('OPEN_DECISION', 'OPEN_DECISION')
+
+First differing element 0:
+'PASS'
+'OPEN_DECISION'
+
+- ('PASS', 'PASS')
++ ('OPEN_DECISION', 'OPEN_DECISION')
+
+N02 attestation acceptance line not required
+test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused:1060 self.assertIsNone(rec, (att[:40], review, extra))
+AssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'acceptance_record': 'reviews/ACCEPT.md', 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : (b'{"schema": "rebaseguard.p5y.k5.newhost-c', b'verdict: accepted\n', None)
+
+N03 attestation schema not checked
+test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused:1060 self.assertIsNone(rec, (att[:40], review, extra))
+AssertionError: {'schema': 'other', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'acceptance_record': 'reviews/ACCEPT.md', 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : (b'{"schema": "other", "reviewed": true, "a', None, None)
+
+N04 caller-asserted fields accepted in the attestation reference
+test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused:1060 self.assertIsNone(rec, (att[:40], review, extra))
+AssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'acceptance_record': 'reviews/ACCEPT.md', 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : (b'{"schema": "rebaseguard.p5y.k5.newhost-c', None, {'accepted': True})
+
+N05 root attestation truthy again
+test_lx_platform.TestMemory.test_root_attestation_must_be_true:582 self.assertEqual((r["effective_limit"], r["cgroup_min_headroom"]), (None, None), bad)
+AssertionError: Tuples differ: (1000000000, 999999600) != (None, None)
+
+First differing element 0:
+1000000000
+None
+
+- (1000000000, 999999600)
++ (None, None) : no
+
+N06 nested PID namespace view accepted
+test_lx_platform.TestBusy.test_proc_view:728 self.assertFalse(L.proc_view_complete(st, mi, pidns=4026532265))           # nested ns with its own /proc
+AssertionError: True is not false
+
+N07 boot id not validated
+test_lx_platform.TestAttestationPreflight.test_boot_id_must_be_valid:1141 self.assertEqual(self.gates(boot_id=bad)["boot_id_recorded"], L.UNKNOWN, bad)
+AssertionError: 'PASS' != 'UNKNOWN'
+- PASS
++ UNKNOWN
+ :
+
+N08 exited processes not reported
+test_lx_platform.TestBusy.test_exited_in_window_is_reported:620 self.assertEqual(out, [{"pid": 30, "comm": "short_hog", "exe": None, "pct": None, "exited_in_window": True}])
+AssertionError: Lists differ: [] != [{'pid': 30, 'comm': 'short_hog', 'exe': N[39 chars]rue}]
+
+Second list contains 1 additional elements.
+First extra element 0:
+{'pid': 30, 'comm': 'short_hog', 'exe': None, 'pct': None, 'exited_in_window': True}
+
+- []
++ [{'comm': 'short_hog',
++   'exe': None,
++   'exited_in_window': True,
++   'pct': None,
++   'pid': 30}]
+
+N09 unreadable existing process skipped
+test_lx_platform.TestBusy.test_unreadable_existing_process_fails_the_snapshot:794 self.assertIsNone(L.cpu_ticks(d))
+AssertionError: {(7, 777): (1, 15, 'py (x) y', None)} is not None
+
+N10 campaign children exempt by pid alone
+test_lx_platform.TestBusy.test_reused_campaign_pid_does_not_exempt_children:626 self.assertEqual(len(L.busy_processes(t0, t1, 5.0, 25, own={(99, 50)}, hz=100)), 1)
+AssertionError: 0 != 1
+
+N11 unrecorded namespace lets pid evidence count (revision-2 behaviour)
+test_lx_platform.TestIdentity.test_unrecorded_namespace_never_proves_death:143 self.assertEqual(self.state(ident=rec, exists=False), L.UNKNOWN, k)
+AssertionError: 'DEAD' != 'UNKNOWN'
+- DEAD
++ UNKNOWN
+ : pidns
+
+N12 pin without libm / libc / loader accepted
+test_lx_platform.TestPins.test_required_members_and_pin_point:992 self.assertIsNone(L.mapped_objects(f"7f00-7f01 r-xp 0 08:01 1 {libc}\n"))
+AssertionError: {'/usr/lib/x86_64-linux-gnu/libc.so.6': '3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf'} is not None
+
+N13 launch record trusted on its 'pass' flag
+test_lx_platform.TestAttestationPreflight.test_launch_record_fields_are_verified:1161 self.assertEqual(self.gates(launched=bad)["launched_by_systemd"], L.FAIL, bad)
+AssertionError: 'PASS' != 'FAIL'
+- PASS
++ FAIL
+ : {'pass': True}
+
+N14 unrecognised battery status read as not discharging
+test_lx_platform.TestPowerThermal.test_unrecognised_battery_status_is_unknown:480 self.assertIsNone(L.power_source(d), st)
+AssertionError: 'AC' is not None : Unknown
+
+Y01 effective memory minimum omits the host MemTotal cap
+test_lx_platform.TestMemory.test_host_memtotal_caps_every_cgroup_limit:552 self.assertEqual(r["effective_limit"], 1000)
+AssertionError: 3000 != 1000
+
+Y02 cgroup headroom uses the maximum instead of the minimum
+test_lx_platform.TestMemory.test_v2_root_and_memory_high:564 self.assertEqual(r["cgroup_min_headroom"], 2990)
+AssertionError: 7980 != 2990
+
+Y03 sample order is ignored (both sample-order and pairwise non-increase guards removed)
+test_lx_platform.TestAssess.test_samples_out_of_order_never_clean:432 self.assertEqual(r["status"], "AMBIGUOUS")
+AssertionError: 'CLEAN' != 'AMBIGUOUS'
+- CLEAN
++ AMBIGUOUS
+
+P01 campaign child ownership ignores the parent's observed starttime identity
+test_lx_platform.TestBusy.test_reused_campaign_pid_new_children_are_external:640 self.assertTrue(out is None or any(row["comm"] == "unrelated_child" for row in out), out)
+AssertionError: False is not true : []
+
+P02 a malformed current boot id counts as positive identity evidence
+test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death:151 self.assertEqual(self.state(boot=bad), L.UNKNOWN)
+AssertionError: 'DEAD' != 'UNKNOWN'
+- DEAD
++ UNKNOWN
+
+P03 matching malformed boot ids count as positive interval evidence
+test_lx_platform.TestAssess.test_malformed_boot_readings_never_clean:386 self.assertEqual(L.assess(a, b, s, j)["status"], "AMBIGUOUS")
+AssertionError: 'CLEAN' != 'AMBIGUOUS'
+- CLEAN
++ AMBIGUOUS
+
+P04 nonfinite CPU window duration is accepted
+test_lx_platform.TestBusy.test_invalid_window_duration_is_no_reading:682 self.assertIsNone(L.busy_processes(t0, t1, bad, 25, set(), hz=100))
+AssertionError: [] is not None
+
+P05 malformed NSpid entries count as a complete proc view
+test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid:741 self.assertIsNot(L.proc_view_complete(f"NSpid:\t{value}\n", mi, pidns=L.INIT_PID_NS), True)
+AssertionError: unexpectedly identical: True
+
+F01 clock-pair checks ignore intermediate observations and use only the endpoints
+test_lx_platform.TestAssess.test_intermediate_boottime_excursion_never_clean:320 self.assertEqual(r["status"], "CONTAMINATED")
+AssertionError: 'CLEAN' != 'CONTAMINATED'
+- CLEAN
++ CONTAMINATED
+
+F02 suspend counter checks ignore intermediate observations and use only the endpoints
+test_lx_platform.TestAssess.test_intermediate_suspend_counter_reset_is_ambiguous:329 self.assertEqual(r["status"], "AMBIGUOUS")
+AssertionError: 'CLEAN' != 'AMBIGUOUS'
+- CLEAN
++ AMBIGUOUS
+
+F03 malformed mount IDs and device numbers bypass numeric metadata validation
+test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata:775 self.assertIsNot(L.proc_view_complete("NSpid:\t77\n", mi, pidns=L.INIT_PID_NS), True)
+AssertionError: unexpectedly identical: True
+
+F04 the first NSpid field is trusted when duplicate NSpid records disagree
+test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields:749 self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)
+AssertionError: unexpectedly identical: True
+
+F05 multiple starttime identities for one PID are accepted in a single CPU snapshot
+test_lx_platform.TestBusy.test_duplicate_pid_identities_in_end_snapshot_are_no_reading:667 self.assertIsNone(L.busy_processes(t0, t1, 5, 25, own={(99, 2)}, hz=100))
+AssertionError: [] is not None
+
+F06 payload adjoining NSpid's colon is discarded before validation
+test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload:756 self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)
+AssertionError: unexpectedly identical: True
+
+F07 malformed attestation/reference paths escape as subprocess argument exceptions
+test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions:146 self.fail(f"malformed reference path escaped instead of being refused: {type(exc).__name__}")
+AssertionError: malformed reference path escaped instead of being refused: ValueError

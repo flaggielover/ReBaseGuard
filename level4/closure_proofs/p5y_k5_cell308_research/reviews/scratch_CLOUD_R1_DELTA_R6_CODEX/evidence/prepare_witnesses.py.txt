@@ -1,0 +1,121 @@
+from __future__ import annotations
+import ast, hashlib, importlib.util, json, re, subprocess
+from pathlib import Path
+OUT=Path('/tmp/cell308-codex-review64/evidence')
+IMM=OUT/'immutable'; REV='875eb95575fa9dc137083667bf30cc4a5a228fe6'
+ROOT=Path('/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard')
+DEV='level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+spec=importlib.util.spec_from_file_location('r6_harness',IMM/'tests/run_mutants.py'); H=importlib.util.module_from_spec(spec);spec.loader.exec_module(H)
+# Independently selected intended-property assertions from the immutable fixtures.
+mapping={
+'M01':('TestIdentity.test_failed_readings_are_unknown_never_dead','Failed boot read must be UNKNOWN rather than positive death evidence.'),
+'M02':('TestIdentity.test_failed_readings_are_unknown_never_dead','Missing process stat must be UNKNOWN rather than DEAD.'),
+'M03':('TestIdentity.test_unrecorded_fields','An incomplete recorded identity cannot be ALIVE.'),
+'M04':('TestIdentity.test_zombie_is_never_proof_of_death','Z/X state must be UNKNOWN rather than DEAD.'),
+'M05':('TestIdentity.test_positive_death_evidence','Different starttime identifies PID reuse and must be DEAD.'),
+'M06':('TestPowerThermal.test_power_classes','Empty temporary supply tree must be ABSENT rather than AC.'),
+'M07':('TestMemory.test_partial_chain_never_numeric','An unreadable ancestor limit invalidates every memory minimum.'),
+'M08':('TestAssess.test_missing_channels_never_clean','Missing journal list must yield AMBIGUOUS.'),
+'M09':('TestAssess.test_pause_channel_is_ambiguous','A 3-second REALTIME excursion must report P ambiguity.'),
+'M10':('TestAssess.test_suspend_detected_just_above_tolerance','A 3-second positive BOOTTIME divergence must report CONTAMINATED.'),
+'M11':('TestAttestationPreflight.test_all_favourable_still_blocked','Undecided free-memory gate must remain in the blocking OPEN_DECISION set.'),
+'M12':('TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused','Non-True reviewed flag must refuse the committed fixture.'),
+'M13':('TestAttestationPreflight.test_lifetime_gates_open_while_undecided','Decided lifetime alone cannot pass unknown provider-image token.'),
+'M14':('TestUpdatesLaunch.test_positive_evidence_only','Enabled timer/snapd/cloud/livepatch prevents shown-disabled update state.'),
+'M15':('TestUpdatesLaunch.test_launched_by_systemd_requires_everything','Different systemctl MainPID cannot pass launch evidence.'),
+'M16':('TestDurableWrite.test_stale_tmp_is_a_named_state','Existing separate .tmp must raise StaleTmp rather than write target in place.'),
+'M17':('TestPins.test_unreadable_pins_never_match','Two equally unreadable pins must still mismatch.'),
+'M18':('TestBusy.test_window_not_lifetime_and_reuse_and_birth','Unchanged large lifetime ticks must not add old_hog to the window busy set.'),
+'M19':('TestIdentity.test_empty_cmdline_is_a_failed_read','Empty command bytes must return None rather than a digest.'),
+'M20':('TestAttestationPreflight.test_unknowns_never_pass_and_are_reported','UNKNOWN gate must be present in blocked, preserving refusal.'),
+'M21':('TestMemory.test_partial_chain_never_numeric','Missing usage at a limited level invalidates headroom even with another readable limited ancestor.'),
+'M22':('TestIdentity.test_namespace_mismatch_is_unknown','Mismatched PID/time namespace cannot establish ALIVE or DEAD.'),
+'M23':('TestPowerThermal.test_failed_or_unknown_supplies_are_unknown','Unknown USB supply beside online mains cannot be silently skipped.'),
+'M24':('TestBusy.test_window_not_lifetime_and_reuse_and_birth','Born/reused identity with busy ticks must be included.'),
+'M25':('TestAttestationPreflight.test_reference_digest_must_match_the_committed_file','A reference naming a different accepted digest cannot verify these committed bytes.'),
+'M26':('TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused','A different or unbound current hardware identity must be refused.'),
+'M27':('TestMemory.test_v2_root_and_memory_high','The v2 root exemption must require strict attestation in direct _chain_values.'),
+'M28':('TestMemory.test_v1_needs_root_attestation_for_a_number','Unattested raw memory must withhold effective_limit.'),
+'M29':('TestAttestationPreflight.test_launch_record_fields_are_verified','Execute/resume must include launched_by_systemd and fail when supplied launch is absent.'),
+'M30':('TestPins.test_pin_set_covers_libm_libc_loader','PIN_KEYS must include mapped_objects.'),
+'M31':('TestBusy.test_no_reading_or_unsafe_inputs_fail_closed','Incomplete or unknown proc view prevents numeric exclusivity reading.'),
+'M32':('TestBusy.test_no_reading_or_unsafe_inputs_fail_closed','own containing PID 1 must be refused.'),
+'R01':('TestPowerThermal.test_failed_or_unknown_supplies_are_unknown','An unreadable Battery status beside mains must give None.'),
+'R02':('TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused','Present accepted key with REJECTED or 1 does not establish strict acceptance.'),
+'R03':('TestDurableWrite.test_fsyncs_file_then_directory','Data-file fsync must precede directory fsync.'),
+'R04':('TestAssess.test_suspend_detected_just_above_tolerance','3 seconds must exceed the preserved 2-second tolerance.'),
+'R05':('TestBusy.test_no_name_or_path_allowlist','claude/process_api names cannot exempt observed busy work.'),
+'R06':('TestPins.test_pin_set_covers_libm_libc_loader','PIN_KEYS must preserve package versions and glibc.'),
+'R07':('TestIdentity.test_live_task_states_are_alive','Stopped/uninterruptible states are live, not DEAD.'),
+'R08':('TestDurableWrite.test_fsyncs_file_then_directory','Post-rename directory fsync is required after data fsync.'),
+'R09':('TestAssess.test_sample_spacing_boundary','181-second spacing must be AMBIGUOUS under the unchanged 180-second maximum.'),
+'R10':('TestAssess.test_power_checked_at_every_sample','Middle Battery/None readings cannot be erased by AC endpoints.'),
+'X01':('TestBusy.test_proc_view','subset=pid proc mount is incomplete.'),
+'X02':('TestBusy.test_proc_view','Missing /proc mount cannot count as complete view.'),
+'X03':('TestUpdatesLaunch.test_positive_evidence_only','Existing unreadable livepatch path is not absence.'),
+'X04':('TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples','Negative BOOTTIME-minus-MONOTONIC divergence must remain AMBIGUOUS with P isolated.'),
+'X05':('TestDurableWrite.test_read_back_mismatch_is_detected','Corrupted bytes after rename must raise OSError.'),
+'X06':('TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples','samples=None must remain AMBIGUOUS.'),
+'X07':('TestUpdatesLaunch.test_launched_by_systemd_requires_everything','A .scope is not the required campaign .service.'),
+'X08':('TestMemory.test_large_v1_limit_is_a_limit','2,000,000,000-byte v1 limit remains a real limit.'),
+'X09':('TestPins.test_unknown_interpreter_package_never_matches','Unknown interpreter owner retains explicit unknown package placeholder and mismatches.'),
+'N01':('TestAttestationPreflight.test_lifetime_gates_open_while_undecided','Valid fixture cannot decide D-HOST-LIFETIME or pass its dependent gates.'),
+'N02':('TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused','Missing or wrong committed acceptance line must refuse fixture.'),
+'N03':('TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused','Wrong schema must refuse fixture.'),
+'N04':('TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused','Extra caller acceptance/root facts are not valid reference fields.'),
+'N05':('TestMemory.test_root_attestation_must_be_true','Truthy strings/1/list/dict cannot become root contract or numeric allowance.'),
+'N06':('TestBusy.test_proc_view','Nested PID namespace must remain incomplete even with one supplied NSpid token.'),
+'N07':('TestAttestationPreflight.test_boot_id_must_be_valid','Noncanonical boot IDs cannot pass presence gate.'),
+'N08':('TestBusy.test_exited_in_window_is_reported','A t0-only process must be reported with unknown window CPU.'),
+'N09':('TestBusy.test_unreadable_existing_process_fails_the_snapshot','Existing PID directory without readable stat invalidates the whole snapshot.'),
+'N10':('TestBusy.test_reused_campaign_pid_does_not_exempt_children','PID-only parent ownership must not exempt old child of reused campaign PID.'),
+'N11':('TestIdentity.test_unrecorded_namespace_never_proves_death','Unrecorded namespace cannot make absence/starttime difference positive death evidence.'),
+'N12':('TestPins.test_required_members_and_pin_point','A libc-only map must refuse pin lacking libm/loader.'),
+'N13':('TestAttestationPreflight.test_launch_record_fields_are_verified','Caller pass=True cannot replace launch fields and corroboration.'),
+'N14':('TestPowerThermal.test_unrecognised_battery_status_is_unknown','Unknown/garbage Battery statuses must remain None.'),
+'Y01':('TestMemory.test_host_memtotal_caps_every_cgroup_limit','Host MemTotal=1000 caps cgroup limits 3000/8000.'),
+'Y02':('TestMemory.test_v2_root_and_memory_high','Headroom is minimum 2990 rather than larger ancestor headroom.'),
+'Y03':('TestAssess.test_samples_out_of_order_never_clean','Sample after end must remain AMBIGUOUS despite short gaps; both independent ordering guards are intentionally bypassed.'),
+'P01':('TestBusy.test_reused_campaign_pid_new_children_are_external','Observed unrelated parent identity (99,50) cannot inherit campaign own (99,2) for its newer child.'),
+'P02':('TestIdentity.test_malformed_current_boot_never_proves_death','Malformed current boot cannot become reboot/DEAD evidence.'),
+'P03':('TestAssess.test_malformed_boot_readings_never_clean','Matching malformed nonempty boots must remain AMBIGUOUS.'),
+'P04':('TestBusy.test_invalid_window_duration_is_no_reading','NaN/Infinity duration must return None rather than empty/usable reading.'),
+'P05':('TestBusy.test_proc_view_rejects_malformed_nspid','Invalid empty/nonpositive/noninteger NSpid token cannot establish complete view.'),
+'F01':('TestAssess.test_intermediate_boottime_excursion_never_clean','Middle BOOTTIME excursion remains CONTAMINATED even with aligned endpoints.'),
+'F02':('TestAssess.test_intermediate_suspend_counter_reset_is_ambiguous','0→1→0 counter reset remains AMBIGUOUS even with matching endpoints.'),
+'F03':('TestBusy.test_proc_view_rejects_malformed_mount_metadata','Malformed/non-ASCII/nonpositive mount/parent or device fields cannot yield True.'),
+'F04':('TestBusy.test_proc_view_rejects_duplicate_nspid_fields','Repeated/conflicting NSpid fields cannot yield complete view.'),
+'F05':('TestBusy.test_duplicate_pid_identities_in_end_snapshot_are_no_reading','Ambiguous two-starttime PID identity in either snapshot must return None.'),
+'F06':('TestBusy.test_proc_view_preserves_the_whole_nspid_payload','Content adjoining colon must remain part of payload: garbage+77 and 77+88 cannot yield True; adjoining valid 77 is accepted.')}
+assert len(mapping)==79 and set(mapping)=={m[0] for m in H.MUTANTS}
+text=(IMM/'tests/test_lx_platform.py').read_text();tree=ast.parse(text)
+methods={c.name+'.'+f.name:f for c in tree.body if isinstance(c,ast.ClassDef) for f in c.body if isinstance(f,ast.FunctionDef)}
+rows=[]
+for mid,prop,edits in H.MUTANTS:
+    name,rationale=mapping[mid]; node=methods[name]
+    rows.append({'id':mid,'property':prop,'expected_witness_test':'test_lx_platform.'+name,'line':node.lineno,'end_line':node.end_lineno,'rationale':rationale,'fixture_source':ast.get_source_segment(text,node)})
+(OUT/'expected_property_witnesses.json').write_text(json.dumps({'commit':REV,'runtime_evidence_pending':True,'witnesses':rows},indent=2)+'\n')
+
+authored=json.loads((OUT/'authored_or_historical/validation.json').read_text());static=json.loads((OUT/'static_checks.json').read_text())
+assert authored['input_sha256']==static['input_sha256']
+selected={'test_lx_platform.'+name for name in methods if name.startswith('TestBusy.test_proc_view')}
+verified_tree=ast.parse((IMM/'tests/test_lx_verified.py').read_text())
+selected.update('test_lx_verified.'+c.name+'.'+f.name for c in verified_tree.body if isinstance(c,ast.ClassDef) for f in c.body if isinstance(f,ast.FunctionDef) and f.name.startswith('test_'))
+assert len(selected)==29
+records=[]
+for run in authored['runs']:
+    names=re.findall(r'^test_\w+ \((test_lx_\w+\.\w+\.test_\w+)\)',run['stderr'],re.M)
+    assert len(names)==29 and set(names)==selected
+    for kind in ['stdout','stderr']:
+        raw=subprocess.check_output(['git','show',REV+':'+DEV+'/results/REVISION6_AUTHORED_CHECKS_20261015/'+run['label']+'.'+kind+'.txt'],cwd=ROOT)
+        assert raw.decode()==run[kind]
+    rec=H._suite_record(run['command'],{'LX_PLATFORM_DIR':run['LX_PLATFORM_DIR']},returncode=run['returncode'],stdout=run['stdout'],stderr=run['stderr'],elapsed_s=0)
+    assert rec['ran']==29 and rec['errors']==rec['skipped']==0 and rec['invalid_reasons']==[]
+    records.append({'label':run['label'],'module_sha256':run['module_sha256'],'record':{k:v for k,v in rec.items() if k not in ['stdout','stderr']}})
+assert H.suite_passed(H._suite_record(authored['runs'][0]['command'],{},returncode=0,stdout='',stderr=authored['runs'][0]['stderr'],elapsed_s=0))
+assert records[1]['record']['failures']==3
+assert authored['runs'][0]['module_sha256']==static['input_sha256']['lx_platform.py']
+f06=next(x for x in static['mutants'] if x['id']=='F06')
+assert authored['runs'][1]['module_sha256']==f06['mutated_lx_platform_sha256']
+(OUT/'authored_subset_checks.json').write_text(json.dumps({'commit':REV,'source_hashes_match':True,'selected_29_methods_complete':True,'selected_tests':sorted(selected),'raw_embedded_reports_match_git_files':True,'runs':records,'native_linux_full_suite':authored['native_linux_full_suite'],'authored_platform':authored['platform'],'new_target_evaluations':authored['new_target_evaluations'],'replayed_by_this_reviewer':False},indent=2)+'\n')
+print(json.dumps({'property_witnesses_prepared':len(rows),'authored_selected_tests':len(selected),'authored_F06_assertion_failures':records[1]['record']['failures'],'authored_scope':'macOS subset only'}))

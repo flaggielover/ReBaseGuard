@@ -1,0 +1,35 @@
+{
+  "old_mutants_preserved_except": [
+    "X04",
+    "Y03"
+  ],
+  "old_mutant_order_and_ids_retained": true,
+  "X04_indentation_only_reanchor": true,
+  "Y03_old_order_edit_retained_and_nonincrease_guard_added": true,
+  "Y03_scope": "same sample ordering property: remove both independent ordering rejection routes; other K/P/sample-gap checks retained",
+  "all_103_old_tests_AST_identical": true,
+  "added_tests": [
+    "TestAssess.test_intermediate_boottime_excursion_never_clean",
+    "TestAssess.test_intermediate_realtime_excursion_never_clean",
+    "TestAssess.test_intermediate_suspend_counter_reset_is_ambiguous",
+    "TestAssess.test_nondecreasing_suspend_counter_increase_is_contaminated",
+    "TestBusy.test_duplicate_pid_identities_in_end_snapshot_are_no_reading",
+    "TestBusy.test_duplicate_pid_identities_in_start_snapshot_are_no_reading",
+    "TestBusy.test_proc_view_rejects_duplicate_nspid_fields",
+    "TestBusy.test_proc_view_rejects_malformed_mount_metadata"
+  ],
+  "changed_source_functions": [
+    "assess",
+    "proc_view_complete",
+    "busy_processes"
+  ],
+  "authored_subset_record": {
+    "42_methods_named_and_current": true,
+    "source_tests_hashes_match": true,
+    "complete_42_OK_stderr": true,
+    "native_linux_full_suite": "UNVERIFIED",
+    "reported_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "recorded_LX_PLATFORM_DIR": "/tmp/cell308-codex-review62/code/rev5/base",
+    "not_replayed_by_this_reviewer": true
+  }
+}

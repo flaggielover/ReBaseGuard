@@ -1,0 +1,18 @@
+"""Show each NEW mutant changes a defined synthetic outcome; all loaded modules are copies."""
+import importlib.util
+import json
+from pathlib import Path
+ROOT=Path(__file__).resolve().parent
+def module(path):
+ spec=importlib.util.spec_from_file_location('mutation_'+path.parent.name,path)
+ m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
+base=module(ROOT/'base/lx_platform.py')
+mutants={mid:module(ROOT/'mutants'/mid/'lx_platform.py') for mid in ('Y01','Y02','Y03')}
+ch={'version':'v1','chain':[{'root':False,'limit':3000,'usage':10},{'root':True,'limit':'max','usage':20}]}
+head={'version':'v1','chain':[{'root':False,'limit':3000,'usage':2990},{'root':True,'limit':8000,'usage':20}]}
+BOOT='0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0'
+def snap(t):return {'clocks':{k:t for k in ('monotonic_ns','boottime_ns','realtime_ns')},'boot_id':BOOT,'suspend_success':0,'power':'AC'}
+out={'Y01':{'base':base.effective_memory_limit(ch,{'MemTotal':1000},root_attested=True), 'mutant':mutants['Y01'].effective_memory_limit(ch,{'MemTotal':1000},root_attested=True)},
+     'Y02':{'base':base.cgroup_min_headroom(head,root_attested=True),'mutant':mutants['Y02'].cgroup_min_headroom(head,root_attested=True)},
+     'Y03':{'base':base.assess(snap(0),snap(120*10**9),[snap(150*10**9)],[])['status'], 'mutant':mutants['Y03'].assess(snap(0),snap(120*10**9),[snap(150*10**9)],[])['status']}}
+(ROOT/'mutant_semantics61_out.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out,indent=2))

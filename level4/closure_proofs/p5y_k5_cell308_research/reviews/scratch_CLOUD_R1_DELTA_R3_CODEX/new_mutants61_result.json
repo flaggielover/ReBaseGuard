@@ -1,0 +1,31 @@
+{
+  "base_sha256": "6978cba7e10521e00b78428b02c10f6455ab2baa43c90cfa9a4a0b8c8934897c",
+  "platform": "darwin",
+  "full_Linux_suite": "UNVERIFIED_RUNTIME",
+  "mutants": [
+    {
+      "id": "Y01",
+      "property": "effective_memory_limit ignores MemTotal host cap",
+      "selected_suite_class": "TestMemory",
+      "status": "SURVIVED_SELECTED_TESTS",
+      "returncode": 0,
+      "tail": "OK"
+    },
+    {
+      "id": "Y02",
+      "property": "headroom uses largest ancestor allowance instead of minimum",
+      "selected_suite_class": "TestMemory",
+      "status": "KILLED_BY_SELECTED_TESTS",
+      "returncode": 1,
+      "tail": "FAILED (failures=1)"
+    },
+    {
+      "id": "Y03",
+      "property": "out-of-order samples ignored by assessment",
+      "selected_suite_class": "TestAssess",
+      "status": "SURVIVED_SELECTED_TESTS",
+      "returncode": 0,
+      "tail": "OK"
+    }
+  ]
+}

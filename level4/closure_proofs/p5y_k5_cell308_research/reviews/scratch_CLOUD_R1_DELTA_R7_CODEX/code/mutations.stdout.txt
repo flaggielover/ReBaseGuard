@@ -1,0 +1,38 @@
+{
+  "static": {
+    "test_counts": {
+      "test_lx_platform.py": 112,
+      "test_lx_verified.py": 24
+    },
+    "mutants": 80
+  },
+  "selected_mutants": [
+    {
+      "id": "F07",
+      "status": "KILLED",
+      "ran": 32,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "failure_names": [
+        "test_invalid_acceptance_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_acceptance_paths_produce_refusal_without_exceptions) (path=\"'\\\\x00'\")",
+        "test_invalid_acceptance_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_acceptance_paths_produce_refusal_without_exceptions) (path=\"'\\\\ud800'\")",
+        "test_invalid_reference_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions) (path=\"'\\\\x00'\")",
+        "test_invalid_reference_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions) (path=\"'\\\\ud800'\")"
+      ],
+      "sha256": "93a590093dda050dc65d76088f6436c3ad06bc6c067144799c708ea0ff219295"
+    },
+    {
+      "id": "M25",
+      "status": "KILLED",
+      "ran": 32,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failure_names": [
+        "test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)"
+      ],
+      "sha256": "c77320c1bd91f4321305acb5422c313e5a86dbe8c26a3dddb77f5bec7f4f7ba2"
+    }
+  ]
+}

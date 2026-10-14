@@ -1,0 +1,196 @@
+{
+  "classification_cases": {
+    "assertion": {
+      "status": "KILLED",
+      "reasons": []
+    },
+    "survival": {
+      "status": "SURVIVED",
+      "reasons": []
+    },
+    "unit_error": {
+      "status": "ERROR",
+      "reasons": [
+        "UNITTEST_ERRORS",
+        "EXIT_WITHOUT_ASSERTION_FAILURES"
+      ]
+    },
+    "missing_summary": {
+      "status": "ERROR",
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY",
+        "EXIT_WITHOUT_ASSERTION_FAILURES"
+      ]
+    },
+    "short_run": {
+      "status": "ERROR",
+      "reasons": [
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ]
+    },
+    "skip": {
+      "status": "ERROR",
+      "reasons": [
+        "NONASSERTION_OUTCOMES"
+      ]
+    },
+    "expected_failure": {
+      "status": "ERROR",
+      "reasons": [
+        "NONASSERTION_OUTCOMES"
+      ]
+    },
+    "unexpected_success": {
+      "status": "ERROR",
+      "reasons": [
+        "NONASSERTION_OUTCOMES"
+      ]
+    },
+    "timeout": {
+      "status": "ERROR",
+      "reasons": [
+        "TIMEOUT",
+        "NO_NORMAL_EXIT"
+      ]
+    },
+    "signal": {
+      "status": "ERROR",
+      "reasons": [
+        "NO_NORMAL_EXIT"
+      ]
+    },
+    "launch_error": {
+      "status": "ERROR",
+      "reasons": [
+        "SUBPROCESS_LAUNCH_ERROR",
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "NO_NORMAL_EXIT",
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ]
+    },
+    "resource_warning": {
+      "status": "ERROR",
+      "reasons": [
+        "UNRAISABLE_OR_RESOURCE_WARNING"
+      ]
+    },
+    "unraisable": {
+      "status": "ERROR",
+      "reasons": [
+        "UNRAISABLE_OR_RESOURCE_WARNING"
+      ]
+    },
+    "unmatched_names": {
+      "status": "ERROR",
+      "reasons": [
+        "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY"
+      ]
+    },
+    "multiple_summaries": {
+      "status": "ERROR",
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY",
+        "EXIT_WITHOUT_ASSERTION_FAILURES"
+      ]
+    },
+    "multiple_counts": {
+      "status": "ERROR",
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ]
+    },
+    "exit_zero_failure": {
+      "status": "ERROR",
+      "reasons": [
+        "EXIT_AND_SUMMARY_DISAGREE"
+      ]
+    },
+    "exit_nonzero_OK": {
+      "status": "ERROR",
+      "reasons": [
+        "EXIT_WITHOUT_ASSERTION_FAILURES"
+      ]
+    },
+    "failed_baseline": {
+      "status": "ERROR",
+      "reasons": [
+        "BASELINE_NOT_PASS"
+      ]
+    }
+  },
+  "main_controls": {
+    "all_killed": {
+      "exit": 0,
+      "suite_subprocess_calls": 79,
+      "baseline_environment_clean": true,
+      "killed": 78,
+      "status_counts": {
+        "KILLED": 78,
+        "SURVIVED": 0,
+        "ERROR": 0,
+        "NOT_APPLIED": 0
+      },
+      "inputs_unchanged": true
+    },
+    "short": {
+      "exit": 1,
+      "suite_subprocess_calls": 79,
+      "baseline_environment_clean": true,
+      "killed": 77,
+      "status_counts": {
+        "KILLED": 77,
+        "SURVIVED": 0,
+        "ERROR": 1,
+        "NOT_APPLIED": 0
+      },
+      "inputs_unchanged": true
+    },
+    "survivor": {
+      "exit": 1,
+      "suite_subprocess_calls": 79,
+      "baseline_environment_clean": true,
+      "killed": 77,
+      "status_counts": {
+        "KILLED": 77,
+        "SURVIVED": 1,
+        "ERROR": 0,
+        "NOT_APPLIED": 0
+      },
+      "inputs_unchanged": true
+    },
+    "bad_baseline": {
+      "exit": 1,
+      "suite_subprocess_calls": 1,
+      "baseline_environment_clean": true,
+      "killed": 0,
+      "status_counts": {
+        "KILLED": 0,
+        "SURVIVED": 0,
+        "ERROR": 78,
+        "NOT_APPLIED": 0
+      },
+      "inputs_unchanged": true
+    },
+    "changed_hash": {
+      "exit": 1,
+      "suite_subprocess_calls": 79,
+      "baseline_environment_clean": true,
+      "killed": 78,
+      "status_counts": {
+        "KILLED": 78,
+        "SURVIVED": 0,
+        "ERROR": 0,
+        "NOT_APPLIED": 0
+      },
+      "inputs_unchanged": false
+    },
+    "registry_shrink": {
+      "exception": "ValueError",
+      "rejected": true
+    }
+  },
+  "repository_tests_executed": false
+}

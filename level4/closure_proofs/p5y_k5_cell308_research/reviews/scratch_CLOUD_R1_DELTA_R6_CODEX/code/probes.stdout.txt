@@ -1,0 +1,83 @@
+{
+  "head": "875eb95575fa9dc137083667bf30cc4a5a228fe6",
+  "signature": "(attestation_ref=None, *, mode='execute') -> 'dict'",
+  "platform_sha256": "e8e33df59f3edd9f187db149cf77d1cca024403ffda5e21eb1c1d66980ec2074",
+  "wrapper_sha256": "ba59aab0ce408c97cfc46f037d525ca16b90a5261129fd75fc2d05a0a487ad65",
+  "total": 85,
+  "passed": 81,
+  "failed": 4
+}
+[
+  {
+    "name": "malformed-reference-nul",
+    "expected": {
+      "verified": false,
+      "root": false,
+      "raw_root": false,
+      "allowance_fields": [],
+      "ready": false,
+      "pass": false,
+      "job": "UNKNOWN",
+      "development_only": true,
+      "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+    },
+    "actual": null,
+    "exception": "ValueError: embedded null byte",
+    "traceback": "Traceback (most recent call last):\n  File \"/tmp/cell308-codex-review64/code/probes.py\", line 17, in outcome\n    got=fn();error=None;trace=None\n  File \"/tmp/cell308-codex-review64/code/probes.py\", line 98, in <lambda>\n    outcome('malformed-reference-'+label,expected(False,False),lambda token=token:slim(V.observe(dict(ref,path=token))))\n                                                                                       ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 45, in observe\n    attestation, reasons = _committed_attestation(attestation_ref)\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 32, in _committed_attestation\n    return L.attestation_valid(ref, repo_root=_REPO_ROOT)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py\", line 986, in attestation_valid\n    data = _git_blob(base, path)\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py\", line 965, in _git_blob\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), \"show\", f\"HEAD:{path}\"], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nValueError: embedded null byte\n",
+    "pass": false
+  },
+  {
+    "name": "malformed-reference-surrogate",
+    "expected": {
+      "verified": false,
+      "root": false,
+      "raw_root": false,
+      "allowance_fields": [],
+      "ready": false,
+      "pass": false,
+      "job": "UNKNOWN",
+      "development_only": true,
+      "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+    },
+    "actual": null,
+    "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 5: surrogates not allowed",
+    "traceback": "Traceback (most recent call last):\n  File \"/tmp/cell308-codex-review64/code/probes.py\", line 17, in outcome\n    got=fn();error=None;trace=None\n  File \"/tmp/cell308-codex-review64/code/probes.py\", line 98, in <lambda>\n    outcome('malformed-reference-'+label,expected(False,False),lambda token=token:slim(V.observe(dict(ref,path=token))))\n                                                                                       ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 45, in observe\n    attestation, reasons = _committed_attestation(attestation_ref)\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 32, in _committed_attestation\n    return L.attestation_valid(ref, repo_root=_REPO_ROOT)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py\", line 986, in attestation_valid\n    data = _git_blob(base, path)\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py\", line 965, in _git_blob\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), \"show\", f\"HEAD:{path}\"], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nUnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 5: surrogates not allowed\n",
+    "pass": false
+  },
+  {
+    "name": "malformed-acceptance-path-nul",
+    "expected": {
+      "verified": false,
+      "root": false,
+      "raw_root": false,
+      "allowance_fields": [],
+      "ready": false,
+      "pass": false,
+      "job": "UNKNOWN",
+      "development_only": true,
+      "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+    },
+    "actual": null,
+    "exception": "ValueError: embedded null byte",
+    "traceback": "Traceback (most recent call last):\n  File \"/tmp/cell308-codex-review64/code/probes.py\", line 17, in outcome\n    got=fn();error=None;trace=None\n  File \"/tmp/cell308-codex-review64/code/probes.py\", line 119, in <lambda>\n    outcome('malformed-acceptance-path-'+label,expected(False,False),lambda token=token:slim(V.observe(fixture(acceptance_record=token))))\n                                                                                             ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 45, in observe\n    attestation, reasons = _committed_attestation(attestation_ref)\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 32, in _committed_attestation\n    return L.attestation_valid(ref, repo_root=_REPO_ROOT)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py\", line 1002, in attestation_valid\n    review = _git_blob(base, acc) if isinstance(acc, str) and acc else None\n             ~~~~~~~~~^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py\", line 965, in _git_blob\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), \"show\", f\"HEAD:{path}\"], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nValueError: embedded null byte\n",
+    "pass": false
+  },
+  {
+    "name": "malformed-acceptance-path-surrogate",
+    "expected": {
+      "verified": false,
+      "root": false,
+      "raw_root": false,
+      "allowance_fields": [],
+      "ready": false,
+      "pass": false,
+      "job": "UNKNOWN",
+      "development_only": true,
+      "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+    },
+    "actual": null,
+    "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 5: surrogates not allowed",
+    "traceback": "Traceback (most recent call last):\n  File \"/tmp/cell308-codex-review64/code/probes.py\", line 17, in outcome\n    got=fn();error=None;trace=None\n  File \"/tmp/cell308-codex-review64/code/probes.py\", line 119, in <lambda>\n    outcome('malformed-acceptance-path-'+label,expected(False,False),lambda token=token:slim(V.observe(fixture(acceptance_record=token))))\n                                                                                             ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 45, in observe\n    attestation, reasons = _committed_attestation(attestation_ref)\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 32, in _committed_attestation\n    return L.attestation_valid(ref, repo_root=_REPO_ROOT)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py\", line 1002, in attestation_valid\n    review = _git_blob(base, acc) if isinstance(acc, str) and acc else None\n             ~~~~~~~~~^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review64/code/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py\", line 965, in _git_blob\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), \"show\", f\"HEAD:{path}\"], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nUnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 5: surrogates not allowed\n",
+    "pass": false
+  }
+]

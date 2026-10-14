@@ -1,0 +1,60 @@
+import ast, hashlib, json, subprocess
+from pathlib import Path
+R=Path('/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard')
+O=Path('/tmp/cell308-codex-review65/evidence')
+H='7eb3ba4d03f3b7898109073c83eb9b08f4589354'; B='af55168c'
+NS='level4/closure_proofs/p5y_k5_cell308_research'; DEV=NS+'/streams/CLOUD_R1_LINUX_DEV'
+def blob(path, rev=H): return subprocess.check_output(['git','show',rev+':'+path],cwd=R)
+def sha(b): return hashlib.sha256(b).hexdigest()
+paths=[DEV+'/'+p for p in ['lx_platform.py','lx_inventory.py','lx_verified.py','tests/test_lx_platform.py','tests/test_lx_verified.py','tests/run_mutants.py','README_DEV_ONLY.md']]
+paths += ['.github/workflows/cell308-dev-review.yml',NS+'/reviews/REVIEW_CLOUD_R1_DELTA_R6_CODEX_EVIDENCE.md']
+paths += [NS+'/reviews/scratch_CLOUD_R1_DELTA_R6_CODEX/evidence/'+p for p in ['record_checks.json','expected_property_witnesses.json','current_adjudication_checks.json']]
+paths += [DEV+'/results/REVISION7_AUTHORED_CHECKS_20261015/'+p for p in ['validation.json','static_checks.json','run_selected.py.txt','BASELINE.stdout.txt','BASELINE.stderr.txt','M25.stdout.txt','M25.stderr.txt','F06.stdout.txt','F06.stderr.txt','F07.stdout.txt','F07.stderr.txt']]
+paths += [DEV+'/results/REVIEW64_LINUX_REVISION6_20261015/'+p for p in ['validation.json','input-commit.txt','run-metadata.json','M25.json']]
+manifest={}; data={}
+for path in paths:
+    d=blob(path); data[path]=d
+    p=O/'immutable'/path; p.parent.mkdir(parents=True,exist_ok=True); p.write_bytes(d)
+    manifest[path]={'sha256':sha(d),'git_blob':subprocess.check_output(['git','rev-parse',H+':'+path],cwd=R,text=True).strip(),'bytes':len(d)}
+inputs={path[len(DEV)+1:]:sha(data[path]) for path in paths[:6]}
+tree=ast.parse(data[DEV+'/tests/run_mutants.py'])
+def literal(tree,name):
+    for n in tree.body:
+        if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id==name for t in n.targets): return ast.literal_eval(n.value)
+mut=literal(tree,'MUTANTS'); groups=literal(tree,'MUTANT_GROUP_SIZES')
+btree=ast.parse(blob(DEV+'/tests/run_mutants.py',B)); old=literal(btree,'MUTANTS')
+rows=[]; src=data[DEV+'/lx_platform.py'].decode()
+for mid,prop,edits in mut:
+    transformed=src; counts=[]
+    for oldtxt,newtxt in edits:
+        counts.append(transformed.count(oldtxt)); assert counts[-1]==1,(mid,counts)
+        transformed=transformed.replace(oldtxt,newtxt)
+    ast.parse(transformed)
+    rows.append({'id':mid,'property':prop,'edits':edits,'anchor_counts':counts,'mutated_lx_platform_sha256':sha(transformed.encode())})
+names=[]; counts={}; methods={}
+for rel in ['tests/test_lx_platform.py','tests/test_lx_verified.py']:
+    a=ast.parse(data[DEV+'/'+rel]); d={}
+    for cl in a.body:
+        if isinstance(cl,ast.ClassDef):
+            for f in cl.body:
+                if isinstance(f,ast.FunctionDef) and f.name.startswith('test_'):
+                    name=Path(rel).stem+'.'+cl.name+'.'+f.name
+                    d[name]={'line':f.lineno,'end_line':f.end_lineno,'source':'\n'.join(data[DEV+'/'+rel].decode().splitlines()[f.lineno-1:f.end_lineno]),'ast':ast.dump(f)}
+    methods.update(d); counts[rel]=len(d); names += list(d)
+    oldtree=ast.parse(blob(DEV+'/'+rel,B)); od={Path(rel).stem+'.'+cl.name+'.'+f.name:ast.dump(f) for cl in oldtree.body if isinstance(cl,ast.ClassDef) for f in cl.body if isinstance(f,ast.FunctionDef) and f.name.startswith('test_')}
+    assert all(d[k]['ast']==v for k,v in od.items()),rel
+static=json.loads(data[DEV+'/results/REVISION7_AUTHORED_CHECKS_20261015/static_checks.json'])
+assert inputs==static['input_sha256']; assert counts==static['test_counts']; assert sum(counts.values())==136
+assert len(names)==len(set(names))==136
+assert [x[:3] for x in mut[:-1]]==old
+assert groups=={'M':32,'R':10,'X':9,'N':14,'Y':3,'P':5,'F':7}
+expected={f'{p}{i:02d}' for p,c in groups.items() for i in range(1,c+1)}
+assert set(r['id'] for r in rows)==expected and len(rows)==80
+assert [{'id':r['id'],'anchor_counts':r['anchor_counts'],'mutated_sha256':r['mutated_lx_platform_sha256']} for r in rows]==static['anchors']
+functions={n.name:ast.dump(n) for n in tree.body if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))}
+oldfunctions={n.name:ast.dump(n) for n in btree.body if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))}
+assert functions==oldfunctions
+out={'head':H,'base':B,'input_sha256':inputs,'test_counts':counts,'names':names,'mutant_groups':groups,'mutants':rows,'harness_functions_ast_identical':list(functions),'old_79_registry_tuples_identical':True,'platform_112_method_ast_identical':True,'old_wrapper_22_method_ast_identical':True,'new_wrapper_tests':[k for k in methods if k not in {Path('tests/test_lx_verified.py').stem+'.'+cl.name+'.'+f.name for cl in ast.parse(blob(DEV+'/tests/test_lx_verified.py',B)).body if isinstance(cl,ast.ClassDef) for f in cl.body if isinstance(f,ast.FunctionDef) and f.name.startswith('test_')} and k.startswith('test_lx_verified.')], 'authored_static_matches':True}
+(O/'static_checks.json').write_text(json.dumps(out,indent=2)+'\n'); (O/'test_methods.json').write_text(json.dumps(methods,indent=2)+'\n'); (O/'immutable_manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+print(json.dumps({k:v for k,v in out.items() if k not in ('names','mutants')},indent=2))
+print('PRESERVATION_RECORD_SCHEMA',json.dumps(json.loads(data[NS+'/reviews/scratch_CLOUD_R1_DELTA_R6_CODEX/evidence/record_checks.json']),indent=2))

@@ -1,0 +1,47 @@
+from pathlib import Path
+import ast,hashlib,json,os,subprocess,sys
+ROOT=Path('/tmp/cell308-codex-review64/code')
+REL=Path('level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV')
+DEV=ROOT/REL
+MUTANTS=[
+ ('W01','canonical committed verifier bypassed','    return L.attestation_valid(ref, repo_root=_REPO_ROOT)','    return (ref if isinstance(ref, dict) else None), []'),
+ ('W02','root claim accepts truthy non-boolean','root_attested = verified and attestation.get("root_cgroup_is_real") is True','root_attested = verified and bool(attestation.get("root_cgroup_is_real"))'),
+ ('W03','withheld memory fields are returned','    memory.pop("effective_limit", None)\n    memory.pop("cgroup_min_headroom", None)','    # weakened: allowances returned'),
+ ('W04','policy lifetime decision supplied','_UNDECIDED = frozenset()','_UNDECIDED = frozenset({"D-HOST-LIFETIME"})'),
+ ('W05','unavailable job detector reports absent','other_job_running=None','other_job_running=False'),
+ ('W06','fresh launch corroboration bypassed','attestation_check=_committed_attestation,','attestation_check=_committed_attestation, launch_observer=lambda: launched,'),
+ ('W07','operational readiness promoted','"operational_ready": False','"operational_ready": True'),
+ ('W08','A5 completion promoted','"A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"','"A5": "MET"'),
+ ('W09','public machine seam added','def observe(attestation_ref=None, *, mode="execute") -> dict:','def observe(attestation_ref=None, *, mode="execute", machine=None) -> dict:'),
+]
+runner=ROOT/'run_wrapper_mutant.py'
+runner.write_text('''from pathlib import Path
+import hashlib,importlib.util,json,sys,unittest
+ROOT=Path('/tmp/cell308-codex-review64/code')
+DEV=ROOT/'level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+sys.path[:0]=[str(DEV),str(DEV/'tests')]
+import lx_platform as L
+source=Path(sys.argv[1]);spec=importlib.util.spec_from_file_location('lx_verified',source)
+V=importlib.util.module_from_spec(spec);sys.modules['lx_verified']=V;spec.loader.exec_module(V)
+import test_lx_platform as P
+import test_lx_verified as T
+suite=unittest.TestSuite()
+for name in ['test_proc_view','test_proc_view_rejects_malformed_nspid','test_proc_view_rejects_duplicate_nspid_fields','test_proc_view_preserves_the_whole_nspid_payload','test_proc_view_rejects_malformed_mount_metadata','test_proc_view_rejects_nonproc_filesystem','test_proc_view_rejects_duplicate_mounts']:suite.addTest(P.TestBusy(name))
+suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(T.TestVerifiedObservation))
+result=unittest.TextTestRunner(verbosity=2).run(suite)
+print(json.dumps({'tests':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),'failure_names':[str(case) for case,_ in result.failures],'wrapper_source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'platform_source_sha256':hashlib.sha256(Path(L.__file__).read_bytes()).hexdigest()}))
+raise SystemExit(0 if result.wasSuccessful() else 1)
+''')
+src=(DEV/'lx_verified.py').read_text();record=[]
+env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',TMPDIR=str(ROOT),GIT_CONFIG_NOSYSTEM='1',GIT_CONFIG_GLOBAL='/dev/null');env.pop('LX_PLATFORM_DIR',None)
+for mid,prop,old,new in MUTANTS:
+ count=src.count(old);assert count==1,(mid,count)
+ changed=src.replace(old,new);ast.parse(changed)
+ dest=ROOT/'wrapper-mutants'/mid/REL/'lx_verified.py';dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(changed)
+ p=subprocess.run([sys.executable,'-B','-W','error::ResourceWarning',str(runner),str(dest)],env=env,capture_output=True,text=True,timeout=40)
+ (dest.parent/(mid+'.stdout.txt')).write_text(p.stdout);(dest.parent/(mid+'.stderr.txt')).write_text(p.stderr)
+ data=json.loads(p.stdout)
+ valid=data['tests']==29 and data['errors']==0 and data['skipped']==0 and 'ResourceWarning:' not in p.stderr and 'Exception ignored in:' not in p.stderr
+ record.append({'id':mid,'property':prop,'anchor_count':count,'status':'KILLED_ASSERTION' if valid and p.returncode==1 and data['failures']>0 else 'INVALID_OR_SURVIVED','returncode':p.returncode,**data})
+(ROOT/'wrapper_mutants_result.json').write_text(json.dumps(record,indent=2)+'\n')
+print(json.dumps(record,indent=2))

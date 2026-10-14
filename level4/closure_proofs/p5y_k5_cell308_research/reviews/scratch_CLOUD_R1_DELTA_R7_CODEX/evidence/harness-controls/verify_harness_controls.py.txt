@@ -1,0 +1,410 @@
+"""Synthetic controls for one immutable stdlib-only harness; no real suites or mutations."""
+from __future__ import annotations
+
+import ast
+import contextlib
+import datetime
+import hashlib
+import importlib.util
+import io
+import json
+from pathlib import Path, PurePosixPath
+import subprocess
+import tempfile
+from types import SimpleNamespace
+from unittest import mock
+
+ROOT = Path('/tmp/cell308-codex-review65/evidence/harness-controls')
+CURRENT_COMMIT = '7eb3ba4d03f3b7898109073c83eb9b08f4589354'
+BASE_COMMIT = 'af55168c'
+REPO_PATH = 'level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py'
+CURRENT = ROOT / 'run_mutants.current.py'
+BASE = ROOT / 'run_mutants.base.py'
+EXPECTED_INPUTS = ['lx_platform.py', 'lx_inventory.py', 'lx_verified.py',
+                   'tests/test_lx_platform.py', 'tests/test_lx_verified.py', 'tests/run_mutants.py']
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def save(name, data):
+    (ROOT / name).write_text(json.dumps(data, indent=2, sort_keys=True) + '\n')
+
+
+trees = {name: ast.parse(path.read_text()) for name, path in [('base', BASE), ('current', CURRENT)]}
+functions = {name: {n.name: ast.dump(n, include_attributes=False)
+                    for n in tree.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
+             for name, tree in trees.items()}
+ast_results = {}
+assert functions['base'].keys() == functions['current'].keys()
+for name, normalized in functions['current'].items():
+    equal = normalized == functions['base'][name]
+    assert equal, name
+    ast_results[name] = {'unchanged': equal, 'normalized_ast_sha256': sha(normalized.encode())}
+
+allowed_imports = {'__future__', 'ast', 'datetime', 'hashlib', 'json', 'os', 'platform',
+                   're', 'subprocess', 'sys', 'tempfile', 'time', 'pathlib'}
+imports = []
+for node in trees['current'].body:
+    if isinstance(node, ast.Import):
+        imports.extend(alias.name for alias in node.names)
+    elif isinstance(node, ast.ImportFrom):
+        assert node.level == 0
+        imports.append(node.module)
+assert set(imports) == allowed_imports
+save('ast_comparison.json', {'current_commit': CURRENT_COMMIT, 'base_commit': BASE_COMMIT,
+                            'git_path': REPO_PATH, 'blob_sha256': {
+                                'current': sha(CURRENT.read_bytes()), 'base': sha(BASE.read_bytes())},
+                            'functions': ast_results, 'import_modules': imports})
+
+spec = importlib.util.spec_from_file_location('synthetic_harness_control', CURRENT)
+h = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(h)
+ORIGINAL_REGISTRY = list(h.MUTANTS)
+ORIGINAL_GROUPS = dict(h.MUTANT_GROUP_SIZES)
+assert len(ORIGINAL_REGISTRY) == sum(ORIGINAL_GROUPS.values()) == 80
+
+FIXTURE_ENV = {'LX_PLATFORM_DIR': 'synthetic-fixture', 'PYTHONDONTWRITEBYTECODE': '1'}
+FIXTURE_COMMAND = ['SYNTHETIC_ONLY_NO_EXECUTION']
+
+
+def raw(ran=12, summary='OK', names=()):
+    return ''.join(name + '\n' for name in names) + f'Ran {ran} tests in 0.001s\n{summary}\n'
+
+
+def suite(stderr=None, returncode=0, timed_out=False, launch_error=None, stdout='synthetic stdout\n'):
+    return h._suite_record(FIXTURE_COMMAND, FIXTURE_ENV, returncode=returncode,
+                           stdout=stdout, stderr=raw() if stderr is None else stderr,
+                           elapsed_s=1.0, timed_out=timed_out, launch_error=launch_error)
+
+
+PASS = suite()
+ASSERT = suite(raw(summary='FAILED (failures=1)', names=['FAIL: synthetic_one']), returncode=1)
+ASSERT_TWO = suite(raw(summary='FAILED (failures=2)', names=['FAIL: synthetic_one', 'FAIL: synthetic_two']),
+                   returncode=1)
+ERROR = suite(raw(summary='FAILED (errors=1)', names=['ERROR: synthetic_error']), returncode=1)
+classifier_controls = []
+
+
+def classifier(label, record, expected, required_reasons=(), baseline=PASS):
+    status, reasons = h.classify_mutant(record, baseline)
+    assert status == expected, (label, status, reasons)
+    assert set(required_reasons) <= set(reasons), (label, reasons)
+    assert record['stdout'] == 'synthetic stdout\n'
+    classifier_controls.append({'control': label, 'expected_status': expected, 'observed_status': status,
+                                'reasons': reasons, 'ran': record['ran'],
+                                'baseline_ran': baseline['ran'], 'passed': True})
+
+
+classifier('same_count_pass', PASS, 'SURVIVED')
+classifier('one_named_assertion_failure', ASSERT, 'KILLED')
+classifier('two_named_assertion_failures', ASSERT_TWO, 'KILLED')
+classifier('shortened_failure_suite', suite(raw(11, 'FAILED (failures=1)', ['FAIL: synthetic_one']), 1),
+           'ERROR', ['TEST_COUNT_DIFFERS_FROM_BASELINE'])
+classifier('enlarged_pass_suite', suite(raw(13)), 'ERROR', ['TEST_COUNT_DIFFERS_FROM_BASELINE'])
+classifier('zero_test_pass', suite(raw(0)), 'ERROR', ['MISSING_OR_INVALID_UNITTEST_SUMMARY'])
+classifier('missing_count', suite('OK\n'), 'ERROR', ['MISSING_OR_INVALID_UNITTEST_SUMMARY'])
+classifier('missing_summary', suite('Ran 12 tests in 0.001s\n'), 'ERROR', ['MISSING_OR_INVALID_UNITTEST_SUMMARY'])
+classifier('duplicate_count', suite('Ran 12 tests in 0.001s\n' + raw()), 'ERROR',
+           ['MISSING_OR_INVALID_UNITTEST_SUMMARY'])
+classifier('duplicate_summary', suite(raw() + 'OK\n'), 'ERROR', ['MISSING_OR_INVALID_UNITTEST_SUMMARY'])
+classifier('assertion_name_missing', suite(raw(summary='FAILED (failures=1)'), 1), 'ERROR',
+           ['OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY'])
+classifier('extra_assertion_name', suite(raw(names=['FAIL: synthetic_one'])), 'ERROR',
+           ['OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY'])
+classifier('named_unittest_error', ERROR, 'ERROR', ['UNITTEST_ERRORS'])
+classifier('assertion_plus_error', suite(raw(summary='FAILED (failures=1, errors=1)',
+           names=['FAIL: synthetic_one', 'ERROR: synthetic_error']), 1), 'ERROR', ['UNITTEST_ERRORS'])
+classifier('extra_error_name', suite(raw(names=['ERROR: synthetic_error'])), 'ERROR',
+           ['OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY'])
+classifier('skipped_test', suite(raw(summary='OK (skipped=1)')), 'ERROR', ['NONASSERTION_OUTCOMES'])
+classifier('expected_failure', suite(raw(summary='OK (expected failures=1)')), 'ERROR', ['NONASSERTION_OUTCOMES'])
+classifier('unexpected_success', suite(raw(summary='FAILED (unexpected successes=1)'), 1), 'ERROR',
+           ['NONASSERTION_OUTCOMES'])
+classifier('resource_warning', suite('ResourceWarning: synthetic only\n' + raw()), 'ERROR',
+           ['UNRAISABLE_OR_RESOURCE_WARNING'])
+classifier('unraisable_exception', suite('Exception ignored in: synthetic only\n' + raw()), 'ERROR',
+           ['UNRAISABLE_OR_RESOURCE_WARNING'])
+classifier('timeout_even_with_assertion_text', suite(ASSERT['stderr'], None, timed_out=True), 'ERROR',
+           ['TIMEOUT', 'NO_NORMAL_EXIT'])
+classifier('launch_error_even_with_assertion_text', suite(ASSERT['stderr'], None, launch_error='synthetic only'),
+           'ERROR', ['SUBPROCESS_LAUNCH_ERROR', 'NO_NORMAL_EXIT'])
+classifier('signal_exit', suite(ASSERT['stderr'], -9), 'ERROR', ['NO_NORMAL_EXIT'])
+classifier('missing_exit', suite(ASSERT['stderr'], None), 'ERROR', ['NO_NORMAL_EXIT'])
+classifier('zero_exit_failed_summary', suite(ASSERT['stderr'], 0), 'ERROR', ['EXIT_AND_SUMMARY_DISAGREE'])
+classifier('nonzero_exit_ok_summary', suite(raw(), 1), 'ERROR', ['EXIT_WITHOUT_ASSERTION_FAILURES'])
+classifier('malformed_summary', suite(raw(summary='NOT_A_UNITTEST_SUMMARY')), 'ERROR',
+           ['MISSING_OR_INVALID_UNITTEST_SUMMARY'])
+classifier('error_baseline_preempts_assertion_kill', ASSERT, 'ERROR', ['BASELINE_NOT_PASS'], baseline=ERROR)
+classifier('assertion_failure_baseline_preempts_kill', ASSERT, 'ERROR', ['BASELINE_NOT_PASS'], baseline=ASSERT)
+
+run_suite_controls = []
+
+
+def run_suite_control(label, side_effect=None, completion=None):
+    supplied_env = {'LX_PLATFORM_DIR': 'synthetic-fixture', 'PYTHONDONTWRITEBYTECODE': '0'}
+    before = dict(supplied_env)
+    with mock.patch.object(h.subprocess, 'run', side_effect=side_effect, return_value=completion) as runner, \
+         mock.patch.object(h.time, 'monotonic', side_effect=[10.0, 11.0]), \
+         mock.patch.object(h.sys, 'executable', 'SYNTHETIC_PYTHON'):
+        record = h.run_suite(supplied_env, timeout_s=7)
+    assert supplied_env == before
+    runner.assert_called_once()
+    args, kwargs = runner.call_args
+    assert args[0] == ['SYNTHETIC_PYTHON', '-B', '-W', 'error::ResourceWarning', '-m',
+                       'unittest', 'discover', '-s', str(h.HERE), '-v']
+    assert kwargs == {'cwd': h.HERE.parent, 'env': dict(before, PYTHONDONTWRITEBYTECODE='1'),
+                      'capture_output': True, 'text': True, 'timeout': 7}
+    assert record['elapsed_s'] == 1.0
+    run_suite_controls.append({'control': label, 'subprocess_was_mocked': True, 'command': args[0],
+                               'environment_controls': record['environment_controls'],
+                               'invalid_reasons': record['invalid_reasons'], 'stdout': record['stdout'],
+                               'stderr': record['stderr'], 'passed': True})
+    return record
+
+
+assert not run_suite_control('normal_success', completion=SimpleNamespace(returncode=0, stdout='kept stdout',
+                            stderr=raw()))['invalid_reasons']
+normal_failure = run_suite_control('normal_assertion_failure', completion=SimpleNamespace(
+                                  returncode=1, stdout='kept stdout', stderr=ASSERT['stderr']))
+assert h.classify_mutant(normal_failure, PASS) == ('KILLED', [])
+timeout_record = run_suite_control('timeout_preserves_bytes_with_replacement', side_effect=
+                                  subprocess.TimeoutExpired('synthetic', 7, output=b'\xffstdout',
+                                                            stderr=ASSERT['stderr'].encode()))
+assert timeout_record['stdout'] == '\ufffdstdout'
+assert {'TIMEOUT', 'NO_NORMAL_EXIT'} <= set(timeout_record['invalid_reasons'])
+launch_record = run_suite_control('oserror_launch_failure', side_effect=OSError('synthetic launch refusal'))
+assert launch_record['launch_error'] == 'OSError: synthetic launch refusal'
+assert 'SUBPROCESS_LAUNCH_ERROR' in launch_record['invalid_reasons']
+
+fixture_bytes = {name: f'SYNTHETIC_HASH_INPUT:{name}\n'.encode() for name in EXPECTED_INPUTS}
+fixture_reads = []
+fixture_root = PurePosixPath('/synthetic-only/dev')
+
+
+class FakePath:
+    def __init__(self, value):
+        self.value = PurePosixPath(value.value if isinstance(value, FakePath) else value)
+        assert self.value.is_relative_to(fixture_root)
+
+    def __truediv__(self, value):
+        return FakePath(self.value / value)
+
+    @property
+    def parent(self):
+        return FakePath(self.value.parent)
+
+    def resolve(self):
+        return self
+
+    def relative_to(self, other):
+        return self.value.relative_to(other.value)
+
+    def read_bytes(self):
+        key = str(self.value.relative_to(fixture_root))
+        fixture_reads.append(key)
+        return fixture_bytes[key]
+
+
+with mock.patch.object(h, 'HERE', FakePath(fixture_root / 'tests')), \
+     mock.patch.object(h, 'SRC', FakePath(fixture_root / 'lx_platform.py')), \
+     mock.patch.object(h, 'Path', FakePath), \
+     mock.patch.object(h, '__file__', str(fixture_root / 'tests/run_mutants.py')):
+    observed_hashes = h.input_hashes()
+assert fixture_reads == EXPECTED_INPUTS
+assert observed_hashes == {name: sha(data) for name, data in fixture_bytes.items()}
+input_hash_control = {'six_inputs': EXPECTED_INPUTS, 'fixture_reads': fixture_reads,
+                      'observed_synthetic_sha256': observed_hashes, 'real_input_files_read': False, 'passed': True}
+
+SYNTHETIC_SOURCE = '# SYNTHETIC ONLY: no product source or mutation\n'
+SYNTHETIC_MUTATED = '# SYNTHETIC ONLY: mocked apply_mutation return value\n'
+BEFORE_HASHES = {name: sha(fixture_bytes[name]) for name in EXPECTED_INPUTS}
+BEFORE_HASHES['lx_platform.py'] = sha(SYNTHETIC_SOURCE.encode())
+temp_root = ROOT / 'scratch-tempdirs'
+temp_root.mkdir(exist_ok=True)
+real_tempdir = tempfile.TemporaryDirectory
+original_environ_object = h.os.environ
+main_controls = []
+
+
+class FixedDatetime(datetime.datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return cls(2026, 10, 15, 0, 0, 0, tzinfo=tz)
+
+
+def main_control(label, *, baseline=PASS, outcomes=None, first_not_applied=False,
+                 after_changed=False, registry=None, source_hash_mismatch=False, expected_exit=1,
+                 expected_exception=None, write_output=False):
+    run_calls, apply_calls, temp_calls = [], [], []
+    inherited_fixture = {'LX_PLATFORM_DIR': 'INHERITED_SYNTHETIC_CONTROL', 'PYTHONDONTWRITEBYTECODE': '0'}
+    before = dict(BEFORE_HASHES)
+    if source_hash_mismatch:
+        before['lx_platform.py'] = '0' * 64
+    after = dict(before)
+    if after_changed:
+        after['lx_inventory.py'] = '1' * 64
+    registry = ORIGINAL_REGISTRY if registry is None else registry
+    outcomes = {} if outcomes is None else outcomes
+
+    def fake_run_suite(env):
+        env = dict(env)
+        run_calls.append(env)
+        assert env['PYTHONDONTWRITEBYTECODE'] == '1'
+        if len(run_calls) == 1:
+            assert 'LX_PLATFORM_DIR' not in env
+            chosen = baseline
+        else:
+            assert Path(env['LX_PLATFORM_DIR']).is_relative_to(temp_root)
+            assert set(env) == {'LX_PLATFORM_DIR', 'PYTHONDONTWRITEBYTECODE'}
+            index = len(run_calls) - 2 + (1 if first_not_applied else 0)
+            chosen = outcomes.get(index, ASSERT)
+        result = dict(chosen)
+        result['environment_controls'] = {'LX_PLATFORM_DIR': env.get('LX_PLATFORM_DIR'),
+                                          'PYTHONDONTWRITEBYTECODE': env.get('PYTHONDONTWRITEBYTECODE')}
+        return result
+
+    def fake_apply(src, edits):
+        assert src == SYNTHETIC_SOURCE
+        index = len(apply_calls)
+        apply_calls.append(index)
+        if first_not_applied and index == 0:
+            return None, [0], 'ANCHOR_NOT_UNIQUE'
+        return SYNTHETIC_MUTATED, [1] * len(edits), None
+
+    def bounded_tempdir():
+        result = real_tempdir(prefix='synthetic-', dir=str(temp_root))
+        temp_calls.append(result.name)
+        assert Path(result.name).is_relative_to(temp_root)
+        return result
+
+    printed = io.StringIO()
+    output_path = ROOT / f'main-{label}.json'
+    caught = None
+    with contextlib.ExitStack() as stack:
+        patches = [mock.patch.object(h, 'input_hashes', side_effect=[before, after]),
+                   mock.patch.object(h, 'SRC', SimpleNamespace(read_text=lambda: SYNTHETIC_SOURCE)),
+                   mock.patch.object(h, 'run_suite', side_effect=fake_run_suite),
+                   mock.patch.object(h, 'apply_mutation', side_effect=fake_apply),
+                   mock.patch.object(h, 'MUTANTS', registry),
+                   mock.patch.object(h.os, 'environ', inherited_fixture),
+                   mock.patch.object(h.os.path, 'realpath', return_value='SYNTHETIC_REAL_PYTHON'),
+                   mock.patch.object(h.sys, 'executable', 'SYNTHETIC_PYTHON'),
+                   mock.patch.object(h.sys, 'version', 'SYNTHETIC_PYTHON_VERSION'),
+                   mock.patch.object(h.platform, 'python_implementation', return_value='SYNTHETIC_IMPLEMENTATION'),
+                   mock.patch.object(h.platform, 'release', return_value='SYNTHETIC_KERNEL'),
+                   mock.patch.object(h.platform, 'machine', return_value='SYNTHETIC_MACHINE'),
+                   mock.patch.object(h.platform, 'system', return_value='SYNTHETIC_SYSTEM'),
+                   mock.patch.object(h.datetime, 'datetime', FixedDatetime),
+                   mock.patch.object(h.tempfile, 'TemporaryDirectory', side_effect=bounded_tempdir)]
+        for patch in patches:
+            stack.enter_context(patch)
+        stack.enter_context(contextlib.redirect_stdout(printed))
+        try:
+            exit_value = h.main(str(output_path) if write_output else None)
+        except Exception as exc:
+            caught = exc
+    assert h.os.environ is original_environ_object
+    assert inherited_fixture == {'LX_PLATFORM_DIR': 'INHERITED_SYNTHETIC_CONTROL', 'PYTHONDONTWRITEBYTECODE': '0'}
+    assert not any(Path(name).exists() for name in temp_calls)
+    if expected_exception:
+        assert isinstance(caught, expected_exception), (label, caught)
+        assert printed.getvalue() == ''
+        record = None
+        save(output_path.name, {'synthetic_control': label, 'expected_exception': type(caught).__name__,
+                                'message': str(caught)})
+    else:
+        assert caught is None, (label, caught)
+        assert exit_value == expected_exit, (label, exit_value)
+        record = json.loads(printed.getvalue())
+        assert record['new_target_evaluations'] == 0
+        assert record['input_sha256'] == before and record['input_sha256_after'] == after
+        assert record['expected_mutants'] == 80
+        if write_output:
+            assert output_path.read_text() == printed.getvalue()
+        else:
+            output_path.write_text(printed.getvalue())
+    main_controls.append({'control': label, 'expected_exit': expected_exit if not expected_exception else None,
+                          'exception': type(caught).__name__ if caught else None,
+                          'suite_calls': len(run_calls), 'mocked_apply_calls': len(apply_calls),
+                          'bounded_synthetic_tempdirs': len(temp_calls),
+                          'status_counts': record['status_counts'] if record else None,
+                          'inputs_unchanged': record['inputs_unchanged'] if record else None,
+                          'record_artifact': output_path.name, 'environment_restored': True, 'passed': True})
+    return record, run_calls, apply_calls, temp_calls
+
+
+all_killed, calls, apply_calls, temps = main_control('all-killed', expected_exit=0, write_output=True)
+assert all_killed['status_counts'] == {'KILLED': 80, 'SURVIVED': 0, 'ERROR': 0, 'NOT_APPLIED': 0}
+assert (len(calls), len(apply_calls), len(temps)) == (81, 80, 80)
+assert (all_killed['reviewer_mutants_killed'], all_killed['review60_mutants_killed'],
+        all_killed['review61_mutants_killed'], all_killed['regression_mutants_killed']) == (10, 9, 3, 5)
+short_suite = suite(raw(11, 'FAILED (failures=1)', ['FAIL: synthetic_one']), 1)
+mixed, calls, apply_calls, temps = main_control('mixed-status', first_not_applied=True,
+                                              outcomes={1: PASS, 2: short_suite})
+assert mixed['status_counts'] == {'KILLED': 77, 'SURVIVED': 1, 'ERROR': 1, 'NOT_APPLIED': 1}
+assert (len(calls), len(apply_calls), len(temps)) == (80, 80, 79)
+assert mixed['mutants'][0]['reasons'] == ['ANCHOR_NOT_UNIQUE']
+assert mixed['mutants'][2]['reasons'] == ['TEST_COUNT_DIFFERS_FROM_BASELINE']
+for label, baseline in [('error-baseline', ERROR), ('assertion-failed-baseline', ASSERT)]:
+    rec, calls, apply_calls, temps = main_control(label, baseline=baseline)
+    assert rec['status_counts'] == {'KILLED': 0, 'SURVIVED': 0, 'ERROR': 80, 'NOT_APPLIED': 0}
+    assert (len(calls), len(apply_calls), len(temps)) == (1, 80, 0)
+    assert all(row['reasons'] == ['BASELINE_NOT_PASS'] for row in rec['mutants'])
+changed, calls, apply_calls, temps = main_control('after-hash-mismatch', after_changed=True)
+assert changed['inputs_unchanged'] is False and changed['killed'] == 80
+duplicate = list(ORIGINAL_REGISTRY)
+duplicate[0] = (duplicate[1][0], duplicate[0][1], duplicate[0][2])
+for label, registry in [('duplicate-registry-id', duplicate), ('missing-registry-id', ORIGINAL_REGISTRY[:-1])]:
+    rec, calls, apply_calls, temps = main_control(label, registry=registry, expected_exception=ValueError)
+    assert (len(calls), len(apply_calls), len(temps)) == (1, 0, 0)
+rec, calls, apply_calls, temps = main_control('before-source-hash-mismatch', source_hash_mismatch=True,
+                                           expected_exception=RuntimeError)
+assert (len(calls), len(apply_calls), len(temps)) == (0, 0, 0)
+
+results = {'binding': {'current_commit': CURRENT_COMMIT, 'base_commit': BASE_COMMIT, 'git_path': REPO_PATH},
+           'synthetic_only': True, 'classifier_controls': classifier_controls,
+           'run_suite_controls': run_suite_controls, 'input_hash_control': input_hash_control,
+           'mocked_main_controls': main_controls,
+           'counts': {'classifier': len(classifier_controls), 'run_suite': len(run_suite_controls),
+                      'six_input_hash_fixture': 1, 'mocked_main': len(main_controls),
+                      'total_controls': len(classifier_controls) + len(run_suite_controls) + 1 + len(main_controls)},
+           'exposure_disclosure': {
+               'repository_content_read': [f'{BASE_COMMIT}:{REPO_PATH}', f'{CURRENT_COMMIT}:{REPO_PATH}'],
+               'product_or_test_modules_imported': False, 'actual_suites_executed': 0,
+               'actual_mutations_applied': 0, 'real_input_files_read_or_hashed': False,
+               'host_metadata_calls': 'Mocked platform functions, realpath, clock, executable/version for main.',
+               'real_environment_values_read': False,
+               'environment_controls': 'Only synthetic LX_PLATFORM_DIR and PYTHONDONTWRITEBYTECODE dictionaries; os.environ object restored.',
+               'filesystem_writes': str(ROOT),
+               'limitations': 'These synthetic controls establish only the listed harness behaviors. They do not constitute a global code verdict or complete wrapper coverage.'}}
+save('control_results.json', results)
+report = f'''The evidence is bound to immutable commit {CURRENT_COMMIT}, compared with base {BASE_COMMIT}, for `{REPO_PATH}` only.
+
+All eight function ASTs are unchanged. The classifier and orchestration functions `_suite_record`, `run_suite`, `suite_passed`, `classify_mutant`, and `main` match the base; `_text`, `apply_mutation`, and `input_hashes` match as well. Raw blob hashes and normalized AST hashes are in `ast_comparison.json`.
+
+All {results['counts']['total_controls']} listed synthetic controls passed: {len(classifier_controls)} classifier records, {len(run_suite_controls)} subprocess-mocked `run_suite` paths, one six-input fixture hash control, and {len(main_controls)} fully mocked `main` scenarios. The six input keys are {', '.join(EXPECTED_INPUTS)}. Their fixture order and hashes are checked without reading any real product or test input.
+
+The classifier controls distinguish passing full-count reports from named assertion failures and reject the listed count mismatches, malformed or repeated summaries, outcome-name mismatches, errors, skips, expected failures, unexpected successes, resource warnings, unraisable messages, timeouts, launch failures, signal/no exit, exit/summary disagreements, and nonpassing baselines. These are fixture cases; no real suite was run.
+
+The `run_suite` controls verify the bytecode suppression and ResourceWarning command controls, explicit copied environment, timeout argument, capture/text arguments, complete output preservation, timeout-byte replacement decoding, and OSError launch records. Every subprocess invocation was intercepted by a mock.
+
+Mocked `main` covers 80 synthetic KILLED rows with return 0; a mixture of 77 KILLED, one SURVIVED, one ERROR, and one NOT_APPLIED with return 1; invalid and assertion-failed baselines that suppress mutant suites; after-snapshot mismatch with return 1; duplicate and missing registry IDs; and source/snapshot mismatch before any suite call. Source access, input hashes, application of mutations, suite calls, host metadata, and time were mocked. Synthetic temporary files were restricted to this scratch root and removed by their contexts. Main's only environment contains two fixture controls, and the original os.environ object is restored.
+
+Exposure disclosure: only the two specified harness Git blobs were read from the repository. The copied current harness imports only its explicitly checked stdlib imports. No lx_platform, lx_verified, or test module was imported; zero actual suites and zero actual mutations ran. No actual product/test inputs, real environment values, settings, secrets, target records, unrelated branches/files, or live platform data were read. All writes and temporary directories stayed under {ROOT}. The listed controls do not constitute a global code verdict or complete wrapper coverage.
+'''
+(ROOT / 'REPORT.md').write_text(report)
+manifest_items = []
+for path in sorted(ROOT.iterdir()):
+    if path.is_file() and path.name not in {'manifest.json', 'manifest.sha256'}:
+        data = path.read_bytes()
+        manifest_items.append({'path': str(path), 'bytes': len(data), 'sha256': sha(data)})
+save('manifest.json', {'immutable_commit': CURRENT_COMMIT, 'root': str(ROOT),
+                       'files': manifest_items, 'file_count': len(manifest_items),
+                       'manifest_excludes_itself_and_its_checksum': True})
+manifest_sha = sha((ROOT / 'manifest.json').read_bytes())
+(ROOT / 'manifest.sha256').write_text(f'{manifest_sha}  manifest.json\n')
+print(json.dumps({'controls': results['counts'], 'manifest_file_count': len(manifest_items),
+                  'manifest_sha256': manifest_sha, 'results': str(ROOT / 'control_results.json'),
+                  'report': str(ROOT / 'REPORT.md')}, indent=2))

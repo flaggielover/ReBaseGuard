@@ -1,0 +1,40 @@
+from pathlib import Path
+import copy,json,os,sys
+from unittest import mock
+sys.path.insert(0,os.environ['LX_PLATFORM_DIR'])
+import lx_platform as L
+BOOT='0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0'
+S=10**9
+
+def snap(t,**updates):
+    r={'clocks': {'monotonic_ns':t*S,'boottime_ns':t*S,'realtime_ns':t*S},'suspend_success':0,'boot_id':BOOT,'power':L.AC}
+    r.update(updates)
+    return r
+
+out={}
+own={(99,2)}
+t0={(99,2):(1,0,'old_campaign',None)}
+t1={(99,50):(1,0,'unrelated_parent',None),(40,51):(99,500,'unrelated_child',None)}
+out['Q62A_original_forward_reuse']=L.busy_processes(t0,t1,5,25,own,hz=100)
+ambiguous={(99,2):(1,0,'old_campaign',None),(99,50):(1,0,'new_parent',None),(40,51):(99,500,'external_child',None)}
+out['Q62B_ambiguous_parent_identities']=L.busy_processes(t0,ambiguous,5,25,own,hz=100)
+# Three independently authored adjacent-record probes, all have recognised field types.
+a,b= snap(0),snap(120)
+mid=snap(60)
+mid['clocks']['realtime_ns']=90*S
+out['Q62C_transient_wall_divergence']=L.assess(a,b,[mid],[])
+mid=snap(60,suspend_success=1)
+out['Q62D_intermediate_suspend_counter_excursion']=L.assess(a,b,[mid],[])
+mi='garbage garbage garbage / /proc rw,relatime - proc proc rw\n'
+out['Q62E_malformed_mount_metadata']=L.proc_view_complete('NSpid:\t77\n',mi,pidns=L.INIT_PID_NS)
+mi='23 28 0:22 / /proc rw,relatime - proc proc rw\n'
+out['Q62F_duplicate_nspid_evidence']=L.proc_view_complete('NSpid:\t77\nNSpid:\t77 88\n',mi,pidns=L.INIT_PID_NS)
+# Default observer must be used and supplied fields must not overwrite it.
+launch={'systemd_pid1':True,'unit':'rebaseguard-mbs308-exec.service','invocation_id':'abc',
+        'systemctl':{'MainPID':os.getpid(),'InvocationID':'abc'},'pass':True}
+rd={'power':L.AC,'free_disk':10*2**30,'boot_id':BOOT,'updates':{'guest_updates_shown_disabled':True}}
+with mock.patch.object(L,'launched_by_systemd',return_value={'pass':False,'systemd_pid1':False}) as observed:
+    r=L.preflight('/',mode='execute',other_job_running=False,launched=launch,attestation_ref=None,readings=rd)
+    out['Q62G_default_observer_corroboration']={'calls':observed.call_count,'launch_gate':r['gates']['launched_by_systemd'],'whole_preflight':r['pass']}
+Path(__file__).with_name('probes62_out.json').write_text(json.dumps(out,indent=2)+'\n')
+print(json.dumps(out,indent=2))

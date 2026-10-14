@@ -1,0 +1,58 @@
+{
+  "baseline": {
+    "ran": 136,
+    "summary": "OK",
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [],
+    "unique_methods": 136,
+    "returncode": 0
+  },
+  "assertion_only_reports": 80,
+  "recorded_environment": {
+    "utc": "2026-10-14T22:02:16Z",
+    "python": {
+      "executable": "/usr/bin/python3",
+      "real_executable": "/usr/bin/python3.12",
+      "version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+      "implementation": "CPython"
+    },
+    "kernel": "6.17.0-1022-azure",
+    "machine": "x86_64",
+    "system": "Linux"
+  },
+  "scoped_property_records": {
+    "M25": {
+      "id": "M25",
+      "sha256": "c77320c1bd91f4321305acb5422c313e5a86dbe8c26a3dddb77f5bec7f4f7ba2",
+      "ran": 136,
+      "summary": "FAILED (failures=1)",
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failure_names": [
+        "test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)"
+      ],
+      "unique_methods": 136,
+      "returncode": 1
+    },
+    "F07": {
+      "id": "F07",
+      "sha256": "93a590093dda050dc65d76088f6436c3ad06bc6c067144799c708ea0ff219295",
+      "ran": 136,
+      "summary": "FAILED (failures=4)",
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "failure_names": [
+        "test_invalid_acceptance_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_acceptance_paths_produce_refusal_without_exceptions) (path=\"'\\\\x00'\")",
+        "test_invalid_acceptance_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_acceptance_paths_produce_refusal_without_exceptions) (path=\"'\\\\ud800'\")",
+        "test_invalid_reference_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions) (path=\"'\\\\x00'\")",
+        "test_invalid_reference_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions) (path=\"'\\\\ud800'\")"
+      ],
+      "unique_methods": 136,
+      "returncode": 1
+    }
+  }
+}

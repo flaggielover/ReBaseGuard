@@ -1,0 +1,441 @@
+{
+  "source_sha256": {
+    "platform": "92c7dbcd9f71e30736a799e54842c433daac2258b7a15d719587e47cfd66705e",
+    "wrapper": "ba59aab0ce408c97cfc46f037d525ca16b90a5261129fd75fc2d05a0a487ad65"
+  },
+  "signature": "(attestation_ref=None, *, mode='execute') -> 'dict'",
+  "cases": [
+    {
+      "name": "canonical_committed_current_machine_positive",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": true,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "original_reference_NUL",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "attestation not committed at HEAD"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "original_reference_SURROGATE",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "attestation not committed at HEAD"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "original_acceptance_NUL",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "no committed acceptance record naming this attestation's sha256"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "original_acceptance_SURROGATE",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "no committed acceptance record naming this attestation's sha256"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "adjacent_reference_NUL_SUFFIX",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "attestation not committed at HEAD"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "adjacent_reference_SURROGATE_SUFFIX",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "attestation not committed at HEAD"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "valid_utf8_path_positive",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": true,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "no_hash_or_json_for_ABSENT",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "attestation not committed at HEAD"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "no_hash_or_json_for_UNCOMMITTED",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "attestation not committed at HEAD"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "accepted_blob_positive_before_digest_mismatch",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": true,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "different_valid_blob_original_digest_witness",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "attestation not committed at HEAD, or sha256 mismatch"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "strict_root_False",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": false,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "strict_root_None",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": false,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "strict_root_1",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": false,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "strict_root_'True'",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": false,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "strict_root_[]",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": false,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "strict_root_{'asserted': True}",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": false,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "wrong_current_machine_refused",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "not bound to this hardware identity"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "unbound_machine_refused",
+      "pass": true,
+      "details": {
+        "verified": false,
+        "root": false,
+        "reasons": [
+          "not bound to this hardware identity"
+        ],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "restricted_public_keyword_root_attested",
+      "pass": true,
+      "details": {
+        "keyword": "root_attested",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_root_cgroup_is_real",
+      "pass": true,
+      "details": {
+        "keyword": "root_cgroup_is_real",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_repo_root",
+      "pass": true,
+      "details": {
+        "keyword": "repo_root",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_machine",
+      "pass": true,
+      "details": {
+        "keyword": "machine",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_attestation_check",
+      "pass": true,
+      "details": {
+        "keyword": "attestation_check",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_launch_observer",
+      "pass": true,
+      "details": {
+        "keyword": "launch_observer",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_readings",
+      "pass": true,
+      "details": {
+        "keyword": "readings",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_decided",
+      "pass": true,
+      "details": {
+        "keyword": "decided",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_launched",
+      "pass": true,
+      "details": {
+        "keyword": "launched",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_other_job_running",
+      "pass": true,
+      "details": {
+        "keyword": "other_job_running",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_memory_reader",
+      "pass": true,
+      "details": {
+        "keyword": "memory_reader",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_verifier",
+      "pass": true,
+      "details": {
+        "keyword": "verifier",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_reader",
+      "pass": true,
+      "details": {
+        "keyword": "reader",
+        "refused": true
+      }
+    },
+    {
+      "name": "restricted_public_keyword_observer",
+      "pass": true,
+      "details": {
+        "keyword": "observer",
+        "refused": true
+      }
+    },
+    {
+      "name": "all_modes_launcher_preflight",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": true,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN",
+        "mode": "launcher_preflight"
+      }
+    },
+    {
+      "name": "all_modes_execute",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": true,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN",
+        "mode": "execute"
+      }
+    },
+    {
+      "name": "all_modes_resume",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": true,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN",
+        "mode": "resume"
+      }
+    },
+    {
+      "name": "global_policy_cannot_override_wrapper_empty_decisions",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": true,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "inconsistent_live_launch_refused",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": true,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "missing_memory_still_no_allowance",
+      "pass": true,
+      "details": {
+        "verified": true,
+        "root": true,
+        "reasons": [],
+        "preflight_pass": false,
+        "detector": "UNKNOWN"
+      }
+    },
+    {
+      "name": "invalid_mode_before_observations",
+      "pass": true,
+      "details": {
+        "refused": true
+      }
+    }
+  ],
+  "total": 41,
+  "passed": 41
+}

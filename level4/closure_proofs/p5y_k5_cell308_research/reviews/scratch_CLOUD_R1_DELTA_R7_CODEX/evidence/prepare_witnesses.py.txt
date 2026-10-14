@@ -1,0 +1,18 @@
+import ast, json, re, textwrap
+from pathlib import Path
+O=Path('/tmp/cell308-codex-review65/evidence'); NS='level4/closure_proofs/p5y_k5_cell308_research'; DEV=NS+'/streams/CLOUD_R1_LINUX_DEV'; I=O/'immutable'
+old=json.loads((I/NS/'reviews/scratch_CLOUD_R1_DELTA_R6_CODEX/evidence/current_adjudication_checks.json').read_text())
+methods=json.loads((O/'test_methods.json').read_text()); static=json.loads((O/'static_checks.json').read_text()); rows=[]
+for row in old['adjudication']:
+ w=row['direct_property_witness']; n=w['test']; method=methods[n]
+ assert ast.dump(ast.parse(method['source'].lstrip()))==ast.dump(ast.parse(w['fixture_source'])),row['id']
+ sec=w['failure_section']; frames=re.findall(r'  File "([^\n]+test_lx_(?:platform|verified)\.py)", line (\d+), in ([^\n]+)\n    ([^\n]+)',sec)
+ own=[f for f in frames if f[2]==n.split('.')[-1]]; assert own
+ f,line,fn,statement=own[-1]; lines=(I/DEV/'tests'/Path(f).name).read_text().splitlines(); assert lines[int(line)-1].strip()==statement.strip()
+ r={'id':row['id'],'property':row['property'],'test':n,'rationale':w['rationale'],'method_source':method['source'],'assertion_line':int(line),'assertion_statement':statement,'prior_observation_for_witness_selection_only':w['assertion_observation']}
+ rows.append(r)
+rows.append({'id':'F07','property':static['mutants'][-1]['property'],'test':'test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions','rationale':'Malformed NUL/unencodable reference paths must produce explicit refusal reasons and false root/verified flags; escaping ValueError or UnicodeError must be caught as the intended assertion failure. The paired acceptance-record-path test exercises the same canonical reader boundary.','method_source':methods['test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions']['source'],'assertion_line':146,'assertion_statement':'self.fail(f"malformed reference path escaped instead of being refused: {type(exc).__name__}")'})
+assert len(rows)==80
+(O/'expected_property_witnesses.json').write_text(json.dumps({'head':static['head'],'runtime_evidence_pending':True,'selection_basis':'Current immutable fixture bytes plus intended mutant edit; prior assertions only seed fixture selection, never current run proof','witnesses':rows},indent=2)+'\n')
+for r in rows:
+ print(r['id'],r['property']); print(r['test']+':'+str(r['assertion_line']),r['assertion_statement']); print(r['rationale']); print(r.get('prior_observation_for_witness_selection_only','pending new F07 runtime')); print()

@@ -1,0 +1,32 @@
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+import unittest
+
+BASE = Path(__file__).resolve().parent
+DEV = BASE / 'snapshot/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+sys.path.insert(0, str(DEV / 'tests'))
+import test_lx_platform as P
+import test_lx_verified as W
+
+names = [
+    'test_proc_view', 'test_proc_view_rejects_malformed_nspid',
+    'test_proc_view_rejects_duplicate_nspid_fields',
+    'test_proc_view_preserves_the_whole_nspid_payload',
+    'test_proc_view_rejects_malformed_mount_metadata',
+    'test_proc_view_rejects_nonproc_filesystem',
+    'test_proc_view_rejects_duplicate_mounts',
+]
+suite = unittest.TestSuite(P.TestBusy(name) for name in names)
+suite.addTest(P.TestAttestationPreflight('test_reference_digest_must_match_the_committed_file'))
+suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(W.TestVerifiedObservation))
+result = unittest.TextTestRunner(verbosity=2).run(suite)
+record = {'ran': result.testsRun, 'failures': len(result.failures), 'errors': len(result.errors),
+          'skipped': len(result.skipped), 'failure_names': [str(t) for t, _ in result.failures],
+          'error_names': [str(t) for t, _ in result.errors], 'platform_file': P.L.__file__,
+          'platform_sha256': hashlib.sha256(Path(P.L.__file__).read_bytes()).hexdigest(),
+          'wrapper_file': W.V.__file__, 'wrapper_sha256': hashlib.sha256(Path(W.V.__file__).read_bytes()).hexdigest()}
+print(json.dumps(record, sort_keys=True))
+raise SystemExit(0 if result.wasSuccessful() else 1)

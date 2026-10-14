@@ -1,0 +1,49 @@
+name: Cell-308 development review
+
+on:
+  push:
+    branches: [codex/cell308-review61-continuation]
+    paths:
+      - .github/workflows/cell308-dev-review.yml
+      - .github/scripts/cell308_dev_review.py
+      - level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py
+      - level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py
+      - level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/**
+
+permissions:
+  contents: read
+
+env:
+  SOURCE_REVISION: ${{ github.sha }}
+
+jobs:
+  synthetic-validation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out validation control
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: control
+          persist-credentials: false
+      - name: Check out immutable development snapshot
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_REVISION }}
+          fetch-depth: 0
+          path: snapshot
+          persist-credentials: false
+      - name: Run isolated development tests and forensic mutations
+        run: |
+          mkdir -p evidence
+          git -C snapshot rev-parse HEAD > evidence/input-commit.txt
+          cd snapshot/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV
+          python3 -B tests/run_mutants.py "$GITHUB_WORKSPACE/evidence/validation.json" > "$GITHUB_WORKSPACE/evidence/full-output.json"
+      - name: Preserve complete synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cell308-development-evidence-${{ github.run_id }}
+          path: evidence
+          if-no-files-found: error
+          retention-days: 14

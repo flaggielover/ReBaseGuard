@@ -1,0 +1,54 @@
+test_proc_view (test_lx_platform.TestBusy.test_proc_view)
+N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok
+test_proc_view_rejects_malformed_nspid (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid) ... ok
+test_proc_view_rejects_duplicate_nspid_fields (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields)
+F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view. ... ok
+test_proc_view_preserves_the_whole_nspid_payload (test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload)
+R5-C1/F06: a value adjoining the colon cannot be silently discarded; numeric tokens are ASCII. ... ok
+test_proc_view_rejects_malformed_mount_metadata (test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata)
+F3: malformed supplied mount IDs/device fields are not recognised mountinfo evidence. ... ok
+test_proc_view_rejects_nonproc_filesystem (test_lx_platform.TestBusy.test_proc_view_rejects_nonproc_filesystem) ... ok
+test_proc_view_rejects_duplicate_mounts (test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_mounts) ... ok
+test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)
+M25: a review accepting digest X does not make a DIFFERENT committed file pass when the reference quotes X. ... FAIL
+test_canonical_verifier_has_internal_repository_and_default_machine (test_lx_verified.TestVerifiedObservation.test_canonical_verifier_has_internal_repository_and_default_machine) ... ok
+test_changed_live_launch_observation_refuses_corroboration (test_lx_verified.TestVerifiedObservation.test_changed_live_launch_observation_refuses_corroboration) ... ok
+test_default_launch_record_is_independently_corroborated (test_lx_verified.TestVerifiedObservation.test_default_launch_record_is_independently_corroborated) ... ok
+test_invalid_acceptance_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_acceptance_paths_produce_refusal_without_exceptions)
+The same path boundary applies to review paths read from a committed attestation. ... ok
+test_invalid_mode_is_refused_before_any_observation (test_lx_verified.TestVerifiedObservation.test_invalid_mode_is_refused_before_any_observation) ... ok
+test_invalid_reference_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions)
+R6-C1/F07: malformed subprocess arguments are refusal evidence, never an escaping exception. ... ok
+test_machine_id_without_hardware_binding_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_machine_id_without_hardware_binding_withholds_root_contract) ... ok
+test_malformed_references_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract) ... ok
+test_missing_acceptance_line_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_acceptance_line_withholds_root_contract) ... ok
+test_missing_live_launch_observation_refuses_corroboration (test_lx_verified.TestVerifiedObservation.test_missing_live_launch_observation_refuses_corroboration) ... ok
+test_missing_reference_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_reference_withholds_root_contract) ... ok
+test_missing_root_claim_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_missing_root_claim_withholds_root_contract) ... ok
+test_non_json_committed_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_non_json_committed_fixture_withholds_root_contract) ... ok
+test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked (test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked) ... ok
+test_preflight_composition_has_no_caller_reading_launch_or_policy_seam (test_lx_verified.TestVerifiedObservation.test_preflight_composition_has_no_caller_reading_launch_or_policy_seam) ... ok
+test_public_api_refuses_caller_selected_seams (test_lx_verified.TestVerifiedObservation.test_public_api_refuses_caller_selected_seams) ... ok
+test_unaccepted_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_unaccepted_fixture_withholds_root_contract) ... ok
+test_uncommitted_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_uncommitted_fixture_withholds_root_contract) ... ok
+test_unreviewed_fixture_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_unreviewed_fixture_withholds_root_contract) ... ok
+test_verified_committed_fixture_supplies_raw_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_committed_fixture_supplies_raw_root_contract) ... ok
+test_verified_non_boolean_root_claims_withhold_root_contract (test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract) ... ok
+test_wrapper_uses_the_same_platform_module_selected_by_harness (test_lx_verified.TestVerifiedObservation.test_wrapper_uses_the_same_platform_module_selected_by_harness) ... ok
+test_wrong_host_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_wrong_host_withholds_root_contract) ... ok
+test_wrong_sha_withholds_root_contract (test_lx_verified.TestVerifiedObservation.test_wrong_sha_withholds_root_contract) ... ok
+
+======================================================================
+FAIL: test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)
+M25: a review accepting digest X does not make a DIFFERENT committed file pass when the reference quotes X.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/cell308-codex-review65/code/snapshot/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py", line 1076, in test_reference_digest_must_match_the_committed_file
+    self.assertIsNone(rec)
+    ~~~~~~~~~~~~~~~~~^^^^^
+AssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'acceptance_record': 'reviews/ACCEPT.md', 'provider_image_updates': 'anything', 'root_cgroup_is_real': True} is not None
+
+----------------------------------------------------------------------
+Ran 32 tests in 1.626s
+
+FAILED (failures=1)

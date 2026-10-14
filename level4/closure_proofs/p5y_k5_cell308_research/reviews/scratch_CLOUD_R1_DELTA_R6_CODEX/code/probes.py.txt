@@ -1,0 +1,129 @@
+"""Independent bounded probes of immutable R6 copies; infrastructure fixtures only."""
+from pathlib import Path
+from contextlib import ExitStack,contextmanager
+from unittest import mock
+import hashlib,inspect,json,os,subprocess,sys,tempfile,traceback
+ROOT=Path('/tmp/cell308-codex-review64/code')
+DEV=ROOT/'level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+sys.path.insert(0,str(DEV))
+import lx_platform as L
+import lx_verified as V
+M={'machine_id_sha256':'d'*64,'product_uuid_sha256':'e'*64,'hardware_bound':True}
+BOOT='12345678-1234-1234-1234-123456789abc'
+MI='103 201 0:28 / /proc rw,relatime - proc proc rw\n'
+rows=[]
+def outcome(name,expect,fn):
+ try:
+  got=fn();error=None;trace=None
+ except Exception as exc:
+  got=None;error=type(exc).__name__+': '+str(exc);trace=traceback.format_exc()
+ rows.append({'name':name,'expected':expect,'actual':got,'exception':error,'traceback':trace,'pass':error is None and got==expect})
+def proc(token,mi=MI):return L.proc_view_complete('Name: fixture\nNSpid:'+token+'\n',mi,pidns=L.INIT_PID_NS)
+for name,token,expected in [
+ ('r5-colon-garbage','junk\t93',False),('r5-colon-two-pids','93 104',False),
+ ('superscript','²',None),('fullwidth','９３',None),('mixed-superscript','93²',None),
+ ('arabic-indic','٩٣',None),('unicode-minus','−93',None),('plus','+93',None),
+ ('all-zero','000',None),('embedded-nul','93\x00',None),('ascii-no-space','93',True),
+ ('ascii-leading-zeros','00093',True),('ascii-tab','\t93',True),('ascii-space',' 93 ',True),
+ ('very-long-ascii','9'*5000,True),('very-long-zero','0'*5000,None)]:
+ outcome(name,expected,lambda token=token:proc(token))
+for field in range(3):
+ for token in ['²','１０３','+103','-103','x103','000']:
+  fields=['103','201','0:28'];fields[field]=token
+  if field==2 and token=='000':continue
+  outcome('mount-field-'+str(field)+'-'+token,None,lambda fields=fields:proc('93',' '.join(fields)+' / /proc rw - proc proc rw\n'))
+for field in [0,1]:
+ fields=['103','201','0:28'];fields[field]='9'*5000
+ outcome('mount-huge-ascii-'+str(field),True,lambda fields=fields:proc('93',' '.join(fields)+' / /proc rw - proc proc rw\n'))
+for dev in ['０:28','0:２８','0:²','²:28']:
+ outcome('mount-device-'+dev,None,lambda dev=dev:proc('93','103 201 '+dev+' / /proc rw - proc proc rw\n'))
+
+@contextmanager
+def env_fixture(*,current=M,launch=None,memory_missing=False):
+ with ExitStack() as stack:
+  repo=Path(stack.enter_context(tempfile.TemporaryDirectory(dir=ROOT)))
+  def git(*args):
+   return subprocess.run(['git','-C',str(repo),'-c','commit.gpgSign=false','-c','user.name=Review fixture','-c','user.email=review@example.invalid',*args],capture_output=True,text=True,check=True).stdout
+  git('init','-q')
+  stack.enter_context(mock.patch.object(V,'_REPO_ROOT',repo))
+  identity=stack.enter_context(mock.patch.object(L,'machine_identity',return_value=current))
+  stack.enter_context(mock.patch.object(L,'meminfo',return_value=None if memory_missing else {'MemTotal':1200,'MemFree':150,'MemAvailable':400}))
+  stack.enter_context(mock.patch.object(L,'memory_cgroup_chain',return_value={'version':'v1','chain':None} if memory_missing else {'version':'v1','chain':[{'path':'/fixture','limit':800,'usage':300,'root':False},{'path':'/','limit':1000,'usage':400,'root':True}]}))
+  stack.enter_context(mock.patch.object(L,'ns_inode',return_value=L.INIT_CGROUP_NS))
+  stack.enter_context(mock.patch.object(L,'power_source',return_value=L.AC))
+  stack.enter_context(mock.patch.object(L,'free_disk_bytes',return_value=L.MIN_FREE_DISK))
+  stack.enter_context(mock.patch.object(L,'boot_id',side_effect=lambda text=None:text or BOOT))
+  stack.enter_context(mock.patch.object(L,'auto_update_settings',return_value={'guest_updates_shown_disabled':True}))
+  default={'systemd_pid1':True,'unit':L.CAMPAIGN_UNIT_PREFIX+'review.service','invocation_id':'review-inv','systemctl':{'MainPID':os.getpid(),'InvocationID':'review-inv'},'pass':True}
+  launchmock=stack.enter_context(mock.patch.object(L,'launched_by_systemd',return_value=default if launch is None else launch))
+  # Unexpected live reads are fatal to the probe, keeping host/config data out.
+  stack.enter_context(mock.patch.object(L,'_read',side_effect=AssertionError('unplanned native read')))
+  def fixture(*,reviewline=True,committed=True,root=True,**change):
+   record={'schema':L.ATTESTATION_SCHEMA,'reviewed':True,'accepted':True,'machine':M,'root_cgroup_is_real':root,'provider_image_updates':L.NO_IMAGE_CHANGE,'acceptance_record':'infra/review.txt'};record.update(change)
+   data=(json.dumps(record,sort_keys=True)+'\n').encode();sha=hashlib.sha256(data).hexdigest()
+   (repo/'infra').mkdir(exist_ok=True);(repo/'infra/host.json').write_bytes(data)
+   (repo/'infra/review.txt').write_text((L.ACCEPTANCE_LINE+sha+'\n') if reviewline else 'synthetic refusal\n')
+   if committed:git('add','infra');git('commit','-q','-m','Synthetic review fixture')
+   return {'path':'infra/host.json','sha256':sha}
+  yield repo,fixture,identity,launchmock,default
+
+def slim(result):
+ return {'verified':result['attestation']['verified'],'root':result['attestation']['root_cgroup_is_real'],'raw_root':result['raw_memory']['readings']['root_attested'],'allowance_fields':sorted(set(result['raw_memory']['readings']) & {'effective_limit','cgroup_min_headroom'}),'ready':result['operational_ready'],'pass':result['preflight']['pass'],'job':result['preflight']['gates']['no_other_campaign_job'],'development_only':result['development_only'],'A5':result['conditions']['A5']}
+def expected(verified,root):return {'verified':verified,'root':root,'raw_root':root,'allowance_fields':[],'ready':False,'pass':False,'job':L.UNKNOWN,'development_only':True,'A5':'UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT'}
+with env_fixture() as (repo,fixture,identity,launchmock,launch):
+ ref=fixture()
+ outcome('canonical-accepted-fixture',expected(True,True),lambda:slim(V.observe(ref)))
+ # Committed bytes remain authoritative despite favorable/unfavorable worktree overlays.
+ (repo/'infra/host.json').write_text('{}\n');(repo/'infra/review.txt').write_text('rejected\n')
+ outcome('worktree-overlay-ignored',expected(True,True),lambda:slim(V.observe(ref)))
+ outcome('extra-caller-root-claim',expected(False,False),lambda:slim(V.observe(dict(ref,root_cgroup_is_real=True))))
+ outcome('wrong-reference-sha',expected(False,False),lambda:slim(V.observe(dict(ref,sha256='0'*64))))
+ outcome('missing-path',expected(False,False),lambda:slim(V.observe(dict(ref,path='infra/absent.json'))))
+ for mode in L.MODES:
+  def modes(mode=mode):
+   launchmock.reset_mock();res=V.observe(ref,mode=mode)
+   return {'mode':res['preflight']['mode'],'blocked':res['preflight']['pass'] is False,'root':res['attestation']['root_cgroup_is_real'],'launch_reads':launchmock.call_count,'all_lifetime_open':all(res['preflight']['gates'][k]==L.OPEN_DECISION for k in ('host_lifetime_attested','no_automatic_os_install'))}
+  outcome('mode-'+mode,{'mode':mode,'blocked':True,'root':True,'launch_reads':2,'all_lifetime_open':True},modes)
+ with mock.patch.object(L,'DECIDED',frozenset(L.OPEN_DECISIONS)):
+  outcome('platform-global-decisions-do-not-open-wrapper',expected(True,True),lambda:slim(V.observe(ref)))
+ outcome('canonical-default-machine-no-kwargs',True,lambda:all(c.args==() and c.kwargs=={} for c in identity.call_args_list))
+ for field in ['repo_root','repo_path','machine','root_attested','root_cgroup_is_real','decided','readings','reader','attestation_check','checker','launch_observer','observer','launched','other_job_running']:
+  def refuses(field=field):
+   try:V.observe(ref,**{field:lambda *a,**k:True})
+   except TypeError:return True
+   return False
+  outcome('public-seam-refusal-'+field,True,refuses)
+ # These are adverse robustness probes, never a claim of favorable authority.
+ for token,label in [('\x00','nul'),('\ud800','surrogate')]:
+  outcome('malformed-reference-'+label,expected(False,False),lambda token=token:slim(V.observe(dict(ref,path=token))))
+with env_fixture(current=dict(M,product_uuid_sha256='f'*64)) as (repo,fixture,*_):
+ outcome('wrong-current-machine',expected(False,False),lambda:slim(V.observe(fixture())))
+with env_fixture(current=dict(M,hardware_bound=False)) as (repo,fixture,*_):
+ outcome('unbound-current-machine',expected(False,False),lambda:slim(V.observe(fixture(machine=dict(M,hardware_bound=False)))))
+for value in [False,None,0,1,'true',[],{}]:
+ with env_fixture() as (repo,fixture,*_):
+  outcome('root-strict-'+repr(value),expected(True,False),lambda value=value:slim(V.observe(fixture(root=value))))
+for name,kw in [('uncommitted',{'committed':False}),('no-acceptance-line',{'reviewline':False}),('not-reviewed',{'reviewed':False}),('not-accepted',{'accepted':False}),('bad-schema',{'schema':'fake'})]:
+ with env_fixture() as (repo,fixture,*_):
+  outcome('provenance-'+name,expected(False,False),lambda kw=kw:slim(V.observe(fixture(**kw))))
+with env_fixture(memory_missing=True) as (repo,fixture,*_):
+ outcome('missing-raw-memory-still-withheld',expected(True,True),lambda:slim(V.observe(fixture())))
+with env_fixture() as (repo,fixture,identity,launchmock,launch):
+ ref=fixture();changed=dict(launch,invocation_id='different',systemctl=dict(launch['systemctl'],InvocationID='different'));launchmock.side_effect=[launch,changed]
+ outcome('fresh-launch-mismatch',L.FAIL,lambda:V.observe(ref)['preflight']['gates']['launched_by_systemd'])
+with env_fixture() as (repo,fixture,identity,launchmock,launch):
+ ref=fixture();launchmock.side_effect=[launch,None]
+ outcome('fresh-launch-missing',L.FAIL,lambda:V.observe(ref)['preflight']['gates']['launched_by_systemd'])
+for token,label in [('\x00','nul'),('\ud800','surrogate')]:
+ with env_fixture() as (repo,fixture,*_):
+  outcome('malformed-acceptance-path-'+label,expected(False,False),lambda token=token:slim(V.observe(fixture(acceptance_record=token))))
+with env_fixture() as (repo,fixture,*_):
+ data=(b'['*10000)+(b']'*10000);sha=hashlib.sha256(data).hexdigest()
+ (repo/'deep.json').write_bytes(data)
+ subprocess.run(['git','-C',str(repo),'add','deep.json'],check=True,capture_output=True)
+ subprocess.run(['git','-C',str(repo),'-c','commit.gpgSign=false','-c','user.name=Review fixture','-c','user.email=review@example.invalid','commit','-q','-m','Synthetic malformed JSON fixture'],check=True,capture_output=True)
+ outcome('committed-excessive-json-nesting',expected(False,False),lambda:slim(V.observe({'path':'deep.json','sha256':sha})))
+record={'head':'875eb95575fa9dc137083667bf30cc4a5a228fe6','signature':str(inspect.signature(V.observe)),'platform_sha256':hashlib.sha256(Path(L.__file__).read_bytes()).hexdigest(),'wrapper_sha256':hashlib.sha256(Path(V.__file__).read_bytes()).hexdigest(),'total':len(rows),'passed':sum(r['pass'] for r in rows),'failed':sum(not r['pass'] for r in rows),'rows':rows}
+(ROOT/'probes_result.json').write_text(json.dumps(record,indent=2,ensure_ascii=True)+'\n')
+print(json.dumps({k:v for k,v in record.items() if k!='rows'},indent=2))
+print(json.dumps([r for r in rows if not r['pass']],indent=2))

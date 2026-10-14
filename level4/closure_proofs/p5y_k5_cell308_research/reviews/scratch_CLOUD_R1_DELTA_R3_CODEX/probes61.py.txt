@@ -1,0 +1,71 @@
+"""Review 61 independent correctness probes, copied lx_platform only; synthetic inputs."""
+import hashlib
+import importlib.util
+import json
+import math
+import os
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+base = ROOT / "base/lx_platform.py"
+spec = importlib.util.spec_from_file_location("review61_lx_platform", base)
+L = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(L)
+BOOT = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+NS = {"pidns": L.INIT_PID_NS, "timens": 4026531834}
+IDENT = {"pid": 4242, "starttime_ticks": 777, "boot_id": BOOT, "cmdline_sha256": "c" * 64, **NS}
+
+def snap(t, *, boot=BOOT, susp=0):
+    return {"clocks": {k: t for k in ("monotonic_ns", "boottime_ns", "realtime_ns")},
+            "boot_id": boot, "suspend_success": susp, "power": L.AC}
+
+rows = []
+def record(id, expected, got, **detail):
+    rows.append({"id": id, "expected": expected, "got": got, **detail})
+
+t0 = {(99, 2): (1, 0, "old_campaign", None)}
+t1 = {(99, 50): (1, 0, "unrelated_reused_parent", None), (40, 51): (99, 500, "new_unrelated_child", None)}
+record("Q01_reused_parent_new_child", "new_unrelated_child reported, or no reading", 
+       L.busy_processes(t0, t1, 5.0, 25, {(99, 2)}, hz=100), t0=repr(t0), t1=repr(t1))
+
+st = {"pid": 4242, "state": "?", "ppid": 1, "utime": 10, "stime": 5, "starttime": 777}
+record("Q02_unrecognised_task_state", L.UNKNOWN,
+       L.identity_state(IDENT, current_boot=BOOT, exists=lambda p: True, stat=lambda p: st,
+                        cmd=lambda p: "c" * 64, current_ns=NS))
+record("Q03_malformed_boot_death", L.UNKNOWN,
+       L.identity_state(IDENT, current_boot="garbage", exists=lambda p: True, stat=lambda p: st,
+                        cmd=lambda p: "c" * 64, current_ns=NS))
+
+record("Q04_invalid_boots_assess", "AMBIGUOUS", L.assess(snap(0, boot="garbage"),
+       snap(120_000_000_000, boot="garbage"), [snap(60_000_000_000, boot="garbage")], []))
+record("Q05_nonfinite_clocks_assess", "AMBIGUOUS", L.assess(snap(0), snap(float("nan")), [], []))
+record("Q06_boolean_suspend_count", "AMBIGUOUS", L.assess(snap(0, susp=False),
+       snap(120_000_000_000, susp=False), [snap(60_000_000_000, susp=False)], []))
+
+busy0, busy1 = {(40, 1): (1, 0, "hog", None)}, {(40, 1): (1, 500, "hog", None)}
+record("Q07_nonfinite_duration", None, L.busy_processes(busy0, busy1, float("nan"), 25, set(), hz=100))
+record("Q08_nonfinite_threshold", None, L.busy_processes(busy0, busy1, 5, float("nan"), set(), hz=100))
+record("Q09_counter_regression", None, L.busy_processes(busy1, busy0, 5, 25, set(), hz=100))
+
+mi = "23 28 0:22 / /proc rw,relatime - proc proc rw\n"
+record("Q10_empty_NSpid", "None/False", L.proc_view_complete("NSpid:\t\n", mi, pidns=L.INIT_PID_NS))
+record("Q11_non_numeric_NSpid", "None/False", L.proc_view_complete("NSpid:\tgarbage\n", mi, pidns=L.INIT_PID_NS))
+record("Q12_nonproc_mount", "None/False", L.proc_view_complete("NSpid:\t77\n",
+       "23 28 0:22 / /proc rw,relatime - tmpfs tmpfs rw\n", pidns=L.INIT_PID_NS))
+record("Q14_later_restricted_proc_mount", "False/None", L.proc_view_complete("NSpid:\t77\n", mi +
+       "24 23 0:23 / /proc rw,relatime - proc proc rw,hidepid=2\n", pidns=L.INIT_PID_NS))
+
+forged = {"systemd_pid1": True, "unit": "rebaseguard-mbs308-exec.service", "invocation_id": "invented",
+          "systemctl": {"MainPID": os.getpid(), "InvocationID": "invented"}, "pass": True}
+pf = L.preflight(ROOT, mode="execute", other_job_running=False, launched=forged, attestation_ref=None,
+                 readings={"power": None, "free_disk": None, "boot_id": None, "updates": None})
+record("Q13_caller_asserted_launch", "caller contract must be enforced by integration",
+       {"launch_record_ok": L.launch_record_ok(forged), "preflight_launch_gate": pf["gates"]["launched_by_systemd"],
+        "overall_preflight_pass": pf["pass"]})
+
+out = {"module_sha256": hashlib.sha256(base.read_bytes()).hexdigest(), "platform": sys.platform,
+       "runtime_scope": "pure synthetic; native Linux lifecycle and full suite not executed", "probes": rows}
+text = json.dumps(out, indent=2, allow_nan=False)
+(ROOT / "probes61_out.json").write_text(text + "\n")
+print(text)

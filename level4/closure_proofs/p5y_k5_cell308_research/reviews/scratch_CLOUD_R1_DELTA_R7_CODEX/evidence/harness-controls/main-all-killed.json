@@ -1,0 +1,3123 @@
+{
+ "schema": "CLOUD_R1_LINUX_DEV_MUTATION_RUN_V2",
+ "class": "SYNTHETIC_VALIDATION",
+ "dev_only": true,
+ "utc": "2026-10-15T00:00:00Z",
+ "python": {
+  "executable": "SYNTHETIC_PYTHON",
+  "real_executable": "SYNTHETIC_REAL_PYTHON",
+  "version": "SYNTHETIC_PYTHON_VERSION",
+  "implementation": "SYNTHETIC_IMPLEMENTATION"
+ },
+ "kernel": "SYNTHETIC_KERNEL",
+ "machine": "SYNTHETIC_MACHINE",
+ "system": "SYNTHETIC_SYSTEM",
+ "input_sha256": {
+  "lx_platform.py": "5a95e481e41585934018f29d7cd5bc1820df4ba594453acbe994464225b78fd5",
+  "lx_inventory.py": "435e30cc6cde08482396ac9c01330bcf6502161dc4573598bd90954212ddc6fa",
+  "lx_verified.py": "c157108e5532c234c7a2883359cf5a49bc191bd3c65ebed7e31f73254135be6e",
+  "tests/test_lx_platform.py": "7c1fbc94b46e2c968ea776e0af0ef3f09207f2a552bc38c2a923c9eb3afd12a1",
+  "tests/test_lx_verified.py": "5c5ba6fbab0e65338312a73ac5848c11d0215cfa7d559bf5a4a40c9e5374fe08",
+  "tests/run_mutants.py": "cfc6c35b42a79480e8d65919948f9583c4095d4e148e065f2007e65b7234b062"
+ },
+ "input_sha256_after": {
+  "lx_platform.py": "5a95e481e41585934018f29d7cd5bc1820df4ba594453acbe994464225b78fd5",
+  "lx_inventory.py": "435e30cc6cde08482396ac9c01330bcf6502161dc4573598bd90954212ddc6fa",
+  "lx_verified.py": "c157108e5532c234c7a2883359cf5a49bc191bd3c65ebed7e31f73254135be6e",
+  "tests/test_lx_platform.py": "7c1fbc94b46e2c968ea776e0af0ef3f09207f2a552bc38c2a923c9eb3afd12a1",
+  "tests/test_lx_verified.py": "5c5ba6fbab0e65338312a73ac5848c11d0215cfa7d559bf5a4a40c9e5374fe08",
+  "tests/run_mutants.py": "cfc6c35b42a79480e8d65919948f9583c4095d4e148e065f2007e65b7234b062"
+ },
+ "inputs_unchanged": true,
+ "lx_platform_sha256": "5a95e481e41585934018f29d7cd5bc1820df4ba594453acbe994464225b78fd5",
+ "tests_sha256": "7c1fbc94b46e2c968ea776e0af0ef3f09207f2a552bc38c2a923c9eb3afd12a1",
+ "harness_sha256": "cfc6c35b42a79480e8d65919948f9583c4095d4e148e065f2007e65b7234b062",
+ "unmutated_suite": "PASS",
+ "baseline": {
+  "command": [
+   "SYNTHETIC_ONLY_NO_EXECUTION"
+  ],
+  "cwd": "/private/tmp/cell308-codex-review65/evidence",
+  "environment_controls": {
+   "LX_PLATFORM_DIR": null,
+   "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "returncode": 0,
+  "elapsed_s": 1.0,
+  "timed_out": false,
+  "launch_error": null,
+  "ran": 12,
+  "summary": "OK",
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "failure_names": [],
+  "error_names": [],
+  "invalid_reasons": [],
+  "stdout": "synthetic stdout\n",
+  "stderr": "Ran 12 tests in 0.001s\nOK\n",
+  "suite_tail": "OK"
+ },
+ "unmutated_tail": "OK",
+ "expected_mutants": 80,
+ "killed": 80,
+ "total": 80,
+ "status_counts": {
+  "KILLED": 80,
+  "SURVIVED": 0,
+  "ERROR": 0,
+  "NOT_APPLIED": 0
+ },
+ "reviewer_mutants_killed": 10,
+ "review60_mutants_killed": 9,
+ "review61_mutants_killed": 3,
+ "regression_mutants_killed": 5,
+ "new_target_evaluations": 0,
+ "mutants": [
+  {
+   "id": "M01",
+   "property": "failed boot-id read treated as a reboot (DEAD)",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-txp34vrk",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M02",
+   "property": "unreadable /proc/<pid>/stat treated as DEAD",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-fypurkei",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M03",
+   "property": "incomplete identity record reported ALIVE",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-rqijz4ik",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M04",
+   "property": "zombie read as DEAD again (the withdrawn L-ID-1)",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-uwahw9bq",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M05",
+   "property": "pid reuse (other starttime) not detected",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-okqi04qe",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M06",
+   "property": "no power supply exposed read as AC",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-z_bzdpta",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M07",
+   "property": "unreadable cgroup limit skipped",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-x92y4zn0",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M08",
+   "property": "missing journal channel ignored in assess",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-c5_hex3e",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M09",
+   "property": "pause channel P removed",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-un0ijx0o",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M10",
+   "property": "suspend (boottime - monotonic) ignored",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-q_0ccq6t",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M11",
+   "property": "D-MEM-FREE gate silently passes",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-veykrig9",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M12",
+   "property": "attestation 'reviewed' not required",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-uw48z5bw",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M13",
+   "property": "provider image updates pass without an attested token",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-u8taezga",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M14",
+   "property": "update vectors other than apt ignored",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-1bsivwt2",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M15",
+   "property": "launched_by_systemd skips the MainPID check",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-j5lf2pmh",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M16",
+   "property": "durable_write writes the target in place",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-v1gql8al",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M17",
+   "property": "unreadable pin counts as a match",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-gbgo5w_9",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M18",
+   "property": "busy_processes uses lifetime ticks instead of the window",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-9skff9z_",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M19",
+   "property": "empty cmdline (failed read) hashed as a command",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-gcqqe8ab",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M20",
+   "property": "UNKNOWN gates not reported as blocking",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-xw_ggcom",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M21",
+   "property": "headroom computed over levels with unreadable usage",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-ggw_apw_",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M22",
+   "property": "namespace mismatch ignored",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-oiisz99g",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M23",
+   "property": "unknown power-supply type skipped",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-0dk_l4iw",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M24",
+   "property": "process born in the window not counted",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-eg0qxmq_",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M25",
+   "property": "attestation file sha256 not verified",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-83nu5hp6",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M26",
+   "property": "attestation not bound to the hardware identity",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-zciklxww",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M27",
+   "property": "v2 root accepted as unlimited without attestation",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-2atcoe4f",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M28",
+   "property": "effective_limit numeric without root attestation",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-cxkkbrs0",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M29",
+   "property": "execute / resume pass the launch gate without a launch record",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-0eholauv",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M30",
+   "property": "mapped shared objects (libm) not pinned",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-kviudwyw",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M31",
+   "property": "incomplete /proc view accepted",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-uq1h16_q",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M32",
+   "property": "own may contain init",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-br7o4itm",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R01",
+   "property": "unreadable Battery status skipped (a failed read can yield AC)",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-59qctha5",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R02",
+   "property": "host attestation accepted when the 'accepted' key is merely present (e.g. 'REJECTED')",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-jlqge0_m",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R03",
+   "property": "durable_write never fsyncs the data",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-hgrrk2un",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R04",
+   "property": "suspend / pause tolerance raised from 2 s to 25 s",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-bbx87bsi",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R05",
+   "property": "hidden name allow-list for the Cloud session controller in busy_processes",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-lc5ljqwq",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R06",
+   "property": "package versions and glibc dropped from PIN_KEYS",
+   "anchor_counts": [
+    1,
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-lcfff2ml",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R07",
+   "property": "stopped (T/t) and uninterruptible (D) tasks read as DEAD",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-8ozluybk",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R08",
+   "property": "durable_write never fsyncs the directory after the rename",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-9jt_rfv9",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R09",
+   "property": "maximum sample spacing raised from 180 s to 390 s",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-q6wl2sji",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R10",
+   "property": "assess checks power only at start and end, not at the samples",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-ek2qwrvn",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X01",
+   "property": "/proc 'subset=' no longer refused",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-17m3hkzi",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X02",
+   "property": "no /proc mount line counts as a complete view",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-ysyiqqa4",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X03",
+   "property": "unreadable livepatch counts as none applied",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-gaw833dk",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X04",
+   "property": "K' monotonic-ahead-of-boottime channel removed",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-v4zuoefp",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X05",
+   "property": "durable_write read-back verification removed",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-7vfsgnda",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X06",
+   "property": "absent samples no longer AMBIGUOUS",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-3kcrea4b",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X07",
+   "property": "a transient .scope accepted as the campaign unit",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-u9cr_y8s",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X08",
+   "property": "v1 'unlimited' sentinel lowered to 1 GiB",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-3j36t2zt",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X09",
+   "property": "unknown interpreter package drops out of the pin",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-e0hhapjc",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N01",
+   "property": "D-HOST-LIFETIME treated as decided",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-snbyz08l",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N02",
+   "property": "attestation acceptance line not required",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-_r3o1ha3",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N03",
+   "property": "attestation schema not checked",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-y7xr1c8y",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N04",
+   "property": "caller-asserted fields accepted in the attestation reference",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-tmjec8_6",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N05",
+   "property": "root attestation truthy again",
+   "anchor_counts": [
+    1,
+    1,
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-usyzacpf",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N06",
+   "property": "nested PID namespace view accepted",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-bw5pja9n",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N07",
+   "property": "boot id not validated",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-gtg3970l",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N08",
+   "property": "exited processes not reported",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-vq57n_yd",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N09",
+   "property": "unreadable existing process skipped",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-ez7040ar",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N10",
+   "property": "campaign children exempt by pid alone",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-silcdbct",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N11",
+   "property": "unrecorded namespace lets pid evidence count (revision-2 behaviour)",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-nj8rlb3i",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N12",
+   "property": "pin without libm / libc / loader accepted",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-jyznoh9f",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N13",
+   "property": "launch record trusted on its 'pass' flag",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-sumaaew0",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N14",
+   "property": "unrecognised battery status read as not discharging",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-ycg1wnms",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y01",
+   "property": "effective memory minimum omits the host MemTotal cap",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-a5id3srd",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y02",
+   "property": "cgroup headroom uses the maximum instead of the minimum",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-5pve27ny",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y03",
+   "property": "sample order is ignored (both sample-order and pairwise non-increase guards removed)",
+   "anchor_counts": [
+    1,
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-4g83iyyl",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P01",
+   "property": "campaign child ownership ignores the parent's observed starttime identity",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-gi39rexz",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P02",
+   "property": "a malformed current boot id counts as positive identity evidence",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-yn6bciq2",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P03",
+   "property": "matching malformed boot ids count as positive interval evidence",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-j83pnoq2",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P04",
+   "property": "nonfinite CPU window duration is accepted",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-zjbueef6",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P05",
+   "property": "malformed NSpid entries count as a complete proc view",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-97r3glvq",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "F01",
+   "property": "clock-pair checks ignore intermediate observations and use only the endpoints",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-47sq2d2m",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "F02",
+   "property": "suspend counter checks ignore intermediate observations and use only the endpoints",
+   "anchor_counts": [
+    1,
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-j4v4yb76",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "F03",
+   "property": "malformed mount IDs and device numbers bypass numeric metadata validation",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-d6bawafq",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "F04",
+   "property": "the first NSpid field is trusted when duplicate NSpid records disagree",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-jzmb6_3o",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "F05",
+   "property": "multiple starttime identities for one PID are accepted in a single CPU snapshot",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-9ez1fexe",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "F06",
+   "property": "payload adjoining NSpid's colon is discarded before validation",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-jev7e1dw",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "F07",
+   "property": "malformed attestation/reference paths escape as subprocess argument exceptions",
+   "anchor_counts": [
+    1
+   ],
+   "mutated_lx_platform_sha256": "03f81d7d639082e32a59bded6f64ba608e1cd1607bf78eced3ce55bb04f085be",
+   "status": "KILLED",
+   "reasons": [],
+   "suite": {
+    "command": [
+     "SYNTHETIC_ONLY_NO_EXECUTION"
+    ],
+    "cwd": "/private/tmp/cell308-codex-review65/evidence",
+    "environment_controls": {
+     "LX_PLATFORM_DIR": "/tmp/cell308-codex-review65/evidence/harness-controls/scratch-tempdirs/synthetic-sgxozvw_",
+     "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "returncode": 1,
+    "elapsed_s": 1.0,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "FAILED (failures=1)",
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [
+     "synthetic_one"
+    ],
+    "error_names": [],
+    "invalid_reasons": [],
+    "stdout": "synthetic stdout\n",
+    "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+    "suite_tail": "FAILED (failures=1)"
+   },
+   "suite_tail": "FAILED (failures=1)"
+  }
+ ]
+}

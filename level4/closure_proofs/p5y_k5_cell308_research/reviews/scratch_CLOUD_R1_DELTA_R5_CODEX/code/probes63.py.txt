@@ -1,0 +1,121 @@
+"""Independent target-free helper probes against LX_PLATFORM_DIR; no live readers."""
+import copy
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+
+sys.path.insert(0, os.environ["LX_PLATFORM_DIR"])
+import lx_platform as L
+
+S = 10**9
+BOOT = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+MI = "23 28 0:22 / /proc rw,relatime - proc proc rw\n"
+ST = "NSpid:\t77\n"
+
+def snap(m, b=None, r=None, count=0):
+    return {"clocks": {"monotonic_ns": m, "boottime_ns": m if b is None else b,
+                       "realtime_ns": m if r is None else r},
+            "suspend_success": count, "boot_id": BOOT, "power": L.AC}
+
+def assess(seq, journal=None):
+    return L.assess(seq[0], seq[-1], seq[1:-1], [] if journal is None else journal)
+
+rows = []
+def probe(name, inputs, call, expected, *, defect=False):
+    try:
+        result = call()
+        outcome = expected(result)
+        rows.append({"name": name, "input": inputs, "result": result,
+                     "expected_outcome_met": outcome, "residual_defect_probe": defect})
+    except Exception as ex:
+        rows.append({"name": name, "input": inputs, "exception": repr(ex),
+                     "expected_outcome_met": False, "residual_defect_probe": defect})
+
+aligned = [snap(0), snap(60*S), snap(120*S)]
+probe("C01_aligned_clock_unchanged_count_control", aligned, lambda: assess(aligned),
+      lambda x: x["status"] == "CLEAN" and x["clean"] is True)
+
+seq = [snap(0), snap(60*S, r=90*S), snap(120*S)]
+probe("F1_original_intermediate_realtime_excursion", seq, lambda: assess(seq),
+      lambda x: x["status"] == "AMBIGUOUS" and not x["clean"])
+seq = [snap(0), snap(60*S, count=1), snap(120*S)]
+probe("F2_original_suspend_counter_0_1_0", seq, lambda: assess(seq),
+      lambda x: x["status"] == "AMBIGUOUS" and not x["clean"]
+                and not any(r.startswith("CONTAMINATED: S'") for r in x["reasons"]))
+bad_mi = "garbage garbage garbage / /proc rw,relatime - proc proc rw\n"
+probe("F3_original_garbage_mount_header", bad_mi,
+      lambda: L.proc_view_complete(ST, bad_mi, pidns=L.INIT_PID_NS), lambda x: x is not True)
+dup_st = ST + "NSpid:\t77 88\n"
+probe("F4_original_conflicting_duplicate_nspid", dup_st,
+      lambda: L.proc_view_complete(dup_st, MI, pidns=L.INIT_PID_NS), lambda x: x is not True)
+
+t0 = {(99, 2): (1, 0, "old_campaign", None)}
+t1 = {(99, 2): (1, 0, "old_campaign", None), (99, 50): (1, 0, "new_parent", None),
+      (40, 51): (99, 500, "external_child", None)}
+probe("F5_original_duplicate_end_snapshot_parent_identity", {"t0":repr(t0),"t1":repr(t1)},
+      lambda: L.busy_processes(t0, t1, 5, 25, {(99,2)}, hz=100), lambda x: x is None)
+
+probe("C02_valid_single_proc_record_control", {"status":ST,"mountinfo":MI},
+      lambda: L.proc_view_complete(ST, MI, pidns=L.INIT_PID_NS), lambda x: x is True)
+valid_t1 = {(99, 50): (1, 0, "new_parent", None), (40, 51): (99, 500, "external_child", None)}
+probe("C03_valid_forward_reuse_reports_external_child", repr(valid_t1),
+      lambda: L.busy_processes(t0, valid_t1, 5, 25, {(99,2)}, hz=100),
+      lambda x: isinstance(x,list) and any(r["comm"] == "external_child" and r["pct"] == 100 for r in x))
+owned_t0 = {(99,2):(1,0,"campaign",None),(40,3):(99,0,"child",None)}
+owned_t1 = {(99,2):(1,0,"campaign",None),(40,3):(99,500,"child",None)}
+probe("C04_valid_parent_identity_exempts_child_control", repr(owned_t1),
+      lambda: L.busy_processes(owned_t0,owned_t1,5,25,{(99,2)},hz=100), lambda x: x == [])
+
+seq = [snap(0),snap(60*S,b=90*S),snap(120*S)]
+probe("A01_intermediate_boottime_excursion",seq,lambda: assess(seq),
+      lambda x: x["status"] == "CONTAMINATED" and not x["clean"])
+seq = [snap(0),snap(60*S,r=62*S),snap(120*S)]
+probe("A02_exact_2s_realtime_tolerance_control",seq,lambda: assess(seq),
+      lambda x: x["status"] == "CLEAN")
+seq = [snap(0),snap(60*S,r=62*S+1),snap(120*S)]
+probe("A03_realtime_2s_plus_1ns",seq,lambda: assess(seq),
+      lambda x: x["status"] == "AMBIGUOUS")
+seq = [snap(0),snap(60*S,b=60*S+S+S//2),snap(120*S,b=123*S)]
+probe("A04_each_adjacent_1_5s_endpoint_3s_still_contaminated",seq,lambda: assess(seq),
+      lambda x: x["status"] == "CONTAMINATED")
+seq = [snap(0),snap(60*S,count=1),snap(120*S,count=1)]
+probe("A05_nondecreasing_counter_increase",seq,lambda: assess(seq),
+      lambda x: x["status"] == "CONTAMINATED")
+seq = [snap(0,count=5),snap(60*S,count=4),snap(120*S,count=5)]
+probe("A06_counter_decrease_before_increase_is_ambiguous",seq,lambda: assess(seq),
+      lambda x: x["status"] == "AMBIGUOUS" and not any(r.startswith("CONTAMINATED: S'") for r in x["reasons"]))
+seq = [snap(0),snap(60*S,b=90*S,count=1),snap(120*S)]
+probe("A07_independent_clock_contamination_dominates_ambiguous_counter",seq,lambda: assess(seq),
+      lambda x: x["status"] == "CONTAMINATED"
+                and any(r.startswith("AMBIGUOUS: S'") for r in x["reasons"]))
+seq = [snap(0),snap(60*S,count=True),snap(120*S)]
+probe("A08_bool_middle_counter_is_ambiguous",seq,lambda: assess(seq),
+      lambda x: x["status"] == "AMBIGUOUS")
+for n,st in enumerate(("NSpid:\t77 88\n"+ST,ST+ST),start=1):
+    probe(f"A09_duplicate_nspid_order_or_identical_{n}",st,
+          lambda st=st: L.proc_view_complete(st,MI,pidns=L.INIT_PID_NS), lambda x: x is not True)
+for n,mi in enumerate(("0 28 0:22 / /proc rw - proc proc rw\n",
+                       "23 0 0:22 / /proc rw - proc proc rw\n",
+                       "23 28 -1:22 / /proc rw - proc proc rw\n",
+                       "23 28 0:-22 / /proc rw - proc proc rw\n"),start=1):
+    probe(f"A10_bad_numeric_mount_metadata_{n}",mi,
+          lambda mi=mi: L.proc_view_complete(ST,mi,pidns=L.INIT_PID_NS),lambda x: x is not True)
+dup_start={(99,2):(1,0,"old_campaign",None),(99,50):(1,0,"new_parent",None)}
+probe("A11_duplicate_start_snapshot_identity",repr(dup_start),
+      lambda: L.busy_processes(dup_start,valid_t1,5,25,{(99,2)},hz=100),lambda x: x is None)
+unrelated_dup={(40,3):(1,0,"external",None),(40,4):(1,0,"external_reuse",None)}
+probe("A12_duplicate_noncampaign_snapshot_identity",repr(unrelated_dup),
+      lambda: L.busy_processes(unrelated_dup,{},5,25,set(),hz=100),lambda x: x is None)
+for n,st in enumerate(("NSpid:garbage\t77\n","NSpid:77 88\n"),start=1):
+    probe(f"D01_malformed_nspid_header_false_complete_{n}",st,
+          lambda st=st: L.proc_view_complete(st,MI,pidns=L.INIT_PID_NS),lambda x: x is not True,defect=True)
+
+rec={"actual_import":str(Path(L.__file__).resolve()),
+     "actual_import_sha256":hashlib.sha256(Path(L.__file__).read_bytes()).hexdigest(),
+     "probe_count":len(rows),"met_expectation":sum(r["expected_outcome_met"] for r in rows),"rows":rows}
+out=Path(__file__).with_name("probes63_out.json")
+out.write_text(json.dumps(rec,indent=2)+"\n")
+print(json.dumps({"probe_count":len(rows),"met_expectation":rec["met_expectation"],
+                  "unexpected":[r for r in rows if not r["expected_outcome_met"]]},indent=2))

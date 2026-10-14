@@ -1,0 +1,38 @@
+{
+  "class": "NONTARGET_INFRASTRUCTURE_CHECK",
+  "purpose": "Read-only connectivity check for optional native synthetic validation",
+  "new_target_evaluations": 0,
+  "host_selected": false,
+  "changes_made": false,
+  "results": [
+    {
+      "worker": "mcp__rebaseguard_aws__exec",
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error executing tool exec"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "worker": "mcp__rebaseguard_vultr__exec",
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "ERROR: command timed out after 10 seconds\n\nSTDOUT:\n\n\nSTDERR:\n"
+          }
+        ],
+        "structuredContent": {
+          "result": "ERROR: command timed out after 10 seconds\n\nSTDOUT:\n\n\nSTDERR:\n"
+        },
+        "isError": false
+      }
+    }
+  ]
+}

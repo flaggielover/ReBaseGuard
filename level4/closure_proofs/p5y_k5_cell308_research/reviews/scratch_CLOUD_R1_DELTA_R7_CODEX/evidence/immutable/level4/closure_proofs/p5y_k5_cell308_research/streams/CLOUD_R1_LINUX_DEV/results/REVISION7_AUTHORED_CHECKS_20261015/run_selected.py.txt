@@ -1,0 +1,12 @@
+import sys,unittest
+from pathlib import Path
+sys.path.insert(0,str(Path.cwd()/"tests"))
+import test_lx_platform as T
+import test_lx_verified as V
+loader=unittest.TestLoader();s=unittest.TestSuite()
+for name in loader.getTestCaseNames(T.TestBusy):
+ if name.startswith("test_proc_view"):s.addTest(T.TestBusy(name))
+s.addTests(loader.loadTestsFromModule(V))
+s.addTest(T.TestAttestationPreflight("test_reference_digest_must_match_the_committed_file"))
+r=unittest.TextTestRunner(verbosity=2).run(s)
+sys.exit(0 if r.wasSuccessful() else 1)

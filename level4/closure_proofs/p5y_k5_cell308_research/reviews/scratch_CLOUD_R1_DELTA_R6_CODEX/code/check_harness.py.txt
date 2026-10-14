@@ -1,0 +1,19 @@
+from pathlib import Path
+import ast,hashlib,importlib.util,json,sys
+ROOT=Path('/tmp/cell308-codex-review64/code')
+DEV=ROOT/'level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+spec=importlib.util.spec_from_file_location('review_harness',DEV/'tests/run_mutants.py');H=importlib.util.module_from_spec(spec);spec.loader.exec_module(H)
+src=(DEV/'lx_platform.py').read_text();rows=[]
+for mid,description,edits in H.MUTANTS:
+ transformed,counts,error=H.apply_mutation(src,edits)
+ rows.append({'id':mid,'anchor_counts':counts,'error':error,'mutated_platform_sha256':hashlib.sha256(transformed.encode()).hexdigest() if transformed else None})
+counts={}
+for name in ['test_lx_platform.py','test_lx_verified.py']:
+ tree=ast.parse((DEV/'tests'/name).read_text());counts[name]=sum(isinstance(n,ast.FunctionDef) and n.name.startswith('test_') for n in ast.walk(tree))
+imports={}
+for name in ['lx_platform.py','lx_verified.py']:
+ tree=ast.parse((DEV/name).read_text())
+ imports[name]=[ast.unparse(n) for n in ast.walk(tree) if isinstance(n,(ast.Import,ast.ImportFrom))]
+record={'head':'875eb95575fa9dc137083667bf30cc4a5a228fe6','test_counts':counts,'registered_mutants':len(rows),'unique_mutants':len(set(r['id'] for r in rows)),'group_sizes':H.MUTANT_GROUP_SIZES,'all_unique_anchors_and_parse':all(r['error'] is None and all(c==1 for c in r['anchor_counts']) for r in rows),'input_hashes':H.input_hashes(),'imports':imports,'mutants':rows}
+(ROOT/'harness_static.json').write_text(json.dumps(record,indent=2)+'\n')
+print(json.dumps({k:v for k,v in record.items() if k!='mutants'},indent=2))

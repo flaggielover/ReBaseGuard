@@ -1,0 +1,59 @@
+import ast, collections, hashlib, importlib.util, json, re, sys
+from pathlib import Path
+sys.dont_write_bytecode=True
+O=Path('/tmp/cell308-codex-review65/evidence'); I=O/'immutable'; NS='level4/closure_proofs/p5y_k5_cell308_research'; DEV=NS+'/streams/CLOUD_R1_LINUX_DEV'; H='7eb3ba4d03f3b7898109073c83eb9b08f4589354'
+static=json.loads((O/'static_checks.json').read_text()); methods=json.loads((O/'test_methods.json').read_text()); plan=json.loads((O/'expected_property_witnesses.json').read_text()); rec=json.loads((O/'linux_artifact/validation.json').read_text()); meta=json.loads((O/'ci_metadata.json').read_text()); manifest=json.loads((O/'linux_artifact/artifact_manifest.json').read_text())
+assert meta['headSha']==H and meta['status']=='completed' and meta['conclusion']=='success' and meta['databaseId']==38644122257 and meta['workflowName']=='Cell-308 development review'
+assert all(j['status']=='completed' and j['conclusion']=='success' for j in meta['jobs'])
+assert (O/'linux_artifact/input-commit.txt').read_text().strip()==H
+assert rec['class']=='SYNTHETIC_VALIDATION' and rec['dev_only'] is True and rec['system']=='Linux' and rec['new_target_evaluations']==0
+assert rec['input_sha256']==rec['input_sha256_after']==static['input_sha256'] and rec['inputs_unchanged'] is True
+assert rec['lx_platform_sha256']==static['input_sha256']['lx_platform.py'] and rec['tests_sha256']==static['input_sha256']['tests/test_lx_platform.py'] and rec['harness_sha256']==static['input_sha256']['tests/run_mutants.py']
+assert rec['expected_mutants']==rec['total']==rec['killed']==80 and rec['status_counts']=={'KILLED':80,'SURVIVED':0,'ERROR':0,'NOT_APPLIED':0}
+spec=importlib.util.spec_from_file_location('read_only_harness',I/DEV/'tests/run_mutants.py'); h=importlib.util.module_from_spec(spec); spec.loader.exec_module(h)
+source=(I/DEV/'lx_platform.py').read_text(); h.HERE=Path(rec['baseline']['cwd'])/'tests'
+expected_command=[rec['python']['executable'],'-B','-W','error::ResourceWarning','-m','unittest','discover','-s',str(h.HERE),'-v']
+lines_by_file={p:(I/DEV/p).read_text().splitlines() for p in ['tests/test_lx_platform.py','tests/test_lx_verified.py','lx_verified.py']}; nodes_by_file={p:ast.parse('\n'.join(v)) for p,v in lines_by_file.items()}
+def suite(s):
+ assert s['command']==expected_command and s['cwd']==str(h.HERE.parent)
+ assert s['environment_controls']['PYTHONDONTWRITEBYTECODE']=='1'
+ z=h._suite_record(s['command'],s['environment_controls'],returncode=s['returncode'],stdout=s['stdout'],stderr=s['stderr'],elapsed_s=s['elapsed_s'],timed_out=s['timed_out'],launch_error=s['launch_error'])
+ assert z==s
+ got=re.findall(r'^test_[^\n (]+ \((test_lx_(?:platform|verified)\.[^\n ()]+)\)',s['stderr'],re.M)
+ assert len(got)==len(set(got))==136 and set(got)==set(static['names'])
+ assert s['ran']==136 and s['errors']==s['skipped']==0 and not s['timed_out'] and not s['launch_error'] and not s['invalid_reasons']
+ return {'ran':s['ran'],'summary':s['summary'],'returncode':s['returncode'],'failures':s['failures'],'errors':s['errors'],'skipped':s['skipped'],'invalid_reasons':s['invalid_reasons'],'exact_136_method_names':True,'full_record_reconstruction_matches':True}
+def verify_frames(text,mutated):
+ lines={'lx_platform.py':mutated.splitlines(),**lines_by_file}; nodes={'lx_platform.py':ast.parse(mutated),**nodes_by_file}; rows=[]
+ for file,line,fun,statement in re.findall(r'  File "([^\n]+/(?:test_lx_(?:platform|verified)|lx_platform|lx_verified)\.py)", line (\d+), in ([^\n]+)\n    ([^\n]+)',text):
+  rel=('tests/' if Path(file).name.startswith('test_') else '')+Path(file).name; n=int(line); assert lines[rel][n-1].strip()==statement.strip(),(rel,n,statement,lines[rel][n-1])
+  funcs=[x for x in ast.walk(nodes[rel]) if isinstance(x,(ast.FunctionDef,ast.AsyncFunctionDef)) and x.lineno<=n<=x.end_lineno]
+  if fun not in ('<module>','<lambda>'):
+   assert funcs and max(funcs,key=lambda x:x.lineno).name==fun,(rel,n,fun)
+  rows.append({'file':rel,'line':n,'function':fun,'statement':statement})
+ return rows
+def sections(text): return re.findall(r'^FAIL: .*?(?=^=+\n|^-+\nRan |\Z)',text,re.M|re.S)
+base=rec['baseline']; bsummary=suite(base); assert h.suite_passed(base) and base['failures']==0 and base['returncode']==0 and base['summary']=='OK' and base['environment_controls']['LX_PLATFORM_DIR'] is None
+assert [r['id'] for r in rec['mutants']]==[r['id'] for r in static['mutants']]
+rows=[]; all_frames=[]; observations=[]
+for row,expected,w in zip(rec['mutants'],static['mutants'],plan['witnesses']):
+ mid=row['id']; assert mid==w['id']
+ assert row['property']==expected['property'] and row['anchor_counts']==expected['anchor_counts'] and row['mutated_lx_platform_sha256']==expected['mutated_lx_platform_sha256']
+ assert row['status']=='KILLED' and not row['reasons']
+ transformed=source
+ for old,new in expected['edits']: transformed=transformed.replace(old,new)
+ assert hashlib.sha256(transformed.encode()).hexdigest()==row['mutated_lx_platform_sha256']
+ s=row['suite']; summary=suite(s); status,reasons=h.classify_mutant(s,base); assert status=='KILLED' and not reasons
+ assert s['returncode']==1 and s['failures']>0 and s['environment_controls']['LX_PLATFORM_DIR'] is not None
+ frames=verify_frames(s['stderr'],transformed); all_frames+=frames
+ candidate=[x for x in sections(s['stderr']) if '('+w['test']+')' in x and re.search(r'line '+str(w['assertion_line'])+r', in '+re.escape(w['test'].split('.')[-1])+r'\n',x)]
+ assert candidate,(mid,w['test'],w['assertion_line'])
+ chosen=candidate[0]; matches=re.findall(r'^AssertionError: [\s\S]*',chosen,re.M); assert matches,(mid,chosen)
+ observation=matches[-1].strip()
+ # The complete current section remains available for direct human property adjudication.
+ direct={'test':w['test'],'rationale':w['rationale'],'assertion_line':w['assertion_line'],'assertion_statement':w['assertion_statement'],'assertion_observation':observation,'failure_section':chosen,'fixture_source':w['method_source'],'intended_property_assertion':True}
+ rows.append({'id':mid,'property':row['property'],'status':status,'valid_assertion_kill':True,'suite':summary,'anchor_counts':row['anchor_counts'],'mutated_lx_platform_sha256':row['mutated_lx_platform_sha256'],'direct_property_witness':direct,'verified_source_frames':frames})
+ observations.append(mid+' '+row['property']+'\n'+w['test']+':'+str(w['assertion_line'])+' '+w['assertion_statement']+'\n'+observation+'\n')
+assert len(rows)==80
+out={'head':H,'ci':meta,'artifact_sha256':manifest['files'],'validation_and_full_output_byte_identical':True,'input_hashes_match_immutable_git_before_and_after':True,'input_sha256':static['input_sha256'],'metadata':{k:rec[k] for k in ['schema','class','dev_only','utc','python','kernel','machine','system','new_target_evaluations']},'baseline':bsummary,'all_81_suites_have_exact_136_current_method_names':True,'mutants':80,'independent_classifier_counts':dict(collections.Counter(x['status'] for x in rows)),'verified_test_traceback_frames':sum(f['file'].startswith('tests/') for f in all_frames),'verified_product_traceback_frames':sum(not f['file'].startswith('tests/') for f in all_frames),'valid_property_assertion_kills':80,'global_code_verdict_inferred':False,'wrapper_mutation_coverage_complete_inferred':False,'adjudication':rows}
+(O/'current_adjudication_checks.json').write_text(json.dumps(out,indent=2)+'\n'); (O/'property_observations.txt').write_text('\n'.join(observations)); print(json.dumps({k:v for k,v in out.items() if k not in ['adjudication','ci','input_sha256','artifact_sha256']},indent=2)); print('\n'.join(observations))

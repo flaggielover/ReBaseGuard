@@ -1,0 +1,25 @@
+{
+  "class": "SYNTHETIC_VALIDATION",
+  "dev_only": true,
+  "input_sha256": "e4f30c816a31a2f36fe7fab88fb4af957457d817b88fc2a8b75324cdb7ef705e",
+  "cases": [
+    {
+      "status": "NSpid:\t²\n",
+      "mount": "23 28 0:22 / /proc rw - proc proc rw\n",
+      "exception": "ValueError",
+      "detail": "invalid literal for int() with base 10: '²'"
+    },
+    {
+      "status": "NSpid:\t７７\n",
+      "mount": "23 28 0:22 / /proc rw - proc proc rw\n",
+      "result": true
+    },
+    {
+      "status": "NSpid:\t77\n",
+      "mount": "² 28 0:22 / /proc rw - proc proc rw\n",
+      "exception": "ValueError",
+      "detail": "invalid literal for int() with base 10: '²'"
+    }
+  ],
+  "new_target_evaluations": 0
+}
