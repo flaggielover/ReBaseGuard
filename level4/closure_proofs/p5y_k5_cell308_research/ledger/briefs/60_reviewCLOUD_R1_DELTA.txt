@@ -1,0 +1,87 @@
+BRIEF 60 — reviewCLOUD_R1_DELTA: fresh independent DELTA review of the repairs made after review 59 (Cell 308, MB-S
+successor, S4 changed branch, Cloud route r1). Issued 2026-10-14 by the coordinator of a Claude Cloud session. Pasted
+inline to the reviewer verbatim.
+
+=== ROLE
+You are a fresh, independent reviewer. You wrote none of the material and none of review 59. You review; you do not
+repair, commit, push or edit any repository file. Write your review to the single output file named at the end.
+
+=== REPOSITORY AND COMMITS
+Checkout: /home/user/ReBaseGuard (git). Branch claude/cell-308-github-state-skb1g0. Review the delta
+b3d8eb5e..ff9006ac (the state reviewed by review 59 is b3d8eb5e; ff9006ac carries the repairs). Namespace NS =
+level4/closure_proofs/p5y_k5_cell308_research/. The historical candidate 142d97a90a1c3fafff394044aa1448674f7a633c may be
+read only with `git show 142d97a9:<path>`; never check it out, import it or run it.
+
+=== INPUT: THE REVIEW BEING ANSWERED
+NS/reviews/REVIEW_CLOUD_R1_FEASIBILITY_AMENDMENT_DEV.md (review 59; verdicts CLASSIFICATION HOST_UNSUITABLE_CONFIRMED,
+AMENDMENT_DRAFT NEEDS_REVISION, DEV_CODE NOT_FAIL_CLOSED; findings F1-F23). Its scratch material is under
+NS/reviews/scratch_CLOUD_R1/ (probes, the reviewer's mutants, fetched provider pages).
+
+=== WHAT TO REVIEW (at ff9006ac)
+D1. NS/governance/new_host_route_cloud_r1/PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R2.md (its §10 maps every finding),
+    OWNER_DECISION_BRIEF_CLOUD_R1_R2.md, CLOUD_FEASIBILITY_R2_ERRATUM_E1.md,
+    OFFICIAL_PROVIDER_FACTS_20261014_ERRATUM_E1.md, CLOUD_HOST_INVENTORY_R2B_20261014.json.
+D2. NS/streams/CLOUD_R1_LINUX_DEV/ revision 2: lx_platform.py, lx_inventory.py, tests/test_lx_platform.py,
+    tests/run_mutants.py, results/, README_DEV_ONLY.md.
+D3. The ledger lines added after b3d8eb5e in NS/ledger/TARGET_INTEGRITY_LEDGER.jsonl.
+
+=== ACCEPTED SOURCES YOU MAY READ to check fidelity
+NS/governance/SUCCESSOR_GOVERNANCE_308*.md, NS/governance/USER_DECISION_BRIEF_308_SUCCESSOR_R2.md,
+NS/governance/USER_DECISION_BRIEF_308_MBS_R1_RFREE_STOP.md, NS/governance/CONSTANTS_RATIFICATION_MBS308.md ("Written
+rules"), NS/registry/SUCCESSOR_ROUTE_AUDIT_308*.md, NS/reviews/REVIEW_SUCCESSOR_ROUTE_308.md,
+NS/reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308.md, NS/governance/new_host_route_cloud_r1/ROUTE_PREPARATION.md, and the
+candidate code / tests via git show. You may read MB r1's
+level4/closure_proofs/p5y_k5_cell308_mb_r1/review/MB308_QUALIFICATION_REVIEW.md via `git show 142d97a9:<path>` ONLY at
+its E7 / E8 items.
+
+=== EXPOSURE RESTRICTIONS (binding; governance S13, S10)
+Do NOT open, grep into or otherwise read: NS/audit/EXECUTION_INTERRUPTION_ASSESSMENT*, NS/audit/INCIDENT_AUDIT*,
+NS/reviews/REVIEW_EXECUTION_INTERRUPTION*, anything under level4/closure_proofs/p5y_k5_cell308_mb_r1/postexec/ or any MB
+r1 target-run record, NS/ledger/COORDINATOR_EXPOSURE_DISCLOSURE.md. Do not read any Cell-309 branch, file or record
+(branch names in `git branch -a` are the only permitted contact). Disclose any accidental contact.
+
+=== WHAT YOU MAY RUN
+Target-free, read-only or synthetic only: git read commands, file reads, and from NS/streams/CLOUD_R1_LINUX_DEV:
+`python3 -B -m unittest discover -s tests -v` and `python3 -B tests/run_mutants.py` (NO output-file argument; do not
+write results/). Throwaway scripts and extra mutants ONLY under
+/tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review60/, run against a COPY of
+lx_platform.py there (the suite honours LX_PLATFORM_DIR). Never run candidate code, a science module, a decoy, a
+qualification case, quarantine guards against cells, or anything that evaluates a cell, drift or certificate. No
+installs, no setting changes. You may re-run review 59's probes from NS/reviews/scratch_CLOUD_R1/ against a copy of the
+revision-2 module.
+
+=== QUESTIONS
+Q1. For EACH finding F1-F23 of review 59: is it RESOLVED, PARTIALLY RESOLVED, NOT RESOLVED, or DISPUTED-JUSTIFIED (the
+    coordinator chose not to follow the requested correction, with a reason you accept)? Give evidence (file:line,
+    test name, command output).
+Q2. Did the repairs introduce NEW defects? In particular: any path in lx_platform.py revision 2 where a failed, absent,
+    unrecognised or rejected input yields PASS, ALIVE, AC, a numeric allowance or CLEAN; any test that cannot fail; any
+    mutant anchor that tests something trivial. Write at least three NEW mutants of your own against revision 2 and
+    report whether the suite kills them.
+Q3. Amendment r2 fidelity: check every [ACCEPTED] quotation word for word against its source; check every option in §4
+    for a correct "amends which accepted text / new number" label; check that nothing relaxes an accepted rule or
+    blurs PROPOSED vs ACCEPTED; check L-DET (§5) against MBR1_REPRO (route A1 §3) and E8.
+Q4. Errata discipline: were the reviewed files (CLOUD_FEASIBILITY_R2.md, OFFICIAL_PROVIDER_FACTS_20261014.md, the r1
+    amendment draft, the r1 owner brief, CLOUD_HOST_INVENTORY_R2_20261014.json) left byte-unchanged
+    (`git diff b3d8eb5e ff9006ac -- <path>`)? Are the errata accurate (check the provider quotations against the review
+    59 fetched pages)?
+Q5. Ledger: recompute every sha256 bound by the ledger lines added after b3d8eb5e; check the counts they state.
+Q6. Preservation: candidate and research tips untouched; everything new outside the candidate namespace; S5, S7, S10,
+    S13 (with E1 D2/D3), MBS-5(b) carried.
+
+=== OUTPUT
+ONE Markdown file: /tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review60/REVIEW_CLOUD_R1_DELTA_R2.md
+  1. Header: reviewer = "reviewCLOUD_R1_DELTA (fresh agent, brief 60)", date, delta reviewed.
+  2. Exposure disclosure: files opened, commands run, statement on excluded material.
+  3. Verdict lines, exactly:
+     DELTA: one of DELTA_ACCEPTED / DELTA_ACCEPTED_WITH_CONDITIONS / DELTA_REJECTED
+     AMENDMENT_DRAFT_R2: one of FIT_FOR_FORMAL_ROUTE_REVIEW / FIT_WITH_CONDITIONS / NEEDS_REVISION
+     DEV_CODE_R2: one of FAIL_CLOSED_CONFIRMED / FAIL_CLOSED_WITH_DEFECTS / NOT_FAIL_CLOSED
+     State plainly that no verdict here accepts the amendment (only a formal route / governance review, the S12
+     re-rating and the owner can).
+  4. Table F1-F23 with status and evidence (Q1).
+  5. Answers Q2-Q6.
+  6. New findings N1..Nn with severity BLOCKING / MAJOR / MINOR / NOTE, location, required correction.
+  7. Your mutants: diff and killed/survived.
+Be specific and adversarial; no praise; say UNVERIFIED where you cannot verify.
+When finished, reply with only: the output path, the three verdict lines, and the count of new findings by severity.
