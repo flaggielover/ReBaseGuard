@@ -1,0 +1,89 @@
+BRIEF 59 — reviewCLOUD_R1: fresh independent review of the Cloud route r2 feasibility determination, the PROPOSED
+route amendment A1 and the development-only Linux platform layer (Cell 308, MB-S successor, S4 changed branch).
+Issued 2026-10-14 by the coordinator of a Claude Cloud session. Pasted inline to the reviewer verbatim.
+
+=== ROLE
+You are a fresh, independent reviewer. You did not write any of the material. You review; you do not repair, commit,
+push or edit any file in the repository. Write your review to the single output file named at the end, and nothing
+else.
+
+=== REPOSITORY AND COMMITS
+Repository checkout: /home/user/ReBaseGuard (git). Review commit b3d8eb5e on branch
+claude/cell-308-github-state-skb1g0 (it descends from the research tip 88a16f74 of branch
+p5y-k5-cell308-mbs-r1-research). The historical candidate is commit 142d97a90a1c3fafff394044aa1448674f7a633c (branch
+p5y-k5-cell308-mbs-r1-candidate); read it only with `git show 142d97a9:<path>` — do not check it out, import it or run
+it. Namespace below = level4/closure_proofs/p5y_k5_cell308_research/ (abbreviated NS).
+
+=== WHAT TO REVIEW (all at b3d8eb5e)
+U1. NS/governance/new_host_route_cloud_r1/CLOUD_FEASIBILITY_R2.md, with its evidence
+    OFFICIAL_PROVIDER_FACTS_20261014.md, CLOUD_HOST_INVENTORY_R2_20261014.json, and the earlier r1 files in the same
+    directory (ROUTE_PREPARATION.md, OWNER_SELECTION.md, CLOUD_FEASIBILITY.md, CLOUD_HOST_INVENTORY.json,
+    OFFICIAL_PROVIDER_FACTS_20261004.md, USER_AUTHORIZATION_20261014.md).
+U2. NS/governance/new_host_route_cloud_r1/PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1.md and OWNER_DECISION_BRIEF_CLOUD_R1.md.
+U3. NS/streams/CLOUD_R1_LINUX_DEV/ (lx_platform.py, lx_inventory.py, lx_portmap.py, tests/, results/,
+    README_DEV_ONLY.md).
+
+=== ACCEPTED SOURCES YOU MAY READ to check fidelity
+NS/governance/SUCCESSOR_GOVERNANCE_308.md, SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1.md and its ERRATUM_E1,
+NS/governance/USER_DECISION_BRIEF_308_MBS_R1_RFREE_STOP.md, NS/governance/USER_DECISION_BRIEF_308_SUCCESSOR_R2.md,
+NS/governance/CONSTANTS_RATIFICATION_MBS308.md ("Written rules" section), NS/registry/SUCCESSOR_ROUTE_AUDIT_308*.md,
+NS/reviews/REVIEW_SUCCESSOR_ROUTE_308.md, NS/reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308.md, NS/README.md, the
+candidate's code/*.py and tests/*.py via `git show 142d97a9:level4/closure_proofs/p5y_k5_cell308_mbs_r1/<path>`.
+You may fetch the public provider pages cited in OFFICIAL_PROVIDER_FACTS_20261014.md to check the quotations.
+
+=== EXPOSURE RESTRICTIONS (binding; governance S13, S10)
+Do NOT open, grep into or otherwise read: NS/audit/EXECUTION_INTERRUPTION_ASSESSMENT*, NS/audit/INCIDENT_AUDIT*,
+NS/reviews/REVIEW_EXECUTION_INTERRUPTION*, any file under level4/closure_proofs/p5y_k5_cell308_mb_r1/postexec/ or any
+MB r1 target-run record, NS/ledger/COORDINATOR_EXPOSURE_DISCLOSURE.md beyond its section headings. Do not read any
+Cell-309 branch, file or record (branch names visible in `git branch -a` are the only permitted contact). If you
+accidentally open excluded material, stop reading it and disclose it in your review.
+
+=== WHAT YOU MAY RUN
+Only target-free, read-only or synthetic commands: `git show`, `git log`, `git diff`, file reads, and from
+NS/streams/CLOUD_R1_LINUX_DEV: `python3 -m unittest discover -s tests -v` and `python3 tests/run_mutants.py` (no output
+file argument; do not overwrite results/). You may write throwaway scripts or extra mutants ONLY under
+/tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review59/ and run them against a
+COPY of lx_platform.py there. Do NOT run any candidate code, any science module, any decoy, any qualification case,
+c308_quarantine guards against cells, or anything that evaluates a cell, a drift or a certificate. Do not install
+packages. Do not change system settings.
+
+=== QUESTIONS (answer each with evidence: file:line or command output)
+Q1. Classification. Is the coordinator's HOST_UNSUITABLE classification of the Anthropic-hosted Cloud session
+    environment for the official stages sound under the accepted texts and the cited evidence, or should it remain
+    HOST_UNVERIFIED (or something else)? Check each of U1-U4 in CLOUD_FEASIBILITY_R2 §3. Check the verbatim provider
+    quotations against the live pages if reachable, and the r1-vs-r2 comparison table against the two inventory JSONs.
+Q2. No silent relaxation. Does any statement, table row or code path in U1-U3 relax an accepted threshold, number,
+    rule or gate, change science, treat an unknown/absent host property as passing, or blur PROPOSED vs ACCEPTED?
+    Check every [ACCEPTED] quotation in the amendment against its source, word for word.
+Q3. Completeness of the open decisions (amendment §4). Is any macOS-dependent rule element missing (use the port map
+    and the candidate code)? Is any listed "option" actually a rule change not labelled as such?
+Q4. RC2 / L-DET (amendment §5). Does the pre-registered L-DET protocol faithfully implement the accepted RC2 condition
+    and the HOST row? Are the stop rules adequate? Is anything in it target-adjacent or selection-prone?
+Q5. Dev code fail-closed properties. Review lx_platform.py adversarially: find any path where a failed or absent
+    reading yields PASS, ALIVE, AC, a numeric memory allowance, or a CLEAN assessment. Run the tests and mutants.
+    Write at least three NEW mutants of your own (in your scratch dir) that a careful attacker would try, and report
+    whether the existing suite kills them. Specific readings to judge: L-ID-1 (zombie => DEAD); channel P; the
+    auto-update logic; the cgroup v1/v2 chain walk (including the v2 root, which has no memory.max).
+Q6. Preservation. Are S5, S7, S10, S13, the immutability of the MB-S r1 designated evidence / NOT_DERIVED stop, and
+    exactly-once carried without loss? Is the candidate branch untouched (compare `git diff 88a16f74 b3d8eb5e --stat`)
+    and is everything new outside the candidate namespace?
+Q7. Ledger and records. Are the four new ledger lines on this branch (`git diff 88a16f74 b3d8eb5e --
+    NS/ledger/TARGET_INTEGRITY_LEDGER.jsonl`) consistent with the files (recompute the sha256 values they bind)?
+
+=== OUTPUT
+Write ONE Markdown file: /tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review59/REVIEW_CLOUD_R1_FEASIBILITY_AMENDMENT_DEV.md
+Structure:
+  1. Header: reviewer = "reviewCLOUD_R1 (fresh agent, brief 59)", date, commit reviewed.
+  2. Exposure disclosure: every file you opened (paths), every command you ran, and a statement on excluded material.
+  3. Verdicts, exactly these three lines:
+     CLASSIFICATION: one of HOST_UNSUITABLE_CONFIRMED / DOWNGRADE_TO_HOST_UNVERIFIED / CLASSIFICATION_REJECTED
+     AMENDMENT_DRAFT: one of FIT_FOR_FORMAL_ROUTE_REVIEW / FIT_WITH_CONDITIONS / NEEDS_REVISION
+     DEV_CODE: one of FAIL_CLOSED_CONFIRMED / FAIL_CLOSED_WITH_DEFECTS / NOT_FAIL_CLOSED
+     State plainly that your verdict on the amendment draft is NOT acceptance of the amendment (only a formal route /
+     governance review, the S12 re-rating and the owner can do that).
+  4. Answers Q1-Q7 with evidence.
+  5. Findings: numbered F1..Fn, each with severity BLOCKING / MAJOR / MINOR / NOTE, location, and the concrete
+     correction you require. Mark which findings must be fixed before the draft goes to a formal route review.
+  6. Your own mutants: the diff of each and whether the suite killed it.
+Be specific and adversarial; do not praise. If you cannot verify something, say UNVERIFIED and why.
+When finished, reply with only: the output path, the three verdict lines, and the count of findings by severity.
