@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 env:
-  SOURCE_REVISION: d423c7aacc4d1cc15f3c7d77aecb5257a0175392
+  SOURCE_REVISION: ${{ github.sha }}
 
 jobs:
   synthetic-validation:
@@ -33,7 +33,11 @@ jobs:
           path: snapshot
           persist-credentials: false
       - name: Run isolated development tests and forensic mutations
-        run: python3 -B control/.github/scripts/cell308_dev_review.py --repo snapshot --output evidence
+        run: |
+          mkdir -p evidence
+          git -C snapshot rev-parse HEAD > evidence/input-commit.txt
+          cd snapshot/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV
+          python3 -B tests/run_mutants.py "$GITHUB_WORKSPACE/evidence/validation.json" > "$GITHUB_WORKSPACE/evidence/full-output.json"
       - name: Preserve complete synthetic evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

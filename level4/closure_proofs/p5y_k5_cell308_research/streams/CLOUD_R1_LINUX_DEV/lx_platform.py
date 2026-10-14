@@ -1,4 +1,4 @@
-"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 2).
+"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 4).
 
 STATUS: DEV_ONLY · NOT ACCEPTED BY ANY GOVERNANCE REVIEW · NOT FROZEN · NOT A CAMPAIGN NAMESPACE · NOT USABLE FOR ANY
 DESIGNATED SERIES, QUALIFICATION, FREEZE, GRANT OR TARGET STEP. Nothing in the historical candidate (142d97a9) imports
@@ -17,7 +17,8 @@ named state.
 Revision 3 repairs the findings of the fresh delta review 60 (reviews/REVIEW_CLOUD_R1_DELTA_R2.md): N1 attestations
 are parsed from the committed file and accepted only by a committed review naming their sha256, and the gates that
 depend on D-HOST-LIFETIME stay OPEN_DECISION while it is open; N2 only known battery statuses count; N3 root
-attestation must be ``is True`` and comes from a verified attestation; N4 the /proc view must be the initial PID
+attestation must be ``is True``; verifying that helper input's provenance remains an integration condition. N4 the
+/proc view must be the initial PID
 namespace's; N6 the boot id is validated; N7 exited / unreadable processes are not silently dropped and the campaign
 tree is keyed by (pid, starttime); N8 pid-based death evidence needs recorded, matching namespaces; N11 the pin set
 requires libm, libc and the loader; N12 execute / resume verify the launch record's fields.
@@ -38,6 +39,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import platform as _platform
 import re
@@ -121,8 +123,10 @@ def machine_identity(machine_id_path="/etc/machine-id", dmi_path="/sys/class/dmi
 # ====================================================================== process identity (R2 / N-2 / O-4 semantics)
 def proc_stat(pid: int, text: str | None = None) -> dict | None:
     """Parse /proc/<pid>/stat (``comm`` may contain spaces and parentheses: split at the LAST ')')."""
-    text = _read(f"/proc/{int(pid)}/stat") if text is None else text
-    if not text:
+    if type(pid) is not int or pid <= 0:
+        return None
+    text = _read(f"/proc/{pid}/stat") if text is None else text
+    if not isinstance(text, str) or not text:
         return None
     lp, rp = text.find("("), text.rfind(")")
     if lp < 0 or rp < lp:
@@ -130,8 +134,12 @@ def proc_stat(pid: int, text: str | None = None) -> dict | None:
     try:
         head_pid = int(text[:lp].strip())
         rest = text[rp + 1:].split()
-        return {"pid": head_pid, "comm": text[lp + 1:rp], "state": rest[0], "ppid": int(rest[1]),
-                "utime": int(rest[11]), "stime": int(rest[12]), "starttime": int(rest[19])}
+        record = {"pid": head_pid, "comm": text[lp + 1:rp], "state": rest[0], "ppid": int(rest[1]),
+                  "utime": int(rest[11]), "stime": int(rest[12]), "starttime": int(rest[19])}
+        if head_pid != pid or record["state"] not in ("R", "S", "D", "T", "t", "I", "Z", "X") \
+                or any(record[k] < 0 for k in ("ppid", "utime", "stime", "starttime")):
+            return None
+        return record
     except (ValueError, IndexError):
         return None
 
@@ -174,34 +182,53 @@ def identity_state(ident, *, current_boot: str | None = None, exists=None, stat=
     compared; ALIVE needs every field recorded and matching. Injection (tests): ``current_boot`` (``""`` = read
     failed), ``exists``, ``stat``, ``cmd``,
     ``current_ns`` ({"pidns": int|None, "timens": int|None})."""
-    if not isinstance(ident, dict) or not ident.get("pid"):
+    if not isinstance(ident, dict) or type(ident.get("pid")) is not int or ident["pid"] <= 0:
         return UNKNOWN
-    cur = boot_id() if current_boot is None else (current_boot or None)
+    cur = boot_id() if current_boot is None else (boot_id(current_boot) if isinstance(current_boot, str) else None)
     if cur is None:
         return UNKNOWN
-    if ident.get("boot_id") and ident["boot_id"] != cur:
+    recorded_boot = ident.get("boot_id")
+    if recorded_boot is not None and (not isinstance(recorded_boot, str) or boot_id(recorded_boot) is None):
+        return UNKNOWN
+    if recorded_boot is not None and boot_id(recorded_boot) != cur:
         return DEAD
     ns = current_ns if current_ns is not None else {"pidns": ns_inode("pid"), "timens": ns_inode("time")}
     for k in ("pidns", "timens"):
         # N8: pid numbers, ESRCH and starttimes mean something only in the recorder's namespaces; an unrecorded or
         # different namespace makes every pid-based reading UNKNOWN (a boot-id change, above, stays positive evidence)
-        if ident.get(k) is None or ns.get(k) != ident[k]:
+        if type(ident.get(k)) is not int or ident[k] <= 0 or not isinstance(ns, dict) \
+                or type(ns.get(k)) is not int or ns.get(k) != ident[k]:
             return UNKNOWN
     pid = ident["pid"]
     ex = (exists or _pid_exists)(pid)
-    if ex is None:
+    if type(ex) is not bool:
         return UNKNOWN
     if ex is False:
         return DEAD
     st = (stat or proc_stat)(pid)
     if st is None:
         return UNKNOWN
+    if not isinstance(st, dict) or type(st.get("pid")) is not int or st["pid"] != pid:
+        return UNKNOWN
     if st.get("state") in ("Z", "X"):
+        return UNKNOWN
+    if st.get("state") not in ("R", "S", "D", "T", "t", "I"):
+        return UNKNOWN
+    if any(type(st.get(k)) is not int or st[k] < 0 for k in ("ppid", "utime", "stime")):
+        return UNKNOWN
+    if type(st.get("starttime")) is not int or st["starttime"] < 0:
+        return UNKNOWN
+    if ident.get("starttime_ticks") is not None and (
+            type(ident["starttime_ticks"]) is not int or ident["starttime_ticks"] < 0):
         return UNKNOWN
     if ident.get("starttime_ticks") is not None and st["starttime"] != ident["starttime_ticks"]:
         return DEAD
     cs = (cmd or cmdline_sha256)(pid)
-    if cs is None:
+    if not isinstance(cs, str) or not re.fullmatch(r"[0-9a-f]{64}", cs):
+        return UNKNOWN
+    recorded_cmd = ident.get("cmdline_sha256")
+    if recorded_cmd is not None and (not isinstance(recorded_cmd, str)
+                                     or not re.fullmatch(r"[0-9a-f]{64}", recorded_cmd)):
         return UNKNOWN
     if ident.get("cmdline_sha256") and cs != ident["cmdline_sha256"]:
         return DEAD
@@ -236,8 +263,17 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     (AMBIGUOUS only; NOT a pause detector: a hypervisor pause invisible to both guest clocks is silent, D-PAUSE);
     boot-id change; power at EVERY reading; sample spacing. CLEAN only if every channel exists and none fires."""
     reasons = []
+    if not isinstance(start, dict) or not isinstance(end, dict):
+        return {"status": "AMBIGUOUS", "clean": False, "reasons": ["AMBIGUOUS: endpoint record malformed"]}
     seq = [start, *(samples if isinstance(samples, list) else []), end]
+    valid_clocks = all(isinstance(x, dict) and isinstance(x.get("clocks"), dict)
+                       and all(type(x["clocks"].get(k)) is int and x["clocks"][k] >= 0
+                               for k in ("monotonic_ns", "boottime_ns", "realtime_ns")) for x in seq)
+    if not valid_clocks:
+        reasons.append("AMBIGUOUS: clock records must contain nonnegative integer nanoseconds")
     try:
+        if not valid_clocks:
+            raise TypeError("invalid clock record")
         c0, c1 = start["clocks"], end["clocks"]
         dm = c1["monotonic_ns"] - c0["monotonic_ns"]
         db = c1["boottime_ns"] - c0["boottime_ns"]
@@ -254,16 +290,19 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     except (KeyError, TypeError):
         reasons.append("AMBIGUOUS: K'/P clocks absent")
     s0, s1 = (start or {}).get("suspend_success"), (end or {}).get("suspend_success")
-    if not isinstance(s0, int) or not isinstance(s1, int):
+    if type(s0) is not int or type(s1) is not int or s0 < 0 or s1 < 0:
         reasons.append("AMBIGUOUS: S' suspend_stats absent")
     elif s0 != s1:
         reasons.append("CONTAMINATED: S' suspend count changed")
+    if any(not isinstance(x, dict) or type(x.get("suspend_success")) is not int
+           or x["suspend_success"] < 0 for x in seq):
+        reasons.append("AMBIGUOUS: a suspend counter reading is malformed")
     if not isinstance(journal_suspend_events, list):
         reasons.append("AMBIGUOUS: L' journal unavailable")
     elif journal_suspend_events:
         reasons.append(f"CONTAMINATED: L' {len(journal_suspend_events)} suspend entries")
     boots = [x.get("boot_id") if isinstance(x, dict) else None for x in seq]
-    if any(b is None for b in boots):
+    if any(not isinstance(b, str) or boot_id(b) is None for b in boots):
         reasons.append("AMBIGUOUS: a boot_id reading is absent")
     elif len(set(boots)) > 1:
         reasons.append("CONTAMINATED: boot_id changed (reboot)")
@@ -275,6 +314,8 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     if not isinstance(samples, list):
         reasons.append("AMBIGUOUS: samples absent")
     try:
+        if not valid_clocks:
+            raise TypeError("invalid sample clock record")
         ts = [x["clocks"]["monotonic_ns"] for x in seq]
         steps = [b - a for a, b in zip(ts, ts[1:])]
         if any(d < 0 for d in steps):
@@ -502,8 +543,9 @@ def cgroup_resources(proc_cgroup_text: str | None = None, root="/sys/fs/cgroup")
 def memory_readings(mem_text: str | None = None, proc_cgroup_text: str | None = None, root="/sys/fs/cgroup",
                     *, root_attested: bool = False) -> dict:
     """Every Linux candidate quantity side by side, none labelled as the R-FREE quantity (D-MEM-FREE, D-MEM-WIRED).
-    ``root_attested`` counts only if it is the boolean True (N3); the caller derives it from attestation_valid()'s
-    verified record (field ``root_cgroup_is_real``), never from a flag of its own."""
+    ``root_attested`` counts only if it is the boolean True (N3). This raw helper does not verify that flag's
+    provenance. An operational wrapper must derive it from a verified attestation's ``root_cgroup_is_real``;
+    such a wrapper remains a formal-review condition. Current inventory calls leave it False."""
     mem = meminfo(mem_text)
     ch = memory_cgroup_chain(proc_cgroup_text, root)
     root_attested = root_attested is True
@@ -540,7 +582,7 @@ def proc_view_complete(status_text: str | None = None, mountinfo_text: str | Non
     st = _read("/proc/self/status") if status_text is None else status_text
     mi = _read("/proc/self/mountinfo") if mountinfo_text is None else mountinfo_text
     ino = ns_inode("pid") if pidns == -1 else pidns
-    if not st or not mi or ino is None:
+    if not isinstance(st, str) or not st or not isinstance(mi, str) or not mi or ino is None:
         return None
     if ino != INIT_PID_NS:
         return False
@@ -549,12 +591,21 @@ def proc_view_complete(status_text: str | None = None, mountinfo_text: str | Non
         return None
     if len(nspid) > 1:
         return False
-    for ln in mi.splitlines():
-        f = ln.split()
-        if len(f) > 4 and f[4] == "/proc":
-            opts = " ".join(f[5:])
-            return not ("hidepid=" in opts or "subset=" in opts)
-    return None
+    if len(nspid) != 1 or not nspid[0].isdigit() or int(nspid[0]) <= 0:
+        return None
+    candidates = [ln.split() for ln in mi.splitlines() if len(ln.split()) > 4 and ln.split()[4] == "/proc"]
+    if not candidates:
+        return None
+    if len(candidates) != 1:
+        return False
+    f = candidates[0]
+    if "-" not in f:
+        return None
+    separator = f.index("-")
+    if separator < 6 or len(f) < separator + 4 or f[3] != "/" or f[separator + 1] != "proc":
+        return False
+    opts = " ".join(f[5:])
+    return not ("hidepid=" in opts or "subset=" in opts)
 
 
 def cpu_ticks(proc_root="/proc") -> dict | None:
@@ -589,24 +640,46 @@ def busy_processes(t0: dict | None, t1: dict | None, dt_s: float, threshold_pct:
     no earlier than that parent. Pid 0 / 1 may not be in ``own``. Nothing is allowed by name or path (D-ALLOW-PATHS).
     None (no reading) if a snapshot is missing, dt <= 0, ``own`` is malformed or unsafe, or the /proc view is not known
     to be complete."""
-    if t0 is None or t1 is None or dt_s <= 0 or view_complete is not True:
+    if not isinstance(t0, dict) or not isinstance(t1, dict) or not isinstance(dt_s, (int, float)) \
+            or isinstance(dt_s, bool) or not math.isfinite(dt_s) or dt_s <= 0 or view_complete is not True:
+        return None
+    if not isinstance(threshold_pct, (int, float)) or isinstance(threshold_pct, bool) \
+            or not math.isfinite(threshold_pct) or threshold_pct < 0:
         return None
     if not isinstance(own, (set, frozenset)) or not all(isinstance(k, tuple) and len(k) == 2 for k in own) \
             or any(k[0] in (0, 1) for k in own):
         return None
-    hz = hz or os.sysconf("SC_CLK_TCK")
+    hz = os.sysconf("SC_CLK_TCK") if hz is None else hz
+    if type(hz) is not int or hz <= 0:
+        return None
+    def valid_key(key):
+        return isinstance(key, tuple) and len(key) == 2 and type(key[0]) is int and key[0] > 0 \
+            and type(key[1]) is int and key[1] >= 0
+    if not all(valid_key(key) for key in own) or len({key[0] for key in own}) != len(own):
+        return None
+    for snapshot in (t0, t1):
+        for key, record in snapshot.items():
+            if not valid_key(key) or not isinstance(record, (list, tuple)) or len(record) != 4:
+                return None
+            if type(record[0]) is not int or record[0] < 0 or type(record[1]) is not int or record[1] < 0:
+                return None
     own_start = {pid: start for pid, start in own}
+    def owned(key, ppid, snapshot):
+        return key in own or (ppid in own_start and (ppid, own_start[ppid]) in snapshot
+                              and key[1] >= own_start[ppid])
     out = []
     for (pid, start), (ppid, ticks1, comm, exe) in t1.items():
-        if (pid, start) in own or (ppid in own_start and start >= own_start[ppid]):
+        if owned((pid, start), ppid, t1):
             continue
         prev = t0.get((pid, start))
         used = ticks1 - prev[1] if prev is not None else ticks1
+        if used < 0:
+            return None
         pct = 100.0 * used / hz / dt_s
         if pct > threshold_pct:
             out.append({"pid": pid, "comm": comm, "exe": exe, "pct": round(pct, 1), "born_in_window": prev is None})
     for (pid, start), (ppid, _t, comm, exe) in t0.items():
-        if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start and start >= own_start[ppid]):
+        if (pid, start) not in t1 and not owned((pid, start), ppid, t0):
             out.append({"pid": pid, "comm": comm, "exe": exe, "pct": None, "exited_in_window": True})
     return out
 
@@ -932,8 +1005,9 @@ _GATE_DECISION = {"ac_power": "D-POWER-ABSENT", "lowpowermode_0": "D-LPM", "ther
 MODES = ("launcher_preflight", "execute", "resume")
 
 
-def launch_record_ok(rec) -> bool:
-    """N12: a launch record counts only if every field shows a systemd launch of THIS process (not a 'pass' flag)."""
+def launch_record_ok(rec, *, observed=None) -> bool:
+    """Verify record fields against independently observed current systemd context. Supplied fields alone cannot
+    establish a launch; ``observed`` must be the live reader's result (or an explicit synthetic test fixture)."""
     if not isinstance(rec, dict):
         return False
     sc = rec.get("systemctl")
@@ -941,12 +1015,15 @@ def launch_record_ok(rec) -> bool:
     return bool(rec.get("systemd_pid1") is True and isinstance(unit, str) and unit.startswith(CAMPAIGN_UNIT_PREFIX)
                 and unit.endswith(".service") and isinstance(rec.get("invocation_id"), str) and rec["invocation_id"]
                 and isinstance(sc, dict) and sc.get("MainPID") == os.getpid()
-                and sc.get("InvocationID") == rec["invocation_id"] and rec.get("pass") is True)
+                and sc.get("InvocationID") == rec["invocation_id"] and rec.get("pass") is True
+                and isinstance(observed, dict) and observed.get("systemd_pid1") is True
+                and observed.get("pass") is True and observed.get("unit") == unit
+                and observed.get("invocation_id") == rec["invocation_id"] and observed.get("systemctl") == sc)
 
 
 def preflight(repo_path, *, mode: str, other_job_running: bool | None, launched: dict | None,
               attestation_ref: dict | None, readings: dict | None = None, decided: frozenset = DECIDED,
-              attestation_check=None) -> dict:
+              attestation_check=None, launch_observer=None) -> dict:
     """The Linux gate set (amendment §3). ``mode`` "launcher_preflight" may omit the launch record; "execute" and
     "resume" need a record that launch_record_ok() accepts, else FAIL (F15, N12). Gates that depend on an open D-*
     decision are OPEN_DECISION while it is not in ``decided`` (DECIDED is empty in development), including
@@ -981,7 +1058,8 @@ def preflight(repo_path, *, mode: str, other_job_running: bool | None, launched:
         "host_lifetime_attested": OPEN_DECISION if lifetime_open else (PASS if isinstance(att, dict) else UNKNOWN),
     }
     if mode in ("execute", "resume") or launched is not None:
-        gates["launched_by_systemd"] = PASS if launch_record_ok(launched) else FAIL
+        observed = (launch_observer or launched_by_systemd)()
+        gates["launched_by_systemd"] = PASS if launch_record_ok(launched, observed=observed) else FAIL
     blocked = {k: v for k, v in gates.items() if v != PASS}
     return {"mode": mode, "gates": gates, "pass": not blocked, "blocked": blocked,
             "readings": {"power": power, "free_disk_bytes": free, "boot_id": boot, "updates": upd,
