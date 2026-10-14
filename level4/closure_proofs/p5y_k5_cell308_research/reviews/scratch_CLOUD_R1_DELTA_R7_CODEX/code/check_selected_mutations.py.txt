@@ -1,0 +1,48 @@
+import ast
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+BASE=Path(__file__).resolve().parent
+DEV=BASE/'snapshot/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+spec=importlib.util.spec_from_file_location('review65_harness', DEV/'tests/run_mutants.py')
+H=importlib.util.module_from_spec(spec); spec.loader.exec_module(H)
+src=(DEV/'lx_platform.py').read_text()
+rows=[]
+for mid,what,edits in H.MUTANTS:
+    mutated,counts,error=H.apply_mutation(src,edits)
+    rows.append({'id':mid,'anchor_counts':counts,'error':error,'sha256':hashlib.sha256(mutated.encode()).hexdigest() if mutated else None})
+expected={f'{p}{i:02d}' for p,c in H.MUTANT_GROUP_SIZES.items() for i in range(1,c+1)}
+ids=[row['id'] for row in rows]
+require=lambda cond,msg: None if cond else (_ for _ in ()).throw(AssertionError(msg))
+require(len(ids)==len(set(ids))==80 and set(ids)==expected,'registry invalid')
+require(all(not row['error'] and all(x==1 for x in row['anchor_counts']) for row in rows),'transformation invalid')
+counts={name:sum(isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef)) and n.name.startswith('test_') for n in ast.walk(ast.parse((DEV/'tests'/name).read_text()))) for name in ['test_lx_platform.py','test_lx_verified.py']}
+require(counts=={'test_lx_platform.py':112,'test_lx_verified.py':24},'test counts changed')
+static={'total_tests':sum(counts.values()),'test_methods':counts,'mutant_group_sizes':H.MUTANT_GROUP_SIZES,'total_lowlevel_mutants':len(ids),'rows':rows,'input_hashes':H.input_hashes()}
+(BASE/'harness_static.json').write_text(json.dumps(static,indent=2)+'\n')
+cmd=[sys.executable,'-B','-W','error::ResourceWarning',str(BASE/'run_selected.py')]
+env=dict(os.environ); env.pop('LX_PLATFORM_DIR',None)
+env.update({'PYTHONDONTWRITEBYTECODE':'1','TMPDIR':str(BASE),'GIT_CONFIG_NOSYSTEM':'1','GIT_CONFIG_GLOBAL':'/dev/null'})
+baseline=H._suite_record(cmd,env,returncode=0,stdout=(BASE/'selected.stdout.txt').read_text(),stderr=(BASE/'selected.stderr.txt').read_text(),elapsed_s=0)
+require(H.suite_passed(baseline) and baseline['ran']==32,'selected baseline not valid')
+records=[]
+for mid in ['F07','M25']:
+    _,what,edits=next(m for m in H.MUTANTS if m[0]==mid)
+    mutated,anchor_counts,error=H.apply_mutation(src,edits)
+    dest=BASE/'platform-mutants'/mid; dest.mkdir(parents=True,exist_ok=True); (dest/'lx_platform.py').write_text(mutated)
+    run_env=dict(env,LX_PLATFORM_DIR=str(dest)); start=time.monotonic()
+    p=subprocess.run(cmd,env=run_env,capture_output=True,text=True)
+    (BASE/(mid+'.stdout.txt')).write_text(p.stdout); (BASE/(mid+'.stderr.txt')).write_text(p.stderr)
+    suite=H._suite_record(cmd,run_env,returncode=p.returncode,stdout=p.stdout,stderr=p.stderr,elapsed_s=time.monotonic()-start)
+    status,reasons=H.classify_mutant(suite,baseline)
+    row={'id':mid,'property':what,'sha256':hashlib.sha256(mutated.encode()).hexdigest(),'anchor_counts':anchor_counts,'status':status,'reasons':reasons,'suite':suite}
+    records.append(row)
+    require(status=='KILLED' and suite['errors']==suite['skipped']==0 and suite['ran']==32,'not a valid selected assertion kill')
+(BASE/'selected_mutations.json').write_text(json.dumps({'baseline':baseline,'mutants':records},indent=2)+'\n')
+print(json.dumps({'static':{'test_counts':counts,'mutants':len(ids)},'selected_mutants':[{'id':r['id'],'status':r['status'],'ran':r['suite']['ran'],'failures':r['suite']['failures'],'errors':r['suite']['errors'],'skipped':r['suite']['skipped'],'failure_names':r['suite']['failure_names'],'sha256':r['sha256']} for r in records]},indent=2))

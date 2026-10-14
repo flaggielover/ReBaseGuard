@@ -1,0 +1,223 @@
+{
+  "head": "7eb3ba4d03f3b7898109073c83eb9b08f4589354",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "python": "3.14.5 (v3.14.5:5607950ef23, May 10 2026, 07:38:09) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "selected_names": [
+    "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+    "test_lx_platform.TestBusy.test_proc_view",
+    "test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_mounts",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid",
+    "test_lx_platform.TestBusy.test_proc_view_rejects_nonproc_filesystem",
+    "test_lx_verified.TestVerifiedObservation.test_canonical_verifier_has_internal_repository_and_default_machine",
+    "test_lx_verified.TestVerifiedObservation.test_changed_live_launch_observation_refuses_corroboration",
+    "test_lx_verified.TestVerifiedObservation.test_default_launch_record_is_independently_corroborated",
+    "test_lx_verified.TestVerifiedObservation.test_invalid_acceptance_paths_produce_refusal_without_exceptions",
+    "test_lx_verified.TestVerifiedObservation.test_invalid_mode_is_refused_before_any_observation",
+    "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions",
+    "test_lx_verified.TestVerifiedObservation.test_machine_id_without_hardware_binding_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_malformed_references_withhold_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_missing_acceptance_line_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_missing_live_launch_observation_refuses_corroboration",
+    "test_lx_verified.TestVerifiedObservation.test_missing_reference_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_missing_root_claim_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_non_json_committed_fixture_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_open_decisions_and_unknown_campaign_detector_keep_all_modes_blocked",
+    "test_lx_verified.TestVerifiedObservation.test_preflight_composition_has_no_caller_reading_launch_or_policy_seam",
+    "test_lx_verified.TestVerifiedObservation.test_public_api_refuses_caller_selected_seams",
+    "test_lx_verified.TestVerifiedObservation.test_unaccepted_fixture_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_uncommitted_fixture_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_unreviewed_fixture_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_verified_committed_fixture_supplies_raw_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_verified_non_boolean_root_claims_withhold_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_wrapper_uses_the_same_platform_module_selected_by_harness",
+    "test_lx_verified.TestVerifiedObservation.test_wrong_host_withholds_root_contract",
+    "test_lx_verified.TestVerifiedObservation.test_wrong_sha_withholds_root_contract"
+  ],
+  "runner_source_sha256": "123c51772b958ee12fb9f4f4c03c202487f0271e34491791dd260ca21593e73e",
+  "native_linux_full_suite": "UNVERIFIED",
+  "input_hashes_match": true,
+  "raw_reports_match_separate_git_files": true,
+  "runs": [
+    {
+      "label": "BASELINE",
+      "status": "PASS",
+      "module_sha256": "92c7dbcd9f71e30736a799e54842c433daac2258b7a15d719587e47cfd66705e",
+      "exact_32_test_names": true,
+      "suite": {
+        "ran": 32,
+        "summary": "OK",
+        "returncode": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "invalid_reasons": []
+      },
+      "failure_sections": [],
+      "verified_test_frames": []
+    },
+    {
+      "label": "M25",
+      "status": "KILLED",
+      "module_sha256": "c77320c1bd91f4321305acb5422c313e5a86dbe8c26a3dddb77f5bec7f4f7ba2",
+      "exact_32_test_names": true,
+      "suite": {
+        "ran": 32,
+        "summary": "FAILED (failures=1)",
+        "returncode": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "invalid_reasons": []
+      },
+      "failure_sections": [
+        "FAIL: test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\nM25: a review accepting digest X does not make a DIFFERENT committed file pass when the reference quotes X.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 1076, in test_reference_digest_must_match_the_committed_file\n    self.assertIsNone(rec)\n    ~~~~~~~~~~~~~~~~~^^^^^\nAssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'acceptance_record': 'reviews/ACCEPT.md', 'provider_image_updates': 'anything', 'root_cgroup_is_real': True} is not None\n\n"
+      ],
+      "verified_test_frames": [
+        {
+          "file": "tests/test_lx_platform.py",
+          "line": 1076,
+          "function": "test_reference_digest_must_match_the_committed_file",
+          "statement": "self.assertIsNone(rec)"
+        }
+      ]
+    },
+    {
+      "label": "F06",
+      "status": "KILLED",
+      "module_sha256": "3fe7b374bc50ade2f99fd73abe080c30da469e54b25605f96ba421ca02f6ae10",
+      "exact_32_test_names": true,
+      "suite": {
+        "ran": 32,
+        "summary": "FAILED (failures=3)",
+        "returncode": 1,
+        "failures": 3,
+        "errors": 0,
+        "skipped": 0,
+        "invalid_reasons": []
+      },
+      "failure_sections": [
+        "FAIL: test_proc_view_preserves_the_whole_nspid_payload (test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload) (status='NSpid:garbage\\t77\\n')\nR5-C1/F06: a value adjoining the colon cannot be silently discarded; numeric tokens are ASCII.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 756, in test_proc_view_preserves_the_whole_nspid_payload\n    self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: unexpectedly identical: True\n\n",
+        "FAIL: test_proc_view_preserves_the_whole_nspid_payload (test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload) (status='NSpid:77 88\\n')\nR5-C1/F06: a value adjoining the colon cannot be silently discarded; numeric tokens are ASCII.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 756, in test_proc_view_preserves_the_whole_nspid_payload\n    self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: unexpectedly identical: True\n\n",
+        "FAIL: test_proc_view_preserves_the_whole_nspid_payload (test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload) (control='NSpid:77\\n')\nR5-C1/F06: a value adjoining the colon cannot be silently discarded; numeric tokens are ASCII.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 759, in test_proc_view_preserves_the_whole_nspid_payload\n    self.assertIs(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: None is not True\n\n"
+      ],
+      "verified_test_frames": [
+        {
+          "file": "tests/test_lx_platform.py",
+          "line": 756,
+          "function": "test_proc_view_preserves_the_whole_nspid_payload",
+          "statement": "self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)"
+        },
+        {
+          "file": "tests/test_lx_platform.py",
+          "line": 756,
+          "function": "test_proc_view_preserves_the_whole_nspid_payload",
+          "statement": "self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)"
+        },
+        {
+          "file": "tests/test_lx_platform.py",
+          "line": 759,
+          "function": "test_proc_view_preserves_the_whole_nspid_payload",
+          "statement": "self.assertIs(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)"
+        }
+      ]
+    },
+    {
+      "label": "F07",
+      "status": "KILLED",
+      "module_sha256": "93a590093dda050dc65d76088f6436c3ad06bc6c067144799c708ea0ff219295",
+      "exact_32_test_names": true,
+      "suite": {
+        "ran": 32,
+        "summary": "FAILED (failures=4)",
+        "returncode": 1,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 0,
+        "invalid_reasons": []
+      },
+      "failure_sections": [
+        "FAIL: test_invalid_acceptance_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_acceptance_paths_produce_refusal_without_exceptions) (path=\"'\\\\x00'\")\nThe same path boundary applies to review paths read from a committed attestation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 156, in test_invalid_acceptance_paths_produce_refusal_without_exceptions\n    result = self.assert_no_root(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 94, in assert_no_root\n    result = V.observe(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 45, in observe\n    attestation, reasons = _committed_attestation(attestation_ref)\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 32, in _committed_attestation\n    return L.attestation_valid(ref, repo_root=_REPO_ROOT)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review61/r7-authored/F07/lx_platform.py\", line 1004, in attestation_valid\n    review = _git_blob(base, acc) if isinstance(acc, str) and acc else None\n             ~~~~~~~~~^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review61/r7-authored/F07/lx_platform.py\", line 965, in _git_blob\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), \"show\", f\"HEAD:{path}\"], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nValueError: embedded null byte\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 158, in test_invalid_acceptance_paths_produce_refusal_without_exceptions\n    self.fail(f\"malformed acceptance path escaped instead of being refused: {type(exc).__name__}\")\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: malformed acceptance path escaped instead of being refused: ValueError\n\n",
+        "FAIL: test_invalid_acceptance_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_acceptance_paths_produce_refusal_without_exceptions) (path=\"'\\\\ud800'\")\nThe same path boundary applies to review paths read from a committed attestation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 156, in test_invalid_acceptance_paths_produce_refusal_without_exceptions\n    result = self.assert_no_root(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 94, in assert_no_root\n    result = V.observe(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 45, in observe\n    attestation, reasons = _committed_attestation(attestation_ref)\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 32, in _committed_attestation\n    return L.attestation_valid(ref, repo_root=_REPO_ROOT)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review61/r7-authored/F07/lx_platform.py\", line 1004, in attestation_valid\n    review = _git_blob(base, acc) if isinstance(acc, str) and acc else None\n             ~~~~~~~~~^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review61/r7-authored/F07/lx_platform.py\", line 965, in _git_blob\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), \"show\", f\"HEAD:{path}\"], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nUnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 5: surrogates not allowed\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 158, in test_invalid_acceptance_paths_produce_refusal_without_exceptions\n    self.fail(f\"malformed acceptance path escaped instead of being refused: {type(exc).__name__}\")\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: malformed acceptance path escaped instead of being refused: UnicodeEncodeError\n\n",
+        "FAIL: test_invalid_reference_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions) (path=\"'\\\\x00'\")\nR6-C1/F07: malformed subprocess arguments are refusal evidence, never an escaping exception.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 144, in test_invalid_reference_paths_produce_refusal_without_exceptions\n    result = self.assert_no_root(dict(valid, path=path))\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 94, in assert_no_root\n    result = V.observe(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 45, in observe\n    attestation, reasons = _committed_attestation(attestation_ref)\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 32, in _committed_attestation\n    return L.attestation_valid(ref, repo_root=_REPO_ROOT)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review61/r7-authored/F07/lx_platform.py\", line 986, in attestation_valid\n    data = _git_blob(base, path)\n  File \"/tmp/cell308-codex-review61/r7-authored/F07/lx_platform.py\", line 965, in _git_blob\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), \"show\", f\"HEAD:{path}\"], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nValueError: embedded null byte\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 146, in test_invalid_reference_paths_produce_refusal_without_exceptions\n    self.fail(f\"malformed reference path escaped instead of being refused: {type(exc).__name__}\")\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: malformed reference path escaped instead of being refused: ValueError\n\n",
+        "FAIL: test_invalid_reference_paths_produce_refusal_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_produce_refusal_without_exceptions) (path=\"'\\\\ud800'\")\nR6-C1/F07: malformed subprocess arguments are refusal evidence, never an escaping exception.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 144, in test_invalid_reference_paths_produce_refusal_without_exceptions\n    result = self.assert_no_root(dict(valid, path=path))\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 94, in assert_no_root\n    result = V.observe(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 45, in observe\n    attestation, reasons = _committed_attestation(attestation_ref)\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 32, in _committed_attestation\n    return L.attestation_valid(ref, repo_root=_REPO_ROOT)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cell308-codex-review61/r7-authored/F07/lx_platform.py\", line 986, in attestation_valid\n    data = _git_blob(base, path)\n  File \"/tmp/cell308-codex-review61/r7-authored/F07/lx_platform.py\", line 965, in _git_blob\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), \"show\", f\"HEAD:{path}\"], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nUnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 5: surrogates not allowed\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 146, in test_invalid_reference_paths_produce_refusal_without_exceptions\n    self.fail(f\"malformed reference path escaped instead of being refused: {type(exc).__name__}\")\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: malformed reference path escaped instead of being refused: UnicodeEncodeError\n\n"
+      ],
+      "verified_test_frames": [
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 156,
+          "function": "test_invalid_acceptance_paths_produce_refusal_without_exceptions",
+          "statement": "result = self.assert_no_root(ref)"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 94,
+          "function": "assert_no_root",
+          "statement": "result = V.observe(ref)"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 158,
+          "function": "test_invalid_acceptance_paths_produce_refusal_without_exceptions",
+          "statement": "self.fail(f\"malformed acceptance path escaped instead of being refused: {type(exc).__name__}\")"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 156,
+          "function": "test_invalid_acceptance_paths_produce_refusal_without_exceptions",
+          "statement": "result = self.assert_no_root(ref)"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 94,
+          "function": "assert_no_root",
+          "statement": "result = V.observe(ref)"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 158,
+          "function": "test_invalid_acceptance_paths_produce_refusal_without_exceptions",
+          "statement": "self.fail(f\"malformed acceptance path escaped instead of being refused: {type(exc).__name__}\")"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 144,
+          "function": "test_invalid_reference_paths_produce_refusal_without_exceptions",
+          "statement": "result = self.assert_no_root(dict(valid, path=path))"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 94,
+          "function": "assert_no_root",
+          "statement": "result = V.observe(ref)"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 146,
+          "function": "test_invalid_reference_paths_produce_refusal_without_exceptions",
+          "statement": "self.fail(f\"malformed reference path escaped instead of being refused: {type(exc).__name__}\")"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 144,
+          "function": "test_invalid_reference_paths_produce_refusal_without_exceptions",
+          "statement": "result = self.assert_no_root(dict(valid, path=path))"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 94,
+          "function": "assert_no_root",
+          "statement": "result = V.observe(ref)"
+        },
+        {
+          "file": "tests/test_lx_verified.py",
+          "line": 146,
+          "function": "test_invalid_reference_paths_produce_refusal_without_exceptions",
+          "statement": "self.fail(f\"malformed reference path escaped instead of being refused: {type(exc).__name__}\")"
+        }
+      ]
+    }
+  ]
+}

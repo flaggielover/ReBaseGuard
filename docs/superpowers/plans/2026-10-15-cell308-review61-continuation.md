@@ -35,10 +35,10 @@
 
 ## Task 3: independent follow-up and delivery
 
-- [ ] Obtain independent follow-up review of repaired code, relevant document deltas and final evidence.
-- [ ] Verify historical source/evidence preservation and the changed-path allowlist.
-- [ ] Record integrity-ledger bindings and additive review/validation artifacts behind the scoped scan gate.
-- [ ] Commit and push only the continuation branch; prepare a concrete next-step packet without claiming acceptance of proposed governance.
+- [x] Obtain independent follow-up review of repaired code, relevant document deltas and final evidence.
+- [x] Verify historical source/evidence preservation and the changed-path allowlist.
+- [x] Record integrity-ledger bindings and additive review/validation artifacts behind the scoped scan gate.
+- [x] Commit and push only the continuation branch; prepare a concrete next-step packet without claiming acceptance of proposed governance.
 
 ## Task 4: trusted-boundary development prototype
 
@@ -51,12 +51,12 @@ The r4 A1/A2 integration conditions already require a caller boundary deriving r
 - [x] Add synthetic committed-fixture provenance/refusal and public-seam tests; bind both new files in the full-suite input hashes and trigger exact-source Linux CI.
 - [x] Preserve revision-6 independent code/document/evidence review and strict Linux baseline134 PASS /78 valid kills /M25 ERROR; keep the failed aggregate record.
 - [x] Repair the demonstrated malformed-path exception boundary and explicitly refuse absent committed blobs before JSON parsing; add two wrapper refusal tests and F07 without relaxing classification.
-- [ ] Obtain fresh independent code and evidence review of revision 7, verify the final exact-input native run, preserve records and prepare a concrete handoff packet.
+- [x] Obtain fresh independent code and evidence review of revision 7, verify the final exact-input native run, preserve records and prepare a concrete handoff packet.
 
 ## Validation commands
 
 Baseline: `python3 -B -W error::ResourceWarning -m unittest discover -s tests -v` from the development stream in the pinned Linux snapshot.
 
-Independent mutation evidence: `python3 .github/scripts/cell308_dev_review.py --repo <snapshot> --output <scratch-evidence>` from the control checkout. No output is written to historical `results/` records.
+Current mutation evidence: `python3 -B tests/run_mutants.py <scratch-evidence.json>` from the immutable development snapshot. The separately preserved `.github/scripts/cell308_dev_review.py` supplied the original forensic replay only. No historical result record is overwritten.
 
 Scoped quarantine scan: import `c308_quarantine` and call `scan` on a temporary copy containing only the explicit changed target-free files. Gate on `verdict == PASS`; keep both planted controls enabled and redact literal hit values from display.

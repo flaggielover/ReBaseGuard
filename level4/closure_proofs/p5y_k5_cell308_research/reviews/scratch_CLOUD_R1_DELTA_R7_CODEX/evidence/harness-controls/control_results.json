@@ -1,0 +1,621 @@
+{
+  "binding": {
+    "base_commit": "af55168c",
+    "current_commit": "7eb3ba4d03f3b7898109073c83eb9b08f4589354",
+    "git_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py"
+  },
+  "classifier_controls": [
+    {
+      "baseline_ran": 12,
+      "control": "same_count_pass",
+      "expected_status": "SURVIVED",
+      "observed_status": "SURVIVED",
+      "passed": true,
+      "ran": 12,
+      "reasons": []
+    },
+    {
+      "baseline_ran": 12,
+      "control": "one_named_assertion_failure",
+      "expected_status": "KILLED",
+      "observed_status": "KILLED",
+      "passed": true,
+      "ran": 12,
+      "reasons": []
+    },
+    {
+      "baseline_ran": 12,
+      "control": "two_named_assertion_failures",
+      "expected_status": "KILLED",
+      "observed_status": "KILLED",
+      "passed": true,
+      "ran": 12,
+      "reasons": []
+    },
+    {
+      "baseline_ran": 12,
+      "control": "shortened_failure_suite",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 11,
+      "reasons": [
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "enlarged_pass_suite",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 13,
+      "reasons": [
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "zero_test_pass",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 0,
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "missing_count",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": null,
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "missing_summary",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "EXIT_AND_SUMMARY_DISAGREE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "duplicate_count",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": null,
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "duplicate_summary",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "EXIT_AND_SUMMARY_DISAGREE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "assertion_name_missing",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "extra_assertion_name",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "named_unittest_error",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "UNITTEST_ERRORS",
+        "EXIT_WITHOUT_ASSERTION_FAILURES"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "assertion_plus_error",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "UNITTEST_ERRORS"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "extra_error_name",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "skipped_test",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "NONASSERTION_OUTCOMES",
+        "EXIT_AND_SUMMARY_DISAGREE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "expected_failure",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "NONASSERTION_OUTCOMES",
+        "EXIT_AND_SUMMARY_DISAGREE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "unexpected_success",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "NONASSERTION_OUTCOMES",
+        "EXIT_WITHOUT_ASSERTION_FAILURES"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "resource_warning",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "UNRAISABLE_OR_RESOURCE_WARNING"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "unraisable_exception",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "UNRAISABLE_OR_RESOURCE_WARNING"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "timeout_even_with_assertion_text",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "TIMEOUT",
+        "NO_NORMAL_EXIT"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "launch_error_even_with_assertion_text",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "SUBPROCESS_LAUNCH_ERROR",
+        "NO_NORMAL_EXIT"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "signal_exit",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "NO_NORMAL_EXIT"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "missing_exit",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "NO_NORMAL_EXIT"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "zero_exit_failed_summary",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "EXIT_AND_SUMMARY_DISAGREE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "nonzero_exit_ok_summary",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "EXIT_WITHOUT_ASSERTION_FAILURES"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "malformed_summary",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "EXIT_AND_SUMMARY_DISAGREE"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "error_baseline_preempts_assertion_kill",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "BASELINE_NOT_PASS"
+      ]
+    },
+    {
+      "baseline_ran": 12,
+      "control": "assertion_failure_baseline_preempts_kill",
+      "expected_status": "ERROR",
+      "observed_status": "ERROR",
+      "passed": true,
+      "ran": 12,
+      "reasons": [
+        "BASELINE_NOT_PASS"
+      ]
+    }
+  ],
+  "counts": {
+    "classifier": 29,
+    "mocked_main": 8,
+    "run_suite": 4,
+    "six_input_hash_fixture": 1,
+    "total_controls": 42
+  },
+  "exposure_disclosure": {
+    "actual_mutations_applied": 0,
+    "actual_suites_executed": 0,
+    "environment_controls": "Only synthetic LX_PLATFORM_DIR and PYTHONDONTWRITEBYTECODE dictionaries; os.environ object restored.",
+    "filesystem_writes": "/tmp/cell308-codex-review65/evidence/harness-controls",
+    "host_metadata_calls": "Mocked platform functions, realpath, clock, executable/version for main.",
+    "limitations": "These synthetic controls establish only the listed harness behaviors. They do not constitute a global code verdict or complete wrapper coverage.",
+    "product_or_test_modules_imported": false,
+    "real_environment_values_read": false,
+    "real_input_files_read_or_hashed": false,
+    "repository_content_read": [
+      "af55168c:level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py",
+      "7eb3ba4d03f3b7898109073c83eb9b08f4589354:level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py"
+    ]
+  },
+  "input_hash_control": {
+    "fixture_reads": [
+      "lx_platform.py",
+      "lx_inventory.py",
+      "lx_verified.py",
+      "tests/test_lx_platform.py",
+      "tests/test_lx_verified.py",
+      "tests/run_mutants.py"
+    ],
+    "observed_synthetic_sha256": {
+      "lx_inventory.py": "435e30cc6cde08482396ac9c01330bcf6502161dc4573598bd90954212ddc6fa",
+      "lx_platform.py": "376b538f5569827c2779d6efafe56074f48015dc2892d0af3a8704cba7d2e015",
+      "lx_verified.py": "c157108e5532c234c7a2883359cf5a49bc191bd3c65ebed7e31f73254135be6e",
+      "tests/run_mutants.py": "cfc6c35b42a79480e8d65919948f9583c4095d4e148e065f2007e65b7234b062",
+      "tests/test_lx_platform.py": "7c1fbc94b46e2c968ea776e0af0ef3f09207f2a552bc38c2a923c9eb3afd12a1",
+      "tests/test_lx_verified.py": "5c5ba6fbab0e65338312a73ac5848c11d0215cfa7d559bf5a4a40c9e5374fe08"
+    },
+    "passed": true,
+    "real_input_files_read": false,
+    "six_inputs": [
+      "lx_platform.py",
+      "lx_inventory.py",
+      "lx_verified.py",
+      "tests/test_lx_platform.py",
+      "tests/test_lx_verified.py",
+      "tests/run_mutants.py"
+    ]
+  },
+  "mocked_main_controls": [
+    {
+      "bounded_synthetic_tempdirs": 80,
+      "control": "all-killed",
+      "environment_restored": true,
+      "exception": null,
+      "expected_exit": 0,
+      "inputs_unchanged": true,
+      "mocked_apply_calls": 80,
+      "passed": true,
+      "record_artifact": "main-all-killed.json",
+      "status_counts": {
+        "ERROR": 0,
+        "KILLED": 80,
+        "NOT_APPLIED": 0,
+        "SURVIVED": 0
+      },
+      "suite_calls": 81
+    },
+    {
+      "bounded_synthetic_tempdirs": 79,
+      "control": "mixed-status",
+      "environment_restored": true,
+      "exception": null,
+      "expected_exit": 1,
+      "inputs_unchanged": true,
+      "mocked_apply_calls": 80,
+      "passed": true,
+      "record_artifact": "main-mixed-status.json",
+      "status_counts": {
+        "ERROR": 1,
+        "KILLED": 77,
+        "NOT_APPLIED": 1,
+        "SURVIVED": 1
+      },
+      "suite_calls": 80
+    },
+    {
+      "bounded_synthetic_tempdirs": 0,
+      "control": "error-baseline",
+      "environment_restored": true,
+      "exception": null,
+      "expected_exit": 1,
+      "inputs_unchanged": true,
+      "mocked_apply_calls": 80,
+      "passed": true,
+      "record_artifact": "main-error-baseline.json",
+      "status_counts": {
+        "ERROR": 80,
+        "KILLED": 0,
+        "NOT_APPLIED": 0,
+        "SURVIVED": 0
+      },
+      "suite_calls": 1
+    },
+    {
+      "bounded_synthetic_tempdirs": 0,
+      "control": "assertion-failed-baseline",
+      "environment_restored": true,
+      "exception": null,
+      "expected_exit": 1,
+      "inputs_unchanged": true,
+      "mocked_apply_calls": 80,
+      "passed": true,
+      "record_artifact": "main-assertion-failed-baseline.json",
+      "status_counts": {
+        "ERROR": 80,
+        "KILLED": 0,
+        "NOT_APPLIED": 0,
+        "SURVIVED": 0
+      },
+      "suite_calls": 1
+    },
+    {
+      "bounded_synthetic_tempdirs": 80,
+      "control": "after-hash-mismatch",
+      "environment_restored": true,
+      "exception": null,
+      "expected_exit": 1,
+      "inputs_unchanged": false,
+      "mocked_apply_calls": 80,
+      "passed": true,
+      "record_artifact": "main-after-hash-mismatch.json",
+      "status_counts": {
+        "ERROR": 0,
+        "KILLED": 80,
+        "NOT_APPLIED": 0,
+        "SURVIVED": 0
+      },
+      "suite_calls": 81
+    },
+    {
+      "bounded_synthetic_tempdirs": 0,
+      "control": "duplicate-registry-id",
+      "environment_restored": true,
+      "exception": "ValueError",
+      "expected_exit": null,
+      "inputs_unchanged": null,
+      "mocked_apply_calls": 0,
+      "passed": true,
+      "record_artifact": "main-duplicate-registry-id.json",
+      "status_counts": null,
+      "suite_calls": 1
+    },
+    {
+      "bounded_synthetic_tempdirs": 0,
+      "control": "missing-registry-id",
+      "environment_restored": true,
+      "exception": "ValueError",
+      "expected_exit": null,
+      "inputs_unchanged": null,
+      "mocked_apply_calls": 0,
+      "passed": true,
+      "record_artifact": "main-missing-registry-id.json",
+      "status_counts": null,
+      "suite_calls": 1
+    },
+    {
+      "bounded_synthetic_tempdirs": 0,
+      "control": "before-source-hash-mismatch",
+      "environment_restored": true,
+      "exception": "RuntimeError",
+      "expected_exit": null,
+      "inputs_unchanged": null,
+      "mocked_apply_calls": 0,
+      "passed": true,
+      "record_artifact": "main-before-source-hash-mismatch.json",
+      "status_counts": null,
+      "suite_calls": 0
+    }
+  ],
+  "run_suite_controls": [
+    {
+      "command": [
+        "SYNTHETIC_PYTHON",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/private/tmp/cell308-codex-review65/evidence/harness-controls",
+        "-v"
+      ],
+      "control": "normal_success",
+      "environment_controls": {
+        "LX_PLATFORM_DIR": "synthetic-fixture",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "invalid_reasons": [],
+      "passed": true,
+      "stderr": "Ran 12 tests in 0.001s\nOK\n",
+      "stdout": "kept stdout",
+      "subprocess_was_mocked": true
+    },
+    {
+      "command": [
+        "SYNTHETIC_PYTHON",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/private/tmp/cell308-codex-review65/evidence/harness-controls",
+        "-v"
+      ],
+      "control": "normal_assertion_failure",
+      "environment_controls": {
+        "LX_PLATFORM_DIR": "synthetic-fixture",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "invalid_reasons": [],
+      "passed": true,
+      "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+      "stdout": "kept stdout",
+      "subprocess_was_mocked": true
+    },
+    {
+      "command": [
+        "SYNTHETIC_PYTHON",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/private/tmp/cell308-codex-review65/evidence/harness-controls",
+        "-v"
+      ],
+      "control": "timeout_preserves_bytes_with_replacement",
+      "environment_controls": {
+        "LX_PLATFORM_DIR": "synthetic-fixture",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "invalid_reasons": [
+        "TIMEOUT",
+        "NO_NORMAL_EXIT"
+      ],
+      "passed": true,
+      "stderr": "FAIL: synthetic_one\nRan 12 tests in 0.001s\nFAILED (failures=1)\n",
+      "stdout": "\ufffdstdout",
+      "subprocess_was_mocked": true
+    },
+    {
+      "command": [
+        "SYNTHETIC_PYTHON",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/private/tmp/cell308-codex-review65/evidence/harness-controls",
+        "-v"
+      ],
+      "control": "oserror_launch_failure",
+      "environment_controls": {
+        "LX_PLATFORM_DIR": "synthetic-fixture",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "invalid_reasons": [
+        "SUBPROCESS_LAUNCH_ERROR",
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "NO_NORMAL_EXIT"
+      ],
+      "passed": true,
+      "stderr": "",
+      "stdout": "",
+      "subprocess_was_mocked": true
+    }
+  ],
+  "synthetic_only": true
+}

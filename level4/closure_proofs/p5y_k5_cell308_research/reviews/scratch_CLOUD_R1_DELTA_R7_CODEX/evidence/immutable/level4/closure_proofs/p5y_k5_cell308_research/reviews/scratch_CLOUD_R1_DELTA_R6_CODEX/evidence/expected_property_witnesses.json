@@ -1,0 +1,717 @@
+{
+  "commit": "875eb95575fa9dc137083667bf30cc4a5a228fe6",
+  "runtime_evidence_pending": true,
+  "witnesses": [
+    {
+      "id": "M01",
+      "property": "failed boot-id read treated as a reboot (DEAD)",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead",
+      "line": 114,
+      "end_line": 119,
+      "rationale": "Failed boot read must be UNKNOWN rather than positive death evidence.",
+      "fixture_source": "def test_failed_readings_are_unknown_never_dead(self):\n        self.assertEqual(self.state(boot=\"\"), L.UNKNOWN)\n        self.assertEqual(self.state(exists=None), L.UNKNOWN)\n        self.assertEqual(L.identity_state(self.ident, current_boot=BOOT, exists=lambda p: True,\n                                          stat=lambda p: None, cmd=lambda p: \"c\" * 64, current_ns=NS), L.UNKNOWN)\n        self.assertEqual(self.state(cmd=None), L.UNKNOWN)"
+    },
+    {
+      "id": "M02",
+      "property": "unreadable /proc/<pid>/stat treated as DEAD",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead",
+      "line": 114,
+      "end_line": 119,
+      "rationale": "Missing process stat must be UNKNOWN rather than DEAD.",
+      "fixture_source": "def test_failed_readings_are_unknown_never_dead(self):\n        self.assertEqual(self.state(boot=\"\"), L.UNKNOWN)\n        self.assertEqual(self.state(exists=None), L.UNKNOWN)\n        self.assertEqual(L.identity_state(self.ident, current_boot=BOOT, exists=lambda p: True,\n                                          stat=lambda p: None, cmd=lambda p: \"c\" * 64, current_ns=NS), L.UNKNOWN)\n        self.assertEqual(self.state(cmd=None), L.UNKNOWN)"
+    },
+    {
+      "id": "M03",
+      "property": "incomplete identity record reported ALIVE",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_unrecorded_fields",
+      "line": 127,
+      "end_line": 135,
+      "rationale": "An incomplete recorded identity cannot be ALIVE.",
+      "fixture_source": "def test_unrecorded_fields(self):\n        \"\"\"N-2: a field never recorded is never compared (cannot prove death) and blocks ALIVE.\"\"\"\n        for k in (\"boot_id\", \"starttime_ticks\", \"cmdline_sha256\", \"pidns\", \"timens\"):\n            partial = dict(self.ident, **{k: None})\n            self.assertEqual(self.state(ident=partial), L.UNKNOWN, k)\n        no_cmd = dict(self.ident, cmdline_sha256=None)\n        self.assertEqual(self.state(ident=no_cmd, cmd=\"d\" * 64), L.UNKNOWN)\n        no_start = dict(self.ident, starttime_ticks=None)\n        self.assertEqual(self.state(ident=no_start, stat=L.proc_stat(4242, stat_text(start=1))), L.UNKNOWN)"
+    },
+    {
+      "id": "M04",
+      "property": "zombie read as DEAD again (the withdrawn L-ID-1)",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_zombie_is_never_proof_of_death",
+      "line": 109,
+      "end_line": 112,
+      "rationale": "Z/X state must be UNKNOWN rather than DEAD.",
+      "fixture_source": "def test_zombie_is_never_proof_of_death(self):\n        \"\"\"F2: a zombie / dead task reads UNKNOWN (macOS O-4 outcome), never DEAD.\"\"\"\n        for s in (\"Z\", \"X\"):\n            self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.UNKNOWN, s)"
+    },
+    {
+      "id": "M05",
+      "property": "pid reuse (other starttime) not detected",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_positive_death_evidence",
+      "line": 103,
+      "end_line": 107,
+      "rationale": "Different starttime identifies PID reuse and must be DEAD.",
+      "fixture_source": "def test_positive_death_evidence(self):\n        self.assertEqual(self.state(boot=OTHER_BOOT), L.DEAD)                       # reboot\n        self.assertEqual(self.state(exists=False), L.DEAD)                           # ESRCH\n        self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(start=778))), L.DEAD)   # pid reuse\n        self.assertEqual(self.state(cmd=\"d\" * 64), L.DEAD)"
+    },
+    {
+      "id": "M06",
+      "property": "no power supply exposed read as AC",
+      "expected_witness_test": "test_lx_platform.TestPowerThermal.test_power_classes",
+      "line": 444,
+      "end_line": 455,
+      "rationale": "Empty temporary supply tree must be ABSENT rather than AC.",
+      "fixture_source": "def test_power_classes(self):\n        with tempfile.TemporaryDirectory() as d:\n            self.assertEqual(L.power_source(d), \"ABSENT\")\n            mkfiles(Path(d), {\"AC/type\": \"Mains\\n\", \"AC/online\": \"1\\n\"})\n            self.assertEqual(L.power_source(d), L.AC)\n            mkfiles(Path(d), {\"BAT0/type\": \"Battery\\n\", \"BAT0/status\": \"Discharging\\n\"})\n            self.assertEqual(L.power_source(d), \"BATTERY\")\n            mkfiles(Path(d), {\"BAT0/status\": \"Charging\\n\", \"AC/online\": \"0\\n\"})\n            self.assertEqual(L.power_source(d), \"NO_MAINS\")\n            mkfiles(Path(d), {\"AC/online\": \"?\\n\"})\n            self.assertIsNone(L.power_source(d))\n        self.assertIsNone(L.power_source(\"/nonexistent/power_supply\"))"
+    },
+    {
+      "id": "M07",
+      "property": "unreadable cgroup limit skipped",
+      "expected_witness_test": "test_lx_platform.TestMemory.test_partial_chain_never_numeric",
+      "line": 529,
+      "end_line": 539,
+      "rationale": "An unreadable ancestor limit invalidates every memory minimum.",
+      "fixture_source": "def test_partial_chain_never_numeric(self):\n        \"\"\"F10: an unreadable limit anywhere, or an unreadable usage at a limited level, gives no number.\"\"\"\n        with tempfile.TemporaryDirectory() as d:\n            self.v1(d, drop=(\"memory/a/memory.limit_in_bytes\",))\n            r = L.memory_readings(MEMINFO, \"4:memory:/a/b\\n\", d, root_attested=True)\n            self.assertEqual((r[\"effective_limit\"], r[\"cgroup_min_headroom\"], r[\"visible_limit_upper_bound\"]),\n                             (None, None, None))\n        with tempfile.TemporaryDirectory() as d:\n            self.v1(d, leaf_use=\"?\\n\", mid=\"2000000000\")      # another limited level exists: a partial min is possible\n            r = L.memory_readings(MEMINFO, \"4:memory:/a/b\\n\", d, root_attested=True)\n            self.assertIsNone(r[\"cgroup_min_headroom\"])"
+    },
+    {
+      "id": "M08",
+      "property": "missing journal channel ignored in assess",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_missing_channels_never_clean",
+      "line": 342,
+      "end_line": 348,
+      "rationale": "Missing journal list must yield AMBIGUOUS.",
+      "fixture_source": "def test_missing_channels_never_clean(self):\n        a, b, s, j = self.clean_case()\n        self.assertEqual(L.assess(a, b, s, None)[\"status\"], \"AMBIGUOUS\")\n        self.assertEqual(L.assess(dict(a, suspend_success=None), b, s, j)[\"status\"], \"AMBIGUOUS\")\n        self.assertEqual(L.assess(a, dict(b, power=\"ABSENT\"), s, j)[\"status\"], \"AMBIGUOUS\")\n        self.assertEqual(L.assess(a, dict(b, power=None), s, j)[\"status\"], \"AMBIGUOUS\")\n        self.assertEqual(L.assess(a, dict(b, boot_id=None), s, j)[\"status\"], \"AMBIGUOUS\")"
+    },
+    {
+      "id": "M09",
+      "property": "pause channel P removed",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_pause_channel_is_ambiguous",
+      "line": 299,
+      "end_line": 304,
+      "rationale": "A 3-second REALTIME excursion must report P ambiguity.",
+      "fixture_source": "def test_pause_channel_is_ambiguous(self):\n        a, b, s, j = self.clean_case()\n        b[\"clocks\"][\"realtime_ns\"] += 3 * S\n        r = L.assess(a, b, s, j)\n        self.assertEqual(r[\"status\"], \"AMBIGUOUS\")\n        self.assertTrue(any(x.startswith(\"AMBIGUOUS: P\") for x in r[\"reasons\"]))"
+    },
+    {
+      "id": "M10",
+      "property": "suspend (boottime - monotonic) ignored",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_suspend_detected_just_above_tolerance",
+      "line": 294,
+      "end_line": 297,
+      "rationale": "A 3-second positive BOOTTIME divergence must report CONTAMINATED.",
+      "fixture_source": "def test_suspend_detected_just_above_tolerance(self):\n        a, b, s, j = self.clean_case()\n        b[\"clocks\"][\"boottime_ns\"] += 3 * S\n        self.assertEqual(L.assess(a, b, s, j)[\"status\"], \"CONTAMINATED\")"
+    },
+    {
+      "id": "M11",
+      "property": "D-MEM-FREE gate silently passes",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_all_favourable_still_blocked",
+      "line": 1127,
+      "end_line": 1136,
+      "rationale": "Undecided free-memory gate must remain in the blocking OPEN_DECISION set.",
+      "fixture_source": "def test_all_favourable_still_blocked(self):\n        r = L.preflight(\"/\", mode=\"execute\", other_job_running=False, launched=self.launch(), attestation_ref=None,\n                        readings=self.rd(), attestation_check=lambda ref: ({\"provider_image_updates\":\n                                                                              L.NO_IMAGE_CHANGE}, []),\n                        launch_observer=self.launch)\n        self.assertFalse(r[\"pass\"])\n        self.assertEqual(set(r[\"blocked\"]), {\"lowpowermode_0\", \"thermal_pressure_0\", \"memory_pressure_normal\",\n                                             \"free_memory_ge_min\", \"host_exclusive\", \"host_lifetime_attested\",\n                                             \"no_automatic_os_install\"})\n        self.assertTrue(all(v == L.OPEN_DECISION for v in r[\"blocked\"].values()))"
+    },
+    {
+      "id": "M12",
+      "property": "attestation 'reviewed' not required",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+      "line": 1044,
+      "end_line": 1065,
+      "rationale": "Non-True reviewed flag must refuse the committed fixture.",
+      "fixture_source": "def test_forged_or_unaccepted_attestations_refused(self):\n        \"\"\"N1 / F8 / R02: an arbitrary committed file, wrong schema, non-True flags, another machine, a missing or\n        mismatching acceptance line, or extra caller fields are all refused.\"\"\"\n        bad = [\n            (b\"# README\\nnot an attestation\\n\", None, None),\n            (self.attestation(schema=\"other\"), None, None),\n            (self.attestation(accepted=\"REJECTED\"), None, None),\n            (self.attestation(reviewed=\"true\"), None, None),\n            (self.attestation(accepted=1), None, None),\n            (self.attestation(machine=dict(self.HW, machine_id_sha256=\"c\" * 64)), None, None),\n            (self.attestation(), b\"verdict: accepted\\n\", None),                     # no acceptance line\n            (self.attestation(), f\"{L.ACCEPTANCE_LINE}{'0' * 64}\\n\".encode(), None),   # names another sha\n            (self.attestation(), None, {\"accepted\": True}),                          # caller-asserted field\n        ]\n        for att, review, extra in bad:\n            rec, why = self.check(att, review, extra)\n            self.assertIsNone(rec, (att[:40], review, extra))\n            self.assertTrue(why)\n        soft = dict(self.HW, hardware_bound=False, product_uuid_sha256=None)\n        self.assertIsNone(self.check(self.attestation(machine=soft), machine=soft)[0])\n        for ref in (None, {}, {\"path\": \"att/HOST.json\"}, {\"path\": 1, \"sha256\": \"x\"}):\n            self.assertIsNone(L.attestation_valid(ref)[0], ref)"
+    },
+    {
+      "id": "M13",
+      "property": "provider image updates pass without an attested token",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided",
+      "line": 1109,
+      "end_line": 1125,
+      "rationale": "Decided lifetime alone cannot pass unknown provider-image token.",
+      "fixture_source": "def test_lifetime_gates_open_while_undecided(self):\n        \"\"\"N1: with D-HOST-LIFETIME open, even a valid attestation leaves both dependent gates OPEN_DECISION.\"\"\"\n        good = ({\"provider_image_updates\": L.NO_IMAGE_CHANGE}, [])\n        g = self.gates(att=good)\n        self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]),\n                         (L.OPEN_DECISION, L.OPEN_DECISION))\n        g = self.gates(att=good, decided=frozenset({\"D-HOST-LIFETIME\"}))\n        self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]), (L.PASS, L.PASS))\n        g = self.gates(att=(None, [\"x\"]), decided=frozenset({\"D-HOST-LIFETIME\"}))\n        self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]), (L.UNKNOWN, L.UNKNOWN))\n        g = self.gates(att=({\"provider_image_updates\": \"unknown\"}, []), decided=frozenset({\"D-HOST-LIFETIME\"}))\n        self.assertEqual(g[\"no_automatic_os_install\"], L.UNKNOWN)\n        for upd in ({}, None, {\"guest_updates_shown_disabled\": \"true\"}, {\"guest_updates_shown_disabled\": False}):\n            g = L.preflight(\"/\", mode=\"execute\", other_job_running=False, launched=self.launch(),\n                            attestation_ref=None, readings=self.rd(updates=upd), decided=frozenset({\"D-HOST-LIFETIME\"}),\n                            attestation_check=lambda ref: good)[\"gates\"]\n            self.assertEqual(g[\"no_automatic_os_install\"], L.UNKNOWN, upd)"
+    },
+    {
+      "id": "M14",
+      "property": "update vectors other than apt ignored",
+      "expected_witness_test": "test_lx_platform.TestUpdatesLaunch.test_positive_evidence_only",
+      "line": 825,
+      "end_line": 834,
+      "rationale": "Enabled timer/snapd/cloud/livepatch prevents shown-disabled update state.",
+      "fixture_source": "def test_positive_evidence_only(self):\n        off = 'APT::Periodic \"\";\\nAPT::Periodic::Enable \"0\";\\n'\n        self.assertTrue(self.settings(off)[\"guest_updates_shown_disabled\"])\n        self.assertTrue(self.settings('APT::Periodic::Unattended-Upgrade \"0\";\\n')[\"guest_updates_shown_disabled\"])\n        for kw in ({\"timer\": True}, {\"snapd\": True}, {\"cloud\": True}, {\"livepatch\": [\"kpatch_1\"]},\n                   {\"livepatch\": \"unreadable\"}):                               # X03\n            self.assertFalse(self.settings(off, **kw)[\"guest_updates_shown_disabled\"], kw)\n        self.assertFalse(self.settings('APT::Periodic::Unattended-Upgrade \"1\";\\n')[\"guest_updates_shown_disabled\"])\n        self.assertFalse(self.settings(\"\")[\"guest_updates_shown_disabled\"])                 # nothing positive\n        self.assertFalse(L.auto_update_settings(None, use_live_apt=False)[\"guest_updates_shown_disabled\"])"
+    },
+    {
+      "id": "M15",
+      "property": "launched_by_systemd skips the MainPID check",
+      "expected_witness_test": "test_lx_platform.TestUpdatesLaunch.test_launched_by_systemd_requires_everything",
+      "line": 846,
+      "end_line": 858,
+      "rationale": "Different systemctl MainPID cannot pass launch evidence.",
+      "fixture_source": "def test_launched_by_systemd_requires_everything(self):\n        cg = \"1:name=systemd:/system.slice/rebaseguard-mbs308-exec.service\\n\"\n        env = {\"INVOCATION_ID\": \"abc\"}\n        good = {\"MainPID\": os.getpid(), \"InvocationID\": \"abc\"}\n        self.assertTrue(L.launched_by_systemd(env=env, proc_cgroup_text=cg, show=lambda u: good, pid1=True)[\"pass\"])\n        for kw in ({\"pid1\": False}, {\"env\": {}},\n                   {\"proc_cgroup_text\": \"0::/system.slice/rebaseguard-mbs308-exec.scope\\n\"},          # X07\n                   {\"proc_cgroup_text\": \"1:name=systemd:/user.slice/other.service\\n\"},\n                   {\"show\": lambda u: None}, {\"show\": lambda u: dict(good, MainPID=1)},\n                   {\"show\": lambda u: dict(good, InvocationID=\"zzz\")}):\n            args = dict(env=env, proc_cgroup_text=cg, show=lambda u: good, pid1=True)\n            args.update(kw)\n            self.assertFalse(L.launched_by_systemd(**args)[\"pass\"], kw)"
+    },
+    {
+      "id": "M16",
+      "property": "durable_write writes the target in place",
+      "expected_witness_test": "test_lx_platform.TestDurableWrite.test_stale_tmp_is_a_named_state",
+      "line": 910,
+      "end_line": 916,
+      "rationale": "Existing separate .tmp must raise StaleTmp rather than write target in place.",
+      "fixture_source": "def test_stale_tmp_is_a_named_state(self):\n        \"\"\"F23: a stale tmp raises StaleTmp and is left in place.\"\"\"\n        with tempfile.TemporaryDirectory() as d:\n            Path(d, \"r.tmp\").write_text(\"stale\")\n            with self.assertRaises(L.StaleTmp):\n                L.durable_write(Path(d, \"r\"), b\"x\")\n            self.assertEqual(Path(d, \"r.tmp\").read_text(), \"stale\")"
+    },
+    {
+      "id": "M17",
+      "property": "unreadable pin counts as a match",
+      "expected_witness_test": "test_lx_platform.TestPins.test_unreadable_pins_never_match",
+      "line": 971,
+      "end_line": 977,
+      "rationale": "Two equally unreadable pins must still mismatch.",
+      "fixture_source": "def test_unreadable_pins_never_match(self):\n        got = L.platform_readings()\n        for bad in ({\"python_sha256\": None}, {\"mapped_objects\": None}, {\"mapped_objects\": {}},\n                    {\"dpkg_versions\": dict(got[\"dpkg_versions\"], libc6=None)}):\n            pins = dict(got, **bad)\n            self.assertIn(next(iter(bad)), L.pin_mismatches(pins, pins), bad)\n        self.assertIsNone(L.mapped_objects(\"7f00-7f01 r-xp 0 08:01 1 /nonexistent/libx.so.1\\n\"))"
+    },
+    {
+      "id": "M18",
+      "property": "busy_processes uses lifetime ticks instead of the window",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+      "line": 604,
+      "end_line": 614,
+      "rationale": "Unchanged large lifetime ticks must not add old_hog to the window busy set.",
+      "fixture_source": "def test_window_not_lifetime_and_reuse_and_birth(self):\n        hz = 100\n        t0 = {(10, 1): (1, 1000, \"old_hog\", \"/usr/bin/x\"), (11, 2): (1, 0, \"spiker\", \"/opt/y\"),\n              (12, 3): (99, 0, \"mine\", None), (99, 2): (1, 0, \"campaign\", None)}\n        t1 = {(10, 1): (1, 1000, \"old_hog\", \"/usr/bin/x\"), (11, 2): (1, 300, \"spiker\", \"/opt/y\"),\n              (12, 3): (99, 900, \"mine\", None), (99, 2): (1, 900, \"campaign\", None),\n              (13, 50): (1, 200, \"newborn\", None), (20, 60): (1, 150, \"reused_pid\", None)}\n        busy = {b[\"comm\"]: b for b in L.busy_processes(t0, t1, 5.0, 25, own={(99, 2)}, hz=hz)}\n        self.assertEqual(set(busy), {\"spiker\", \"newborn\", \"reused_pid\"})\n        self.assertEqual(busy[\"spiker\"][\"pct\"], 60.0)\n        self.assertTrue(busy[\"newborn\"][\"born_in_window\"])"
+    },
+    {
+      "id": "M19",
+      "property": "empty cmdline (failed read) hashed as a command",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_empty_cmdline_is_a_failed_read",
+      "line": 91,
+      "end_line": 93,
+      "rationale": "Empty command bytes must return None rather than a digest.",
+      "fixture_source": "def test_empty_cmdline_is_a_failed_read(self):\n        self.assertIsNone(L.cmdline_sha256(1, b\"\"))\n        self.assertEqual(L.cmdline_sha256(1, b\"a\\0b\\0\"), hashlib.sha256(b\"a\\0b\\0\").hexdigest())"
+    },
+    {
+      "id": "M20",
+      "property": "UNKNOWN gates not reported as blocking",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_unknowns_never_pass_and_are_reported",
+      "line": 1144,
+      "end_line": 1152,
+      "rationale": "UNKNOWN gate must be present in blocked, preserving refusal.",
+      "fixture_source": "def test_unknowns_never_pass_and_are_reported(self):\n        r = L.preflight(\"/\", mode=\"launcher_preflight\", other_job_running=None, launched=None, attestation_ref=None,\n                        readings=self.rd(power=None, free_disk=None, boot_id=None, updates={}))\n        for k in (\"ac_power\", \"free_disk_ge_2GiB\", \"boot_id_recorded\", \"no_other_campaign_job\",\n                  \"no_automatic_os_install\"):\n            self.assertEqual(r[\"gates\"][k], L.UNKNOWN, k)\n            self.assertEqual(r[\"blocked\"].get(k), L.UNKNOWN, k)\n        self.assertEqual(self.gates(power=\"ABSENT\")[\"ac_power\"], L.OPEN_DECISION)\n        self.assertEqual(self.gates(free_disk=True)[\"free_disk_ge_2GiB\"], L.UNKNOWN)"
+    },
+    {
+      "id": "M21",
+      "property": "headroom computed over levels with unreadable usage",
+      "expected_witness_test": "test_lx_platform.TestMemory.test_partial_chain_never_numeric",
+      "line": 529,
+      "end_line": 539,
+      "rationale": "Missing usage at a limited level invalidates headroom even with another readable limited ancestor.",
+      "fixture_source": "def test_partial_chain_never_numeric(self):\n        \"\"\"F10: an unreadable limit anywhere, or an unreadable usage at a limited level, gives no number.\"\"\"\n        with tempfile.TemporaryDirectory() as d:\n            self.v1(d, drop=(\"memory/a/memory.limit_in_bytes\",))\n            r = L.memory_readings(MEMINFO, \"4:memory:/a/b\\n\", d, root_attested=True)\n            self.assertEqual((r[\"effective_limit\"], r[\"cgroup_min_headroom\"], r[\"visible_limit_upper_bound\"]),\n                             (None, None, None))\n        with tempfile.TemporaryDirectory() as d:\n            self.v1(d, leaf_use=\"?\\n\", mid=\"2000000000\")      # another limited level exists: a partial min is possible\n            r = L.memory_readings(MEMINFO, \"4:memory:/a/b\\n\", d, root_attested=True)\n            self.assertIsNone(r[\"cgroup_min_headroom\"])"
+    },
+    {
+      "id": "M22",
+      "property": "namespace mismatch ignored",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_namespace_mismatch_is_unknown",
+      "line": 121,
+      "end_line": 125,
+      "rationale": "Mismatched PID/time namespace cannot establish ALIVE or DEAD.",
+      "fixture_source": "def test_namespace_mismatch_is_unknown(self):\n        \"\"\"F14: a reader in another PID / time namespace cannot prove anything about the recorded pid.\"\"\"\n        self.assertEqual(self.state(ns=dict(NS, pidns=1)), L.UNKNOWN)\n        self.assertEqual(self.state(ns=dict(NS, timens=None)), L.UNKNOWN)\n        self.assertEqual(self.state(ns=dict(NS, pidns=1), exists=False), L.UNKNOWN)"
+    },
+    {
+      "id": "M23",
+      "property": "unknown power-supply type skipped",
+      "expected_witness_test": "test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown",
+      "line": 457,
+      "end_line": 472,
+      "rationale": "Unknown USB supply beside online mains cannot be silently skipped.",
+      "fixture_source": "def test_failed_or_unknown_supplies_are_unknown(self):\n        \"\"\"F9 / R01: an unreadable type, an unreadable battery status, or an unknown supply type is never AC.\"\"\"\n        base = {\"AC/type\": \"Mains\\n\", \"AC/online\": \"1\\n\"}\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), dict(base, **{\"BAT0/type\": \"Battery\\n\"}))          # status file missing\n            self.assertIsNone(L.power_source(d))\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), base)\n            (Path(d) / \"BAT1\" / \"type\").mkdir(parents=True)                   # type unreadable (a directory)\n            self.assertIsNone(L.power_source(d))\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), dict(base, **{\"ups/type\": \"UPS\\n\", \"ups/status\": \"Discharging\\n\"}))\n            self.assertEqual(L.power_source(d), \"BATTERY\")\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), dict(base, **{\"usb/type\": \"USB\\n\", \"usb/online\": \"1\\n\"}))\n            self.assertIsNone(L.power_source(d))"
+    },
+    {
+      "id": "M24",
+      "property": "process born in the window not counted",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+      "line": 604,
+      "end_line": 614,
+      "rationale": "Born/reused identity with busy ticks must be included.",
+      "fixture_source": "def test_window_not_lifetime_and_reuse_and_birth(self):\n        hz = 100\n        t0 = {(10, 1): (1, 1000, \"old_hog\", \"/usr/bin/x\"), (11, 2): (1, 0, \"spiker\", \"/opt/y\"),\n              (12, 3): (99, 0, \"mine\", None), (99, 2): (1, 0, \"campaign\", None)}\n        t1 = {(10, 1): (1, 1000, \"old_hog\", \"/usr/bin/x\"), (11, 2): (1, 300, \"spiker\", \"/opt/y\"),\n              (12, 3): (99, 900, \"mine\", None), (99, 2): (1, 900, \"campaign\", None),\n              (13, 50): (1, 200, \"newborn\", None), (20, 60): (1, 150, \"reused_pid\", None)}\n        busy = {b[\"comm\"]: b for b in L.busy_processes(t0, t1, 5.0, 25, own={(99, 2)}, hz=hz)}\n        self.assertEqual(set(busy), {\"spiker\", \"newborn\", \"reused_pid\"})\n        self.assertEqual(busy[\"spiker\"][\"pct\"], 60.0)\n        self.assertTrue(busy[\"newborn\"][\"born_in_window\"])"
+    },
+    {
+      "id": "M25",
+      "property": "attestation file sha256 not verified",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+      "line": 1067,
+      "end_line": 1079,
+      "rationale": "A reference naming a different accepted digest cannot verify these committed bytes.",
+      "fixture_source": "def test_reference_digest_must_match_the_committed_file(self):\n        \"\"\"M25: a review accepting digest X does not make a DIFFERENT committed file pass when the reference quotes X.\"\"\"\n        with tempfile.TemporaryDirectory() as d:\n            accepted = self.attestation()\n            other = self.attestation(provider_image_updates=\"anything\")\n            x = hashlib.sha256(accepted).hexdigest()\n            self.repo(d, {\"att/HOST.json\": other, \"att/ACCEPTED.json\": accepted,\n                          \"reviews/ACCEPT.md\": f\"{L.ACCEPTANCE_LINE}{x}\\n\".encode()})\n            rec, why = L.attestation_valid({\"path\": \"att/HOST.json\", \"sha256\": x}, repo_root=d, machine=self.HW)\n            self.assertIsNone(rec)\n            self.assertIn(\"sha256 mismatch\", \" \".join(why))\n            self.assertIsNotNone(L.attestation_valid({\"path\": \"att/ACCEPTED.json\", \"sha256\": x}, repo_root=d,\n                                                     machine=self.HW)[0])"
+    },
+    {
+      "id": "M26",
+      "property": "attestation not bound to the hardware identity",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+      "line": 1044,
+      "end_line": 1065,
+      "rationale": "A different or unbound current hardware identity must be refused.",
+      "fixture_source": "def test_forged_or_unaccepted_attestations_refused(self):\n        \"\"\"N1 / F8 / R02: an arbitrary committed file, wrong schema, non-True flags, another machine, a missing or\n        mismatching acceptance line, or extra caller fields are all refused.\"\"\"\n        bad = [\n            (b\"# README\\nnot an attestation\\n\", None, None),\n            (self.attestation(schema=\"other\"), None, None),\n            (self.attestation(accepted=\"REJECTED\"), None, None),\n            (self.attestation(reviewed=\"true\"), None, None),\n            (self.attestation(accepted=1), None, None),\n            (self.attestation(machine=dict(self.HW, machine_id_sha256=\"c\" * 64)), None, None),\n            (self.attestation(), b\"verdict: accepted\\n\", None),                     # no acceptance line\n            (self.attestation(), f\"{L.ACCEPTANCE_LINE}{'0' * 64}\\n\".encode(), None),   # names another sha\n            (self.attestation(), None, {\"accepted\": True}),                          # caller-asserted field\n        ]\n        for att, review, extra in bad:\n            rec, why = self.check(att, review, extra)\n            self.assertIsNone(rec, (att[:40], review, extra))\n            self.assertTrue(why)\n        soft = dict(self.HW, hardware_bound=False, product_uuid_sha256=None)\n        self.assertIsNone(self.check(self.attestation(machine=soft), machine=soft)[0])\n        for ref in (None, {}, {\"path\": \"att/HOST.json\"}, {\"path\": 1, \"sha256\": \"x\"}):\n            self.assertIsNone(L.attestation_valid(ref)[0], ref)"
+    },
+    {
+      "id": "M27",
+      "property": "v2 root accepted as unlimited without attestation",
+      "expected_witness_test": "test_lx_platform.TestMemory.test_v2_root_and_memory_high",
+      "line": 555,
+      "end_line": 569,
+      "rationale": "The v2 root exemption must require strict attestation in direct _chain_values.",
+      "fixture_source": "def test_v2_root_and_memory_high(self):\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), {\"x/y/memory.max\": \"max\\n\", \"x/y/memory.high\": \"3000\\n\", \"x/y/memory.current\": \"10\\n\",\n                              \"x/memory.max\": \"8000\\n\", \"x/memory.high\": \"max\\n\", \"x/memory.current\": \"20\\n\"})\n            cg = \"0::/x/y\\n\"\n            self.assertIsNone(L.memory_readings(MEMINFO, cg, d)[\"effective_limit\"])        # root not attested\n            r = L.memory_readings(MEMINFO, cg, d, root_attested=True)\n            self.assertEqual(r[\"cgroup\"][\"version\"], \"v2\")\n            self.assertEqual(r[\"effective_limit\"], 3000)                                  # memory.high binds\n            self.assertEqual(r[\"cgroup_min_headroom\"], 2990)\n            ch = L.memory_cgroup_chain(cg, d)\n            self.assertIsNone(L._chain_values(ch, root_attested=False))                    # helper refuses directly\n            self.assertIsNotNone(L._chain_values(ch, root_attested=True))\n            Path(d, \"x/memory.high\").unlink()                                              # unreadable high\n            self.assertIsNone(L.memory_readings(MEMINFO, cg, d, root_attested=True)[\"effective_limit\"])"
+    },
+    {
+      "id": "M28",
+      "property": "effective_limit numeric without root attestation",
+      "expected_witness_test": "test_lx_platform.TestMemory.test_v1_needs_root_attestation_for_a_number",
+      "line": 518,
+      "end_line": 527,
+      "rationale": "Unattested raw memory must withhold effective_limit.",
+      "fixture_source": "def test_v1_needs_root_attestation_for_a_number(self):\n        with tempfile.TemporaryDirectory() as d:\n            self.v1(d)\n            r = L.memory_readings(MEMINFO, \"4:memory:/a/b\\n\", d)\n            self.assertEqual([x[\"path\"] for x in r[\"cgroup\"][\"chain\"]], [\"/a/b\", \"/a\", \"/\"])\n            self.assertIsNone(r[\"effective_limit\"])\n            self.assertIsNone(r[\"cgroup_min_headroom\"])\n            self.assertEqual(r[\"visible_limit_upper_bound\"], 1000000000)\n            ra = L.memory_readings(MEMINFO, \"4:memory:/a/b\\n\", d, root_attested=True)\n            self.assertEqual((ra[\"effective_limit\"], ra[\"cgroup_min_headroom\"]), (1000000000, 1000000000 - 400))"
+    },
+    {
+      "id": "M29",
+      "property": "execute / resume pass the launch gate without a launch record",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_launch_record_fields_are_verified",
+      "line": 1154,
+      "end_line": 1174,
+      "rationale": "Execute/resume must include launched_by_systemd and fail when supplied launch is absent.",
+      "fixture_source": "def test_launch_record_fields_are_verified(self):\n        \"\"\"F15 / N12 / A2: execute / resume need valid fields matching independent observation of this process.\"\"\"\n        self.assertEqual(self.gates()[\"launched_by_systemd\"], L.PASS)\n        for bad in ({\"pass\": True}, True, \"yes\", self.launch(systemd_pid1=None),\n                    self.launch(unit=\"rebaseguard-mbs308-exec.scope\"), self.launch(unit=\"other.service\"),\n                    self.launch(invocation_id=\"\"), self.launch(systemctl={\"MainPID\": 1, \"InvocationID\": \"abc\"}),\n                    self.launch(systemctl={\"MainPID\": os.getpid(), \"InvocationID\": \"zzz\"}), self.launch(**{\"pass\": 1})):\n            self.assertEqual(self.gates(launched=bad)[\"launched_by_systemd\"], L.FAIL, bad)\n        for mode in (\"execute\", \"resume\"):\n            g = L.preflight(\"/\", mode=mode, other_job_running=False, launched=None, attestation_ref=None,\n                            readings=self.rd(), launch_observer=self.launch)[\"gates\"]\n            self.assertIn(\"launched_by_systemd\", g)\n            self.assertEqual(g[\"launched_by_systemd\"], L.FAIL, mode)\n        g = L.preflight(\"/\", mode=\"launcher_preflight\", other_job_running=False, launched=None, attestation_ref=None,\n                        readings=self.rd())[\"gates\"]\n        self.assertNotIn(\"launched_by_systemd\", g)\n        g = L.preflight(\"/\", mode=\"launcher_preflight\", other_job_running=False, launched=True, attestation_ref=None,\n                        readings=self.rd())[\"gates\"]\n        self.assertEqual(g[\"launched_by_systemd\"], L.FAIL)\n        with self.assertRaises(ValueError):\n            L.preflight(\"/\", mode=None, other_job_running=False, launched=None, attestation_ref=None)"
+    },
+    {
+      "id": "M30",
+      "property": "mapped shared objects (libm) not pinned",
+      "expected_witness_test": "test_lx_platform.TestPins.test_pin_set_covers_libm_libc_loader",
+      "line": 940,
+      "end_line": 950,
+      "rationale": "PIN_KEYS must include mapped_objects.",
+      "fixture_source": "def test_pin_set_covers_libm_libc_loader(self):\n        \"\"\"F1: the mapped shared objects (incl. libm.so.6, libc.so.6, the loader) and package versions are pinned.\"\"\"\n        self.assertEqual(set(L.PIN_KEYS), {\"python_executable\", \"python_sha256\", \"python_sys_version\",\n                                           \"mapped_objects\", \"dpkg_versions\", \"livepatch\", \"os_id\", \"os_version_id\",\n                                           \"os_version\", \"kernel_release\", \"machine\", \"glibc\"})\n        got = L.platform_readings()\n        names = {Path(k).name for k in got[\"mapped_objects\"]}\n        for lib in (\"libm.so.6\", \"libc.so.6\"):\n            self.assertIn(lib, names)\n        self.assertTrue(any(n.startswith(\"ld-linux\") for n in names))\n        self.assertIn(\"libc6\", got[\"dpkg_versions\"])"
+    },
+    {
+      "id": "M31",
+      "property": "incomplete /proc view accepted",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed",
+      "line": 706,
+      "end_line": 712,
+      "rationale": "Incomplete or unknown proc view prevents numeric exclusivity reading.",
+      "fixture_source": "def test_no_reading_or_unsafe_inputs_fail_closed(self):\n        self.assertIsNone(L.busy_processes(None, {}, 5, 25, set()))\n        self.assertIsNone(L.busy_processes({}, {}, 0, 25, set()))\n        self.assertIsNone(L.busy_processes({}, {}, 5, 25, {(1, 1)}))             # own may not contain init\n        self.assertIsNone(L.busy_processes({}, {}, 5, 25, {99}))                 # bare pids: malformed\n        self.assertIsNone(L.busy_processes({}, {}, 5, 25, set(), view_complete=False))\n        self.assertIsNone(L.busy_processes({}, {}, 5, 25, set(), view_complete=None))"
+    },
+    {
+      "id": "M32",
+      "property": "own may contain init",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed",
+      "line": 706,
+      "end_line": 712,
+      "rationale": "own containing PID 1 must be refused.",
+      "fixture_source": "def test_no_reading_or_unsafe_inputs_fail_closed(self):\n        self.assertIsNone(L.busy_processes(None, {}, 5, 25, set()))\n        self.assertIsNone(L.busy_processes({}, {}, 0, 25, set()))\n        self.assertIsNone(L.busy_processes({}, {}, 5, 25, {(1, 1)}))             # own may not contain init\n        self.assertIsNone(L.busy_processes({}, {}, 5, 25, {99}))                 # bare pids: malformed\n        self.assertIsNone(L.busy_processes({}, {}, 5, 25, set(), view_complete=False))\n        self.assertIsNone(L.busy_processes({}, {}, 5, 25, set(), view_complete=None))"
+    },
+    {
+      "id": "R01",
+      "property": "unreadable Battery status skipped (a failed read can yield AC)",
+      "expected_witness_test": "test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown",
+      "line": 457,
+      "end_line": 472,
+      "rationale": "An unreadable Battery status beside mains must give None.",
+      "fixture_source": "def test_failed_or_unknown_supplies_are_unknown(self):\n        \"\"\"F9 / R01: an unreadable type, an unreadable battery status, or an unknown supply type is never AC.\"\"\"\n        base = {\"AC/type\": \"Mains\\n\", \"AC/online\": \"1\\n\"}\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), dict(base, **{\"BAT0/type\": \"Battery\\n\"}))          # status file missing\n            self.assertIsNone(L.power_source(d))\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), base)\n            (Path(d) / \"BAT1\" / \"type\").mkdir(parents=True)                   # type unreadable (a directory)\n            self.assertIsNone(L.power_source(d))\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), dict(base, **{\"ups/type\": \"UPS\\n\", \"ups/status\": \"Discharging\\n\"}))\n            self.assertEqual(L.power_source(d), \"BATTERY\")\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), dict(base, **{\"usb/type\": \"USB\\n\", \"usb/online\": \"1\\n\"}))\n            self.assertIsNone(L.power_source(d))"
+    },
+    {
+      "id": "R02",
+      "property": "host attestation accepted when the 'accepted' key is merely present (e.g. 'REJECTED')",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+      "line": 1044,
+      "end_line": 1065,
+      "rationale": "Present accepted key with REJECTED or 1 does not establish strict acceptance.",
+      "fixture_source": "def test_forged_or_unaccepted_attestations_refused(self):\n        \"\"\"N1 / F8 / R02: an arbitrary committed file, wrong schema, non-True flags, another machine, a missing or\n        mismatching acceptance line, or extra caller fields are all refused.\"\"\"\n        bad = [\n            (b\"# README\\nnot an attestation\\n\", None, None),\n            (self.attestation(schema=\"other\"), None, None),\n            (self.attestation(accepted=\"REJECTED\"), None, None),\n            (self.attestation(reviewed=\"true\"), None, None),\n            (self.attestation(accepted=1), None, None),\n            (self.attestation(machine=dict(self.HW, machine_id_sha256=\"c\" * 64)), None, None),\n            (self.attestation(), b\"verdict: accepted\\n\", None),                     # no acceptance line\n            (self.attestation(), f\"{L.ACCEPTANCE_LINE}{'0' * 64}\\n\".encode(), None),   # names another sha\n            (self.attestation(), None, {\"accepted\": True}),                          # caller-asserted field\n        ]\n        for att, review, extra in bad:\n            rec, why = self.check(att, review, extra)\n            self.assertIsNone(rec, (att[:40], review, extra))\n            self.assertTrue(why)\n        soft = dict(self.HW, hardware_bound=False, product_uuid_sha256=None)\n        self.assertIsNone(self.check(self.attestation(machine=soft), machine=soft)[0])\n        for ref in (None, {}, {\"path\": \"att/HOST.json\"}, {\"path\": 1, \"sha256\": \"x\"}):\n            self.assertIsNone(L.attestation_valid(ref)[0], ref)"
+    },
+    {
+      "id": "R03",
+      "property": "durable_write never fsyncs the data",
+      "expected_witness_test": "test_lx_platform.TestDurableWrite.test_fsyncs_file_then_directory",
+      "line": 884,
+      "end_line": 897,
+      "rationale": "Data-file fsync must precede directory fsync.",
+      "fixture_source": "def test_fsyncs_file_then_directory(self):\n        \"\"\"R03 / R08: the data and the directory are both fsync'd, in that order.\"\"\"\n        calls, real = [], os.fsync\n\n        def spy(fd):\n            calls.append(\"dir\" if _stat.S_ISDIR(os.fstat(fd).st_mode) else \"file\")\n            return real(fd)\n        os.fsync = spy\n        try:\n            with tempfile.TemporaryDirectory() as d:\n                L.durable_write(Path(d, \"r\"), b\"x\")\n        finally:\n            os.fsync = real\n        self.assertEqual(calls, [\"file\", \"dir\"])"
+    },
+    {
+      "id": "R04",
+      "property": "suspend / pause tolerance raised from 2 s to 25 s",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_suspend_detected_just_above_tolerance",
+      "line": 294,
+      "end_line": 297,
+      "rationale": "3 seconds must exceed the preserved 2-second tolerance.",
+      "fixture_source": "def test_suspend_detected_just_above_tolerance(self):\n        a, b, s, j = self.clean_case()\n        b[\"clocks\"][\"boottime_ns\"] += 3 * S\n        self.assertEqual(L.assess(a, b, s, j)[\"status\"], \"CONTAMINATED\")"
+    },
+    {
+      "id": "R05",
+      "property": "hidden name allow-list for the Cloud session controller in busy_processes",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_no_name_or_path_allowlist",
+      "line": 714,
+      "end_line": 720,
+      "rationale": "claude/process_api names cannot exempt observed busy work.",
+      "fixture_source": "def test_no_name_or_path_allowlist(self):\n        \"\"\"R05 / D-ALLOW-PATHS: no process is exempt by name or path, including the Cloud session controller.\"\"\"\n        for comm, exe in ((\"claude\", \"/opt/claude-code/bin/claude\"), (\"process_api\", \"/process_api\"),\n                          (\"systemd-journald\", \"/usr/lib/systemd/systemd-journald\")):\n            t0 = {(5, 1): (2, 0, comm, exe)}\n            t1 = {(5, 1): (2, 100, comm, exe)}\n            self.assertEqual(len(L.busy_processes(t0, t1, 1.0, 25, set(), hz=100)), 1, comm)"
+    },
+    {
+      "id": "R06",
+      "property": "package versions and glibc dropped from PIN_KEYS",
+      "expected_witness_test": "test_lx_platform.TestPins.test_pin_set_covers_libm_libc_loader",
+      "line": 940,
+      "end_line": 950,
+      "rationale": "PIN_KEYS must preserve package versions and glibc.",
+      "fixture_source": "def test_pin_set_covers_libm_libc_loader(self):\n        \"\"\"F1: the mapped shared objects (incl. libm.so.6, libc.so.6, the loader) and package versions are pinned.\"\"\"\n        self.assertEqual(set(L.PIN_KEYS), {\"python_executable\", \"python_sha256\", \"python_sys_version\",\n                                           \"mapped_objects\", \"dpkg_versions\", \"livepatch\", \"os_id\", \"os_version_id\",\n                                           \"os_version\", \"kernel_release\", \"machine\", \"glibc\"})\n        got = L.platform_readings()\n        names = {Path(k).name for k in got[\"mapped_objects\"]}\n        for lib in (\"libm.so.6\", \"libc.so.6\"):\n            self.assertIn(lib, names)\n        self.assertTrue(any(n.startswith(\"ld-linux\") for n in names))\n        self.assertIn(\"libc6\", got[\"dpkg_versions\"])"
+    },
+    {
+      "id": "R07",
+      "property": "stopped (T/t) and uninterruptible (D) tasks read as DEAD",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_live_task_states_are_alive",
+      "line": 98,
+      "end_line": 101,
+      "rationale": "Stopped/uninterruptible states are live, not DEAD.",
+      "fixture_source": "def test_live_task_states_are_alive(self):\n        \"\"\"R07: stopped (T, t), uninterruptible (D), running (R), idle (I) tasks are live.\"\"\"\n        for s in (\"R\", \"S\", \"D\", \"T\", \"t\", \"I\"):\n            self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.ALIVE, s)"
+    },
+    {
+      "id": "R08",
+      "property": "durable_write never fsyncs the directory after the rename",
+      "expected_witness_test": "test_lx_platform.TestDurableWrite.test_fsyncs_file_then_directory",
+      "line": 884,
+      "end_line": 897,
+      "rationale": "Post-rename directory fsync is required after data fsync.",
+      "fixture_source": "def test_fsyncs_file_then_directory(self):\n        \"\"\"R03 / R08: the data and the directory are both fsync'd, in that order.\"\"\"\n        calls, real = [], os.fsync\n\n        def spy(fd):\n            calls.append(\"dir\" if _stat.S_ISDIR(os.fstat(fd).st_mode) else \"file\")\n            return real(fd)\n        os.fsync = spy\n        try:\n            with tempfile.TemporaryDirectory() as d:\n                L.durable_write(Path(d, \"r\"), b\"x\")\n        finally:\n            os.fsync = real\n        self.assertEqual(calls, [\"file\", \"dir\"])"
+    },
+    {
+      "id": "R09",
+      "property": "maximum sample spacing raised from 180 s to 390 s",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_sample_spacing_boundary",
+      "line": 364,
+      "end_line": 368,
+      "rationale": "181-second spacing must be AMBIGUOUS under the unchanged 180-second maximum.",
+      "fixture_source": "def test_sample_spacing_boundary(self):\n        \"\"\"R09: 180 s spacing is covered, 181 s is not.\"\"\"\n        a = snap(0, 0, 0)\n        self.assertEqual(L.assess(a, snap(180 * S, 180 * S, 180 * S), [], [])[\"status\"], \"CLEAN\")\n        self.assertEqual(L.assess(a, snap(181 * S, 181 * S, 181 * S), [], [])[\"status\"], \"AMBIGUOUS\")"
+    },
+    {
+      "id": "R10",
+      "property": "assess checks power only at start and end, not at the samples",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_power_checked_at_every_sample",
+      "line": 350,
+      "end_line": 355,
+      "rationale": "Middle Battery/None readings cannot be erased by AC endpoints.",
+      "fixture_source": "def test_power_checked_at_every_sample(self):\n        \"\"\"R10: a battery reading in the middle of the interval contaminates it.\"\"\"\n        a, b, _, j = self.clean_case()\n        mid = snap(60 * S, 60 * S, 60 * S, power=\"BATTERY\")\n        self.assertEqual(L.assess(a, b, [mid], j)[\"status\"], \"CONTAMINATED\")\n        self.assertEqual(L.assess(a, b, [dict(mid, power=None)], j)[\"status\"], \"AMBIGUOUS\")"
+    },
+    {
+      "id": "X01",
+      "property": "/proc 'subset=' no longer refused",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_proc_view",
+      "line": 722,
+      "end_line": 735,
+      "rationale": "subset=pid proc mount is incomplete.",
+      "fixture_source": "def test_proc_view(self):\n        \"\"\"N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without\n        hidepid / subset; no /proc line or an unreadable namespace is UNKNOWN.\"\"\"\n        mi = \"23 28 0:22 / /proc rw,relatime - proc proc rw\\n\"\n        st = \"NSpid:\\t77\\n\"\n        self.assertTrue(L.proc_view_complete(st, mi, pidns=L.INIT_PID_NS))\n        self.assertFalse(L.proc_view_complete(st, mi, pidns=4026532265))           # nested ns with its own /proc\n        self.assertFalse(L.proc_view_complete(\"NSpid:\\t77\\t3\\n\", mi, pidns=L.INIT_PID_NS))\n        for opt in (\"hidepid=2\", \"subset=pid\"):\n            self.assertFalse(L.proc_view_complete(st, f\"23 28 0:22 / /proc rw,{opt} - proc proc rw\\n\",\n                                                  pidns=L.INIT_PID_NS), opt)\n        self.assertIsNone(L.proc_view_complete(st, \"23 28 0:22 / /sys rw - sysfs sysfs rw\\n\", pidns=L.INIT_PID_NS))\n        self.assertIsNone(L.proc_view_complete(\"Name: x\\n\", mi, pidns=L.INIT_PID_NS))\n        self.assertIsNone(L.proc_view_complete(st, mi, pidns=None))"
+    },
+    {
+      "id": "X02",
+      "property": "no /proc mount line counts as a complete view",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_proc_view",
+      "line": 722,
+      "end_line": 735,
+      "rationale": "Missing /proc mount cannot count as complete view.",
+      "fixture_source": "def test_proc_view(self):\n        \"\"\"N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without\n        hidepid / subset; no /proc line or an unreadable namespace is UNKNOWN.\"\"\"\n        mi = \"23 28 0:22 / /proc rw,relatime - proc proc rw\\n\"\n        st = \"NSpid:\\t77\\n\"\n        self.assertTrue(L.proc_view_complete(st, mi, pidns=L.INIT_PID_NS))\n        self.assertFalse(L.proc_view_complete(st, mi, pidns=4026532265))           # nested ns with its own /proc\n        self.assertFalse(L.proc_view_complete(\"NSpid:\\t77\\t3\\n\", mi, pidns=L.INIT_PID_NS))\n        for opt in (\"hidepid=2\", \"subset=pid\"):\n            self.assertFalse(L.proc_view_complete(st, f\"23 28 0:22 / /proc rw,{opt} - proc proc rw\\n\",\n                                                  pidns=L.INIT_PID_NS), opt)\n        self.assertIsNone(L.proc_view_complete(st, \"23 28 0:22 / /sys rw - sysfs sysfs rw\\n\", pidns=L.INIT_PID_NS))\n        self.assertIsNone(L.proc_view_complete(\"Name: x\\n\", mi, pidns=L.INIT_PID_NS))\n        self.assertIsNone(L.proc_view_complete(st, mi, pidns=None))"
+    },
+    {
+      "id": "X03",
+      "property": "unreadable livepatch counts as none applied",
+      "expected_witness_test": "test_lx_platform.TestUpdatesLaunch.test_positive_evidence_only",
+      "line": 825,
+      "end_line": 834,
+      "rationale": "Existing unreadable livepatch path is not absence.",
+      "fixture_source": "def test_positive_evidence_only(self):\n        off = 'APT::Periodic \"\";\\nAPT::Periodic::Enable \"0\";\\n'\n        self.assertTrue(self.settings(off)[\"guest_updates_shown_disabled\"])\n        self.assertTrue(self.settings('APT::Periodic::Unattended-Upgrade \"0\";\\n')[\"guest_updates_shown_disabled\"])\n        for kw in ({\"timer\": True}, {\"snapd\": True}, {\"cloud\": True}, {\"livepatch\": [\"kpatch_1\"]},\n                   {\"livepatch\": \"unreadable\"}):                               # X03\n            self.assertFalse(self.settings(off, **kw)[\"guest_updates_shown_disabled\"], kw)\n        self.assertFalse(self.settings('APT::Periodic::Unattended-Upgrade \"1\";\\n')[\"guest_updates_shown_disabled\"])\n        self.assertFalse(self.settings(\"\")[\"guest_updates_shown_disabled\"])                 # nothing positive\n        self.assertFalse(L.auto_update_settings(None, use_live_apt=False)[\"guest_updates_shown_disabled\"])"
+    },
+    {
+      "id": "X04",
+      "property": "K' monotonic-ahead-of-boottime channel removed",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples",
+      "line": 370,
+      "end_line": 377,
+      "rationale": "Negative BOOTTIME-minus-MONOTONIC divergence must remain AMBIGUOUS with P isolated.",
+      "fixture_source": "def test_monotonic_ahead_of_boottime_and_absent_samples(self):\n        \"\"\"X04 / X06: monotonic advancing more than boottime, or samples absent, is AMBIGUOUS, never CLEAN.\"\"\"\n        a, b, s, j = self.clean_case()\n        b[\"clocks\"][\"monotonic_ns\"] += 3 * S\n        b[\"clocks\"][\"realtime_ns\"] += 3 * S                          # keep channel P silent: isolate K'\n        self.assertEqual(L.assess(a, b, s, j)[\"status\"], \"AMBIGUOUS\")\n        a, b, s, j = self.clean_case()\n        self.assertEqual(L.assess(a, b, None, j)[\"status\"], \"AMBIGUOUS\")"
+    },
+    {
+      "id": "X05",
+      "property": "durable_write read-back verification removed",
+      "expected_witness_test": "test_lx_platform.TestDurableWrite.test_read_back_mismatch_is_detected",
+      "line": 899,
+      "end_line": 908,
+      "rationale": "Corrupted bytes after rename must raise OSError.",
+      "fixture_source": "def test_read_back_mismatch_is_detected(self):\n        \"\"\"X05: if the bytes on disk after the rename are not the bytes written, durable_write raises.\"\"\"\n        with tempfile.TemporaryDirectory() as d:\n            p = Path(d, \"r\")\n\n            def corrupt(stage):\n                if stage == \"renamed\":\n                    p.write_bytes(b\"something else\")\n            with self.assertRaises(OSError):\n                L.durable_write(p, b\"x\" * 100, fault=corrupt)"
+    },
+    {
+      "id": "X06",
+      "property": "absent samples no longer AMBIGUOUS",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples",
+      "line": 370,
+      "end_line": 377,
+      "rationale": "samples=None must remain AMBIGUOUS.",
+      "fixture_source": "def test_monotonic_ahead_of_boottime_and_absent_samples(self):\n        \"\"\"X04 / X06: monotonic advancing more than boottime, or samples absent, is AMBIGUOUS, never CLEAN.\"\"\"\n        a, b, s, j = self.clean_case()\n        b[\"clocks\"][\"monotonic_ns\"] += 3 * S\n        b[\"clocks\"][\"realtime_ns\"] += 3 * S                          # keep channel P silent: isolate K'\n        self.assertEqual(L.assess(a, b, s, j)[\"status\"], \"AMBIGUOUS\")\n        a, b, s, j = self.clean_case()\n        self.assertEqual(L.assess(a, b, None, j)[\"status\"], \"AMBIGUOUS\")"
+    },
+    {
+      "id": "X07",
+      "property": "a transient .scope accepted as the campaign unit",
+      "expected_witness_test": "test_lx_platform.TestUpdatesLaunch.test_launched_by_systemd_requires_everything",
+      "line": 846,
+      "end_line": 858,
+      "rationale": "A .scope is not the required campaign .service.",
+      "fixture_source": "def test_launched_by_systemd_requires_everything(self):\n        cg = \"1:name=systemd:/system.slice/rebaseguard-mbs308-exec.service\\n\"\n        env = {\"INVOCATION_ID\": \"abc\"}\n        good = {\"MainPID\": os.getpid(), \"InvocationID\": \"abc\"}\n        self.assertTrue(L.launched_by_systemd(env=env, proc_cgroup_text=cg, show=lambda u: good, pid1=True)[\"pass\"])\n        for kw in ({\"pid1\": False}, {\"env\": {}},\n                   {\"proc_cgroup_text\": \"0::/system.slice/rebaseguard-mbs308-exec.scope\\n\"},          # X07\n                   {\"proc_cgroup_text\": \"1:name=systemd:/user.slice/other.service\\n\"},\n                   {\"show\": lambda u: None}, {\"show\": lambda u: dict(good, MainPID=1)},\n                   {\"show\": lambda u: dict(good, InvocationID=\"zzz\")}):\n            args = dict(env=env, proc_cgroup_text=cg, show=lambda u: good, pid1=True)\n            args.update(kw)\n            self.assertFalse(L.launched_by_systemd(**args)[\"pass\"], kw)"
+    },
+    {
+      "id": "X08",
+      "property": "v1 'unlimited' sentinel lowered to 1 GiB",
+      "expected_witness_test": "test_lx_platform.TestMemory.test_large_v1_limit_is_a_limit",
+      "line": 585,
+      "end_line": 590,
+      "rationale": "2,000,000,000-byte v1 limit remains a real limit.",
+      "fixture_source": "def test_large_v1_limit_is_a_limit(self):\n        \"\"\"X08: a 2 000 000 000-byte v1 limit is a limit, not the 'unlimited' sentinel.\"\"\"\n        with tempfile.TemporaryDirectory() as d:\n            self.v1(d, leaf=\"2000000000\")\n            r = L.memory_readings(MEMINFO, \"4:memory:/a/b\\n\", d, root_attested=True)\n            self.assertEqual(r[\"effective_limit\"], 2000000000)"
+    },
+    {
+      "id": "X09",
+      "property": "unknown interpreter package drops out of the pin",
+      "expected_witness_test": "test_lx_platform.TestPins.test_unknown_interpreter_package_never_matches",
+      "line": 998,
+      "end_line": 1004,
+      "rationale": "Unknown interpreter owner retains explicit unknown package placeholder and mismatches.",
+      "fixture_source": "def test_unknown_interpreter_package_never_matches(self):\n        \"\"\"X09: an interpreter whose dpkg owner is unknown keeps a placeholder whose version is None.\"\"\"\n        pk = L._python_packages(owner_query=lambda: None)\n        self.assertIn(L.UNKNOWN_PACKAGE, pk)\n        vers = L.dpkg_versions(pk, query=lambda name: None if name == L.UNKNOWN_PACKAGE else \"1.0\")\n        got = dict(L.platform_readings(), dpkg_versions=vers)\n        self.assertIn(\"dpkg_versions\", L.pin_mismatches(got, got))"
+    },
+    {
+      "id": "N01",
+      "property": "D-HOST-LIFETIME treated as decided",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided",
+      "line": 1109,
+      "end_line": 1125,
+      "rationale": "Valid fixture cannot decide D-HOST-LIFETIME or pass its dependent gates.",
+      "fixture_source": "def test_lifetime_gates_open_while_undecided(self):\n        \"\"\"N1: with D-HOST-LIFETIME open, even a valid attestation leaves both dependent gates OPEN_DECISION.\"\"\"\n        good = ({\"provider_image_updates\": L.NO_IMAGE_CHANGE}, [])\n        g = self.gates(att=good)\n        self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]),\n                         (L.OPEN_DECISION, L.OPEN_DECISION))\n        g = self.gates(att=good, decided=frozenset({\"D-HOST-LIFETIME\"}))\n        self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]), (L.PASS, L.PASS))\n        g = self.gates(att=(None, [\"x\"]), decided=frozenset({\"D-HOST-LIFETIME\"}))\n        self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]), (L.UNKNOWN, L.UNKNOWN))\n        g = self.gates(att=({\"provider_image_updates\": \"unknown\"}, []), decided=frozenset({\"D-HOST-LIFETIME\"}))\n        self.assertEqual(g[\"no_automatic_os_install\"], L.UNKNOWN)\n        for upd in ({}, None, {\"guest_updates_shown_disabled\": \"true\"}, {\"guest_updates_shown_disabled\": False}):\n            g = L.preflight(\"/\", mode=\"execute\", other_job_running=False, launched=self.launch(),\n                            attestation_ref=None, readings=self.rd(updates=upd), decided=frozenset({\"D-HOST-LIFETIME\"}),\n                            attestation_check=lambda ref: good)[\"gates\"]\n            self.assertEqual(g[\"no_automatic_os_install\"], L.UNKNOWN, upd)"
+    },
+    {
+      "id": "N02",
+      "property": "attestation acceptance line not required",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+      "line": 1044,
+      "end_line": 1065,
+      "rationale": "Missing or wrong committed acceptance line must refuse fixture.",
+      "fixture_source": "def test_forged_or_unaccepted_attestations_refused(self):\n        \"\"\"N1 / F8 / R02: an arbitrary committed file, wrong schema, non-True flags, another machine, a missing or\n        mismatching acceptance line, or extra caller fields are all refused.\"\"\"\n        bad = [\n            (b\"# README\\nnot an attestation\\n\", None, None),\n            (self.attestation(schema=\"other\"), None, None),\n            (self.attestation(accepted=\"REJECTED\"), None, None),\n            (self.attestation(reviewed=\"true\"), None, None),\n            (self.attestation(accepted=1), None, None),\n            (self.attestation(machine=dict(self.HW, machine_id_sha256=\"c\" * 64)), None, None),\n            (self.attestation(), b\"verdict: accepted\\n\", None),                     # no acceptance line\n            (self.attestation(), f\"{L.ACCEPTANCE_LINE}{'0' * 64}\\n\".encode(), None),   # names another sha\n            (self.attestation(), None, {\"accepted\": True}),                          # caller-asserted field\n        ]\n        for att, review, extra in bad:\n            rec, why = self.check(att, review, extra)\n            self.assertIsNone(rec, (att[:40], review, extra))\n            self.assertTrue(why)\n        soft = dict(self.HW, hardware_bound=False, product_uuid_sha256=None)\n        self.assertIsNone(self.check(self.attestation(machine=soft), machine=soft)[0])\n        for ref in (None, {}, {\"path\": \"att/HOST.json\"}, {\"path\": 1, \"sha256\": \"x\"}):\n            self.assertIsNone(L.attestation_valid(ref)[0], ref)"
+    },
+    {
+      "id": "N03",
+      "property": "attestation schema not checked",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+      "line": 1044,
+      "end_line": 1065,
+      "rationale": "Wrong schema must refuse fixture.",
+      "fixture_source": "def test_forged_or_unaccepted_attestations_refused(self):\n        \"\"\"N1 / F8 / R02: an arbitrary committed file, wrong schema, non-True flags, another machine, a missing or\n        mismatching acceptance line, or extra caller fields are all refused.\"\"\"\n        bad = [\n            (b\"# README\\nnot an attestation\\n\", None, None),\n            (self.attestation(schema=\"other\"), None, None),\n            (self.attestation(accepted=\"REJECTED\"), None, None),\n            (self.attestation(reviewed=\"true\"), None, None),\n            (self.attestation(accepted=1), None, None),\n            (self.attestation(machine=dict(self.HW, machine_id_sha256=\"c\" * 64)), None, None),\n            (self.attestation(), b\"verdict: accepted\\n\", None),                     # no acceptance line\n            (self.attestation(), f\"{L.ACCEPTANCE_LINE}{'0' * 64}\\n\".encode(), None),   # names another sha\n            (self.attestation(), None, {\"accepted\": True}),                          # caller-asserted field\n        ]\n        for att, review, extra in bad:\n            rec, why = self.check(att, review, extra)\n            self.assertIsNone(rec, (att[:40], review, extra))\n            self.assertTrue(why)\n        soft = dict(self.HW, hardware_bound=False, product_uuid_sha256=None)\n        self.assertIsNone(self.check(self.attestation(machine=soft), machine=soft)[0])\n        for ref in (None, {}, {\"path\": \"att/HOST.json\"}, {\"path\": 1, \"sha256\": \"x\"}):\n            self.assertIsNone(L.attestation_valid(ref)[0], ref)"
+    },
+    {
+      "id": "N04",
+      "property": "caller-asserted fields accepted in the attestation reference",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+      "line": 1044,
+      "end_line": 1065,
+      "rationale": "Extra caller acceptance/root facts are not valid reference fields.",
+      "fixture_source": "def test_forged_or_unaccepted_attestations_refused(self):\n        \"\"\"N1 / F8 / R02: an arbitrary committed file, wrong schema, non-True flags, another machine, a missing or\n        mismatching acceptance line, or extra caller fields are all refused.\"\"\"\n        bad = [\n            (b\"# README\\nnot an attestation\\n\", None, None),\n            (self.attestation(schema=\"other\"), None, None),\n            (self.attestation(accepted=\"REJECTED\"), None, None),\n            (self.attestation(reviewed=\"true\"), None, None),\n            (self.attestation(accepted=1), None, None),\n            (self.attestation(machine=dict(self.HW, machine_id_sha256=\"c\" * 64)), None, None),\n            (self.attestation(), b\"verdict: accepted\\n\", None),                     # no acceptance line\n            (self.attestation(), f\"{L.ACCEPTANCE_LINE}{'0' * 64}\\n\".encode(), None),   # names another sha\n            (self.attestation(), None, {\"accepted\": True}),                          # caller-asserted field\n        ]\n        for att, review, extra in bad:\n            rec, why = self.check(att, review, extra)\n            self.assertIsNone(rec, (att[:40], review, extra))\n            self.assertTrue(why)\n        soft = dict(self.HW, hardware_bound=False, product_uuid_sha256=None)\n        self.assertIsNone(self.check(self.attestation(machine=soft), machine=soft)[0])\n        for ref in (None, {}, {\"path\": \"att/HOST.json\"}, {\"path\": 1, \"sha256\": \"x\"}):\n            self.assertIsNone(L.attestation_valid(ref)[0], ref)"
+    },
+    {
+      "id": "N05",
+      "property": "root attestation truthy again",
+      "expected_witness_test": "test_lx_platform.TestMemory.test_root_attestation_must_be_true",
+      "line": 576,
+      "end_line": 583,
+      "rationale": "Truthy strings/1/list/dict cannot become root contract or numeric allowance.",
+      "fixture_source": "def test_root_attestation_must_be_true(self):\n        \"\"\"N3: a rejected or merely truthy attestation never yields a number.\"\"\"\n        with tempfile.TemporaryDirectory() as d:\n            self.v1(d)\n            for bad in (\"no\", \"false\", \"REJECTED\", 1, {\"accepted\": False}, [True]):\n                r = L.memory_readings(MEMINFO, \"4:memory:/a/b\\n\", d, root_attested=bad)\n                self.assertEqual((r[\"effective_limit\"], r[\"cgroup_min_headroom\"]), (None, None), bad)\n                self.assertIs(r[\"root_attested\"], False)"
+    },
+    {
+      "id": "N06",
+      "property": "nested PID namespace view accepted",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_proc_view",
+      "line": 722,
+      "end_line": 735,
+      "rationale": "Nested PID namespace must remain incomplete even with one supplied NSpid token.",
+      "fixture_source": "def test_proc_view(self):\n        \"\"\"N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without\n        hidepid / subset; no /proc line or an unreadable namespace is UNKNOWN.\"\"\"\n        mi = \"23 28 0:22 / /proc rw,relatime - proc proc rw\\n\"\n        st = \"NSpid:\\t77\\n\"\n        self.assertTrue(L.proc_view_complete(st, mi, pidns=L.INIT_PID_NS))\n        self.assertFalse(L.proc_view_complete(st, mi, pidns=4026532265))           # nested ns with its own /proc\n        self.assertFalse(L.proc_view_complete(\"NSpid:\\t77\\t3\\n\", mi, pidns=L.INIT_PID_NS))\n        for opt in (\"hidepid=2\", \"subset=pid\"):\n            self.assertFalse(L.proc_view_complete(st, f\"23 28 0:22 / /proc rw,{opt} - proc proc rw\\n\",\n                                                  pidns=L.INIT_PID_NS), opt)\n        self.assertIsNone(L.proc_view_complete(st, \"23 28 0:22 / /sys rw - sysfs sysfs rw\\n\", pidns=L.INIT_PID_NS))\n        self.assertIsNone(L.proc_view_complete(\"Name: x\\n\", mi, pidns=L.INIT_PID_NS))\n        self.assertIsNone(L.proc_view_complete(st, mi, pidns=None))"
+    },
+    {
+      "id": "N07",
+      "property": "boot id not validated",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_boot_id_must_be_valid",
+      "line": 1138,
+      "end_line": 1142,
+      "rationale": "Noncanonical boot IDs cannot pass presence gate.",
+      "fixture_source": "def test_boot_id_must_be_valid(self):\n        \"\"\"N6: the boot-id gate validates the value, not just its presence.\"\"\"\n        for bad in (\"\", \"garbage\", 0, False, BOOT.upper()):\n            self.assertEqual(self.gates(boot_id=bad)[\"boot_id_recorded\"], L.UNKNOWN, bad)\n        self.assertEqual(self.gates()[\"boot_id_recorded\"], L.PASS)"
+    },
+    {
+      "id": "N08",
+      "property": "exited processes not reported",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+      "line": 616,
+      "end_line": 620,
+      "rationale": "A t0-only process must be reported with unknown window CPU.",
+      "fixture_source": "def test_exited_in_window_is_reported(self):\n        \"\"\"N7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped.\"\"\"\n        t0 = {(30, 5): (1, 0, \"short_hog\", None)}\n        out = L.busy_processes(t0, {}, 5.0, 25, own=set(), hz=100)\n        self.assertEqual(out, [{\"pid\": 30, \"comm\": \"short_hog\", \"exe\": None, \"pct\": None, \"exited_in_window\": True}])"
+    },
+    {
+      "id": "N09",
+      "property": "unreadable existing process skipped",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_unreadable_existing_process_fails_the_snapshot",
+      "line": 788,
+      "end_line": 794,
+      "rationale": "Existing PID directory without readable stat invalidates the whole snapshot.",
+      "fixture_source": "def test_unreadable_existing_process_fails_the_snapshot(self):\n        \"\"\"N7: a /proc/<pid> that exists but cannot be read makes the whole snapshot None.\"\"\"\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), {\"7/stat\": stat_text(pid=7)})\n            self.assertEqual(set(L.cpu_ticks(d)), {(7, 777)})\n            Path(d, \"8\").mkdir()                                                    # exists, no readable stat\n            self.assertIsNone(L.cpu_ticks(d))"
+    },
+    {
+      "id": "N10",
+      "property": "campaign children exempt by pid alone",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_reused_campaign_pid_does_not_exempt_children",
+      "line": 622,
+      "end_line": 626,
+      "rationale": "PID-only parent ownership must not exempt old child of reused campaign PID.",
+      "fixture_source": "def test_reused_campaign_pid_does_not_exempt_children(self):\n        \"\"\"N7: own is keyed by (pid, starttime); a child of a reused pid (older than the campaign process) counts.\"\"\"\n        t0 = {(40, 1): (99, 0, \"old_child\", None)}\n        t1 = {(40, 1): (99, 500, \"old_child\", None)}\n        self.assertEqual(len(L.busy_processes(t0, t1, 5.0, 25, own={(99, 50)}, hz=100)), 1)"
+    },
+    {
+      "id": "N11",
+      "property": "unrecorded namespace lets pid evidence count (revision-2 behaviour)",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_unrecorded_namespace_never_proves_death",
+      "line": 138,
+      "end_line": 145,
+      "rationale": "Unrecorded namespace cannot make absence/starttime difference positive death evidence.",
+      "fixture_source": "def test_unrecorded_namespace_never_proves_death(self):\n        \"\"\"N8: without recorded namespaces, ESRCH or a starttime difference proves nothing (UNKNOWN); a boot-id change\n        still proves a reboot.\"\"\"\n        for k in (\"pidns\", \"timens\"):\n            rec = dict(self.ident, **{k: None})\n            self.assertEqual(self.state(ident=rec, exists=False), L.UNKNOWN, k)\n            self.assertEqual(self.state(ident=rec, stat=L.proc_stat(4242, stat_text(start=1))), L.UNKNOWN, k)\n            self.assertEqual(self.state(ident=rec, boot=OTHER_BOOT), L.DEAD, k)"
+    },
+    {
+      "id": "N12",
+      "property": "pin without libm / libc / loader accepted",
+      "expected_witness_test": "test_lx_platform.TestPins.test_required_members_and_pin_point",
+      "line": 989,
+      "end_line": 996,
+      "rationale": "A libc-only map must refuse pin lacking libm/loader.",
+      "fixture_source": "def test_required_members_and_pin_point(self):\n        \"\"\"N11: a mapped set needs libm / libc / the loader; pin_point requires the supplied modules already loaded.\"\"\"\n        libc = next(k for k in L.mapped_objects() if k.endswith(\"libc.so.6\"))\n        self.assertIsNone(L.mapped_objects(f\"7f00-7f01 r-xp 0 08:01 1 {libc}\\n\"))\n        got = L.pin_point((\"json\", \"hashlib\"))                            # both imported statically above\n        self.assertIn(\"libc6\", got[\"dpkg_versions\"])\n        with self.assertRaises(RuntimeError):\n            L.pin_point((\"json\", \"a_module_that_is_not_imported\"))"
+    },
+    {
+      "id": "N13",
+      "property": "launch record trusted on its 'pass' flag",
+      "expected_witness_test": "test_lx_platform.TestAttestationPreflight.test_launch_record_fields_are_verified",
+      "line": 1154,
+      "end_line": 1174,
+      "rationale": "Caller pass=True cannot replace launch fields and corroboration.",
+      "fixture_source": "def test_launch_record_fields_are_verified(self):\n        \"\"\"F15 / N12 / A2: execute / resume need valid fields matching independent observation of this process.\"\"\"\n        self.assertEqual(self.gates()[\"launched_by_systemd\"], L.PASS)\n        for bad in ({\"pass\": True}, True, \"yes\", self.launch(systemd_pid1=None),\n                    self.launch(unit=\"rebaseguard-mbs308-exec.scope\"), self.launch(unit=\"other.service\"),\n                    self.launch(invocation_id=\"\"), self.launch(systemctl={\"MainPID\": 1, \"InvocationID\": \"abc\"}),\n                    self.launch(systemctl={\"MainPID\": os.getpid(), \"InvocationID\": \"zzz\"}), self.launch(**{\"pass\": 1})):\n            self.assertEqual(self.gates(launched=bad)[\"launched_by_systemd\"], L.FAIL, bad)\n        for mode in (\"execute\", \"resume\"):\n            g = L.preflight(\"/\", mode=mode, other_job_running=False, launched=None, attestation_ref=None,\n                            readings=self.rd(), launch_observer=self.launch)[\"gates\"]\n            self.assertIn(\"launched_by_systemd\", g)\n            self.assertEqual(g[\"launched_by_systemd\"], L.FAIL, mode)\n        g = L.preflight(\"/\", mode=\"launcher_preflight\", other_job_running=False, launched=None, attestation_ref=None,\n                        readings=self.rd())[\"gates\"]\n        self.assertNotIn(\"launched_by_systemd\", g)\n        g = L.preflight(\"/\", mode=\"launcher_preflight\", other_job_running=False, launched=True, attestation_ref=None,\n                        readings=self.rd())[\"gates\"]\n        self.assertEqual(g[\"launched_by_systemd\"], L.FAIL)\n        with self.assertRaises(ValueError):\n            L.preflight(\"/\", mode=None, other_job_running=False, launched=None, attestation_ref=None)"
+    },
+    {
+      "id": "N14",
+      "property": "unrecognised battery status read as not discharging",
+      "expected_witness_test": "test_lx_platform.TestPowerThermal.test_unrecognised_battery_status_is_unknown",
+      "line": 474,
+      "end_line": 484,
+      "rationale": "Unknown/garbage Battery statuses must remain None.",
+      "fixture_source": "def test_unrecognised_battery_status_is_unknown(self):\n        \"\"\"N2: only Discharging and the known not-discharging statuses are read; anything else is UNKNOWN.\"\"\"\n        base = {\"AC/type\": \"Mains\\n\", \"AC/online\": \"1\\n\", \"BAT0/type\": \"Battery\\n\"}\n        for st in (\"Unknown\", \"garbage\", \"discharging\", \"Discharging\\0\"):\n            with tempfile.TemporaryDirectory() as d:\n                mkfiles(Path(d), dict(base, **{\"BAT0/status\": st + \"\\n\"}))\n                self.assertIsNone(L.power_source(d), st)\n        for st in (\"Charging\", \"Full\", \"Not charging\"):\n            with tempfile.TemporaryDirectory() as d:\n                mkfiles(Path(d), dict(base, **{\"BAT0/status\": st + \"\\n\"}))\n                self.assertEqual(L.power_source(d), L.AC, st)"
+    },
+    {
+      "id": "Y01",
+      "property": "effective memory minimum omits the host MemTotal cap",
+      "expected_witness_test": "test_lx_platform.TestMemory.test_host_memtotal_caps_every_cgroup_limit",
+      "line": 547,
+      "end_line": 553,
+      "rationale": "Host MemTotal=1000 caps cgroup limits 3000/8000.",
+      "fixture_source": "def test_host_memtotal_caps_every_cgroup_limit(self):\n        \"\"\"P6/Y01: a fully readable chain cannot grant more than the host's MemTotal.\"\"\"\n        with tempfile.TemporaryDirectory() as d:\n            self.v1(d, leaf=\"3000\", mid=\"8000\")\n            r = L.memory_readings(\"MemTotal: 1000\\n\", \"4:memory:/a/b\\n\", d, root_attested=True)\n            self.assertEqual(r[\"effective_limit\"], 1000)\n            self.assertEqual(r[\"visible_limit_upper_bound\"], 1000)"
+    },
+    {
+      "id": "Y02",
+      "property": "cgroup headroom uses the maximum instead of the minimum",
+      "expected_witness_test": "test_lx_platform.TestMemory.test_v2_root_and_memory_high",
+      "line": 555,
+      "end_line": 569,
+      "rationale": "Headroom is minimum 2990 rather than larger ancestor headroom.",
+      "fixture_source": "def test_v2_root_and_memory_high(self):\n        with tempfile.TemporaryDirectory() as d:\n            mkfiles(Path(d), {\"x/y/memory.max\": \"max\\n\", \"x/y/memory.high\": \"3000\\n\", \"x/y/memory.current\": \"10\\n\",\n                              \"x/memory.max\": \"8000\\n\", \"x/memory.high\": \"max\\n\", \"x/memory.current\": \"20\\n\"})\n            cg = \"0::/x/y\\n\"\n            self.assertIsNone(L.memory_readings(MEMINFO, cg, d)[\"effective_limit\"])        # root not attested\n            r = L.memory_readings(MEMINFO, cg, d, root_attested=True)\n            self.assertEqual(r[\"cgroup\"][\"version\"], \"v2\")\n            self.assertEqual(r[\"effective_limit\"], 3000)                                  # memory.high binds\n            self.assertEqual(r[\"cgroup_min_headroom\"], 2990)\n            ch = L.memory_cgroup_chain(cg, d)\n            self.assertIsNone(L._chain_values(ch, root_attested=False))                    # helper refuses directly\n            self.assertIsNotNone(L._chain_values(ch, root_attested=True))\n            Path(d, \"x/memory.high\").unlink()                                              # unreadable high\n            self.assertIsNone(L.memory_readings(MEMINFO, cg, d, root_attested=True)[\"effective_limit\"])"
+    },
+    {
+      "id": "Y03",
+      "property": "sample order is ignored (both sample-order and pairwise non-increase guards removed)",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_samples_out_of_order_never_clean",
+      "line": 428,
+      "end_line": 433,
+      "rationale": "Sample after end must remain AMBIGUOUS despite short gaps; both independent ordering guards are intentionally bypassed.",
+      "fixture_source": "def test_samples_out_of_order_never_clean(self):\n        \"\"\"P6/Y03: each spacing is small, but the sample occurs after the end.\"\"\"\n        a, b, _, j = self.clean_case()\n        r = L.assess(a, b, [snap(150 * S, 150 * S, 150 * S)], j)\n        self.assertEqual(r[\"status\"], \"AMBIGUOUS\")\n        self.assertTrue(any(\"out of order\" in reason for reason in r[\"reasons\"]))"
+    },
+    {
+      "id": "P01",
+      "property": "campaign child ownership ignores the parent's observed starttime identity",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_reused_campaign_pid_new_children_are_external",
+      "line": 635,
+      "end_line": 640,
+      "rationale": "Observed unrelated parent identity (99,50) cannot inherit campaign own (99,2) for its newer child.",
+      "fixture_source": "def test_reused_campaign_pid_new_children_are_external(self):\n        \"\"\"P1: a new unrelated child of a later PID reuse cannot inherit the old campaign's ownership.\"\"\"\n        t0 = {(99, 2): (1, 0, \"old_campaign\", None)}\n        t1 = {(99, 50): (1, 0, \"unrelated_parent\", None), (40, 51): (99, 500, \"unrelated_child\", None)}\n        out = L.busy_processes(t0, t1, 5.0, 25, own={(99, 2)}, hz=100)\n        self.assertTrue(out is None or any(row[\"comm\"] == \"unrelated_child\" for row in out), out)"
+    },
+    {
+      "id": "P02",
+      "property": "a malformed current boot id counts as positive identity evidence",
+      "expected_witness_test": "test_lx_platform.TestIdentity.test_malformed_current_boot_never_proves_death",
+      "line": 147,
+      "end_line": 151,
+      "rationale": "Malformed current boot cannot become reboot/DEAD evidence.",
+      "fixture_source": "def test_malformed_current_boot_never_proves_death(self):\n        \"\"\"P2: unrecognised current boot evidence is UNKNOWN, not a positive reboot.\"\"\"\n        for bad in (\"garbage\", BOOT.upper(), 0, False, [], {}, float(\"nan\")):\n            with self.subTest(boot=bad):\n                self.assertEqual(self.state(boot=bad), L.UNKNOWN)"
+    },
+    {
+      "id": "P03",
+      "property": "matching malformed boot ids count as positive interval evidence",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_malformed_boot_readings_never_clean",
+      "line": 379,
+      "end_line": 386,
+      "rationale": "Matching malformed nonempty boots must remain AMBIGUOUS.",
+      "fixture_source": "def test_malformed_boot_readings_never_clean(self):\n        \"\"\"P3: matching malformed boot strings do not become positive interval evidence.\"\"\"\n        for bad in (\"garbage\", \"\", BOOT.upper(), False, 0):\n            with self.subTest(boot=bad):\n                a, b, s, j = self.clean_case()\n                for record in (a, *s, b):\n                    record[\"boot_id\"] = bad\n                self.assertEqual(L.assess(a, b, s, j)[\"status\"], \"AMBIGUOUS\")"
+    },
+    {
+      "id": "P04",
+      "property": "nonfinite CPU window duration is accepted",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_invalid_window_duration_is_no_reading",
+      "line": 678,
+      "end_line": 682,
+      "rationale": "NaN/Infinity duration must return None rather than empty/usable reading.",
+      "fixture_source": "def test_invalid_window_duration_is_no_reading(self):\n        t0, t1 = {(40, 1): (1, 0, \"hog\", None)}, {(40, 1): (1, 500, \"hog\", None)}\n        for bad in (float(\"nan\"), float(\"inf\"), -float(\"inf\"), True, False, \"5\", None):\n            with self.subTest(duration=bad):\n                self.assertIsNone(L.busy_processes(t0, t1, bad, 25, set(), hz=100))"
+    },
+    {
+      "id": "P05",
+      "property": "malformed NSpid entries count as a complete proc view",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_proc_view_rejects_malformed_nspid",
+      "line": 737,
+      "end_line": 741,
+      "rationale": "Invalid empty/nonpositive/noninteger NSpid token cannot establish complete view.",
+      "fixture_source": "def test_proc_view_rejects_malformed_nspid(self):\n        mi = \"23 28 0:22 / /proc rw,relatime - proc proc rw\\n\"\n        for value in (\"\", \"garbage\", \"0\", \"-1\", \"1.5\"):\n            with self.subTest(nspid=value):\n                self.assertIsNot(L.proc_view_complete(f\"NSpid:\\t{value}\\n\", mi, pidns=L.INIT_PID_NS), True)"
+    },
+    {
+      "id": "F01",
+      "property": "clock-pair checks ignore intermediate observations and use only the endpoints",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_intermediate_boottime_excursion_never_clean",
+      "line": 315,
+      "end_line": 322,
+      "rationale": "Middle BOOTTIME excursion remains CONTAMINATED even with aligned endpoints.",
+      "fixture_source": "def test_intermediate_boottime_excursion_never_clean(self):\n        \"\"\"F1: recognised intermediate K' evidence must be checked even when the endpoint difference is zero.\"\"\"\n        a, b, s, j = self.clean_case()\n        s[0][\"clocks\"][\"boottime_ns\"] = 90 * S\n        r = L.assess(a, b, s, j)\n        self.assertEqual(r[\"status\"], \"CONTAMINATED\")\n        self.assertIs(r[\"clean\"], False)\n        self.assertTrue(any(x.startswith(\"CONTAMINATED: K'\") for x in r[\"reasons\"]), r)"
+    },
+    {
+      "id": "F02",
+      "property": "suspend counter checks ignore intermediate observations and use only the endpoints",
+      "expected_witness_test": "test_lx_platform.TestAssess.test_intermediate_suspend_counter_reset_is_ambiguous",
+      "line": 324,
+      "end_line": 331,
+      "rationale": "0\u21921\u21920 counter reset remains AMBIGUOUS even with matching endpoints.",
+      "fixture_source": "def test_intermediate_suspend_counter_reset_is_ambiguous(self):\n        \"\"\"F2: supplied 0 -> 1 -> 0 counter evidence is inconsistent, despite matching endpoints.\"\"\"\n        a, b, s, j = self.clean_case()\n        s[0][\"suspend_success\"] = 1\n        r = L.assess(a, b, s, j)\n        self.assertEqual(r[\"status\"], \"AMBIGUOUS\")\n        self.assertIs(r[\"clean\"], False)\n        self.assertTrue(any(x.startswith(\"AMBIGUOUS: S'\") for x in r[\"reasons\"]), r)"
+    },
+    {
+      "id": "F03",
+      "property": "malformed mount IDs and device numbers bypass numeric metadata validation",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_proc_view_rejects_malformed_mount_metadata",
+      "line": 761,
+      "end_line": 775,
+      "rationale": "Malformed/non-ASCII/nonpositive mount/parent or device fields cannot yield True.",
+      "fixture_source": "def test_proc_view_rejects_malformed_mount_metadata(self):\n        \"\"\"F3: malformed supplied mount IDs/device fields are not recognised mountinfo evidence.\"\"\"\n        cases = ((\"garbage\", \"garbage\", \"garbage\"),\n                 (\"garbage\", \"28\", \"0:22\"), (\"23\", \"garbage\", \"0:22\"), (\"23\", \"28\", \"garbage\"),\n                 (\"0\", \"28\", \"0:22\"), (\"23\", \"0\", \"0:22\"),\n                 (\"-1\", \"28\", \"0:22\"), (\"23\", \"-1\", \"0:22\"),\n                 (\"\u00b2\", \"28\", \"0:22\"), (\"23\", \"\u00b2\", \"0:22\"),\n                 (\"\uff12\uff13\", \"28\", \"0:22\"), (\"23\", \"\uff12\uff18\", \"0:22\"),\n                 (\"23\", \"28\", \"0\"), (\"23\", \"28\", \"0:\"), (\"23\", \"28\", \":22\"),\n                 (\"23\", \"28\", \"0:22:1\"), (\"23\", \"28\", \"x:22\"), (\"23\", \"28\", \"0:x\"),\n                 (\"23\", \"28\", \"-1:22\"), (\"23\", \"28\", \"0:-1\"))\n        for mount_id, parent_id, device in cases:\n            with self.subTest(mount_id=mount_id, parent_id=parent_id, device=device):\n                mi = f\"{mount_id} {parent_id} {device} / /proc rw,relatime - proc proc rw\\n\"\n                self.assertIsNot(L.proc_view_complete(\"NSpid:\\t77\\n\", mi, pidns=L.INIT_PID_NS), True)"
+    },
+    {
+      "id": "F04",
+      "property": "the first NSpid field is trusted when duplicate NSpid records disagree",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_proc_view_rejects_duplicate_nspid_fields",
+      "line": 743,
+      "end_line": 749,
+      "rationale": "Repeated/conflicting NSpid fields cannot yield complete view.",
+      "fixture_source": "def test_proc_view_rejects_duplicate_nspid_fields(self):\n        \"\"\"F4: conflicting or repeated supplied status fields cannot establish an unambiguous complete view.\"\"\"\n        mi = \"23 28 0:22 / /proc rw,relatime - proc proc rw\\n\"\n        single, nested = \"NSpid:\\t77\\n\", \"NSpid:\\t77 88\\n\"\n        for status in (single + nested, nested + single, single + single):\n            with self.subTest(status=status):\n                self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)"
+    },
+    {
+      "id": "F05",
+      "property": "multiple starttime identities for one PID are accepted in a single CPU snapshot",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_duplicate_pid_identities_in_end_snapshot_are_no_reading",
+      "line": 661,
+      "end_line": 667,
+      "rationale": "Ambiguous two-starttime PID identity in either snapshot must return None.",
+      "fixture_source": "def test_duplicate_pid_identities_in_end_snapshot_are_no_reading(self):\n        \"\"\"F5: a supplied snapshot cannot establish parent ownership with both old and reused PID identities.\"\"\"\n        t0 = {(99, 2): (1, 0, \"old_campaign\", None)}\n        t1 = {(99, 2): (1, 0, \"old_campaign\", None),\n              (99, 50): (1, 0, \"unrelated_parent\", None),\n              (40, 51): (99, 500, \"external_child\", None)}\n        self.assertIsNone(L.busy_processes(t0, t1, 5, 25, own={(99, 2)}, hz=100))"
+    },
+    {
+      "id": "F06",
+      "property": "payload adjoining NSpid's colon is discarded before validation",
+      "expected_witness_test": "test_lx_platform.TestBusy.test_proc_view_preserves_the_whole_nspid_payload",
+      "line": 751,
+      "end_line": 759,
+      "rationale": "Content adjoining colon must remain part of payload: garbage+77 and 77+88 cannot yield True; adjoining valid 77 is accepted.",
+      "fixture_source": "def test_proc_view_preserves_the_whole_nspid_payload(self):\n        \"\"\"R5-C1/F06: a value adjoining the colon cannot be silently discarded; numeric tokens are ASCII.\"\"\"\n        mi = \"23 28 0:22 / /proc rw,relatime - proc proc rw\\n\"\n        for status in (\"NSpid:garbage\\t77\\n\", \"NSpid:77 88\\n\", \"NSpid:\\t\u00b2\\n\", \"NSpid:\\t\uff17\uff17\\n\"):\n            with self.subTest(status=status):\n                self.assertIsNot(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)\n        for status in (\"NSpid:\\t77\\n\", \"NSpid: 77\\n\", \"NSpid:77\\n\"):\n            with self.subTest(control=status):\n                self.assertIs(L.proc_view_complete(status, mi, pidns=L.INIT_PID_NS), True)"
+    }
+  ]
+}

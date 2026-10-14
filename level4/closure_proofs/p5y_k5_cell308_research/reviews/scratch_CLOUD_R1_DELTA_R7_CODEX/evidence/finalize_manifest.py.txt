@@ -1,0 +1,35 @@
+import hashlib,json,re,subprocess
+from pathlib import Path
+D=Path('/tmp/cell308-codex-review65'); O=D/'evidence'; R=Path('/Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard'); H='7eb3ba4d03f3b7898109073c83eb9b08f4589354'; B='af55168c'; NS='level4/closure_proofs/p5y_k5_cell308_research'; DEV=NS+'/streams/CLOUD_R1_LINUX_DEV'
+def sha(b):return hashlib.sha256(b).hexdigest()
+static=json.loads((O/'static_checks.json').read_text()); records=json.loads((O/'record_checks.json').read_text()); native=json.loads((O/'current_adjudication_checks.json').read_text()); raw=json.loads((O/'linux_artifact/validation.json').read_text()); child=json.loads((O/'harness-controls/control_results.json').read_text()); own=json.loads((O/'immutable_manifest.json').read_text()); report=(D/'EVIDENCE_REVIEW.md').read_text()
+for path,hsh in static['input_sha256'].items():
+ assert '| `'+path+'` | `'+hsh+'` |' in report
+assert len(static['names'])==136 and len(static['mutants'])==80 and native['valid_property_assertion_kills']==80
+assert child['counts']=={'classifier':29,'mocked_main':8,'run_suite':4,'six_input_hash_fixture':1,'total_controls':42}
+for category in ['classifier_controls','run_suite_controls','mocked_main_controls']:
+ assert all(x['passed'] for x in child[category])
+for rows in [records['preserved'],records['latest_ledger']['bindings']]:
+ for row in rows:
+  p=row['path']; got=subprocess.check_output(['git','rev-parse',H+':'+p],cwd=R,text=True).strip(); own.setdefault(p,{}).update({'sha256':row['sha256'],'git_blob':got,'use':'preservation or exact latest binding; bytes only unless separately listed as content input'})
+base={}
+for p in [DEV+'/tests/run_mutants.py',DEV+'/tests/test_lx_platform.py',DEV+'/tests/test_lx_verified.py']:
+ b=subprocess.check_output(['git','show',B+':'+p],cwd=R); base[p]={'sha256':sha(b),'git_blob':subprocess.check_output(['git','rev-parse',B+':'+p],cwd=R,text=True).strip(),'use':'AST and registry comparison'}
+(O/'read_manifest.json').write_text(json.dumps({'head':H,'base':B,'current_explicit_git_inputs':own,'base_explicit_git_inputs':base,'bounded_diffs':[{'paths':[DEV],'kind':'changed-name diff only'},{'paths':[DEV+'/lx_platform.py',DEV+'/tests/run_mutants.py',DEV+'/tests/test_lx_verified.py'],'kind':'bounded source/test/harness diff'},{'path':NS+'/ledger/TARGET_INTEGRITY_LEDGER.jsonl','kind':'unified=0 latest append only; full ledger not read'}],'external_explicit_inputs':[str(Path('/Users/suzhe/.codex/AGENTS.md')),str(Path('/Users/suzhe/.codex/skills/using-superpowers/SKILL.md'))],'absent_requested_inputs':[DEV+'/README.md',NS+'/ledger/COORDINATOR_LEDGER.jsonl'],'no_forbidden_content_exposure':True,'recorded_ci_candidate_constant_read_is_not_local_execution':True},indent=2)+'\n')
+special={}
+for mid in ['M16','M25','F07']:
+ row=next(x for x in raw['mutants'] if x['id']==mid); text=row['suite']['stderr']; sections=re.findall(r'^FAIL: .*?(?=^=+\n|^-+\nRan |\Z)',text,re.M|re.S)
+ special[mid]={'summary':row['suite']['summary'],'failures':row['suite']['failures'],'errors':row['suite']['errors'],'full_failure_sections':sections}
+ if mid=='M16':
+  p=text.index('Traceback'); special[mid]['secondary_child_exception']=text[p:text.index('\nFAIL\n',p)]; special[mid]['secondary_child_exception_not_property_proof']=True
+ if mid=='M25': special[mid]['uncommitted_fixture_ok']=any(x.startswith('test_uncommitted_fixture') and x.endswith(' ... ok') for x in text.splitlines())
+(O/'special_property_details.json').write_text(json.dumps(special,indent=2)+'\n')
+files=[]
+for p in sorted([D/'EVIDENCE_REVIEW.md',*O.rglob('*')]):
+ if p.is_file() and p.name!='output_manifest.json':
+  b=p.read_bytes(); files.append({'path':str(p),'relative_path':str(p.relative_to(D)),'bytes':len(b),'sha256':sha(b)})
+manifest={'head':H,'report':str(D/'EVIDENCE_REVIEW.md'),'report_sha256':sha((D/'EVIDENCE_REVIEW.md').read_bytes()),'root':str(D),'files':files,'file_count':len(files),'only_assigned_scratch_outputs':True,'repository_edits':False,'commits':False,'pushes':False,'new_target_evaluations':0}
+(O/'output_manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+for r in files:
+ assert sha(Path(r['path']).read_bytes())==r['sha256']
+print(json.dumps({'report_sha256':manifest['report_sha256'],'manifest_sha256':sha((O/'output_manifest.json').read_bytes()),'files':len(files),'native':'136 baseline PASS;80 valid assertion kills','controls':42},indent=2))

@@ -1,0 +1,70 @@
+import ast
+import hashlib
+import json
+from pathlib import Path
+import re
+
+BASE=Path(__file__).resolve().parent
+ART=Path('/tmp/cell308-codex-review61/linux-r7-38644122257')
+DEV=BASE/'snapshot/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+REV='7eb3ba4d03f3b7898109073c83eb9b08f4589354'
+require=lambda cond,msg: None if cond else (_ for _ in ()).throw(AssertionError(msg))
+raw=(ART/'validation.json').read_bytes(); full=(ART/'full-output.json').read_bytes()
+require(raw==full,'full-output differs')
+require((ART/'input-commit.txt').read_text().strip()==REV,'commit differs')
+record=json.loads(raw)
+static=json.loads((BASE/'harness_static.json').read_text())
+require(record['input_sha256']==record['input_sha256_after']==static['input_hashes'],'input hashes differ')
+require(record['inputs_unchanged'] is True,'unchanged flag false')
+expected=set()
+for module in ['test_lx_platform','test_lx_verified']:
+    tree=ast.parse((DEV/'tests'/(module+'.py')).read_text())
+    for cls in tree.body:
+        if isinstance(cls,ast.ClassDef):
+            for fn in cls.body:
+                if isinstance(fn,ast.FunctionDef) and fn.name.startswith('test_'):
+                    expected.add((fn.name,module,cls.name))
+require(len(expected)==136,'static count differs')
+def parse_suite(suite):
+    text=suite['stderr']
+    runs=re.findall(r'^Ran (\d+) tests? in [0-9.]+s$',text,re.M)
+    sums=re.findall(r'^(?:OK(?: \([^\n]*\))?|FAILED \([^\n]*\))$',text,re.M)
+    require(len(runs)==len(sums)==1 and runs==['136'],'missing or wrong summary')
+    named=re.findall(r'^(test_\w+) \((test_lx_\w+)\.(\w+)\.\1\)',text,re.M)
+    require(len(named)==len(set(named))==136 and set(named)==expected,'suite method set differs')
+    tally=dict((k,int(v)) for k,v in re.findall(r'(failures|errors|skipped|expected failures|unexpected successes)=(\d+)',sums[0]))
+    failures=re.findall(r'^FAIL: (.+)$',text,re.M); errors=re.findall(r'^ERROR: (.+)$',text,re.M)
+    require(len(failures)==tally.get('failures',0) and len(errors)==tally.get('errors',0),'outcomes differ')
+    require(not errors and not any(tally.get(k,0) for k in ['errors','skipped','expected failures','unexpected successes']),'invalid error/skip')
+    require('ResourceWarning:' not in text and 'Exception ignored in:' not in text,'resource/unraisable warning')
+    require(not suite['timed_out'] and suite['launch_error'] is None and suite['invalid_reasons']==[],'invalid flags')
+    require(suite['ran']==136 and suite['errors']==suite['skipped']==0 and suite['failures']==len(failures),'stored counts differ')
+    require(suite['summary']==sums[0],'stored summary differs')
+    return {'ran':136,'summary':sums[0],'failures':len(failures),'errors':0,'skipped':0,'failure_names':failures,'unique_methods':136,'returncode':suite['returncode']}
+baseline=parse_suite(record['baseline'])
+require(baseline['summary']=='OK' and baseline['failures']==0 and baseline['returncode']==0,'baseline invalid')
+require(record['baseline']['environment_controls']['LX_PLATFORM_DIR'] is None,'baseline module seam')
+byid={r['id']:r for r in static['rows']}
+require(len(record['mutants'])==80 and [r['id'] for r in record['mutants']]==[r['id'] for r in static['rows']],'registry/order differs')
+rows=[]; details={}
+for row in record['mutants']:
+    expectedrow=byid[row['id']]
+    require(row['anchor_counts']==expectedrow['anchor_counts'] and row['mutated_lx_platform_sha256']==expectedrow['sha256'],'mutation hash/anchor differs '+row['id'])
+    suite=parse_suite(row['suite'])
+    require(suite['failures']>0 and suite['returncode']==1 and suite['summary'].startswith('FAILED ('),'not assertion-only normal fail '+row['id'])
+    require(row['status']=='KILLED' and row['reasons']==[],'stored classification differs '+row['id'])
+    rows.append({'id':row['id'],'sha256':expectedrow['sha256'],**suite})
+    if row['id'] in ['F07','M25']:
+        details[row['id']]={'record':rows[-1],'stderr':row['suite']['stderr']}
+require(record['status_counts']=={'KILLED':80,'SURVIVED':0,'ERROR':0,'NOT_APPLIED':0} and record['killed']==record['total']==record['expected_mutants']==80,'aggregate differs')
+meta_path=Path('/tmp/cell308-codex-review61/r7-ci-metadata.json'); meta=json.loads(meta_path.read_bytes())
+require(meta['headSha']==REV and meta['conclusion']=='success' and meta['status']=='completed','metadata differs')
+require(record['new_target_evaluations']==0,'target count nonzero')
+assessment={'revision':REV,'scope':'Structural assertion-only report checks for 80; direct property attribution only F07/M25; separate evidence reviewer owns every-kill attribution',
+ 'artifacts':[{'path':str(p),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in [ART/'input-commit.txt',ART/'validation.json',ART/'full-output.json',meta_path]],
+ 'byte_identical_json_copies':True,'input_hashes':record['input_sha256'],'recorded_environment':{k:record[k] for k in ['utc','python','kernel','machine','system']},
+ 'baseline':baseline,'mutants':rows,'scoped_property_traces':details,'metadata':meta}
+(BASE/'linux_artifact_assessment.json').write_text(json.dumps(assessment,indent=2)+'\n')
+for mid in ['M25','F07']:
+    (BASE/('linux-'+mid+'.stderr.txt')).write_text(details[mid]['stderr'])
+print(json.dumps({'baseline':baseline,'assertion_only_reports':len(rows),'recorded_environment':assessment['recorded_environment'],'scoped_property_records':{mid:details[mid]['record'] for mid in details}},indent=2))

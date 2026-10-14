@@ -52,8 +52,14 @@ malformed-path refusal issue. Revision 7 explicitly refuses absent blobs before 
 Git arguments at the canonical reader boundary, including acceptance-record paths. It preserves the original M25
 digest-mismatch counterexample and adds F07 refusal witnesses; classifier rules are unchanged.
 
-Revision-7 exact-input Linux validation and fresh independent review are pending. Historical evidence does not
-establish current behavior. Neither this continuation nor a successful test authorizes an official step.
+Revision-7 exact-input Linux validation passed at `7eb3ba4d03f3b7898109073c83eb9b08f4589354`
+([run38644122257](https://github.com/flaggielover/ReBaseGuard/actions/runs/38644122257)):136 baseline tests and80
+valid intended-property low-level assertion kills, zero unittest errors/skips/timeouts and six unchanged input hashes.
+Fresh independent code/evidence reports are `reviews/REVIEW_CLOUD_R1_DELTA_R7_CODEX_CODE.md` and
+`reviews/REVIEW_CLOUD_R1_DELTA_R7_CODEX_EVIDENCE.md`; no new actionable code findings were established in their
+bounded development scope. Full evidence is additive under `results/REVIEW65_LINUX_REVISION7_20261015/`.
+This establishes the recorded test scope, not every possible input or complete wrapper coverage. Neither this
+continuation nor a successful test authorizes an official step.
 
 ## Contents
 
