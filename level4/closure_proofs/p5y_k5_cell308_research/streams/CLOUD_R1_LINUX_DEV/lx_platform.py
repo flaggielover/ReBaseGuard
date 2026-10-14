@@ -1,4 +1,4 @@
-"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 6).
+"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 7).
 
 STATUS: DEV_ONLY · NOT ACCEPTED BY ANY GOVERNANCE REVIEW · NOT FROZEN · NOT A CAMPAIGN NAMESPACE · NOT USABLE FOR ANY
 DESIGNATED SERIES, QUALIFICATION, FREEZE, GRANT OR TARGET STEP. Nothing in the historical candidate (142d97a9) imports
@@ -964,7 +964,7 @@ def _git_blob(repo_root, path: str) -> bytes | None:
     try:
         r = subprocess.run(["git", "-C", str(repo_root), "show", f"HEAD:{path}"], capture_output=True, timeout=60,
                            stdin=subprocess.DEVNULL)
-    except (OSError, subprocess.SubprocessError):
+    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
         return None
     return r.stdout if r.returncode == 0 else None
 
@@ -984,6 +984,8 @@ def attestation_valid(ref, *, repo_root=None, machine=None) -> tuple:
         return None, ["malformed reference"]
     base = Path(repo_root) if repo_root else Path(__file__).resolve().parents[5]
     data = _git_blob(base, path)
+    if data is None:
+        return None, ["attestation not committed at HEAD"]
     if _sha(data) != want:
         return None, ["attestation not committed at HEAD, or sha256 mismatch"]
     try:

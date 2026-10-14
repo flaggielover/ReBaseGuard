@@ -135,6 +135,30 @@ class TestVerifiedObservation(unittest.TestCase):
     def test_uncommitted_fixture_withholds_root_contract(self):
         self.assertIs(self.assert_no_root(self.fixture(commit=False))["attestation"]["verified"], False)
 
+    def test_invalid_reference_paths_produce_refusal_without_exceptions(self):
+        """R6-C1/F07: malformed subprocess arguments are refusal evidence, never an escaping exception."""
+        valid = self.fixture()
+        for path in ("\x00", "\ud800"):
+            with self.subTest(path=repr(path)):
+                try:
+                    result = self.assert_no_root(dict(valid, path=path))
+                except (ValueError, UnicodeError) as exc:
+                    self.fail(f"malformed reference path escaped instead of being refused: {type(exc).__name__}")
+                self.assertIs(result["attestation"]["verified"], False)
+                self.assertTrue(result["attestation"]["reasons"])
+
+    def test_invalid_acceptance_paths_produce_refusal_without_exceptions(self):
+        """The same path boundary applies to review paths read from a committed attestation."""
+        for path in ("\x00", "\ud800"):
+            with self.subTest(path=repr(path)):
+                ref = self.fixture(acceptance_record=path)
+                try:
+                    result = self.assert_no_root(ref)
+                except (ValueError, UnicodeError) as exc:
+                    self.fail(f"malformed acceptance path escaped instead of being refused: {type(exc).__name__}")
+                self.assertIs(result["attestation"]["verified"], False)
+                self.assertTrue(result["attestation"]["reasons"])
+
     def test_non_json_committed_fixture_withholds_root_contract(self):
         self.assertIs(self.assert_no_root(self.fixture(raw=b"not-json\n"))["attestation"]["verified"], False)
 

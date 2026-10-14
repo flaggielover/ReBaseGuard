@@ -3,7 +3,7 @@ copy of lx_platform.py. A KILLED case must run the baseline's full test count an
 errors or skips. Import failures, malformed reports, timeouts and other invalid runs are ERROR, never kills.
 M01-M32 are the coordinator's; R01-R10 are review 59's mutants and X01-X09 are review 60's surviving mutants, each
 re-anchored with the same weakening; N01-N14 weaken the revision-3 repairs. Y01-Y03 are review 61's fresh semantic
-mutants; P01-P05 cover its discovered regressions. F01-F05 weaken review 62's bounded follow-up repairs; F06 restores review 63's payload-dropping defect.
+mutants; P01-P05 cover its discovered regressions. F01-F05 weaken review 62's bounded follow-up repairs; F06 restores review 63's payload-dropping defect; F07 weakens review 64's malformed-path refusal.
 Y03 removes both the sample-order and pairwise non-increase rejection routes for the same ordering property.
 The baseline runs first with an inherited
 LX_PLATFORM_DIR removed. Every suite subprocess uses strict ResourceWarning handling and keeps its complete output.
@@ -226,9 +226,12 @@ MUTANTS = [
     ("F06", "payload adjoining NSpid's colon is discarded before validation",
      [('    nspid_fields = [ln.partition(":")[2].split() for ln in st.splitlines() if ln.startswith("NSpid:")]',
        '    nspid_fields = [ln.split()[1:] for ln in st.splitlines() if ln.startswith("NSpid:")]')]),
+    ("F07", "malformed attestation/reference paths escape as subprocess argument exceptions",
+     [('    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):',
+       '    except (OSError, subprocess.SubprocessError):')]),
 ]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 3, "P": 5, "F": 6}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 3, "P": 5, "F": 7}
 
 
 def _text(value) -> str:

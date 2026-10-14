@@ -1,4 +1,4 @@
-# Stream CLOUD_R1_LINUX_DEV — development-only Linux platform layer (Cloud route r1), revision 6
+# Stream CLOUD_R1_LINUX_DEV — development-only Linux platform layer (Cloud route r1), revision 7
 
 **Status: DEV_ONLY · NOT ACCEPTED BY ANY GOVERNANCE REVIEW · NOT FROZEN · NOT A CAMPAIGN NAMESPACE.**
 Nothing here may be used for a designated series, a derivation, an apply, a freeze, an official qualification, a
@@ -46,7 +46,13 @@ The internal preflight verifier callback binds the canonical verifier to this sa
 injection seam. Mode names only select observation checks and launch nothing. A1/A2 operational acceptance and A5's
 complete fixed science import list remain unmet. No science is imported and no pin-point completion is claimed.
 
-Revision-6 exact-input Linux validation and fresh independent review are pending. Historical evidence does not
+Revision 6 passed its exact-input 134-test Linux baseline and 78 valid low-level mutation cases, while M25 correctly
+remained ERROR: digest weakening also sent an absent blob to JSON parsing. Its independent review found one MINOR
+malformed-path refusal issue. Revision 7 explicitly refuses absent blobs before parsing and catches invalid/unencodable
+Git arguments at the canonical reader boundary, including acceptance-record paths. It preserves the original M25
+digest-mismatch counterexample and adds F07 refusal witnesses; classifier rules are unchanged.
+
+Revision-7 exact-input Linux validation and fresh independent review are pending. Historical evidence does not
 establish current behavior. Neither this continuation nor a successful test authorizes an official step.
 
 ## Contents
@@ -57,9 +63,9 @@ establish current behavior. Neither this continuation nor a successful test auth
 | `lx_inventory.py` | Read-only host inventory; revision 2 compares with r1 after normalisation (`governance/new_host_route_cloud_r1/CLOUD_HOST_INVENTORY_R2B_20261014.json`). The earlier `CLOUD_HOST_INVENTORY_R2_20261014.json` was produced by revision 1 of both tools and is kept unchanged. |
 | `lx_portmap.py` | Read-only scan of the candidate's macOS dependencies via `git show` (`results/PORT_MAP_142D97A9.json`). |
 | `lx_verified.py` | Canonical committed/current-host attestation and live launch composition with a restricted public API; development observation only, unresolved operational conditions remain. |
-| `tests/test_lx_verified.py` | 22 synthetic provenance, refusal and restricted-interface tests using committed temporary Git fixtures. |
+| `tests/test_lx_verified.py` | 24 synthetic provenance, refusal and restricted-interface tests using committed temporary Git fixtures. |
 | `tests/test_lx_platform.py` | 112 isolated tests: synthetic `/proc` and `/sys` trees, child processes (incl. a zombie leader with a live thread, and a detached grandchild), temporary files and git repositories, SIGKILL crash injection, an fsync-order spy, and two constants pinned to the candidate's values via `git show`. |
-| `tests/run_mutants.py` | 79 low-level mutants (M01–M32 coordinator, R01–R10 from review 59, X01–X09 from review 60, N01–N14 weakening the revision-3 repairs; Y01–Y03 from review61 and P01–P05 for the takeover repairs; F01–F06 for the adjacent record/payload checks); the passing unmodified suite must detect their intended weakening; full failure traces are preserved and execution errors are never automatic kills. The full 134-test suite includes wrapper regressions, but these 79 mutations target low-level code, not every wrapper behavior. |
+| `tests/run_mutants.py` | 80 low-level mutants (M01–M32 coordinator, R01–R10 from review 59, X01–X09 from review 60, N01–N14 weakening the revision-3 repairs; Y01–Y03 from review61 and P01–P05 for the takeover repairs; F01–F07 for the adjacent record/payload and malformed-path checks); the passing unmodified suite must detect their intended weakening; full failure traces are preserved and execution errors are never automatic kills. The full 136-test suite includes wrapper regressions, but these 80 mutations target low-level code, not every wrapper behavior. |
 | `results/TEST_RUN.json`, `results/MUTANTS_RUN.json` | historical revision-3 records, preserved unchanged. Revision-4 evidence is filed separately and must match current input hashes. |
 
 ## Run

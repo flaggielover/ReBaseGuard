@@ -49,7 +49,9 @@ The r4 A1/A2 integration conditions already require a caller boundary deriving r
 - [x] Keep decisions empty and the unavailable campaign detector UNKNOWN. Import no science and expose no pin-point completion, campaign launch, caller-supplied readings, checker, observer, repository or root flags.
 - [x] Label memory data RAW; withhold unresolved effective-limit/headroom quantities as operational allowances and return development-only / operational-ready False. Keep A5 and all20 policy decisions unmet.
 - [x] Add synthetic committed-fixture provenance/refusal and public-seam tests; bind both new files in the full-suite input hashes and trigger exact-source Linux CI.
-- [ ] Obtain fresh independent code and evidence review, repair findings, preserve final records and prepare a concrete handoff packet.
+- [x] Preserve revision-6 independent code/document/evidence review and strict Linux baseline134 PASS /78 valid kills /M25 ERROR; keep the failed aggregate record.
+- [x] Repair the demonstrated malformed-path exception boundary and explicitly refuse absent committed blobs before JSON parsing; add two wrapper refusal tests and F07 without relaxing classification.
+- [ ] Obtain fresh independent code and evidence review of revision 7, verify the final exact-input native run, preserve records and prepare a concrete handoff packet.
 
 ## Validation commands
 
