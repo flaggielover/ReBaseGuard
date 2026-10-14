@@ -1,0 +1,95 @@
+{
+  "module_sha256": "6978cba7e10521e00b78428b02c10f6455ab2baa43c90cfa9a4a0b8c8934897c",
+  "platform": "darwin",
+  "runtime_scope": "pure synthetic; native Linux lifecycle and full suite not executed",
+  "probes": [
+    {
+      "id": "Q01_reused_parent_new_child",
+      "expected": "new_unrelated_child reported, or no reading",
+      "got": [],
+      "t0": "{(99, 2): (1, 0, 'old_campaign', None)}",
+      "t1": "{(99, 50): (1, 0, 'unrelated_reused_parent', None), (40, 51): (99, 500, 'new_unrelated_child', None)}"
+    },
+    {
+      "id": "Q02_unrecognised_task_state",
+      "expected": "UNKNOWN",
+      "got": "ALIVE"
+    },
+    {
+      "id": "Q03_malformed_boot_death",
+      "expected": "UNKNOWN",
+      "got": "DEAD"
+    },
+    {
+      "id": "Q04_invalid_boots_assess",
+      "expected": "AMBIGUOUS",
+      "got": {
+        "status": "CLEAN",
+        "clean": true,
+        "reasons": []
+      }
+    },
+    {
+      "id": "Q05_nonfinite_clocks_assess",
+      "expected": "AMBIGUOUS",
+      "got": {
+        "status": "CLEAN",
+        "clean": true,
+        "reasons": []
+      }
+    },
+    {
+      "id": "Q06_boolean_suspend_count",
+      "expected": "AMBIGUOUS",
+      "got": {
+        "status": "CLEAN",
+        "clean": true,
+        "reasons": []
+      }
+    },
+    {
+      "id": "Q07_nonfinite_duration",
+      "expected": null,
+      "got": []
+    },
+    {
+      "id": "Q08_nonfinite_threshold",
+      "expected": null,
+      "got": []
+    },
+    {
+      "id": "Q09_counter_regression",
+      "expected": null,
+      "got": []
+    },
+    {
+      "id": "Q10_empty_NSpid",
+      "expected": "None/False",
+      "got": true
+    },
+    {
+      "id": "Q11_non_numeric_NSpid",
+      "expected": "None/False",
+      "got": true
+    },
+    {
+      "id": "Q12_nonproc_mount",
+      "expected": "None/False",
+      "got": true
+    },
+    {
+      "id": "Q14_later_restricted_proc_mount",
+      "expected": "False/None",
+      "got": true
+    },
+    {
+      "id": "Q13_caller_asserted_launch",
+      "expected": "caller contract must be enforced by integration",
+      "got": {
+        "launch_record_ok": true,
+        "preflight_launch_gate": "PASS",
+        "overall_preflight_pass": false
+      }
+    }
+  ]
+}
