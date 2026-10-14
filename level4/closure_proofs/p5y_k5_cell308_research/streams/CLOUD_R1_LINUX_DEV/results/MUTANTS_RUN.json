@@ -1,11 +1,12 @@
 {
- "lx_platform_sha256": "7561c36494ebc6db8edb3fb4526f8312f68fdb152833eedde31b28fb26fadbe5",
- "tests_sha256": "139a392bda5804d13d9ceaf9b641b83edab87aae5016ee3c67f37c77c0e9ef16",
+ "lx_platform_sha256": "6978cba7e10521e00b78428b02c10f6455ab2baa43c90cfa9a4a0b8c8934897c",
+ "tests_sha256": "e7f9b2d60d45eb338082068ccd8d6d1ac0441135665b808c453aac133f44495f",
  "unmutated_suite": "PASS",
  "unmutated_tail": "OK",
- "killed": 42,
- "total": 42,
+ "killed": 65,
+ "total": 65,
  "reviewer_mutants_killed": 10,
+ "review60_mutants_killed": 9,
  "mutants": [
   {
    "id": "M01",
@@ -107,7 +108,7 @@
    "id": "M17",
    "property": "unreadable pin counts as a match",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (failures=2)"
   },
   {
    "id": "M18",
@@ -137,7 +138,7 @@
    "id": "M22",
    "property": "namespace mismatch ignored",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (failures=2)"
   },
   {
    "id": "M23",
@@ -173,13 +174,13 @@
    "id": "M28",
    "property": "effective_limit numeric without root attestation",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=2)"
+   "suite_tail": "FAILED (failures=3)"
   },
   {
    "id": "M29",
    "property": "execute / resume pass the launch gate without a launch record",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (errors=1)"
   },
   {
    "id": "M30",
@@ -195,7 +196,7 @@
   },
   {
    "id": "M32",
-   "property": "own_pids may contain init",
+   "property": "own may contain init",
    "status": "KILLED",
    "suite_tail": "FAILED (failures=1)"
   },
@@ -203,7 +204,7 @@
    "id": "R01",
    "property": "unreadable Battery status skipped (a failed read can yield AC)",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (failures=2)"
   },
   {
    "id": "R02",
@@ -221,19 +222,19 @@
    "id": "R04",
    "property": "suspend / pause tolerance raised from 2 s to 25 s",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=3)"
+   "suite_tail": "FAILED (failures=4)"
   },
   {
    "id": "R05",
    "property": "hidden name allow-list for the Cloud session controller in busy_processes",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (failures=2)"
   },
   {
    "id": "R06",
    "property": "package versions and glibc dropped from PIN_KEYS",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=3)"
+   "suite_tail": "FAILED (failures=4)"
   },
   {
    "id": "R07",
@@ -258,6 +259,144 @@
    "property": "assess checks power only at start and end, not at the samples",
    "status": "KILLED",
    "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X01",
+   "property": "/proc 'subset=' no longer refused",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X02",
+   "property": "no /proc mount line counts as a complete view",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X03",
+   "property": "unreadable livepatch counts as none applied",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X04",
+   "property": "K' monotonic-ahead-of-boottime channel removed",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X05",
+   "property": "durable_write read-back verification removed",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X06",
+   "property": "absent samples no longer AMBIGUOUS",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X07",
+   "property": "a transient .scope accepted as the campaign unit",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X08",
+   "property": "v1 'unlimited' sentinel lowered to 1 GiB",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X09",
+   "property": "unknown interpreter package drops out of the pin",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N01",
+   "property": "D-HOST-LIFETIME treated as decided",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=3)"
+  },
+  {
+   "id": "N02",
+   "property": "attestation acceptance line not required",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N03",
+   "property": "attestation schema not checked",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N04",
+   "property": "caller-asserted fields accepted in the attestation reference",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N05",
+   "property": "root attestation truthy again",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N06",
+   "property": "nested PID namespace view accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N07",
+   "property": "boot id not validated",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N08",
+   "property": "exited processes not reported",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N09",
+   "property": "unreadable existing process skipped",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N10",
+   "property": "campaign children exempt by pid alone",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N11",
+   "property": "unrecorded namespace lets pid evidence count (revision-2 behaviour)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N12",
+   "property": "pin without libm / libc / loader accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N13",
+   "property": "launch record trusted on its 'pass' flag",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N14",
+   "property": "unrecognised battery status read as not discharging",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
   }
  ]
 }
