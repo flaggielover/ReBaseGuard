@@ -1,0 +1,129 @@
+{
+ "module_sha256": "7561c36494ebc6db8edb3fb4526f8312f68fdb152833eedde31b28fb26fadbe5",
+ "P1_unreadable_battery_type": null,
+ "P1b_ups_discharging": "BATTERY",
+ "N_power_battery_status['Unknown']": "AC",
+ "N_power_battery_status['garbage']": "AC",
+ "N_power_battery_status['discharging']": "AC",
+ "N_power_battery_status['Discharging \\x00']": "AC",
+ "N_power_battery_status['Not charging']": "AC",
+ "N_power_battery_status['Full']": "AC",
+ "N_power_battery_status_dir": null,
+ "P2_no_automatic_os_install[empty_dict]": "UNKNOWN",
+ "P2_no_automatic_os_install[shown_None]": "UNKNOWN",
+ "P2_no_automatic_os_install[shown_str_true]": "UNKNOWN",
+ "P3_host_lifetime_attested[accepted_REJECTED]": "UNKNOWN",
+ "P3_host_lifetime_attested[accepted_false_string]": "UNKNOWN",
+ "P3_host_lifetime_attested[truthy_ints]": "UNKNOWN",
+ "N_forged_attestation_valid": [
+  true,
+  []
+ ],
+ "N_forged_gates": {
+  "host_lifetime_attested": "PASS",
+  "no_automatic_os_install": "PASS"
+ },
+ "N_boot_id_recorded['']": "PASS",
+ "N_boot_id_recorded['garbage']": "PASS",
+ "N_boot_id_recorded[0]": "PASS",
+ "N_boot_id_recorded[False]": "PASS",
+ "N_launched_True_launcher_mode": "raises AttributeError",
+ "P4a_partial_usage_root_attested": {
+  "effective_limit": 1000000000,
+  "cgroup_min_headroom": null,
+  "visible_limit_upper_bound": 1000000000
+ },
+ "P4b_unreadable_ancestor_limit": {
+  "effective_limit": null,
+  "cgroup_min_headroom": null,
+  "visible_limit_upper_bound": null
+ },
+ "N_v1_root_files_absent": {
+  "effective_limit": null,
+  "cgroup_min_headroom": null
+ },
+ "P4c_v2_systemd_host": {
+  "unattested": [
+   null,
+   null,
+   null
+  ],
+  "attested": [
+   null,
+   null
+  ]
+ },
+ "P5a_commented_line": false,
+ "P5_live_host": {
+  "apt_config_readable": true,
+  "apt_periodic": {
+   "Enable": "0"
+  },
+  "apt_daily_upgrade_timer_enabled": true,
+  "snapd_present": false,
+  "cloud_init_present": true,
+  "livepatch_applied": [],
+  "guest_updates_shown_disabled": false
+ },
+ "N_timer_dirs_checked": [
+  "/etc/systemd/system/timers.target.wants (only)"
+ ],
+ "P7_newborn_hog": [
+  {
+   "pid": 11,
+   "comm": "newhog",
+   "exe": "/tmp/hog",
+   "pct": 100.0,
+   "born_in_window": true
+  }
+ ],
+ "P7b_pid_reuse_hog": [
+  {
+   "pid": 10,
+   "comm": "reused_hog",
+   "exe": "/tmp/hog",
+   "pct": 100.0,
+   "born_in_window": true
+  }
+ ],
+ "P7c_own_pids_contains_1": null,
+ "N_hog_exits_in_window": [],
+ "N_cpu_ticks_unreadable_pid_skipped": {
+  "(10, 1)": [
+   1,
+   0,
+   "idle",
+   null
+  ]
+ },
+ "N_child_of_own_pid_exempt": [],
+ "P8_launch_gate_in_launcher_mode_with_None": "<absent>",
+ "N_unrecorded_ns_esrch": "DEAD",
+ "N_unrecorded_ns_starttime_differs": "DEAD",
+ "N_proc_view_complete_live": true,
+ "N_pidns_inode_live": 4026531836,
+ "N_init_pidns_inode_constant": 4026531836,
+ "N_mapped_deleted": null,
+ "N_mapped_without_libm": {},
+ "P10_rev2_libpython_mapped": false,
+ "P10_rev2_mapped_names": [
+  "_bz2.cpython-313-x86_64-linux-gnu.so",
+  "_hashlib.cpython-313-x86_64-linux-gnu.so",
+  "_json.cpython-313-x86_64-linux-gnu.so",
+  "_lzma.cpython-313-x86_64-linux-gnu.so",
+  "ld-linux-x86-64.so.2",
+  "libbz2.so.1.0.4",
+  "libc.so.6",
+  "libcrypto.so.3",
+  "libexpat.so.1.9.1",
+  "liblzma.so.5.4.5",
+  "libm.so.6",
+  "libz.so.1.3"
+ ],
+ "P10_rev2_dpkg_versions": {
+  "libc6": "2.39-0ubuntu8.9",
+  "python3.13": "3.13.16-1+noble1",
+  "libpython3.13-stdlib": "3.13.16-1+noble1"
+ },
+ "P10_rev2_livepatch": []
+}

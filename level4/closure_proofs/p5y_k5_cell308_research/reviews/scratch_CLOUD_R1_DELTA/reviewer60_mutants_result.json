@@ -1,0 +1,109 @@
+[
+ {
+  "id": "BASE",
+  "status": "PASS",
+  "tail": "OK"
+ },
+ {
+  "id": "X01",
+  "what": "proc_view_complete: /proc 'subset=' mount option no longer refused",
+  "status": "SURVIVED",
+  "tail": "OK",
+  "failing": [],
+  "diff": "--- rev2\n+++ X01\n@@ -526 +526 @@\n-            return not (\"hidepid=\" in opts or \"subset=\" in opts)\n+            return not (\"hidepid=\" in opts)\n"
+ },
+ {
+  "id": "X02",
+  "what": "proc_view_complete: no /proc mount line found counts as a complete view",
+  "status": "SURVIVED",
+  "tail": "OK",
+  "failing": [],
+  "diff": "--- rev2\n+++ X02\n@@ -527 +527 @@\n-    return None\n+    return True\n"
+ },
+ {
+  "id": "X03",
+  "what": "auto_update_settings: an unreadable /sys/kernel/livepatch counts as 'no livepatch applied'",
+  "status": "SURVIVED",
+  "tail": "OK",
+  "failing": [],
+  "diff": "--- rev2\n+++ X03\n@@ -604 +604 @@\n-    shown_disabled = bool(apt_off and not timer and not snapd and not cloud and livepatch == [])\n+    shown_disabled = bool(apt_off and not timer and not snapd and not cloud and livepatch in ([], None))\n"
+ },
+ {
+  "id": "X04",
+  "what": "assess: K' 'monotonic advanced more than boottime' channel removed",
+  "status": "SURVIVED",
+  "tail": "OK",
+  "failing": [],
+  "diff": "--- rev2\n+++ X04\n@@ -233,2 +232,0 @@\n-            elif db - dm < -SLEEP_GAP_TOL_NS:\n-                reasons.append(\"AMBIGUOUS: K' monotonic advanced more than boottime\")\n"
+ },
+ {
+  "id": "X05",
+  "what": "durable_write: read-back verification removed",
+  "status": "SURVIVED",
+  "tail": "OK",
+  "failing": [],
+  "diff": "--- rev2\n+++ X05\n@@ -693 +693 @@\n-    if got != want:\n+    if False:\n"
+ },
+ {
+  "id": "X06",
+  "what": "assess: absent samples (None) no longer AMBIGUOUS",
+  "status": "SURVIVED",
+  "tail": "OK",
+  "failing": [],
+  "diff": "--- rev2\n+++ X06\n@@ -258,2 +257,0 @@\n-    if not isinstance(samples, list):\n-        reasons.append(\"AMBIGUOUS: samples absent\")\n"
+ },
+ {
+  "id": "X07",
+  "what": "launched_by_systemd: a transient .scope (e.g. systemd-run --scope from an agent session) accepted as the unit",
+  "status": "SURVIVED",
+  "tail": "OK",
+  "failing": [],
+  "diff": "--- rev2\n+++ X07\n@@ -633 +633 @@\n-            if last.startswith(prefix) and last.endswith(\".service\"):\n+            if last.startswith(prefix) and last.endswith((\".service\", \".scope\")):\n"
+ },
+ {
+  "id": "X08",
+  "what": "v1 'unlimited' sentinel lowered to 1 GiB (real limits >= 1 GiB read as no limit)",
+  "status": "SURVIVED",
+  "tail": "OK",
+  "failing": [],
+  "diff": "--- rev2\n+++ X08\n@@ -43 +43 @@\n-UNLIMITED_CGROUP_V1 = 2 ** 62                   # memory.limit_in_bytes at or above this is \"no limit\" (v1 sentinel)\n+UNLIMITED_CGROUP_V1 = 2 ** 30                   # memory.limit_in_bytes at or above this is \"no limit\" (v1 sentinel)\n"
+ },
+ {
+  "id": "X09",
+  "what": "pins: an interpreter whose dpkg owner is unknown silently drops out of the package pin",
+  "status": "SURVIVED",
+  "tail": "OK",
+  "failing": [],
+  "diff": "--- rev2\n+++ X09\n@@ -761 +761 @@\n-    return (owner or \"<unknown-interpreter-package>\", f\"libpython{v}-stdlib\")\n+    return tuple(x for x in (owner, f\"libpython{v}-stdlib\") if x)\n"
+ },
+ {
+  "id": "X10",
+  "what": "identity_state: ESRCH proves death even when the reader's namespaces could not be read",
+  "status": "KILLED",
+  "tail": "FAILED (failures=1)",
+  "failing": [
+   "FAIL: test_namespace_mismatch_is_unknown (test_lx_platform.TestIdentity.test_namespace_mismatch_is_unknown)"
+  ],
+  "diff": "--- rev2\n+++ X10\n@@ -171 +171 @@\n-        if ident.get(k) is not None and ns.get(k) != ident[k]:\n+        if ident.get(k) is not None and ns.get(k) is not None and ns.get(k) != ident[k]:\n"
+ },
+ {
+  "id": "X11",
+  "what": "power_source: Mains 'online' unreadable treated as offline (not UNKNOWN)",
+  "status": "KILLED",
+  "tail": "FAILED (failures=1)",
+  "failing": [
+   "FAIL: test_power_classes (test_lx_platform.TestPowerThermal.test_power_classes)"
+  ],
+  "diff": "--- rev2\n+++ X11\n@@ -292 +292 @@\n-                return None\n+                on = \"0\"\n"
+ },
+ {
+  "id": "X12",
+  "what": "pin_mismatches: an EMPTY dict pin (no mapped objects / no packages) counts as readable",
+  "status": "KILLED",
+  "tail": "FAILED (failures=1)",
+  "failing": [
+   "FAIL: test_unreadable_pins_never_match (test_lx_platform.TestPins.test_unreadable_pins_never_match)"
+  ],
+  "diff": "--- rev2\n+++ X12\n@@ -799 +799 @@\n-        return v is None or (isinstance(v, dict) and (not v or any(x is None for x in v.values())))\n+        return v is None or (isinstance(v, dict) and any(x is None for x in v.values()))\n"
+ }
+]
