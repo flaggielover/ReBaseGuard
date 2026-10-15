@@ -1,0 +1,782 @@
+{
+  "base_commit": "a9aa7c3b757b0d2f5ec4ff41e9c799d61b77f399",
+  "command": "python -B -m unittest -v test_transport_stop",
+  "development_failures": {
+    "elapsed_unittest_seconds": 34.709,
+    "errors": 2,
+    "errors_detail": [
+      "Two fixed-tree constructors returned supervisor response timeout before link observation began. Cloud scheduling/I/O cause not independently established; existing readiness budget kept unchanged."
+    ],
+    "failures": 2,
+    "failures_detail": [
+      "Two test assertions incorrectly required the observation caller thread to stay alive; the blocked signer worker, not that caller, is the intended subject. Corrected to assert signer_pending."
+    ],
+    "full_output_location": "Codex tool transcript of initial development run; not captured as a local full log",
+    "source_fix": "New scenario assertion corrected, unused import removed, new link thread-start cleanup made explicit. Existing monitor/fixture and thresholds unchanged.",
+    "tests": 10
+  },
+  "environment": "Cloud Linux; not Windows or private CPython",
+  "evidence_directory": "/workspace/p309-transport-stop-evidence-20261015",
+  "evidence_sha256": {
+    "initial-development-result.json": "ff5613e965c55d6ed3f25173adad10566b244c62559a36c12920d35fa8ebfec6",
+    "linux.stderr.txt": "f62d885480f98327eb0438106e33f23cff30b4c6737f329176fff7ec29746e70",
+    "linux.stdout.txt": "b60833e772cccd51ddb58a10381ba10247bfdcf5a6f3198eb859cd9ecf302c25"
+  },
+  "formal_admission": "BLOCKED",
+  "leftover_synthetic_processes": [],
+  "openssl": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+  "protected_sources_verified": 20,
+  "python_version": "3.12.14",
+  "qualification_authorized": false,
+  "recorded_utc": "2026-10-15T12:30:14.662287+00:00",
+  "result": {
+    "errors": 0,
+    "exit_code": 0,
+    "failures": 0,
+    "passed_test_ids": [
+      "test_transport_stop.LinkArguments.test_invalid_scope_or_timeout_is_refused_before_monitor_or_signer_use",
+      "test_transport_stop.LocalTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+      "test_transport_stop.LocalTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+      "test_transport_stop.LocalTransportStop.test_close_is_one_shot_and_does_not_own_signer_cleanup",
+      "test_transport_stop.LocalTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+      "test_transport_stop.LocalTransportStop.test_concurrent_request_stops_without_second_signature",
+      "test_transport_stop.LocalTransportStop.test_helper_exit_automatically_stops_without_manual_bridge_notification",
+      "test_transport_stop.LocalTransportStop.test_malformed_payload_stops_before_signing",
+      "test_transport_stop.LocalTransportStop.test_safe_then_busy_flows_through_link",
+      "test_transport_stop.LocalTransportStop.test_tampered_signature_stops_without_manual_bridge_notification"
+    ],
+    "skipped": 0,
+    "tests": 10,
+    "unittest_seconds": 6.092
+  },
+  "schema": "P309_TRANSPORT_STOP_COORDINATOR_VALIDATION/1",
+  "scope": "DEVELOPMENT_ONLY",
+  "source_sha256": {
+    "TRANSPORT_STOP.txt": "a57cced381caf05b73063710bf3328075fbaf170562ec8b892e861992ff60a88",
+    "dev_session.py": "59f536943096d61af65fa27a1cc3f39d7252a5b459f2ecb93a75a041ff5a07d2",
+    "host_controls.py": "29ccd0f3789ddb715d69affcb0278cac79cc5079959f0aad4a1a8d20bd5f86fe",
+    "observation_monitor.py": "435deb91f09365e2c4c91c1ed458ce0e88283affd75855542341ab88ce00eb74",
+    "owned_stop_scenarios.py": "da3f3d4a9586812aee5c02c7d5fe22499a5d5a9ec3e6ed43fe5e1fe045ed1832",
+    "synthetic_owned_stop.py": "0ed1e83e845870ff5924fe24626b7c3c829cf6ca2888337e62cab73de469e847",
+    "synthetic_transport_link.py": "65c42757dd4a0346124ae3b5e40a543ecd74e760886f6115a3835c5590ce1a6c",
+    "synthetic_windows_bridge.py": "bb7fabb5f9829b2ed1515884e7beceac10418cae949b9bbef24638f60d30bd2b",
+    "synthetic_windows_signer.ps1": "e83130759261a6faa695a676a72b4921fb3d67fdcd23d3261735d5db6325a068",
+    "test_host_controls.py": "d2a6aa5c814821e93078af9447b664d9201677f380f5f685e5a6336022c7502f",
+    "test_transport_stop.py": "6039c373165adc2447a6ef0fb532d22e806532e0520bb41e144053bbab87add8",
+    "test_windows_transport_stop.py": "96d135dde968a6a76bf181e76940c4c13a1f62ef31498c58956f37f13cd38b7d",
+    "transport_stop_scenarios.py": "d1ad9af45065cc197ed379d840f2990d0f1293b3ace1b59d710341676cfcd0fd"
+  },
+  "synthetic_link_records": [
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_signer_timeout",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_signer_timeout",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_close_is_one_shot_and_does_not_own_signer_cleanup",
+      "link": {
+        "closed": true,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "link_closed",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+      "link": {
+        "closed": true,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "link_closed",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_concurrent_request_stops_without_second_signature",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "concurrent_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_helper_exit_automatically_stops_without_manual_bridge_notification",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_signer_failed",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_malformed_payload_stops_before_signing",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_safe_then_busy_flows_through_link",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_tampered_signature_stops_without_manual_bridge_notification",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    }
+  ],
+  "synthetic_stop_records": [
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 9736,
+            "pid": 9736,
+            "ppid": 9735,
+            "sid": 9735,
+            "start_ticks": 1118276,
+            "state": "R"
+          },
+          {
+            "pgid": 9736,
+            "pid": 9737,
+            "ppid": 9736,
+            "sid": 9735,
+            "start_ticks": 1118277,
+            "state": "R"
+          },
+          {
+            "pgid": 9736,
+            "pid": 9738,
+            "ppid": 9737,
+            "sid": 9735,
+            "start_ticks": 1118277,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 9736,
+            "wait_status": 9
+          },
+          {
+            "pid": 9737,
+            "wait_status": 9
+          },
+          {
+            "pid": 9738,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 9744,
+            "pid": 9744,
+            "ppid": 9743,
+            "sid": 9743,
+            "start_ticks": 1118496,
+            "state": "R"
+          },
+          {
+            "pgid": 9744,
+            "pid": 9746,
+            "ppid": 9745,
+            "sid": 9743,
+            "start_ticks": 1118496,
+            "state": "R"
+          },
+          {
+            "pgid": 9744,
+            "pid": 9745,
+            "ppid": 9744,
+            "sid": 9743,
+            "start_ticks": 1118496,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 9744,
+            "wait_status": 9
+          },
+          {
+            "pid": 9746,
+            "wait_status": 9
+          },
+          {
+            "pid": 9745,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_close_is_one_shot_and_does_not_own_signer_cleanup",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 9753,
+            "pid": 9753,
+            "ppid": 9752,
+            "sid": 9752,
+            "start_ticks": 1118717,
+            "state": "R"
+          },
+          {
+            "pgid": 9753,
+            "pid": 9754,
+            "ppid": 9753,
+            "sid": 9752,
+            "start_ticks": 1118717,
+            "state": "R"
+          },
+          {
+            "pgid": 9753,
+            "pid": 9755,
+            "ppid": 9754,
+            "sid": 9752,
+            "start_ticks": 1118717,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 9753,
+            "wait_status": 9
+          },
+          {
+            "pid": 9754,
+            "wait_status": 9
+          },
+          {
+            "pid": 9755,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 9760,
+            "pid": 9760,
+            "ppid": 9759,
+            "sid": 9759,
+            "start_ticks": 1118737,
+            "state": "R"
+          },
+          {
+            "pgid": 9760,
+            "pid": 9761,
+            "ppid": 9760,
+            "sid": 9759,
+            "start_ticks": 1118737,
+            "state": "R"
+          },
+          {
+            "pgid": 9760,
+            "pid": 9762,
+            "ppid": 9761,
+            "sid": 9759,
+            "start_ticks": 1118737,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 9760,
+            "wait_status": 9
+          },
+          {
+            "pid": 9761,
+            "wait_status": 9
+          },
+          {
+            "pid": 9762,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_concurrent_request_stops_without_second_signature",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 9770,
+            "pid": 9770,
+            "ppid": 9769,
+            "sid": 9769,
+            "start_ticks": 1118759,
+            "state": "R"
+          },
+          {
+            "pgid": 9770,
+            "pid": 9771,
+            "ppid": 9770,
+            "sid": 9769,
+            "start_ticks": 1118759,
+            "state": "R"
+          },
+          {
+            "pgid": 9770,
+            "pid": 9772,
+            "ppid": 9771,
+            "sid": 9769,
+            "start_ticks": 1118759,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 9770,
+            "wait_status": 9
+          },
+          {
+            "pid": 9772,
+            "wait_status": 9
+          },
+          {
+            "pid": 9771,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_helper_exit_automatically_stops_without_manual_bridge_notification",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 9780,
+            "pid": 9780,
+            "ppid": 9779,
+            "sid": 9779,
+            "start_ticks": 1118783,
+            "state": "R"
+          },
+          {
+            "pgid": 9780,
+            "pid": 9781,
+            "ppid": 9780,
+            "sid": 9779,
+            "start_ticks": 1118783,
+            "state": "R"
+          },
+          {
+            "pgid": 9780,
+            "pid": 9782,
+            "ppid": 9781,
+            "sid": 9779,
+            "start_ticks": 1118783,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 9780,
+            "wait_status": 9
+          },
+          {
+            "pid": 9782,
+            "wait_status": 9
+          },
+          {
+            "pid": 9781,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_malformed_payload_stops_before_signing",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 9788,
+            "pid": 9788,
+            "ppid": 9787,
+            "sid": 9787,
+            "start_ticks": 1118803,
+            "state": "R"
+          },
+          {
+            "pgid": 9788,
+            "pid": 9790,
+            "ppid": 9789,
+            "sid": 9787,
+            "start_ticks": 1118804,
+            "state": "R"
+          },
+          {
+            "pgid": 9788,
+            "pid": 9789,
+            "ppid": 9788,
+            "sid": 9787,
+            "start_ticks": 1118804,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 9788,
+            "wait_status": 9
+          },
+          {
+            "pid": 9790,
+            "wait_status": 9
+          },
+          {
+            "pid": 9789,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_safe_then_busy_flows_through_link",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 9795,
+            "pid": 9795,
+            "ppid": 9794,
+            "sid": 9794,
+            "start_ticks": 1118823,
+            "state": "R"
+          },
+          {
+            "pgid": 9795,
+            "pid": 9797,
+            "ppid": 9796,
+            "sid": 9794,
+            "start_ticks": 1118823,
+            "state": "R"
+          },
+          {
+            "pgid": 9795,
+            "pid": 9796,
+            "ppid": 9795,
+            "sid": 9794,
+            "start_ticks": 1118823,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 9795,
+            "wait_status": 9
+          },
+          {
+            "pid": 9796,
+            "wait_status": 9
+          },
+          {
+            "pid": 9797,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "candidate_observations_refused",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 1,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_tampered_signature_stops_without_manual_bridge_notification",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 9810,
+            "pid": 9810,
+            "ppid": 9809,
+            "sid": 9809,
+            "start_ticks": 1118848,
+            "state": "R"
+          },
+          {
+            "pgid": 9810,
+            "pid": 9811,
+            "ppid": 9810,
+            "sid": 9809,
+            "start_ticks": 1118848,
+            "state": "R"
+          },
+          {
+            "pgid": 9810,
+            "pid": 9812,
+            "ppid": 9811,
+            "sid": 9809,
+            "start_ticks": 1118848,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 9810,
+            "wait_status": 9
+          },
+          {
+            "pid": 9811,
+            "wait_status": 9
+          },
+          {
+            "pid": 9812,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "signed_observation_or_persistence_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    }
+  ],
+  "target_execution_authorized": false,
+  "unchanged_source_bindings_verified": 34,
+  "windows_result": {
+    "expected_methods": 9,
+    "status": "PENDING_LOCAL_EXECUTION",
+    "suite": "test_windows_transport_stop"
+  }
+}

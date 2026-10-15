@@ -1,0 +1,114 @@
+Automatic synthetic transport-failure stop link (development only)
+
+Base: a9aa7c3b757b0d2f5ec4ff41e9c799d61b77f399, the published 24-test
+private-Python/actual-Windows validation of the fixed synthetic stop fixture.
+This change adds a link and new tests only. Existing implementation, tests,
+thresholds and validation records are preserved byte for byte.
+
+The specific gap addressed
+The previous transport-failure stop cases explicitly called bridge_failed().
+SyntheticObservationLink now requests a monitor challenge, serializes the
+synthetic payload, calls the existing signer, and passes its envelope to the
+existing verifier/monitor. A signer exception, bounded response timeout, rejected
+observation, concurrent request or explicit close automatically publishes stop.
+The fixed fixture independently observes that stop Event and reaps its tree.
+Callers no longer have to add bridge_failed() around each signing call.
+
+Semantics and limits
+- The link requires synthetic_only=True. It never creates a signer, session,
+  key, process tree, host collector or P309 workload. The test/caller explicitly
+  owns those objects. Only the existing fixed idle fixture is used by the tests.
+- It enables the existing monitor watchdog if one is not already active, using
+  0.01-second polling. It preserves the existing 105-second diagnostic deadline
+  and all host thresholds. A separate synthetic signer response budget defaults
+  to two seconds (accepted range 0.05..5); it is not a host sampling threshold.
+- At most one signing request is outstanding. Concurrent observation attempts
+  refuse and stop. Timeout is terminal: late valid signatures are discarded and
+  no subsequent request is sent. Clearing an external Event or a worker finishing
+  does not restore the link or monitor.
+- Signing runs in a retained daemon thread, allowing the supervising call to
+  publish stop while the signer holds its own lock or blocks in cleanup. No
+  thread is unsafely cancelled. A forever-blocked thread remains an incomplete
+  cleanup, not proof of resource release. The process hosting the supervisor and
+  Python's scheduler must remain responsive; uninterruptible native operations,
+  starvation, suspension or process/host death are not solved here.
+- close publishes stop before waiting for observation/signing completion. It
+  reports incomplete cleanup on timeout. It does not close caller-owned signer,
+  monitor or session objects; release injected blockers, complete link cleanup,
+  reap the fixed tree, then close monitor/session and signer. Repeated successful
+  close is idempotent. Late worker output cannot become a monitor acknowledgement.
+- Tests distinguish a caller thread that already returned a refusal from a
+  signer worker that is still pending. A caller need not remain blocked to
+  demonstrate that its signer cleanup is still blocked.
+- There is no listener, service, account, production key/trust configuration,
+  arbitrary command launch, general process containment or official P309 adapter.
+  Current fixed-group ownership and supervisor-crash limits in OWNED_STOP.txt
+  still apply. Full host observation, attribution, privilege isolation, durable
+  anti-rollback, AWS/WSL route acceptance and continuous-run qualification remain
+  open. Every result retains BLOCKED/false, including a green signed diagnostic.
+
+Test evidence and disclosed injection
+test_transport_stop has ten methods: one argument/scope check plus nine link
+scenarios using ephemeral local OpenSSL keys and an explicit transport double.
+test_windows_transport_stop repeats those nine scenarios with the existing real
+Windows CNG helper; it never skips when Windows interoperability is unavailable.
+The nine scenarios are safe-then-busy, owned-helper exit, delayed signature,
+blocked error cleanup, overlapping requests, close during signing, signature
+tamper, malformed payload before signing, and idempotent one-shot close.
+Each scenario starts and reaps a fixed idle three-generation tree and checks
+that an independent bystander survives. Each prints SYNTHETIC_STOP_CHAIN and
+SYNTHETIC_LINK_STOP evidence. Windows metadata is printed per owned helper.
+For the actual Windows failure case, an invalid synthetic request causes that
+test's helper to exit; the next normal bridge call encounters the closed pipe.
+Blocked signing/cleanup are explicit Python fault injections around that real
+bridge, not claims that an observed Windows outage happened naturally. Delayed
+valid signatures use the real signer once the test releases its blocker.
+
+Coordinator development history
+The first development run had two readiness errors before link observation
+began: the unchanged fixed fixture reported a supervisor response timeout.
+Scheduling/I/O as the cause was not independently established, and neither the
+readiness budget nor fixture code was changed. Two additional test failures
+incorrectly required the observation caller thread to remain alive after stop;
+the intended subject is the independently blocked signer worker. That assertion
+was corrected to check signer_pending. A subsequent full new-suite run passed
+all ten cases. The failed-run summary and later full logs are retained separately
+in coordinator evidence; the initial full output is in the Codex tool transcript.
+No failed/partial run is counted as passing. See TRANSPORT_STOP_VALIDATION.json.
+
+Windows/WSL local verification
+1. Fetch codex/p309-wsl-transport-stop-dev-20261015 and verify the exact full SHA
+   supplied by the coordinator before running code. Use a separate clean worktree
+   such as D:\ReBaseGuard-309\workspace\p309-transport-stop-validation-20261015
+   and branch codex/p309-wsl-transport-stop-validation-20261015. Read this file
+   and TRANSPORT_STOP_VALIDATION.json; review the additions-only diff from base.
+2. Verify all source_sha256 values against Git blob bytes and record raw/CRLF
+   normalized worktree hashes separately. Verify the 34 canonical source entries
+   from OWNED_STOP_LOCAL_SOURCE_SHA256.json and 20 protected code hashes. Preserve
+   old branches, checkouts, evidence files, backup and manifest without rewriting.
+3. Use the existing private interpreter
+   /home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 and existing
+   P309_WINDOWS_PWSH executable path. Keep temporary sessions on Linux ext4 outside
+   Git. From wsl_host_controls run only the two new suites:
+
+   python3.11 -B -m unittest -v test_transport_stop test_windows_transport_stop
+
+   Expected: 10 + 9 = 19 methods, zero failures/errors/skips. The previous 24 and
+   53 suites have unchanged inputs and need no repetition. No host safety sample,
+   actual P309 workload, drill, grant, freeze, qualification or target is involved.
+   Do not install software/services, configure production keys or change Windows
+   policy. Do not change sources, budgets, assertions or counts to force a pass.
+4. Save full stdout/stderr, individual IDs, exit status, interpreter hash,
+   OpenSSL/Windows metadata, and 18 records of each evidence kind (nine per
+   backend). For blocked cases the recorded link should still report a pending
+   signer while the fixed tree is already reaped; after releasing test blockers,
+   threads must join and helpers must close. Check fixture/supervisor/bystander
+   identities, temporary directories and new zombies after the suites exit.
+   These cleanup observations do not establish complete host process visibility.
+5. Preserve coordinator/historical JSON. Add only separate
+   TRANSPORT_STOP_LOCAL_VALIDATION.json and TRANSPORT_STOP_LOCAL_SOURCE_SHA256.json;
+   put full logs in a new D:\ReBaseGuard-309\records directory. Verify prior
+   evidence hashes/refs, preserve the F: backup and manifest, commit the two new
+   JSON files, push the separate validation branch normally and verify its remote
+   HEAD. Preserve and report any failure rather than presenting partial evidence
+   as success. Formal admission and all execution/qualification flags stay blocked.
