@@ -40,6 +40,7 @@ jobs:
           test -x "$PYTHON_EXE"
           "$PYTHON_EXE" -VV > "$RUNNER_TEMP/cell308-r5-evidence/python.txt"
           uname -a > "$RUNNER_TEMP/cell308-r5-evidence/kernel.txt"
+          git --version > "$RUNNER_TEMP/cell308-r5-evidence/git.txt"
       - name: Full baseline and strict property mutations
         shell: bash
         run: |
@@ -70,6 +71,21 @@ jobs:
               (folder / f'{label}.metadata.json').write_text(suite['controlled_runner_metadata_raw'] or '')
           manifest = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(folder.iterdir()) if p.is_file()}
           (folder / 'artifact-sha256.json').write_text(json.dumps(manifest, indent=2) + '\n')
+          # Value-free diagnosis in the job log (ids, statuses, test ids, exception types): the artifact host may be
+          # unreachable from a reviewing environment.
+          print('SUMMARY', json.dumps({k: rec.get(k) for k in ('unmutated_suite', 'expected_test_count', 'killed',
+                                                                 'total', 'pass', 'inputs_unchanged',
+                                                                 'full_registry_completed')}))
+          for r in rec['mutants']:
+              if r.get('status') != 'KILLED':
+                  st = r.get('suite') or {}
+                  meta = json.loads(st.get('controlled_runner_metadata_raw') or '{}') if st else {}
+                  print('NOT_KILLED', json.dumps({'id': r.get('id'), 'status': r.get('status'),
+                                                  'reasons': r.get('reasons') or r.get('invalid_reasons'),
+                                                  'ran': st.get('ran'), 'failures': st.get('failures'),
+                                                  'errors': st.get('errors'), 'suite_invalid': st.get('invalid_reasons'),
+                                                  'events': [(e.get('test_id'), e.get('exception_type'))
+                                                             for e in meta.get('events', [])][:12]}))
           assert rec['source_commit'] == os.environ['GITHUB_SHA']
           assert rec['system'] == 'Linux' and rec['class'] == 'SYNTHETIC_VALIDATION' and rec['dev_only'] is True
           assert rec['new_target_evaluations'] == 0

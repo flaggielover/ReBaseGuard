@@ -995,7 +995,8 @@ def main(out: str | None) -> int:
     rows = []
     for mid, what, edits in MUTANTS:
         row = {"id": mid, "origin": ("combined integration" if mid.startswith("R5SYNC") or mid == "CDEX16" else
-                           "Codex" if mid.startswith("CDEX") else "Claude revision 5"),
+                           "Codex" if mid.startswith("CDEX") else "Claude review 63" if mid.startswith("RV") else
+                           "Claude revision 5"),
                "property": what, "intended_property_test_methods": PROPERTY_WITNESSES[mid],
                "edits": [{"old": old, "new": new} for old, new in edits]}
         mutated, counts, mutation_error = apply_mutation(src, edits)
