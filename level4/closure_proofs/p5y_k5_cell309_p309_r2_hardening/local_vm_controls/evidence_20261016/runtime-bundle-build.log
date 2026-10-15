@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "D:\ReBaseGuard-309\workspace\p309-local-vm-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_vm_controls\runtime_bundle.py", line 196, in <module>
+    main()
+    ~~~~^^
+  File "D:\ReBaseGuard-309\workspace\p309-local-vm-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_vm_controls\runtime_bundle.py", line 181, in main
+    plan = scan(args.archives, args.signatures)
+  File "D:\ReBaseGuard-309\workspace\p309-local-vm-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_vm_controls\runtime_bundle.py", line 120, in scan
+    row["imports"] = imports(binary_data[name])
+                     ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\ReBaseGuard-309\workspace\p309-local-vm-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_vm_controls\runtime_bundle.py", line 74, in imports
+    result.add(name(dll_rva))
+               ~~~~^^^^^^^^^
+  File "D:\ReBaseGuard-309\workspace\p309-local-vm-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_vm_controls\runtime_bundle.py", line 58, in name
+    raise ValueError("invalid DLL import")
+ValueError: invalid DLL import

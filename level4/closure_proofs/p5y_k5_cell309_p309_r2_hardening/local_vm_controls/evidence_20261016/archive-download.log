@@ -1,0 +1,76 @@
+{"schema": "P309_ARCHIVE_LOCK/1", "database_sha256": "258b76eebc2a679820eb43cef9df5b171dd22f3ce0c5fdb03f8da9e7422a6c39", "archive_bytes": 266372417, "installed_bytes": 2606369841, "installation_performed": false, "signatures_verified": false}
+packages: 159
+mingw-w64-ucrt-x86_64-SDL2
+mingw-w64-ucrt-x86_64-SDL2_image
+mingw-w64-ucrt-x86_64-adobe-source-code-pro-fonts
+mingw-w64-ucrt-x86_64-adwaita-icon-theme
+mingw-w64-ucrt-x86_64-adwaita-icon-theme-legacy
+mingw-w64-ucrt-x86_64-angleproject
+mingw-w64-ucrt-x86_64-aom
+mingw-w64-ucrt-x86_64-atk
+mingw-w64-ucrt-x86_64-brotli
+mingw-w64-ucrt-x86_64-bzip2
+mingw-w64-ucrt-x86_64-c-ares
+mingw-w64-ucrt-x86_64-ca-certificates
+mingw-w64-ucrt-x86_64-cairo
+mingw-w64-ucrt-x86_64-cantarell-fonts
+mingw-w64-ucrt-x86_64-capstone
+mingw-w64-ucrt-x86_64-cc-libs
+mingw-w64-ucrt-x86_64-curl
+mingw-w64-ucrt-x86_64-cyrus-sasl
+mingw-w64-ucrt-x86_64-dav1d
+mingw-w64-ucrt-x86_64-db
+mingw-w64-ucrt-x86_64-dtc
+mingw-w64-ucrt-x86_64-duktape
+mingw-w64-ucrt-x86_64-egl-headers
+mingw-w64-ucrt-x86_64-expat
+mingw-w64-ucrt-x86_64-flac
+mingw-w64-ucrt-x86_64-fontconfig
+mingw-w64-ucrt-x86_64-freetype
+mingw-w64-ucrt-x86_64-fribidi
+mingw-w64-ucrt-x86_64-gdbm
+mingw-w64-ucrt-x86_64-gdk-pixbuf2
+mingw-w64-ucrt-x86_64-gettext-libtextstyle
+curl: (35) schannel: failed to receive handshake, SSL/TLS connection failed
+mingw-w64-ucrt-x86_64-gettext-runtime
+mingw-w64-ucrt-x86_64-gettext-tools
+mingw-w64-ucrt-x86_64-giflib
+mingw-w64-ucrt-x86_64-gles-headers
+mingw-w64-ucrt-x86_64-glib-networking
+mingw-w64-ucrt-x86_64-glib2
+mingw-w64-ucrt-x86_64-gmp
+mingw-w64-ucrt-x86_64-gnutls
+Traceback (most recent call last):
+  File "D:\ReBaseGuard-309\workspace\p309-local-vm-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_vm_controls\prepare_archives.py", line 147, in <module>
+    main()
+    ~~~~^^
+  File "D:\ReBaseGuard-309\workspace\p309-local-vm-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_vm_controls\prepare_archives.py", line 142, in main
+    for name in pool.map(lambda p: download(p, args.output), packages):
+                ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\concurrent\futures\_base.py", line 645, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python314\Lib\concurrent\futures\_base.py", line 312, in _result_or_cancel
+    return fut.result(timeout)
+           ~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\concurrent\futures\_base.py", line 447, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\concurrent\futures\_base.py", line 396, in __get_result
+    raise self._exception
+  File "C:\Python314\Lib\concurrent\futures\thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "C:\Python314\Lib\concurrent\futures\thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "D:\ReBaseGuard-309\workspace\p309-local-vm-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_vm_controls\prepare_archives.py", line 142, in <lambda>
+    for name in pool.map(lambda p: download(p, args.output), packages):
+                                   ~~~~~~~~^^^^^^^^^^^^^^^^
+  File "D:\ReBaseGuard-309\workspace\p309-local-vm-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_vm_controls\prepare_archives.py", line 116, in download
+    subprocess.run(["curl.exe", "--fail", "--location", "--silent", "--show-error",
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    "--max-time", "60", p["url"] + ".sig", "--output", str(sig)], check=True)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['curl.exe', '--fail', '--location', '--silent', '--show-error', '--max-time', '60', 'https://repo.msys2.org/mingw/ucrt64/mingw-w64-ucrt-x86_64-graphene-1.10.8-3-any.pkg.tar.zst.sig', '--output', 'D:\\ReBaseGuard-309\\records\\p309-local-vm-preparation-20261016-162345\\downloads\\mingw-w64-ucrt-x86_64-graphene-1.10.8-3-any.pkg.tar.zst.sig']' returned non-zero exit status 35.
