@@ -1,0 +1,30 @@
+{
+  "schema": "P309_WSL_DEVELOPMENT_VALIDATION/1",
+  "utc": "2026-10-15T09:57:00.682039+00:00",
+  "development_base": "39dfb2faa36a63006d5367ffa563859820d57298",
+  "r2_reference": "501f48cb31fd3f80d5c6dd33f1eef6b8f01b2853",
+  "python": "3.12.14",
+  "source_sha256": {
+    "collect_windows.ps1": "a93d1ab823490d99458a55376b2bd1439c3942a85083eb268aa4fbd14fd173af",
+    "inspect_wsl.py": "88e6d41b3edd4e3a271471fa893d9f0032e70ead3558fff13925d45e960ba0be",
+    "test_readiness.py": "e5ac21d3639f411b8abe6dad8e00b4e00bdacdba94775c462da6631f33f57873",
+    "RUN_LOCAL.txt": "8fb10c4c8a44ebc77bc9013969f2f5ac3e73dae859127840612aee209c5e2d6d"
+  },
+  "validation": {
+    "unittest_command": "python3 -B -m unittest -v test_readiness",
+    "tests_passed": 9,
+    "failures": 0,
+    "errors": 0,
+    "windows_powershell_execution": "NOT_RUN: PowerShell is unavailable in the coordinating Cloud runtime",
+    "windows_host_execution": "NOT_RUN",
+    "cloud_collection_smoke": "Completed read-only; pid1 tail and Python 3.12.14 refused readiness, host resource evidence unknown"
+  },
+  "scope": "Development-only preparation tooling, not formal qualification or host acceptance",
+  "official_r2_modified": false,
+  "new_target_evaluations": 0,
+  "remaining_work": [
+    "Execute collector and inspector in the existing Windows local chat",
+    "Prepare private CPython 3.11.15 without replacing Ubuntu system Python",
+    "Implement and independently review WSL host controls and a route amendment before admission"
+  ]
+}

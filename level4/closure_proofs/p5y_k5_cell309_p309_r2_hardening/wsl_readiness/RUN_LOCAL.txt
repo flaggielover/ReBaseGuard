@@ -1,0 +1,43 @@
+P309 WSL preparation inspection (development only)
+
+These tools collect evidence; they do not modify r2 admission, start a drill,
+install Python, change Windows power/update settings, or authorize execution.
+Read-only system queries are used. Output files below are preparation records,
+not qualification evidence. No secrets or raw host identity are collected.
+
+1. In the existing Windows local Codex chat, fetch the continuation branch into
+   a separate preparation checkout under D:\ReBaseGuard-309\workspace.
+   Branch: codex/p309-host-continuation-20261015
+   Directory within the repository:
+   level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_readiness
+   Preserve the original migration records and F: backup.
+
+2. From that directory in Windows PowerShell, collect the host snapshot:
+   & .\collect_windows.ps1 | Out-File -Encoding utf8 D:\ReBaseGuard-309\records\windows-readiness.json
+   The script reads WSL's registration to identify the actual VHDX backing drive.
+   Do not change machine execution policy merely to run it; the local agent may
+   execute the reviewed script's contents in its existing PowerShell session.
+
+3. In Ubuntu, run the Python inspector from the corresponding /mnt/d checkout:
+   python3 -B inspect_wsl.py --workspace /home/<actual-user> --windows-snapshot /mnt/d/ReBaseGuard-309/records/windows-readiness.json
+   Return stdout to the Windows local agent and save a preparation record under
+   D:\ReBaseGuard-309\records using its own output mechanism. Use a real existing
+   Linux filesystem workspace, not an invented home path. The inspection reads
+   it only; it does not create or clone anything there.
+
+4. Review the collected resource checks and every unresolved requirement.
+   The guest filesystem may advertise 1 TB while its Windows backing drive has
+   much less space: both must satisfy the existing 40 decimal GB floor.
+   Both Windows host and guest available RAM must satisfy 8 decimal GB in this
+   conservative preparation check; these observations do not reserve resources.
+   Python 3.12 may run this inspector, but r2 requires private CPython 3.11.15.
+   Ubuntu's system Python must remain intact when a private runtime is prepared.
+
+Exit zero means inspection completed, never formal admission. The output always
+keeps formal_admission=BLOCKED: the WSL route, host-side workload visibility,
+Windows sleep/update continuity, and a replacement for the AWS-dependent checks
+still need an implementation and independent review. No short check proves a
+6-hour qualification or the possible 31.5-hour target window can run continuously.
+
+Keep official r2 at 501f48cb unchanged. Do not call the launcher, qualification
+runner, freeze tool, driver or target evaluator as part of this inspection.
