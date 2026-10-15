@@ -1,0 +1,56 @@
+P309 D2 repair independent static rereview: attributed result and scope correction
+Recorded2026-10-15. Reviewed commit16ab849c7df7868480c700a5f3f8a654b96124e1.
+This is a documentation/evidence-only additive record. No implementation, test,
+fixture, threshold or historical validation record is changed; no test is rerun.
+
+Independent result supplied by the user
+- F1-F4 may close at SOURCE REVIEW level. No new mandatory code defect introduced
+  by the repair was reported. This records the supplied independent finding,
+  not a second independent review performed by this coordinator.
+- V1's missing non-mocked valid positive protocol evidence is satisfied. The
+  preserved157-pass aggregate result and four expected original-commit failures
+  correspond to the reviewed repair; this rereview did not execute them again.
+- I1-I7 remain OPEN_RETAINED and formal admission remains BLOCKED. Closure of
+  these code findings grants no host/deployment/qualification/execution approval.
+
+Correction to the coordinator's previous summary
+The previous final message described18 valid signature fixtures as passing
+through Session/Chain without clearly separating mathematical verification from
+protocol coverage. That scope was too broad. The precise statement is:
+ 18 DISTINCT fixtures all undergo mathematical signature verification.
+ 12 DISTINCT pre-generated fixtures enter Session/Chain.
+ 2048/3072/4096 bits each cover first+second valid observation and signed-busy stop.
+ The ADDITIONAL future/late-second/exact-boundary time examples enter Session/
+ Chain ONLY at2048 bits. Their3072/4096 counterparts are mathematically verified
+ but are not exercised through Session/Chain by the preserved test suite.
+
+Per-width distinct fixture coverage (repeated delivery is not another fixture)
+ bits   mathematical fixtures   Session/Chain fixtures
+ 2048   6                      6: first,second,busy,future,late_second,boundary_second
+ 3072   6                      3: first,second,busy
+ 4096   6                      3: first,second,busy
+ TOTAL 18                     12
+ Derived tampered messages/signatures are negative inputs, not additional valid
+ pre-generated fixture coverage. The54 NIST and18 protocol-vector cases remain
+ subcases within the157 methods; neither number is added to the method total.
+ The157-pass result is historical Cloud CPython3.11.15 evidence, not a new run.
+
+Attribution and limits
+The user reported20 protected sources and328 Windows-local historical evidence
+files unchanged. Canonical Git/source bindings are separately checked here; the
+Windows evidence files and original review report are not available in Cloud
+and are not claimed to have been rehashed or independently read here.
+User-provided report locations:
+C:/Users/Lenovo/Documents/Codex/2026-10-15/rebaseguard-309-windows-cpu-wsl2-ubuntu/outputs/P309-D2-repair-static-rereview.md
+C:/Users/Lenovo/Documents/Codex/2026-10-15/rebaseguard-309-windows-cpu-wsl2-ubuntu/outputs/P309-D2-repair-static-rereview.json
+
+Current code-review closure does not establish real Windows observation or
+service/key trust, complete process coverage, protected cross-restart anti-replay,
+actual clock/suspend behavior, independent stop, OS/cgroup cleanup or route
+acceptance. The full-queue/shared-lock/synchronous-verification limitations are
+retained. All I1-I7 and operational flags remain OPEN_RETAINED/BLOCKED/false.
+No further per-module test handoff is created by this record. No host query,
+elevation, install, actual service/endpoint/account/key/unit, policy change,
+workload, safety sample, drill, freeze/grant, qualification or target is performed.
+The next deployment stage still requires its own concrete contract/package and
+resolution/review of the retained blockers; this record does not authorize it.
