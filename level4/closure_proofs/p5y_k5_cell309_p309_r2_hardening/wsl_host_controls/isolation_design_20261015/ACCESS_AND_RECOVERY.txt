@@ -1,0 +1,82 @@
+Proposed access matrix and administrative change boundaries
+Candidate only. No executable installer is supplied; configuration is NOT ready
+to deploy while PLAN.json blockers remain. Existing host objects stay unchanged.
+
+Windows objects
+Object                              Administrators/SYSTEM   Observer SID   Operator relay / guest
+Program Files observer image/config maintain/read           read/execute   read/execute only
+ProgramData observer checkpoint     maintain/read           read/write     none
+CNG private key                     recovery/manage policy sign/use       none
+Pipe endpoint                       maintain               own/server     selected operator SID client
+Guest public pin enrollment         maintain               publish public read-only pinned public data
+
+Administrator/SYSTEM are TRUSTED and capable of taking ownership or replacing
+code; the matrix does not claim protection against them. Key export policy is
+disabled; managed key use/security descriptors must be verified with CNG APIs.
+Do not directly copy or chmod provider-private key-store filesystem internals.
+Client pipe rights must exclude server-instance creation, ACL/owner changes and
+remote access, and must be reviewed at the actual Windows API access-mask level.
+Avoid a generic write ACE that inadvertently grants pipe-instance creation.
+Exact selected operator SID is resolved locally at enrollment and recorded as
+a digest; the existing record's token digest is not an authorization credential.
+Service/pipe/key existence and ACL inheritance must be checked before mutation.
+Unexpected existing objects are collisions, never adopted or overwritten.
+
+Linux objects (inside proposed new distribution only)
+Object                              root            p309-monitor          p309-runner
+/usr/local/libexec/rebaseguard-p309  maintain/r-x    fixed tools r-x        no write
+/var/lib/rebaseguard-p309-control    maintain/rw     status via broker      none
+/run/rebaseguard-p309/control.sock  own/server      fixed authorized API   none
+/home/p309-runner parent/runtime    maintain/r-x    trusted runtime r-x    runtime r-x only
+/home/p309-runner/workspace         maintain        needed metadata only   read/write
+/home/p309-runner/scratch           maintain        needed metadata only   read/write
+monitor private diagnostic dir      maintain        read/write             none
+execution unit/cgroup hierarchy     maintain        stop/status via broker no delegation/write
+
+ACL/mode numbers, service security descriptors and group membership must match
+this semantic matrix in a later installer. Do not equate DrvFs0777 with effective
+Windows write permissions. No parent of trusted runtime/control code may be
+runner-writable, and caller-controlled PYTHONPATH/cwd/environment is excluded
+from trusted monitor startup. Actual foreign-root unreadability must be proven
+later without sharing cell308 objects; current evidence never inspected them.
+
+Administrative work proposed for a later bounded artifact
+A. Register a fresh, pinned, verified Ubuntu execution image at the proposed D:
+   location; create new root-owned configuration and the two dedicated roles.
+   Preserve Ubuntu-24.04 and its VHDX/runtime/records. Do not clone personal or
+   foreign checkout data into a new image. Record actual image/runtime hashes.
+B. Install only pinned, independently reviewed observer/relay/control binaries.
+   Resolve service SID/client SID and exact ACLs; create a new service-owned key
+   and protected anchor only after key/persistence contracts are accepted.
+C. Install only reviewed monitor/controller and fixed idle-test units. Keep the
+   actual P309 execution operation absent. No generic polkit/sudo changes.
+D. Apply exact minimum collector privileges only if their necessity and bounds
+   have been proven. Current discovery did not establish that a virtual account
+   can collect the required data. Undefined privileges block this artifact.
+E. Validate using explicitly approved bounded idle tests, observed ACL access
+   denials, forged request/endpoint rejection, trace loss handling, descendant
+   cgroup stopping and restart/refusal semantics. No official workload/drill.
+This list names intended changes; it is not approval to perform any of them.
+
+Recovery/rollback design requirements
+- Before deployment, record exact pre-state and create a recoverable export of
+  each newly created object/configuration plus its evidence manifest as needed.
+  F: currently unavailable is reported, not silently treated as a usable backup;
+  no new r2 formal backup requirement is invented here.
+- On partial install/validation failure, first revoke start capability and stop
+  only the newly created monitor/control/idle units and observer service. Record
+  OS stop acknowledgement and cgroup emptiness before any cleanup claim.
+- Disconnect relay and revoke enrollment/pins/endpoint access. Preserve service
+  checkpoint, key identity and failed evidence for diagnosis. Do not reuse an
+  old pin, reset sequence state or delete exactly-once evidence to enable retry.
+- Restore only settings changed by the exact installer, using recorded originals.
+  Never relax unrelated ACLs, reconfigure current Ubuntu or remove existing data.
+  Remove newly installed service/unit files/roles only after no owned processes,
+  files or outstanding handles remain and evidence retention has been resolved.
+- Keep the new distribution offline/quarantined if validation fails. No automatic
+  wsl --unregister, destructive VHDX deletion or blanket directory removal is a
+  rollback step. Removal of retained data would need its own concrete scope.
+- The original Ubuntu, private runtime, D: historical records and existing refs
+  remain intact. This design neither mounts nor writes F: and never claims that
+  an old backup hash was freshly checked. Host-change rollback is distinct from
+  formal-run retry authority; no attempt is resumed by restoring this design.

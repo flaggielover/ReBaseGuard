@@ -1,0 +1,196 @@
+P309 Windows/WSL isolation design candidate
+Evidence base de4a00fb0cd75eed935895cebe2f2d6098c8374f; 2026-10-15
+Disposition: PROPOSAL_ONLY_REVIEW_REQUIRED_NOT_DEPLOYABLE.
+Formal admission BLOCKED; route/execution/qualification authorization false.
+No accounts, distributions, services, keys, endpoints or policies are created.
+
+1. Facts driving the design
+- Current Windows effective token is not administrator. This does not prove the
+  account lacks a different elevated token; no elevation was attempted.
+- Ubuntu-24.04 is registered in current-user HKCU, DefaultUid 1000. Its registry
+  key ACL OWNER is built-in Administrators, distinct from the current token SID.
+  Registry ownership is not evidence of a separate WSL execution identity or DACL.
+- Guest UID/EUID is 1000; the private runtime is owned and metadata-writable by
+  that user. No p309/rebaseguard account name was found; differently named roles
+  were not excluded. Conventional Linux workspace/scratch are absent and the
+  scratch variable is unset. D: workspace appears 0777 through DrvFs; that is not
+  a complete Windows ACL model or a suitable basis for a Linux isolation claim.
+- systemd 255 is PID1. Current /init.scope quota is max, affinity 32. No loaded
+  p309-r2-* unit was found. Unit-file enumeration returned exit1/empty, not a
+  successful universal absence proof. Inspected cgroup files are not UID1000-
+  writable. /etc/polkit-1/rules.d was denied; actual authorization is UNKNOWN.
+- WSLInterop is enabled via /init. Kernel-Process/Power, Hyper-V-Compute and
+  WMI-Activity metadata exist; exact Lxss lookup did not match. These observations
+  prove neither trace authority/completeness nor an interop escape. WSL root and
+  Windows-token acquisition from another Linux account were explicitly UNTESTED.
+- timedatectl follow-up reported NTP synchronized. F: is absent; old backup
+  digest is historical only. Full host audit and route acceptance remain open.
+
+2. Proposed roles and names (reservations requested by design only)
+Windows service: ReBaseGuardP309Observer
+Windows service principal: NT SERVICE\ReBaseGuardP309Observer
+Windows service SID: enabled for that service; resolve locally, do not substitute
+  a caller-supplied SID. Proposed restricted virtual account, not LocalSystem.
+Windows image/config: C:\Program Files\ReBaseGuard-P309\observer\
+Windows protected state: C:\ProgramData\ReBaseGuard-P309\observer\
+Windows endpoint: \\.\pipe\ReBaseGuard-P309-Observer-v1
+CNG key logical name: ReBaseGuard-P309-Observer-v1; proposed RSA3072/SHA256,
+  non-exportable service-owned key; no certificate or private-key export.
+Windows relay: fixed executable under the protected image directory, run by the
+  explicitly selected Windows operator SID. It forwards bounded protocol bytes
+  only. It is not the observation trust root and accepts no executable/command.
+Guest distribution candidate: ReBaseGuard-P309
+Guest backing directory candidate: D:\ReBaseGuard-309\WSL\ReBaseGuard-P309
+Guest roles: p309-monitor and p309-runner, separate locked-password, non-root
+  accounts, dedicated primary groups, no sudo/admin/supplementary access groups.
+Guest monitor/control code: /usr/local/libexec/rebaseguard-p309/
+Guest root-owned control state: /var/lib/rebaseguard-p309-control/
+Guest monitor socket: /run/rebaseguard-p309/control.sock
+Guest monitor unit: rebaseguard-p309-monitor.service
+Guest fixed controller unit: rebaseguard-p309-control.service
+Guest development acceptance unit: p309-dev-owned-check.service
+Guest runtime candidate: /home/p309-runner/runtime/cpython-3.11.15/
+Guest repository/scratch candidates: /home/p309-runner/workspace and
+  /home/p309-runner/scratch, disjoint. No shared Git alternates/worktrees/refs.
+Every name/path above is proposed, not an assertion that it exists or is free.
+An authorized installer would have to reject collisions, not overwrite them.
+
+3. Why a separate execution distribution is proposed
+Do not disable interop/automount or change policy in the user's current
+Ubuntu-24.04. That distribution holds the preparation runtime and development
+records. Changing its global integration settings could affect unrelated work.
+A new, separately reviewed distribution can have, from its initial configuration:
+  [boot] systemd=true
+  [interop] enabled=false, appendWindowsPath=false
+  [automount] enabled=false
+These are design settings, not commands or an applied wsl.conf. Disabling
+automount is not network isolation, and hiding /mnt/c is not proof of interop
+denial. Later controlled tests must establish effective denial of PE/binfmt
+execution, Windows filesystem/UNC access and Windows-token acquisition for the
+runner, including alternate paths and inherited descriptors. Unknown/bypass
+keeps this design rejected. Do not infer success from configuration text alone.
+The trusted Windows operator can enter its WSL distribution as root. No claim
+of protection against that owner, Windows administrator, guest root or kernel
+is made. The intended boundary is an unprivileged runner versus protected
+monitor/observer and other work. Root/administrator compromise invalidates it.
+
+Windows-to-guest relay is initiated OUTSIDE the worker by the trusted Windows
+operator using a fixed distribution/user/executable tuple. Disabling guest-to-
+Windows interop must not be worked around by enabling it inside the runner.
+The observer virtual account is not assumed to own or be able to enter the
+operator's per-user WSL registration. SCM starting a service does not establish
+such access. The operator relay, service endpoint authentication and guest
+monitor authorization need a separately validated end-to-end binding.
+
+4. Observer data contract and trust
+The existing synthetic signer signs caller-supplied bytes. Keep it unchanged as
+a test fixture. The proposed real observer MUST NOT expose that signing API.
+Client request is a strict versioned object with only challenge/session/sequence,
+previous checkpoint, baseline digest and pre-enrolled guest/runtime binding.
+Reject unknown/duplicate fields, caller CPU/policy/coverage facts, commands,
+file paths and arbitrary bytes-to-sign before querying a collector or key.
+Use explicit message budgets no larger than existing development bounds, fresh
+nonces, one outstanding request and no replay/late continuation. The independent
+host bootstrap/baseline protocol needs review; a client-supplied baseline is
+never treated as evidence of host facts or an accepted initial safety state.
+
+The service collects Windows identities/clocks/process/lifetime/resource/policy
+facts itself, checks coverage/loss, then constructs and signs the fixed response.
+The signed response binds authorized guest enrollment, host/guest boot, service
+identity/version, runtime identity, sequence/checkpoint and observation interval.
+Guest public-key pin comes from administrator-controlled enrollment; no trust-on-
+first-hello. Service-owned key/anchor/config must be non-writable by operator
+relay and guest runner. Non-exportable alone does not prove that protection.
+Endpoint ACL plus actual peer/token authentication are required. Reject remote
+pipe clients and unauthorized local clients; endpoint name alone is not trust.
+The service exposes no start-process, change-policy, import-key or generic sign
+operation. Existing development pins/keys/journals are never promoted in place.
+
+Coverage is an independent deployment blocker. A virtual service account is NOT
+assumed to possess ETW kernel session rights or protected-process access. Prove
+the minimum needed rights and event completeness/loss behavior before proposing
+an exact privilege grant. Do not silently switch to LocalSystem, enable debug
+privilege, install a driver or set ATTESTED_COMPLETE to bypass denied coverage.
+If required protected/lifetime facts cannot be established, reject this route or
+bring an explicit semantic amendment for independent review; no green fallback.
+Do not exempt vmmemWSL/process names, all same-user activity or a caller allowlist.
+Host/guest CPU units, time denominators, ownership and double-counting need
+independent evidence. Discovered provider names are insufficient evidence.
+
+5. Guest control contract
+Runtime and monitor/control code are root-owned, runner-nonwritable, including
+every parent directory. Root-owned /home/p309-runner is traversable but not
+runner-writable; only its workspace/scratch children are runner-writable.
+Use trusted fresh image/build inputs, not a blind root copy of UID1000-writable
+code. Verify the official CPython3.11.15 source digest and bind the FULL installed
+runtime tree (stdlib/extensions as well as interpreter). A fresh build may have
+a different binary hash: record it, never inherit b21d... as an expected result.
+System Python and original Ubuntu/runtime remain untouched.
+
+The controller is a small root-owned privileged broker with fixed operations:
+status, stop, and (in later explicitly scoped development) start-fixed-idle-test.
+The runner has no broker endpoint access. Monitor access is checked using kernel
+peer credentials; no user-provided UID, unit name, PID, environment, command or
+systemd property map is accepted. No generic StartTransientUnit polkit grant and
+no broad sudo rule are proposed. Review unreadable existing policy through a
+separately authorized administrative path; do not assume it grants nothing.
+
+Development test unit has fixed trusted idle code, p309-runner User/Group,
+Restart=no, KillMode=control-group, KillSignal=SIGKILL, SendSIGKILL=yes,
+TimeoutStopSec=10s, NoNewPrivileges=yes, PrivateTmp=yes, ProtectSystem=strict,
+ProtectControlGroups=yes, Delegate=no and read-only runtime. Resolve required
+access to /proc and cgroup accounting explicitly; do not add hidepid/PrivateUsers
+or blanket filesystem restrictions that defeat native foreign-process gates.
+Protect/restrict resources based on the actual deployed unit, not /init.scope.
+No execution-unit values are claimed agreed: memory headroom, CPU capacity,
+MemoryMax/CPUQuota/CPUWeight/IOWeight, foreign roots and scratch need exact
+operator-reviewed values and current accounting. A CPU quota cap is not a
+reservation of four dedicated CPUs. This is a non-deployable parameter blocker.
+
+Whole-cgroup stop must handle descendants that setsid/change process groups,
+observe cgroup.events populated=0 and unit exit/cleanup, and distinguish request,
+OS acknowledgement and completed reaping. A lost acknowledgement stays unknown.
+Stop publication must remain independent of blocked signature/collection/storage
+operations and detect observer/relay/monitor loss and WSL restart/clock changes.
+Suspension, guest scheduling and supervisor death require explicit tested
+semantics; no real-time guarantee comes from a Python thread's poll interval.
+
+There is NO actual P309 start operation here. A future official adapter changes
+the reviewed launch contract and requires its own accepted route/source pins.
+Native p309_launch.py cannot be assumed compatible with this fixed broker.
+Keep native reference501f48cb, exactly-once files, grant/freeze machinery and
+development-tree differences unchanged. Do not install a p309-r2-* unit or run
+the qualification launcher while validating a future idle-only broker.
+
+6. Protected state and fail-closed recovery
+Windows observer owns an epoch/sequence/checkpoint journal outside caller write
+authority. Specify atomic publication/write-through, torn-record detection,
+startup reconciliation and independent rollback anchor BEFORE persistence can
+be called durable. NTFS/VHDX/filesystem presence alone proves none of these.
+Guest records are diagnostics, not the authoritative anti-rollback anchor.
+Boot/service/guest identity changes close the session; restart cannot reopen an
+attempt, replace a checkpoint or authorize a retry. No implementation of this
+store or recovery protocol is supplied by this design. Existing same-user
+development replay tests remain scoped evidence only.
+Earlier preparation recorded tight C: free space; this feasibility run did not
+refresh disk capacity. Before selecting the C: image/state paths for installation,
+budget the longest proposed window, bounded journal/log growth and refusal on
+space exhaustion. Development journal record/byte limits are not evidence that
+a 31.5-hour production window fits. Do not silently move trusted state below a
+caller-writable D: parent: parent rename/delete authority is part of the ACL
+review. Observer storage budgeting is a separate design condition, not a change
+to the native 40GB floor for P309 roots or a fresh disk-space observation.
+
+7. Review gates and next work
+Gate D1: source/architecture review only, using REVIEW_REQUEST.txt. No host work.
+Gate D2: implement isolated observer-owned request/response parsing and privileged
+broker policy as development libraries, plus loss/timeout/forgery cases; no
+service install, trace activation, production keys or official entrypoint.
+Gate D3: after D1/D2, produce a pinned administrative installation/rollback
+artifact with all parameter/coverage/enrollment/recovery blockers resolved.
+Only that concrete artifact can be considered for separate host-change approval.
+Gate D4: approved idle-only acceptance, followed by separate route/audit/drill/
+pre-freeze decisions. No D1-D3 result grants D4 or OD-R2-0(D).
+Known unresolved decisions/observations are enumerated in PLAN.json. No present
+administrator action, UAC prompt, sudo invocation, distribution creation, key
+generation, trace activation, policy edit, P309 run or test rerun is requested.

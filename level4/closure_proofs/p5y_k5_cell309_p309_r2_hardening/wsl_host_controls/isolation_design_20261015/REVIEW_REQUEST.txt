@@ -1,0 +1,50 @@
+Independent source/design review only; no host queries or configuration changes
+
+Fetch codex/p309-wsl-isolation-design-20261015 and verify the coordinator-supplied
+full commit. Use a separate clean worktree/new review branch. Read DESIGN.txt,
+ACCESS_AND_RECOVERY.txt, PLAN.json and SOURCE_BINDINGS.json in this directory.
+Verify all canonical source/evidence/report hashes using exact Git blob bytes.
+The base is de4a00fb0cd75eed935895cebe2f2d6098c8374f. Review its precise facts and
+limitations; do not collect another audit or repeat unchanged test suites.
+
+Review questions
+1. Are factual statements accurately scoped? In particular, registry ACL owner
+   versus per-user WSL registration, non-admin effective token versus account
+   elevation potential, denied polkit query versus absence of privilege, and
+   provider metadata versus complete collection must remain distinct.
+2. Does the proposed separate distribution and disabled interop address the
+   potential Linux-to-Windows identity path without pretending it has been
+   proven? Would any unprivileged runner path still acquire the Windows owner's
+   token, root, service control or control-file write access? State assumptions
+   and later acceptance cases rather than attempting such actions on this host.
+3. Are service/relay/guest identities and endpoint/trust relationships coherent?
+   The observer must not require unproven ownership of a per-user distribution,
+   must not sign caller-provided facts, and must not use first-hello key trust.
+4. Does the ACL/API matrix constrain code, key/anchor, pipe-instance creation,
+   remote clients and control requests? Check for implicit arbitrary commands,
+   root transient-unit properties, PID/unit-name injection or writable parents.
+5. Are collector privilege/completeness, host/guest attribution, resource values,
+   durable anchors and suspension/recovery honestly unresolved? No speculative
+   LocalSystem/debug privilege, coverage override or assumed reservation allowed.
+6. Is future whole-cgroup termination distinct from the fixed process-group
+   fixture? Is the future official launcher integration explicitly unimplemented
+   and subject to independent route review, preserving native r2 reference501?
+7. Are administrative changes/rollback bounded and recoverability claims honest?
+   Current Ubuntu, user data, evidence, protected refs and unavailable F: backup
+   must not be modified; destructive automatic unregister is not acceptable.
+
+Deliverable
+Add DESIGN_REVIEW_LOCAL.json and DESIGN_REVIEW_LOCAL_SOURCE_SHA256.json only,
+in this directory, with exact source commit/digests, findings by severity, file/
+paragraph references, concrete corrections, assumptions and a disposition such
+as CHANGES_REQUIRED or ACCEPTABLE_FOR_DEVELOPMENT_ONLY. This is not formal route
+acceptance, host acceptance, installation consent, pre-freeze review or run
+authorization. A clean design review does not resolve explicitly unknown host
+capabilities or enable deployment. Keep formal flags BLOCKED/false.
+
+Store review/evidence logs additively under a new records directory, preserve
+prior evidence/refs, commit only the two new review JSON files and push a separate
+codex/p309-wsl-isolation-design-review-20261015 branch normally. Report its exact
+HEAD and any unresolved issues. Do not change the design to hide findings.
+No elevation, new accounts/distributions/services/keys, trace/safety sampling,
+policy edits, tests, P309 workload, drill, freeze, grant or qualification occurs.
