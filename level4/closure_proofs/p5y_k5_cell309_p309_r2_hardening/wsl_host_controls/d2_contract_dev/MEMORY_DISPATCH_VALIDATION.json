@@ -1,0 +1,282 @@
+{
+  "authorization": "Existing explicit user authorization for pure-memory D2 protocol/state code, synthetic tests, additive evidence and normal push; no additional operational scope.",
+  "auxiliary_or_workload_processes_by_new_code_or_tests": 0,
+  "backup_status": "HISTORICAL_UNAVAILABLE_ONLY; NO_NEW_QUERY_OR_REHASH",
+  "base_commit": "78103f65ea9f30b516bd28d6a416ff8fc0781c81",
+  "base_current_blob_count_verified": 99,
+  "branch": "codex/p309-d2-memory-dispatch-dev-20261015",
+  "budgets": {
+    "max_instance_ascii_chars": 128,
+    "max_message_bytes": 16384,
+    "max_peer_epoch": 65536,
+    "max_pending": 64,
+    "max_role_ascii_chars": 32,
+    "max_tickets": 65536,
+    "unchanged_model_events": 8192,
+    "unchanged_model_generations": 16,
+    "unchanged_model_request_ids": 4096
+  },
+  "deployment_authorized": false,
+  "direct_imports": {
+    "d2_memory_dispatch.py": [
+      "collections",
+      "d2_broker_model",
+      "d2_control_wire",
+      "dataclasses",
+      "threading"
+    ],
+    "test_d2_memory_dispatch.py": [
+      "d2_broker_model",
+      "d2_memory_dispatch",
+      "dataclasses",
+      "test_d2_model",
+      "test_d2_wire",
+      "threading",
+      "unittest",
+      "unittest.mock"
+    ]
+  },
+  "evidence_directory": "/workspace/p309-d2-memory-dispatch-evidence-20261015",
+  "evidence_sha256": {
+    "result.json": "ca0db3b2e574472923150be60db10b65e82ef2940c4e30bd75f9fad8d59c7f6f",
+    "source-verification.json": "92002d3b8087d796571268ab283c97091cd9504a26c3084258a00136b0547814",
+    "unittest.log": "8a1100da804231b02d6d5e1c5a1a3e97fcdf8109f39594af7fea06cd2c94b32d"
+  },
+  "execution_authorized": false,
+  "formal_admission": "BLOCKED",
+  "freeze_or_grants_issued": false,
+  "historical_blob_binding_count_verified": 417,
+  "host_accepted": false,
+  "host_queries": 0,
+  "limitations": [
+    "One shared lock blocks close/stop when dispatch calculation is paused; no independent watchdog or latency guarantee",
+    "Queue-full can reject stop; no priority path or actual OS executor",
+    "Counter-boundary fixture does not prove long-duration operation",
+    "Python private attributes and synthetic labels are not a privilege boundary",
+    "No persistence, crash recovery, actual service/endpoint/account/key/unit or host controls implemented"
+  ],
+  "original_d2_feature_commit": "0f0b2bf53983657a79e7c4f9e782b68b985d8aed",
+  "prior_native_validation": {
+    "commit": "78103f65ea9f30b516bd28d6a416ff8fc0781c81",
+    "exact_ids_and_source_bindings_verified": true,
+    "old_tests_rerun": false,
+    "python": "3.11.15",
+    "source_commit": "0f0b2bf53983657a79e7c4f9e782b68b985d8aed",
+    "tests_passed": 46
+  },
+  "private_python_new_suite_validation": "PENDING; this new21-test result uses Cloud CPython3.12.14, not the private3.11.15 interpreter.",
+  "qualification_authorized": false,
+  "raw_unittest_log": "MEMORY_DISPATCH_TEST_LOG.txt",
+  "recorded_date": "2026-10-15",
+  "result": {
+    "actual_runner": "in-process unittest.TextTestRunner with per-test result collection",
+    "command_equivalent": "python3 -B -m unittest -v test_d2_memory_dispatch",
+    "elapsed_seconds": 0.021105464002175722,
+    "errors": 0,
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "failures": 0,
+    "invocations": 1,
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "skipped": 0,
+    "successful": true,
+    "suite": "test_d2_memory_dispatch",
+    "test_cases": [
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_all_exports_remain_blocked",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_cached_old_generation_rechecked_on_dequeue",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_calculation_exception_retains_item_and_latches_unknown",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_close_preserves_terminal_history_without_fresh_cleanup_claim",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_close_retains_fifo_for_unknown_refusals_and_cannot_reopen",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_concurrent_drain_publishes_each_request_once",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_concurrent_submit_keeps_unique_tickets",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_copies_synthetic_metadata_without_caller_alias",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_duplicate_stop_has_one_model_update_and_no_cleanup_claim",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_explicit_synthetic_factory",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_fifo_receipts_and_no_implicit_dispatch",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_full_queue_refuses_without_eviction_or_ticket_consumption",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_invalid_wire_and_public_start_never_advance_model",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_last_ticket_then_exhaustion_is_terminal",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_maximum_raw_size_is_validated_only_at_dispatch",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_paused_first_calculation_serializes_second_without_lost_update",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_queued_peer_refused_after_monitor_restart",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_queued_status_reads_dispatch_time_state",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_snapshot_and_export_mutation_cannot_change_published_model",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_submission_primitive_and_size_bounds_do_not_mutate",
+        "outcome": "passed"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_wrong_role_is_not_authenticated_by_enqueue",
+        "outcome": "passed"
+      }
+    ],
+    "tests_run": 21
+  },
+  "route_accepted": false,
+  "schema": "P309_D2_MEMORY_DISPATCH_COORDINATOR_VALIDATION/1",
+  "scope": "ADDITIVE_BOUNDED_IN_PROCESS_MEMORY_DISPATCH_AND_SYNTHETIC_TESTS_ONLY",
+  "service_endpoint_account_key_unit_policy_mutations": 0,
+  "source_sha256": {
+    "LOCAL_MEMORY_DISPATCH.txt": "f06d13d4327791d83b5a44e94d7aa80e3c3d163082acba28120032a17cd4cec6",
+    "MEMORY_DISPATCH.txt": "64aaab405e78ae532b9d893e2d1c49dcd1b58cc806ff8fbdd7f5d2a8d4076129",
+    "MEMORY_DISPATCH_TEST_LOG.txt": "8a1100da804231b02d6d5e1c5a1a3e97fcdf8109f39594af7fea06cd2c94b32d",
+    "d2_memory_dispatch.py": "0ac5daa6fa27772b2690a7261f2abc0f387a3d49b7d96caa92d97925af181aec",
+    "test_d2_memory_dispatch.py": "60367f54f3208787b9623b2803df8dd2605da3e5cfccda1dd31d7fe0c0f23dfd"
+  },
+  "static_review_limit": "Direct imports inspected alongside implementation and tests; this is scoped code review, not a security scan or independent approval.",
+  "target_execution_authorized": false,
+  "test_threads": "Ordinary in-process unittest threads/events only; no helpers, real workload or sampling.",
+  "unresolved_original_blockers": [
+    {
+      "deployment_blocking": true,
+      "id": "I1",
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ],
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Runner Windows/root boundary"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I2",
+      "original_fact_questions": [
+        1,
+        5
+      ],
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Collector rights, completeness and attribution"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I3",
+      "original_fact_questions": [
+        1,
+        6
+      ],
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Enrollment and ACL/API descriptors"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I4",
+      "original_fact_questions": [
+        2
+      ],
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Fresh image/runtime provenance"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I5",
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ],
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Guest policy/unit limits and controlled launcher"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I6",
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ],
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Protected persistence and stop/recovery"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I7",
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Route, host and formal authority"
+    }
+  ],
+  "verified_behavior": [
+    "FIFO, bounded admission and no queue eviction",
+    "Dispatch-time synthetic peer and generation checks, including cached old IDs",
+    "Concurrent ticket uniqueness and serialized model publication without lost updates",
+    "Duplicate stop idempotency, unknown latching, retained queue and terminal history",
+    "No public start/arm/reset operation, no actual credentials or OS authority"
+  ]
+}

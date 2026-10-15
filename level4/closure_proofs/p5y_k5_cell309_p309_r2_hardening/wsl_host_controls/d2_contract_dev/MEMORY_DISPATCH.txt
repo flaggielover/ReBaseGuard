@@ -1,0 +1,51 @@
+D2 additive slice: bounded in-process dispatch over the unchanged H4 model
+
+Base: 78103f65ea9f30b516bd28d6a416ff8fc0781c81, including the native 46-test
+validation of 0f0b2bf53983657a79e7c4f9e782b68b985d8aed. The previous wire/model,
+tests, contract, review and validation records remain byte-for-byte unchanged.
+The user's existing authorization covers pure-memory development and synthetic
+tests on a separate branch with additive evidence and a normal push.
+
+d2_memory_dispatch.py adds a queue and serialized publication of the immutable
+model. Each dispatcher starts with an empty synthetic model. submit accepts only
+bounded exact bytes and copies bounded primitive SyntheticPeer labels; these are
+caller-created simulation data, NEVER authenticated credentials. No external
+snapshot, callback, executor or receipt is accepted. Enqueue is not acceptance
+by the broker model. dispatch_next checks role/instance, protocol and generation
+against the model that exists at dequeue time, including before cache lookup.
+One RLock covers model calculation, publication and FIFO removal. Fixture events
+use the same lock. A revision changes only when the published model changes;
+it is not a durable sequence, authorization token or global fencing service.
+
+Budgets: 64 queued messages, 16384 bytes each, 65536 ticket IDs per dispatcher;
+peer role at most32 ASCII characters, instance at most128, positive integer
+epoch at most65536. The unchanged model also retains its own 4096 request-ID,
+16 generation and8192 event limits. Queue-full rejects without eviction or ticket
+consumption; a stop request can also be rejected when full. Ticket exhaustion
+closes admission and latches the model unknown, retaining queued items and model
+history. There is no automatic queue worker, timer, completion-result cache or
+ticket lookup endpoint; callers receive completions when they explicitly drain.
+
+An unexpected Exception from model.dispatch closes admission, latches unknown,
+retains the head item and propagates the exception. A subsequent explicit drain
+can return a model refusal; no successful stop receipt is invented. close is
+irreversible/idempotent and retains FIFO items for terminal refusals. It does not
+erase terminal history or reopen a generation. Private _fixture_* methods are
+synthetic setup only, and are refused after close. They are not an administrative
+permit API or a client start path. Same-process callers and Python objects are
+not an isolation boundary; deliberate modification of private attributes is not
+defended against. The ticket-boundary test sets a private counter to its boundary
+as a fixture; it does not establish long-duration or65536-message reliability.
+
+The shared lock is NOT an independent safety path: a paused calculation also
+blocks close, fixture events, status and stop dispatch. No stop latency, fairness,
+crash consistency, watchdog responsiveness or durable exactly-once execution is
+claimed. The artificially paused calculation test verifies serialized publication
+and retained updates in this library; it is not an OS workload termination test.
+The tests use normal in-process unittest threads/events only, with no process,
+service, endpoint, account, key, unit, host query, policy change or real workload.
+
+All I1-I7 remain OPEN_RETAINED and deployment-blocking. No actual peer identity,
+Windows/WSL privilege boundary, protected persistence, real cleanup or formal WSL
+route is established. Every exported authority flag remains BLOCKED/false.
+This slice neither completes D2 nor changes any formal P309 gate.

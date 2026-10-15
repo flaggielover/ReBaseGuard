@@ -1,0 +1,41 @@
+D2 memory-dispatch-only native validation (no host preparation or deployment)
+
+Fetch codex/p309-d2-memory-dispatch-dev-20261015 and verify the exact full SHA
+provided with the handoff. Create a separate clean worktree and independent
+codex/p309-d2-memory-dispatch-validation-20261015 branch from that commit.
+Read MEMORY_DISPATCH.txt and MEMORY_DISPATCH_VALIDATION.json. Verify all new
+source hashes and pinned base/history blobs in MEMORY_DISPATCH_SOURCE_SHA256.json
+using canonical Git bytes; record worktree bytes and CRLF handling separately.
+
+Use the existing private interpreter, from this d2_contract_dev directory:
+  /home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 -B -m unittest -v test_d2_memory_dispatch
+
+Expected21 tests, zero failures/errors/skips, one invocation. Only this new suite
+is requested. Existing46 wire/model tests have unchanged sources and already
+passed in private CPython3.11.15; do not rerun them or previous host/interop/stop
+suites. Normal unittest threads/events are development tooling, not P309 workers
+or an actual OS controller. No Windows signing helper, PowerShell sampler or
+auxiliary subprocess is part of this suite. Record runtime context only from
+sys.version/sys.executable in the same normal test context; no host inventory,
+interpreter rehash, process audit, clock query or backup-drive access is requested.
+
+Review the limited source behavior: bounded queue, no eviction, unique tickets,
+dispatch-time peer/G validation before cached responses, one-lock publication,
+duplicate request behavior, retained terminal history and fail-unknown handling.
+Do not equate synthetic peer labels with authentication, publication with durable
+fencing, or a shared lock with an independent stop/watchdog path. Queue-full may
+reject stop and a blocked calculation blocks close/stop. I1-I7 remain open.
+If a defect is found, preserve the failure and report it; do not change source,
+assertions, budgets or counts to obtain a pass.
+
+Save full stdout/stderr, exit code, per-test IDs/outcomes and runtime context in
+a new additive records directory. Preserve existing records and Git refs using
+file/Git reads only; no fresh F: query or backup rehash. F: status remains historical.
+Add only MEMORY_DISPATCH_LOCAL_VALIDATION.json and
+MEMORY_DISPATCH_LOCAL_SOURCE_SHA256.json beside these sources, including limited
+review findings and evidence hashes. Keep coordinator JSON and all old records
+unchanged. Commit and normally push the separate validation branch, verify exact
+remote HEAD and report it. No actual service/endpoint/account/key/unit, host query,
+elevation, policy edit, safety sample or P309 workload is authorized by this task.
+Keep formal_admission=BLOCKED and route/host/deployment/execution/qualification/
+target authorization false; this validation grants no new implementation scope.
