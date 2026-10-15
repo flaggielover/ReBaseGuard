@@ -269,7 +269,7 @@ class TestHarnessExecutionControls(unittest.TestCase):
         self.assertFalse(rec["pass"])
 
     def test_registry_witnesses_and_complete_input_hashes(self):
-        self.assertEqual(len(H.validate_registry()), 187)
+        self.assertEqual(len(H.validate_registry()), 193)
         hashes = H.input_hashes()
         for filename in ("lx_platform.py", "lx_inventory.py", "lx_verified.py", "tests/test_lx_platform.py",
                          "tests/test_sync_boundaries.py", "tests/test_lx_verified.py", "tests/test_mutation_harness.py",

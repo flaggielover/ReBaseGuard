@@ -1,0 +1,17 @@
+"""Review 68: RA1 re-run with the witness list widened to the include/worktree test (the test that failed).
+usage: python3 -B -I ra1_reclassify.py.txt <pinned DEV dir> <scratch tmp dir>"""
+import importlib.util, json, os, sys, tempfile
+from pathlib import Path
+DEV, TMP = sys.argv[1:3]
+spec = importlib.util.spec_from_file_location("rm", Path(DEV, "tests/run_mutants.py")); H = importlib.util.module_from_spec(spec); spec.loader.exec_module(H)
+src = H.SRC.read_text()
+env = dict(os.environ); env.pop("LX_PLATFORM_DIR", None)
+env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONWARNINGS="error", PYTHONHASHSEED="0")
+base = H.run_suite(env)
+mut, counts, err = H.apply_mutation(src, [('re.compile(r"fsck\\.|extensions', 're.compile(r"fsck\\.(skiplist|missingemail)$|extensions')])
+with tempfile.TemporaryDirectory(dir=TMP) as d:
+    Path(d, "lx_platform.py").write_text(mut)
+    suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+w = ["test_review65_local_fsck_or_promisor_configuration_refuses", "test_review66_configuration_in_includes_and_worktree_scope_refuses"]
+print(json.dumps({"counts": counts, "baseline_ran": base["ran"], "ran": suite["ran"], "classify": H.classify_mutant(suite, base, w),
+                  "failed": sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]})}))

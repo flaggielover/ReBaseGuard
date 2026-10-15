@@ -1,0 +1,303 @@
+{
+ "source_sha256": "fbcf9ef595365fb17f7f092a50d5c5df8e0b10b3fba8c1779ddc8a856ebd6284",
+ "baseline_ran": 224,
+ "baseline_pass": true,
+ "expected_test_count": 224,
+ "registered": [
+  {
+   "id": "RV31",
+   "witnesses": [
+    "test_review65_forged_graph_and_rewritten_object_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 224,
+   "failed_methods": [
+    "test_review65_forged_graph_and_rewritten_object_refuse",
+    "test_review67_warning_class_tree_name_refuses"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "aa1349244842a9da68fa70586dacbb0866dce4188fd56ff35c7ae7ae268941ee"
+  },
+  {
+   "id": "RV44",
+   "witnesses": [
+    "test_review66_fsmonitor_command_never_runs"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 224,
+   "failed_methods": [
+    "test_review66_fsmonitor_command_never_runs"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "1e02e802542e1652f51c9039805d3b7b5b516ce415fa6226700c355668acf9ce"
+  },
+  {
+   "id": "RV49",
+   "witnesses": [
+    "test_review67_warning_class_tree_name_refuses"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 224,
+   "failed_methods": [
+    "test_review67_warning_class_tree_name_refuses"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "0971c9530057ad17d5fb8db93a982ff0583a59e3d19bc5032b56676aa90e48f9"
+  },
+  {
+   "id": "RV50",
+   "witnesses": [
+    "test_review67_signature_program_never_runs"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 224,
+   "failed_methods": [
+    "test_review67_signature_program_never_runs"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "84bf62dc9c20954f238af5af6f375401d7533b63228cdfc8b96351c2221143a9"
+  },
+  {
+   "id": "RV51",
+   "witnesses": [
+    "test_review67_global_attributes_file_is_not_read"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 224,
+   "failed_methods": [
+    "test_review67_global_attributes_file_is_not_read"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "088860374868218aa758122ef16b5d8577ec1110d4f48cd40e373ec5298032cc"
+  },
+  {
+   "id": "RV52",
+   "witnesses": [
+    "test_review65_forged_graph_and_rewritten_object_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 224,
+   "failed_methods": [
+    "test_review65_forged_graph_and_rewritten_object_refuse"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "7108a2eae02adac4349c90c22c5c081da4e018c9e0dcc64996306474293d0ffd"
+  },
+  {
+   "id": "RV53",
+   "witnesses": [
+    "test_review65_local_fsck_or_promisor_configuration_refuses"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 224,
+   "failed_methods": [
+    "test_review65_local_fsck_or_promisor_configuration_refuses"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "641d02072a0a0642b566f0adb13902c8cf35ada83d558e1dfef6f4326d1bcaf5"
+  },
+  {
+   "id": "RV54",
+   "witnesses": [
+    "test_review65_local_fsck_or_promisor_configuration_refuses"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 224,
+   "failed_methods": [
+    "test_review65_local_fsck_or_promisor_configuration_refuses"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "c6984a9015808d25568923b156cac5be0f8f6f3dbbd9f5c4990bf3454ca2a93d"
+  }
+ ],
+ "mutants": [
+  {
+   "id": "RA1",
+   "property": "fsck-key refusal narrowed to the two keys the suite tests (fsck.skipList, fsck.missingEmail)",
+   "witnesses": [
+    "test_review65_local_fsck_or_promisor_configuration_refuses"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "re.compile(r\"fsck\\.|extensions",
+     "new": "re.compile(r\"fsck\\.(skiplist|missingemail)$|extensions"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: history completeness not established (shallow clone or unreadable)",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ],
+    "without_key": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: history completeness not established (shallow clone or unreadable)",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    },
+    "history_complete": false
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": [],
+    "without_key": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: history completeness not established (shallow clone or unreadable)",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    },
+    "history_complete": true
+   },
+   "status": "ERROR",
+   "reasons": [
+    "NO_INTENDED_PROPERTY_ASSERTION"
+   ],
+   "ran": 224,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review66_configuration_in_includes_and_worktree_scope_refuses"
+   ],
+   "mutated_sha256": "6536e78e715b8f60f327b07d3743454bd57b662f0fb93e1209c97372501009da"
+  },
+  {
+   "id": "RA2",
+   "property": "strict fsck narrowed to the one tested message (fsck.fullPathname=error instead of --strict)",
+   "witnesses": [
+    "test_review67_warning_class_tree_name_refuses"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "_git(repo_root, \"fsck\", \"--full\", \"--strict\", \"--no-dangling\", \"--no-progress\")",
+     "new": "_git(repo_root, \"-c\", \"fsck.fullPathname=error\", \"fsck\", \"--full\", \"--no-dangling\", \"--no-progress\")"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: history completeness not established (shallow clone or unreadable)",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 224,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "976690a9a6096c48588957864d02abfe76698e1e36e819ff3b58cc70e5d068ca"
+  },
+  {
+   "id": "RA3",
+   "property": "log.showSignature=false only on the blob search (--no-show-signature there); the -S search honours the repository's setting",
+   "witnesses": [
+    "test_review67_signature_program_never_runs"
+   ],
+   "anchor_counts": [
+    1,
+    1
+   ],
+   "edits": [
+    {
+     "old": "                  \"-c\", \"log.showSignature=false\",              # review 67 N2: no signature program from `git log`\n",
+     "new": ""
+    },
+    {
+     "old": "    blob_commits = _commits(repo_root, f\"--find-object={blob}\", \"HEAD\")",
+     "new": "    blob_commits = _commits(repo_root, \"--no-show-signature\", f\"--find-object={blob}\", \"HEAD\")"
+    }
+   ],
+   "outcome_base": {
+    "valid": true,
+    "reasons": [],
+    "signature_program_ran": false
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": [],
+    "signature_program_ran": true
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 224,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "19353fdcafbb6dd939b963587932a140a63553bf5d23acb7a334303b371450c9"
+  },
+  {
+   "id": "RA4",
+   "property": "the system attributes file is read (GIT_ATTR_NOSYSTEM dropped)",
+   "witnesses": [
+    "test_review67_global_attributes_file_is_not_read",
+    "test_review64_order_ignores_reading_configuration"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM=\"1\",",
+     "new": "GIT_CONFIG_GLOBAL=os.devnull,"
+    }
+   ],
+   "outcome_base": {
+    "valid": true,
+    "reasons": [],
+    "note": "system attributes file (/etc/gitattributes) not writable here; outcome inert"
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": [],
+    "note": "system attributes file (/etc/gitattributes) not writable here; outcome inert"
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 224,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "310e99041787cbe964c0725911f4a2e0b0016704f0d054f506fb2386e644ba02"
+  }
+ ]
+}

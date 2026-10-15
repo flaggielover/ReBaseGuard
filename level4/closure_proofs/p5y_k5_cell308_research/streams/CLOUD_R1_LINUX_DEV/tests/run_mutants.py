@@ -12,7 +12,8 @@ RV18-RV28 carry review 64's surviving mutants (RW1-RW4, RW6) and weaken its K1, 
 weaken the history-completeness guard restored after review 64 (shallow clones hide deleted rejections); RV31-RV42
 carry review 65's mutants RX1-RX6 and weaken its L1, L3, L6 and L7 repairs; RV43-RV48 weaken review 66's M1-M4
 repairs (RV39 is narrowed to the key refusal; the lazy-fetch block is RV45); RV49-RV51 weaken review 67's N1, N2 and
-N4 repairs, and RV52-RV54 carry its surviving mutants RZ1, RZ4 and RZ5 (N5).
+N4 repairs, and RV52-RV54 carry its surviving mutants RZ1, RZ4 and RZ5 (N5); RV55-RV58 carry review 68's mutants
+RA1-RA4 and RV59-RV60 weaken its P1 repair (RV26 then also tolerates symlinks in the history scan).
 Every complete raw report, mutation anchor, and before/after input hash is retained.
 No scientific evaluator is imported or executed. Explicit output paths receive the evidence.
 
@@ -534,7 +535,7 @@ MUTANTS = [('M01',
   'Combined R5 repair: unavailable recursive listing cannot be replaced by an independent accepting read; '
   'on the combined source unavailable review history is ignored too, and the review-64 mode check tolerates a path '
   'missing from the (emptied) exact listing, since both would otherwise refuse the same way',
-  [('    if history is None:\n        return [], ["UNAVAILABLE: review history unreadable or not UTF-8"]\n',
+  [('    if history is None:\n        return [], ["UNAVAILABLE: review history unreadable, not UTF-8 or not regular files"]\n',
     '    if history is None:\n        history = []\n'),
    ('        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):',
     '        if path in entries and entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):'),
@@ -593,7 +594,7 @@ MUTANTS = [('M01',
     '')]),
  ('RV10',
   'Review 63 H3: unreadable review history counts as no historical rejection',
-  [('    if history is None:\n        return [], ["UNAVAILABLE: review history unreadable or not UTF-8"]\n',
+  [('    if history is None:\n        return [], ["UNAVAILABLE: review history unreadable, not UTF-8 or not regular files"]\n',
     '    if history is None:\n        history = []\n')]),
  ('RV11',
   'Review 63 H3: side branches simplified away from the historical review scan',
@@ -652,10 +653,13 @@ MUTANTS = [('M01',
   'Review 64 K4: a full sha inside a longer hex run no longer names the attestation',
   [('    return sha in line.lower() or any(', '    return any(')]),
  ('RV26',
-  'Review 64 K7: a symlink counts as an accepting review file',
+  'Review 64 K7: a symlink counts as an accepting review file (on the combined source the review-68 history scan '
+  'tolerates symlinks too, since it would otherwise refuse the same symlink)',
   [('        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):\n            continue',
     '        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob"), ("120000", "blob")):\n'
-    '            continue')]),
+    '            continue'),
+   ('            if parts[0] not in (b"100644", b"100755"):          # review 68 P1',
+    '            if parts[0] not in (b"100644", b"100755", b"120000"):  # review 68 P1')]),
  ('RV27',
   'Review 64 K9: review blobs read with git show (a range-like name is parsed as a revision range)',
   [('        data = _git(repo_root, "cat-file", "blob", f"HEAD:{path}")    # review 64 K9: never a revision range\n',
@@ -761,9 +765,36 @@ MUTANTS = [('M01',
   [('re.compile(r"fsck\\.|extensions\\.partialclone$|remote', 're.compile(r"fsck\\.|remote')]),
  ('RV54',
   'Review 67 N5 (RZ5): promisor keys are refused only for a remote named origin',
-  [('|remote\\..*\\.(promisor|partialclonefilter)$")', '|remote\\.origin\\.(promisor|partialclonefilter)$")')])]
+  [('|remote\\..*\\.(promisor|partialclonefilter)$")', '|remote\\.origin\\.(promisor|partialclonefilter)$")')]),
+ ('RV55',
+  'Review 68 P3 (RA3): signature programs are off only for the --find-object search; the -S search honours the '
+  'repository',
+  [('                  "-c", "log.showSignature=false",              # review 67 N2: no signature program from `git log`\n',
+    ''),
+   ('    blob_commits = _commits(repo_root, f"--find-object={blob}", "HEAD")',
+    '    blob_commits = _commits(repo_root, "--no-show-signature", f"--find-object={blob}", "HEAD")')]),
+ ('RV56',
+  'Review 68 P4 (RA2): strict fsck narrowed to the one tested message (fullPathname)',
+  [('    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None',
+    '    return _git(repo_root, "-c", "fsck.fullPathname=error", "fsck", "--full", "--no-dangling", "--no-progress") '
+    'is not None')]),
+ ('RV57',
+  'Review 68 P4 (RA4): the system attributes file is read (GIT_ATTR_NOSYSTEM dropped)',
+  [('GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM="1",', 'GIT_CONFIG_GLOBAL=os.devnull,')]),
+ ('RV58',
+  'Review 68 (RA1): the fsck-key refusal narrowed to fsck.skipList and fsck.missingEmail',
+  [('re.compile(r"fsck\\.|extensions', 're.compile(r"fsck\\.(skiplist|missingemail)$|extensions')]),
+ ('RV59',
+  'Review 68 P1: a symlink or gitlink under the review directory in the history is read as its target text or '
+  'skipped',
+  [('            if parts[0] not in (b"100644", b"100755"):          # review 68 P1: a symlink or gitlink under the\n'
+    '                return None                                     # directory is not a review file; unavailable\n',
+    '            if parts[1] != b"blob":\n                continue\n')]),
+ ('RV60',
+  'Review 68 P1: the review directory or an ancestor may be a symlink (or other non-directory) in some commit',
+  [('    if not _review_dir_is_a_directory(repo_root):', '    if False:')])]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 54}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 60}
 
 # A kill must include at least one named direct witness for the weakened property.
 # These method names are unique across the full discovered suite. They are evidence
@@ -855,7 +886,7 @@ for _method, _ids in {
     "test_review64_missing_blob_commits_refuse": "RV18",
     "test_review64_shallow_history_refuses_deleted_preboundary_rejection": "RV29 RV30",
     "test_review65_forged_graph_and_rewritten_object_refuse": "RV31 RV52",
-    "test_review65_local_fsck_or_promisor_configuration_refuses": "RV32 RV53 RV54",
+    "test_review65_local_fsck_or_promisor_configuration_refuses": "RV32 RV53 RV54 RV58",
     "test_review65_replace_refs_and_grafts_are_ignored": "RV33 RV34 RV35",
     "test_review65_short_exact_listing_refuses": "RV38",
     "test_review65_partial_clone_runs_no_configured_command": "RV39",
@@ -868,8 +899,10 @@ for _method, _ids in {
     "test_review66_unreadable_configuration_listing_refuses": "RV47",
     "test_review66_configuration_in_includes_and_worktree_scope_refuses": "RV48",
     "test_review67_warning_class_tree_name_refuses": "RV49",
-    "test_review67_signature_program_never_runs": "RV50",
+    "test_review67_signature_program_never_runs": "RV50 RV55",
     "test_review67_global_attributes_file_is_not_read": "RV51",
+    "test_review68_non_directory_review_paths_refuse": "RV59 RV60",
+    "test_review68_strict_fsck_and_forced_git_environment": "RV56 RV57",
     "test_review64_dangling_top_entry_shadows_lower_mask": "RV19",
     "test_review64_non_utf8_historical_review_path_refuses": "RV20",
     "test_review64_side_branch_acceptance_synced_and_merged_refuses": "RV22",
@@ -1181,7 +1214,7 @@ def main(out: str | None) -> int:
     rows = []
     for mid, what, edits in MUTANTS:
         row = {"id": mid, "origin": ("combined integration" if mid.startswith("R5SYNC") or mid == "CDEX16" else
-                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-67" if mid.startswith("RV") else
+                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-68" if mid.startswith("RV") else
                            "Claude revision 5"),
                "property": what, "intended_property_test_methods": PROPERTY_WITNESSES[mid],
                "edits": [{"old": old, "new": new} for old, new in edits]}

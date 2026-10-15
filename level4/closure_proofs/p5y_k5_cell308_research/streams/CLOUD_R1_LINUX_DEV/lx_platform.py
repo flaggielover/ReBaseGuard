@@ -1197,12 +1197,14 @@ def _history_complete(repo_root) -> bool:
     checks); (3) review 65 L1: `git fsck --full` of every object, alternates included, passes (a rewritten object
     fails it). The commit-graph is never read (review 66 M1: its changed-path Bloom filters are not verified by fsck),
     and no fsmonitor command runs (M2). `--strict` is required (review 67 N1): a warning-class tree entry, e.g. one
-    whose NAME is `<review dir>/veto.md`, is invisible to the pathspec-limited history scan while a checkout shows the
-    file; strict fsck refuses it (and also refuses legitimate histories with any warning, e.g. zero-padded modes). Any
-    other answer, a failure or a timeout is not evidence. This is defence in depth, not a closure (review 67 N7): it
-    trusts git's own verification at the moment of the check; it does not detect a history rewritten consistently (new
-    commit ids), nor a change made by another process between this check and the reads, which the ledger binding is
-    to catch."""
+    whose NAME is `<review dir>/veto.md`, is invisible to the pathspec-limited history scan; strict fsck refuses it (and
+    also refuses legitimate histories with any WARN-class message, e.g. zero-padded modes; INFO-class messages such as
+    `badFilemode` pass, review 68 P2). The rule is defined on git tree paths and blob contents; checkout-view
+    equivalence is not established (review 68 P1: symlinks, refused separately by _historical_review_blobs and
+    _review_dir_is_a_directory). Any other answer, a failure or a timeout is not evidence. This is defence in depth,
+    not a closure (review 67 N7): it trusts git's own verification at the moment of the check; it does not detect a
+    history rewritten consistently (new commit ids), nor a change made by another process between this check and the
+    reads, which the ledger binding is to catch."""
     if _git(repo_root, "rev-parse", "--is-shallow-repository") != b"false\n":
         return False
     names = _git(repo_root, "config", "--includes", "--name-only", "--list", "-z")  # review 66 M3: every scope
@@ -1222,6 +1224,28 @@ def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
     except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
         return False
     return r.returncode == 0
+
+
+def _review_dir_is_a_directory(repo_root) -> bool:
+    """Review 68 P1: in EVERY commit of HEAD's history, ACCEPTANCE_REVIEW_DIR and each of its ancestors is a directory
+    or absent. A symlink (or gitlink, or file) there would let a checkout show files at review paths that git's scan
+    never lists; such a history is unavailable evidence. One `cat-file --batch-check` reads `<commit>:<path>` for all
+    of them; only `<oid> tree <size>` and `<commit>:<path> missing` answers are accepted."""
+    commits = _git(repo_root, "rev-list", "HEAD")
+    if not commits:
+        return False
+    parts = ACCEPTANCE_REVIEW_DIR.split("/")
+    names = [f"{c}:{'/'.join(parts[:i])}" for c in commits.decode("ascii", "replace").split()
+             for i in range(1, len(parts) + 1)]
+    try:
+        r = subprocess.run(["git", "-C", str(repo_root), *_GIT_ISOLATION, "cat-file", "--batch-check"],
+                           input=("\n".join(names) + "\n").encode(), capture_output=True, timeout=60, env=_git_env())
+    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
+        return False
+    answers = r.stdout.decode("utf-8", "replace").split("\n")
+    if r.returncode != 0 or answers[-1] != "" or len(answers) != len(names) + 1:
+        return False
+    return all(a == f"{n} missing" or re.fullmatch(r"[0-9a-f]{40,64} tree [0-9]+", a) for n, a in zip(names, answers))
 
 
 _VERDICT = re.compile(r"(?i:.*\bverdict\b)|\s*[A-Z][A-Z0-9_]*\s*:\s*[A-Z][A-Z0-9_]*\s*$")   # review 63 H7
@@ -1250,7 +1274,8 @@ def _historical_review_blobs(repo_root, current: set) -> list | None:
     """Review 63 H3: every (blob, path) that existed under ACCEPTANCE_REVIEW_DIR in ANY commit of HEAD's full
     history (side branches included) and is not one of the ``current`` HEAD paths' blobs, with its UTF-8 lines. A
     rejection therefore survives `git rm`, `git mv` out of the directory and later edits. None if any listing or blob
-    is unavailable or not UTF-8."""
+    is unavailable or not UTF-8, or if any entry under the directory in any commit is not a regular file (review 68
+    P1)."""
     commits = _git(repo_root, "rev-list", "--full-history", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)
     if commits is None:
         return None
@@ -1264,8 +1289,8 @@ def _historical_review_blobs(repo_root, current: set) -> list | None:
             parts = meta.split()
             if not sep or len(parts) != 3:
                 return None
-            if parts[1] != b"blob":
-                continue
+            if parts[0] not in (b"100644", b"100755"):          # review 68 P1: a symlink or gitlink under the
+                return None                                     # directory is not a review file; unavailable
             try:
                 seen.setdefault(parts[2].decode("ascii"), name.decode("utf-8", errors="strict"))
             except UnicodeDecodeError:
@@ -1354,7 +1379,9 @@ def _acceptances(repo_root, sha: str) -> tuple:
     current = {oid for mode, kind, oid in entries.values()}
     history = _historical_review_blobs(repo_root, current)
     if history is None:
-        return [], ["UNAVAILABLE: review history unreadable or not UTF-8"]
+        return [], ["UNAVAILABLE: review history unreadable, not UTF-8 or not regular files"]
+    if not _review_dir_is_a_directory(repo_root):
+        return [], ["UNAVAILABLE: the review directory or an ancestor is not a directory in some commit"]
     rej += [f"HISTORICAL: {path} (blob {oid[:12]})" for oid, path, lines in history if _vetoing(lines, sha)]
     for path in tree:
         name = Path(path).name

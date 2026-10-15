@@ -1396,6 +1396,7 @@ class TestAttestationPreflight(unittest.TestCase):
         att = self.attestation()
         sha = hashlib.sha256(att).hexdigest()
         for key, value in ((None, None), ("fsck.missingEmail", "ignore"), ("fsck.skipList", os.devnull),
+                           ("fsck.fullPathname", "ignore"),
                            ("remote.origin.promisor", "true"), ("remote.origin.partialclonefilter", "blob:none"),
                            ("extensions.partialClone", "origin"), ("remote.upstream.promisor", "true")):
             with self.subTest(key=key), tempfile.TemporaryDirectory() as d:
@@ -1410,7 +1411,7 @@ class TestAttestationPreflight(unittest.TestCase):
                 if key is None:
                     self.assertIsNotNone(rec, why)
                 else:
-                    self.assertIsNone(rec)                                                # RV32 RV53 RV54
+                    self.assertIsNone(rec)                                           # RV32 RV53 RV54 RV58
                     self.assertTrue(any("history completeness" in w for w in why), why)
 
     def _partial_clone(self, d, att):
@@ -1591,28 +1592,33 @@ class TestAttestationPreflight(unittest.TestCase):
     def test_review67_signature_program_never_runs(self):
         """Review 67 N2: with the repository's own `log.showSignature=true` and `gpg.program`, a signed commit selected
         by the order rule's `git log` would run that program after fsck (it could rewrite a verified object); no
-        signature program runs, and the legitimate repository is accepted (review 67 N3)."""
+        signature program runs, and the legitimate repository is accepted (review 67 N3). Both the attestation commit
+        (selected by `--find-object`) and the acceptance commit (selected by `-S`) are signed (review 68 P3)."""
         att = self.attestation()
         sha = hashlib.sha256(att).hexdigest()
         with tempfile.TemporaryDirectory() as d:
             repo, marker = Path(d, "r"), Path(d, "gpg.marker")
             repo.mkdir()
             git_init(repo)
+
+            def sign_head():
+                raw = subprocess.run(["git", "-C", str(repo), "cat-file", "commit", "HEAD"], capture_output=True,
+                                     check=True).stdout
+                sig = b"gpgsig -----BEGIN PGP SIGNATURE-----\n \n iQEz\n -----END PGP SIGNATURE-----\n"
+                signed = self._out(repo, "hash-object", "-t", "commit", "-w", "--stdin",
+                                   data=raw.replace(b"\n\n", b"\n" + sig + b"\n", 1))
+                fixture_git(repo, "update-ref", "HEAD", signed)
             git_commit(repo, {"att/HOST.json": att})
-            raw = subprocess.run(["git", "-C", str(repo), "cat-file", "commit", "HEAD"], capture_output=True,
-                                 check=True).stdout
-            sig = b"gpgsig -----BEGIN PGP SIGNATURE-----\n \n iQEz\n -----END PGP SIGNATURE-----\n"
-            signed = self._out(repo, "hash-object", "-t", "commit", "-w", "--stdin",
-                               data=raw.replace(b"\n\n", b"\n" + sig + b"\n", 1))
-            fixture_git(repo, "update-ref", "HEAD", signed)
+            sign_head()
             git_commit(repo, {f"{ACC}1.md": self.accept(sha)})
+            sign_head()
             script = Path(d, "gpg.sh")
             script.write_text(f"#!/bin/sh\ntouch '{marker}'\nexit 1\n")
             script.chmod(0o755)
             fixture_git(repo, "config", "--local", "log.showSignature", "true")
             fixture_git(repo, "config", "--local", "gpg.program", str(script))
             rec, why = self._valid_in(repo, att)
-            self.assertFalse(marker.exists(), "a repository-configured signature program ran")  # RV50
+            self.assertFalse(marker.exists(), "a repository-configured signature program ran")  # RV50 RV55
             self.assertIsNotNone(rec, why)
 
     def test_review67_global_attributes_file_is_not_read(self):
@@ -1627,6 +1633,70 @@ class TestAttestationPreflight(unittest.TestCase):
             with mock.patch.dict(os.environ, {"HOME": str(home)}):
                 out = L._git(repo, "check-attr", "diff", "--", "x")
             self.assertEqual(out, b"x: diff: unspecified\n")                              # RV51
+
+    def test_review68_non_directory_review_paths_refuse(self):
+        """Review 68 P1: a checkout can show a rejection at a review path that git's scan never lists as a regular
+        file there: a symlink (at HEAD or in history), a gitlink, the review directory itself, or one of its ancestors
+        being a symlink in some commit. Each is unavailable evidence."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        rd = L.ACCEPTANCE_REVIEW_DIR
+        veto = f"{sha} REJECTED\n".encode()
+        up = "../" * rd.count("/")
+        for case in ("head_symlink", "history_symlink", "history_gitlink", "review_dir_symlink", "ancestor_symlink"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as d:
+                git_init(d)
+                git_commit(d, {"att/HOST.json": att})
+                if case in ("head_symlink", "history_symlink"):
+                    git_commit(d, {"notes/veto.txt": veto})
+                    Path(d, rd).mkdir(parents=True)
+                    os.symlink(f"{up}../notes/veto.txt", Path(d, rd, "veto.md"))
+                    git_commit(d, {})
+                    if case == "history_symlink":
+                        fixture_git(d, "rm", "-q", f"{rd}/veto.md")
+                        git_commit(d, {})
+                elif case == "history_gitlink":
+                    head = self._out(d, "rev-parse", "HEAD")
+                    fixture_git(d, "update-index", "--add", "--cacheinfo", f"160000,{head},{rd}/sub")
+                    self._out(d, "commit", "-q", "-m", "gitlink")                         # no `add -A`
+                    fixture_git(d, "rm", "-q", "--cached", f"{rd}/sub")
+                    self._out(d, "commit", "-q", "-m", "rm")
+                else:
+                    top = rd if case == "review_dir_symlink" else rd.split("/")[0]
+                    git_commit(d, {f"alt/{rd}/veto.md" if case == "ancestor_symlink" else "alt/veto.md": veto})
+                    Path(d, top).parent.mkdir(parents=True, exist_ok=True)
+                    os.symlink("../" * top.count("/") + "alt", Path(d, top))
+                    git_commit(d, {})
+                    fixture_git(d, "rm", "-q", top)
+                    fixture_git(d, "rm", "-q", "-r", "alt")
+                    git_commit(d, {})
+                git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+                rec, why = self._valid_in(d, att)
+                self.assertIsNone(rec)                                                    # RV59 RV60
+                self.assertTrue(any("UNAVAILABLE" in w for w in why), why)
+
+    def test_review68_strict_fsck_and_forced_git_environment(self):
+        """Review 68 P4: (a) `--strict` itself is required: a WARN-class message other than fullPathname (a
+        zero-padded tree mode) refuses as unavailable evidence; (b) the forced git environment, including
+        GIT_ATTR_NOSYSTEM, which a test cannot observe without writing the system attributes file."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att})
+            c1 = self._out(d, "rev-parse", "HEAD")
+            tree = self._out(d, "hash-object", "-t", "tree", "--literally", "-w", "--stdin",
+                             data=b"040000 att\0" + bytes.fromhex(self._out(d, "rev-parse", "HEAD:att")))
+            fixture_git(d, "update-ref", "HEAD", self._out(d, "commit-tree", tree, "-p", c1, "-m", "padded"))
+            git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+            rec, why = self._valid_in(d, att)
+            self.assertIsNone(rec)                                                        # RV56
+            self.assertTrue(any("history completeness" in w for w in why), why)
+        forced = {k: L._git_env().get(k) for k in ("GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL", "GIT_ATTR_NOSYSTEM",
+                                                    "GIT_GRAFT_FILE", "GIT_NO_LAZY_FETCH")}
+        self.assertEqual(forced, {"GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull,
+                                  "GIT_ATTR_NOSYSTEM": "1", "GIT_GRAFT_FILE": os.devnull,
+                                  "GIT_NO_LAZY_FETCH": "1"})                              # RV57
 
     def test_review65_replace_refs_and_grafts_are_ignored(self):
         """Review 65 L2 (RX1, RX2, RX5): a replace graft or an info/grafts entry that cuts the deletion commit, and a
@@ -1774,7 +1844,9 @@ class TestAttestationPreflight(unittest.TestCase):
 
     def test_review64_symlink_is_not_an_accepting_review(self):
         """Review 64 K7: an accepting entry must be a regular file (mode 100644 / 100755); a symlink whose target
-        text holds the two lines is not a review."""
+        text holds the two lines is not a review. Review 68 P1: once a symlink was committed under the review
+        directory, the history stays unavailable evidence after it is replaced; a regular file in a fresh history is
+        accepted (control)."""
         att = self.attestation()
         sha = hashlib.sha256(att).hexdigest()
         with tempfile.TemporaryDirectory() as d:
@@ -1787,7 +1859,10 @@ class TestAttestationPreflight(unittest.TestCase):
             os.unlink(Path(d, f"{ACC}1.md"))
             git_commit(d, {f"{ACC}2.md": self.accept(sha)})
             rec, why = self._valid_in(d, att)
-            self.assertIsNotNone(rec, why)                                                # control: a regular file
+            self.assertIsNone(rec)
+            self.assertTrue(any("UNAVAILABLE" in w for w in why), why)
+        rec, why = self.check(att)
+        self.assertIsNotNone(rec, why)                                                    # control: a regular file
 
     def test_review64_range_like_review_names_do_not_block(self):
         """Review 64 K9: review files named like a revision range (`x`, `x..HEAD`) are ordinary paths; they do not
