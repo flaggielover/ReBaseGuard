@@ -1,0 +1,293 @@
+[
+  {
+    "id": "M24",
+    "status": "KILLED",
+    "summary": "FAILED (failures=5)",
+    "errors": 0,
+    "skips": 0,
+    "invalid_reasons": [],
+    "semantic_assessment": "Actual set-membership assertion requires the newborn process alongside spiker/reused PID; directly detects omitted process birth.",
+    "actual_intended_assertions": [
+      {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+        "line": 554,
+        "method": "test_window_not_lifetime_and_reuse_and_birth",
+        "owner": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)",
+        "assertion": "self.assertEqual(set(busy), {\"spiker\", \"newborn\", \"reused_pid\"})",
+        "in_raw_and_controlled_trace": true
+      }
+    ],
+    "events": [
+      {
+        "test_id": "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_child_older_than_observed_own_parent_is_reported",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_missing_and_reused_parent_identity_cannot_exempt_child",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_overflow_and_nonfinite_cpu_arithmetic_are_refused",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      }
+    ]
+  },
+  {
+    "id": "N04",
+    "status": "KILLED",
+    "summary": "FAILED (failures=3)",
+    "errors": 0,
+    "skips": 0,
+    "invalid_reasons": [],
+    "semantic_assessment": "Genuinely accepted synthetic blob plus extra reference fields must be refused; actual assertIsNone detects bypassed exact reference schema.",
+    "actual_intended_assertions": [
+      {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+        "line": 1095,
+        "method": "test_reference_rejects_extra_fields_even_if_otherwise_valid",
+        "owner": "test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)",
+        "assertion": "self.assertIsNone(rec)",
+        "in_raw_and_controlled_trace": true
+      }
+    ],
+    "events": [
+      {
+        "test_id": "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_lx_verified.TestVerifiedObservation.test_malformed_or_extra_reference_fields_are_unverified (ref={'path': 'fixtures/host.json', 'sha256': 'e7ffd90e4819346404f17a25ab6e3165fcf2216cfe3e95be2db8fcd425b03dd9', 'root_cgroup_is_real': True})",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_lx_verified.TestVerifiedObservation.test_malformed_or_extra_reference_fields_are_unverified (ref={'path': 'fixtures/host.json', 'sha256': 'e7ffd90e4819346404f17a25ab6e3165fcf2216cfe3e95be2db8fcd425b03dd9', 'reviewed': True, 'accepted': True})",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      }
+    ]
+  },
+  {
+    "id": "N06",
+    "status": "KILLED",
+    "summary": "FAILED (failures=1)",
+    "errors": 0,
+    "skips": 0,
+    "invalid_reasons": [],
+    "semantic_assessment": "Nested PID namespace /proc view must be incomplete; actual assertFalse detects accepting the nested namespace. No cleanup error occurred in this R2 suite.",
+    "actual_intended_assertions": [
+      {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+        "line": 602,
+        "method": "test_proc_view",
+        "owner": "test_proc_view (test_lx_platform.TestBusy.test_proc_view)",
+        "assertion": "self.assertFalse(REAL_PROC_VIEW(st, mi, pidns=4026532265))           # nested ns with its own /proc",
+        "in_raw_and_controlled_trace": true
+      }
+    ],
+    "events": [
+      {
+        "test_id": "test_lx_platform.TestBusy.test_proc_view",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      }
+    ]
+  },
+  {
+    "id": "N08",
+    "status": "KILLED",
+    "summary": "FAILED (failures=4)",
+    "errors": 0,
+    "skips": 0,
+    "invalid_reasons": [],
+    "semantic_assessment": "Actual exact output assertion requires the exited-in-window process record; detects omitted exited process.",
+    "actual_intended_assertions": [
+      {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+        "line": 562,
+        "method": "test_exited_in_window_is_reported",
+        "owner": "test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)",
+        "assertion": "self.assertEqual(out, [{\"pid\": 30, \"comm\": \"short_hog\", \"exe\": None, \"pct\": None, \"exited_in_window\": True}])",
+        "in_raw_and_controlled_trace": true
+      }
+    ],
+    "events": [
+      {
+        "test_id": "test_lx_platform.TestBusy.test_exited_child_of_reused_campaign_pid_is_reported",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_missing_and_reused_parent_identity_cannot_exempt_child",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      }
+    ]
+  },
+  {
+    "id": "P04",
+    "status": "KILLED",
+    "summary": "FAILED (failures=3)",
+    "errors": 0,
+    "skips": 0,
+    "invalid_reasons": [],
+    "semantic_assessment": "Actual no-verdict-line assertion refuses acceptance; observer cases4 and5 also fail under distinct stable IDs. Duplicate policy is unchanged.",
+    "actual_intended_assertions": [
+      {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+        "line": 1015,
+        "method": "test_acceptance_is_found_not_named",
+        "owner": "test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)",
+        "assertion": "self.assertIsNone(rec, name)",
+        "in_raw_and_controlled_trace": true
+      }
+    ],
+    "events": [
+      {
+        "test_id": "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict (case_index=4, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict (case_index=5, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      }
+    ]
+  },
+  {
+    "id": "Q07",
+    "status": "KILLED",
+    "summary": "FAILED (failures=5)",
+    "errors": 0,
+    "skips": 0,
+    "invalid_reasons": [],
+    "semantic_assessment": "Actual unit-state assertion requires a running update unit to count enabled despite disabled setting; detects ignored is-active evidence.",
+    "actual_intended_assertions": [
+      {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+        "line": 713,
+        "method": "test_systemctl_path_when_systemd_is_pid1",
+        "owner": "test_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)",
+        "assertion": "self.assertIs(L.unit_enabled(\"x.timer\"), True, act)",
+        "in_raw_and_controlled_trace": true
+      }
+    ],
+    "events": [
+      {
+        "test_id": "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_known_inactive_disabled_and_positive_activity_controls",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='unit')",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='updates')",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      }
+    ]
+  },
+  {
+    "id": "CDEX16",
+    "status": "KILLED",
+    "summary": "FAILED (failures=3)",
+    "errors": 0,
+    "skips": 0,
+    "invalid_reasons": [],
+    "semantic_assessment": "Actual assertIsNone requires unknown/unrecognized activity plus disabled state to remain unknown; detects positive inactive inference.",
+    "actual_intended_assertions": [
+      {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+        "line": 471,
+        "method": "test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+        "owner": "test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)",
+        "assertion": "self.assertIsNone(self.unit(active, enabled), (active, enabled))",
+        "in_raw_and_controlled_trace": true
+      }
+    ],
+    "events": [
+      {
+        "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='unit')",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='updates')",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      },
+      {
+        "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+        "kind": "failure",
+        "exception_type": "builtins.AssertionError",
+        "is_exact_assertion_error": true
+      }
+    ]
+  }
+]

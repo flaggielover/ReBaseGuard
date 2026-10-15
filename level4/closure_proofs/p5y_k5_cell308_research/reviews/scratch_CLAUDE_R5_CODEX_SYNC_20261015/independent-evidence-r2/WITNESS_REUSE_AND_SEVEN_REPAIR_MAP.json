@@ -1,0 +1,2517 @@
+{
+  "status": "PREPARATION_ONLY; R2_RUNTIME_PENDING",
+  "prior126_reusable_semantic_reviews": 126,
+  "all_prior126_have_matching_R2_intended_assertion_text": false,
+  "R1_stale_result_secondary_R5SYNC04_failure_not_reused": true,
+  "unmatched": [],
+  "prior126_mapping": [
+    {
+      "id": "M01",
+      "property": "failed boot-id read treated as a reboot (DEAD)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_failed_readings_are_unknown_never_dead",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 130,
+          "assertion": "self.assertEqual(self.state(boot=\"\"), L.UNKNOWN)",
+          "R2_matching_lines": [
+            130
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M02",
+      "property": "unreadable /proc/<pid>/stat treated as DEAD",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_failed_readings_are_unknown_never_dead",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 132,
+          "assertion": "self.assertEqual(L.identity_state(self.ident, current_boot=BOOT, exists=lambda p: True,",
+          "R2_matching_lines": [
+            132
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M03",
+      "property": "incomplete identity record reported ALIVE",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unrecorded_fields",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 146,
+          "assertion": "self.assertEqual(self.state(ident=partial), L.UNKNOWN, k)",
+          "R2_matching_lines": [
+            146
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M04",
+      "property": "zombie read as DEAD again (the withdrawn L-ID-1)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_zombie_is_never_proof_of_death",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 127,
+          "assertion": "self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.UNKNOWN, s)",
+          "R2_matching_lines": [
+            127
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M05",
+      "property": "pid reuse (other starttime) not detected",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_positive_death_evidence",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 121,
+          "assertion": "self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(start=778))), L.DEAD)   # pid reuse",
+          "R2_matching_lines": [
+            121
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M06",
+      "property": "no power supply exposed read as AC",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_power_classes",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 353,
+          "assertion": "self.assertEqual(L.power_source(d), \"ABSENT\")",
+          "R2_matching_lines": [
+            353
+          ],
+          "owner_class": "TestPowerThermal"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M07",
+      "property": "unreadable cgroup limit skipped",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_partial_chain_never_numeric",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 443,
+          "assertion": "self.assertEqual((r[\"effective_limit\"], r[\"cgroup_min_headroom\"], r[\"visible_limit_upper_bound\"]),",
+          "R2_matching_lines": [
+            443
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M08",
+      "property": "missing journal channel ignored in assess",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_missing_channels_never_clean",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 307,
+          "assertion": "self.assertEqual(L.assess(a, b, s, None)[\"status\"], \"AMBIGUOUS\")",
+          "R2_matching_lines": [
+            307
+          ],
+          "owner_class": "TestAssess"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M09",
+      "property": "pause channel P removed",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_pause_channel_is_ambiguous",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 302,
+          "assertion": "self.assertEqual(r[\"status\"], \"AMBIGUOUS\")",
+          "R2_matching_lines": [
+            302
+          ],
+          "owner_class": "TestAssess"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M10",
+      "property": "suspend (boottime - monotonic) ignored",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_suspend_detected_just_above_tolerance",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 296,
+          "assertion": "self.assertEqual(L.assess(a, b, s, j)[\"status\"], \"CONTAMINATED\")",
+          "R2_matching_lines": [
+            296
+          ],
+          "owner_class": "TestAssess"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M11",
+      "property": "D-MEM-FREE gate silently passes",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_all_favourable_still_blocked",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1176,
+          "assertion": "self.assertEqual(blocked, {\"lowpowermode_0\", \"thermal_pressure_0\", \"memory_pressure_normal\",",
+          "R2_matching_lines": [
+            1193
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M12",
+      "property": "attestation 'reviewed' not required",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1050,
+          "assertion": "self.assertIsNone(self.check(att)[0], att[:40])",
+          "R2_matching_lines": [
+            1064
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M13",
+      "property": "provider image updates pass without an attested token",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_lifetime_gates_open_while_undecided",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1167,
+          "assertion": "self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]), (L.UNKNOWN, L.UNKNOWN))",
+          "R2_matching_lines": [
+            1184
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M14",
+      "property": "update vectors other than apt ignored",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_positive_evidence_only",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 670,
+          "assertion": "self.assertFalse(self.settings(off, **kw)[\"guest_updates_shown_disabled\"], kw)",
+          "R2_matching_lines": [
+            670
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M15",
+      "property": "launched_by_systemd skips the MainPID check",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_launched_by_systemd_requires_everything",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 779,
+          "assertion": "self.assertFalse(L.launched_by_systemd(**args)[\"pass\"], kw)",
+          "R2_matching_lines": [
+            779
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M16",
+      "property": "durable_write writes the target in place",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_stale_tmp_is_a_named_state",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 835,
+          "assertion": "with self.assertRaises(L.StaleTmp):",
+          "R2_matching_lines": [
+            835
+          ],
+          "owner_class": "TestDurableWrite"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M17",
+      "property": "unreadable pin counts as a match",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unreadable_pins_never_match",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 897,
+          "assertion": "self.assertIn(next(iter(bad)), L.pin_mismatches(pins, pins), bad)",
+          "R2_matching_lines": [
+            897
+          ],
+          "owner_class": "TestPins"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M18",
+      "property": "busy_processes uses lifetime ticks instead of the window",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_window_not_lifetime_and_reuse_and_birth",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 554,
+          "assertion": "self.assertEqual(set(busy), {\"spiker\", \"newborn\", \"reused_pid\"})",
+          "R2_matching_lines": [
+            554
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M19",
+      "property": "empty cmdline (failed read) hashed as a command",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_empty_cmdline_is_a_failed_read",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 107,
+          "assertion": "self.assertIsNone(L.cmdline_sha256(1, b\"\"))",
+          "R2_matching_lines": [
+            107
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M20",
+      "property": "UNKNOWN gates not reported as blocking",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unknowns_never_pass_and_are_reported",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1193,
+          "assertion": "self.assertEqual(r[\"blocked\"].get(k), L.UNKNOWN, k)",
+          "R2_matching_lines": [
+            1210
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M21",
+      "property": "headroom computed over levels with unreadable usage",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_partial_chain_never_numeric",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 449,
+          "assertion": "self.assertIsNone(r[\"cgroup_min_headroom\"])",
+          "R2_matching_lines": [
+            449
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M22",
+      "property": "namespace mismatch ignored",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_namespace_mismatch_is_unknown",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 138,
+          "assertion": "self.assertEqual(self.state(ns=dict(NS, pidns=1)), L.UNKNOWN)",
+          "R2_matching_lines": [
+            138
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M23",
+      "property": "unknown power-supply type skipped",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_failed_or_unknown_supplies_are_unknown",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 373,
+          "assertion": "self.assertIsNone(L.power_source(d))",
+          "R2_matching_lines": [
+            369,
+            373,
+            379
+          ],
+          "owner_class": "TestPowerThermal"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M25",
+      "property": "attestation file sha256 not verified",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_reference_digest_must_match_the_committed_file",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1069,
+          "assertion": "self.assertIsNone(rec)",
+          "R2_matching_lines": [
+            1086
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M26",
+      "property": "attestation not bound to the hardware identity",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1050,
+          "assertion": "self.assertIsNone(self.check(att)[0], att[:40])",
+          "R2_matching_lines": [
+            1064
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M27",
+      "property": "v2 root accepted as unlimited without attestation",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_v2_root_and_memory_high",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 470,
+          "assertion": "self.assertIsNone(L._chain_values(ch, root_attested=False))                    # helper refuses directly",
+          "R2_matching_lines": [
+            470
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M28",
+      "property": "effective_limit numeric without root attestation",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_v1_needs_root_attestation_for_a_number",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 430,
+          "assertion": "self.assertIsNone(r[\"effective_limit\"])",
+          "R2_matching_lines": [
+            430
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M29",
+      "property": "execute / resume pass the launch gate without a launch record",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_launch_gate_uses_a_fresh_reading",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1204,
+          "assertion": "self.assertIn(\"launched_by_systemd\", gates)                             # M29: required execute gate",
+          "R2_matching_lines": [
+            1221
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M30",
+      "property": "mapped shared objects (libm) not pinned",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_pin_set_covers_libm_libc_loader",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 863,
+          "assertion": "self.assertEqual(set(L.PIN_KEYS), {\"python_executable\", \"python_sha256\", \"python_sys_version\",",
+          "R2_matching_lines": [
+            863
+          ],
+          "owner_class": "TestPins"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M31",
+      "property": "incomplete /proc view accepted",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_view_is_read_not_assumed",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 542,
+          "assertion": "self.assertIsNone(L.busy_processes({}, {}, 5, 25, set()), view)",
+          "R2_matching_lines": [
+            542
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "M32",
+      "property": "own may contain init",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_no_reading_or_unsafe_inputs_fail_closed",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 585,
+          "assertion": "self.assertIsNone(L.busy_processes({}, {}, 5, 25, {(1, 1)}))             # own may not contain init",
+          "R2_matching_lines": [
+            585
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R01",
+      "property": "unreadable Battery status skipped (a failed read can yield AC)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_failed_or_unknown_supplies_are_unknown",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 369,
+          "assertion": "self.assertIsNone(L.power_source(d))",
+          "R2_matching_lines": [
+            369,
+            373,
+            379
+          ],
+          "owner_class": "TestPowerThermal"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R02",
+      "property": "host attestation accepted when the 'accepted' key is merely present (e.g. 'REJECTED')",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1050,
+          "assertion": "self.assertIsNone(self.check(att)[0], att[:40])",
+          "R2_matching_lines": [
+            1064
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R03",
+      "property": "durable_write never fsyncs the data",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_fsyncs_file_then_directory",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 818,
+          "assertion": "self.assertEqual(calls, [\"file\", \"dir\"])",
+          "R2_matching_lines": [
+            818
+          ],
+          "owner_class": "TestDurableWrite"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R04",
+      "property": "suspend / pause tolerance raised from 2 s to 25 s",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_constants_equal_the_candidates",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 287,
+          "assertion": "self.assertEqual((L.SLEEP_GAP_TOL_NS, L.MAX_SAMPLE_GAP_S), (tol, gap))",
+          "R2_matching_lines": [
+            287
+          ],
+          "owner_class": "TestAssess"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R05",
+      "property": "hidden name allow-list for the Cloud session controller in busy_processes",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_no_name_or_path_allowlist",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 594,
+          "assertion": "self.assertEqual(len(L.busy_processes(t0, t1, 1.0, 25, set(), hz=100)), 1, comm)",
+          "R2_matching_lines": [
+            594
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R06",
+      "property": "package versions and glibc dropped from PIN_KEYS",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_pin_set_covers_libm_libc_loader",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 863,
+          "assertion": "self.assertEqual(set(L.PIN_KEYS), {\"python_executable\", \"python_sha256\", \"python_sys_version\",",
+          "R2_matching_lines": [
+            863
+          ],
+          "owner_class": "TestPins"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R07",
+      "property": "stopped (T/t) and uninterruptible (D) tasks read as DEAD",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_live_task_states_are_alive",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 116,
+          "assertion": "self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.ALIVE, s)",
+          "R2_matching_lines": [
+            116
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R08",
+      "property": "durable_write never fsyncs the directory after the rename",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_fsyncs_file_then_directory",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 818,
+          "assertion": "self.assertEqual(calls, [\"file\", \"dir\"])",
+          "R2_matching_lines": [
+            818
+          ],
+          "owner_class": "TestDurableWrite"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R09",
+      "property": "maximum sample spacing raised from 180 s to 390 s",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_constants_equal_the_candidates",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 287,
+          "assertion": "self.assertEqual((L.SLEEP_GAP_TOL_NS, L.MAX_SAMPLE_GAP_S), (tol, gap))",
+          "R2_matching_lines": [
+            287
+          ],
+          "owner_class": "TestAssess"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R10",
+      "property": "assess checks power only at start and end, not at the samples",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_power_checked_at_every_sample",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 317,
+          "assertion": "self.assertEqual(L.assess(a, b, [mid], j)[\"status\"], \"CONTAMINATED\")",
+          "R2_matching_lines": [
+            317
+          ],
+          "owner_class": "TestAssess"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "X01",
+      "property": "/proc 'subset=' no longer refused",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_proc_view",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 605,
+          "assertion": "self.assertFalse(REAL_PROC_VIEW(st, f\"23 28 0:22 / /proc rw,{opt} - proc proc rw\\n\",",
+          "R2_matching_lines": [
+            605
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "X02",
+      "property": "no /proc mount line counts as a complete view",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_proc_view",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 607,
+          "assertion": "self.assertIsNone(REAL_PROC_VIEW(st, \"23 28 0:22 / /sys rw - sysfs sysfs rw\\n\", pidns=L.INIT_PID_NS))",
+          "R2_matching_lines": [
+            607
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "X03",
+      "property": "unreadable livepatch counts as none applied",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_positive_evidence_only",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 670,
+          "assertion": "self.assertFalse(self.settings(off, **kw)[\"guest_updates_shown_disabled\"], kw)",
+          "R2_matching_lines": [
+            670
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "X04",
+      "property": "K' monotonic-ahead-of-boottime channel removed",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_monotonic_ahead_of_boottime_and_absent_samples",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 338,
+          "assertion": "self.assertEqual(L.assess(a, b, s, j)[\"status\"], \"AMBIGUOUS\")",
+          "R2_matching_lines": [
+            338
+          ],
+          "owner_class": "TestAssess"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "X05",
+      "property": "durable_write read-back verification removed",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_read_back_mismatch_is_detected",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 828,
+          "assertion": "with self.assertRaises(OSError):",
+          "R2_matching_lines": [
+            828
+          ],
+          "owner_class": "TestDurableWrite"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "X06",
+      "property": "absent samples no longer AMBIGUOUS",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_monotonic_ahead_of_boottime_and_absent_samples",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 340,
+          "assertion": "self.assertEqual(L.assess(a, b, None, j)[\"status\"], \"AMBIGUOUS\")",
+          "R2_matching_lines": [
+            340
+          ],
+          "owner_class": "TestAssess"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "X07",
+      "property": "a transient .scope accepted as the campaign unit",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_launched_by_systemd_requires_everything",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 779,
+          "assertion": "self.assertFalse(L.launched_by_systemd(**args)[\"pass\"], kw)",
+          "R2_matching_lines": [
+            779
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "X08",
+      "property": "v1 'unlimited' sentinel lowered to 1 GiB",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_large_v1_limit_is_a_limit",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 514,
+          "assertion": "self.assertEqual(r[\"effective_limit\"], 2000000000)",
+          "R2_matching_lines": [
+            514
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "X09",
+      "property": "unknown interpreter package drops out of the pin",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unknown_interpreter_package_never_matches",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 930,
+          "assertion": "self.assertIn(L.UNKNOWN_PACKAGE, pk)",
+          "R2_matching_lines": [
+            930
+          ],
+          "owner_class": "TestPins"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N01",
+      "property": "D-HOST-LIFETIME treated as decided",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_lifetime_gates_open_while_undecided",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1158,
+          "assertion": "self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]),",
+          "R2_matching_lines": [
+            1175,
+            1178
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N02",
+      "property": "attestation acceptance line not required",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1001,
+          "assertion": "self.assertIsNone(rec, name)",
+          "R2_matching_lines": [
+            1015
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N03",
+      "property": "attestation schema not checked",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1050,
+          "assertion": "self.assertIsNone(self.check(att)[0], att[:40])",
+          "R2_matching_lines": [
+            1064
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N05",
+      "property": "attestation's root_cgroup_is_real not required",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_root_attestation_is_derived_never_asserted",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 497,
+          "assertion": "self.assertFalse(L.root_attestation({\"x\": 1})[0], rec)",
+          "R2_matching_lines": [
+            497
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N07",
+      "property": "boot id not validated",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_boot_id_must_be_valid",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1183,
+          "assertion": "self.assertEqual(self.gates(boot_id=bad)[\"boot_id_recorded\"], L.UNKNOWN, bad)",
+          "R2_matching_lines": [
+            1200
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N09",
+      "property": "unreadable existing process skipped",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unreadable_existing_process_fails_the_snapshot",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 617,
+          "assertion": "self.assertIsNone(L.cpu_ticks(d))",
+          "R2_matching_lines": [
+            617
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N10",
+      "property": "campaign children exempt by pid alone",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_reused_campaign_pid_does_not_exempt_children",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 568,
+          "assertion": "self.assertEqual(len(L.busy_processes(t0, t1, 5.0, 25, own={(99, 50)}, hz=100)), 1)",
+          "R2_matching_lines": [
+            568
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N11",
+      "property": "unrecorded namespace lets pid evidence count (revision-2 behaviour)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unrecorded_namespace_never_proves_death",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 158,
+          "assertion": "self.assertEqual(self.state(ident=rec, exists=False), L.UNKNOWN, k)",
+          "R2_matching_lines": [
+            158
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N12",
+      "property": "pin without libm / libc / loader accepted",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_required_members_and_pin_point",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 911,
+          "assertion": "self.assertIsNone(L.mapped_objects(f\"7f00-7f01 r-xp 0 08:01 1 {libc}\\n\"))",
+          "R2_matching_lines": [
+            911
+          ],
+          "owner_class": "TestPins"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N13",
+      "property": "launch record trusted on its 'pass' flag",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_launch_gate_uses_a_fresh_reading",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1217,
+          "assertion": "self.assertEqual(self.gates(fresh=bad_fresh).get(\"launched_by_systemd\"), L.FAIL, bad_fresh)",
+          "R2_matching_lines": [
+            1234
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "N14",
+      "property": "unrecognised battery status read as not discharging",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unrecognised_battery_status_is_unknown",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 387,
+          "assertion": "self.assertIsNone(L.power_source(d), st)",
+          "R2_matching_lines": [
+            387
+          ],
+          "owner_class": "TestPowerThermal"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Y01",
+      "property": "any non-empty decided set opens D-HOST-LIFETIME",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_lifetime_gates_open_while_undecided",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1161,
+          "assertion": "self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]),",
+          "R2_matching_lines": [
+            1175,
+            1178
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Y02",
+      "property": "exited children of a campaign pid exempt whatever their start",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_exited_child_of_reused_campaign_pid_is_reported",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 575,
+          "assertion": "self.assertEqual([o[\"comm\"] for o in out], [\"old_exited\"])",
+          "R2_matching_lines": [
+            575
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Y03",
+      "property": "acceptance token matched as a substring",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1001,
+          "assertion": "self.assertIsNone(rec, name)",
+          "R2_matching_lines": [
+            1015
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Y04",
+      "property": "cgroup namespace reading hard-wired to initial",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_root_attestation_is_derived_never_asserted",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 502,
+          "assertion": "self.assertEqual((r[\"effective_limit\"], r[\"cgroup_min_headroom\"], r[\"cgroup_ns_initial\"]),",
+          "R2_matching_lines": [
+            502
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Y05",
+      "property": "attestation bound to /etc/machine-id only",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1054,
+          "assertion": "self.assertIsNone(self.check(self.attestation(), machine=cloned)[0])",
+          "R2_matching_lines": [
+            1068
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Y06",
+      "property": "loader no longer a required pin member",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_required_members_and_pin_point",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 913,
+          "assertion": "self.assertIsNone(L.mapped_objects(two))                               # Y06: no loader",
+          "R2_matching_lines": [
+            913
+          ],
+          "owner_class": "TestPins"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Y07",
+      "property": "launch record unit type not checked",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_launch_gate_uses_a_fresh_reading",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1217,
+          "assertion": "self.assertEqual(self.gates(fresh=bad_fresh).get(\"launched_by_systemd\"), L.FAIL, bad_fresh)",
+          "R2_matching_lines": [
+            1234
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Y08",
+      "property": "merely truthy guest_updates_shown_disabled counts",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_lifetime_gates_open_while_undecided",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1171,
+          "assertion": "self.assertEqual(self.gates(att=good, decided=dec, upd=upd)[\"no_automatic_os_install\"], L.UNKNOWN, upd)",
+          "R2_matching_lines": [
+            1188
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Y09",
+      "property": "cgroup_resources reads the leaf only",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_cgroup_resources_whole_chain",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 523,
+          "assertion": "self.assertEqual(set(rows), {\"/x/y\", \"/x\", \"/\"})                    # Y09: ancestry is the property",
+          "R2_matching_lines": [
+            523
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P01",
+      "property": "acceptance committed with the attestation accepted (no order check)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1003,
+          "assertion": "self.assertIsNone(self.check(self.attestation(), same_commit=True)[0])          # same commit as attestation",
+          "R2_matching_lines": [
+            1017
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P02",
+      "property": "a rejecting review ignored",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1001,
+          "assertion": "self.assertIsNone(rec, name)",
+          "R2_matching_lines": [
+            1015
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P03",
+      "property": "acceptance review outside the fixed name set accepted",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1001,
+          "assertion": "self.assertIsNone(rec, name)",
+          "R2_matching_lines": [
+            1015
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P05",
+      "property": "non-initial cgroup namespace does not block a number",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_root_attestation_is_derived_never_asserted",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 491,
+          "assertion": "self.assertFalse(L.root_attestation({\"x\": 1})[0], ns)",
+          "R2_matching_lines": [
+            491
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P06",
+      "property": "root attestation without D-HOST-LIFETIME decided",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_root_attestation_is_derived_never_asserted",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 493,
+          "assertion": "self.assertFalse(L.root_attestation({\"x\": 1})[0])                       # D-HOST-LIFETIME open",
+          "R2_matching_lines": [
+            493
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P07",
+      "property": "DECIDED not validated",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_decided_is_validated",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1149,
+          "assertion": "with self.assertRaises(ValueError):",
+          "R2_matching_lines": [
+            1166
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P08",
+      "property": "passed launch record trusted instead of a fresh reading",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_launch_gate_uses_a_fresh_reading",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1209,
+          "assertion": "self.assertEqual(self.gates(launched=self.launch(), fresh=not_launched).get(\"launched_by_systemd\"), L.FAIL)  # P08",
+          "R2_matching_lines": [
+            1226
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P09",
+      "property": "MainPID type not checked",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_launch_gate_uses_a_fresh_reading",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1217,
+          "assertion": "self.assertEqual(self.gates(fresh=bad_fresh).get(\"launched_by_systemd\"), L.FAIL, bad_fresh)",
+          "R2_matching_lines": [
+            1234
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P10",
+      "property": "journal channel counted without a reviewed reader",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_no_reviewed_journal_reader_never_clean",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 276,
+          "assertion": "self.assertEqual(r[\"status\"], \"AMBIGUOUS\")",
+          "R2_matching_lines": [
+            276
+          ],
+          "owner_class": "TestAssess"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P11",
+      "property": "masked unit not recognised",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unit_enabled_from_every_root",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 690,
+          "assertion": "self.assertIs(L.unit_enabled(\"x.timer\", roots), False)                  # masked in the first root",
+          "R2_matching_lines": [
+            690
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P12",
+      "property": "unknown update-unit state counted as disabled",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unit_enabled_from_every_root",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 696,
+          "assertion": "self.assertFalse(self.settings(off)[\"guest_updates_shown_disabled\"])  # unknown unit state",
+          "R2_matching_lines": [
+            696
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P13",
+      "property": "only the first unit root searched (file mode)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unit_enabled_from_every_root",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 688,
+          "assertion": "self.assertIs(L.unit_enabled(\"x.timer\", roots), True)                   # enabled in the SECOND root",
+          "R2_matching_lines": [
+            688
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P14",
+      "property": "identity record shape not validated",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_malformed_records_prove_nothing",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 169,
+          "assertion": "self.assertEqual(self.state(ident=bad, exists=False), L.UNKNOWN, bad)",
+          "R2_matching_lines": [
+            169
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "P15",
+      "property": "empty pin-point list accepted",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_required_members_and_pin_point",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 914,
+          "assertion": "with self.assertRaises(RuntimeError):",
+          "R2_matching_lines": [
+            914,
+            917,
+            922
+          ],
+          "owner_class": "TestPins"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z01",
+      "property": "a rejecting review counts only if the negative word is on the same line as the sha",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1016,
+          "assertion": "self.assertIsNone(self.check(self.attestation(), reviews=revs)[0], name)",
+          "R2_matching_lines": [
+            1030
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z02",
+      "property": "update units enabled through a *.requires link are not seen",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_file_mode_edge_cases",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 749,
+          "assertion": "self.assertIs(L.unit_enabled(\"x.timer\", (missing, str(b))), True)        # Z02 and Z04",
+          "R2_matching_lines": [
+            749
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z03",
+      "property": "systemctl is-enabled: enabled-runtime / indirect / alias / linked read as disabled",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_systemctl_path_when_systemd_is_pid1",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 709,
+          "assertion": "self.assertIs(L.unit_enabled(\"x.timer\"), want, out)",
+          "R2_matching_lines": [
+            709
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z04",
+      "property": "a missing unit root ends the search (later roots never read)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_file_mode_edge_cases",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 749,
+          "assertion": "self.assertIs(L.unit_enabled(\"x.timer\", (missing, str(b))), True)        # Z02 and Z04",
+          "R2_matching_lines": [
+            749
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z05",
+      "property": "accepting line's first commit looked up by path only (a git mv into the set resets it)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_accepting_line_must_post_date_the_attested_blob",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1042,
+          "assertion": "self.assertIsNone(run([{\"att/HOST.json\": att, \"tmp/acc.md\": line}, \"mv\"]))",
+          "R2_matching_lines": [
+            1056
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z06",
+      "property": "accepting line in the same commit as the attested blob counts as later",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_accepting_line_must_post_date_the_attested_blob",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1040,
+          "assertion": "self.assertIsNone(run([{f\"{ACC}1.md\": b\"placeholder\\n\"}, {\"att/HOST.json\": att, f\"{ACC}1.md\": line}]))",
+          "R2_matching_lines": [
+            1054
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z07",
+      "property": "a failed systemctl query (empty stdout) reads as 'disabled'",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_failed_systemctl_query_is_no_reading",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 735,
+          "assertion": "self.assertIsNone(L._systemctl_query(\"is-enabled\", \"x.timer\"), repr(res))",
+          "R2_matching_lines": [
+            735
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z08",
+      "property": "only an UNREADABLE cgroup namespace blocks root attestation (a non-initial one passes)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_root_attestation_is_derived_never_asserted",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 491,
+          "assertion": "self.assertFalse(L.root_attestation({\"x\": 1})[0], ns)",
+          "R2_matching_lines": [
+            491
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z09",
+      "property": "launch gate evaluated only for execute / resume (a record passed in launcher mode is ignored)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_launch_gate_uses_a_fresh_reading",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1220,
+          "assertion": "self.assertIn(\"launched_by_systemd\", gates)                             # Z09: supplied record is checked",
+          "R2_matching_lines": [
+            1237
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z10",
+      "property": "an unreadable /proc view (None) treated as complete",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_view_is_read_not_assumed",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 542,
+          "assertion": "self.assertIsNone(L.busy_processes({}, {}, 5, 25, set()), view)",
+          "R2_matching_lines": [
+            542
+          ],
+          "owner_class": "TestBusy"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Z11",
+      "property": "a bool starttime in a record passes the shape check",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_malformed_records_prove_nothing",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 169,
+          "assertion": "self.assertEqual(self.state(ident=bad, exists=False), L.UNKNOWN, bad)",
+          "R2_matching_lines": [
+            169
+          ],
+          "owner_class": "TestIdentity"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q01",
+      "property": "negative scan not recursive (a rejection in a review subdirectory ignored)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1016,
+          "assertion": "self.assertIsNone(self.check(self.attestation(), reviews=revs)[0], name)",
+          "R2_matching_lines": [
+            1030
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q02",
+      "property": "accepting set recursive (reviewer scratch can accept)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1016,
+          "assertion": "self.assertIsNone(self.check(self.attestation(), reviews=revs)[0], name)",
+          "R2_matching_lines": [
+            1030
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q03",
+      "property": "negative words matched case-sensitively",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1016,
+          "assertion": "self.assertIsNone(self.check(self.attestation(), reviews=revs)[0], name)",
+          "R2_matching_lines": [
+            1030
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q04",
+      "property": "a second (conflicting) verdict line tolerated",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1016,
+          "assertion": "self.assertIsNone(self.check(self.attestation(), reviews=revs)[0], name)",
+          "R2_matching_lines": [
+            1030
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q05",
+      "property": "accepting file suffix not required",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1016,
+          "assertion": "self.assertIsNone(self.check(self.attestation(), reviews=revs)[0], name)",
+          "R2_matching_lines": [
+            1030
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q06",
+      "property": "attested commit found by path, not by blob (placeholder attestation filled later)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_accepting_line_must_post_date_the_attested_blob",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1041,
+          "assertion": "self.assertIsNone(run([{\"att/HOST.json\": b\"placeholder\"}, {\"att/HOST.json\": att, f\"{ACC}1.md\": line}]))",
+          "R2_matching_lines": [
+            1055
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q08",
+      "property": "is-enabled not-found read as disabled without checking the unit files",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_systemctl_path_when_systemd_is_pid1",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 719,
+          "assertion": "self.assertIsNone(L.unit_enabled(\"x.timer\", (d,)))",
+          "R2_matching_lines": [
+            719
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q09",
+      "property": "dangling .wants / .requires link not counted",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_file_mode_edge_cases",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 752,
+          "assertion": "self.assertIs(L.unit_enabled(\"y.timer\", (missing, str(b))), True)        # dangling link counts",
+          "R2_matching_lines": [
+            752
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q10",
+      "property": "preflight power reading replaced by a constant AC",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unknowns_never_pass_and_are_reported",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1192,
+          "assertion": "self.assertEqual(r[\"gates\"][k], L.UNKNOWN, k)",
+          "R2_matching_lines": [
+            1209
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q11",
+      "property": "preflight free-disk reading replaced by a constant",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unknowns_never_pass_and_are_reported",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1192,
+          "assertion": "self.assertEqual(r[\"gates\"][k], L.UNKNOWN, k)",
+          "R2_matching_lines": [
+            1209
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q12",
+      "property": "transient / generator roots dropped from the unit search path",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_file_mode_edge_cases",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 755,
+          "assertion": "self.assertIn(root, L.UNIT_ROOTS)",
+          "R2_matching_lines": [
+            755
+          ],
+          "owner_class": "TestUpdatesLaunch"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "Q13",
+      "property": "host_exclusive reports only its first open decision",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unknowns_never_pass_and_are_reported",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 1198,
+          "assertion": "self.assertTrue({\"D-EXCL-WINDOW\", \"D-ALLOW-PATHS\", \"D-ALLOW-BASE39\"} <= set(r[\"open_decisions\"]))",
+          "R2_matching_lines": [
+            1215
+          ],
+          "owner_class": "TestAttestationPreflight"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX01",
+      "property": "Codex Y01: effective memory minimum omits the host MemTotal cap",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_host_memtotal_caps_every_larger_cgroup_limit",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 288,
+          "assertion": "self.assertEqual(L._effective_memory_limit(chain, {\"MemTotal\": 1000}, root_attested=True), 1000)",
+          "R2_matching_lines": [
+            292
+          ],
+          "owner_class": "TestMemoryMinima"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX02",
+      "property": "Codex Y02: cgroup headroom uses the maximum instead of the minimum",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_v2_root_and_memory_high",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "R1_line": 468,
+          "assertion": "self.assertEqual(r[\"cgroup_min_headroom\"], 2990)",
+          "R2_matching_lines": [
+            468
+          ],
+          "owner_class": "TestMemory"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX03",
+      "property": "Codex Y03: sample order is ignored (both sample-order and pairwise non-increase guards removed)",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_reversed_sample_order_is_refused",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 169,
+          "assertion": "self.assertFalse(result[\"clean\"])",
+          "R2_matching_lines": [
+            169
+          ],
+          "owner_class": "TestIntervalEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX04",
+      "property": "Codex P01: campaign child ownership ignores the parent's observed starttime identity",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_missing_and_reused_parent_identity_cannot_exempt_child",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 200,
+          "assertion": "self.assertTrue(any(x[\"pid\"] == 43 for x in self.busy(t1=t1, own=own)))",
+          "R2_matching_lines": [
+            204
+          ],
+          "owner_class": "TestCpuWindowEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX05",
+      "property": "Codex P02: a malformed current boot id counts as positive identity evidence",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_current_boot_requires_a_recognized_string",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 69,
+          "assertion": "self.assertEqual(self.state(boot=value), L.UNKNOWN)",
+          "R2_matching_lines": [
+            69
+          ],
+          "owner_class": "TestIdentityEvidence"
+        },
+        {
+          "method": "test_current_boot_requires_a_recognized_string",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 69,
+          "assertion": "self.assertEqual(self.state(boot=value), L.UNKNOWN)",
+          "R2_matching_lines": [
+            69
+          ],
+          "owner_class": "TestIdentityEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX06",
+      "property": "Codex P03: matching malformed boot ids count as positive interval evidence",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_interval_boot_schema_and_nonrecord_samples",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 158,
+          "assertion": "self.assertEqual(result[\"status\"], \"AMBIGUOUS\")",
+          "R2_matching_lines": [
+            158
+          ],
+          "owner_class": "TestIntervalEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX07",
+      "property": "Codex P04: nonfinite CPU window duration is accepted",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_duration_threshold_frequency_schemas",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 217,
+          "assertion": "self.assertIsNone(self.busy(dt=value))",
+          "R2_matching_lines": [
+            221
+          ],
+          "owner_class": "TestCpuWindowEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX08",
+      "property": "Codex P05: malformed NSpid entries count as a complete proc view",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_whole_colon_payload_and_ascii_schema",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 264,
+          "assertion": "self.assertIsNot(self.view(f\"NSpid:{payload}\\n\"), True, payload)",
+          "R2_matching_lines": [
+            268
+          ],
+          "owner_class": "TestProcViewEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX09",
+      "property": "Codex F01: clock-pair checks ignore intermediate observations and use only the endpoints",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_middle_clock_excursion_not_hidden_by_matching_endpoints",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 122,
+          "assertion": "self.assertFalse(result[\"clean\"])",
+          "R2_matching_lines": [
+            122
+          ],
+          "owner_class": "TestIntervalEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX10",
+      "property": "Codex F02: suspend counter checks ignore intermediate observations and use only the endpoints",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_every_suspend_counter_and_reset_is_checked",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 133,
+          "assertion": "self.assertEqual(result[\"status\"], \"AMBIGUOUS\")",
+          "R2_matching_lines": [
+            133
+          ],
+          "owner_class": "TestIntervalEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX11",
+      "property": "Codex F03: malformed mount IDs and device numbers bypass numeric metadata validation",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_mount_metadata_and_duplicate_mounts_refused",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 278,
+          "assertion": "self.assertIsNot(self.view(mount=mount), True, mount)",
+          "R2_matching_lines": [
+            282
+          ],
+          "owner_class": "TestProcViewEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX12",
+      "property": "Codex F04: the first NSpid field is trusted when duplicate NSpid records disagree",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_duplicate_fields_both_orders_and_identical_duplicates_refused",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 270,
+          "assertion": "self.assertIsNot(self.view(status), True)",
+          "R2_matching_lines": [
+            274
+          ],
+          "owner_class": "TestProcViewEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX13",
+      "property": "Codex F05: multiple starttime identities for one PID are accepted in a single CPU snapshot",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_duplicate_pid_in_either_snapshot_or_own_set_is_refused",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 211,
+          "assertion": "self.assertIsNone(self.busy(t0=duplicate))",
+          "R2_matching_lines": [
+            215
+          ],
+          "owner_class": "TestCpuWindowEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX14",
+      "property": "Codex F06: payload adjoining NSpid's colon is discarded before validation",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_whole_colon_payload_and_ascii_schema",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 264,
+          "assertion": "self.assertIsNot(self.view(f\"NSpid:{payload}\\n\"), True, payload)",
+          "R2_matching_lines": [
+            268
+          ],
+          "owner_class": "TestProcViewEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "CDEX15",
+      "property": "Codex F07: malformed attestation/reference paths escape as subprocess argument exceptions",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_git_malformed_args_and_subprocess_failures_return_none",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 310,
+          "assertion": "self.fail(f\"Git evidence boundary leaked {type(escaped).__name__}\")",
+          "R2_matching_lines": [
+            314
+          ],
+          "owner_class": "TestGitRefusal"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R5SYNC01",
+      "property": "Combined R5 repair: complete negative-review scan includes nonASCII, tab and newline path names",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_ascii_acceptance_control_and_nonascii_tab_newline_veto_paths",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 378,
+          "assertion": "self.assertIsNone(accepted)",
+          "R2_matching_lines": [
+            382
+          ],
+          "owner_class": "TestAcceptanceReviewEvidence"
+        },
+        {
+          "method": "test_ascii_acceptance_control_and_nonascii_tab_newline_veto_paths",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 378,
+          "assertion": "self.assertIsNone(accepted)",
+          "R2_matching_lines": [
+            382
+          ],
+          "owner_class": "TestAcceptanceReviewEvidence"
+        },
+        {
+          "method": "test_ascii_acceptance_control_and_nonascii_tab_newline_veto_paths",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 378,
+          "assertion": "self.assertIsNone(accepted)",
+          "R2_matching_lines": [
+            382
+          ],
+          "owner_class": "TestAcceptanceReviewEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R5SYNC02",
+      "property": "Combined R5 repair: unavailable recursive listing cannot be replaced by an independent accepting read",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unavailable_recursive_listing_or_veto_blob_refuses_verification",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 402,
+          "assertion": "self.assertIsNone(accepted)",
+          "R2_matching_lines": [
+            406
+          ],
+          "owner_class": "TestAcceptanceReviewEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R5SYNC03",
+      "property": "Combined R5 repair: unavailable recursive review blob cannot be skipped in the veto scan",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_unavailable_recursive_listing_or_veto_blob_refuses_verification",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 402,
+          "assertion": "self.assertIsNone(accepted)",
+          "R2_matching_lines": [
+            406
+          ],
+          "owner_class": "TestAcceptanceReviewEvidence"
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true
+    },
+    {
+      "id": "R5SYNC04",
+      "property": "Combined R5 repair: unknown supervisor state cannot imply filesystem-only update inactivity",
+      "prior_semantic_review_reusable": true,
+      "assertion_source_map": [
+        {
+          "method": "test_supervisor_true_false_unknown_and_update_composition",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "R1_line": 477,
+          "assertion": "self.assertIs(L.unit_enabled(\"synthetic-update.service\", unit_roots=()), expected)",
+          "R2_matching_lines": [
+            485
+          ],
+          "owner_class": "TestUnitQueryEvidence",
+          "R2_assertion": "self.assertIs(unit, expected)",
+          "R2_observation_line": 480,
+          "equivalence": "The same L.unit_enabled call is evaluated under the same supervisor/activity/enabled mocks into unit; the same identity comparison to expected runs in a distinct evidence=unit subTest. R1 stale-result secondary composition failure is not reused."
+        }
+      ],
+      "fresh_R2_runtime_witness_still_required": true,
+      "R2_assertion_text_changed_by_equivalent_variable_extraction": true
+    }
+  ],
+  "seven_repaired_rows": [
+    {
+      "id": "M24",
+      "R1_status": "ERROR",
+      "R1_kill_credit": false,
+      "catalog_property": "process born in the window not counted",
+      "intended_property_test_methods": [
+        "test_window_not_lifetime_and_reuse_and_birth"
+      ],
+      "R2_intended_method_locations": [
+        {
+          "method": "test_window_not_lifetime_and_reuse_and_birth",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "line": 546,
+          "end_line": 556
+        }
+      ],
+      "repaired_collateral_fixture_method": "test_birth_exit_and_observed_owned_parent_positive_controls",
+      "repair_method_location": {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+        "class": "TestCpuWindowEvidence",
+        "line": 184,
+        "end_line": 198
+      },
+      "bounded_repair": "Birth result list type and exact cardinality asserted before indexing.",
+      "fresh_R2_raw_events_and_intended_direct_assertion_required": true
+    },
+    {
+      "id": "N04",
+      "R1_status": "ERROR",
+      "R1_kill_credit": false,
+      "catalog_property": "caller-asserted fields accepted in the attestation reference",
+      "intended_property_test_methods": [
+        "test_reference_rejects_extra_fields_even_if_otherwise_valid"
+      ],
+      "R2_intended_method_locations": [
+        {
+          "method": "test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "line": 1090,
+          "end_line": 1096
+        }
+      ],
+      "repaired_collateral_fixture_method": "test_forged_or_unaccepted_attestations_refused",
+      "repair_method_location": {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+        "class": "TestAttestationPreflight",
+        "line": 1060,
+        "end_line": 1074
+      },
+      "bounded_repair": "Malformed-reference probes explicitly bind a synthetic temporary repository.",
+      "fresh_R2_raw_events_and_intended_direct_assertion_required": true
+    },
+    {
+      "id": "N06",
+      "R1_status": "ERROR",
+      "R1_kill_credit": false,
+      "catalog_property": "nested PID namespace view accepted",
+      "intended_property_test_methods": [
+        "test_proc_view"
+      ],
+      "R2_intended_method_locations": [
+        {
+          "method": "test_proc_view",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "line": 596,
+          "end_line": 609
+        }
+      ],
+      "repaired_collateral_fixture_method": "test_accepting_line_must_post_date_the_attested_blob",
+      "repair_method_location": {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+        "class": "TestAttestationPreflight",
+        "line": 1032,
+        "end_line": 1058
+      },
+      "bounded_repair": "Checked isolated fixture Git helper/settings; R1 cleanup cause remains UNPROVEN and no cleanup failure is ignored.",
+      "fresh_R2_raw_events_and_intended_direct_assertion_required": true
+    },
+    {
+      "id": "N08",
+      "R1_status": "ERROR",
+      "R1_kill_credit": false,
+      "catalog_property": "exited processes not reported",
+      "intended_property_test_methods": [
+        "test_exited_in_window_is_reported"
+      ],
+      "R2_intended_method_locations": [
+        {
+          "method": "test_exited_in_window_is_reported",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "line": 558,
+          "end_line": 562
+        }
+      ],
+      "repaired_collateral_fixture_method": "test_birth_exit_and_observed_owned_parent_positive_controls",
+      "repair_method_location": {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+        "class": "TestCpuWindowEvidence",
+        "line": 184,
+        "end_line": 198
+      },
+      "bounded_repair": "Exit result list type and exact cardinality asserted before indexing.",
+      "fresh_R2_raw_events_and_intended_direct_assertion_required": true
+    },
+    {
+      "id": "P04",
+      "R1_status": "ERROR",
+      "R1_kill_credit": false,
+      "catalog_property": "verdict line not required",
+      "intended_property_test_methods": [
+        "test_acceptance_is_found_not_named"
+      ],
+      "R2_intended_method_locations": [
+        {
+          "method": "test_acceptance_is_found_not_named",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "line": 996,
+          "end_line": 1030
+        }
+      ],
+      "repaired_collateral_fixture_method": "test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+      "repair_method_location": {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+        "class": "TestVerifiedObservation",
+        "line": 262,
+        "end_line": 278
+      },
+      "bounded_repair": "Genuine distinct content cases now have stable case_index in subtest identities; duplicate policy unchanged.",
+      "fresh_R2_raw_events_and_intended_direct_assertion_required": true
+    },
+    {
+      "id": "Q07",
+      "R1_status": "ERROR",
+      "R1_kill_credit": false,
+      "catalog_property": "systemctl is-active not consulted (a running but disabled update unit reads as off)",
+      "intended_property_test_methods": [
+        "test_systemctl_path_when_systemd_is_pid1"
+      ],
+      "R2_intended_method_locations": [
+        {
+          "method": "test_systemctl_path_when_systemd_is_pid1",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestUpdatesLaunch",
+          "line": 700,
+          "end_line": 719
+        }
+      ],
+      "repaired_collateral_fixture_method": "test_supervisor_true_false_unknown_and_update_composition",
+      "repair_method_location": {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+        "class": "TestUnitQueryEvidence",
+        "line": 473,
+        "end_line": 488
+      },
+      "bounded_repair": "Independent evidence=unit and evidence=updates subtests retain mock scope and avoid dependent unbound/stale result.",
+      "fresh_R2_raw_events_and_intended_direct_assertion_required": true
+    },
+    {
+      "id": "CDEX16",
+      "R1_status": "ERROR",
+      "R1_kill_credit": false,
+      "catalog_property": "Combined: unknown activity plus disabled state is not positive inactive evidence",
+      "intended_property_test_methods": [
+        "test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+      ],
+      "R2_intended_method_locations": [
+        {
+          "method": "test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+          "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+          "class": "TestUnitQueryEvidence",
+          "line": 468,
+          "end_line": 471
+        }
+      ],
+      "repaired_collateral_fixture_method": "test_supervisor_true_false_unknown_and_update_composition",
+      "repair_method_location": {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+        "class": "TestUnitQueryEvidence",
+        "line": 473,
+        "end_line": 488
+      },
+      "bounded_repair": "Independent unit/update evidence subtests retain direct refusal/composition assertions.",
+      "fresh_R2_raw_events_and_intended_direct_assertion_required": true
+    }
+  ],
+  "registry_count": 133,
+  "registry_and_witness_mapping_unchanged": true,
+  "no_new_execution_or_requirements": true,
+  "exact_assertion_text_mapping_rows": 125,
+  "equivalent_observation_variable_extraction_rows": 1,
+  "all_prior126_have_matching_or_explicitly_equivalent_R2_intended_assertions": true,
+  "note": "125 credited rows retain exact assertion source text; R5SYNC04 retains the same observation+identity assertion through explicit unit variable extraction. Fresh R2 actual frames remain required for every row."
+}

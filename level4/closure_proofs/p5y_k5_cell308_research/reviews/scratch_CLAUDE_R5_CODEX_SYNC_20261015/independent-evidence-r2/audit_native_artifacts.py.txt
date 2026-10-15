@@ -1,0 +1,282 @@
+"""Independent read-only auditor. Never imports product, harness, or test modules.
+
+Requires coordinator-supplied explicit exact-commit input binding and artifact path.
+Only AST parsing, literal text transforms, raw report parsing, file hashing, and
+exact `git show COMMIT:PATH` reads occur. No native or candidate test executes.
+"""
+import argparse
+import ast
+import collections
+import hashlib
+import json
+import re
+import subprocess
+from pathlib import Path
+
+DEV='level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+WORKFLOW='.github/workflows/cell-308-r5-integration.yml'
+FORBIDDEN=('EXECUTION_INTERRUPTION_ASSESSMENT','INCIDENT_AUDIT','REVIEW_EXECUTION_INTERRUPTION','COORDINATOR_EXPOSURE_DISCLOSURE','MB-r1postexec','Cell309')
+
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+def literal_assign(tree,name):
+    for n in tree.body:
+        if isinstance(n,ast.Assign) and len(n.targets)==1 and isinstance(n.targets[0],ast.Name) and n.targets[0].id==name:
+            return ast.literal_eval(n.value)
+    raise ValueError('missing literal '+name)
+
+def registry_witnesses(tree):
+    for n in tree.body:
+        if isinstance(n,ast.For) and isinstance(n.iter,ast.Call) and isinstance(n.iter.func,ast.Attribute) and n.iter.func.attr=='items' and isinstance(n.iter.func.value,ast.Dict):
+            mapping=ast.literal_eval(n.iter.func.value)
+            if all(isinstance(k,str) and k.startswith('test_') for k in mapping):
+                result={}
+                for method,ids in mapping.items():
+                    for mid in ids.split(): result.setdefault(mid,[]).append(method)
+                return result
+    raise ValueError('no explicit witness mapping')
+
+def test_inventory(sources):
+    inventory={}
+    methods={}
+    assertion_lines={}
+    for rel,source in sources.items():
+        p=Path(rel)
+        if p.parent.as_posix()!=DEV+'/tests' or not p.name.startswith('test_') or p.suffix!='.py': continue
+        tree=ast.parse(source)
+        for cl in tree.body:
+            if not isinstance(cl,ast.ClassDef): continue
+            for m in cl.body:
+                if not isinstance(m,ast.FunctionDef) or not m.name.startswith('test_'): continue
+                full=f'{m.name} ({p.stem}.{cl.name}.{m.name})'
+                inventory[full]={'path':rel,'line':m.lineno,'end_line':m.end_lineno,'method':m.name,'class':cl.name}
+                methods.setdefault(m.name,[]).append(full)
+                for n in ast.walk(m):
+                    if isinstance(n,ast.Assert) or (isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and (n.func.attr.startswith('assert') or n.func.attr=='fail')):
+                        for line in range(n.lineno,n.end_lineno+1): assertion_lines.setdefault((rel,line),[]).append(full)
+    return inventory,methods,assertion_lines
+
+def unique_object(pairs):
+    value={}
+    for key,item in pairs:
+        if key in value: raise ValueError('duplicate JSON key: '+key)
+        value[key]=item
+    return value
+
+def suite_parse(label,suite,expected_names,expected_count,sources,assertion_lines):
+    expected_names=list(expected_names)
+    text=suite.get('stderr','')
+    result={'label':label,'issues':[],'direct_assertions':[]}
+    def check(ok,what):
+        if not ok: result['issues'].append(what)
+    counts=re.findall(r'^Ran (\d+) tests? in ([0-9.]+)s$',text,re.M)
+    summaries=re.findall(r'^(?:OK(?: \([^\n]*\))?|FAILED \([^\n]*\))$',text,re.M)
+    check(len(counts)==1 and int(counts[0][0])==expected_count,'raw unittest count missing, duplicate, or differs from exact source inventory')
+    check(suite.get('ran')==expected_count,'reported ran differs from exact source inventory')
+    check(len(summaries)==1,'raw summary missing or duplicate')
+    check(len(summaries)==1 and suite.get('summary')==summaries[0],'reported suite summary differs from raw summary')
+    check(suite.get('suite_tail')==(text.strip().splitlines() or [''])[-1],'reported suite tail differs from raw output')
+    names=re.findall(r'^(test_[A-Za-z0-9_]+ \([A-Za-z0-9_.]+\))(?= \.\.\.|$)',text,re.M)
+    check(collections.Counter(names)==collections.Counter(expected_names),'verbose top-level test names differ from exact source inventory')
+    check(len(names)==len(set(names)),'duplicate verbose top-level test names')
+    result['test_names']=names
+    failures=re.findall(r'^FAIL: (.+)$',text,re.M)
+    errors=re.findall(r'^ERROR: (.+)$',text,re.M)
+    check(not errors,'raw ERROR entries present')
+    check(len(failures)==len(set(failures)),'duplicate FAIL names')
+    check(suite.get('failure_names')==failures,'reported failure names differ from raw output')
+    check(suite.get('error_names')==errors,'reported error names differ from raw output')
+    check(suite.get('errors')==suite.get('skipped')==0,'reported errors or skips present')
+    check(not suite.get('timed_out') and not suite.get('launch_error') and not suite.get('invalid_reasons'),'reported suite is invalid/timed out/launch failed')
+    combined=suite.get('stdout','')+'\n'+text
+    check(not re.search(r'\b[A-Za-z_]*Warning\b',combined) and 'Exception ignored in:' not in combined,'warning/unraisable output present')
+    check(not re.search(r'^(?:skipped|expected failure|unexpected success)\b',text,re.M),'nonassertion outcome output present')
+    if label=='baseline':
+        check(summaries==['OK'] and suite.get('returncode')==0 and not failures,'baseline raw summary/exit/failure mismatch')
+    else:
+        check(summaries==[f'FAILED (failures={len(failures)})'] and len(failures)>0 and suite.get('returncode')==1,'mutation raw summary/count/exit mismatch')
+    check(suite.get('failures')==len(failures),'reported failure count differs from raw output')
+    blocks=re.findall(r'^FAIL: ([^\n]+)\n(.*?)(?=^={10,}$|^-{10,}\nRan |\Z)',text,re.M|re.S)
+    check([name for name,_ in blocks]==failures,'raw failure block boundaries mismatch')
+    md=suite.get('controlled_runner_metadata')
+    raw_md=suite.get('controlled_runner_metadata_raw')
+    try: decoded=json.loads(raw_md,object_pairs_hook=unique_object)
+    except (TypeError,ValueError): decoded=None
+    check(isinstance(md,dict) and decoded==md,'raw runner sidecar missing, malformed, duplicated, or differs from embedded metadata')
+    md=md if isinstance(md,dict) else {}
+    expected_ids=[name.split(' (',1)[1][:-1] for name in expected_names]
+    executed=md.get('executed_test_ids',[])
+    valid_executed=isinstance(executed,list) and all(isinstance(test_id,str) and test_id for test_id in executed)
+    check(valid_executed,'controlled executed IDs have invalid shape')
+    executed=executed if valid_executed else []
+    check(collections.Counter(executed)==collections.Counter(expected_ids),'controlled executed IDs differ from exact source inventory')
+    check(md.get('schema')=='CELL308_CONTROLLED_UNITTEST_RESULT_V1' and type(md.get('ran')) is int and md.get('ran')==expected_count,'runner schema or count mismatch')
+    check(type(md.get('successful')) is bool and md.get('successful')==(label=='baseline'),'controlled successful flag mismatch')
+    check(all(type(md.get(k)) is int and md[k]==0 for k in ('skipped','expected_failures','unexpected_successes')),'runner nonassertion outcomes present')
+    events=md.get('events')
+    check(isinstance(events,list),'runner events is not a list')
+    events=events if isinstance(events,list) else []
+    failed_events=[event for event in events if isinstance(event,dict) and event.get('kind')=='failure']
+    check(len(events)==len(failed_events) and [event.get('description') for event in failed_events]==failures,'runner events and raw failure descriptions disagree')
+    event_shape=all(all(isinstance(event.get(k),str) and event[k] for k in ('test_id','parent_test_id','description','exception_type')) and type(event.get('is_exact_assertion_error')) is bool and isinstance(event.get('traceback_frames'),list) and bool(event['traceback_frames']) and all(isinstance(frame,dict) and all(isinstance(frame.get(k),str) and frame[k] for k in ('file','function')) and type(frame.get('line')) is int and frame['line']>0 for frame in event['traceback_frames']) for event in failed_events)
+    check(event_shape,'runner failure event or traceback frame has invalid shape')
+    failure_ids=[event.get('test_id') for event in failed_events if isinstance(event.get('test_id'),str)]
+    check(len(failure_ids)==len(failed_events) and len(set(failure_ids))==len(failed_events),'duplicate or malformed runner failure IDs')
+    result['executed_test_ids']=executed
+    result['runner_events']=events
+    assertion_names=[]
+    for block_index,(name,block) in enumerate(blocks):
+        headers=re.findall(r'^Traceback \(most recent call last\):$',block,re.M)
+        exceptions=re.findall(r'^([A-Za-z_][\w.]*(?:Error|Exception|Interrupt|Exit|ExceptionGroup))(?::[^\n]*)?$',block,re.M)
+        event=failed_events[block_index] if block_index<len(failed_events) else {}
+        identity=re.fullmatch(r'([^\s()]+) \(([^()\n]+)\)([^\n]*)',name)
+        identity_ok=False
+        if identity:
+            method,owner,suffix=identity.groups()
+            identity_ok=owner in expected_ids and owner.endswith('.'+method) and event.get('parent_test_id')==owner and event.get('test_id')==owner+suffix
+        check(identity_ok,'runner event identity/parent/description mismatch: '+name)
+        valid=bool(headers) and 'AssertionError' in exceptions and event.get('exception_type')=='builtins.AssertionError' and event.get('is_exact_assertion_error') is True
+        check(valid,'missing raw exception line or non-exact-AssertionError runner identity: '+name)
+        if valid: assertion_names.append(name)
+        frames=re.findall(r'^  File "([^"]+)", line (\d+), in ([A-Za-z0-9_<>]+)$',block,re.M)
+        reported_frames=event.get('traceback_frames',[])
+        check(isinstance(reported_frames,list) and bool(reported_frames),'missing controlled traceback frames: '+name)
+        if isinstance(reported_frames,list):
+            for frame in reported_frames:
+                if isinstance(frame,dict) and any(str(frame.get('file','')).endswith('/'+rel) for rel in sources if '/tests/' in rel):
+                    check((frame.get('file'),str(frame.get('line')),frame.get('function')) in frames,'controlled test frame not present in raw trace: '+name)
+        direct=[]
+        for filename,line,method in frames:
+            match=[rel for rel in sources if filename.endswith('/'+rel)]
+            if len(match)!=1: continue
+            rel=match[0]
+            line=int(line)
+            parent_id=event.get('parent_test_id') if isinstance(event.get('parent_test_id'),str) else ''
+            owner_name=parent_id.rsplit('.',1)[-1]+' ('+parent_id+')'
+            controlled_frame_present=any(isinstance(frame,dict) and frame.get('file')==filename and frame.get('line')==line and frame.get('function')==method for frame in reported_frames) if isinstance(reported_frames,list) else False
+            if owner_name in assertion_lines.get((rel,line),[]) and controlled_frame_present and method==owner_name.split(' ',1)[0]:
+                direct.append({'path':rel,'line':line,'method':method,'owner':owner_name,'assertion':sources[rel].splitlines()[line-1].strip(),'in_raw_and_controlled_trace':True})
+        result['direct_assertions'].append({'failure_name':name,'frames':frames,'direct_assertion_frames':direct})
+    check(suite.get('assertion_failure_names')==assertion_names,'reported assertion failure names differ from strict raw parse')
+    controls=suite.get('environment_controls',{})
+    check(controls.get('PYTHONDONTWRITEBYTECODE')=='1' and controls.get('PYTHONWARNINGS')=='error' and controls.get('PYTHONHASHSEED')=='0','missing deterministic warning/bytecode controls')
+    check((not controls.get('LX_PLATFORM_DIR')) if label=='baseline' else bool(controls.get('LX_PLATFORM_DIR')),'baseline/mutant module path separation missing')
+    cwd=suite.get('cwd','')
+    check(cwd.endswith('/'+DEV),'suite cwd is not expected development directory')
+    command=suite.get('command',[])
+    runner=literal_assign(ast.parse(sources[DEV+'/tests/run_mutants.py']),'_RUNNER')
+    check(len(command)==8 and command[1:5]==['-B','-W','error','-c'] and command[5]==runner and command[6]==cwd+'/tests' and command[7].endswith('/result.json'),'unexpected suite command or runner source')
+    result['failure_names']=failures
+    result['assertion_failure_names']=assertion_names
+    return result
+
+def main():
+    ap=argparse.ArgumentParser()
+    ap.add_argument('--repo',required=True)
+    ap.add_argument('--commit',required=True)
+    ap.add_argument('--binding',required=True,help='JSON mapping exact explicit source paths to expected SHA256')
+    ap.add_argument('--artifact-dir',required=True)
+    ap.add_argument('--out',required=True)
+    args=ap.parse_args()
+    if not re.fullmatch('[0-9a-f]{40}',args.commit): raise ValueError('exact full commit required')
+    binding=json.loads(Path(args.binding).read_text())
+    if not isinstance(binding,dict) or not binding or not all(isinstance(v,str) and re.fullmatch('[0-9a-f]{64}',v) for v in binding.values()): raise ValueError('explicit source hash map required')
+    sources={}; source_bindings={}; issues=[]
+    for rel,expected in binding.items():
+        if Path(rel).is_absolute() or '..' in Path(rel).parts or any(x in rel for x in FORBIDDEN): raise ValueError('disallowed input path')
+        if rel!=WORKFLOW and not (rel.startswith(DEV+'/') and rel.endswith('.py')): raise ValueError('outside explicit dev Python + workflow scope')
+        run=subprocess.run(['git','show',args.commit+':'+rel],cwd=args.repo,capture_output=True,check=True)
+        actual=sha(run.stdout)
+        source_bindings[rel]={'expected':expected,'actual_exact_commit':actual,'matches':actual==expected}
+        if actual!=expected: issues.append('exact-commit source hash mismatch: '+rel)
+        sources[rel]=run.stdout.decode()
+    hrel=DEV+'/tests/run_mutants.py'
+    tree=ast.parse(sources[hrel])
+    mutants=literal_assign(tree,'MUTANTS'); groups=literal_assign(tree,'MUTANT_GROUP_SIZES'); witnesses=registry_witnesses(tree)
+    expected_ids={f'{prefix}{index:02d}' for prefix,size in groups.items() for index in range(1,size+1)}
+    if len(mutants)!=len(expected_ids) or {r[0] for r in mutants}!=expected_ids or set(witnesses)!=expected_ids: issues.append('source registry/group/witness keys incoherent')
+    inventory,methods,assertion_lines=test_inventory(sources)
+    if any(len(names)!=1 for names in methods.values()): issues.append('nonunique test method names in exact source inventory')
+    if any(n not in methods for ws in witnesses.values() for n in ws): issues.append('intended witness missing from exact source inventory')
+    folder=Path(args.artifact_dir)
+    required={'mutations.json','harness.stdout.log','harness.stderr.log','source-commit.txt','python.txt','kernel.txt','status-before.txt','status-after.txt','baseline.stdout.txt','baseline.stderr.txt','baseline.metadata.json'}|{mid+'.'+stream+'.txt' for mid in expected_ids for stream in ('stdout','stderr')}|{mid+'.metadata.json' for mid in expected_ids}
+    if folder.is_symlink() or not folder.is_dir(): raise ValueError('artifact directory must be a real directory')
+    for name in required|{'artifact-sha256.json'}:
+        artifact_path=folder/name
+        if artifact_path.is_symlink() or not artifact_path.is_file(): raise ValueError('required artifact is missing, non-file, or a symlink: '+name)
+    manifest_raw=(folder/'artifact-sha256.json').read_bytes()
+    manifest=json.loads(manifest_raw,object_pairs_hook=unique_object)
+    if not isinstance(manifest,dict) or set(manifest)!=required: raise ValueError('artifact manifest must contain exactly the fixed expected filename allowlist')
+    if any(not isinstance(value,str) or not re.fullmatch('[0-9a-f]{64}',value) for value in manifest.values()): raise ValueError('artifact manifest contains invalid SHA256 value')
+    raw=(folder/'mutations.json').read_bytes(); rec=json.loads(raw,object_pairs_hook=unique_object)
+    artifact_checks={}
+    for name in sorted(required):
+        expected=manifest[name]
+        actual=sha((folder/name).read_bytes())
+        artifact_checks[name]={'expected':expected,'actual':actual,'matches':actual==expected}
+        if actual!=expected: issues.append('artifact hash mismatch: '+name)
+    if (folder/'harness.stdout.log').read_bytes()!=raw: issues.append('stdout JSON differs from mutations.json')
+    if (folder/'harness.stderr.log').read_bytes(): issues.append('harness stderr is nonempty')
+    if (folder/'source-commit.txt').read_text().strip()!=args.commit: issues.append('source-commit.txt mismatch')
+    for name in ('status-before.txt','status-after.txt'):
+        if (folder/name).read_bytes(): issues.append('nonempty clean-tree status: '+name)
+    for key,expected in {'schema':'CLOUD_R1_LINUX_DEV_MUTATION_RUN_V3','class':'SYNTHETIC_VALIDATION','dev_only':True,'system':'Linux','source_commit':args.commit,'new_target_evaluations':0,'pass':True,'inputs_unchanged':True,'full_registry_completed':True,'unmutated_suite':'PASS'}.items():
+        if rec.get(key)!=expected: issues.append('report metadata mismatch: '+key)
+    if rec.get('input_sha256')!=binding or rec.get('input_sha256_after')!=binding: issues.append('before/after source hash bindings differ from exact frozen input set')
+    runtime=rec.get('python',{})
+    if runtime.get('executable')!='/usr/bin/python3.12' or runtime.get('real_executable')!='/usr/bin/python3.12' or runtime.get('implementation')!='CPython' or not re.fullmatch('[0-9a-f]{64}',runtime.get('executable_sha256','')): issues.append('runtime interpreter identity differs from frozen workflow or lacks binary hash')
+    python_text=(folder/'python.txt').read_text().strip()
+    if not python_text.startswith('Python 3.12.') or ' '.join(python_text.removeprefix('Python ').split())!=' '.join(str(runtime.get('version','')).split()): issues.append('runtime Python version differs from python.txt')
+    kernel_text=(folder/'kernel.txt').read_text()
+    if not kernel_text.startswith('Linux ') or not rec.get('kernel') or rec['kernel'] not in kernel_text or not rec.get('machine') or rec['machine'] not in kernel_text: issues.append('runtime kernel/system/machine differs from kernel.txt')
+    n=len(expected_ids)
+    if not (rec.get('expected_mutants')==rec.get('total')==rec.get('killed')==n): issues.append('mutant totals differ from exact registry')
+    if rec.get('expected_test_count')!=len(inventory): issues.append('reported static test count differs from independent inventory')
+    if rec.get('status_counts')!={'KILLED':n,'SURVIVED':0,'ERROR':0,'NOT_APPLIED':0}: issues.append('status counts mismatch')
+    rows=rec.get('mutants',[])
+    if collections.Counter(r.get('id') for r in rows)!=collections.Counter(expected_ids): issues.append('report mutant ID multiplicity mismatch')
+    transforms={mid:(what,edits) for mid,what,edits in mutants}
+    baseline=suite_parse('baseline',rec['baseline'],inventory,len(inventory),sources,assertion_lines)
+    suites=[baseline]; mutation_audits=[]
+    for row in rows:
+        mid=row['id']
+        if mid not in transforms:
+            issues.append('unknown mutant ID: '+mid); continue
+        what,edits=transforms[mid]
+        transformed=sources[DEV+'/lx_platform.py']; counts=[]
+        for old,new in edits:
+            counts.append(transformed.count(old))
+            if counts[-1]!=1: issues.append('anchor not unique: '+mid)
+            transformed=transformed.replace(old,new)
+        parse_ok=True
+        try: ast.parse(transformed)
+        except SyntaxError: parse_ok=False; issues.append('mutated source not parseable: '+mid)
+        checks={'property':row.get('property')==what,'edits':row.get('edits')==[{'old':old,'new':new} for old,new in edits],'anchor_counts':row.get('anchor_counts')==counts and all(c==1 for c in counts),'mutated_sha256':row.get('mutated_lx_platform_sha256')==sha(transformed.encode()),'parse':parse_ok,'status':row.get('status')=='KILLED' and row.get('reasons')==[],'intended_witnesses':row.get('intended_property_test_methods')==witnesses[mid]}
+        if not all(checks.values()): issues.append('mutation binding mismatch: '+mid)
+        if 'suite' not in row:
+            issues.append('missing full suite: '+mid); continue
+        parsed=suite_parse(mid,row['suite'],inventory,len(inventory),sources,assertion_lines)
+        direct=[d for d in parsed['direct_assertions'] if d['failure_name'].split(' ',1)[0] in witnesses[mid] and d['direct_assertion_frames']]
+        if not direct: parsed['issues'].append('no intended-property direct test assertion frame')
+        if parsed['test_names']!=baseline['test_names']: parsed['issues'].append('verbose test order differs from baseline')
+        if parsed['executed_test_ids']!=baseline['executed_test_ids']: parsed['issues'].append('controlled executed ID order differs from baseline')
+        if row.get('suite_tail')!=row['suite'].get('suite_tail'): parsed['issues'].append('row suite tail differs from suite record')
+        suites.append(parsed)
+        mutation_audits.append({'id':mid,'checks':checks,'direct_intended_assertions':direct})
+    for result in suites:
+        if result['issues']: issues.extend(result['label']+': '+i for i in result['issues'])
+        suite=rec['baseline'] if result['label']=='baseline' else next(r['suite'] for r in rows if r['id']==result['label'])
+        if not suite.get('command') or suite['command'][0]!=runtime.get('executable'): issues.append('suite executable differs from bound runtime: '+result['label'])
+        metadata_file=folder/(result['label']+'.metadata.json')
+        if not metadata_file.is_file() or metadata_file.read_text()!=suite.get('controlled_runner_metadata_raw'): issues.append('raw sidecar file differs from embedded suite: '+metadata_file.name)
+        for stream in ('stdout','stderr'):
+            p=folder/(result['label']+'.'+stream+'.txt')
+            if not p.is_file() or p.read_text()!=suite[stream]: issues.append('raw stream file differs from embedded suite: '+p.name)
+    artifact_after={name:sha((folder/name).read_bytes()) for name in sorted(required)}
+    if artifact_after!={name:entry['actual'] for name,entry in artifact_checks.items()} or (folder/'artifact-sha256.json').read_bytes()!=manifest_raw: issues.append('artifact inputs changed during independent audit')
+    out={'auditor_source_sha256':sha(Path(__file__).read_bytes()),'artifact_manifest_sha256':sha(manifest_raw),'artifact_sha256_after':artifact_after,'role':'independent source/evidence correctness audit; no host/governance/route acceptance','source_commit':args.commit,'artifact_directory':str(folder),'mutations_json_sha256':sha(raw),'expected_mutants':n,'expected_suites':n+1,'expected_test_methods':len(inventory),'observed_suites':len(suites),'source_bindings':source_bindings,'artifact_bindings':artifact_checks,'test_inventory':inventory,'suite_audits':suites,'mutation_audits':mutation_audits,'issues':issues,'verdict':'STRUCTURAL_EVIDENCE_CHECKS_PASS; SEMANTIC_PROPERTY_REVIEW_PENDING' if not issues else 'FAIL/PENDING_REVIEW','product_or_suite_execution':False}
+    Path(args.out).write_text(json.dumps(out,indent=2)+'\n')
+    print(json.dumps({k:v for k,v in out.items() if k not in ('source_bindings','artifact_bindings','test_inventory','suite_audits','mutation_audits')},indent=2))
+
+if __name__=='__main__': main()
