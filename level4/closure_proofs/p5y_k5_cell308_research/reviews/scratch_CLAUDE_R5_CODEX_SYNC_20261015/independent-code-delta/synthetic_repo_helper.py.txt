@@ -1,0 +1,22 @@
+from probe_safety import *
+import hashlib
+MACHINE={"machine_id_sha256":"a"*64,"product_uuid_sha256":"b"*64,"hardware_bound":True}
+class Repo:
+    def __init__(self):
+        self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name)
+        self.git('init','-q')
+        self.path='fixtures/host.json'
+        self.data=(json.dumps({'schema':L.ATTESTATION_SCHEMA,'accepted':True,'reviewed':True,'machine':MACHINE,'root_cgroup_is_real':True,'provider_image_updates':L.NO_IMAGE_CHANGE},sort_keys=True)+'\n').encode()
+        self.sha=hashlib.sha256(self.data).hexdigest();self.ref={'path':self.path,'sha256':self.sha}
+        self.write(self.path,self.data);self.commit()
+        self.accept=f'{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}FRESH.md'
+        self.write(self.accept,f'{L.ACCEPTANCE_LINE}{self.sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n');self.commit()
+    def git(self,*args):
+        return subprocess.run(['git','-C',str(self.root),'-c','commit.gpgSign=false','-c','core.hooksPath=/dev/null','-c','core.fsmonitor=false','-c','user.name=Independent synthetic probe','-c','user.email=independent@example.invalid',*args],check=True,capture_output=True).stdout
+    def write(self,rel,data):
+        p=self.root/rel;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data if isinstance(data,bytes) else data.encode())
+    def commit(self):self.git('add','-A');self.git('commit','-q','-m','Independent synthetic fixture')
+    def verify(self):
+        with mock.patch.object(L,'machine_identity',return_value=MACHINE):
+            rec,why=L.attestation_valid(self.ref,repo_root=self.root)
+        return {'verified':isinstance(rec,dict),'reasons':why}

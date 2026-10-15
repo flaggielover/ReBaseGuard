@@ -1,0 +1,489 @@
+"""Target-free synthetic controls for the selective Claude R5 / Codex integration.
+
+Only planted records, parser strings and mocked module-reader boundaries are used. No host
+proc/systemd reader, candidate, science evaluator, real job or governance acceptance runs here.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import tempfile
+from contextlib import contextmanager
+import unittest
+from pathlib import Path
+from unittest import mock
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, os.environ.get("LX_PLATFORM_DIR", str(HERE.parent)))
+import lx_platform as L  # noqa: E402
+
+BOOT = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+OTHER_BOOT = "11111111-2222-3333-4444-555555555555"
+NS = {"pidns": 4026531836, "timens": 4026531834}
+IDENT = {"pid": 4242, "starttime_ticks": 777, "boot_id": BOOT, "cmdline_sha256": "c" * 64, **NS}
+STAT = {"pid": 4242, "state": "S", "ppid": 1, "utime": 10, "stime": 5, "starttime": 777}
+MOUNT = "36 25 0:32 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw\n"
+S = 10 ** 9
+
+
+def stat_text(pid=4242, state="S", ppid=1, utime=10, stime=5, start=777):
+    fields = [state, ppid, 1, 1, 0, -1, 0, 0, 0, 0, 0, utime, stime, 0, 0, 20, 0, 1, 0, start, 0, 0]
+    return f"{pid} (py (x) y) " + " ".join(map(str, fields)) + "\n"
+
+
+def snap(seconds, *, boottime=None, realtime=None, count=7, boot=BOOT):
+    n = seconds * S
+    return {"clocks": {"monotonic_ns": n, "boottime_ns": n if boottime is None else boottime,
+                       "realtime_ns": n if realtime is None else realtime},
+            "suspend_success": count, "boot_id": boot, "power": L.AC}
+
+
+class TestIdentityEvidence(unittest.TestCase):
+    def state(self, ident=None, *, boot=BOOT, exists=True, stat=None, cmd="c" * 64, ns=None):
+        return L.identity_state(IDENT if ident is None else ident, current_boot=boot,
+                                exists=lambda _pid: exists, stat=lambda _pid: STAT if stat is None else stat,
+                                cmd=lambda _pid: cmd, current_ns=NS if ns is None else ns)
+
+    def test_valid_matching_evidence_and_positive_death_controls(self):
+        self.assertEqual(self.state(), L.ALIVE)
+        self.assertEqual(self.state(boot=OTHER_BOOT), L.DEAD)
+        self.assertEqual(self.state(exists=False), L.DEAD)
+        self.assertEqual(self.state(stat={**STAT, "starttime": 778}), L.DEAD)
+        self.assertEqual(self.state(cmd="d" * 64), L.DEAD)
+
+    def test_malformed_record_cannot_bypass_validation_with_reboot_or_esrch(self):
+        for key, values in {"starttime_ticks": (True, -1, "777"), "cmdline_sha256": ("bad", b"c" * 64),
+                            "boot_id": ("bad", BOOT + "\n"), "pidns": (True, -1), "timens": (True, -1)}.items():
+            for value in values:
+                record = {**IDENT, key: value}
+                with self.subTest(key=key, value=value):
+                    self.assertEqual(self.state(record, boot=OTHER_BOOT), L.UNKNOWN)
+                    self.assertEqual(self.state(record, exists=False), L.UNKNOWN)
+
+    def test_current_boot_requires_a_recognized_string(self):
+        for value in ("", "different-boot", 123, True, [], {}):
+            with self.subTest(value=value):
+                self.assertEqual(self.state(boot=value), L.UNKNOWN)
+
+    def test_current_namespace_shape_and_exists_boolean(self):
+        for value in (True, 1.0, "4026531836", None, -1):
+            self.assertEqual(self.state(ns={**NS, "pidns": value}), L.UNKNOWN)
+        for ns in ([], "bad", {"pidns": NS["pidns"]}):
+            self.assertEqual(self.state(ns=ns), L.UNKNOWN)
+        for value in (None, 1, 0, "yes", [], {}):
+            self.assertEqual(self.state(exists=value), L.UNKNOWN)
+
+    def test_current_stat_schema_before_identity_comparison(self):
+        for key, values in {"pid": (4243, True, "4242"), "state": ("?", None, "Z", "X"),
+                            "ppid": (True, -1, "1"), "utime": (True, -1, 1.5),
+                            "stime": (False, -1), "starttime": (True, -1, "777")}.items():
+            for value in values:
+                with self.subTest(key=key, value=value):
+                    self.assertEqual(self.state(stat={**STAT, key: value}), L.UNKNOWN)
+        for value in ([], "bad", {}):
+            self.assertEqual(self.state(stat=value), L.UNKNOWN)
+
+    def test_current_command_digest_shape(self):
+        for value in (None, "", "bad", "C" * 64, b"c" * 64, True):
+            self.assertEqual(self.state(cmd=value), L.UNKNOWN)
+
+    def test_proc_parser_requested_pid_state_and_nonnegative_counters(self):
+        self.assertEqual(L.proc_stat(4242, stat_text())["comm"], "py (x) y")
+        for text in (stat_text(pid=4243), stat_text(state="?"), stat_text(ppid=-1), stat_text(utime=-1),
+                     stat_text(stime=-1), stat_text(start=-1), "", "malformed"):
+            self.assertIsNone(L.proc_stat(4242, text))
+        for value in (None, True, 0, -1, "4242"):
+            self.assertIsNone(L.proc_stat(value, stat_text()))
+        for value in ([], 123, True):
+            self.assertIsNone(L.proc_stat(4242, value))
+
+
+class TestIntervalEvidence(unittest.TestCase):
+    def assess(self, start=None, end=None, samples=None):
+        with mock.patch.object(L, "JOURNAL_READER_REVIEWED", True):
+            return L.assess(snap(0) if start is None else start, snap(30) if end is None else end,
+                            [snap(10), snap(20)] if samples is None else samples, [])
+
+    def test_valid_sequence_clean_only_with_synthetic_reviewed_reader(self):
+        self.assertTrue(self.assess()["clean"])
+        with mock.patch.object(L, "JOURNAL_READER_REVIEWED", False):
+            result = L.assess(snap(0), snap(30), [snap(10), snap(20)], [])
+        self.assertFalse(result["clean"])
+        self.assertTrue(any("no reviewed journal reader" in x for x in result["reasons"]))
+
+    def test_middle_clock_excursion_not_hidden_by_matching_endpoints(self):
+        for channel in ("boottime_ns", "realtime_ns"):
+            middle = snap(10)
+            middle["clocks"][channel] += 3 * S
+            result = self.assess(samples=[middle, snap(20)])
+            self.assertFalse(result["clean"])
+            self.assertTrue(any("suspended" in x or "diverged" in x for x in result["reasons"]))
+
+    def test_cumulative_endpoint_divergence_checked_in_addition_to_adjacent_pairs(self):
+        result = self.assess(end=snap(30, boottime=34_500_000_000),
+                             samples=[snap(10, boottime=11_500_000_000), snap(20, boottime=23_000_000_000)])
+        self.assertEqual(result["status"], "CONTAMINATED")
+
+    def test_every_suspend_counter_and_reset_is_checked(self):
+        for middle in (snap(10, count=8), snap(10, count=6)):
+            result = self.assess(samples=[middle, snap(20)])
+            self.assertEqual(result["status"], "AMBIGUOUS")
+            self.assertTrue(any("decreased or reset" in x for x in result["reasons"]))
+        result = self.assess(end=snap(30, count=8), samples=[snap(10, count=8), snap(20, count=8)])
+        self.assertEqual(result["status"], "CONTAMINATED")
+        for count in (True, -1, 7.0, "7", None):
+            self.assertFalse(self.assess(samples=[snap(10, count=count), snap(20)])["clean"])
+
+    def test_clock_schema_refuses_noninteger_nonfinite_bool_and_negative(self):
+        for channel in ("monotonic_ns", "boottime_ns", "realtime_ns"):
+            for value in (True, -1, 10.0, float("nan"), float("inf"), "10", None):
+                middle = snap(10)
+                middle["clocks"][channel] = value
+                with self.subTest(channel=channel, value=value):
+                    self.assertFalse(self.assess(samples=[middle, snap(20)])["clean"])
+        for value in ({}, [], "bad", None):
+            middle = snap(10)
+            middle["clocks"] = value
+            self.assertFalse(self.assess(samples=[middle, snap(20)])["clean"])
+
+    def test_interval_boot_schema_and_nonrecord_samples(self):
+        for value in ("bad", "", True, [], {}, None):
+            self.assertFalse(self.assess(samples=[snap(10, boot=value), snap(20)])["clean"])
+        self.assertEqual(self.assess(samples=[snap(10, boot=OTHER_BOOT), snap(20)])["status"], "CONTAMINATED")
+        for value in (None, [], "bad", 1):
+            self.assertFalse(self.assess(samples=[value, snap(20)])["clean"])
+        for value in ([], "bad", 1):
+            with mock.patch.object(L, "JOURNAL_READER_REVIEWED", True):
+                self.assertFalse(L.assess(value, snap(30), [], [])["clean"])
+
+    def test_reversed_sample_order_is_refused(self):
+        result = self.assess(samples=[snap(20), snap(10)])
+        self.assertFalse(result["clean"])
+        self.assertTrue(any("out of order" in x for x in result["reasons"]))
+
+    def test_equal_and_reversed_clock_steps_refused(self):
+        for samples in ([snap(0), snap(20)], [snap(10), snap(10)], [snap(20), snap(10)]):
+            self.assertFalse(self.assess(samples=samples)["clean"])
+        self.assertFalse(self.assess(samples=[snap(10, boottime=0), snap(20)])["clean"])
+
+
+class TestCpuWindowEvidence(unittest.TestCase):
+    def busy(self, t0=None, t1=None, dt=10, threshold=1, own=None, hz=100, view=True):
+        with mock.patch.object(L, "proc_view_complete", return_value=view):
+            return L.busy_processes({} if t0 is None else t0, {} if t1 is None else t1,
+                                    dt, threshold, set() if own is None else own, hz=hz)
+
+    def test_birth_exit_and_observed_owned_parent_positive_controls(self):
+        key, parent = (43, 120), (42, 100)
+        child = (42, 100, "child", None)
+        born = self.busy(t1={key: child})
+        self.assertEqual(born[0]["pid"], 43)
+        self.assertTrue(born[0]["born_in_window"])
+        exited = self.busy(t0={key: child})
+        self.assertTrue(exited[0]["exited_in_window"])
+        parent_record = (1, 0, "parent", None)
+        self.assertEqual(self.busy(t1={parent: parent_record, key: child}, own={parent}), [])
+        self.assertEqual(self.busy(t0={parent: parent_record, key: child}, own={parent}), [])
+
+    def test_missing_and_reused_parent_identity_cannot_exempt_child(self):
+        key, own = (43, 120), {(42, 100)}
+        child = (42, 100, "child", None)
+        for t1 in ({key: child}, {(42, 900): (1, 0, "reuse", None), key: child}):
+            self.assertTrue(any(x["pid"] == 43 for x in self.busy(t1=t1, own=own)))
+        for t0 in ({key: child}, {(42, 900): (1, 0, "reuse", None), key: child}):
+            self.assertTrue(any(x["pid"] == 43 for x in self.busy(t0=t0, own=own)))
+
+    def test_child_older_than_observed_own_parent_is_reported(self):
+        parent = (42, 100)
+        result = self.busy(t1={parent: (1, 0, "parent", None), (43, 99): (42, 100, "older", None)}, own={parent})
+        self.assertEqual([x["pid"] for x in result], [43])
+
+    def test_duplicate_pid_in_either_snapshot_or_own_set_is_refused(self):
+        duplicate = {(42, 100): (1, 100, "old", None), (42, 900): (1, 100, "new", None)}
+        self.assertIsNone(self.busy(t0=duplicate))
+        self.assertIsNone(self.busy(t1=duplicate))
+        self.assertIsNone(self.busy(own={(42, 100), (42, 900)}))
+
+    def test_duration_threshold_frequency_schemas(self):
+        for value in (0, -1, True, float("nan"), float("inf"), 10 ** 1000, "10", []):
+            self.assertIsNone(self.busy(dt=value))
+        for value in (-1, True, float("nan"), float("inf"), 10 ** 1000, "1", []):
+            self.assertIsNone(self.busy(threshold=value))
+        for value in (0, -1, True, 100.0, "100", []):
+            self.assertIsNone(self.busy(hz=value))
+        self.assertEqual(self.busy(dt=1.5, threshold=0), [])
+
+    def test_key_record_and_counter_schemas(self):
+        for key in (42, (42,), (True, 100), (0, 100), (42, True), (42, -1), ("42", 100)):
+            self.assertIsNone(self.busy(t1={key: (1, 100, "bad", None)}))
+        for record in (None, (1, 100), (True, 100, "bad", None), (-1, 100, "bad", None),
+                       (1, True, "bad", None), (1, -1, "bad", None), (1, 1.5, "bad", None)):
+            self.assertIsNone(self.busy(t1={(42, 100): record}))
+        for own in ({(0, 100)}, {(1, 100)}, {(True, 100)}, {(42, True)}, {(42, -1)}, [], {(42,)}):
+            self.assertIsNone(self.busy(own=own))
+        self.assertIsNone(self.busy(t0={(42, 100): (1, 200, "bad", None)},
+                                    t1={(42, 100): (1, 100, "bad", None)}))
+
+    def test_counter_regression_refused_before_ownership_exemption(self):
+        parent, child = (42, 100), (43, 120)
+        t0 = {parent: (1, 200, "own", None), child: (42, 100, "child", None)}
+        t1 = {parent: (1, 100, "own", None), child: (42, 100, "child", None)}
+        self.assertIsNone(self.busy(t0=t0, t1=t1, own={parent}))
+        t1 = {parent: (1, 200, "own", None), child: (42, 99, "child", None)}
+        self.assertIsNone(self.busy(t0=t0, t1=t1, own={parent}))
+
+    def test_overflow_and_nonfinite_cpu_arithmetic_are_refused(self):
+        self.assertIsNone(self.busy(t1={(42, 100): (1, 10 ** 1000, "huge", None)}))
+        self.assertIsNone(self.busy(t1={(42, 100): (1, 100, "tiny duration", None)}, dt=1e-320))
+        self.assertIsNone(self.busy(t1={(42, 100): (1, 100, "huge frequency", None)}, hz=10 ** 1000))
+
+    def test_fresh_completeness_refusal_is_preserved(self):
+        for view in (None, False, 1, "true"):
+            self.assertIsNone(self.busy(view=view))
+
+
+class TestProcViewEvidence(unittest.TestCase):
+    def view(self, status="NSpid:\t77\n", mount=MOUNT, pidns=L.INIT_PID_NS):
+        return L.proc_view_complete(status, mount, pidns=pidns)
+
+    def test_single_positive_ascii_payload_and_normal_mount(self):
+        for text in ("NSpid:\t77\n", "NSpid:77\n", "NSpid:00077\n"):
+            self.assertIs(self.view(text), True)
+        self.assertIs(self.view("NSpid: 77 9\n"), False)
+
+    def test_whole_colon_payload_and_ascii_schema(self):
+        for payload in ("", "bad", "0", "-1", "+77", "7.7", "７７", "٧٧", "bad 77", "bad77"):
+            self.assertIsNot(self.view(f"NSpid:{payload}\n"), True, payload)
+        for status in ("NSpid:bad 77\n", "NSpid:bad\t77\n", "NSpid:７７\n"):
+            self.assertIsNot(self.view(status), True)
+
+    def test_duplicate_fields_both_orders_and_identical_duplicates_refused(self):
+        for status in ("NSpid:77\nNSpid:77\n", "NSpid:77\nNSpid:77 9\n", "NSpid:77 9\nNSpid:77\n"):
+            self.assertIsNot(self.view(status), True)
+
+    def test_mount_metadata_and_duplicate_mounts_refused(self):
+        for mount in (MOUNT.replace("36 25", "x 25"), MOUNT.replace("36 25", "36 -1"),
+                      MOUNT.replace("0:32", "bad"), MOUNT.replace("0:32", "０:32"),
+                      MOUNT.replace(" / /proc ", " /sub /proc "), MOUNT.replace("- proc proc", "- tmpfs proc"),
+                      MOUNT.replace(" - ", " "), MOUNT + MOUNT, MOUNT.replace("rw,nosuid", "rw,hidepid=2"),
+                      MOUNT.replace("rw,nosuid", "rw,subset=pid")):
+            self.assertIsNot(self.view(mount=mount), True, mount)
+        for value in (None, True, float(L.INIT_PID_NS), "4026531836"):
+            self.assertIsNot(self.view(pidns=value), True)
+
+
+class TestMemoryMinima(unittest.TestCase):
+    def test_host_memtotal_caps_every_larger_cgroup_limit(self):
+        chain = {"version": "v1", "chain": [
+            {"path": "/a", "limit": 10_000, "usage": 50, "root": False},
+            {"path": "/", "limit": 20_000, "usage": 100, "root": True}]}
+        self.assertEqual(L._effective_memory_limit(chain, {"MemTotal": 1000}, root_attested=True), 1000)
+        self.assertEqual(L.visible_limit_upper_bound(chain, {"MemTotal": 1000}), 1000)
+        self.assertIsNone(L._effective_memory_limit(chain, {"MemTotal": 1000}, root_attested=False))
+        self.assertEqual(L._cgroup_min_headroom(chain, root_attested=True), 9950)
+
+    def test_headroom_uses_minimum_over_readable_limited_levels(self):
+        chain = {"version": "v2", "chain": [
+            {"path": "/a/b", "limit": 3000, "usage": 10, "root": False},
+            {"path": "/a", "limit": 8000, "usage": 7000, "root": False},
+            {"path": "/", "limit": None, "usage": None, "root": True}]}
+        self.assertEqual(L._cgroup_min_headroom(chain, root_attested=True), 1000)
+
+
+class TestGitRefusal(unittest.TestCase):
+    def test_git_malformed_args_and_subprocess_failures_return_none(self):
+        for error in (ValueError("embedded null byte"), UnicodeEncodeError("utf-8", "\ud800", 0, 1, "surrogate"),
+                      OSError("unavailable"), subprocess.TimeoutExpired("git", 1)):
+            with mock.patch.object(L.subprocess, "run", side_effect=error):
+                try:
+                    data = L._git("/synthetic/repo", "show", "HEAD:bad\0path")
+                    after = L._strictly_after("/synthetic/repo", "a" * 40, "b" * 40)
+                except (OSError, subprocess.SubprocessError, ValueError, UnicodeError) as escaped:
+                    self.fail(f"Git evidence boundary leaked {type(escaped).__name__}")
+                self.assertIsNone(data)
+                self.assertFalse(after)
+
+    def test_normal_utf8_path_control(self):
+        with mock.patch.object(L.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, b"ok", b"")) as run:
+            self.assertEqual(L._git("/synthetic/repo", "show", "HEAD:证据.json"), b"ok")
+            self.assertEqual(run.call_args.args[0][-1], "HEAD:证据.json")
+            self.assertTrue(L._strictly_after("/synthetic/repo", "a" * 40, "b" * 40))
+        self.assertFalse(L._strictly_after("/synthetic/repo", "a" * 40, "a" * 40))
+
+    def test_absent_blob_refused_before_hash_or_json(self):
+        for path in ("absent.json", "uncommitted.json", "nul\0.json", "surrogate\ud800.json"):
+            with mock.patch.object(L, "_git", return_value=None), \
+                    mock.patch.object(L, "_sha", side_effect=AssertionError("must not hash absence")), \
+                    mock.patch.object(L.json, "loads", side_effect=AssertionError("must not parse absence")):
+                record, reasons = L.attestation_valid({"path": path, "sha256": "a" * 64}, repo_root="/synthetic/repo")
+            self.assertIsNone(record)
+            self.assertTrue(reasons)
+
+    def test_wrong_valid_blob_digest_refused_before_json(self):
+        with mock.patch.object(L, "_git", return_value=b'{"valid": "different committed bytes"}'), \
+                mock.patch.object(L.json, "loads", side_effect=AssertionError("must not parse mismatched digest")):
+            record, reasons = L.attestation_valid({"path": "record.json", "sha256": "a" * 64}, repo_root="/synthetic/repo")
+        self.assertIsNone(record)
+        self.assertTrue(any("sha256 mismatch" in reason for reason in reasons))
+
+
+class TestAcceptanceReviewEvidence(unittest.TestCase):
+    @contextmanager
+    def fixture(self):
+        environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+        environment.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull)
+        with tempfile.TemporaryDirectory() as directory, mock.patch.dict(os.environ, environment, clear=True):
+            root = Path(directory)
+            def git(*args):
+                return subprocess.run(["git", "-C", str(root), "-c", "commit.gpgsign=false",
+                                       "-c", "core.hooksPath=" + os.devnull,
+                                       "-c", "user.name=Synthetic Test", "-c", "user.email=test@example.invalid",
+                                       *args], capture_output=True, check=True, env=environment).stdout
+            git("init", "-q")
+            machine = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+            payload = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True,
+                                  "machine": machine, "root_cgroup_is_real": True}, sort_keys=True).encode()
+            (root / "attestation.json").write_bytes(payload)
+            git("add", "--", "attestation.json")
+            git("commit", "-q", "-m", "Synthetic attested blob")
+            digest = hashlib.sha256(payload).hexdigest()
+            review = Path(L.ACCEPTANCE_REVIEW_DIR) / "REVIEW_HOST_ATTESTATION_SYNC.md"
+            (root / review).parent.mkdir(parents=True)
+            (root / review).write_text(f"{L.ACCEPTANCE_LINE}{digest}\n{L.ACCEPTANCE_VERDICT_LINE}\n")
+            git("add", "--", str(review))
+            git("commit", "-q", "-m", "Later synthetic accepting line")
+            reference = {"path": "attestation.json", "sha256": digest}
+            with mock.patch.object(L, "machine_identity", return_value=machine):
+                yield root, git, reference
+
+    def test_ascii_acceptance_control_and_nonascii_tab_newline_veto_paths(self):
+        for filename in ("拒否.txt", "negative\tfile.txt", "negative\nfile.txt"):
+            with self.subTest(filename=filename), self.fixture() as (root, git, reference):
+                accepted, reasons = L.attestation_valid(reference, repo_root=root)
+                self.assertIsNotNone(accepted, reasons)
+                veto = Path(L.ACCEPTANCE_REVIEW_DIR) / "scratch" / filename
+                (root / veto).parent.mkdir(parents=True)
+                (root / veto).write_text(f"sha256={reference['sha256']}\nVERDICT: ReJeCtEd\n")
+                git("add", "--", str(veto))
+                git("commit", "-q", "-m", "Synthetic negative review")
+                accepted, reasons = L.attestation_valid(reference, repo_root=root)
+                self.assertIsNone(accepted)
+                self.assertTrue(any("rejected by" in reason and filename in reason for reason in reasons))
+
+    def test_unavailable_recursive_listing_or_veto_blob_refuses_verification(self):
+        with self.fixture() as (root, git, reference):
+            veto = Path(L.ACCEPTANCE_REVIEW_DIR) / "scratch" / "negative.txt"
+            (root / veto).parent.mkdir(parents=True)
+            (root / veto).write_text(f"{reference['sha256']}\nwithdrawn\n")
+            git("add", "--", str(veto))
+            git("commit", "-q", "-m", "Synthetic veto evidence")
+            original = L._git
+            for fault in ("recursive-list", "direct-list", "veto-blob", "accepting-blob"):
+                def reading(repo_root, *args):
+                    if fault == "recursive-list" and args[0] == "ls-tree" and "-r" in args:
+                        return None
+                    if fault == "direct-list" and args[0] == "ls-tree" and "-r" not in args:
+                        return None
+                    if fault == "veto-blob" and args == ("show", f"HEAD:{veto}"):
+                        return None
+                    if fault == "accepting-blob" and args[0] == "show" and args[1].endswith("REVIEW_HOST_ATTESTATION_SYNC.md"):
+                        return None
+                    return original(repo_root, *args)
+                with self.subTest(fault=fault), mock.patch.object(L, "_git", side_effect=reading):
+                    accepted, reasons = L.attestation_valid(reference, repo_root=root)
+                self.assertIsNone(accepted)
+                self.assertTrue(any("UNAVAILABLE" in reason for reason in reasons), reasons)
+
+    def test_malformed_listing_and_nonutf8_review_blob_refuse_verification(self):
+        with self.fixture() as (root, _git, reference):
+            original = L._git
+            for listing in (b"unterminated", b"\xff\0", b"\0"):
+                def reading(repo_root, *args):
+                    return listing if args[0] == "ls-tree" and "-r" in args else original(repo_root, *args)
+                with self.subTest(listing=listing), mock.patch.object(L, "_git", side_effect=reading):
+                    accepted, reasons = L.attestation_valid(reference, repo_root=root)
+                self.assertIsNone(accepted)
+                self.assertTrue(any("UNAVAILABLE" in reason for reason in reasons), reasons)
+            def bad_blob(repo_root, *args):
+                if args[0] == "show" and args[1].endswith("REVIEW_HOST_ATTESTATION_SYNC.md"):
+                    return b"\xff"
+                return original(repo_root, *args)
+            with mock.patch.object(L, "_git", side_effect=bad_blob):
+                accepted, reasons = L.attestation_valid(reference, repo_root=root)
+            self.assertIsNone(accepted)
+            self.assertTrue(any("not UTF-8" in reason for reason in reasons), reasons)
+
+
+class TestNumericReaders(unittest.TestCase):
+    def test_suspend_and_cgroup_readers_require_bounded_ascii_text(self):
+        for text, expected in (("0", 0), ("003\n", 3), (" 7 ", 7)):
+            self.assertEqual(L.suspend_success_count(text), expected)
+            with mock.patch.object(L, "_read", return_value=text):
+                self.assertEqual(L.suspend_success_count(), expected)
+                self.assertEqual(L._cg_val("/synthetic/limit"), expected)
+        for text in ("²", "１２", "١٢", b"7", 7, True, [], {}, "9" * 5000, "-1", "1.0", ""):
+            with self.subTest(type=type(text).__name__, length=len(text) if isinstance(text, (str, bytes)) else None):
+                self.assertIsNone(L.suspend_success_count(text))
+                with mock.patch.object(L, "_read", return_value=text):
+                    self.assertIsNone(L.suspend_success_count())
+                    self.assertIsNone(L._cg_val("/synthetic/limit"))
+        with mock.patch.object(L, "_read", return_value="max\n"):
+            self.assertEqual(L._cg_val("/synthetic/limit"), "max")
+
+    def test_thermal_signed_ascii_and_unrecognized_values(self):
+        with tempfile.TemporaryDirectory() as directory:
+            zone = Path(directory) / "thermal_zone0"
+            zone.mkdir()
+            (zone / "trip_point_0_type").write_text("critical\n")
+            for value, expected in (("-12000\n", -12000), ("42000", 42000), ("²", None), ("１２", None),
+                                    ("١٢", None), (b"7", None), (True, None), ("9" * 5000, None), ("--3", None)):
+                def reading(path):
+                    return "synthetic\n" if str(path).endswith("type") else value
+                with self.subTest(type=type(value).__name__), mock.patch.object(L, "_read", side_effect=reading):
+                    result = L.thermal_zones(directory)
+                self.assertEqual(result[0]["temp_mC"], expected)
+                self.assertEqual(result[0]["trips"][0]["temp_mC"], expected)
+
+
+class TestUnitQueryEvidence(unittest.TestCase):
+    def unit(self, active, enabled="disabled"):
+        with mock.patch.object(L, "systemd_is_pid1", return_value=True), \
+                mock.patch.object(L, "_systemctl_is_active", return_value=active), \
+                mock.patch.object(L, "_systemctl_is_enabled", return_value=enabled), \
+                mock.patch.object(L, "_unit_files", return_value=False):
+            return L.unit_enabled("synthetic-update.service", unit_roots=())
+
+    def test_unavailable_or_unrecognized_activity_cannot_be_disabled(self):
+        for active in (None, "", "unknown", "unrecognized", True):
+            for enabled in ("disabled", "masked", "masked-runtime", "not-found"):
+                self.assertIsNone(self.unit(active, enabled), (active, enabled))
+
+    def test_supervisor_true_false_unknown_and_update_composition(self):
+        with tempfile.TemporaryDirectory() as directory:
+            absent = str(Path(directory) / "absent")
+            for supervisor, expected in ((True, None), (False, False), (None, None), (1, None)):
+                with self.subTest(supervisor=supervisor), \
+                        mock.patch.object(L, "systemd_is_pid1", return_value=supervisor), \
+                        mock.patch.object(L, "_systemctl_is_active", return_value=None), \
+                        mock.patch.object(L, "_systemctl_is_enabled", return_value="disabled"):
+                    self.assertIs(L.unit_enabled("synthetic-update.service", unit_roots=()), expected)
+                    result = L.auto_update_settings('APT::Periodic::Enable "0";\n', unit_roots=(),
+                                                    uu_binary=absent, snapd_paths=(), cloud_dir=absent,
+                                                    livepatch_dir=absent, use_live_apt=False)
+                self.assertIs(result["guest_updates_shown_disabled"], supervisor is False)
+                self.assertIs(result["update_unit_enabled_or_unknown"], supervisor is not False)
+
+    def test_known_inactive_disabled_and_positive_activity_controls(self):
+        for active in ("inactive", "failed"):
+            self.assertIs(self.unit(active), False)
+            self.assertIs(self.unit(active, "not-found"), False)
+        for active in ("active", "activating", "reloading"):
+            self.assertIs(self.unit(active), True)
+        self.assertIs(self.unit(None, "enabled"), True)
+
+
+if __name__ == "__main__":
+    unittest.main()

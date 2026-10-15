@@ -1,0 +1,82 @@
+"""Independent delta controls for repaired boundaries and adjacent conservative refusals."""
+from probe_safety import *
+from synthetic_repo_helper import Repo
+from contextlib import ExitStack
+ROWS=[]
+def check(case,actual,expected):
+    if isinstance(expected,type):assert isinstance(actual,expected),(case,type(actual),expected)
+    else:assert actual==expected,(case,actual,expected)
+    ROWS.append({'case':case,'matched_expected':True,'observed':actual if not isinstance(actual,int) or actual.bit_length()<128 else {'integer_bits':actual.bit_length()}})
+with guards():
+    # Exact pathname transport, including characters that plain ls-tree quotes.
+    for value in (b'',b'a\0',b'a\tb\0c\nd\0','拒否.txt\0'.encode()):
+        expected=[] if not value else value[:-1].decode().split('\0')
+        check('_review_paths valid '+repr(value),L._review_paths(value),expected)
+    for value in (None,'a\0',bytearray(b'a\0'),b'a',b'\0',b'a\0\0',b'\xff\0'):
+        check('_review_paths malformed '+repr(value),L._review_paths(value),None)
+    # ASCII numeric grammar; include the exact digit-boundary and active interpreter conversion limit.
+    for signed in (False,True):
+        cases=[('0',0),('003',3),(' 7\n',7),('-7',-7 if signed else None),('+7',None),('--7',None),('-0',0 if signed else None),('²',None),('１２',None),('١٢',None),(b'7',None),(7,None),(True,None),([],None),({},None),(None,None),('9'*4301,None)]
+        for text,expected in cases:check('_nint signed='+str(signed)+' '+repr(text)[:60],L._nint(text,signed=signed),expected)
+        # A 4300-digit valid input may be refused by an explicitly tighter interpreter policy.
+        oldlimit=sys.get_int_max_str_digits()
+        try:
+            sys.set_int_max_str_digits(640)
+            check('_nint configured digit limit signed='+str(signed),L._nint(('' if not signed else '-')+'9'*641,signed=signed),None)
+            check('_nint explicit 4301 bound signed='+str(signed),L._nint(('' if not signed else '-')+'0'*4301,signed=signed),None)
+        finally:sys.set_int_max_str_digits(oldlimit)
+    for supervisor,expected in ((True,None),(False,False),(None,None),(1,None),(0,None),('systemd',None),([],None)):
+        with mock.patch.object(L,'systemd_is_pid1',return_value=supervisor),mock.patch.object(L,'_systemctl_is_active',return_value=None),mock.patch.object(L,'_systemctl_is_enabled',return_value='disabled'):
+            check('unit supervisor '+repr(supervisor),L.unit_enabled('synthetic.service',unit_roots=()),expected)
+    with tempfile.TemporaryDirectory() as directory:
+        root=Path(directory);zone=root/'thermal_zone0';zone.mkdir();(zone/'trip_point_0_type').write_text('critical\n')
+        for value,expected in [('42000',42000),('-12000',-12000),('-0',0),('+2',None),('--2',None),('²',None),('１２',None),('١٢',None),(None,None),(b'7',None),(7,None),(True,None),('9'*4301,None)]:
+            def reader(path):return 'synthetic\n' if str(path).endswith('type') else value
+            with mock.patch.object(L,'_read',side_effect=reader):result=L.thermal_zones(root)
+            check('thermal signed numeric '+repr(value)[:60],result[0]['temp_mC'],expected)
+            check('thermal trip numeric '+repr(value)[:60],result[0]['trips'][0]['temp_mC'],expected)
+    # Direct acceptance names may themselves be UTF-8/tab/newline paths.
+    for label in ('UTF8_拒否','TAB_\t','LINE_\n'):
+        repo=Repo();old=repo.root/repo.accept
+        destination=f'{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}{label}.md'
+        old.rename(repo.root/destination);repo.commit()
+        check('valid acceptance renamed '+repr(label),repo.verify()['verified'],True);repo.tmp.cleanup()
+    # Every required listing/blob failure must refuse, including malformed/inconsistent evidence.
+    repo=Repo();real_git=L._git
+    accepting=repo.accept
+    for fault in ('direct_none','recursive_none','direct_unterminated','recursive_nonutf8','recursive_missing_accepting','accepting_none','accepting_binary'):
+        def reader(root,*args):
+            direct=args[0]=='ls-tree' and '-r' not in args
+            recursive=args[0]=='ls-tree' and '-r' in args
+            if fault=='direct_none' and direct:return None
+            if fault=='recursive_none' and recursive:return None
+            if fault=='direct_unterminated' and direct:return b'bad'
+            if fault=='recursive_nonutf8' and recursive:return b'\xff\0'
+            if fault=='recursive_missing_accepting' and recursive:return b''
+            if args==('show',f'HEAD:{accepting}'):
+                if fault=='accepting_none':return None
+                if fault=='accepting_binary':return b'\xff'
+            return real_git(root,*args)
+        with mock.patch.object(L,'_git',side_effect=reader):result=repo.verify()
+        check('required evidence fault '+fault,result['verified'],False)
+        check('required evidence reason '+fault,any('UNAVAILABLE' in why for why in result['reasons']),True)
+    repo.tmp.cleanup()
+    # Conservative handling of actual non-UTF8 Git names: explicitly unavailable, never bypass veto.
+    repo=Repo();bad=f'{L.ACCEPTANCE_REVIEW_DIR}/scratch/'+os.fsdecode(b'nonutf8_\xff.txt')
+    payload=(repo.sha+'\nREJECT\n').encode()
+    blob=subprocess.run(['git','-C',str(repo.root),'hash-object','-w','--stdin'],input=payload,check=True,capture_output=True).stdout.strip().decode()
+    repo.git('update-index','--add','--cacheinfo','100644',blob,bad)
+    repo.git('commit','-q','-m','Synthetic nonUTF8 tree pathname')
+    result=repo.verify()
+    check('nonUTF8 committed veto path refuses',result['verified'],False)
+    check('nonUTF8 path explicit reason',any('UNAVAILABLE' in why for why in result['reasons']),True);repo.tmp.cleanup()
+    # A name-matching directory is treated conservatively as inconsistent accepting evidence.
+    # Record this behavior as an availability limitation; never mistake it for an acceptance bypass.
+    repo=Repo();name=f'{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}ARCHIVE.md/note.txt'
+    repo.write(name,'Unrelated synthetic text\n');repo.commit();result=repo.verify()
+    ROWS.append({'case':'name-matching directory conservative refusal','observed':result,'matched_expected':result['verified'] is False})
+    repo.tmp.cleanup()
+assert DENIED==[],DENIED
+(OUT/'delta_adjacent_probes.json').write_text(json.dumps({'results':ROWS,'unexpected_host_access_attempts':DENIED},indent=2,ensure_ascii=True)+'\n')
+print('asserted probe results',len(ROWS),'unexpected_host_attempts',len(DENIED))
+print(json.dumps(ROWS[-1],ensure_ascii=True))

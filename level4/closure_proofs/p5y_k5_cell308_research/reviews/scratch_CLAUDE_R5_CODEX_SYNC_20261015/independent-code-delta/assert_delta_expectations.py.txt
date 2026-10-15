@@ -1,0 +1,51 @@
+"""Explicit assertions over the original-case-preserving independent reruns."""
+import json
+from pathlib import Path
+HERE=Path(__file__).resolve().parent
+ORIGINAL=HERE.with_name('independent-code')
+checked=[]
+def load(root,name):return json.loads((root/name).read_text())
+def note(case):checked.append(case)
+a=load(HERE,'acceptance_probes.json')
+assert a['unexpected_host_access_attempts']==[]
+assert len(a['results'])==13
+for row in a['results']:
+    assert row['verified'] is row['case'].startswith('positive_control_before_'),row
+    if not row['verified']:assert row['reasons'],row
+    note('acceptance '+row['case'])
+for filename in ('composition_probes.json','numeric_order_probes.json'):
+    prior={r['case']:r for r in load(ORIGINAL,filename)['results']}
+    current=load(HERE,filename)
+    assert current['unexpected_host_access_attempts']==[]
+    assert set(prior)=={r['case'] for r in current['results']}
+    original_pid=prior.get('observer mode execute',{}).get('result',{}).get('preflight',{}).get('readings',{}).get('launched',{}).get('systemctl',{}).get('MainPID')
+    current_by_case={r['case']:r for r in current['results']}
+    current_pid=current_by_case.get('observer mode execute',{}).get('result',{}).get('preflight',{}).get('readings',{}).get('launched',{}).get('systemctl',{}).get('MainPID')
+    def normalize(value,pid):
+        if isinstance(value,dict):return {key:('<synthetic fixture process pid>' if key=='MainPID' and type(item) is int and item==pid else normalize(item,pid)) for key,item in value.items()}
+        if isinstance(value,list):return [normalize(item,pid) for item in value]
+        return value
+    for row in current['results']:
+        case=row['case'];old=prior[case]
+        assert 'exception' not in row,row
+        if case.startswith('suspend_success_count'):
+            expected=0 if case=="suspend_success_count '0'" else 3 if case=="suspend_success_count '003'" else None
+            assert row['result']==expected,row
+        elif case.startswith('_cg_val'):
+            expected='max' if case=="_cg_val 'max'" else 7 if case=="_cg_val '7'" else None
+            assert row['result']==expected,row
+        elif case=='unit_enabled missing activity pid1=None':assert row['result'] is None,row
+        elif case=='auto_update_settings activity unavailable pid1=None':
+            result=row['result']
+            assert result['guest_updates_shown_disabled'] is False,row
+            assert result['update_unit_enabled_or_unknown'] is True,row
+            assert all(v is None for v in result['update_units'].values()),row
+        else:assert normalize(row,current_pid)==normalize(old,original_pid),(case,row,old)
+        note(filename+' '+case)
+adj=load(HERE,'delta_adjacent_probes.json')
+assert adj['unexpected_host_access_attempts']==[]
+assert len(adj['results'])==102
+for row in adj['results']:assert row['matched_expected'] is True,row
+summary={'original_case_semantics_retained':True,'original_rerun_cases_asserted':len(checked),'additional_adjacent_results_asserted':len(adj['results']),'unexpected_host_access_attempts':[],'cases':checked}
+(HERE/'delta_expectations.json').write_text(json.dumps(summary,indent=2)+'\n')
+print(json.dumps({k:v for k,v in summary.items() if k!='cases'},indent=2))
