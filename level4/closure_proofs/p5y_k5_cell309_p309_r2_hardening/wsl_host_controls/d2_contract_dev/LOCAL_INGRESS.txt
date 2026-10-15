@@ -1,0 +1,47 @@
+D2 H3 pure-memory parsing/staging: limited native verification
+
+Fetch codex/p309-d2-ingress-dev-20261015 and verify the exact full commit supplied
+in the handoff. Use an independent clean worktree/new
+codex/p309-d2-ingress-validation-20261015 branch from that SHA. Read INGRESS.txt,
+INGRESS_VALIDATION.json and INGRESS_SOURCE_SHA256.json. Verify canonical Git blob
+hashes for new files and pinned base/history; record raw worktree hashes and
+CRLF normalization separately. Do not query host configuration or backup drives.
+
+From d2_contract_dev use the existing private interpreter:
+  /home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 -B -m unittest -v test_d2_ingress
+
+Expected28 tests:15 wire +13 staging; zero failures/errors/skips, one invocation.
+Only this new module is requested. Old46 wire/model and21 dispatch tests have
+unchanged inputs and already passed private3.11.15; do not rerun them or earlier
+host/PowerShell/interop/stop suites. Normal test-runner tooling is permitted;
+this new suite does not create workers, helpers, threads, endpoints, keys or
+services and does not invoke signing/host collection. Record runtime context
+only from sys.version/sys.executable/version_info in the same test process.
+No interpreter binary rehash, host/process/clock/cgroup audit or F: access.
+
+Limited review focus
+- Exact directional shapes, byte/type/base64 budgets and unknown/duplicate/
+  nonfinite rejection; unchanged original signed message bytes preserved.
+- Synthetic relay labels remain explicitly unauthenticated. Correct-length
+  dummy signatures parse only as UNVERIFIED. Arbitrary payload fields remain
+  opaque/untrusted and cannot become safe/accepted/continuation authority.
+- Every outstanding challenge component must match. No sequence/checkpoint
+  advancement exists. Additional responses fail rather than renew authority.
+- Failures latch model-only stop for the locally associated fixture G; a wire
+  object cannot choose G or forward a broker command. Terminal state is sticky.
+- No signature verification, host diagnosis, timeout/freshness, shared replay
+  fence, persistence, broker integration or actual OS stop is established.
+If a defect is found, retain evidence and report it; do not change implementation,
+tests, budgets or counts to obtain a pass. This is limited source review, not
+independent deployment approval or authorization for further operational work.
+
+Store full stdout/stderr, exit code, exact test IDs/outcomes and runtime context
+in a new additive records directory. Preserve historical evidence files/refs
+using file/Git reads only, without fresh host/backup queries. Add ONLY
+INGRESS_LOCAL_VALIDATION.json and INGRESS_LOCAL_SOURCE_SHA256.json beside these
+sources; include limited findings, source/evidence hashes and historical-only
+F: status. Keep coordinator and all old validation records unchanged. Normally
+commit/push the separate validation branch and verify exact remote HEAD.
+I1-I7 remain OPEN_RETAINED; formal_admission=BLOCKED and route/host/deployment/
+execution/qualification/target flags false. No software/service/endpoint/account/
+key/unit creation, elevation, policy edit, safety sample or P309 workload.

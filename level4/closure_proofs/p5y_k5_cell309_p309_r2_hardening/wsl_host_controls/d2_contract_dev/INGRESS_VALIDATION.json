@@ -1,0 +1,335 @@
+{
+  "actual_peer_authenticated": false,
+  "authorization": "Existing explicit user authorization for D2 pure-memory protocol/state code, synthetic tests, additive evidence and normal push; no operational scope added.",
+  "backup_status": "HISTORICAL_UNAVAILABLE_ONLY; NO_NEW_QUERY_OR_REHASH",
+  "base_commit": "a262f9f0bd438f2277554b6e9ced08d60ae24301",
+  "base_current_blob_count_verified": 108,
+  "branch": "codex/p309-d2-ingress-dev-20261015",
+  "budgets": {
+    "max_challenge_sequence": 4096,
+    "max_decoded_message_bytes": 1048576,
+    "max_frame_raw_bytes": 1404928,
+    "max_relay_label_ascii_chars": 128,
+    "max_request_raw_bytes": 4096,
+    "retained_outstanding_challenges": 1,
+    "retained_staged_messages": 1,
+    "supported_signature_shape_bytes": [
+      256,
+      384,
+      512
+    ]
+  },
+  "continuation_authorized": false,
+  "contract_rereview_commit": "29a9b8a4db4b3376dafb195fc051083b9d964bc3",
+  "contract_revision_commit": "14a63b4f25935396b288a545476fe808deac85f8",
+  "deployment_authorized": false,
+  "direct_imports": {
+    "d2_ingress_model.py": [
+      "d2_control_wire",
+      "d2_ingress_wire",
+      "dataclasses"
+    ],
+    "d2_ingress_wire.py": [
+      "base64",
+      "dataclasses",
+      "json",
+      "math",
+      "re"
+    ],
+    "test_d2_ingress.py": [
+      "base64",
+      "d2_ingress_model",
+      "d2_ingress_wire",
+      "dataclasses",
+      "json",
+      "unittest"
+    ]
+  },
+  "evidence_directory": "/workspace/p309-d2-ingress-evidence-20261015",
+  "evidence_sha256": {
+    "prior-verification.json": "0b88641e7d46599fd73e598f888907b4bd8398a7462365c85818bb0398b5c3f3",
+    "result.json": "d1035ea4fb4e8bb3e28a7ce8a39df10afd4af81bd8a93349d314f4f9f07fd614",
+    "source-verification.json": "f51a146a835351dd017681af511ded88928c4b08f4414e5763291bbc592aaa04",
+    "unittest.log": "75c5c9ab2a21e211ff63990bec7ff047953979f9b11becce803c3b9bf23e79f7"
+  },
+  "execution_authorized": false,
+  "formal_admission": "BLOCKED",
+  "freeze_or_grants_issued": false,
+  "helper_or_workload_processes_by_new_code_or_tests": 0,
+  "historical_blob_binding_count_verified": 516,
+  "host_accepted": false,
+  "host_facts_validated": false,
+  "host_queries": 0,
+  "limitations": [
+    "No signature verification, key/pin/enrollment, host facts/coverage or freshness calculation",
+    "No clock, journal, shared replay fence, broker integration or actual stop",
+    "No transition from UNVERIFIED to accepted/safe/continuation; no challenge issuance or advancement",
+    "Immutable serial reducer only; same-process synthetic labels/fixtures are not an authentication or privilege boundary",
+    "New H3 wrapper is an isolated development encoding, not an installed production API",
+    "D2 remains incomplete and all I1-I7 deployment blockers retained"
+  ],
+  "observation_accepted": false,
+  "prior_dispatch_feature_commit": "a467a32e91bcfcb5e6f4840478a58bbda10b7db4",
+  "prior_native_validation": {
+    "commit": "a262f9f0bd438f2277554b6e9ced08d60ae24301",
+    "exact_ids_and_source_bindings_verified": true,
+    "old_tests_rerun": false,
+    "python": "3.11.15",
+    "source_commit": "a467a32e91bcfcb5e6f4840478a58bbda10b7db4",
+    "tests_passed": 21
+  },
+  "private_python_new_suite_validation": "PENDING; the new28-test result uses Cloud CPython3.12.14, not private3.11.15.",
+  "qualification_authorized": false,
+  "raw_unittest_log": "INGRESS_TEST_LOG.txt",
+  "recorded_date": "2026-10-15",
+  "result": {
+    "actual_runner": "in-process unittest.TextTestRunner with per-test result collection",
+    "dont_write_bytecode": true,
+    "elapsed_seconds": 0.1497462639999867,
+    "equivalent_command": "python3 -B -m unittest -v test_d2_ingress",
+    "errors": 0,
+    "failures": 0,
+    "invocations": 1,
+    "skipped": 0,
+    "successful": true,
+    "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "test_cases": [
+      {
+        "id": "test_d2_ingress.IngressStaging.test_all_states_export_false_authority_and_no_raw_payload",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_duplicate_or_second_response_cannot_advance",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_every_challenge_component_mismatch_is_terminal",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_explicit_private_fixture_setup_only",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_loss_after_staging_discards_bytes_without_observation_acceptance",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_malformed_message_and_h4_command_latch_associated_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_matching_response_only_stages_unverified_bytes",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_other_session_or_sequence_cannot_reuse_staged_message",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_payload_safe_claims_and_dummy_signature_never_authorize",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_snapshot_and_diagnostic_are_not_mutable_aliases",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_terminal_state_does_not_reopen_or_replace_first_failure",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_transport_failure_only_latches_locally_bound_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_wrong_synthetic_peer_cannot_stage_or_route_control",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_base64_strict_type_alphabet_padding_and_budget",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_challenge_tokens_and_sequence_are_exact",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_direction_and_protocol_do_not_cross_into_h4",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_duplicate_fields_at_all_json_layers_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_envelope_and_inner_fields_are_exact",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_failure_notice_fixed_reason_and_no_asserted_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_input_exact_bytes_and_returned_values_immutable",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_message_and_frame_byte_boundaries",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_nonfinite_numbers_in_opaque_payload_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_original_unicode_crlf_whitespace_bytes_preserved",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_outbound_exact_challenge_shape",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_payload_is_opaque_untrusted_object",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_request_rejects_claimed_facts_identity_and_commands",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_strict_utf8_root_types_bom_and_recursion",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_supported_signature_lengths_are_shapes_not_validation",
+        "outcome": "ok"
+      }
+    ],
+    "tests": 28,
+    "version_info": [
+      3,
+      12,
+      14
+    ]
+  },
+  "route_accepted": false,
+  "schema": "P309_D2_INGRESS_COORDINATOR_VALIDATION/1",
+  "scope": "ADDITIVE_PURE_MEMORY_H3_DIRECTIONAL_PARSING_AND_UNVERIFIED_SINGLE_CHALLENGE_STAGING",
+  "service_endpoint_account_key_unit_policy_mutations": 0,
+  "signature_verified": false,
+  "source_sha256": {
+    "INGRESS.txt": "a9cbdf526cc24dc3650cfe4305573086958dec4a5ca532d206ce4b4b609d8067",
+    "INGRESS_TEST_LOG.txt": "75c5c9ab2a21e211ff63990bec7ff047953979f9b11becce803c3b9bf23e79f7",
+    "LOCAL_INGRESS.txt": "d38d47d690bb0fa8c3a1980c54e2782aa91c78e7977048cc2a167e75241dea29",
+    "d2_ingress_model.py": "752ace5db9b47fe01d7362c79e5b3ee59fd187634275414c29d8d92c097a3a76",
+    "d2_ingress_wire.py": "c4567dd08920a8700623aefed73345b6e6ea1c308bbc8fc05f00e94f16aee49b",
+    "test_d2_ingress.py": "e687aa1e8efd1bd4989b69f09140dfbed283c2576fe25ea427ddbc3cdcf9148f"
+  },
+  "static_review_limit": "Scoped inspection of the new source and direct imports only, not an exhaustive security scan or independent acceptance.",
+  "suite_counts": {
+    "IngressStaging": 13,
+    "IngressWire": 15
+  },
+  "target_execution_authorized": false,
+  "threads_by_new_code_or_tests": 0,
+  "unresolved_original_blockers": [
+    {
+      "deployment_blocking": true,
+      "id": "I1",
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ],
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Runner Windows/root boundary"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I2",
+      "original_fact_questions": [
+        1,
+        5
+      ],
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Collector rights, completeness and attribution"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I3",
+      "original_fact_questions": [
+        1,
+        6
+      ],
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Enrollment and ACL/API descriptors"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I4",
+      "original_fact_questions": [
+        2
+      ],
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Fresh image/runtime provenance"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I5",
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ],
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Guest policy/unit limits and controlled launcher"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I6",
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ],
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Protected persistence and stop/recovery"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I7",
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Route, host and formal authority"
+    }
+  ],
+  "verified_behavior": [
+    "Exact M-to-R observer request and R-to-M observation/failure shapes; H4 commands rejected",
+    "Original message/signature bytes retained with strict canonical base64 and bounded JSON parsing",
+    "Exact challenge/session/sequence/baseline/nonce/checkpoint comparison without sequence advancement",
+    "Failure latches model-only stop for the fixture-associated generation and terminal state cannot reopen",
+    "Matching dummy signature bytes stage UNVERIFIED only; opaque safe claims cannot authorize acceptance/continuation"
+  ]
+}

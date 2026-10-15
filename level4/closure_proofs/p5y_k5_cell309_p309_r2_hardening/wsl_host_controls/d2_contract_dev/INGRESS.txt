@@ -1,0 +1,79 @@
+D2 additive H3 parsing/staging slice; pure memory, development only
+Base a262f9f0bd438f2277554b6e9ced08d60ae24301; 2026-10-15.
+
+The existing user authorization covers D2 pure-memory protocol/state libraries,
+synthetic tests and additive publication. This slice implements the H3 message
+directions specified by the reviewed CHANNELS.txt, not a deployed transport.
+All old H4 wire/model/dispatch code, tests and records remain unchanged. The
+native46-test wire/model and21-test dispatch results remain historical results;
+they are not rerun. D2 and I1-I7 are not completed by this additional slice.
+
+Development-only encoding (no production enrollment or installed API)
+Every outer object has protocol="P309_DEV_MONITOR_INGRESS/2".
+M->R observer_request has exactly {protocol,kind,challenge}.
+The challenge follows the existing P309_DEV_CHALLENGE/1 schema, with exactly
+schema, session_id, baseline_sha256, sequence, nonce and previous_sha256. Session,
+baseline, nonce and previous are exactly64 lowercase hex characters; sequence is
+an exact integer1..4096. These are opaque fixture values, not generated entropy,
+an independently pinned baseline, trusted host identity or a journal anchor.
+
+R->M signed_observation has exactly {protocol,kind,envelope}; envelope has exactly
+message_b64 and signature_b64. Base64 must be ASCII and canonical, with strict
+alphabet/padding and decoded-size checks. Decoded signatures must have256/384/512
+bytes, matching the earlier development RSA-size shapes. No key is read/generated,
+no signature is verified and no algorithm/pin is negotiated. DUMMY BYTES OF THE
+CORRECT LENGTH ARE EXPECTED TO PARSE. The signed message has exactly the six
+challenge fields plus payload. payload must be an object but is otherwise opaque
+and UNTRUSTED; CPU/policy/coverage/freshness semantics are not implemented here.
+The parser preserves the exact original message and signature bytes, including
+Unicode/CRLF/whitespace. It never serializes parsed JSON as the signed message.
+Duplicate fields (also in nested opaque payload), malformed UTF-8/JSON, nonfinite
+numbers (including floating overflow), deep recursion and extra fields fail.
+
+R->M transport_failure has exactly {protocol,kind,reason}; the reason is one of
+EOF,TIMEOUT,IO_ERROR,PROTOCOL_ERROR. There is no arbitrary exception text, G, PID,
+command or broker operation. Failure notices are not authenticated host facts.
+Outbound and inbound parser functions reject the other direction. H4 status/stop
+objects and caller assertions outside the opaque signed-message payload fail.
+
+Development parser budgets
+Outbound request <=4096 raw bytes; inbound frame <=1404928 raw bytes; decoded
+message <=1048576 raw bytes; signature <=512 bytes with the exact sizes above.
+The frame budget includes base64/JSON overhead. These are bounded development
+allocations, not production operating-window or Python heap-size guarantees.
+Original host CPU/memory/sample/suspend thresholds are unchanged.
+
+One-challenge immutable staging model
+_fixture_open accepts a parsed request, a synthetic associated G and a bounded
+ASCII relay-instance label, only with explicit synthetic_only=True. It is NOT
+enrollment, an administrative permit, token generation or a wire operation.
+receive checks caller-constructed SyntheticRelay(role="p309-relay",instance)
+against the stored synthetic label. This is not SO_PEERCRED or authentication.
+Then it parses inbound bytes and compares every challenge component to the
+outstanding fixture. Matching bytes move AWAITING_RESPONSE->UNVERIFIED; neither
+the sequence/checkpoint nor the challenge is advanced/consumed. No verified,
+safe, accepted, running, continuation or start outcome exists in this library.
+
+Malformed input, wrong peer, token mismatch, transport notice/loss or an extra
+response after staging enters TERMINAL_STOP, latching a MODEL stop request for
+the fixture's already-associated G. No wire field can choose another G. Staged
+bytes are discarded, and the first terminal reason is retained. Further input
+cannot reopen the same model. Duplicate staged responses intentionally terminate;
+no retry/advance/reconnect protocol is introduced. Independent fixture objects
+do not provide a shared replay store or durable generation nonreuse.
+
+No timeout/freshness calculation, cryptographic verification, baseline/coverage
+diagnosis, observation acceptance, journal, broker forwarding or real stop exists.
+There is no transition out of UNVERIFIED except failure in this slice. A later
+separately reviewed verifier/integration must own authenticated acceptance and
+atomic publication; no parsed value from this module may substitute for that.
+This is an immutable serial reducer, not a concurrent live monitor or watchdog.
+Same-process Python objects/private factories are not a privilege boundary.
+Diagnostic output omits raw payload/signatures and sets all authentication,
+signature/fact/observation/continuation/formal authority flags BLOCKED/false.
+
+Tests use only synthetic bytes and normal unittest tooling, with no keys, files,
+helper processes, signing tools, endpoints, host queries or actual workload.
+Normal test logs and Git evidence are development artifacts. No actual service,
+account, key, unit, privileged action, policy change, safety sample, drill,
+freeze/grant, qualification or target is included. I1-I7 remain OPEN_RETAINED.
