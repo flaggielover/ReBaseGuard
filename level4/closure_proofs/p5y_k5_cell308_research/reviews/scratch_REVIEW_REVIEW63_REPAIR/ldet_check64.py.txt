@@ -1,0 +1,84 @@
+"""Review 64 Q5: recompute the L-DET addendum's hashes / ancestry / digests from git objects only.
+Record blobs are hashed in memory and never printed or parsed. Candidate source is parsed with ast, never executed.
+usage: python3 -I ldet_check64.py.txt <pinned tree> <out.json>"""
+import ast, hashlib, json, subprocess, sys
+T, OUT = sys.argv[1:3]
+def g(*a, ok=False):
+    r = subprocess.run(["git", "-C", T, *a], capture_output=True)
+    return (r.returncode == 0) if ok else (r.stdout if r.returncode == 0 else None)
+Q = "level4/closure_proofs/p5y_k5_cell308_mb_r1/qualification/"
+REC = {"MB308_QC02_DECOY_297.json": ("14e1ac26e483f90e7845eab92d7e6ff629e497a6ca9ba521b4b7aca734e04f02", "1096a8533a2cbe80aa9550be80cddfc532d0a6ea"),
+       "MB308_QC03_DECOY_316_B3.json": ("678025c1420f6162047a441d8ee60b384cbcdb85d028a929a3680cc581922998", "581843963b8cd8821e678ed8dba58e4a166dd041"),
+       "MB308_QC04_SERIAL_297_B0.json": ("d697870767caab5a2771a6c0772c15d0e7485280e7110821d73ae654b7227671", "26e1b0c845703f8fd871aa03c0aaf0548821d697"),
+       "MB308_QC04_LADDER_DET_A.json": ("fc6d02271aa7f6d049b0029e764153e4c09d2f2f030fcecc5e7021979940f540", "e8be508c567d94912b814671069cc9caef882238"),
+       "MB308_QC04_LADDER_DET_B.json": ("e3952991a0a3815de660afe5457fe3857bc0d1f6bee85c379c58840cdade8cb5", "f51dd0eeee4895451dbb0443dfad0a9103e94700")}
+INTRO, CAND, FREEZE, TIP, PIN, HEAD = "7eb057bbbcb3c8d18afc852c1d90f0b3fc0fefc8", "142d97a90a1c3fafff394044aa1448674f7a633c", "c46434a3", "88a16f74", "21e99cf0", "5e8e3d9c"
+out = {"objects_present": {c: g("cat-file", "-e", f"{c}^{{commit}}", ok=True) for c in (INTRO, CAND, FREEZE, TIP, PIN, HEAD)},
+       "is_shallow": (g("rev-parse", "--is-shallow-repository") or b"").decode().strip(), "records": {}}
+for name, (sha, blob) in REC.items():
+    p = Q + name
+    r = {}
+    for c in (INTRO, CAND, PIN):
+        oid = (g("rev-parse", f"{c}:{p}") or b"").decode().strip()
+        r[f"blob_at_{c[:8]}"] = oid == blob if oid else "absent"
+    data = g("cat-file", "blob", blob)
+    r["sha256_matches"] = None if data is None else hashlib.sha256(data).hexdigest() == sha
+    del data
+    for c in (FREEZE, INTRO + "~1", TIP, HEAD):
+        r[f"exists_at_{c[:10]}"] = g("cat-file", "-e", f"{c}:{p}", ok=True)
+    intro = (g("log", "--format=%H", "--find-object=" + blob, CAND) or b"").decode().split()
+    r["commits_touching_blob_in_candidate_history"] = intro
+    out["records"][name] = r
+out["freeze_ancestor_of_intro"] = g("merge-base", "--is-ancestor", FREEZE, INTRO, ok=True)
+out["intro_ancestor_of_candidate"] = g("merge-base", "--is-ancestor", INTRO, CAND, ok=True)
+out["paths_changed_intro..candidate"] = (g("log", "--format=%H", f"{INTRO}..{CAND}", "--", *[Q + n for n in REC]) or b"").decode().split()
+out["intro_committer_date"] = (g("log", "-1", "--format=%cI", INTRO) or b"").decode().strip()
+# candidate MBR1_RECORD_PINS mention every sha / blob prefix (string search in the parsed assignment only)
+BASE = "level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/"
+WANT = {"mbs308_qualify.py": ["TIMING_KEYS", "MBR1_RECORD_PINS", "pinned_bytes", "strip_timing", "_strip_decoy_timing",
+                              "_leaves", "_public", "_serial_view", "_ladder_view", "_decoy_view", "_compare",
+                              "_planted", "_job_rows", "mbr1_repro"], "mbs308_driver.py": ["fs", "jsonable"]}
+claimed = json.loads(open(f"{T}/level4/closure_proofs/p5y_k5_cell308_research/reviews/scratch_LDET_REFERENCE_20261015/FUNCTION_DIGESTS_142D97A9.json").read())
+out["digests"] = {}
+for f, names in WANT.items():
+    rel = BASE + f
+    src = g("show", f"{CAND}:{rel}")
+    text = src.decode()
+    tree = ast.parse(text)
+    cf = claimed["files"][rel]
+    fr = {"blob": (g("rev-parse", f"{CAND}:{rel}") or b"").decode().strip() == cf["blob"],
+          "file_sha256": hashlib.sha256(src).hexdigest() == cf["file_sha256"], "defs": {}}
+    counts = {}
+    for node in tree.body:
+        nm = node.name if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) else (
+            node.targets[0].id if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) else None)
+        if nm in names:
+            counts[nm] = counts.get(nm, 0) + 1
+            seg = ast.get_source_segment(text, node)
+            c = cf["definitions"][nm]
+            fr["defs"][nm] = {"lines": [node.lineno, node.end_lineno] == c["lines"],
+                              "source": hashlib.sha256(seg.encode()).hexdigest() == c["source_sha256"],
+                              "ast": hashlib.sha256(ast.dump(node, include_attributes=False).encode()).hexdigest() == c["ast_sha256"],
+                              "decorators": len(getattr(node, "decorator_list", []))}
+    # any OTHER binding of these names at module level (augmented assignment, later redefinition, annotated assignment)
+    rebinding = []
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.AugAssign, ast.AnnAssign)) and isinstance(getattr(node, "target", None), ast.Name) and node.target.id in names:
+            rebinding.append((node.target.id, node.lineno))
+        if isinstance(node, ast.Assign):
+            for t in node.targets:
+                for n in ast.walk(t):
+                    if isinstance(n, ast.Name) and n.id in names and isinstance(n.ctx, ast.Store) and node not in tree.body:
+                        rebinding.append((n.id, node.lineno))
+    fr["duplicate_top_level"] = {k: v for k, v in counts.items() if v != 1}
+    fr["other_bindings"] = rebinding
+    out["digests"][rel] = fr
+    if f == "mbs308_qualify.py":
+        pins = next(n for n in tree.body if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", None) == "MBR1_RECORD_PINS")
+        seg = ast.get_source_segment(text, pins)
+        out["pins_contain"] = {n: (s in seg, b[:12] in seg) for n, (s, b) in REC.items()}
+        out["pins_lines"] = [pins.lineno, pins.end_lineno]
+        out["line_1822_is_comment"] = text.splitlines()[1821].lstrip().startswith("#")
+Path = None
+open(OUT, "w").write(json.dumps(out, indent=1) + "\n")
+print(json.dumps(out, indent=1))

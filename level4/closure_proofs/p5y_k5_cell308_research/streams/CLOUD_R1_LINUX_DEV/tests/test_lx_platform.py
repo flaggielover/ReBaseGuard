@@ -799,6 +799,31 @@ class TestUpdatesLaunch(unittest.TestCase):
             Path(lo, "timers.target.wants", "m.timer").write_text("")
             self.assertIs(L.unit_enabled("m.timer", (str(hi), str(lo))), False)           # control: a real mask
 
+    def test_review64_dangling_top_entry_shadows_lower_mask(self):
+        """Review 64 RW2: the highest-precedence entry decides masking even when it is a dangling link; a /dev/null
+        link in a lower root does not make a wanted unit 'not enabled'."""
+        with tempfile.TemporaryDirectory() as d:
+            hi, lo = Path(d, "hi"), Path(d, "lo")
+            hi.mkdir(), lo.mkdir()
+            os.symlink(str(Path(d, "nowhere")), Path(hi, "x.timer"))                       # dangling, highest
+            os.symlink("/dev/null", Path(lo, "x.timer"))                                  # mask, lower
+            Path(lo, "timers.target.wants").mkdir()
+            Path(lo, "timers.target.wants", "x.timer").write_text("")
+            self.assertIs(L.unit_enabled("x.timer", (str(hi), str(lo))), True)
+
+    def test_review64_unreadable_unit_root_is_unknown_not_a_crash(self):
+        """Review 64 K9: an OSError while reading a unit root (e.g. listable but not searchable) makes the update
+        settings unknown; it never escapes auto_update_settings."""
+        def boom(*a, **k):
+            raise PermissionError("synthetic: root not searchable")
+        with patched(unit_enabled=boom):
+            try:
+                r = self.settings('APT::Periodic::Enable "0";\n')
+            except OSError as e:                                                          # pragma: no cover
+                self.fail(f"OSError escaped auto_update_settings: {e!r}")
+        self.assertTrue(all(v is None for v in r["update_units"].values()), r)
+        self.assertFalse(r["guest_updates_shown_disabled"])
+
     def test_parser_reads_only_whole_dump_lines(self):
         """N13 (renamed): the parser accepts only whole `apt-config dump` lines; apt's own comment handling is apt's,
         and is relied on by reading the dump rather than the configuration files."""
@@ -1051,6 +1076,8 @@ class TestAttestationPreflight(unittest.TestCase):
             "token inside a longer line": {f"{ACC}1.md": b"REJECTED -- do NOT read as " + L.ACCEPTANCE_LINE.encode()
                                            + b"<SHA>\n" + L.ACCEPTANCE_VERDICT_LINE.encode() + b"\n"},
             "accepting and a separate rejecting review": {f"{ACC}1.md": ok, f"{ACC}2.md": b"<SHA> REJECTED\n"},
+            "accepting verdict line twice (review 64 K2)": {
+                f"{ACC}1.md": ok + L.ACCEPTANCE_VERDICT_LINE.encode() + b"\n"},
             "token embedded in a non-rejecting line (Y03)": {
                 f"{ACC}1.md": b"draft, not final: " + L.ACCEPTANCE_LINE.encode() + b"<SHA>\n"
                 + L.ACCEPTANCE_VERDICT_LINE.encode() + b"\n"},
@@ -1209,6 +1236,127 @@ class TestAttestationPreflight(unittest.TestCase):
             self.assertIsNone(self.check(att, reviews={f"{ACC}1.md": body})[0], extra)
         rec, why = self.check(att, reviews={f"{ACC}1.md": self.accept(sha) + b"Reviewed on a synthetic host.\n"})
         self.assertIsNotNone(rec, why)                                                    # control: plain prose
+
+    def _valid_in(self, d, att):
+        with patched(machine_identity=lambda *a, **k: self.HW):
+            return L.attestation_valid({"path": "att/HOST.json", "sha256": hashlib.sha256(att).hexdigest()},
+                                       repo_root=d)
+
+    def test_review64_order_ignores_reading_configuration(self):
+        """Review 64 K1: neither `log.showRoot=false` in the repository's own configuration nor a textconv driver
+        set through `.git/info/attributes` can hide the commit that introduced an acceptance written before the blob;
+        a shallow clone, whose boundary commit introduces everything it holds, refuses (never accepts)."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        line = f"{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+        quote = f"quoted: {L.ACCEPTANCE_LINE}{sha}\n".encode()
+        with tempfile.TemporaryDirectory() as d:                                          # root commit hidden
+            git_init(d)
+            git_commit(d, {f"{ACC}1.md": line})
+            git_commit(d, {"att/HOST.json": att})
+            git_commit(d, {"notes/q.md": quote})
+            fixture_git(d, "config", "--local", "log.showRoot", "false")
+            self.assertIsNone(self._valid_in(d, att)[0])                                  # RV23
+        with tempfile.TemporaryDirectory() as d:                                          # textconv hides a commit
+            git_init(d)
+            git_commit(d, {"README": b"base\n"})
+            git_commit(d, {f"{ACC}1.md": line})
+            git_commit(d, {"att/HOST.json": att})
+            git_commit(d, {"notes/q.md": quote})
+            Path(d, ".git", "info").mkdir(exist_ok=True)
+            Path(d, ".git", "info", "attributes").write_text(f"{ACC}1.md diff=hide\n")    # only the acceptance
+            fixture_git(d, "config", "--local", "diff.hide.textconv", "true")
+            self.assertIsNone(self._valid_in(d, att)[0])                                  # RV24
+        with tempfile.TemporaryDirectory() as d:                                          # shallow clone
+            src, dst = Path(d, "src"), Path(d, "dst")
+            src.mkdir()
+            git_init(src)
+            git_commit(src, {"att/HOST.json": att})
+            git_commit(src, {f"{ACC}1.md": line})
+            self.assertIsNotNone(self._valid_in(src, att)[0])                             # control: full history
+            fixture_git(d, "clone", "-q", "--depth", "1", src.as_uri(), str(dst))
+            self.assertIsNone(self._valid_in(dst, att)[0])
+
+    def test_review64_missing_blob_commits_refuse(self):
+        """Review 64 RW1: no commit found for the attested blob refuses; `all()` over nothing is not an order."""
+        att = self.attestation()
+        original = L._commits
+
+        def no_blob(repo_root, *args):
+            return [] if any(str(a).startswith("--find-object=") for a in args) else original(repo_root, *args)
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att})
+            git_commit(d, {f"{ACC}1.md": self.accept(hashlib.sha256(att).hexdigest())})
+            self.assertIsNotNone(self._valid_in(d, att)[0])                               # control
+            with patched(_commits=no_blob):
+                self.assertIsNone(self._valid_in(d, att)[0])
+
+    def test_review64_non_utf8_historical_review_path_refuses(self):
+        """Review 64 RW3: a review path that is not UTF-8 anywhere in the history makes the review evidence
+        unavailable; it is never skipped."""
+        att = self.attestation()
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att})
+            odd = os.path.join(os.fsencode(d), os.fsencode(L.ACCEPTANCE_REVIEW_DIR), b"\xff.md")
+            os.makedirs(os.path.dirname(odd), exist_ok=True)
+            with open(odd, "wb") as f:
+                f.write(f"{hashlib.sha256(att).hexdigest()} REJECTED\n".encode())
+            git_commit(d, {})
+            os.unlink(odd)
+            git_commit(d, {})
+            git_commit(d, {f"{ACC}1.md": self.accept(hashlib.sha256(att).hexdigest())})
+            rec, why = self._valid_in(d, att)
+            self.assertIsNone(rec)
+            self.assertTrue(any("UNAVAILABLE" in w for w in why), why)
+
+    def test_review64_side_branch_acceptance_synced_and_merged_refuses(self):
+        """Review 64 RW6: an acceptance written on a side branch before the blob existed there, later synced with the
+        main line and merged with --no-ff, is refused: every line commit, off the first-parent chain too, counts."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        line = f"{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+        steps = [{"README": b"base\n"}, ("branch", "side"), ("checkout", "side"), {f"{ACC}1.md": line},
+                 ("checkout", "-"), {"att/HOST.json": att}, ("checkout", "side"), ("merge", "-", None),
+                 ("checkout", "-"), ("merge", "side", None)]
+        self.assertIsNone(self._repo_run(att, steps)[0])
+
+    def test_review64_sha_inside_longer_hex_run_still_names_it(self):
+        """Review 64 K4: a full sha preceded or followed by other hex digits still names the attestation."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        note = f"{L.ACCEPTANCE_REVIEW_DIR}/notes.md"
+        for text in (f"blob:a{sha} REJECTED\n", f"{sha}0 rejected\n"):
+            self.assertIsNone(self.check(att, reviews={f"{ACC}1.md": self.accept(sha), note: text.encode()})[0],
+                              text)
+
+    def test_review64_symlink_is_not_an_accepting_review(self):
+        """Review 64 K7: an accepting entry must be a regular file (mode 100644 / 100755); a symlink whose target
+        text holds the two lines is not a review."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att})
+            Path(d, L.ACCEPTANCE_REVIEW_DIR).mkdir(parents=True)
+            os.symlink(f"{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n", Path(d, f"{ACC}1.md"))
+            git_commit(d, {})
+            self.assertIsNone(self._valid_in(d, att)[0])
+            os.unlink(Path(d, f"{ACC}1.md"))
+            git_commit(d, {f"{ACC}2.md": self.accept(sha)})
+            rec, why = self._valid_in(d, att)
+            self.assertIsNotNone(rec, why)                                                # control: a regular file
+
+    def test_review64_range_like_review_names_do_not_block(self):
+        """Review 64 K9: review files named like a revision range (`x`, `x..HEAD`) are ordinary paths; they do not
+        make the evidence unavailable."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        rd = L.ACCEPTANCE_REVIEW_DIR
+        rec, why = self.check(att, reviews={f"{ACC}1.md": self.accept(sha), f"{rd}/x": b"note\n",
+                                            f"{rd}/x..HEAD": b"note\n"})
+        self.assertIsNotNone(rec, why)
 
     def test_forged_or_unaccepted_attestations_refused(self):
         for att in (b"# README\nnot an attestation\n", self.attestation(schema="other"),

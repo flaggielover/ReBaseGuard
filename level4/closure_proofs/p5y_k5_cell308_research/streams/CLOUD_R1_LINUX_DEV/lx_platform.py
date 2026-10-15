@@ -901,7 +901,12 @@ def auto_update_settings(apt_dump: str | None = None, *, unit_roots=UNIT_ROOTS,
         vals[m.group(1)] = m.group(2)
     uu_cfg = {m.group(1): m.group(2) for m in
               re.finditer(r'^Unattended-Upgrade::([\w-]+)\s+"([^"]*)";\s*$', dump or "", re.M)}
-    units = {u: unit_enabled(u, unit_roots) for u in UPDATE_UNITS}
+    units = {}
+    for u in UPDATE_UNITS:
+        try:
+            units[u] = unit_enabled(u, unit_roots)
+        except OSError:                                         # review 64 K9: e.g. a root listable, not searchable
+            units[u] = None
     timer = any(v is not False for v in units.values())         # enabled OR unknown: not shown disabled
     snapd = any(Path(p).exists() for p in snapd_paths)
     cloud = Path(cloud_dir).exists()
@@ -1146,10 +1151,22 @@ def free_disk_bytes(path) -> int | None:
 
 
 # ====================================================================== host attestation (F8, F20, N1, P1)
+# Review 64 K1: git reads are isolated from global / system configuration, replace refs and grafts, and the root
+# (or shallow-boundary) commit is always shown; pickaxe searches also pass --no-textconv / --no-ext-diff (_commits).
+# Repository-local configuration is still read. In a shallow clone the boundary commit is shown as introducing every
+# file it holds, so an acceptance whose order the cut hides is refused by _ordered (never accepted).
+_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true")
+
+
+def _git_env() -> dict:
+    return dict(os.environ, GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM="1",
+                GIT_GRAFT_FILE=os.devnull)
+
+
 def _git(repo_root, *args) -> bytes | None:
     try:
-        r = subprocess.run(["git", "-C", str(repo_root), *args], capture_output=True, timeout=60,
-                           stdin=subprocess.DEVNULL)
+        r = subprocess.run(["git", "-C", str(repo_root), *_GIT_ISOLATION, *args], capture_output=True, timeout=60,
+                           stdin=subprocess.DEVNULL, env=_git_env())
     except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
         return None
     return r.stdout if r.returncode == 0 else None
@@ -1160,8 +1177,8 @@ def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
     if not earlier or not later or earlier == later:
         return False
     try:
-        r = subprocess.run(["git", "-C", str(repo_root), "merge-base", "--is-ancestor", earlier, later],
-                           capture_output=True, timeout=60, stdin=subprocess.DEVNULL)
+        r = subprocess.run(["git", "-C", str(repo_root), *_GIT_ISOLATION, "merge-base", "--is-ancestor", earlier,
+                            later], capture_output=True, timeout=60, stdin=subprocess.DEVNULL, env=_git_env())
     except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
         return False
     return r.returncode == 0
@@ -1174,9 +1191,9 @@ _HEX_TOKEN = re.compile(r"[0-9A-Fa-f]{8,64}")
 
 
 def _names_sha(line: str, sha: str) -> bool:
-    """Review 63 H3: a line refers to the attestation by its full sha256 or any prefix of at least 8 hex digits, in
-    either case."""
-    return any(sha.startswith(t.lower()) for t in _HEX_TOKEN.findall(line))
+    """Review 63 H3: a line refers to the attestation by its full sha256 anywhere (review 64 K4: also inside a longer
+    hex run) or by any hex run of at least 8 digits that is a prefix of it, in either case."""
+    return sha in line.lower() or any(sha.startswith(t.lower()) for t in _HEX_TOKEN.findall(line))
 
 
 def _vetoing(lines: list, sha: str) -> bool:
@@ -1227,6 +1244,27 @@ def _historical_review_blobs(repo_root, current: set) -> list | None:
     return out
 
 
+def _tree_entries(repo_root, paths: list) -> dict | None:
+    """{path: (mode, type, object id)} for exactly ``paths`` at HEAD, from `ls-tree -z HEAD -- <paths>` (review 64
+    K9: names such as `x..HEAD` are path specs here, never revision ranges); None if unreadable or malformed."""
+    if not paths:
+        return {}
+    data = _git(repo_root, "ls-tree", "-z", "HEAD", "--", *paths)
+    if data is None or (data and not data.endswith(b"\0")):
+        return None
+    out = {}
+    for entry in filter(None, data.split(b"\0")):
+        meta, sep, name = entry.partition(b"\t")
+        parts = meta.split()
+        if not sep or len(parts) != 3:
+            return None
+        try:
+            out[name.decode("utf-8", errors="strict")] = tuple(x.decode("ascii") for x in parts)
+        except UnicodeDecodeError:
+            return None
+    return out
+
+
 def _review_paths(data: bytes | None) -> list | None:
     """Git -z names are whole paths, never quoted or split on tab/newline; bad evidence refuses verification."""
     if not isinstance(data, bytes) or (data and not data.endswith(b"\0")):
@@ -1257,7 +1295,7 @@ def _acceptances(repo_root, sha: str) -> tuple:
         return [], ["UNAVAILABLE: acceptance review listing unreadable or malformed"]
     acc, rej, records = [], [], {}
     for path in every:
-        data = _git(repo_root, "show", f"HEAD:{path}")
+        data = _git(repo_root, "cat-file", "blob", f"HEAD:{path}")    # review 64 K9: never a revision range
         if data is None:
             return [], [f"UNAVAILABLE: review blob unreadable: {path}"]
         try:
@@ -1267,10 +1305,11 @@ def _acceptances(repo_root, sha: str) -> tuple:
         records[path] = lines
         if _vetoing(lines, sha):
             rej.append(path)
-    current = (_git(repo_root, "rev-parse", *[f"HEAD:{p}" for p in every]) or b"").decode("ascii", "replace").split()
-    if len(current) != len(every):
+    entries = _tree_entries(repo_root, every)
+    if entries is None or set(entries) != set(every):
         return [], ["UNAVAILABLE: current review blob ids unreadable"]
-    history = _historical_review_blobs(repo_root, set(current))
+    current = {oid for mode, kind, oid in entries.values()}
+    history = _historical_review_blobs(repo_root, current)
     if history is None:
         return [], ["UNAVAILABLE: review history unreadable or not UTF-8"]
     rej += [f"HISTORICAL: {path} (blob {oid[:12]})" for oid, path, lines in history if _vetoing(lines, sha)]
@@ -1281,6 +1320,8 @@ def _acceptances(repo_root, sha: str) -> tuple:
         if path not in records:
             return [], [f"UNAVAILABLE: accepting review absent from recursive listing: {path}"]
         lines = records[path]
+        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):
+            continue                                            # review 64 K7: a symlink is not a review file
         verdicts = [ln for ln in lines if _VERDICT.match(ln)]
         if f"{ACCEPTANCE_LINE}{sha}" in lines and verdicts == [ACCEPTANCE_VERDICT_LINE]:
             acc.append(path)
@@ -1291,7 +1332,8 @@ def _commits(repo_root, *args) -> list | None:
     """Every commit of the selected history matched by ``args``, merge commits included (their diff against EACH
     parent, `--diff-merges=separate`; git's default shows no merge diff, so a blob or line introduced by a merge would
     be invisible: review 63 H1); de-duplicated; None if git fails or prints anything but commit ids."""
-    out = _git(repo_root, "log", "--format=%H", "--no-patch", "--diff-merges=separate", *args)
+    out = _git(repo_root, "log", "--format=%H", "--no-patch", "--no-textconv", "--no-ext-diff",
+               "--diff-merges=separate", *args)
     if out is None:
         return None
     try:
@@ -1345,7 +1387,7 @@ def attestation_valid(ref, *, repo_root=None) -> tuple:
     if not isinstance(path, str) or not isinstance(want, str) or not re.fullmatch(r"[0-9a-f]{64}", want):
         return None, ["malformed reference"]
     base = Path(repo_root) if repo_root else _repository_root()
-    data = _git(base, "show", f"HEAD:{path}")
+    data = _git(base, "cat-file", "blob", f"HEAD:{path}")            # review 64 K9: never a revision range
     if data is None:
         return None, ["attestation not committed at HEAD"]
     if _sha(data) != want:

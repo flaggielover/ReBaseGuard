@@ -396,9 +396,10 @@ class TestAcceptanceReviewEvidence(unittest.TestCase):
                         return None
                     if fault == "direct-list" and args[0] == "ls-tree" and "-r" not in args:
                         return None
-                    if fault == "veto-blob" and args == ("show", f"HEAD:{veto}"):
+                    if fault == "veto-blob" and args[-1] == f"HEAD:{veto}" and args[0] in ("show", "cat-file"):
                         return None
-                    if fault == "accepting-blob" and args[0] == "show" and args[1].endswith("REVIEW_HOST_ATTESTATION_SYNC.md"):
+                    if fault == "accepting-blob" and args[0] in ("show", "cat-file") and args[-1].endswith(
+                            "REVIEW_HOST_ATTESTATION_SYNC.md"):
                         return None
                     return original(repo_root, *args)
                 with self.subTest(fault=fault), mock.patch.object(L, "_git", side_effect=reading):
@@ -417,7 +418,7 @@ class TestAcceptanceReviewEvidence(unittest.TestCase):
                 self.assertIsNone(accepted)
                 self.assertTrue(any("UNAVAILABLE" in reason for reason in reasons), reasons)
             def bad_blob(repo_root, *args):
-                if args[0] == "show" and args[1].endswith("REVIEW_HOST_ATTESTATION_SYNC.md"):
+                if args[0] in ("show", "cat-file") and args[-1].endswith("REVIEW_HOST_ATTESTATION_SYNC.md"):
                     return b"\xff"
                 return original(repo_root, *args)
             with mock.patch.object(L, "_git", side_effect=bad_blob):

@@ -8,6 +8,7 @@ full baseline count, only AssertionError failures, and an explicit intended-prop
 R5SYNC01-R5SYNC04 cover complete veto paths, failed veto evidence and unknown supervisor state.
 RV01-RV17 carry Claude review 63's mutants W01-W07 (re-anchored where the code they targeted changed) and
 weaken its H1/H3/H6/H7 repairs; P11, Z01, Z02, Z05 and Q06 are re-anchored with the same weakening.
+RV18-RV28 carry review 64's surviving mutants (RW1-RW4, RW6) and weaken its K1, K4, K7 and K9 repairs.
 Every complete raw report, mutation anchor, and before/after input hash is retained.
 No scientific evaluator is imported or executed. Explicit output paths receive the evidence.
 
@@ -413,11 +414,9 @@ MUTANTS = [('M01',
   [('_NEGATIVE = re.compile(r"reject|withdraw|not[ _-]?accepted|revoke", re.I)',
     '_NEGATIVE = re.compile(r"REJECT|WITHDRAW|NOT[ _-]?ACCEPTED|REVOKE")')]),
  ('Q04',
-  'a second (conflicting) verdict line tolerated; on the combined source the veto clause for other verdict-like '
-  'lines is removed too, since it would otherwise enforce the same property',
-  [('and verdicts == [ACCEPTANCE_VERDICT_LINE]:', 'and ACCEPTANCE_VERDICT_LINE in verdicts:'),
-   ('               or (_VERDICT.match(ln) and ln != ACCEPTANCE_VERDICT_LINE) for ln in lines)',
-    '               for ln in lines)')]),
+  'a second (conflicting) verdict line tolerated (review 64 K2: single site again; a duplicated accepting verdict '
+  'line is the direct witness)',
+  [('and verdicts == [ACCEPTANCE_VERDICT_LINE]:', 'and ACCEPTANCE_VERDICT_LINE in verdicts:')]),
  ('Q05',
   'accepting file suffix not required',
   [('(name.startswith(ACCEPTANCE_REVIEW_PREFIX) and name.endswith(".md"))',
@@ -525,9 +524,12 @@ MUTANTS = [('M01',
     '    for path in (p for p in every if p.isascii() and "\\t" not in p and "\\n" not in p):\n')]),
  ('R5SYNC02',
   'Combined R5 repair: unavailable recursive listing cannot be replaced by an independent accepting read; '
-  'on the combined source unavailable review history is ignored too, since it would otherwise refuse the same way',
+  'on the combined source unavailable review history is ignored too, and the review-64 mode check tolerates a path '
+  'missing from the (emptied) exact listing, since both would otherwise refuse the same way',
   [('    if history is None:\n        return [], ["UNAVAILABLE: review history unreadable or not UTF-8"]\n',
     '    if history is None:\n        history = []\n'),
+   ('        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):',
+    '        if path in entries and entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):'),
    ('    if tree is None or every is None:\n'
     '        return [], ["UNAVAILABLE: acceptance review listing unreadable or malformed"]\n',
     '    if tree is None:\n'
@@ -538,7 +540,7 @@ MUTANTS = [('M01',
     '        lines = records[path]\n',
     '        lines = records.get(path)\n'
     '        if lines is None:\n'
-    '            data = _git(repo_root, "show", f"HEAD:{path}") or b""\n'
+    '            data = _git(repo_root, "cat-file", "blob", f"HEAD:{path}") or b""\n'
     '            lines = data.decode("utf-8", errors="replace").splitlines()\n')]),
  ('R5SYNC03',
   'Combined R5 repair: unavailable recursive review blob cannot be skipped in the veto scan',
@@ -576,8 +578,7 @@ MUTANTS = [('M01',
   [('        found |= f.is_symlink() or f.exists()', '        found = f.is_symlink() or f.exists()')]),
  ('RV08',
   'Review 63 H1: merge commits invisible to the blob / line order searches',
-  [('    out = _git(repo_root, "log", "--format=%H", "--no-patch", "--diff-merges=separate", *args)',
-    '    out = _git(repo_root, "log", "--format=%H", "--no-patch", *args)')]),
+  [('               "--diff-merges=separate", *args)', '               *args)')]),
  ('RV09',
   'Review 63 H3: a rejection removed from HEAD no longer vetoes',
   [('    rej += [f"HISTORICAL: {path} (blob {oid[:12]})" for oid, path, lines in history if _vetoing(lines, sha)]\n',
@@ -592,7 +593,8 @@ MUTANTS = [('M01',
     '    commits = _git(repo_root, "rev-list", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)')]),
  ('RV12',
   'Review 63 H3: only the exact lower-case full sha names the attestation',
-  [('    return any(sha.startswith(t.lower()) for t in _HEX_TOKEN.findall(line))', '    return sha in line')]),
+  [('    return sha in line.lower() or any(sha.startswith(t.lower()) for t in _HEX_TOKEN.findall(line))',
+    '    return sha in line')]),
  ('RV13',
   'Review 63 H3: refused / unaccepted / declined / needs revision / veto are not negative',
   [('    return any(_NEGATIVE.search(ln) or _NEGATIVE_MORE.search(ln)\n', '    return any(_NEGATIVE.search(ln)\n')]),
@@ -610,9 +612,53 @@ MUTANTS = [('M01',
  ('RV17',
   'Review 63 H6: a lower-precedence mask overrides a real higher-precedence unit file',
   [('        if first is None and (f.is_symlink() or f.exists()):',
-    '        if f.is_symlink() and os.path.realpath(f) == "/dev/null":')])]
+    '        if f.is_symlink() and os.path.realpath(f) == "/dev/null":')]), ('RV18',
+  'Review 64 RW1: an empty set of blob commits no longer refuses (all() over nothing)',
+  [('    if not blob_commits or not line_commits:\n        return False\n',
+    '    if not line_commits:\n        return False\n')]),
+ ('RV19',
+  'Review 64 RW2: a dangling highest-precedence unit link no longer shadows a lower mask',
+  [('        if first is None and (f.is_symlink() or f.exists()):',
+    '        if first is None and f.exists():')]),
+ ('RV20',
+  'Review 64 RW3: a non-UTF-8 historical review path is skipped',
+  [('                seen.setdefault(parts[2].decode("ascii"), name.decode("utf-8", errors="strict"))\n'
+    '            except UnicodeDecodeError:\n                return None\n',
+    '                seen.setdefault(parts[2].decode("ascii"), name.decode("utf-8", errors="strict"))\n'
+    '            except UnicodeDecodeError:\n                continue\n')]),
+ ('RV21',
+  'Review 64 RW4: the accepting verdict line may repeat',
+  [('and verdicts == [ACCEPTANCE_VERDICT_LINE]:', 'and set(verdicts) == {ACCEPTANCE_VERDICT_LINE}:')]),
+ ('RV22',
+  'Review 64 RW6: accepting-line commits searched on the first-parent chain only',
+  [('    line_commits = _commits(repo_root, pick, "HEAD")\n',
+    '    line_commits = _commits(repo_root, pick, "--first-parent", "HEAD")\n')]),
+ ('RV23',
+  'Review 64 K1: the reading repository may hide the root / boundary commit (log.showRoot not forced)',
+  [('_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true")',
+    '_GIT_ISOLATION = ("--no-replace-objects",)')]),
+ ('RV24',
+  'Review 64 K1: a textconv driver may rewrite what the pickaxe searches',
+  [('"--no-patch", "--no-textconv", "--no-ext-diff",', '"--no-patch", "--no-ext-diff",')]),
+ ('RV25',
+  'Review 64 K4: a full sha inside a longer hex run no longer names the attestation',
+  [('    return sha in line.lower() or any(', '    return any(')]),
+ ('RV26',
+  'Review 64 K7: a symlink counts as an accepting review file',
+  [('        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):\n            continue',
+    '        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob"), ("120000", "blob")):\n'
+    '            continue')]),
+ ('RV27',
+  'Review 64 K9: review blobs read with git show (a range-like name is parsed as a revision range)',
+  [('        data = _git(repo_root, "cat-file", "blob", f"HEAD:{path}")    # review 64 K9: never a revision range\n',
+    '        data = _git(repo_root, "show", f"HEAD:{path}")\n')]),
+ ('RV28',
+  'Review 64 K9: an OSError reading a unit root escapes auto_update_settings',
+  [('        except OSError:                                         # review 64 K9: e.g. a root listable, not searchable\n'
+    '            units[u] = None',
+    '        except ZeroDivisionError:\n            units[u] = None')])]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 17}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 28}
 
 # A kill must include at least one named direct witness for the weakened property.
 # These method names are unique across the full discovered suite. They are evidence
@@ -657,7 +703,7 @@ for _method, _ids in {
     "test_read_back_mismatch_is_detected": "X05",
     "test_large_v1_limit_is_a_limit": "X08",
     "test_unknown_interpreter_package_never_matches": "X09",
-    "test_acceptance_is_found_not_named": "N02 P01 P02 P03 P04 Y03 Z01 Q01 Q02 Q03 Q04 Q05",
+    "test_acceptance_is_found_not_named": "N02 P01 P02 P03 P04 Y03 Z01 Q01 Q02 Q03 Q04 Q05 RV21",
     "test_reference_rejects_extra_fields_even_if_otherwise_valid": "N04",
     "test_root_attestation_is_derived_never_asserted": "N05 P05 P06 Y04 Z08",
     "test_boot_id_must_be_valid": "N07",
@@ -701,6 +747,15 @@ for _method, _ids in {
     "test_review63_rejection_is_permanent": "RV09 RV10 RV11",
     "test_review63_verdict_like_lines_refuse_acceptance": "RV15",
     "test_review63_upholds_and_mask_precedence": "RV16 RV17",
+    "test_review64_missing_blob_commits_refuse": "RV18",
+    "test_review64_dangling_top_entry_shadows_lower_mask": "RV19",
+    "test_review64_non_utf8_historical_review_path_refuses": "RV20",
+    "test_review64_side_branch_acceptance_synced_and_merged_refuses": "RV22",
+    "test_review64_order_ignores_reading_configuration": "RV23 RV24",
+    "test_review64_sha_inside_longer_hex_run_still_names_it": "RV25",
+    "test_review64_symlink_is_not_an_accepting_review": "RV26",
+    "test_review64_range_like_review_names_do_not_block": "RV27",
+    "test_review64_unreadable_unit_root_is_unknown_not_a_crash": "RV28",
 }.items():
     for _mid in _ids.split():
         PROPERTY_WITNESSES.setdefault(_mid, []).append(_method)
