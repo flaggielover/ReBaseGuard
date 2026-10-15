@@ -1153,8 +1153,8 @@ def free_disk_bytes(path) -> int | None:
 # ====================================================================== host attestation (F8, F20, N1, P1)
 # Review 64 K1: git reads are isolated from global / system configuration, replace refs and grafts, and the root
 # (or shallow-boundary) commit is always shown; pickaxe searches also pass --no-textconv / --no-ext-diff (_commits).
-# Repository-local configuration is still read. In a shallow clone the boundary commit is shown as introducing every
-# file it holds, so an acceptance whose order the cut hides is refused by _ordered (never accepted).
+# Repository-local configuration is still read. History completeness is a precondition (_history_complete): a shallow
+# clone hides commits before its boundary, e.g. a rejecting review that was later deleted (review 64 follow-up).
 _GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true")
 
 
@@ -1170,6 +1170,13 @@ def _git(repo_root, *args) -> bytes | None:
     except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
         return None
     return r.stdout if r.returncode == 0 else None
+
+
+def _history_complete(repo_root) -> bool:
+    """True only on positive evidence that HEAD's history is complete in this repository: git reports it is not a
+    shallow clone. A shallow clone, or no readable answer, is not evidence (the history-wide veto and the order rule
+    both read the whole history; a cut history can hide a deleted rejection while the HEAD tree is identical)."""
+    return _git(repo_root, "rev-parse", "--is-shallow-repository") == b"false\n"
 
 
 def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
@@ -1286,9 +1293,12 @@ def _acceptances(repo_root, sha: str) -> tuple:
     ACCEPTANCE_VERDICT_LINE. Any file anywhere under the review directory (recursively) that names the sha and vetoes
     it (_vetoing) rejects it, whether committed at HEAD or present in ANY commit of HEAD's full history (review 63 H3:
     a rejection is permanent; removing or moving the file, or editing it, does not lift it).
+    A shallow clone, or a repository whose completeness cannot be read, refuses as unavailable evidence.
     Returns (accepting paths, rejecting paths). Unavailable or unrecognized review evidence returns no acceptances
     and an explicit unavailable-evidence sentinel in the rejecting list; it can never establish verification.
     """
+    if not _history_complete(repo_root):
+        return [], ["UNAVAILABLE: history completeness not established (shallow clone or unreadable)"]
     tree = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))
     every = _review_paths(_git(repo_root, "ls-tree", "-r", "-z", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR))
     if tree is None or every is None:

@@ -8,7 +8,8 @@ full baseline count, only AssertionError failures, and an explicit intended-prop
 R5SYNC01-R5SYNC04 cover complete veto paths, failed veto evidence and unknown supervisor state.
 RV01-RV17 carry Claude review 63's mutants W01-W07 (re-anchored where the code they targeted changed) and
 weaken its H1/H3/H6/H7 repairs; P11, Z01, Z02, Z05 and Q06 are re-anchored with the same weakening.
-RV18-RV28 carry review 64's surviving mutants (RW1-RW4, RW6) and weaken its K1, K4, K7 and K9 repairs.
+RV18-RV28 carry review 64's surviving mutants (RW1-RW4, RW6) and weaken its K1, K4, K7 and K9 repairs; RV29-RV30
+weaken the history-completeness guard restored after review 64 (shallow clones hide deleted rejections).
 Every complete raw report, mutation anchor, and before/after input hash is retained.
 No scientific evaluator is imported or executed. Explicit output paths receive the evidence.
 
@@ -659,9 +660,17 @@ MUTANTS = [('M01',
   'Review 64 K9: an OSError reading a unit root escapes auto_update_settings',
   [('        except OSError:                                         # review 64 K9: e.g. a root listable, not searchable\n'
     '            units[u] = None',
-    '        except ZeroDivisionError:\n            units[u] = None')])]
+    '        except ZeroDivisionError:\n            units[u] = None')]),
+ ('RV29',
+  'Review 64 follow-up: the history-completeness guard removed (a shallow clone hides a deleted rejection)',
+  [('    if not _history_complete(repo_root):\n'
+    '        return [], ["UNAVAILABLE: history completeness not established (shallow clone or unreadable)"]\n', '')]),
+ ('RV30',
+  'Review 64 follow-up: an unreadable completeness answer counts as complete history',
+  [('    return _git(repo_root, "rev-parse", "--is-shallow-repository") == b"false\\n"',
+    '    return _git(repo_root, "rev-parse", "--is-shallow-repository") != b"true\\n"')])]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 28}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 30}
 
 # A kill must include at least one named direct witness for the weakened property.
 # These method names are unique across the full discovered suite. They are evidence
@@ -751,6 +760,7 @@ for _method, _ids in {
     "test_review63_verdict_like_lines_refuse_acceptance": "RV15",
     "test_review63_upholds_and_mask_precedence": "RV16 RV17",
     "test_review64_missing_blob_commits_refuse": "RV18",
+    "test_review64_shallow_history_refuses_deleted_preboundary_rejection": "RV29 RV30",
     "test_review64_dangling_top_entry_shadows_lower_mask": "RV19",
     "test_review64_non_utf8_historical_review_path_refuses": "RV20",
     "test_review64_side_branch_acceptance_synced_and_merged_refuses": "RV22",

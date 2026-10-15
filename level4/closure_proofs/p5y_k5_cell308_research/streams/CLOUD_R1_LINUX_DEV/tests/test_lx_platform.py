@@ -1277,6 +1277,45 @@ class TestAttestationPreflight(unittest.TestCase):
             fixture_git(d, "clone", "-q", "--depth", "1", src.as_uri(), str(dst))
             self.assertIsNone(self._valid_in(dst, att)[0])
 
+    def test_review64_shallow_history_refuses_deleted_preboundary_rejection(self):
+        """Review 64 follow-up: a rejecting review committed and then deleted before a shallow clone's boundary is
+        invisible to the history scan although the HEAD tree is identical; history completeness is therefore a
+        precondition. Full history: the rejection refuses, and a valid acceptance (positive control) is accepted. A
+        depth-2 clone and an unreadable completeness answer refuse as unavailable evidence."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        veto = f"{L.ACCEPTANCE_REVIEW_DIR}/veto.md"
+        with tempfile.TemporaryDirectory() as d:
+            good, bad, cut = Path(d, "good"), Path(d, "bad"), Path(d, "cut")
+            for repo, rejected in ((good, False), (bad, True)):
+                repo.mkdir()
+                git_init(repo)
+                git_commit(repo, {"att/HOST.json": att})
+                git_commit(repo, {veto: (f"{sha} REJECTED\n" if rejected else "draft notes\n").encode()})
+                fixture_git(repo, "rm", "-q", veto)
+                git_commit(repo, {})
+                git_commit(repo, {f"{ACC}1.md": self.accept(sha)})
+            rec, why = self._valid_in(good, att)
+            self.assertIsNotNone(rec, why)                                                # positive control
+            rec, why = self._valid_in(bad, att)
+            self.assertIsNone(rec)
+            self.assertTrue(any("HISTORICAL" in w for w in why), why)                     # full history sees it
+            fixture_git(d, "clone", "-q", "--depth", "2", bad.as_uri(), str(cut))
+            same_tree = [subprocess.run(["git", "-C", str(x), "rev-parse", "HEAD^{tree}"], capture_output=True,
+                                        text=True, check=True).stdout for x in (bad, cut)]
+            self.assertEqual(same_tree[0], same_tree[1])
+            rec, why = self._valid_in(cut, att)
+            self.assertIsNone(rec)                                                        # RV29
+            self.assertTrue(any("history completeness" in w for w in why), why)
+            original = L._git
+
+            def no_answer(repo_root, *args):
+                return None if args[:2] == ("rev-parse", "--is-shallow-repository") else original(repo_root, *args)
+            with patched(_git=no_answer):
+                rec, why = self._valid_in(good, att)
+            self.assertIsNone(rec)                                                        # RV30
+            self.assertTrue(any("history completeness" in w for w in why), why)
+
     def test_review64_missing_blob_commits_refuse(self):
         """Review 64 RW1: no commit found for the attested blob refuses; `all()` over nothing is not an order."""
         att = self.attestation()
