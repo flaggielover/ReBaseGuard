@@ -1042,6 +1042,8 @@ class TestAttestationPreflight(unittest.TestCase):
         self.assertEqual(self.gates()["launched_by_systemd"], L.PASS)
         self.assertEqual(self.gates(launched=self.launch())["launched_by_systemd"], L.PASS)
         self.assertEqual(self.gates(launched=self.launch(invocation_id="zzz"))["launched_by_systemd"], L.FAIL)
+        not_launched = {"systemd_pid1": False, "unit": None, "invocation_id": None, "systemctl": None, "pass": False}
+        self.assertEqual(self.gates(launched=self.launch(), fresh=not_launched)["launched_by_systemd"], L.FAIL)  # P08
         for bad_fresh in ({"pass": True}, self.launch(systemd_pid1=None),
                           self.launch(unit="rebaseguard-mbs308-x.scope"),
                           self.launch(unit="other.service"), self.launch(invocation_id=""),
