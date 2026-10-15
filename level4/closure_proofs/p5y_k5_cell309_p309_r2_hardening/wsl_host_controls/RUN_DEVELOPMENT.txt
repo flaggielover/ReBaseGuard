@@ -1,0 +1,54 @@
+WSL controls: DEVELOPMENT ONLY, not an admission/qualification entrypoint.
+
+Read DESIGN.md first. This directory is deliberately outside official r2 code.
+The implementation cannot authorize a launch, issue a grant, write a campaign ref,
+freeze an interpreter, or evaluate a target. Do not integrate it into a launcher
+without the separately required route amendment and independent review.
+
+Target-free Windows observations (stdout only):
+  & .\collect_host_controls.ps1 -SampleSeconds 60
+Do not change execution policy: reviewed contents may be executed in the existing
+PowerShell session. Save stdout in a new, timestamped records directory. A shorter
+smoke sample is supported but cannot satisfy the existing 60-second floor.
+The collector may exceed the sleep duration because CIM/task/event queries take
+time. It uses a conservative lower bound for the CPU sampling denominator.
+
+Guest observations with the prepared private interpreter (stdout only):
+  /home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 -B collect_guest.py
+
+Offline diagnostic report:
+  python3.11 -B host_controls.py --host WINDOWS.json --guest GUEST.json
+Monitor-phase synthetic/offline diagnostics additionally require --phase monitor,
+--previous PAIR.json and --baseline ORIGINAL_PAIR.json (each pair contains host
+and guest). No file here creates a trusted or durable checkpoint store. A caller
+can fabricate/replay JSON; this is one reason formal admission is always BLOCKED.
+
+Synthetic checks (no sampling, workload, qualification or evaluator):
+  python3.11 -B -m unittest -v test_host_controls
+  & .\test_windows_sampler.ps1
+The Python test suite reads original r2 source and compares hashes/AST thresholds;
+it never imports a launcher, driver, freeze tool, guard or target evaluator.
+
+Private-runtime smoke (small child processes only):
+  /home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 -B verify_private_python.py
+This checks stdlib imports including an AST-derived inventory, compression, SSL
+context creation, in-memory SQLite, ctypes, shared memory, and fork/spawn/forkserver.
+No network or project workload is executed by the verifier.
+
+Interpretation:
+  candidate_observations_pass applies only to the proposed diagnostic checks.
+  route_accepted=false, formal_admission=BLOCKED, qualification_authorized=false,
+  target_execution_authorized=false are unconditional, including synthetic PASS.
+  All new Windows-specific policy semantics remain proposals.
+
+Remaining integration work includes a reviewed protected/authenticated bridge,
+event-backed protected/short-lived process visibility, VM workload attribution,
+durable baseline/sequence protection, continuous host+guest monitor, an explicit
+WSL exception to container/AWS checks, and the full independent admission process.
+Current live collector deliberately reports incomplete visibility and unknown
+maintenance approval; no amount of otherwise green synthetic tests changes this.
+
+Sources for read-only Windows APIs:
+https://learn.microsoft.com/en-us/windows/win32/sysinfo/interrupt-time
+https://learn.microsoft.com/en-us/windows/win32/api/powrprof/nf-powrprof-powerreadacvalueindex
+https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-process
