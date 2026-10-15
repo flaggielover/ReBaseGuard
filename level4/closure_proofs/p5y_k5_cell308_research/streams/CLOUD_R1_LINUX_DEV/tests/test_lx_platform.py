@@ -30,6 +30,8 @@ LXDIR = os.environ.get("LX_PLATFORM_DIR", str(HERE.parent))     # the mutation h
 sys.path.insert(0, LXDIR)
 import lx_platform as L  # noqa: E402
 
+REAL_PROC_VIEW = L.proc_view_complete      # TestBusy patches the module reader; test_proc_view needs the real one
+
 REPO = HERE.parents[5]
 CAND_HOST = "level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_host.py"
 CAND_COMMIT = "142d97a90a1c3fafff394044aa1448674f7a633c"
@@ -161,7 +163,9 @@ class TestIdentity(unittest.TestCase):
         pid would address a process group)."""
         for bad in (dict(self.ident, boot_id="garbage"), dict(self.ident, pid=-4242), dict(self.ident, pid=True),
                     dict(self.ident, pid="4242"), dict(self.ident, starttime_ticks="777"),
-                    dict(self.ident, pidns=-1), dict(self.ident, cmdline_sha256="zz")):
+                    dict(self.ident, pidns=-1), dict(self.ident, cmdline_sha256="zz"),
+                    dict(self.ident, starttime_ticks=True), dict(self.ident, pidns=True),
+                    dict(self.ident, timens=False)):                                    # Z11: bools are not ints
             self.assertEqual(self.state(ident=bad, exists=False), L.UNKNOWN, bad)
 
     def test_real_process_lifecycle(self):
@@ -524,6 +528,23 @@ class TestMemory(unittest.TestCase):
             self.assertIsNone(rows["/"]["cpu.max"])                                     # unreadable stays None
 # ====================================================================== CPU exclusivity
 class TestBusy(unittest.TestCase):
+    def setUp(self):
+        """G6: busy_processes reads proc_view_complete() itself; the synthetic cases fix it to True."""
+        self._p = patched(proc_view_complete=lambda *a, **k: True)
+        self._p.__enter__()
+
+    def tearDown(self):
+        self._p.__exit__()
+
+    def test_view_is_read_not_assumed(self):
+        """G6 (review 62's nested-namespace probe): an incomplete or unknown view gives no reading, with no argument
+        that could assert completeness."""
+        for view in (False, None):
+            with patched(proc_view_complete=lambda *a, v=view, **k: v):
+                self.assertIsNone(L.busy_processes({}, {}, 5, 25, set()), view)
+        self.assertNotIn("view_complete", L.busy_processes.__code__.co_varnames[:L.busy_processes.__code__
+                                                                                .co_argcount])
+
     def test_window_not_lifetime_and_reuse_and_birth(self):
         hz = 100
         t0 = {(10, 1): (1, 1000, "old_hog", "/usr/bin/x"), (11, 2): (1, 0, "spiker", "/opt/y"),
@@ -562,8 +583,6 @@ class TestBusy(unittest.TestCase):
         self.assertIsNone(L.busy_processes({}, {}, 0, 25, set()))
         self.assertIsNone(L.busy_processes({}, {}, 5, 25, {(1, 1)}))             # own may not contain init
         self.assertIsNone(L.busy_processes({}, {}, 5, 25, {99}))                 # bare pids: malformed
-        self.assertIsNone(L.busy_processes({}, {}, 5, 25, set(), view_complete=False))
-        self.assertIsNone(L.busy_processes({}, {}, 5, 25, set(), view_complete=None))
 
     def test_no_name_or_path_allowlist(self):
         """R05 / D-ALLOW-PATHS: no process is exempt by name or path, including the Cloud session controller."""
@@ -578,15 +597,15 @@ class TestBusy(unittest.TestCase):
         hidepid / subset; no /proc line or an unreadable namespace is UNKNOWN."""
         mi = "23 28 0:22 / /proc rw,relatime - proc proc rw\n"
         st = "NSpid:\t77\n"
-        self.assertTrue(L.proc_view_complete(st, mi, pidns=L.INIT_PID_NS))
-        self.assertFalse(L.proc_view_complete(st, mi, pidns=4026532265))           # nested ns with its own /proc
-        self.assertFalse(L.proc_view_complete("NSpid:\t77\t3\n", mi, pidns=L.INIT_PID_NS))
+        self.assertTrue(REAL_PROC_VIEW(st, mi, pidns=L.INIT_PID_NS))
+        self.assertFalse(REAL_PROC_VIEW(st, mi, pidns=4026532265))           # nested ns with its own /proc
+        self.assertFalse(REAL_PROC_VIEW("NSpid:\t77\t3\n", mi, pidns=L.INIT_PID_NS))
         for opt in ("hidepid=2", "subset=pid"):
-            self.assertFalse(L.proc_view_complete(st, f"23 28 0:22 / /proc rw,{opt} - proc proc rw\n",
+            self.assertFalse(REAL_PROC_VIEW(st, f"23 28 0:22 / /proc rw,{opt} - proc proc rw\n",
                                                   pidns=L.INIT_PID_NS), opt)
-        self.assertIsNone(L.proc_view_complete(st, "23 28 0:22 / /sys rw - sysfs sysfs rw\n", pidns=L.INIT_PID_NS))
-        self.assertIsNone(L.proc_view_complete("Name: x\n", mi, pidns=L.INIT_PID_NS))
-        self.assertIsNone(L.proc_view_complete(st, mi, pidns=None))
+        self.assertIsNone(REAL_PROC_VIEW(st, "23 28 0:22 / /sys rw - sysfs sysfs rw\n", pidns=L.INIT_PID_NS))
+        self.assertIsNone(REAL_PROC_VIEW("Name: x\n", mi, pidns=L.INIT_PID_NS))
+        self.assertIsNone(REAL_PROC_VIEW(st, mi, pidns=None))
 
     def test_unreadable_existing_process_fails_the_snapshot(self):
         """N7: a /proc/<pid> that exists but cannot be read makes the whole snapshot None."""
@@ -602,10 +621,12 @@ class TestBusy(unittest.TestCase):
         b = L.cpu_ticks()
         view = L.proc_view_complete()
         if a is None or b is None or view is not True:
-            self.assertIsNone(L.busy_processes(a, b, 0.2, 25, set(), view_complete=view))   # P10: no reading
+            with patched(proc_view_complete=lambda *x, **k: view):
+                self.assertIsNone(L.busy_processes(a, b, 0.2, 25, set()))            # P10: no reading
             return
         me = next(k for k in b if k[0] == os.getpid())
-        self.assertIsInstance(L.busy_processes(a, b, 0.2, 25, {me}, view_complete=view), list)
+        with patched(proc_view_complete=lambda *x, **k: view):
+            self.assertIsInstance(L.busy_processes(a, b, 0.2, 25, {me}), list)
 
 
 # ====================================================================== updates, launch context
@@ -668,10 +689,41 @@ class TestUpdatesLaunch(unittest.TestCase):
             self.assertFalse(self.settings(off)["guest_updates_shown_disabled"])
 
     def test_systemctl_path_when_systemd_is_pid1(self):
-        for out, want in (("enabled", True), ("static", True), ("masked", False), ("disabled", False),
-                          ("bad", None), (None, None)):
-            with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u, out=out: out):
+        """Z03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query
+        is None (never 'disabled'); not-found is False only when no unit file exists in any root."""
+        states = [("enabled", True), ("enabled-runtime", True), ("static", True), ("indirect", True),
+                  ("alias", True), ("linked", True), ("linked-runtime", True), ("masked", False),
+                  ("masked-runtime", False), ("disabled", False), ("bad", None), (None, None)]
+        for out, want in states:
+            with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u, out=out: out,
+                         _systemctl_is_active=lambda u: "inactive"):
                 self.assertIs(L.unit_enabled("x.timer"), want, out)
+        for act in ("active", "activating", "reloading"):
+            with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u: "disabled",
+                         _systemctl_is_active=lambda u, a=act: a):
+                self.assertIs(L.unit_enabled("x.timer"), True, act)
+        with tempfile.TemporaryDirectory() as d:
+            with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u: "not-found",
+                         _systemctl_is_active=lambda u: "inactive"):
+                self.assertIs(L.unit_enabled("x.timer", (d,)), False)
+                Path(d, "x.timer").write_text("")
+                self.assertIsNone(L.unit_enabled("x.timer", (d,)))
+
+    def test_file_mode_edge_cases(self):
+        """Z02 / Z04 / G7: a .requires entry, a dangling .wants link, and a missing first root before the enabling one
+        are all seen; the default search path is the full systemd.unit(5) list."""
+        with tempfile.TemporaryDirectory() as d:
+            missing, b = str(Path(d, "missing")), Path(d, "b")
+            b.mkdir()
+            Path(b, "basic.target.requires").mkdir()
+            Path(b, "basic.target.requires", "x.timer").write_text("")
+            self.assertIs(L.unit_enabled("x.timer", (missing, str(b))), True)        # Z02 and Z04
+            Path(b, "timers.target.wants").mkdir()
+            os.symlink(str(Path(d, "nowhere")), Path(b, "timers.target.wants", "y.timer"))
+            self.assertIs(L.unit_enabled("y.timer", (missing, str(b))), True)        # dangling link counts
+        for root in ("/usr/local/lib/systemd/system", "/run/systemd/transient", "/run/systemd/generator.late",
+                     "/etc/systemd/system.control"):
+            self.assertIn(root, L.UNIT_ROOTS)
 
     def test_parser_reads_only_whole_dump_lines(self):
         """N13 (renamed): the parser accepts only whole `apt-config dump` lines; apt's own comment handling is apt's,
@@ -837,13 +889,17 @@ class TestPins(unittest.TestCase):
         two = f"7f00-7f01 r-xp 0 08:01 1 {libc}\n7f02-7f03 r-xp 0 08:01 2 {libm}\n"
         self.assertIsNone(L.mapped_objects(two))                               # Y06: no loader
         with self.assertRaises(RuntimeError):
-            L.pin_point(())                                                    # P11: an empty list is refused
+            with patched(PIN_POINT_MODULES=()):
+                L.pin_point()                                                  # P11: an empty list is refused
         with self.assertRaises(RuntimeError):
             L.pin_point()                                                      # P11: no fixed list defined yet
-        got = L.pin_point(("json", "hashlib"))                            # both imported statically above
+        with patched(PIN_POINT_MODULES=("json", "hashlib")):                 # both imported statically above
+            got = L.pin_point()
         self.assertIn("libc6", got["dpkg_versions"])
         with self.assertRaises(RuntimeError):
-            L.pin_point(("json", "a_module_that_is_not_imported"))
+            with patched(PIN_POINT_MODULES=("json", "a_module_that_is_not_imported")):
+                L.pin_point()
+        self.assertEqual(L.pin_point.__code__.co_argcount, 0)                   # G8: no caller override
 
     def test_unknown_interpreter_package_never_matches(self):
         """X09: an interpreter whose dpkg owner is unknown keeps a placeholder whose version is None."""
@@ -922,6 +978,46 @@ class TestAttestationPreflight(unittest.TestCase):
             self.assertIsNone(rec, name)
             self.assertTrue(why, name)
         self.assertIsNone(self.check(self.attestation(), same_commit=True)[0])          # same commit as attestation
+        g = {   # G1 / G3 (review 62)
+            "subdirectory of the review dir": {
+                f"{L.ACCEPTANCE_REVIEW_DIR}/scratch_x/{L.ACCEPTANCE_REVIEW_PREFIX}n.md": ok},
+            "wrong suffix": {f"{ACC}1.txt": ok},
+            "two verdict lines": {f"{ACC}1.md": ok + b"Verdict: something else\n"},
+            "lower-case rejection elsewhere": {f"{ACC}1.md": ok,
+                                               f"{L.ACCEPTANCE_REVIEW_DIR}/notes.md": b"<SHA> rejected\n"},
+            "not-accepted verdict in a scratch file": {f"{ACC}1.md": ok,
+                                                       f"{L.ACCEPTANCE_REVIEW_DIR}/s/x.txt": b"<SHA> NOT_ACCEPTED\n"},
+            "withdrawn": {f"{ACC}1.md": ok + b"acceptance WITHDRAWN\n"},
+        }
+        for name, revs in g.items():
+            self.assertIsNone(self.check(self.attestation(), reviews=revs)[0], name)
+
+    def test_accepting_line_must_post_date_the_attested_blob(self):
+        """G2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository-
+        wide: a placeholder review whose acceptance is written together with the attestation, an attestation path
+        created first and filled later together with the acceptance, an acceptance moved into the set by git mv, and an
+        acceptance older than the attestation are all refused."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        line = f"{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+
+        def run(steps):
+            with tempfile.TemporaryDirectory() as d:
+                subprocess.run(["git", "init", "-q", d], check=True)
+                for st in steps:
+                    if st == "mv":
+                        Path(d, ACC).parent.mkdir(parents=True, exist_ok=True)
+                        subprocess.run(["git", "-C", d, "mv", "tmp/acc.md", f"{ACC}1.md"], check=True)
+                        git_commit(d, {})
+                    else:
+                        git_commit(d, st)
+                with patched(machine_identity=lambda *a, **k: self.HW):
+                    return L.attestation_valid({"path": "att/HOST.json", "sha256": sha}, repo_root=d)[0]
+        self.assertIsNotNone(run([{"att/HOST.json": att}, {f"{ACC}1.md": line}]))           # the legitimate order
+        self.assertIsNone(run([{f"{ACC}1.md": b"placeholder\n"}, {"att/HOST.json": att, f"{ACC}1.md": line}]))
+        self.assertIsNone(run([{"att/HOST.json": b"placeholder"}, {"att/HOST.json": att, f"{ACC}1.md": line}]))
+        self.assertIsNone(run([{"att/HOST.json": att, "tmp/acc.md": line}, "mv"]))
+        self.assertIsNone(run([{f"{ACC}1.md": line}, {"att/HOST.json": att}]))           # acceptance first
         self.assertIsNone(self.check(self.attestation(), reviews={})[0])                 # no review at all
 
     def test_forged_or_unaccepted_attestations_refused(self):
@@ -975,19 +1071,33 @@ class TestAttestationPreflight(unittest.TestCase):
         rec.update(over)
         return rec
 
+    def readers(self, **kw):
+        """G5: host readings are module readers, patched here (preflight has no readings parameter)."""
+        r = self.rd(**kw)
+        real_boot_id = L.boot_id
+
+        def fake_boot_id(text=None):
+            # preflight reads the boot id (no argument), then validates the value it got with boot_id(value)
+            if text is None:
+                return r["boot_id"]
+            return real_boot_id(text) if isinstance(text, str) else None
+        return patched(power_source=lambda *a, **k: r["power"], free_disk_bytes=lambda *a, **k: r["free_disk"],
+                       boot_id=fake_boot_id, auto_update_settings=lambda *a, **k: r["updates"])
+
     def gates(self, *, decided=frozenset(), att=(None, ["none"]), upd=None, mode="execute", launched=None,
               fresh=None, **rd):
         fresh = self.launch() if fresh is None else fresh
         with patched(DECIDED=decided, attestation_valid=lambda ref, **k: att,
-                     launched_by_systemd=lambda *a, **k: fresh):
-            return L.preflight("/", mode=mode, other_job_running=False, launched=launched, attestation_ref={"x": 1},
-                               readings=self.rd(**({"updates": upd} if upd is not None else {}), **rd))["gates"]
+                     launched_by_systemd=lambda *a, **k: fresh), \
+                self.readers(**({"updates": upd} if upd is not None else {}), **rd):
+            return L.preflight("/", mode=mode, other_job_running=False, launched=launched,
+                               attestation_ref={"x": 1})["gates"]
 
     def test_no_trust_parameters_in_production(self):
         """P5 / P6: preflight takes no decided / attestation_check parameter."""
         args = L.preflight.__code__.co_varnames[:L.preflight.__code__.co_argcount + L.preflight.__code__
                                                 .co_kwonlyargcount]
-        for bad in ("decided", "attestation_check", "machine"):
+        for bad in ("decided", "attestation_check", "machine", "readings"):
             self.assertNotIn(bad, args)
 
     def test_decided_is_validated(self):
@@ -995,6 +1105,9 @@ class TestAttestationPreflight(unittest.TestCase):
         for bad in ("xxD-HOST-LIFETIMExx", {"D-HOST-LIFETIME"}, frozenset({"D-NOT-A-DECISION"})):
             with self.assertRaises(ValueError):
                 self.gates(decided=bad)
+        g = self.gates(decided=frozenset({"D-PIN-POINT", "D-ALLOW-BASE39"}))         # G11: every section-4 id is known
+        self.assertEqual(g["host_exclusive"], L.OPEN_DECISION)
+        self.assertEqual(len(L.OPEN_DECISIONS), 21)
 
     def test_lifetime_gates_open_while_undecided(self):
         good = ({"provider_image_updates": L.NO_IMAGE_CHANGE}, [])
@@ -1028,8 +1141,9 @@ class TestAttestationPreflight(unittest.TestCase):
         self.assertEqual(self.gates()["boot_id_recorded"], L.PASS)
 
     def test_unknowns_never_pass_and_are_reported(self):
-        r = L.preflight("/", mode="launcher_preflight", other_job_running=None, launched=None, attestation_ref=None,
-                        readings=self.rd(power=None, free_disk=None, boot_id=None, updates={}))
+        with self.readers(power=None, free_disk=None, boot_id=None, updates={}):
+            r = L.preflight("/", mode="launcher_preflight", other_job_running=None, launched=None,
+                            attestation_ref=None)
         for k in ("ac_power", "free_disk_ge_2GiB", "boot_id_recorded", "no_other_campaign_job",
                   "no_automatic_os_install"):
             self.assertEqual(r["gates"][k], L.UNKNOWN, k)

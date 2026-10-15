@@ -1,4 +1,4 @@
-"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 4).
+"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 5).
 
 STATUS: DEV_ONLY · NOT ACCEPTED BY ANY GOVERNANCE REVIEW · NOT FROZEN · NOT A CAMPAIGN NAMESPACE · NOT USABLE FOR ANY
 DESIGNATED SERIES, QUALIFICATION, FREEZE, GRANT OR TARGET STEP. Nothing in the historical candidate (142d97a9) imports
@@ -28,8 +28,15 @@ verdict (never named by the attestation); P2 root attestation is derived inside 
 attestation, and a non-initial or unreadable cgroup namespace always blocks a number; P5 the decided D-* set is a
 validated module constant, not a parameter; P6 execute / resume compare the launch record with a fresh reading; P7 L'
 is AMBIGUOUS until a reviewed journal reader exists; P8 update units are checked via systemctl or every unit path;
-P9 identity records are shape-validated; P11 the pin point refuses an undefined module list. Test seams are module
-attributes that tests monkeypatch, not production parameters.
+P9 identity records are shape-validated; P11 the pin point refuses an undefined module list. Revision 5 (review 62):
+the acceptance set is the direct ``REVIEW_HOST_ATTESTATION_*.md`` children only, with a single verdict line, a
+case-insensitive negative scan and blob-level commit order (G1-G3); preflight and busy_processes take every reading
+themselves (G5, G6); unit detection follows the full systemd search path, is-active, dangling links and not-found
+(G7, G9); the pin point has no list override (G8); DECIDED accepts every amendment id (G11). Trust-relevant test
+seams are module attributes. Some readers still take injected texts or roots for the tests (proc_view_complete,
+memory_readings, power_source, auto_update_settings, unit_enabled); a reviewed caller never passes them, and
+preflight passes none. preflight's caller inputs are mode, other_job_running, launched (compared with a fresh
+reading) and attestation_ref (a pointer to committed files); busy_processes takes caller snapshots from cpu_ticks().
 
 Design rules (all fail-closed):
 
@@ -82,10 +89,22 @@ OPEN_DECISIONS = {
     "D-THERMAL": "thermal_pressure_0 (macOS thermal-pressure level 0) on Linux / on hosts with no thermal zones",
     "D-LPM": "lowpowermode_0 (macOS pmset lowpowermode) on Linux",
     "D-POWER-ABSENT": "AC-power gate on hosts that expose no power supply (VMs, servers) or only USB / UPS supplies",
-    "D-ALLOW-PATHS": "R-ALLOW (b) SIP path classes and the 39-name base set on Linux",
+    "D-ALLOW-PATHS": "R-ALLOW (b) SIP path classes on Linux (the 39-name base set is D-ALLOW-BASE39)",
     "D-EXCL-WINDOW": "R-EXCL-PCT reading on Linux (ps %cpu: lifetime average on Linux, decaying average on macOS)",
     "D-PAUSE": "VM pause / snapshot detection channel for hosts whose guest clocks may not show a pause",
     "D-HOST-LIFETIME": "provider lifetime / reclaim / exclusivity / root-cgroup guarantees (an attestation)",
+    # G11: the remaining ids of amendment section 4 (not gate-bound here, but valid members of DECIDED)
+    "D-RC2-SCOPE": "which accepted text governs determinism off the old platform",
+    "D-ALLOW-BASE39": "R-ALLOW's base set of 39 macOS names on Linux",
+    "D-WORKERS-CORES": "WORKERS 5 on fewer than 6 cores",
+    "D-CAPS-CPU": "caps measured on macOS arm64 decoys, on a different CPU",
+    "D-INTERPRETER": "the Linux interpreter build",
+    "D-TEXT-LAUNCHD": "textual amendments of texts naming launchd",
+    "D-LID": "the clamshell readiness check",
+    "D-S15-NEWHOST": "asserting S15 from another host",
+    "D-LDET-REPEAT": "a repeat rule for L-DET",
+    "D-PIN-POINT": "the pin point's fixed module list",
+    "D-ID-ZOMBIE": "any further Linux evidence of death",
 }
 
 
@@ -632,15 +651,15 @@ def cpu_ticks(proc_root="/proc") -> dict | None:
 
 
 def busy_processes(t0: dict | None, t1: dict | None, dt_s: float, threshold_pct: float, own: set,
-                   hz: int | None = None, view_complete: bool | None = True) -> list | None:
+                   hz: int | None = None) -> list | None:
     """Processes whose CPU use within the window exceeds ``threshold_pct`` (100 = one CPU), plus every process present
     at t0 that EXITED before t1 (its usage in the window is unknown, so it is reported with pct None, N7). A process
     absent from t0 (born in the window, or a reused pid) is charged ALL its ticks to the window. ``own`` (the campaign
     tree) is a set of (pid, starttime) keys (N7); a child is exempt only if its parent key is in ``own`` and it started
     no earlier than that parent. Pid 0 / 1 may not be in ``own``. Nothing is allowed by name or path (D-ALLOW-PATHS).
-    None (no reading) if a snapshot is missing, dt <= 0, ``own`` is malformed or unsafe, or the /proc view is not known
-    to be complete."""
-    if t0 is None or t1 is None or dt_s <= 0 or view_complete is not True:
+    None (no reading) if a snapshot is missing, dt <= 0, ``own`` is malformed or unsafe, or a FRESH proc_view_complete()
+    reading is not True (G6: the view is read here, never assumed by a default)."""
+    if t0 is None or t1 is None or dt_s <= 0 or proc_view_complete() is not True:
         return None
     if not isinstance(own, (set, frozenset)) or not all(isinstance(k, tuple) and len(k) == 2 for k in own) \
             or any(k[0] in (0, 1) for k in own):
@@ -672,30 +691,67 @@ def apt_config_dump() -> str | None:
     return p.stdout if p.returncode == 0 else None
 
 
-UNIT_ROOTS = ("/etc/systemd/system", "/run/systemd/system", "/usr/lib/systemd/system", "/lib/systemd/system")
+# G7: the system unit search path of systemd.unit(5), in precedence order
+UNIT_ROOTS = ("/etc/systemd/system.control", "/run/systemd/system.control", "/run/systemd/transient",
+              "/run/systemd/generator.early", "/etc/systemd/system", "/etc/systemd/system.attached",
+              "/run/systemd/system", "/run/systemd/system.attached", "/run/systemd/generator",
+              "/usr/local/lib/systemd/system", "/usr/lib/systemd/system", "/lib/systemd/system",
+              "/run/systemd/generator.late")
 UPDATE_UNITS = ("apt-daily-upgrade.timer", "unattended-upgrades.service")   # units that can INSTALL packages
 
 
 def _systemctl_is_enabled(unit: str) -> str | None:
+    return _systemctl_query("is-enabled", unit)
+
+
+def _systemctl_is_active(unit: str) -> str | None:
+    return _systemctl_query("is-active", unit)
+
+
+def _systemctl_query(verb: str, unit: str) -> str | None:
     try:
-        r = subprocess.run(["systemctl", "is-enabled", unit], capture_output=True, text=True, timeout=30,
+        r = subprocess.run(["systemctl", verb, unit], capture_output=True, text=True, timeout=30,
                            stdin=subprocess.DEVNULL)
     except (OSError, subprocess.SubprocessError):
         return None
     return r.stdout.strip() or None
 
 
+def _unit_files(unit: str, unit_roots) -> bool | None:
+    """True if a unit file (or link) for ``unit`` exists in any root; None if a root is unreadable."""
+    found = False
+    for root in unit_roots:
+        r = Path(root)
+        if not r.exists():
+            continue
+        if not r.is_dir():
+            return None
+        f = r / unit
+        found |= f.is_symlink() or f.exists()
+    return found
+
+
 def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
-    """P8: True / False / None. With systemd as PID 1: ``systemctl is-enabled`` (enabled, enabled-runtime, static,
-    indirect, alias, linked: True; disabled, masked, masked-runtime: False; anything else: None). Without it: from the
-    files in EVERY unit root: masked (a link to /dev/null) False; a ``*.wants`` / ``*.requires`` link to the unit in
-    any root True; the unit file present without such a link False; absent everywhere False; an unreadable root None."""
+    """True / False / None (P8, G7, G9).
+
+    With systemd as PID 1: True if ``systemctl is-active`` reports active / activating / reloading (a disabled unit
+    can still be running, pulled in by another unit), or ``is-enabled`` reports enabled, enabled-runtime, static,
+    indirect, alias, linked or linked-runtime; False if is-enabled reports disabled / masked / masked-runtime, or
+    not-found with no unit file in any root; None otherwise (a failed query is never 'disabled').
+    Without systemd: from every root of the unit search path: masked (a link to /dev/null) False; an entry for the unit
+    in any ``*.wants`` / ``*.requires`` directory, even a dangling link (systemd adds the dependency by link name),
+    True; otherwise False; an unreadable root None."""
     if systemd_is_pid1() is True:
+        act = _systemctl_is_active(unit)
+        if act in ("active", "activating", "reloading"):
+            return True
         st = _systemctl_is_enabled(unit)
         if st in ("enabled", "enabled-runtime", "static", "indirect", "alias", "linked", "linked-runtime"):
             return True
         if st in ("disabled", "masked", "masked-runtime"):
             return False
+        if st == "not-found":
+            return False if _unit_files(unit, unit_roots) is False else None
         return None
     for root in unit_roots:
         r = Path(root)
@@ -709,7 +765,8 @@ def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
         if f.is_symlink() and os.path.realpath(f) == "/dev/null":
             return False
         for d in subs:
-            if d.name.endswith((".wants", ".requires")) and (d / unit).exists():
+            e = d / unit
+            if d.name.endswith((".wants", ".requires")) and (e.is_symlink() or e.exists()):
                 return True
     return False                                                # present without a link, or absent everywhere
 
@@ -911,12 +968,12 @@ def _python_packages(owner_query=None) -> tuple:
 UNKNOWN_PACKAGE = "<unknown-interpreter-package>"
 
 
-def pin_point(modules: tuple | None = None) -> dict:
+def pin_point() -> dict:
     """N11: read the pins at a fixed PIN POINT: every module of a fixed list (the science's imports, fixed in the
     accepted amendment) must already be imported by the caller with static ``import`` statements, so the mapped set
     does not depend on chance. This function imports nothing itself (the research quarantine scanner refuses dynamic
     imports it cannot resolve); a module of the list that is not loaded raises."""
-    mods = PIN_POINT_MODULES if modules is None else modules
+    mods = PIN_POINT_MODULES                                 # G8: the fixed list only; no caller override
     if not mods:
         raise RuntimeError("PIN_POINT_UNDEFINED: no fixed module list (D-PIN-POINT is open)")    # P11
     missing = [m for m in mods if m not in sys.modules]
@@ -983,41 +1040,74 @@ def _git(repo_root, *args) -> bytes | None:
     return r.stdout if r.returncode == 0 else None
 
 
-def _added_in(repo_root, path: str) -> str | None:
-    """The commit that ADDED ``path`` on HEAD's history (None if unknown)."""
-    out = _git(repo_root, "log", "--diff-filter=A", "--format=%H", "HEAD", "--", path)
+def _first_commit(repo_root, *args) -> str | None:
+    out = _git(repo_root, "log", "--format=%H", "--reverse", *args)
     lines = (out or b"").decode(errors="replace").split()
-    return lines[-1] if lines else None
+    return lines[0] if lines else None
+
+
+def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
+    """``later`` is a strict descendant of ``earlier`` on HEAD's history."""
+    if not earlier or not later or earlier == later:
+        return False
+    r = subprocess.run(["git", "-C", str(repo_root), "merge-base", "--is-ancestor", earlier, later],
+                       capture_output=True, timeout=60, stdin=subprocess.DEVNULL)
+    return r.returncode == 0
+
+
+_VERDICT = re.compile(r"^\s*verdict\s*:", re.I)
+_NEGATIVE = re.compile(r"reject|withdraw|not[ _-]?accepted|revoke", re.I)
 
 
 def _acceptances(repo_root, sha: str) -> tuple:
-    """P1: scan EVERY committed file at HEAD under ACCEPTANCE_REVIEW_DIR whose name starts with
-    ACCEPTANCE_REVIEW_PREFIX. Returns (accepting paths, rejecting paths) for this attestation sha256. A file accepts it
-    only if it has the exact line ``HOST_ATTESTATION_ACCEPTED sha256=<sha>`` AND the exact line ACCEPTANCE_VERDICT_LINE
-    and no line containing REJECTED; a file that names the sha in any line and contains REJECTED rejects it."""
-    names = _git(repo_root, "ls-tree", "-r", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)
+    """G1-G3. The fixed set: DIRECT children of ACCEPTANCE_REVIEW_DIR, committed at HEAD, named
+    ``REVIEW_HOST_ATTESTATION_*.md`` (no subdirectory, so no reviewer scratch). A file accepts only if it holds the
+    exact line ``HOST_ATTESTATION_ACCEPTED sha256=<sha>`` and exactly ONE verdict line (case-insensitive ``VERDICT:``),
+    which is ACCEPTANCE_VERDICT_LINE. Any committed file anywhere under the review directory (recursively) that names
+    the sha and carries a negative word (reject, withdraw, not accepted, revoke; case-insensitive) rejects it.
+    Returns (accepting paths, rejecting paths)."""
+    tree = _git(repo_root, "ls-tree", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/")
+    every = _git(repo_root, "ls-tree", "-r", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)
     acc, rej = [], []
-    for path in (names or b"").decode(errors="replace").splitlines():
-        if not Path(path).name.startswith(ACCEPTANCE_REVIEW_PREFIX):
+    for path in (every or b"").decode(errors="replace").splitlines():
+        lines = [ln.rstrip("\r") for ln in ((_git(repo_root, "show", f"HEAD:{path}") or b"")
+                                               .decode(errors="replace").split("\n"))]
+        if any(sha in ln for ln in lines) and any(_NEGATIVE.search(ln) for ln in lines):
+            rej.append(path)
+    for path in (tree or b"").decode(errors="replace").splitlines():
+        name = Path(path).name
+        if not (name.startswith(ACCEPTANCE_REVIEW_PREFIX) and name.endswith(".md")) or path in rej:
             continue
         lines = [ln.rstrip("\r") for ln in ((_git(repo_root, "show", f"HEAD:{path}") or b"")
                                                .decode(errors="replace").split("\n"))]
-        names_sha = any(sha in ln for ln in lines)
-        rejected = any("REJECTED" in ln for ln in lines)
-        if names_sha and rejected:
-            rej.append(path)
-        elif f"{ACCEPTANCE_LINE}{sha}" in lines and ACCEPTANCE_VERDICT_LINE in lines:
+        verdicts = [ln for ln in lines if _VERDICT.match(ln)]
+        if f"{ACCEPTANCE_LINE}{sha}" in lines and verdicts == [ACCEPTANCE_VERDICT_LINE]:
             acc.append(path)
     return acc, rej
+
+
+def _ordered(repo_root, att_path: str, acc_path: str, sha: str) -> bool:
+    """G2: the commit that introduced the ACCEPTING LINE is a strict descendant of the commit that introduced the
+    attested BLOB (by object id, not by path name). Commit order is not independence: every commit may come from one
+    author (stated in the amendment; a reviewer / ledger binding is a carried condition of D-HOST-LIFETIME)."""
+    blob = (_git(repo_root, "rev-parse", f"HEAD:{att_path}") or b"").decode().strip()
+    if not re.fullmatch(r"[0-9a-f]{40,64}", blob):
+        return False
+    att_commit = _first_commit(repo_root, f"--find-object={blob}", "HEAD")
+    # repository-wide, not limited to acc_path: a line written next to the attestation and later moved (git mv) into
+    # the review set keeps its true first commit (review 62's rename case)
+    line_commit = _first_commit(repo_root, f"-S{ACCEPTANCE_LINE}{sha}", "HEAD")
+    return _strictly_after(repo_root, att_commit, line_commit)
 
 
 def attestation_valid(ref, *, repo_root=None) -> tuple:
     """(record or None, reasons). ``ref`` = exactly {"path", "sha256"}; every fact is read from committed files, none
     from the caller. Valid only if: the file is committed at HEAD with that sha256; it is JSON with schema
     ATTESTATION_SCHEMA, ``reviewed is True``, ``accepted is True`` and a ``machine`` equal to the current hardware-bound
-    machine_identity() (BOTH hashes, F20); at least one acceptance review exists in the fixed review set (P1:
-    _acceptances; never a path the attestation names) that was added in a DIFFERENT commit from the attestation, and no
-    review in that set rejects it. ``repo_root`` is a location (default: this repository), not an assertion."""
+    machine_identity() (BOTH hashes, F20); at least one acceptance review exists in the fixed review set (P1 / G1 / G3:
+    _acceptances; never a path the attestation names) whose accepting line was introduced strictly after the attested
+    blob (G2: _ordered), and no review under the review directory rejects it.
+    ``repo_root`` is a location (default: this repository), not an assertion."""
     if not isinstance(ref, dict) or set(ref) != {"path", "sha256"}:
         return None, ["reference must be exactly {path, sha256}"]
     path, want = ref["path"], ref["sha256"]
@@ -1042,10 +1132,9 @@ def attestation_valid(ref, *, repo_root=None) -> tuple:
     acc, rej = _acceptances(base, want)
     if rej:
         reasons.append(f"rejected by {', '.join(rej)}")
-    att_commit = _added_in(base, path)
-    acc = [a for a in acc if att_commit is not None and _added_in(base, a) not in (None, att_commit)]
+    acc = [a for a in acc if _ordered(base, path, a, want)]
     if not acc:
-        reasons.append("no acceptance review in the fixed set, added in a commit other than the attestation's")
+        reasons.append("no acceptance review in the fixed set whose accepting line post-dates the attested blob")
     return (rec if not reasons else None), reasons
 
 
@@ -1056,7 +1145,8 @@ def _g(v: bool | None) -> str:
 
 _GATE_DECISION = {"ac_power": "D-POWER-ABSENT", "lowpowermode_0": "D-LPM", "thermal_pressure_0": "D-THERMAL",
                   "memory_pressure_normal": "D-MEM-PRESSURE", "free_memory_ge_min": "D-MEM-FREE",
-                  "host_exclusive": "D-EXCL-WINDOW", "host_lifetime_attested": "D-HOST-LIFETIME",
+                  "host_exclusive": ("D-EXCL-WINDOW", "D-ALLOW-PATHS", "D-ALLOW-BASE39"),
+                  "host_lifetime_attested": "D-HOST-LIFETIME",
                   "no_automatic_os_install": "D-HOST-LIFETIME"}
 MODES = ("launcher_preflight", "execute", "resume")
 
@@ -1082,21 +1172,22 @@ def launch_record_ok(rec) -> bool:
 
 
 def preflight(repo_path, *, mode: str, other_job_running: bool | None, launched: dict | None,
-              attestation_ref: dict | None, readings: dict | None = None) -> dict:
+              attestation_ref: dict | None) -> dict:
     """The Linux gate set (amendment §3). Gates that depend on an open D-* decision are OPEN_DECISION while it is not
     in the validated module constant DECIDED (empty in development); that applies to host_lifetime_attested and the
     provider-image half of no_automatic_os_install (N1, P5). The launch gate is evaluated for execute / resume, and
     whenever a record is passed: PASS only if a FRESH launched_by_systemd() reading verifies (launch_record_ok) and any
-    passed record equals it (P6). ``readings`` (tests) overrides the four plain host readings only. pass == every gate
-    PASS."""
+    passed record equals it (P6). Every host reading is taken inside (G5); the caller inputs are ``mode``,
+    ``other_job_running`` (from the reviewed launcher's pidfile check, as in the candidate), the ``launched`` record
+    (only compared with a fresh reading) and ``attestation_ref`` (only a pointer to committed files). pass == every
+    gate PASS."""
     if mode not in MODES:
         raise ValueError(f"mode must be one of {MODES}")
     decided = _decided()
-    r = dict(readings or {})
-    power = r["power"] if "power" in r else power_source()
-    free = r["free_disk"] if "free_disk" in r else free_disk_bytes(repo_path)
-    boot = r["boot_id"] if "boot_id" in r else boot_id()
-    upd = r["updates"] if "updates" in r else auto_update_settings()
+    power = power_source()                                  # G5: every reading is taken here, none is supplied
+    free = free_disk_bytes(repo_path)
+    boot = boot_id()
+    upd = auto_update_settings()
     att, att_reasons = attestation_valid(attestation_ref)
     lifetime_open = "D-HOST-LIFETIME" not in decided
     if not isinstance(upd, dict) or upd.get("guest_updates_shown_disabled") is not True:
@@ -1128,4 +1219,6 @@ def preflight(repo_path, *, mode: str, other_job_running: bool | None, launched:
     return {"mode": mode, "gates": gates, "pass": not blocked, "blocked": blocked,
             "readings": {"power": power, "free_disk_bytes": free, "boot_id": boot, "updates": upd,
                          "launched": launched, "launched_fresh": fresh, "attestation_reasons": att_reasons},
-            "open_decisions": sorted({_GATE_DECISION[k] for k, v in gates.items() if v == OPEN_DECISION})}
+            "open_decisions": sorted({d for k, v in gates.items() if v == OPEN_DECISION
+                                      for d in ((_GATE_DECISION[k],) if isinstance(_GATE_DECISION[k], str)
+                                                else _GATE_DECISION[k])})}

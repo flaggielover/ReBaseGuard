@@ -1,11 +1,12 @@
-"""Mutation harness for the DEV-ONLY lx_platform tests (revision 4). Each mutant weakens one fail-closed property in a
+"""Mutation harness for the DEV-ONLY lx_platform tests (revision 5). Each mutant weakens one fail-closed property in a
 temporary copy of lx_platform.py; the unchanged test suite must FAIL against every mutant ("killed"). A surviving
 mutant means a property is untested. M01-M32 are the coordinator's; R01-R10 are review 59's mutants (reviews/
 scratch_CLOUD_R1/reviewer_mutants.py) and X01-X09 review 60's surviving mutants (reviews/scratch_CLOUD_R1_DELTA/
 reviewer60_mutants.py), each re-anchored to revision 3 with the same weakening; N01-N12 weaken the revision-3 repairs
 of review 60's findings; Y01-Y09 are review 61's mutants (reviews/scratch_CLOUD_R1_DELTA2/reviewer61_mutants.py.txt)
-re-anchored to revision 4, and P01-P11 weaken the revision-4 repairs of review 61's findings. Target-free; nothing
-outside a temporary directory is written.
+re-anchored to revision 4, and P01-P15 weaken the revision-4 repairs of review 61's findings; Z01-Z11 are review 62's
+mutants (reviews/scratch_CLOUD_R1_DELTA3/reviewer62_mutants.py.txt) re-anchored to revision 5, and Q01-Q13 weaken the
+revision-5 repairs of review 62's findings. Target-free; nothing outside a temporary directory is written.
 
 usage: python3 tests/run_mutants.py [out.json]       (from streams/CLOUD_R1_LINUX_DEV)
 """
@@ -91,7 +92,7 @@ MUTANTS = [
      [('    if mode in ("execute", "resume") or launched is not None:', '    if launched is not None:')]),
     ("M30", "mapped shared objects (libm) not pinned",
      [('"python_sys_version", "mapped_objects", "dpkg_versions",', '"python_sys_version", "dpkg_versions",')]),
-    ("M31", "incomplete /proc view accepted", [("dt_s <= 0 or view_complete is not True:", "dt_s <= 0:")]),
+    ("M31", "incomplete /proc view accepted", [("dt_s <= 0 or proc_view_complete() is not True:", "dt_s <= 0:")]),
     ("M32", "own may contain init", [("            or any(k[0] in (0, 1) for k in own):", "            or False:")]),
     # ---- review 59's mutants, re-anchored to revision 2 (same weakening)
     ("R01", "unreadable Battery status skipped (a failed read can yield AC)",
@@ -141,7 +142,8 @@ MUTANTS = [
     ("N01", "D-HOST-LIFETIME treated as decided", [('    lifetime_open = "D-HOST-LIFETIME" not in decided',
                                                     "    lifetime_open = False")]),
     ("N02", "attestation acceptance line not required",
-     [('elif f"{ACCEPTANCE_LINE}{sha}" in lines and ACCEPTANCE_VERDICT_LINE in lines:', "elif ACCEPTANCE_VERDICT_LINE in lines:")]),
+     [('if f"{ACCEPTANCE_LINE}{sha}" in lines and verdicts == [ACCEPTANCE_VERDICT_LINE]:',
+       "if verdicts == [ACCEPTANCE_VERDICT_LINE]:")]),
     ("N03", "attestation schema not checked",
      [('    if not isinstance(rec, dict) or rec.get("schema") != ATTESTATION_SCHEMA:', "    if not isinstance(rec, dict):")]),
     ("N04", "caller-asserted fields accepted in the attestation reference",
@@ -173,7 +175,7 @@ MUTANTS = [
      [("if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start and start >= own_start[ppid]):",
        "if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start):")]),
     ("Y03", "acceptance token matched as a substring",
-     [('elif f"{ACCEPTANCE_LINE}{sha}" in lines and', 'elif f"{ACCEPTANCE_LINE}{sha}" in "\\n".join(lines) and')]),
+     [('if f"{ACCEPTANCE_LINE}{sha}" in lines and', 'if f"{ACCEPTANCE_LINE}{sha}" in "\\n".join(lines) and')]),
     ("Y04", "cgroup namespace reading hard-wired to initial",
      [('            "cgroup_ns_initial": ns_inode("cgroup") == INIT_CGROUP_NS,', '            "cgroup_ns_initial": True,')]),
     ("Y05", "attestation bound to /etc/machine-id only",
@@ -192,13 +194,13 @@ MUTANTS = [
      [("        for i in range(len(parts), -1, -1):\n            d = base.joinpath(*parts[:i])\n            rows.append(",
        "        for i in range(len(parts), len(parts) - 1, -1):\n            d = base.joinpath(*parts[:i])\n            rows.append(")]),
     # ---- weakenings of the revision-4 repairs (review 61 findings)
-    ("P01", "acceptance committed with the attestation accepted",
-     [("    acc = [a for a in acc if att_commit is not None and _added_in(base, a) not in (None, att_commit)]",
-       "    acc = acc")]),
+    ("P01", "acceptance committed with the attestation accepted (no order check)",
+     [("    acc = [a for a in acc if _ordered(base, path, a, want)]", "    acc = acc")]),
     ("P02", "a rejecting review ignored", [("    if rej:\n        reasons.append", "    if False:\n        reasons.append")]),
     ("P03", "acceptance review outside the fixed name set accepted",
-     [("        if not Path(path).name.startswith(ACCEPTANCE_REVIEW_PREFIX):\n            continue\n", "")]),
-    ("P04", "verdict line not required", [("and ACCEPTANCE_VERDICT_LINE in lines:", ":")]),
+     [('if not (name.startswith(ACCEPTANCE_REVIEW_PREFIX) and name.endswith(".md")) or path in rej:',
+       "if path in rej:")]),
+    ("P04", "verdict line not required", [("and verdicts == [ACCEPTANCE_VERDICT_LINE]:", ":")]),
     ("P05", "non-initial cgroup namespace does not block a number",
      [('    if ns_inode("cgroup") != INIT_CGROUP_NS:\n        why.append', "    if False:\n        why.append")]),
     ("P06", "root attestation without D-HOST-LIFETIME decided",
@@ -216,11 +218,81 @@ MUTANTS = [
      [('        if f.is_symlink() and os.path.realpath(f) == "/dev/null":\n            return False\n', "")]),
     ("P12", "unknown update-unit state counted as disabled",
      [("    timer = any(v is not False for v in units.values())", "    timer = any(v is True for v in units.values())")]),
-    ("P13", "only the first unit root searched", [("    for root in unit_roots:", "    for root in unit_roots[:1]:")]),
+    ("P13", "only the first unit root searched (file mode)",
+     [("    for root in unit_roots:\n        r = Path(root)\n        if not r.exists():\n            continue\n        try:",
+       "    for root in unit_roots[:1]:\n        r = Path(root)\n        if not r.exists():\n            continue\n        try:")]),
     ("P14", "identity record shape not validated",
      [("    if not _ident_shape_ok(ident):\n        return UNKNOWN", '    if not isinstance(ident, dict) or not ident.get("pid"):\n        return UNKNOWN')]),
     ("P15", "empty pin-point list accepted",
      [("    if not mods:\n        raise RuntimeError", "    if mods is None:\n        raise RuntimeError")]),
+    # ---- review 62's mutants (reviews/scratch_CLOUD_R1_DELTA3/reviewer62_mutants.py.txt), re-anchored to revision 5;
+    # Z05 / Z06 targeted _added_in, which revision 5 removed: Z05 / Z06 here are the same weakenings of its successor
+    # (_ordered): the line's first commit looked up by path (a rename defeats it), and an equal commit counted as later
+    ("Z01", "a rejecting review counts only if the negative word is on the same line as the sha",
+     [("        if any(sha in ln for ln in lines) and any(_NEGATIVE.search(ln) for ln in lines):",
+       "        if any(sha in ln and _NEGATIVE.search(ln) for ln in lines):")]),
+    ("Z02", "update units enabled through a *.requires link are not seen",
+     [('d.name.endswith((".wants", ".requires"))', 'd.name.endswith(".wants")')]),
+    ("Z03", "systemctl is-enabled: enabled-runtime / indirect / alias / linked read as disabled",
+     [('        if st in ("enabled", "enabled-runtime", "static", "indirect", "alias", "linked", "linked-runtime"):\n'
+       '            return True\n        if st in ("disabled", "masked", "masked-runtime"):',
+       '        if st in ("enabled", "static"):\n            return True\n'
+       '        if st in ("disabled", "masked", "masked-runtime", "enabled-runtime", "indirect", "alias", "linked", '
+       '"linked-runtime"):')]),
+    ("Z04", "a missing unit root ends the search (later roots never read)",
+     [("        if not r.exists():\n            continue\n        try:", "        if not r.exists():\n            return False\n        try:")]),
+    ("Z05", "accepting line's first commit looked up by path only (a git mv into the set resets it)",
+     [('line_commit = _first_commit(repo_root, f"-S{ACCEPTANCE_LINE}{sha}", "HEAD")',
+       'line_commit = _first_commit(repo_root, f"-S{ACCEPTANCE_LINE}{sha}", "HEAD", "--", acc_path)')]),
+    ("Z06", "accepting line in the same commit as the attested blob counts as later",
+     [("    if not earlier or not later or earlier == later:\n        return False",
+       "    if not earlier or not later:\n        return False\n    if earlier == later:\n        return True")]),
+    ("Z07", "a failed systemctl query (empty stdout) reads as 'disabled'",
+     [("    return r.stdout.strip() or None\n\n\ndef _unit_files", "    return r.stdout.strip() or \"disabled\"\n\n\ndef _unit_files")]),
+    ("Z08", "only an UNREADABLE cgroup namespace blocks root attestation (a non-initial one passes)",
+     [('    if ns_inode("cgroup") != INIT_CGROUP_NS:\n        why.append', '    if ns_inode("cgroup") is None:\n        why.append')]),
+    ("Z09", "launch gate evaluated only for execute / resume (a record passed in launcher mode is ignored)",
+     [('    if mode in ("execute", "resume") or launched is not None:', '    if mode in ("execute", "resume"):')]),
+    ("Z10", "an unreadable /proc view (None) treated as complete",
+     [("dt_s <= 0 or proc_view_complete() is not True:", "dt_s <= 0 or proc_view_complete() is False:")]),
+    ("Z11", "a bool starttime in a record passes the shape check",
+     [('        if v is not None and (not isinstance(v, int) or isinstance(v, bool) or v < 0):',
+       '        if v is not None and (not isinstance(v, int) or v < 0):')]),
+    # ---- weakenings of the revision-5 repairs (review 62 findings)
+    ("Q01", "negative scan not recursive (a rejection in a review subdirectory ignored)",
+     [('every = _git(repo_root, "ls-tree", "-r", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)',
+       'every = _git(repo_root, "ls-tree", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/")')]),
+    ("Q02", "accepting set recursive (reviewer scratch can accept)",
+     [('tree = _git(repo_root, "ls-tree", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/")',
+       'tree = _git(repo_root, "ls-tree", "-r", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)')]),
+    ("Q03", "negative words matched case-sensitively",
+     [('_NEGATIVE = re.compile(r"reject|withdraw|not[ _-]?accepted|revoke", re.I)',
+       '_NEGATIVE = re.compile(r"REJECT|WITHDRAW|NOT[ _-]?ACCEPTED|REVOKE")')]),
+    ("Q04", "a second (conflicting) verdict line tolerated",
+     [("and verdicts == [ACCEPTANCE_VERDICT_LINE]:", "and ACCEPTANCE_VERDICT_LINE in verdicts:")]),
+    ("Q05", "accepting file suffix not required",
+     [('(name.startswith(ACCEPTANCE_REVIEW_PREFIX) and name.endswith(".md"))', "name.startswith(ACCEPTANCE_REVIEW_PREFIX)")]),
+    ("Q06", "attested commit found by path, not by blob (placeholder attestation filled later)",
+     [('att_commit = _first_commit(repo_root, f"--find-object={blob}", "HEAD")',
+       'att_commit = _first_commit(repo_root, "HEAD", "--", att_path)')]),
+    ("Q07", "systemctl is-active not consulted (a running but disabled update unit reads as off)",
+     [('        act = _systemctl_is_active(unit)\n        if act in ("active", "activating", "reloading"):\n'
+       '            return True\n', "")]),
+    ("Q08", "is-enabled not-found read as disabled without checking the unit files",
+     [("            return False if _unit_files(unit, unit_roots) is False else None", "            return False")]),
+    ("Q09", "dangling .wants / .requires link not counted",
+     [("(e.is_symlink() or e.exists())", "e.exists()")]),
+    ("Q10", "preflight power reading replaced by a constant AC",
+     [("    power = power_source()  ", "    power = AC  ")]),
+    ("Q11", "preflight free-disk reading replaced by a constant",
+     [("    free = free_disk_bytes(repo_path)\n", "    free = 2 ** 40\n")]),
+    ("Q12", "transient / generator roots dropped from the unit search path",
+     [('"/run/systemd/transient",\n              "/run/systemd/generator.early", ', '\n              ')]),
+    ("Q13", "host_exclusive reports only its first open decision",
+     [('                                      for d in ((_GATE_DECISION[k],) if isinstance(_GATE_DECISION[k], str)\n'
+       '                                                else _GATE_DECISION[k])})}',
+       '                                      for d in ((_GATE_DECISION[k],) if isinstance(_GATE_DECISION[k], str)\n'
+       '                                                else _GATE_DECISION[k][:1])})}')]),
 ]
 
 
@@ -257,6 +329,7 @@ def main(out: str | None) -> int:
            "reviewer_mutants_killed": sum(r["status"] == "KILLED" for r in rows if r["id"].startswith("R")),
            "review60_mutants_killed": sum(r["status"] == "KILLED" for r in rows if r["id"].startswith("X")),
            "review61_mutants_killed": sum(r["status"] == "KILLED" for r in rows if r["id"].startswith("Y")),
+           "review62_mutants_killed": sum(r["status"] == "KILLED" for r in rows if r["id"].startswith("Z")),
            "mutants": rows}
     text = json.dumps(rec, indent=1)
     print(text)
