@@ -1,0 +1,1104 @@
+{
+  "schema": "P309_READ_ONLY_FEASIBILITY_LOCAL/1",
+  "recorded_utc": "2026-10-15T12:53:35.118939+00:00",
+  "source_branch": "codex/p309-wsl-admission-review-20261015",
+  "source_commit": "f12715292cf101d237c7f1add7fb941de28fe103",
+  "publication_branch": "codex/p309-wsl-feasibility-20261015",
+  "scope": "READ_ONLY_FEASIBILITY_FACTS_ONLY",
+  "formal_admission": "BLOCKED",
+  "route_accepted": false,
+  "execution_authorized": false,
+  "qualification_authorized": false,
+  "target_execution_authorized": false,
+  "scientific_status": "OPEN",
+  "tests_reexecuted": 0,
+  "host_safety_samples": 0,
+  "traces_started": 0,
+  "services_installed": 0,
+  "production_keys_configured": 0,
+  "policy_changes": 0,
+  "p309_workloads_started": 0,
+  "freeze_or_grants_issued": false,
+  "collection_execution": {
+    "windows": "Existing PowerShell7 -NoProfile -File collect-feasibility-windows.ps1 -OutFile LOCAL_RECORDS/windows-facts.json; exit0. Existing PowerShell7 -NoProfile -File feasibility-followup.ps1 -OutFile LOCAL_RECORDS/windows-ownership-followup.json; exit0.",
+    "ubuntu": "wsl.exe -d Ubuntu-24.04 -- $CURRENT_LINUX_HOME/p309/runtime/cpython-3.11.15/bin/python3.11 -B LOCAL_RECORDS/collect-feasibility-ubuntu.py LOCAL_RECORDS/ubuntu-facts.json; exit0. Same interpreter ran clock-followup.py; exit0. No -u root, sudo or new identity.",
+    "query_exits": "Native command exits embedded per command; query_exit for in-process metadata wrappers means exception/no exception, not a host verdict. Scripts hashed as local evidence; no test suites invoked."
+  },
+  "source_verification": {
+    "canonical_current_source_evidence_blobs": 72,
+    "review_packet_verified": true,
+    "historical_groups": [
+      {
+        "stage": "MONITOR",
+        "canonical_sources_verified": 25,
+        "tests_rerun": 0
+      },
+      {
+        "stage": "OWNED_STOP",
+        "canonical_sources_verified": 34,
+        "tests_rerun": 0
+      },
+      {
+        "stage": "TRANSPORT_STOP",
+        "canonical_sources_verified": 42,
+        "tests_rerun": 0
+      }
+    ],
+    "protected_baseline_files_verified": 20,
+    "development_checkout_is_accepted_runtime_tree": false,
+    "evidence": {
+      "file": "source-bindings.json",
+      "sha256": "1495e5bca059777979279b27e5d95e558f6c90182fd592a8f2767eb09d0d5a5c",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    }
+  },
+  "questions": [
+    {
+      "question": 1,
+      "title": "Windows token and WSL ownership",
+      "observations": [
+        {
+          "id": "windows_token",
+          "utc": "2026-10-15T12:50:44.2509783Z",
+          "query": "$id=[Security.Principal.WindowsIdentity]::GetCurrent()\n  $principal=[Security.Principal.WindowsPrincipal]::new($id)\n  $privs=& \"$env:SystemRoot\\System32\\whoami.exe\" /priv /fo csv /nh\n  $rc=$LASTEXITCODE\n  [ordered]@{sid_sha256=HashText $id.User.Value;effective_token_is_administrator=$principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator);impersonation_level=$id.ImpersonationLevel.ToString();privileges_query='whoami.exe /priv /fo csv /nh';privileges_exit=$rc;privileges_csv=@($privs);powershell_version=$PSVersionTable.PSVersion.ToString();dotnet_version=[Environment]::Version.ToString()}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Token capability is not authority to change host settings; no elevation or impersonation.",
+          "result": {
+            "sid_sha256": "b5fd7d9620e5736b174b0bfaefe6a01bc6a0194429093ec0bc31783f6c6e3c26",
+            "effective_token_is_administrator": false,
+            "impersonation_level": "None",
+            "privileges_query": "whoami.exe /priv /fo csv /nh",
+            "privileges_exit": 0,
+            "privileges_csv": [
+              "\"SeShutdownPrivilege\",\"Shut down the system\",\"Disabled\"",
+              "\"SeChangeNotifyPrivilege\",\"Bypass traverse checking\",\"Enabled\"",
+              "\"SeUndockPrivilege\",\"Remove computer from docking station\",\"Disabled\"",
+              "\"SeIncreaseWorkingSetPrivilege\",\"Increase a process working set\",\"Disabled\"",
+              "\"SeTimeZonePrivilege\",\"Change the time zone\",\"Disabled\""
+            ],
+            "powershell_version": "7.6.5",
+            "dotnet_version": "10.0.11"
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        },
+        {
+          "id": "wsl_registration_owner_relation",
+          "utc": "2026-10-15T12:50:44.3158426Z",
+          "query": "$key='HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss'\n  $found=@(Get-ChildItem -LiteralPath $key | ForEach-Object {\n    $v=Get-ItemProperty -LiteralPath $_.PSPath\n    if ($v.DistributionName -eq 'Ubuntu-24.04') {\n      $acl=Get-Acl -LiteralPath $_.PSPath\n      [ordered]@{distribution=$v.DistributionName;version=$v.Version;default_uid=$v.DefaultUid;registration_in_current_user_hive=$true;registry_key_owner_sha256=HashText $acl.Owner;registry_owner_matches_current_identity=($acl.Owner -eq [Security.Principal.WindowsIdentity]::GetCurrent().Name);registration_identifier_and_basepath_exported=$false}\n    }\n  })\n  [ordered]@{registrations=$found;windows_owner_boundary='Current-user WSL registration; no separate Windows token inferred from Linux UID';wsl_root_capability='UNTESTED'}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "HKCU registration/owner metadata does not prove protected observer/client isolation. No raw registry identifiers exported.",
+          "result": {
+            "registrations": [
+              {
+                "distribution": "Ubuntu-24.04",
+                "version": 2,
+                "default_uid": 1000,
+                "registration_in_current_user_hive": true,
+                "registry_key_owner_sha256": "8fb7ad1866335819249789fea3f27adb3edb1c07ff4b9273c8699b26556f2468",
+                "registry_owner_matches_current_identity": false,
+                "registration_identifier_and_basepath_exported": false
+              }
+            ],
+            "windows_owner_boundary": "Current-user WSL registration; no separate Windows token inferred from Linux UID",
+            "wsl_root_capability": "UNTESTED"
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        },
+        {
+          "utc": "2026-10-15T12:51:33.0999526Z",
+          "query": "Read matching Ubuntu-24.04 HKCU Lxss registration ACL GetOwner(SecurityIdentifier); compare owner SID with current WindowsIdentity.User SID in memory; export hash and well-known role only",
+          "reason": "Initial textual ACL owner/account-name comparison cannot reliably establish SID equality",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "registrations": [
+            {
+              "distribution": "Ubuntu-24.04",
+              "registry_owner_sid_sha256": "3c31830c08affd76b282da3bc73c292c4d915dd86b7059056421893aa48b3151",
+              "registry_owner_sid_equals_current_user": false,
+              "owner_is_builtin_administrators": true,
+              "owner_is_local_system": false,
+              "registration_scope": "CURRENT_USER_HKCU",
+              "raw_sid_exported": false
+            }
+          ],
+          "query_exit": 0,
+          "limitation": "Registry ACL ownership is distinct from WSL user registration scope. No DACL/isolation review or root capability test."
+        }
+      ],
+      "evidence": [
+        {
+          "file": "windows-facts.json",
+          "sha256": "2db8df12f8fdcc221b86a0ba8cf448ecd2535cb3ec64b09c969d2eb206276ebb",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "windows-ownership-followup.json",
+          "sha256": "e23eafc0fc006b4b8e998702dbd9ab6c61a7da599be93b934d2f8913961649cd",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "collect-feasibility-windows.ps1",
+          "sha256": "cb7f93eb907c3b278e19705f293fe03d45d70081318f1c1a19a9e0eff73d2f3f",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "feasibility-followup.ps1",
+          "sha256": "f7e1c5546ea6a50ca9b21549ed1e3fc647e8a085a7048c30e648f53653662b0c",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        }
+      ],
+      "conclusion": "Current effective Windows token is not administrator. SeChangeNotifyPrivilege enabled; four other listed privileges disabled. Ubuntu-24.04 WSL2 registration is in current-user HKCU; DefaultUid 1000. Registration registry-key ACL owner is built-in Administrators, not the current user SID. Registry object ownership is distinct from per-user WSL registration scope.",
+      "limitations": [
+        "SID/account identity hashes only; no elevation/impersonation. Linux UID change does not prove another Windows token. WSL root capability UNTESTED. Registry DACL and protected observer trust boundary NOT_ESTABLISHED."
+      ]
+    },
+    {
+      "question": 2,
+      "title": "Ubuntu execution principal and P309 path metadata",
+      "observations": [
+        {
+          "id": "ubuntu_identity_and_paths",
+          "utc": "2026-10-15T12:50:49.519064+00:00",
+          "query": "Python os.getuid/geteuid/getgid/getegid/getgroups; pwd.getpwall filtered p309|rebaseguard (names hashed); lstat/os.access only enumerated P309 paths",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Name-based inventory does not identify a differently named dedicated account. Writability is current EUID access metadata, no write probe; ACL/mount effects and distinct principal isolation remain unestablished. No foreign checkout inspected.",
+          "status": "OBSERVED",
+          "query_exit": 0,
+          "result": {
+            "uid": 1000,
+            "euid": 1000,
+            "gid": 1000,
+            "egid": 1000,
+            "supplementary_group_ids": [
+              4,
+              24,
+              27,
+              30,
+              46,
+              100,
+              1000
+            ],
+            "current_account_name_sha256": "11dc88799584294b053b524569c347351dd4fda3ac5a2f97f432ae2340bfe93a",
+            "named_p309_account_candidates": [],
+            "dedicated_account_status": "NOT_FOUND_BY_NAME",
+            "metadata": [
+              {
+                "path": "$CURRENT_LINUX_HOME/p309",
+                "exists": true,
+                "uid": 1000,
+                "gid": 1000,
+                "mode": "0o755",
+                "type": "directory",
+                "current_euid_readable": true,
+                "current_euid_writable": true,
+                "current_euid_searchable_or_executable": true
+              },
+              {
+                "path": "$CURRENT_LINUX_HOME/p309/runtime",
+                "exists": true,
+                "uid": 1000,
+                "gid": 1000,
+                "mode": "0o755",
+                "type": "directory",
+                "current_euid_readable": true,
+                "current_euid_writable": true,
+                "current_euid_searchable_or_executable": true
+              },
+              {
+                "path": "$CURRENT_LINUX_HOME/p309/runtime/cpython-3.11.15",
+                "exists": true,
+                "uid": 1000,
+                "gid": 1000,
+                "mode": "0o755",
+                "type": "directory",
+                "current_euid_readable": true,
+                "current_euid_writable": true,
+                "current_euid_searchable_or_executable": true
+              },
+              {
+                "path": "$CURRENT_LINUX_HOME/p309/runtime/cpython-3.11.15/bin/python3.11",
+                "exists": true,
+                "uid": 1000,
+                "gid": 1000,
+                "mode": "0o755",
+                "type": "file",
+                "current_euid_readable": true,
+                "current_euid_writable": true,
+                "current_euid_searchable_or_executable": true
+              },
+              {
+                "path": "$CURRENT_LINUX_HOME/p309/workspace",
+                "exists": false,
+                "error_type": "FileNotFoundError",
+                "errno": 2
+              },
+              {
+                "path": "$CURRENT_LINUX_HOME/p309/scratch",
+                "exists": false,
+                "error_type": "FileNotFoundError",
+                "errno": 2
+              },
+              {
+                "path": "/mnt/d/ReBaseGuard-309/workspace",
+                "exists": true,
+                "uid": 1000,
+                "gid": 1000,
+                "mode": "0o777",
+                "type": "directory",
+                "current_euid_readable": true,
+                "current_euid_writable": true,
+                "current_euid_searchable_or_executable": true
+              },
+              {
+                "path": "/mnt/d/ReBaseGuard-309/workspace/p309-admission-feasibility-20261015",
+                "exists": true,
+                "uid": 1000,
+                "gid": 1000,
+                "mode": "0o777",
+                "type": "directory",
+                "current_euid_readable": true,
+                "current_euid_writable": true,
+                "current_euid_searchable_or_executable": true
+              }
+            ],
+            "dedicated_account_write_access": "NOT_ESTABLISHED",
+            "P309_SCRATCH_ROOT_is_set": false,
+            "scratch_paths": "Conventional P309 path inspected; no official configured scratch binding established. No directory created."
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "file": "ubuntu-facts.json",
+          "sha256": "87bd67988b4b150811576d2531b37f3d3cc756056ac9078351675bcb738a7c9c",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "collect-feasibility-ubuntu.py",
+          "sha256": "4afe62d18a476d905c05dd97da700e5af662b02de3ef23b549af3b74d63c05c6",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        }
+      ],
+      "conclusion": "UID/EUID/GID/EGID 1000, supplementary IDs recorded. No p309|rebaseguard account name candidate. Current account owns and has metadata-indicated write access to private runtime; D: workspace is visible as UID/GID 1000 mode 0777 through WSL. Conventional Linux workspace/scratch absent; P309_SCRATCH_ROOT unset.",
+      "limitations": [
+        "A differently named dedicated account cannot be excluded. No role assignment or full ACL review; no write probes, scratch creation or foreign/cell-308 data inspection. Dedicated-account ownership/write access NOT_ESTABLISHED. DrvFs mode is not a complete Windows ACL model."
+      ]
+    },
+    {
+      "question": 3,
+      "title": "systemd and cgroup capability metadata",
+      "observations": [
+        {
+          "id": "systemd_cgroup_metadata",
+          "utc": "2026-10-15T12:50:49.551689+00:00",
+          "query": "Read /proc/1/comm and /proc/self/cgroup; sched_getaffinity; named cgroup ancestor control metadata; systemctl --version/list-units/list-unit-files p309-r2-*; show only existing matches",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Query-process quota/affinity is not dedicated host capacity or a future execution-unit limit. No unit created/started/stopped/reset/attached; no cpu.stat sampling.",
+          "status": "OBSERVED",
+          "query_exit": 0,
+          "result": {
+            "pid1_comm": "systemd",
+            "process_cgroup": "0::/init.scope\n",
+            "availability": {
+              "systemctl": "/usr/bin/systemctl",
+              "systemd-run": "/usr/bin/systemd-run"
+            },
+            "systemd_version": {
+              "utc": "2026-10-15T12:50:49.551911+00:00",
+              "argv": [
+                "systemctl",
+                "--version"
+              ],
+              "exit": 0,
+              "stdout": "systemd 255 (255.4-1ubuntu8.14)\n+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified\n",
+              "stderr": ""
+            },
+            "affinity_cpu_count": 32,
+            "ancestor_metadata": [
+              {
+                "path": "/sys/fs/cgroup/init.scope",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o755",
+                "type": "directory",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": true,
+                "controller_files": {
+                  "cgroup.type": {
+                    "value": "domain",
+                    "metadata": {
+                      "path": "/sys/fs/cgroup/init.scope/cgroup.type",
+                      "exists": true,
+                      "uid": 0,
+                      "gid": 0,
+                      "mode": "0o644",
+                      "type": "file",
+                      "current_euid_readable": true,
+                      "current_euid_writable": false,
+                      "current_euid_searchable_or_executable": false
+                    }
+                  },
+                  "cgroup.controllers": {
+                    "value": "cpu memory pids",
+                    "metadata": {
+                      "path": "/sys/fs/cgroup/init.scope/cgroup.controllers",
+                      "exists": true,
+                      "uid": 0,
+                      "gid": 0,
+                      "mode": "0o444",
+                      "type": "file",
+                      "current_euid_readable": true,
+                      "current_euid_writable": false,
+                      "current_euid_searchable_or_executable": false
+                    }
+                  },
+                  "cgroup.subtree_control": {
+                    "value": "",
+                    "metadata": {
+                      "path": "/sys/fs/cgroup/init.scope/cgroup.subtree_control",
+                      "exists": true,
+                      "uid": 0,
+                      "gid": 0,
+                      "mode": "0o644",
+                      "type": "file",
+                      "current_euid_readable": true,
+                      "current_euid_writable": false,
+                      "current_euid_searchable_or_executable": false
+                    }
+                  },
+                  "cpu.max": {
+                    "value": "max 100000",
+                    "metadata": {
+                      "path": "/sys/fs/cgroup/init.scope/cpu.max",
+                      "exists": true,
+                      "uid": 0,
+                      "gid": 0,
+                      "mode": "0o644",
+                      "type": "file",
+                      "current_euid_readable": true,
+                      "current_euid_writable": false,
+                      "current_euid_searchable_or_executable": false
+                    }
+                  },
+                  "cpuset.cpus.effective": {
+                    "errno": 2,
+                    "error_type": "FileNotFoundError"
+                  },
+                  "cpuset.mems.effective": {
+                    "errno": 2,
+                    "error_type": "FileNotFoundError"
+                  }
+                }
+              },
+              {
+                "path": "/sys/fs/cgroup",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o555",
+                "type": "directory",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": true,
+                "controller_files": {
+                  "cgroup.type": {
+                    "errno": 2,
+                    "error_type": "FileNotFoundError"
+                  },
+                  "cgroup.controllers": {
+                    "value": "cpuset cpu io memory hugetlb pids rdma",
+                    "metadata": {
+                      "path": "/sys/fs/cgroup/cgroup.controllers",
+                      "exists": true,
+                      "uid": 0,
+                      "gid": 0,
+                      "mode": "0o444",
+                      "type": "file",
+                      "current_euid_readable": true,
+                      "current_euid_writable": false,
+                      "current_euid_searchable_or_executable": false
+                    }
+                  },
+                  "cgroup.subtree_control": {
+                    "value": "cpu memory pids",
+                    "metadata": {
+                      "path": "/sys/fs/cgroup/cgroup.subtree_control",
+                      "exists": true,
+                      "uid": 0,
+                      "gid": 0,
+                      "mode": "0o644",
+                      "type": "file",
+                      "current_euid_readable": true,
+                      "current_euid_writable": false,
+                      "current_euid_searchable_or_executable": false
+                    }
+                  },
+                  "cpu.max": {
+                    "errno": 2,
+                    "error_type": "FileNotFoundError"
+                  },
+                  "cpuset.cpus.effective": {
+                    "value": "0-31",
+                    "metadata": {
+                      "path": "/sys/fs/cgroup/cpuset.cpus.effective",
+                      "exists": true,
+                      "uid": 0,
+                      "gid": 0,
+                      "mode": "0o444",
+                      "type": "file",
+                      "current_euid_readable": true,
+                      "current_euid_writable": false,
+                      "current_euid_searchable_or_executable": false
+                    }
+                  },
+                  "cpuset.mems.effective": {
+                    "value": "0",
+                    "metadata": {
+                      "path": "/sys/fs/cgroup/cpuset.mems.effective",
+                      "exists": true,
+                      "uid": 0,
+                      "gid": 0,
+                      "mode": "0o444",
+                      "type": "file",
+                      "current_euid_readable": true,
+                      "current_euid_writable": false,
+                      "current_euid_searchable_or_executable": false
+                    }
+                  }
+                }
+              }
+            ],
+            "visible_min_finite_cpu_quota": null,
+            "effective_cpu_upper_bound_current_process": 32,
+            "existing_p309_units": {
+              "utc": "2026-10-15T12:50:49.554130+00:00",
+              "argv": [
+                "systemctl",
+                "list-units",
+                "--all",
+                "--no-legend",
+                "--plain",
+                "--no-pager",
+                "p309-r2-*"
+              ],
+              "exit": 0,
+              "stdout": "",
+              "stderr": ""
+            },
+            "p309_unit_files": {
+              "utc": "2026-10-15T12:50:49.556338+00:00",
+              "argv": [
+                "systemctl",
+                "list-unit-files",
+                "--no-legend",
+                "--no-pager",
+                "p309-r2-*"
+              ],
+              "exit": 1,
+              "stdout": "",
+              "stderr": ""
+            },
+            "existing_unit_properties": [],
+            "actual_execution_unit_effective_limits_and_containment": "NOT_ESTABLISHED",
+            "delegation_authority": "Visible controller ownership/mode only; no privileged action attempted."
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "file": "ubuntu-facts.json",
+          "sha256": "87bd67988b4b150811576d2531b37f3d3cc756056ac9078351675bcb738a7c9c",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "collect-feasibility-ubuntu.py",
+          "sha256": "4afe62d18a476d905c05dd97da700e5af662b02de3ef23b549af3b74d63c05c6",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        }
+      ],
+      "conclusion": "PID1 systemd 255.4-1ubuntu8.14; systemctl/systemd-run present. Query process /init.scope has cpu.max=max 100000, affinity 32; visible root cpuset 0-31. No finite visible ancestor CPU quota found. Loaded p309-r2-* list empty (exit0); unit-file query empty (exit1), retained without treating that exit as a successful full inventory.",
+      "limitations": [
+        "Controller and delegation metadata is recorded; current UID cannot write the inspected cgroup files. No actual P309 unit exists in loaded-unit evidence. Actual execution-unit limits/accounting/containment remain NOT_ESTABLISHED. Visible-process bound32 is not dedicated capacity or a reservation."
+      ]
+    },
+    {
+      "question": 4,
+      "title": "P309 privilege policy metadata",
+      "observations": [
+        {
+          "id": "p309_policy_metadata",
+          "utc": "2026-10-15T12:50:49.558251+00:00",
+          "query": "List direct filenames only in /etc/polkit-1/rules.d, /usr/share/polkit-1/rules.d, /etc/polkit-1/localauthority/50-local.d, /etc/sudoers.d; lstat/hash only p309|rebaseguard named files",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Unreadable directories and unmatched generic rule names leave P309 authority UNKNOWN. No sudo invocation, generic rule dump or privilege evaluation.",
+          "status": "OBSERVED",
+          "query_exit": 0,
+          "result": {
+            "inventories": [
+              {
+                "directory": "/etc/polkit-1/rules.d",
+                "matches": [],
+                "status": "DENIED",
+                "errno": 13
+              },
+              {
+                "directory": "/usr/share/polkit-1/rules.d",
+                "matches": [],
+                "status": "NOT_FOUND_BY_FILENAME"
+              },
+              {
+                "directory": "/etc/polkit-1/localauthority/50-local.d",
+                "matches": [],
+                "status": "NOT_FOUND",
+                "errno": 2
+              },
+              {
+                "directory": "/etc/sudoers.d",
+                "matches": [],
+                "status": "NOT_FOUND_BY_FILENAME"
+              }
+            ],
+            "exact_P309_policy": "UNKNOWN",
+            "sudo_invoked": false,
+            "unrelated_rule_contents_read": false
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "file": "ubuntu-facts.json",
+          "sha256": "87bd67988b4b150811576d2531b37f3d3cc756056ac9078351675bcb738a7c9c",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "collect-feasibility-ubuntu.py",
+          "sha256": "4afe62d18a476d905c05dd97da700e5af662b02de3ef23b549af3b74d63c05c6",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        }
+      ],
+      "conclusion": "/etc/polkit-1/rules.d enumeration DENIED (errno13). No P309-named file in readable /usr/share/polkit-1/rules.d or /etc/sudoers.d; legacy 50-local.d absent. No matching readable P309 policy file available to hash. Exact P309 policy UNKNOWN.",
+      "limitations": [
+        "No generic rule contents dumped; no sudo call or privileged policy test. Filename filtering does not exclude differently named relevant rules. Access denial retained, no elevation."
+      ]
+    },
+    {
+      "question": 5,
+      "title": "Windows installed collector interfaces",
+      "observations": [
+        {
+          "id": "provider_Microsoft-Windows-Kernel-Process",
+          "utc": "2026-10-15T12:50:44.5285450Z",
+          "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-Kernel-Process' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+          "result": {
+            "Name": "Microsoft-Windows-Kernel-Process",
+            "Id": "22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716",
+            "Discovery": "DISCOVERED_ONLY"
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        },
+        {
+          "id": "provider_Microsoft-Windows-Kernel-Power",
+          "utc": "2026-10-15T12:50:44.6761590Z",
+          "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-Kernel-Power' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+          "result": {
+            "Name": "Microsoft-Windows-Kernel-Power",
+            "Id": "331c3b3a-2005-44c2-ac5e-77220c37d6b4",
+            "Discovery": "DISCOVERED_ONLY"
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        },
+        {
+          "id": "provider_Microsoft-Windows-Hyper-V-Compute",
+          "utc": "2026-10-15T12:50:44.6883545Z",
+          "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-Hyper-V-Compute' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+          "result": {
+            "Name": "Microsoft-Windows-Hyper-V-Compute",
+            "Id": "17103e3f-3c6e-4677-bb17-3b267eb5be57",
+            "Discovery": "DISCOVERED_ONLY"
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        },
+        {
+          "id": "provider_Microsoft-Windows-Lxss",
+          "utc": "2026-10-15T12:50:44.6985361Z",
+          "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-Lxss' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+          "status": "UNKNOWN_OR_DENIED",
+          "query_exit": 1,
+          "error_type": "System.Exception",
+          "error_hresult": -2146233088,
+          "error_id": "NoMatchingProvidersFound,Microsoft.PowerShell.Commands.GetWinEventCommand"
+        },
+        {
+          "id": "provider_Microsoft-Windows-WMI-Activity",
+          "utc": "2026-10-15T12:50:44.7209487Z",
+          "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-WMI-Activity' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+          "result": {
+            "Name": "Microsoft-Windows-WMI-Activity",
+            "Id": "1418ef04-b0b4-4623-bf7e-d74ab47bbdaa",
+            "Discovery": "DISCOVERED_ONLY"
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        },
+        {
+          "id": "collector_api_binaries",
+          "utc": "2026-10-15T12:50:44.7317624Z",
+          "query": "@('advapi32.dll','tdh.dll','kernel32.dll','pdh.dll','wevtapi.dll') | ForEach-Object {\n    $f=Get-Item -LiteralPath (Join-Path \"$env:SystemRoot\\System32\" $_)\n    [ordered]@{name=$f.Name;file_version=$f.VersionInfo.FileVersion;status='DISCOVERED_ONLY'}\n  }",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Installed DLL versions only; API access/loss/protected-process coverage untested; no protected handles opened.",
+          "result": [
+            {
+              "name": "advapi32.dll",
+              "file_version": "10.0.26100.8875 (WinBuild.160101.0800)",
+              "status": "DISCOVERED_ONLY"
+            },
+            {
+              "name": "tdh.dll",
+              "file_version": "10.0.26100.9444 (WinBuild.160101.0800)",
+              "status": "DISCOVERED_ONLY"
+            },
+            {
+              "name": "kernel32.dll",
+              "file_version": "10.0.26100.9278 (WinBuild.160101.0800)",
+              "status": "DISCOVERED_ONLY"
+            },
+            {
+              "name": "pdh.dll",
+              "file_version": "10.0.26100.8875 (WinBuild.160101.0800)",
+              "status": "DISCOVERED_ONLY"
+            },
+            {
+              "name": "wevtapi.dll",
+              "file_version": "10.0.26100.8875 (WinBuild.160101.0800)",
+              "status": "DISCOVERED_ONLY"
+            }
+          ],
+          "status": "OBSERVED",
+          "query_exit": 0
+        }
+      ],
+      "evidence": [
+        {
+          "file": "windows-facts.json",
+          "sha256": "2db8df12f8fdcc221b86a0ba8cf448ecd2535cb3ec64b09c969d2eb206276ebb",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "collect-feasibility-windows.ps1",
+          "sha256": "cb7f93eb907c3b278e19705f293fe03d45d70081318f1c1a19a9e0eff73d2f3f",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        }
+      ],
+      "conclusion": "Kernel-Process, Kernel-Power, Hyper-V-Compute and WMI-Activity provider metadata discovered. Exact Microsoft-Windows-Lxss lookup returned NoMatchingProvidersFound. advapi32/tdh/kernel32/pdh/wevtapi binary versions recorded. All presence results DISCOVERED_ONLY.",
+      "limitations": [
+        "Provider metadata version was not exposed by selected query; binary versions are not trace coverage proof. No trace, event read, auditing/driver/provider activation, protected-process handle probe or process CPU sampling. Short-lived/protected activity, event loss and host/guest deduplication remain UNKNOWN."
+      ]
+    },
+    {
+      "question": 6,
+      "title": "Existing integration and local name inventory",
+      "observations": [
+        {
+          "id": "windows_integration_config",
+          "utc": "2026-10-15T12:50:44.5242029Z",
+          "query": "$path=Join-Path $env:USERPROFILE '.wslconfig'\n  if (!(Test-Path -LiteralPath $path)) { return @{status='NOT_FOUND';path_label='CURRENT_WINDOWS_PROFILE/.wslconfig'} }\n  $allowed='(?i)^\\s*(processors|memory|swap|localhostForwarding|networkingMode|firewall|dnsTunneling|autoProxy|nestedVirtualization|guiApplications|vmIdleTimeout|autoMemoryReclaim|sparseVhd)\\s*='\n  $lines=@(Get-Content -LiteralPath $path | Where-Object {$_ -match $allowed})\n  [ordered]@{path_label='CURRENT_WINDOWS_PROFILE/.wslconfig';sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant();selected_non_identity_settings=$lines;other_values_exported=$false}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Configured keys only, not proof of effective enforcement. Paths and identity fields omitted.",
+          "result": {
+            "status": "NOT_FOUND",
+            "path_label": "CURRENT_WINDOWS_PROFILE/.wslconfig"
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        },
+        {
+          "id": "p309_windows_services",
+          "utc": "2026-10-15T12:50:44.7525123Z",
+          "query": "$s=@(Get-Service | Where-Object {$_.Name -match '(?i)(p309|rebaseguard)'} | Select-Object Name,Status,StartType)\n  [ordered]@{matching_services=$s;match_rule='case-insensitive p309 or rebaseguard';exact_proposed_service_name='NOT_SPECIFIED_IN_PACKET'}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Service metadata only. Empty name match cannot exclude differently named services; future exact service name/identity requires design.",
+          "result": {
+            "matching_services": [],
+            "match_rule": "case-insensitive p309 or rebaseguard",
+            "exact_proposed_service_name": "NOT_SPECIFIED_IN_PACKET"
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        },
+        {
+          "id": "p309_named_pipe_names",
+          "utc": "2026-10-15T12:50:45.2019632Z",
+          "query": "$matches=[System.Collections.Generic.List[string]]::new(); $count=0; $truncated=$false\n  foreach ($p in [IO.Directory]::EnumerateFiles('\\\\.\\pipe\\')) {\n    $count++; if ($count -gt 10000) {$truncated=$true;break}\n    $name=[IO.Path]::GetFileName($p)\n    if ($name -match '(?i)(p309|rebaseguard)') {$matches.Add($name)}\n  }\n  [ordered]@{matching_names=$matches.ToArray();match_rule='case-insensitive p309 or rebaseguard';bounded_enumeration_truncated=$truncated;exact_proposed_endpoint_name='NOT_SPECIFIED_IN_PACKET';connected_to_endpoints=$false}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Names only, no pipe opened/connected; race-prone snapshot, not endpoint isolation or availability guarantee.",
+          "result": {
+            "matching_names": [],
+            "match_rule": "case-insensitive p309 or rebaseguard",
+            "bounded_enumeration_truncated": false,
+            "exact_proposed_endpoint_name": "NOT_SPECIFIED_IN_PACKET",
+            "connected_to_endpoints": false
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        },
+        {
+          "id": "ubuntu_integration",
+          "utc": "2026-10-15T12:50:49.558827+00:00",
+          "query": "Read allowed nonidentity /etc/wsl.conf settings; /proc/sys/fs/binfmt_misc/WSLInterop metadata; no endpoint connections",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "WSL integration availability does not establish a separate Windows token, authenticated endpoint or key/anchor protection.",
+          "status": "OBSERVED",
+          "query_exit": 0,
+          "result": {
+            "wsl_conf": {
+              "sha256": "c43bfdedddb060682d524d2dbf34d642403e49e493ae2f0bd6964ad509596aaa",
+              "selected_settings": {
+                "boot": {
+                  "systemd": "true"
+                },
+                "interop": {},
+                "automount": {},
+                "network": {}
+              },
+              "default_user_matches_current": true,
+              "other_values_exported": false
+            },
+            "wsl_interop_binfmt": "enabled\ninterpreter /init\nflags: P\noffset 0\nmagic 4d5a\n",
+            "local_endpoint_names": "NOT_SPECIFIED_IN_PACKET; no arbitrary /run or other-user data scanned",
+            "client_host_isolation": "NOT_ESTABLISHED"
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "file": "windows-facts.json",
+          "sha256": "2db8df12f8fdcc221b86a0ba8cf448ecd2535cb3ec64b09c969d2eb206276ebb",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "ubuntu-facts.json",
+          "sha256": "87bd67988b4b150811576d2531b37f3d3cc756056ac9078351675bcb738a7c9c",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "collect-feasibility-windows.ps1",
+          "sha256": "cb7f93eb907c3b278e19705f293fe03d45d70081318f1c1a19a9e0eff73d2f3f",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "collect-feasibility-ubuntu.py",
+          "sha256": "4afe62d18a476d905c05dd97da700e5af662b02de3ef23b549af3b74d63c05c6",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        }
+      ],
+      "conclusion": "Current Windows profile .wslconfig not found. /etc/wsl.conf explicitly enables systemd and configured default user matches current account; other selected settings absent. WSLInterop binfmt enabled, interpreter /init. No p309|rebaseguard-named Windows service or pipe found in bounded metadata enumeration.",
+      "limitations": [
+        "Exact future service/endpoint names are not specified in packet. Enumeration is a point-in-time, name-filtered inventory, not namespace reservation. No pipe connections or Linux unrelated endpoint scan. Client/host isolation, authentication and protected key/anchor ACLs remain NOT_ESTABLISHED. No production signature/key/certificate created."
+      ]
+    },
+    {
+      "question": 7,
+      "title": "Clock capability observation",
+      "observations": [
+        {
+          "id": "clock_observation",
+          "utc": "2026-10-15T12:50:49.559056+00:00",
+          "query": "timedatectl show --property=NTPSynchronized,NTP,CanNTP,Timezone,LocalRTC",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Point-in-time systemd state only; not independent time accuracy verification, NTP enablement, continuity or a reserved window.",
+          "status": "OBSERVED",
+          "query_exit": 0,
+          "result": {
+            "utc": "2026-10-15T12:50:49.559060+00:00",
+            "argv": [
+              "timedatectl",
+              "show",
+              "--property=NTPSynchronized,NTP,CanNTP,Timezone,LocalRTC"
+            ],
+            "exit": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        },
+        {
+          "utc": "2026-10-15T12:51:35.505856+00:00",
+          "argv": [
+            "timedatectl",
+            "show",
+            "--property=NTPSynchronized",
+            "--property=NTP",
+            "--property=CanNTP",
+            "--property=Timezone",
+            "--property=LocalRTC"
+          ],
+          "reason": "Initial comma-separated property argument returned empty stdout with exit 0; query explicit repeated property options; preserve initial evidence.",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Point-in-time daemon state; no independent accuracy verification, clock changes or continuity guarantee.",
+          "exit": 0,
+          "stdout": "Timezone=Asia/Shanghai\nLocalRTC=no\nCanNTP=yes\nNTP=yes\nNTPSynchronized=yes\n",
+          "stderr": ""
+        }
+      ],
+      "evidence": [
+        {
+          "file": "ubuntu-facts.json",
+          "sha256": "87bd67988b4b150811576d2531b37f3d3cc756056ac9078351675bcb738a7c9c",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "clock-followup.json",
+          "sha256": "718177de18f6adf7857741871038c8560b5d4b55f9a9ed5d48d6eaa3d30834b9",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "collect-feasibility-ubuntu.py",
+          "sha256": "4afe62d18a476d905c05dd97da700e5af662b02de3ef23b549af3b74d63c05c6",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "clock-followup.py",
+          "sha256": "0b572cb7830ad18ef006a34204839a98585d925d05fa4f84ef022ce66d52772d",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        }
+      ],
+      "conclusion": "Initial comma-separated property query exited0 with no output; explicit repeated-property follow-up at 2026-10-15T12:51:35.505856Z returned Timezone=Asia/Shanghai, LocalRTC=no, CanNTP=yes, NTP=yes, NTPSynchronized=yes.",
+      "limitations": [
+        "Both queries retained. systemd-reported synchronized state is not independent time accuracy, a maintenance reservation or sleep/restart continuity guarantee. No clock/NTP/service setting changed."
+      ]
+    },
+    {
+      "question": 8,
+      "title": "Backup drive presence",
+      "observations": [
+        {
+          "id": "backup_drive_presence",
+          "utc": "2026-10-15T12:50:45.2107501Z",
+          "query": "[ordered]@{F_drive_present=[IO.Directory]::Exists('F:\\');method='Directory.Exists(F:\\) only';backup_rehashed=$false;backup_modified=$false;historical_vhdx_sha256='C800DB074A15C50940F5D552B185D98555911294A886557D2484F48A5AD03C54';digest_status='HISTORICAL_ONLY'}",
+          "scope": "READ_ONLY_FEASIBILITY",
+          "limitation": "Presence alone cannot establish backup availability/integrity/recoverability; no file reads or rehash.",
+          "result": {
+            "F_drive_present": false,
+            "method": "Directory.Exists(F:\\) only",
+            "backup_rehashed": false,
+            "backup_modified": false,
+            "historical_vhdx_sha256": "C800DB074A15C50940F5D552B185D98555911294A886557D2484F48A5AD03C54",
+            "digest_status": "HISTORICAL_ONLY"
+          },
+          "status": "OBSERVED",
+          "query_exit": 0
+        }
+      ],
+      "evidence": [
+        {
+          "file": "windows-facts.json",
+          "sha256": "2db8df12f8fdcc221b86a0ba8cf448ecd2535cb3ec64b09c969d2eb206276ebb",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        },
+        {
+          "file": "collect-feasibility-windows.ps1",
+          "sha256": "cb7f93eb907c3b278e19705f293fe03d45d70081318f1c1a19a9e0eff73d2f3f",
+          "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+        }
+      ],
+      "conclusion": "F: absent; retain UNAVAILABLE. Historical VHDX SHA256 C800DB074A15C50940F5D552B185D98555911294A886557D2484F48A5AD03C54 is HISTORICAL_ONLY.",
+      "limitations": [
+        "Only F: presence checked. No backup file opened, rehashed, mounted, written or requested. Current recoverability UNKNOWN."
+      ]
+    }
+  ],
+  "preservation": {
+    "utc": "2026-10-15T12:51:51.5166893Z",
+    "prior_file_count": 188,
+    "prior_files_unchanged": true,
+    "changed_paths": [],
+    "prior_branch_ref_count": 7,
+    "prior_branch_refs_unchanged": true,
+    "changed_refs": []
+  },
+  "proposed_changes_requiring_design_and_review": [
+    {
+      "topic": "Observer principal and protected storage",
+      "status": "PROPOSAL_ONLY_NOT_ACCEPTED_NOT_APPLIED",
+      "next": "Specify an exact separate Windows observer service principal, code/config/key/checkpoint paths and ACL matrix. Current caller token is non-admin and current-user WSL registration exists; define which owner/admin/root actions are in/out of supported boundary. Include verification and rollback before deployment."
+    },
+    {
+      "topic": "Observer-owned data and authenticated transport",
+      "status": "PROPOSAL_ONLY_NOT_ACCEPTED_NOT_APPLIED",
+      "next": "Define exact service/endpoint names, fixed request schema limited to pinned session/challenge/sequence/checkpoint identities, client authorization and separately controlled guest public-key pin. Host facts must be collected by observer, never caller-supplied safe facts. Define bounded error/refusal, protected anchor writes and crash/rollback recovery."
+    },
+    {
+      "topic": "Collector completeness and attribution",
+      "status": "PROPOSAL_ONLY_NOT_ACCEPTED_NOT_APPLIED",
+      "next": "Use discovered provider/API metadata to design independently reviewable process-lifetime/resource coverage with explicit loss/denied-read handling and host/guest deduplication. Later controlled trace validation requires separate authorization; this discovery establishes no COMPLETE_COVERAGE."
+    },
+    {
+      "topic": "Dedicated account, runtime, workspace and scratch",
+      "status": "PROPOSAL_ONLY_NOT_ACCEPTED_NOT_APPLIED",
+      "next": "Specify actual non-root P309 identity, approved Linux filesystem workspace/scratch paths and ownership/isolation checks. Current runtime is writable by general UID1000; no dedicated account or configured scratch established. Resolve DrvFs vs Linux permission boundaries without inspecting foreign data in this task."
+    },
+    {
+      "topic": "Fixed unit launch and whole-cgroup stop",
+      "status": "PROPOSAL_ONLY_NOT_ACCEPTED_NOT_APPLIED",
+      "next": "Review exact constrained polkit transient-unit interface for p309-r2-*, fixed launcher and allowed properties. Determine policy despite current rules-directory denial through a later authorized review. Pin effective CPU/memory/accounting/delegation/KillMode and verify whole-cgroup emptiness including escaped process groups. No arbitrary command/PID attach interface."
+    },
+    {
+      "topic": "Continuity and exactly-once state",
+      "status": "PROPOSAL_ONLY_NOT_ACCEPTED_NOT_APPLIED",
+      "next": "Specify independent stop path for observer/supervisor exit, stale/unknown host facts, transport loss, Windows suspension and WSL shutdown; separate request, acknowledgement and completed cleanup. Protected persistent checkpoint cannot be replaced by guest-writable journals; no late evidence or restart may silently resume. Preserve original thresholds and exactly-once ledgers/grants."
+    },
+    {
+      "topic": "WSL admission route and later formal stages",
+      "status": "PROPOSAL_ONLY_NOT_ACCEPTED_NOT_APPLIED",
+      "next": "Independently review WSL replacement semantics for AWS identity/non-preemption/dedicated capacity/maintenance and container route. Preserve accepted r2 reference501f48cb and document development-tree differences. Formal audit/verdict, owner window, worker-tier drill and pre-freeze review remain separate, unstarted gates."
+    }
+  ],
+  "redaction": "Raw Windows account/SID, registry registration identifiers/base path and Linux account names not exported; identity hashes retained. Current home paths symbolic. Raw logs and query scripts remain local, only this result and source/evidence hash manifest committed.",
+  "evidence_files": [
+    {
+      "file": "branches-before.txt",
+      "sha256": "e0e2c4570e8a4f44bc6b32eb5953aafa315ce0e794ac64b01711c4a76c460653",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "clock-followup.json",
+      "sha256": "718177de18f6adf7857741871038c8560b5d4b55f9a9ed5d48d6eaa3d30834b9",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "clock-followup.py",
+      "sha256": "0b572cb7830ad18ef006a34204839a98585d925d05fa4f84ef022ce66d52772d",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "clock-followup.stderr.txt",
+      "sha256": "e816706cd44ce0c6c65a7a7938be8103514f7c899694c8240d844f74319b7f98",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "clock-followup.stdout.txt",
+      "sha256": "2872ce4571ecb1f06c46afe7e7cf735da86c4dc460d5435704240b321506d093",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "collect-feasibility-ubuntu.py",
+      "sha256": "4afe62d18a476d905c05dd97da700e5af662b02de3ef23b549af3b74d63c05c6",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "collect-feasibility-windows.ps1",
+      "sha256": "cb7f93eb907c3b278e19705f293fe03d45d70081318f1c1a19a9e0eff73d2f3f",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "feasibility-followup.ps1",
+      "sha256": "f7e1c5546ea6a50ca9b21549ed1e3fc647e8a085a7048c30e648f53653662b0c",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "fetch.txt",
+      "sha256": "ada71ea0a084bb7961ccc14e6b31ee30f9d4bcb4e0cabf4c70708cb281657646",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "ownership-followup.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "ownership-followup.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "preservation-check.json",
+      "sha256": "9cfe89f41dd2c585f4269f7e67b8cdc8ce6495022807d4d8b71f10a0ffe2bc24",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "prior-records-sha256.json",
+      "sha256": "1cea7aa30a0e9297274b1bb357baaf0d79c8e5ef670d2552c85a3f0aa7cbda59",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "source-bindings.json",
+      "sha256": "1495e5bca059777979279b27e5d95e558f6c90182fd592a8f2767eb09d0d5a5c",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "source-verification.log",
+      "sha256": "2b8c1b7df8bb1dbcbefc9714a20ac612ac6e3053abd2c46700ca9d5ec62103d7",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "ubuntu-collection.stderr.txt",
+      "sha256": "e816706cd44ce0c6c65a7a7938be8103514f7c899694c8240d844f74319b7f98",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "ubuntu-collection.stdout.txt",
+      "sha256": "796ef15fef4cc18624ef2f9154ba6f7a6485c36d894309c8e07b3d4ee53fe990",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "ubuntu-facts.json",
+      "sha256": "87bd67988b4b150811576d2531b37f3d3cc756056ac9078351675bcb738a7c9c",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "verify-admission-bindings.py",
+      "sha256": "48f4792182237776620e5081b90f05df56ad0eb5ab445abc7c7fbf47df4f4364",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "windows-collection.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "windows-collection.stdout.txt",
+      "sha256": "208dea1701f8f11697b524b58baa7463569bae28d8985e0b839a623d0e37ccbe",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "windows-facts.json",
+      "sha256": "2db8df12f8fdcc221b86a0ba8cf448ecd2535cb3ec64b09c969d2eb206276ebb",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "windows-ownership-followup.json",
+      "sha256": "e23eafc0fc006b4b8e998702dbd9ab6c61a7da599be93b934d2f8913961649cd",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "worktree-create.txt",
+      "sha256": "e52479383dcab3cdb374a35b3b4d7a2abdf83661c0bf5503c95139a4286dc3bd",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "worktrees-before.txt",
+      "sha256": "fa3edfb2e7327e2f87365573c6eb7d8e0fb8aaf791f82b4b4e00a09eeb5e03e7",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    },
+    {
+      "file": "write-feasibility-report.py",
+      "sha256": "d6b58fa90aa1dc594f249919c9cd84f76385e82a05eb0f930b4dbed2f85b2e1b",
+      "storage": "LOCAL_RECORDS_ONLY; raw contents not committed"
+    }
+  ]
+}
