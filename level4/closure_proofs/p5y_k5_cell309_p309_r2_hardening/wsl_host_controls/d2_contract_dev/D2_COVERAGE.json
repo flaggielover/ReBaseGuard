@@ -1,0 +1,299 @@
+{
+  "base_commit": "7acbf8a1d2fcbe3c8075ff2cffa5cbfcbe7e4ee3",
+  "contract_rereview": "29a9b8a4db4b3376dafb195fc051083b9d964bc3",
+  "contract_revision": "14a63b4f25935396b288a545476fe808deac85f8",
+  "formal_admission": "BLOCKED",
+  "independent_stop_or_durable_state_established": false,
+  "real_signed_host_end_to_end_tested": false,
+  "rows": [
+    {
+      "contract": "CHANNELS H1 + DESIGN4: strict observer request, no caller facts/signing oracle",
+      "files": [
+        "d2_observer.py"
+      ],
+      "id": "D2-C01",
+      "implementation_scope": "H1 parsing and fixture-owned unsigned response construction",
+      "passing_tests": [
+        "test_d2_complete.ObserverContract.test_injected_facts_commands_and_generic_sign_input_rejected",
+        "test_d2_complete.ObserverContract.test_enrollment_must_match_fixture_owned_configuration",
+        "test_d2_complete.ObserverContract.test_fixture_owned_facts_construct_response_not_client_claims"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "CHANNELS H3 directional forwarding; preserve signed bytes",
+      "files": [
+        "d2_ingress_wire.py",
+        "d2_ingress_model.py"
+      ],
+      "id": "D2-C02",
+      "implementation_scope": "Bounded directional codec; unverified staging only",
+      "passing_tests": [
+        "test_d2_ingress.IngressWire.test_direction_and_protocol_do_not_cross_into_h4",
+        "test_d2_ingress.IngressWire.test_original_unicode_crlf_whitespace_bytes_preserved",
+        "test_d2_ingress.IngressWire.test_base64_strict_type_alphabet_padding_and_budget"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "DESIGN4: verify signature and configured independent pin",
+      "files": [
+        "d2_signature.py",
+        "d2_session.py"
+      ],
+      "id": "D2-C03",
+      "implementation_scope": "Public RSA reference arithmetic; configured synthetic development pin, not enrollment",
+      "passing_tests": [
+        "test_d2_complete.PublicVerification.test_all_public_nist_sha256_known_answers",
+        "test_d2_complete.PublicVerification.test_message_signature_and_key_substitution_rejected",
+        "test_d2_complete.SessionContract.test_wrong_pin_refused_before_verifier",
+        "test_d2_complete.SessionContract.test_real_verifier_rejects_dummy_signature_in_protocol_message"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "CHANNELS H3: exact outstanding session/challenge/sequence/checkpoint",
+      "files": [
+        "d2_session.py"
+      ],
+      "id": "D2-C04",
+      "implementation_scope": "One pending challenge, bounded nonces and memory chain; synthetic positive authentication fixture",
+      "passing_tests": [
+        "test_d2_complete.SessionContract.test_request_binds_one_outstanding_challenge",
+        "test_d2_complete.SessionContract.test_two_synthetic_verified_intervals_chain_checkpoint",
+        "test_d2_complete.SessionContract.test_replayed_response_without_or_with_new_challenge_refused",
+        "test_d2_complete.SessionContract.test_wrong_session_baseline_sequence_nonce_and_checkpoint"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "DESIGN4 + CHANNELS failure: timeout/late/unknown/busy facts fail",
+      "files": [
+        "d2_session.py"
+      ],
+      "id": "D2-C05",
+      "implementation_scope": "Exact fake-time deadlines before/after verification; fixture facts only",
+      "passing_tests": [
+        "test_d2_complete.SessionContract.test_deadline_exact_boundary_and_expiry_during_verification",
+        "test_d2_complete.SessionContract.test_idle_tick_and_new_request_cannot_renew_liveness",
+        "test_d2_complete.SessionContract.test_regressing_and_invalid_fake_time_refused",
+        "test_d2_complete.SessionContract.test_unknown_coverage_busy_or_unstable_policy_refused",
+        "test_d2_complete.SessionContract.test_host_boot_service_and_enrollment_changes_refused"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "LIFECYCLE authority: status/stop only; R/U cannot control B",
+      "files": [
+        "d2_control_wire.py",
+        "d2_broker_model.py"
+      ],
+      "id": "D2-C06",
+      "implementation_scope": "Strict H4 and separate caller-constructed synthetic identities",
+      "passing_tests": [
+        "test_d2_model.BrokerPolicy.test_public_start_arm_reset_and_claimed_identity_never_mutate",
+        "test_d2_model.BrokerPolicy.test_only_simulated_monitor_instance_can_dispatch",
+        "test_d2_model.BrokerPolicy.test_status_does_not_allocate_or_start_generation"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "LIFECYCLE3-4: stop latch and delayed start ordering",
+      "files": [
+        "d2_broker_model.py",
+        "d2_chain.py"
+      ],
+      "id": "D2-C07",
+      "implementation_scope": "Fixture policy and session-failure composition, no actual OS start/stop",
+      "passing_tests": [
+        "test_d2_complete.StopComposition.test_stop_while_armed_suppresses_fixture_start",
+        "test_d2_complete.StopComposition.test_inflight_start_completion_after_failure_never_running",
+        "test_d2_model.BrokerPolicy.test_finite_start_stop_completion_interleavings_never_reopen_after_stop"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "LIFECYCLE5-7: receipt distinct from cleanup and terminal evidence",
+      "files": [
+        "d2_broker_model.py",
+        "d2_chain.py"
+      ],
+      "id": "D2-C08",
+      "implementation_scope": "All synthetic cleanup predicates/inflight tracking required; no real cleanup proof",
+      "passing_tests": [
+        "test_d2_model.BrokerPolicy.test_every_missing_cleanup_predicate_prevents_completion",
+        "test_d2_complete.StopComposition.test_cleanup_requires_all_predicates_and_late_ack_updates_model_only",
+        "test_d2_model.BrokerPolicy.test_stop_during_inflight_start_rejects_early_cleanup_and_late_running"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "LIFECYCLE requests/concurrency: G checked at dispatch before cache",
+      "files": [
+        "d2_memory_dispatch.py",
+        "d2_broker_model.py"
+      ],
+      "id": "D2-C09",
+      "implementation_scope": "Bounded FIFO and serialized immutable publication inside one process",
+      "passing_tests": [
+        "test_d2_memory_dispatch.MemoryDispatch.test_cached_old_generation_rechecked_on_dequeue",
+        "test_d2_memory_dispatch.MemoryDispatch.test_concurrent_drain_publishes_each_request_once",
+        "test_d2_memory_dispatch.MemoryDispatch.test_paused_first_calculation_serializes_second_without_lost_update",
+        "test_d2_complete.StopComposition.test_old_session_stop_never_affects_replacement_generation"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "LIFECYCLE8: restart guard and immutable historical terminal records",
+      "files": [
+        "d2_broker_model.py",
+        "d2_chain.py"
+      ],
+      "id": "D2-C10",
+      "implementation_scope": "Unknown guard, invalidated synthetic instance; no persistent reconciliation",
+      "passing_tests": [
+        "test_d2_model.BrokerPolicy.test_restart_preserves_old_stopped_history_but_not_current_quiescence",
+        "test_d2_model.BrokerPolicy.test_monitor_restart_within_broker_epoch_stops_and_invalidates_old_instance",
+        "test_d2_complete.StopComposition.test_monitor_or_broker_restart_cannot_resume_session"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "LIFECYCLE bounded retention and request-ID content binding",
+      "files": [
+        "d2_broker_model.py",
+        "d2_memory_dispatch.py",
+        "d2_session.py"
+      ],
+      "id": "D2-C11",
+      "implementation_scope": "Memory budgets retain fences/refuse exhaustion; no production-window claim",
+      "passing_tests": [
+        "test_d2_model.BrokerPolicy.test_changed_content_request_id_is_refused",
+        "test_d2_model.BrokerPolicy.test_generation_budget_preserves_all_terminal_records",
+        "test_d2_memory_dispatch.MemoryDispatch.test_full_queue_refuses_without_eviction_or_ticket_consumption",
+        "test_d2_complete.SessionContract.test_session_budget_retains_fences_and_terminal_failure"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "CHANNELS failure: H3 failure generates only associated-G stop",
+      "files": [
+        "d2_chain.py"
+      ],
+      "id": "D2-C12",
+      "implementation_scope": "Pure session-to-H4-stop construction, no arbitrary forwarding or executor",
+      "passing_tests": [
+        "test_d2_complete.StopComposition.test_real_forgery_rejection_requests_stop_of_owned_generation",
+        "test_d2_complete.StopComposition.test_timeout_transport_loss_wrong_peer_and_h4_injection_stop",
+        "test_d2_complete.StopComposition.test_no_fixture_start_or_foreign_pid_unit_in_client_data"
+      ],
+      "real_host_capability_established": false
+    },
+    {
+      "contract": "All scopes: no admission/execution/qualification authority",
+      "files": [
+        "d2_session.py",
+        "d2_chain.py"
+      ],
+      "id": "D2-C13",
+      "implementation_scope": "Explicit synthetic diagnostics with all operational flags false",
+      "passing_tests": [
+        "test_d2_complete.SessionContract.test_factory_rejects_unscoped_bindings_and_exports_remain_blocked",
+        "test_d2_complete.StopComposition.test_no_unscoped_factory_and_all_chain_exports_blocked"
+      ],
+      "real_host_capability_established": false
+    }
+  ],
+  "schema": "P309_D2_CONSOLIDATED_CONTRACT_COVERAGE/1",
+  "status": "TARGET_FREE_LIBRARY_CANDIDATE_COMPLETE_FOR_REVIEW_NOT_FORMAL_GATE_ACCEPTANCE",
+  "unresolved_original_blockers": [
+    {
+      "deployment_blocking": true,
+      "id": "I1",
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ],
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Runner Windows/root boundary"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I2",
+      "original_fact_questions": [
+        1,
+        5
+      ],
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Collector rights, completeness and attribution"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I3",
+      "original_fact_questions": [
+        1,
+        6
+      ],
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Enrollment and ACL/API descriptors"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I4",
+      "original_fact_questions": [
+        2
+      ],
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Fresh image/runtime provenance"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I5",
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ],
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Guest policy/unit limits and controlled launcher"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I6",
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ],
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Protected persistence and stop/recovery"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I7",
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Route, host and formal authority"
+    }
+  ]
+}

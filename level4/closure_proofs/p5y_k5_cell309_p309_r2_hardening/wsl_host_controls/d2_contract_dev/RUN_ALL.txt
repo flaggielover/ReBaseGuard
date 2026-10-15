@@ -1,0 +1,29 @@
+One aggregate D2 validation entrypoint; no per-slice handoffs required
+
+The completed candidate has already run all137 pure-memory tests with Cloud
+CPython3.11.15. Its exact runtime/test IDs are in D2_FINAL_VALIDATION.json.
+The old native46/21/28 records remain intact. A final native rerun is NOT required
+to finish this development batch and is not claimed to have occurred.
+
+If final native verification is later specifically requested, ONE invocation from
+the exact delivered commit suffices. Use an independent clean validation branch
+and a new external records directory (runner refuses an existing directory):
+
+  /home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 -B run_d2_all.py --output-dir /mnt/d/ReBaseGuard-309/records/p309-d2-final-validation-NEW
+
+Run from d2_contract_dev. Expected137 test methods, zero failures/errors/skips;
+54 additional public RSA vector cases are subtests, not extra methods. The normal
+runner writes unittest.log and result.json and records only its own Python
+context. No PowerShell/CNG/host sampler/helper/service/actual workload is invoked.
+No host/process/cgroup/clock/backup audit or runtime binary rehash is needed.
+
+Review/compare D2_FINAL_SOURCE_SHA256.json before execution. Preserve old sources,
+evidence and refs; record canonical Git bytes and raw/CRLF handling separately.
+If a concrete defect appears, preserve it and report it without altering budgets,
+assertions or source to force a pass. An independent native validation, if asked
+for, should add only D2_FINAL_LOCAL_VALIDATION.json and
+D2_FINAL_LOCAL_SOURCE_SHA256.json, retain the coordinator result, normally push
+its separate branch and verify exact remote HEAD. All I1-I7/formal flags remain
+OPEN_RETAINED/BLOCKED/false. This entrypoint is development tooling, not admission
+or installation consent. No real services/endpoints/accounts/keys/units, host
+queries, elevation, policy changes, safety samples or P309 workload.

@@ -1,0 +1,25 @@
+Public RSA reference test-vector provenance
+
+NIST CAVP/CAVS11.0 SigVer PKCS#1 v1.5 data, dated2011-03-02, mirrored by
+pyca/cryptography:
+https://raw.githubusercontent.com/pyca/cryptography/main/vectors/cryptography_vectors/asymmetric/RSA/FIPS_186-2/SigVer15_186-3.rsp
+
+Exact downloaded file SHA256:
+dd8de3c0920e3b75059491e9c5d84f2e399b2a652869977eeb863489eb7dd151
+The URL is a moving upstream branch; the downloaded bytes and extracted committed
+fixture are content-pinned. This does not claim an independently signed NIST
+publisher checksum or validated crypto-module certification.
+
+public_rsa_vectors.py retains ONLY bits,n,e,Msg,S,Result for all54 SHA256 cases
+with2048/3072/4096-bit modulus:9 expected pass and45 expected fail. No p,q,d,
+private key object, signer, entropy source or key-generation operation is retained
+or invoked. These are public, previously published verification inputs, never
+production pin enrollment or trust material. Tests import constants in memory;
+no network/file access occurs within these test methods.
+
+The complete upstream text is preserved only as external source-acquisition
+evidence. It includes publicly published private-number examples for other test
+uses; none is imported, instantiated, used to sign, or copied into this candidate.
+The first guessed FIPS_186-3 directory returned404; reading the upstream RSA test
+source identified the actual FIPS_186-2 path. No failed download was interpreted
+as valid source. HTTPS verification/proxy policy were preserved.

@@ -1,0 +1,118 @@
+P309 D2 consolidated target-free library delivery, 2026-10-15
+Base: 7acbf8a1d2fcbe3c8075ff2cffa5cbfcbe7e4ee3
+Branch: codex/p309-d2-complete-dev-20261015
+
+Disposition: COMPLETE_AS_TARGET_FREE_LIBRARY_CANDIDATE_FOR_REVIEW.
+This ends the current authorized pure-memory development batch. It does not
+declare an independent D2 acceptance, authorize D3/D4, install an observer or
+broker, accept the WSL route, or change P309 formal authority. I1-I7 remain open.
+
+The user requested one consolidated delivery rather than repeated small Windows
+handoffs. The existing authorization covers D2 pure-memory protocol/state code,
+synthetic unit tests, additive evidence and normal push. This batch adds all
+remaining target-free observer/request, verification/session and stop-composition
+pieces together, a contract coverage table and ONE aggregate test entrypoint.
+No further per-module native handoff is required for this development batch.
+Actual deployment/host verification is a different, presently blocked gate.
+
+Delivered library behavior
+- Existing strict H4 parser, immutable broker lifecycle, bounded serialized
+  in-process dispatch and strict H3 parsing/staging remain unchanged.
+- d2_observer.py: H1 request parser and H3->H1 enrollment wrapper. Only challenge
+  fields and configured guest/runtime comparison digests are accepted. Caller
+  facts, coverage, payload, commands, paths or arbitrary bytes-to-sign fail.
+  _fixture_response constructs unsigned message bytes only from fixture-owned
+  enrollment/facts. It is not a collector/signing service or a baseline bootstrap.
+- d2_signature.py: bounded PUBLIC-number RSA PKCS#1 v1.5/SHA256 reference
+  verification. Exact signature width/range and the full DigestInfo/padding are
+  checked. No key generation, private key, signing API, subprocess or crypto
+  provider is used. Public numbers are2048/3072/4096-bit odd moduli, odd exponent
+  3..2^32-1. The domain-separated development public-number fingerprint is NOT
+  the old PEM digest, an SPKI pin or a production enrollment format. Reference
+  arithmetic and known answers are not production cryptographic review/certification.
+- d2_session.py: immutable, bounded one-outstanding-challenge session reducer.
+  Synthetic enrollment/host/service/session/baseline bindings are pinned at
+  fixture creation. Nonce reuse, stale challenge/sequence/checkpoint, changed
+  identity/runtime/policy, missing coverage, busy facts, invalid intervals,
+  wrong public pin/signature/peer and transport loss terminate the model.
+  Both pre- and post-verification fake times obey the original105s allowance;
+  sample intervals remain60..105s. Idle ticks/status cannot renew liveness;
+  even requesting a fresh challenge after an expired gap is refused. All fake
+  times are bounded exact integer milliseconds in a COMMON SYNTHETIC TIME DOMAIN,
+  not measurements or a host/guest clock synchronization claim. Terminal state
+  never resumes/rearms. Session records/nonces remain bounded to4096.
+- d2_chain.py: composes the session reducer with the unchanged broker reducer.
+  Terminal session failure constructs a fixed status/stop-contract stop for its
+  PREVIOUSLY ASSOCIATED G using captured synthetic monitor context. H3 bytes
+  never become a broker command. Old-G/old-peer checking occurs in the broker;
+  failures cannot target a replacement G. No public start, PID/unit selection,
+  executor, real manager action or cleanup claim is introduced. Receipt and
+  synthetic all-predicate cleanup remain distinct. Restart stays unknown.
+
+Validation
+run_d2_all.py is normal development tooling; it runs ALL137 D2 tests in one
+CPython3.11.15 invocation (14 wire +32 broker +21 dispatch +28 ingress +42 new
+observer/verification/session/composition). The first aggregate run passed with
+zero failures/errors/skips. It also exercises54 public NIST CAVP SHA256 RSA
+known answers:9 positive and45 negative, across2048/3072/4096 and e=3/17/65537.
+These54 vector cases are subtests within ONE unittest method, not54 additional
+test methods; they are reported separately to avoid inflated counts.
+
+The aggregate runtime was downloaded through existing uv into the CLOUD WORKSPACE
+only, using --no-bin/--no-registry. It is an independent python-build-standalone
+CPython3.11.15 build, not /home/suzhe's private WSL build. No Windows/Ubuntu
+runtime or system Python was changed. This is Cloud same-version validation,
+not a claim that the final new42 tests were run on Windows/WSL. Earlier native
+46/21/28 results remain preserved historical records. Rerunning those95 unchanged
+tests here is intentional ONCE for the final combined package/new3.11.15 runner;
+older host/PowerShell/signing/actual-process-stop suites are not executed.
+
+Crypto test boundary
+The54 public RSA vectors check real reference verification. Real verification
+also rejects dummy-signature protocol envelopes and triggers broker-model stop.
+Positive session/chain fixtures EXPLICITLY PATCH verify() to return a synthetic
+successful result to test lifecycle/state policy. They DO NOT establish a real
+signed-observation end-to-end chain, Windows CNG interoperability, enrolled
+observer identity or a trustworthy safe observation. No private test exponent,
+signature generation or actual key is created. PUBLIC_VECTORS.txt pins origin.
+Fixture coverage/quiet/policy booleans are test inputs, never a route to claim
+complete real process visibility or override unknown production coverage.
+
+Budgets and unchanged limits
+Existing H4/H3/model/queue budgets are retained. New RSA inputs are bounded to
+1MiB messages and the exact public/signature widths above; the fixture session
+has at most4096 retained nonces, one challenge and one staged response. These
+limits are development allocations, not a production31.5-hour operating budget.
+The original4CPU/8GB/40GB floors,60s samples,0.05/0.5/1.0 CPU ratios,5s suspend
+tolerance and45s gap allowance remain unchanged. The fixture facts/clock are
+not substitutes for original host-control assessment or real suspend accounting.
+
+Explicit completion boundary
+Libraries do not obtain OS facts/credentials, listen/connect to endpoints,
+collect/sign observations, start timers/workers/services, create accounts/keys/
+units, change policies, persist an anchor, terminate actual processes or launch
+P309. The reducers are serial reference calculations. The existing queue uses a
+shared lock: a paused calculation blocks stop/close. The composition's synchronous
+verification can also block its caller. No independent watchdog, bounded real
+stop latency, crash consistency, durable anti-replay or actual exactly-once
+execution is claimed. Those capabilities remain I1-I7 deployment blockers.
+Successful mathematical verification/model observations are not enrollment,
+coverage evidence or execution authority. All diagnostic/formal authority flags
+remain BLOCKED/false, including after fully synthetic cleanup.
+
+Source/evidence preservation
+Only additive D2 files are committed. The previous library/tests/records, contract
+review, exactly-once/grant/freeze protections and native launcher are untouched.
+D2_FINAL_VALIDATION.json records actual runtime/counts/test IDs and limitations;
+D2_FINAL_SOURCE_SHA256.json binds new code and pinned current/history blobs.
+D2_COVERAGE.json maps the reviewed contract to code/tests and retained blockers.
+No Windows host query, backup access, new host sample, elevation, service/account/
+key/unit, policy edit, workload, drill, freeze/grant, qualification or target.
+F: availability/digest remain historical-only; no new backup verification.
+
+Next gate
+This batch stops at the completed target-free candidate. Independent source
+acceptance and I1-I7 resolution are required before a concrete D3 installation/
+rollback package can be accepted. No install instructions or broad administrative
+approval are inferred from successful unit tests. There are no further small
+Windows validation requests queued by this delivery.
