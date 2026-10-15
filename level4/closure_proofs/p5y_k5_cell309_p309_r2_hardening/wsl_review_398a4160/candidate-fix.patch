@@ -1,0 +1,128 @@
+--- a/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/host_controls.py
++++ b/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/host_controls.py
+@@ -68,12 +68,12 @@
+     now = time.time() if now is None else now
+     checks['schemas'] = host.get('schema') == SCHEMA and guest.get('schema') == 'P309_WSL_CONTROL_FACTS/1'
+     checks['phase'] = phase in ('start', 'monitor')
++    age_limit = THRESHOLDS['sample_s'] + THRESHOLDS['monitor_gap_tolerance_s']
+     start, end = host.get('start'), host.get('end')
+-    checks['sample_continuity'] = continuity(start, end)
++    checks['sample_continuity'] = continuity(start, end, age_limit if phase == 'monitor' else None)
+     elapsed = end['uptime_s'] - start['uptime_s'] if checks['sample_continuity'] else None
+     checks['full_sample_duration'] = number(elapsed) and elapsed >= THRESHOLDS['sample_s']
+     # Proposal: evidence age bounded by existing sample + gap allowance (105 s).
+-    age_limit = THRESHOLDS['sample_s'] + THRESHOLDS['monitor_gap_tolerance_s']
+     guest_time = stamp(guest.get('utc'))
+     checks['freshness'] = (number(now) and clock_valid(end) and number(guest_time)
+                            and 0 <= now - end['wall_s'] <= age_limit
+--- a/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/collect_host_controls.ps1
++++ b/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/collect_host_controls.ps1
+@@ -73,6 +73,19 @@
+  finally { if($ptr -ne [IntPtr]::Zero){[void][P309ReadOnlyNative]::LocalFree($ptr)} }
+  return $result
+ }
++function PolicyFingerprint($policy) {
++ # Hash the exact emitted power facts. Never re-query power policy for its hash.
++ $power=[ordered]@{}
++ foreach($key in @('power_query_ok','sleep_ac_s','sleep_dc_s','hibernate_ac_s','hibernate_dc_s','scheme_sha256')) {
++  $power[$key]=$policy[$key]
++ }
++ $tasks=@($policy.update_task_states | Sort-Object identity_sha256 | ForEach-Object {
++  [ordered]@{identity_sha256=$_.identity_sha256;state=$_.state;next_run_utc=$_.next_run_utc}
++ })
++ $updates=[ordered]@{}
++ foreach($key in @($policy.update_policy_values.Keys | Sort-Object)){$updates[$key]=$policy.update_policy_values[$key]}
++ return HashText (([ordered]@{power=$power;update=$updates;tasks=$tasks}) | ConvertTo-Json -Depth 6 -Compress)
++}
+ $start=ClockSnapshot
+ $s0=ProcessSnapshot
+ $firstQueryEnd=[Environment]::TickCount64/1000.0
+@@ -138,13 +151,8 @@
+  $policy.event_log_cleared=@($relevant | Where-Object { $_.Id -eq 104 }).Count -gt 0
+  $policy.event_query_ok=$true
+ } catch { $policy.event_query_ok=$false }
+-# Serialize stable ordered records. A changing schedule/state is conservatively a policy change.
+-$taskFingerprint=@($policy.update_task_states | Sort-Object identity_sha256 | ForEach-Object {
+- [ordered]@{identity_sha256=$_.identity_sha256;state=$_.state;next_run_utc=$_.next_run_utc}
+-})
+-$orderedUpdate=[ordered]@{}
+-foreach($key in @($policy.update_policy_values.Keys | Sort-Object)){$orderedUpdate[$key]=$policy.update_policy_values[$key]}
+-$policy.policy_sha256=HashText (([ordered]@{power=(PowerFacts);update=$orderedUpdate;tasks=$taskFingerprint}) | ConvertTo-Json -Depth 6 -Compress)
++# Serialize stable ordered records from the emitted facts, without a second power query.
++$policy.policy_sha256=PolicyFingerprint $policy
+ $os=Get-CimInstance Win32_OperatingSystem
+ $reg=@(Get-ChildItem -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss' | Get-ItemProperty | Where-Object DistributionName -eq $Distribution)
+ if($reg.Count -ne 1){throw 'Distribution registration ambiguous'}
+--- a/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/test_windows_sampler.ps1
++++ b/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/test_windows_sampler.ps1
+@@ -4,7 +4,7 @@
+ $tokens=$null;$errors=$null
+ $ast=[Management.Automation.Language.Parser]::ParseFile($CollectorPath,[ref]$tokens,[ref]$errors)
+ if($errors.Count){throw 'Collector parse error'}
+-foreach($node in $ast.FindAll({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in @('HashText','MeasureProcesses')},$true)) {
++foreach($node in $ast.FindAll({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in @('HashText','MeasureProcesses','PolicyFingerprint')},$true)) {
+  . ([scriptblock]::Create($node.Extent.Text))
+ }
+ $cases=[ordered]@{}
+@@ -24,6 +24,16 @@
+ $cases.new_process_unknown=$null -eq $r.rows[0].cpu_fraction
+ $cases.exited_process_counted=$r.disappeared_count -eq 1
+ $cases.zero_duration_unknown=$null -eq (MeasureProcesses $a $a 0).rows[0].cpu_fraction
++$policy=[ordered]@{power_query_ok=$true;sleep_ac_s=0;sleep_dc_s=0;hibernate_ac_s=0;hibernate_dc_s=0;scheme_sha256=('a'*64);
++ update_policy_values=@{AUOptions=2;NoAutoUpdate=1};update_task_states=@(@{identity_sha256=('b'*64);state='Disabled';next_run_utc=$null})}
++$first=PolicyFingerprint $policy
++$policy.sleep_dc_s=600
++$cases.emitted_power_is_bound=(PolicyFingerprint $policy) -ne $first
++$policy.sleep_dc_s=0
++$policy.update_policy_values=[ordered]@{NoAutoUpdate=1;AUOptions=2}
++$cases.update_key_order_is_stable=(PolicyFingerprint $policy) -eq $first
++$policy.update_task_states[0].state='Ready'
++$cases.emitted_task_state_is_bound=(PolicyFingerprint $policy) -ne $first
+ $pass=@($cases.Values | Where-Object {$_ -ne $true}).Count -eq 0
+ @{scope='SYNTHETIC_ONLY';cases=$cases;passed=$pass} | ConvertTo-Json -Depth 4
+ if(-not $pass){throw 'Synthetic sampler test failed'}
+--- /dev/null
++++ b/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/test_review_regressions.py
+@@ -0,0 +1,42 @@
++"""Independent synthetic witnesses; no collection, launch or project evaluator."""
++import copy
++import datetime as dt
++import unittest
++import host_controls as H
++from test_host_controls import fixture
++
++
++def monitor(duration):
++    host, guest = fixture()
++    previous = {'host': copy.deepcopy(host), 'guest': copy.deepcopy(guest)}
++    previous['host']['end'].update(wall_s=999, uptime_s=499, active_s=494)
++    baseline = copy.deepcopy(previous)
++    baseline['host']['start'].update(wall_s=939, uptime_s=439, active_s=434)
++    host['end'].update(wall_s=1000 + duration, uptime_s=500 + duration, active_s=495 + duration)
++    host['process_observation']['cpu_elapsed_lower_bound_s'] = 60.0
++    guest['utc'] = dt.datetime.fromtimestamp(1000 + duration, dt.timezone.utc).isoformat()
++    return H.assess(host, guest, previous, now=1000 + duration, phase='monitor', baseline=baseline)
++
++
++class ReviewRegressions(unittest.TestCase):
++    def test_five_minute_monitor_sample_is_refused(self):
++        result = monitor(300)
++        self.assertFalse(result['candidate_observations_pass'])
++        self.assertFalse(result['checks']['sample_continuity'])
++        self.assertEqual(result['formal_admission'], 'BLOCKED')
++
++    def test_monitor_gap_boundary_is_inclusive(self):
++        self.assertTrue(monitor(105)['candidate_observations_pass'])
++        over = monitor(105.001)
++        self.assertFalse(over['candidate_observations_pass'])
++        self.assertFalse(over['checks']['sample_continuity'])
++
++    def test_normal_sixty_second_monitor_sample_still_passes_diagnostics(self):
++        result = monitor(60)
++        self.assertTrue(result['candidate_observations_pass'])
++        self.assertFalse(result['qualification_authorized'])
++        self.assertFalse(result['target_execution_authorized'])
++
++
++if __name__ == '__main__':
++    unittest.main()

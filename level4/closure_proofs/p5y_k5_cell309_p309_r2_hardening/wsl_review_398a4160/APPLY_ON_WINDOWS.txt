@@ -1,0 +1,33 @@
+Candidate review and prepared fixes (not route acceptance)
+
+Candidate: 398a416024bf47c829826d4dc3242503a355867b on the Windows local branch
+codex/p309-wsl-host-controls-20261015. The reviewer reconstructed source from
+complete editor records; canonical Git object verification is still required.
+The original evidence and the original 18/8 test outcomes remain historical.
+
+In the existing Windows local chat:
+1. Preserve the candidate and its records. Publish the existing candidate branch
+   to GitHub so canonical-source review can be completed. Do not force-push.
+2. Fetch the updated codex/p309-host-continuation-20261015 into a separate review
+   checkout. Inspect REVIEW.json and candidate-fix.patch from this directory.
+3. Run verify_review_source.py with the candidate checkout as its argument, using
+   the private Python if available. It reads exact Git blobs, independent of
+   Windows CRLF conversion. If any binding differs, stop patch application and
+   return the actual Git blob digests; never weaken the check.
+4. Preserve a clean worktree, then create a separate repair branch from 398a4160.
+   Run git apply --check with the full path to candidate-fix.patch. Apply only if
+   both source verification and patch checking pass.
+5. In wsl_host_controls, run the original Python suite and test_review_regressions
+   with private CPython 3.11.15. Run test_windows_sampler.ps1 in Windows; the patch
+   adds three pure policy-fingerprint cases to the original eight. These tests
+   extract pure functions only and never start sampling or a project evaluator.
+6. Record all actual results and input hashes additively. The Cloud reviewer ran
+   three Python regression cases on Python 3.12.14, with two failures before the
+   fix and zero afterward. PowerShell and exact-3.11.15 fix validation remain
+   pending; do not describe them as completed until they actually run locally.
+
+The fixes bound monitor samples to 105 seconds and bind policy fingerprints to
+the emitted observations. They do not implement the remaining bridge, lifetime
+accounting, attribution, persistence or enforcement mechanisms. All formal
+admission and execution flags stay BLOCKED/false. No drill, freeze, grant,
+qualification, target evaluation, or Windows policy change is part of this work.

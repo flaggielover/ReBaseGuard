@@ -1,0 +1,71 @@
+{
+  "schema": "P309_WSL_CODE_REVIEW/1",
+  "utc": "2026-10-15T11:17:09.268044+00:00",
+  "reported_candidate_commit": "398a416024bf47c829826d4dc3242503a355867b",
+  "source_provenance": {
+    "method": "Reconstructed complete, untruncated add/update records from the Windows local chat",
+    "thread_id": "01a13ee8-b1d5-76a1-96e7-84d3c72c1459",
+    "canonical_git_objects_verified": false,
+    "reason": "Candidate is local-only; remote branch was absent at this check",
+    "application_condition": "Match the supplied expected source hashes against git blobs at 398a4160 before applying the patch"
+  },
+  "findings": [
+    {
+      "id": "R1",
+      "priority": "major",
+      "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/host_controls.py",
+      "line": 72,
+      "issue": "A monitor sample longer than 105 seconds can pass all candidate observations",
+      "evidence": "300-second synthetic monitor sample returned candidate_observations_pass=true and failed_or_unknown=[]",
+      "impact": "Diagnostic false positive for the retained monitor gap rule; formal admission remains BLOCKED",
+      "fix": "Apply the existing sample_s + monitor_gap_tolerance_s bound within monitor samples as well as between samples"
+    },
+    {
+      "id": "R2",
+      "priority": "minor",
+      "file": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/collect_host_controls.ps1",
+      "line": 147,
+      "issue": "Policy fingerprint re-queries PowerFacts instead of hashing the emitted power observation",
+      "evidence": "PowerFacts is called for the emitted policy at line 87 and again inside the hash at line 147",
+      "impact": "If power settings change between reads, the report fields and policy digest describe different observations",
+      "fix": "Calculate the fingerprint from the emitted power fields, sorted update values and emitted task records"
+    }
+  ],
+  "validation": {
+    "coordinator_python": "3.12.14",
+    "original_regression_tests": {
+      "run": 3,
+      "failures": 2,
+      "errors": 0
+    },
+    "fixed_regression_tests": {
+      "run": 3,
+      "failures": 0,
+      "errors": 0
+    },
+    "powershell_fix_execution": "NOT_RUN: no PowerShell runtime in this Cloud environment",
+    "private_python_3_11_15_fix_execution": "NOT_RUN: private interpreter is on the Windows/WSL host",
+    "new_powershell_synthetic_cases": 3,
+    "patch_applied_on_windows": false,
+    "fixed_original_behavior_tests": {
+      "run": 16,
+      "failures": 0,
+      "errors": 0
+    },
+    "source_tests_not_run_in_coordinator": [
+      "test_thresholds_match_untouched_r2",
+      "test_protected_sources_unchanged"
+    ],
+    "patch_check": "PASS on a scratch repository with reconstructed original sources",
+    "patch_apply_roundtrip_files_verified": 4
+  },
+  "known_route_gaps_remain": [
+    "Authenticated bridge and replay protection",
+    "Protected and short-lived process visibility",
+    "Host/guest workload attribution",
+    "Persistent baseline and continuous enforcement",
+    "AWS/WSL route acceptance and actual-host review"
+  ],
+  "formal_admission": "BLOCKED",
+  "new_target_evaluations": 0
+}
