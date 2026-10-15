@@ -396,10 +396,13 @@ MUTANTS = [('M01',
   [('        if v is not None and (not isinstance(v, int) or isinstance(v, bool) or v < 0):',
     '        if v is not None and (not isinstance(v, int) or v < 0):')]),
  ('Q01',
-  'negative scan not recursive (a rejection in a review subdirectory ignored)',
+  'negative scan not recursive (a rejection in a review subdirectory ignored); on the combined source the '
+  'history-wide veto scan is made non-recursive too, since it would otherwise enforce the same property',
   [('every = _review_paths(_git(repo_root, "ls-tree", "-r", "-z", "--name-only", "HEAD", "--", '
     'ACCEPTANCE_REVIEW_DIR))',
-    'every = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))')]),
+    'every = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))'),
+   ('        listing = _git(repo_root, "ls-tree", "-r", "-z", c, "--", ACCEPTANCE_REVIEW_DIR)',
+    '        listing = _git(repo_root, "ls-tree", "-z", c, f"{ACCEPTANCE_REVIEW_DIR}/")')]),
  ('Q02',
   'accepting set recursive (reviewer scratch can accept)',
   [('tree = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))',
@@ -410,8 +413,11 @@ MUTANTS = [('M01',
   [('_NEGATIVE = re.compile(r"reject|withdraw|not[ _-]?accepted|revoke", re.I)',
     '_NEGATIVE = re.compile(r"REJECT|WITHDRAW|NOT[ _-]?ACCEPTED|REVOKE")')]),
  ('Q04',
-  'a second (conflicting) verdict line tolerated',
-  [('and verdicts == [ACCEPTANCE_VERDICT_LINE]:', 'and ACCEPTANCE_VERDICT_LINE in verdicts:')]),
+  'a second (conflicting) verdict line tolerated; on the combined source the veto clause for other verdict-like '
+  'lines is removed too, since it would otherwise enforce the same property',
+  [('and verdicts == [ACCEPTANCE_VERDICT_LINE]:', 'and ACCEPTANCE_VERDICT_LINE in verdicts:'),
+   ('               or (_VERDICT.match(ln) and ln != ACCEPTANCE_VERDICT_LINE) for ln in lines)',
+    '               for ln in lines)')]),
  ('Q05',
   'accepting file suffix not required',
   [('(name.startswith(ACCEPTANCE_REVIEW_PREFIX) and name.endswith(".md"))',
@@ -518,8 +524,11 @@ MUTANTS = [('M01',
   [('    for path in every:\n',
     '    for path in (p for p in every if p.isascii() and "\\t" not in p and "\\n" not in p):\n')]),
  ('R5SYNC02',
-  'Combined R5 repair: unavailable recursive listing cannot be replaced by an independent accepting read',
-  [('    if tree is None or every is None:\n'
+  'Combined R5 repair: unavailable recursive listing cannot be replaced by an independent accepting read; '
+  'on the combined source unavailable review history is ignored too, since it would otherwise refuse the same way',
+  [('    if history is None:\n        return [], ["UNAVAILABLE: review history unreadable or not UTF-8"]\n',
+    '    if history is None:\n        history = []\n'),
+   ('    if tree is None or every is None:\n'
     '        return [], ["UNAVAILABLE: acceptance review listing unreadable or malformed"]\n',
     '    if tree is None:\n'
     '        return [], ["UNAVAILABLE: acceptance review listing unreadable or malformed"]\n'
