@@ -1,0 +1,340 @@
+{
+  "schema": "P309_ISOLATION_DESIGN_LOCAL_REVIEW/1",
+  "reviewed_source_branch": "codex/p309-wsl-isolation-design-20261015",
+  "reviewed_source_commit": "c2d477e984e10ce9bafca82b793f8de9974e656c",
+  "evidence_base_commit": "de4a00fb0cd75eed935895cebe2f2d6098c8374f",
+  "publication_branch": "codex/p309-wsl-isolation-design-review-20261015",
+  "scope": "SOURCE_AND_DESIGN_REVIEW_ONLY",
+  "disposition": "CHANGES_REQUIRED",
+  "disposition_reason": "The architecture is a scoped proposal and accurately preserves most unknowns. Two contract ambiguities need resolution before implementing the affected D2 transport/broker interfaces. They are design findings, not demonstrated host vulnerabilities. All existing I1-I7 deployment blockers remain open.",
+  "formal_admission": "BLOCKED",
+  "route_accepted": false,
+  "host_accepted": false,
+  "deployment_authorized": false,
+  "installation_consent": false,
+  "pre_freeze_review": false,
+  "execution_authorized": false,
+  "qualification_authorized": false,
+  "target_execution_authorized": false,
+  "freeze_or_grants_issued": false,
+  "tests_run": 0,
+  "new_host_evidence_queries": 0,
+  "host_configuration_changes": 0,
+  "design_files_changed": false,
+  "severity_definition": "MEDIUM means a concrete design contract ambiguity to correct before the affected implementation is pinned. It does not mean an observed exploit or deployed vulnerability. Existing acknowledged capability blockers are carried forward separately, not promoted to new findings or marked resolved.",
+  "findings": [
+    {
+      "id": "DR-01",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "kind": "ENDPOINT_ROLE_AND_AUTHENTICATION_CONTRACT_AMBIGUITY",
+      "title": "Separate the relay-to-monitor ingress from the root broker endpoint",
+      "references": [
+        {
+          "file": "DESIGN.txt",
+          "lines": [
+            46,
+            50
+          ],
+          "paragraph": "2. Proposed roles and names: Guest monitor socket/control unit"
+        },
+        {
+          "file": "DESIGN.txt",
+          "lines": [
+            77,
+            83
+          ],
+          "paragraph": "3. Windows-to-guest relay and end-to-end binding"
+        },
+        {
+          "file": "DESIGN.txt",
+          "lines": [
+            130,
+            136
+          ],
+          "paragraph": "5. Privileged broker and kernel peer credentials"
+        },
+        {
+          "file": "ACCESS_AND_RECOVERY.txt",
+          "lines": [
+            25,
+            34
+          ],
+          "paragraph": "Linux access matrix"
+        }
+      ],
+      "evidence": "DESIGN calls /run/rebaseguard-p309/control.sock the guest monitor socket and names distinct monitor and control services. The access matrix makes that same socket root-owned/server and allows p309-monitor as client. The operator relay is said to enter through a fixed distribution/user/executable tuple, but no concrete tuple or separate monitor ingress/stdio ownership is assigned.",
+      "impact": "A D2 implementation would have to invent whether the relay talks to the monitor or directly to the privileged broker, which process is the server, and which peer is authenticated on each hop. The current texts permit incompatible readings; a single end-to-end authorization claim cannot be reviewed against them. This does not establish that the runner can presently access either endpoint.",
+      "concrete_correction": "Give each channel an explicit server process/principal, client principal, direction and fixed message set. Reserve control.sock unambiguously for the root broker with monitor-only access, and separately specify the protected relay-to-monitor ingress or inherited-stdio protocol and its launch tuple. Specify socket parent ownership, inherited descriptor handling, peer validation and failure behavior. Do not give the relay a generic root broker or arbitrary-command interface. Update the name list and matrix consistently, leaving installation and exact permission verification deferred.",
+      "later_acceptance_cases": [
+        "Source-level contract maps every hop Windows relay -> guest monitor -> privileged broker, including who owns each endpoint and how peer identity is obtained.",
+        "Separately authorized later checks reject runner and wrong-peer ingress, substituted endpoint/launch tuple and inherited control descriptors; no host check was performed for this review."
+      ],
+      "related_existing_blockers": [
+        "I1",
+        "I3",
+        "I5"
+      ],
+      "blocks": "Affected D2 transport/broker contract implementation; deployment already blocked independently",
+      "confidence": "HIGH_IN_DOCUMENT_AMBIGUITY; HOST_EXPLOITABILITY_UNTESTED"
+    },
+    {
+      "id": "DR-02",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "kind": "BROKER_START_AUTHORITY_AND_LIFECYCLE_CONTRACT_INCOMPLETE",
+      "title": "Reconcile fixed-test start authority and specify terminal stop state per execution generation",
+      "references": [
+        {
+          "file": "DESIGN.txt",
+          "lines": [
+            130,
+            141
+          ],
+          "paragraph": "5. Broker operations and fixed idle unit"
+        },
+        {
+          "file": "ACCESS_AND_RECOVERY.txt",
+          "lines": [
+            28,
+            34
+          ],
+          "paragraph": "Linux access matrix: monitor stop/status only"
+        },
+        {
+          "file": "DESIGN.txt",
+          "lines": [
+            150,
+            174
+          ],
+          "paragraph": "5-6. Stop acknowledgements and restart refusal"
+        },
+        {
+          "file": "ACCESS_AND_RECOVERY.txt",
+          "lines": [
+            66,
+            75
+          ],
+          "paragraph": "Rollback revokes start and stops owned units"
+        }
+      ],
+      "evidence": "The broker operation list includes later start-fixed-idle-test, while the matrix grants monitor only stop/status on the execution hierarchy. No other authorized start principal is assigned. The text requires restart not to reopen an attempt and late work not to continue, but does not define the broker's generation/state transitions, duplicate start behavior or how a queued control request is bound to the owned unit instance rather than only its fixed name.",
+      "impact": "A fixed command and unit name remove arbitrary execution inputs but do not by themselves specify authority to start or prevent a delayed/duplicate request from affecting a subsequent idle-test generation. Implementations could disagree about reopening after stop or recovery. This is an unresolved protocol contract, not evidence that the unimplemented broker currently restarts work.",
+      "concrete_correction": "State whether D2 excludes start entirely or which separately authorized identity/state permits the fixed idle-test start; make the matrix agree. Specify broker-owned generation identity and a fail-closed state machine covering unarmed, running, stop-requested, cleanup-pending, stopped and recovery-unknown states. Define duplicate/concurrent start/stop, queued old-generation messages, reboot, lost acknowledgement and cleanup completion. Unknown/terminal states must not reopen on reconnect. Bind status/stop internally to the owned generation without accepting caller PID/unit/command/property maps; any later fresh development generation needs an explicitly reviewed rearm rule and is never formal P309 retry authority.",
+      "later_acceptance_cases": [
+        "Source-level operation/identity/state matrix has no disagreement between DESIGN and ACCESS_AND_RECOVERY.",
+        "Separately authorized later synthetic cases cover duplicate start, delayed old-generation stop, stop during start, lost cleanup acknowledgement and broker/monitor restart; stopped or unknown generations remain terminal."
+      ],
+      "related_existing_blockers": [
+        "I3",
+        "I5",
+        "I6"
+      ],
+      "blocks": "Affected D2 broker policy contract implementation; no official launcher integration authorized",
+      "confidence": "HIGH_IN_CONTRACT_OMISSION; NO_RUNTIME_TEST"
+    }
+  ],
+  "review_question_assessments": [
+    {
+      "question": 1,
+      "assessment": "ACCURATELY_SCOPED_TO_RECORDED_EVIDENCE",
+      "references": [
+        "DESIGN.txt:7-27",
+        "admission_review_20261015/FEASIBILITY_LOCAL_REPORT.json questions 1-8"
+      ],
+      "reason": "Registry ACL ownership versus per-user registration, non-admin effective token versus potential elevation, denied policy enumeration versus absent privilege, metadata providers versus coverage, and empty unit-file output with exit1 are all distinguished. F: absence and clock synchronization are historical observations from the pinned report, not fresh facts in this review. No new backup/clock/capacity query was made."
+    },
+    {
+      "question": 2,
+      "assessment": "PLAUSIBLE_PROPOSED_BOUNDARY_NOT_ESTABLISHED",
+      "references": [
+        "DESIGN.txt:58-83",
+        "DESIGN.txt:120-148",
+        "PLAN.json:I1,I4,I5"
+      ],
+      "reason": "Separate distribution avoids modifying current Ubuntu; disabled interop/automount is explicitly insufficient proof. The design calls for alternate-path/inherited-descriptor denial cases and excludes trusted owner/admin/root/kernel from the threat boundary. It does not prove absence of runner paths to Windows token, root, service control or protected files. Preserve I1/I4/I5 and DR-01/DR-02 rather than asserting a successful boundary."
+    },
+    {
+      "question": 3,
+      "assessment": "CHANGES_REQUIRED_FOR_CHANNEL_ROLES",
+      "references": [
+        "DESIGN.txt:77-107",
+        "ACCESS_AND_RECOVERY.txt:5-34",
+        "DR-01"
+      ],
+      "reason": "Observer does not assume ownership of operator WSL registration; relay is outside the worker, arbitrary signing is rejected and public pins are administratively enrolled. Those are coherent intended roles, but the guest ingress/broker endpoint mapping remains ambiguous. Host bootstrap, guest/runtime binding and actual authenticated relay are unimplemented under I3."
+    },
+    {
+      "question": 4,
+      "assessment": "SEMANTIC_RESTRICTIONS_PRESENT_CONTRACT_INCOMPLETE",
+      "references": [
+        "ACCESS_AND_RECOVERY.txt:5-41",
+        "DESIGN.txt:88-107",
+        "DESIGN.txt:120-148",
+        "DR-01",
+        "DR-02"
+      ],
+      "reason": "Matrix constrains key/state/code writes, pipe-instance creation and remote clients; broker rejects arbitrary UID/PID/unit/command/environment/properties and forbids generic sudo/polkit. Trusted runtime parents and monitor startup environment are addressed. Exact ACL masks, endpoint roles and start lifecycle still need specification and later validation; none is accepted as deployed."
+    },
+    {
+      "question": 5,
+      "assessment": "UNRESOLVED_CAPABILITIES_HONESTLY_RETAINED",
+      "references": [
+        "DESIGN.txt:109-118",
+        "DESIGN.txt:144-156",
+        "DESIGN.txt:165-182",
+        "PLAN.json:I2,I5,I6"
+      ],
+      "reason": "No LocalSystem/debug/driver or complete-coverage fallback is authorized; attribution and resource values remain unknown, quota is not reservation, independent anchor/persistence and suspend semantics are unimplemented. C: space discussion is explicitly historical and requires later budgeting; no new capacity observation is claimed."
+    },
+    {
+      "question": 6,
+      "assessment": "FIXTURE_AND_OFFICIAL_INTEGRATION_CORRECTLY_DISTINGUISHED",
+      "references": [
+        "DESIGN.txt:150-163",
+        "wsl_host_controls/synthetic_owned_stop.py:38,158-174",
+        "p5y_k5_cell309_p309_r2/code/p309_launch.py:128-135"
+      ],
+      "reason": "Static source inspection confirms existing fixture signals a fixed process group via os.killpg, while native launcher builds systemd-run arguments. Proposed whole-cgroup populated=0/cleanup proof is stronger and unimplemented; official adapter compatibility is explicitly not assumed. No protected native files, grants, freezes, thresholds or ledgers were changed."
+    },
+    {
+      "question": 7,
+      "assessment": "BOUNDED_NONDESTRUCTIVE_INTENT_WITH_OPEN_RECOVERY_CONTRACT",
+      "references": [
+        "ACCESS_AND_RECOVERY.txt:43-82",
+        "DESIGN.txt:165-193",
+        "PLAN.json:I6,I7"
+      ],
+      "reason": "Later installer must reject collisions, preserve current Ubuntu/data/evidence/refs, retain failure evidence and avoid automatic unregister/VHDX deletion. Historical backup digest is not fresh recoverability. A concrete rollback still needs ordered actions keeping the broker/control path available until owned-work cleanup is acknowledged, or a separately specified administrative fallback. This is a later I6 installation-artifact condition, not permission for actions now."
+    }
+  ],
+  "assumptions_and_limits": [
+    "This is the requested local source/design review, not organizational or formal route/host/pre-freeze approval.",
+    "No claim is made that interop denial, Linux/Windows isolation, virtual-account privileges, named-pipe authorization, kernel event completeness, cgroup containment, recovery or reserved capacity works on this host.",
+    "Selected Windows operator/distribution owner, administrator/SYSTEM and guest root/kernel remain trusted as explicitly stated by the candidate. Any widened threat model requires a new design review.",
+    "Historical feasibility and synthetic results remain attributed to their original commits/runs; no test count is claimed for this review.",
+    "F: UNAVAILABLE is carried forward from the pinned evidence; even drive presence was not queried this turn.",
+    "The new candidate contains design documents only. No production implementation, installer, key, endpoint or service is reviewed as implemented.",
+    "Existing development checkout differs from accepted native r2 reference501f48cb; protected-file matches do not establish whole-tree equivalence.",
+    "Record creation, Git fetch/worktree/commit/push and hashing of existing repository/evidence files are the only local writes/reads beyond static review. No Windows policy/identity or WSL process/service state was queried."
+  ],
+  "required_next_design_corrections": [
+    "Resolve DR-01 endpoint/principal/channel mapping and DR-02 start/state/generation contract in a new pinned design revision; do not overwrite this review or mark I1-I7 resolved merely by editing text.",
+    "Keep all I1-I7 open until their separately scoped design, evidence and governance requirements are met. Pure library work cannot promote proposed semantics to accepted native requirements.",
+    "Any later verification cases in this review are acceptance criteria only; they were not executed or authorized for this turn."
+  ],
+  "recorded_utc": "2026-10-15T13:12:55.8299492Z",
+  "source_binding_verification": {
+    "canonical_current_blobs": 79,
+    "declared_source_evidence_count": 74,
+    "historical_manifest_bindings_checked": 173,
+    "protected_sources_checked": 20,
+    "result": "MATCH",
+    "source_diff": [
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_design_20261015/ACCESS_AND_RECOVERY.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_design_20261015/DESIGN.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_design_20261015/PLAN.json",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_design_20261015/REVIEW_REQUEST.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_design_20261015/SOURCE_BINDINGS.json"
+    ],
+    "method": "SHA256 of exact git cat-file blob bytes; no text pipeline used for canonical bytes"
+  },
+  "unresolved_original_blockers": [
+    {
+      "id": "I1",
+      "topic": "Runner Windows/root boundary",
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ]
+    },
+    {
+      "id": "I2",
+      "topic": "Collector rights, completeness and attribution",
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        1,
+        5
+      ]
+    },
+    {
+      "id": "I3",
+      "topic": "Enrollment and ACL/API descriptors",
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        1,
+        6
+      ]
+    },
+    {
+      "id": "I4",
+      "topic": "Fresh image/runtime provenance",
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        2
+      ]
+    },
+    {
+      "id": "I5",
+      "topic": "Guest policy/unit limits and controlled launcher",
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "I6",
+      "topic": "Protected persistence and stop/recovery",
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "I7",
+      "topic": "Route, host and formal authority",
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ]
+    }
+  ],
+  "preservation": {
+    "previous_evidence_files_checked": 221,
+    "previous_evidence_unchanged": true,
+    "previous_branch_refs_checked": 8,
+    "previous_branch_refs_unchanged": true,
+    "backup_not_accessed": true,
+    "original_design_unchanged": true
+  }
+}
