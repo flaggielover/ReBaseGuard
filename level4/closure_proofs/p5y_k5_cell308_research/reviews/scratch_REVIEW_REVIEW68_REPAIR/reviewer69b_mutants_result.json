@@ -1,0 +1,58 @@
+{
+ "source_sha256": "bdca4aa07c40ffd22b62dc820c9ce79b505e63a3f65bd542e3c74a8d612cca23",
+ "baseline_ran": 226,
+ "baseline_pass": true,
+ "expected_test_count": 226,
+ "registered": [],
+ "mutants": [
+  {
+   "id": "RB6",
+   "property": "the batch-check call of the ancestor check runs with the caller's environment (env=_git_env() dropped)",
+   "witnesses": [
+    "test_review65_caller_git_environment_is_ignored",
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "input=(\"\\n\".join(names) + \"\\n\").encode(), capture_output=True, timeout=60, env=_git_env())",
+     "new": "input=(\"\\n\".join(names) + \"\\n\").encode(), capture_output=True, timeout=60)"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ],
+    "without_caller_git_dir": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    }
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": [],
+    "without_caller_git_dir": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    }
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 226,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "e370e56936cf397e429eb17c1819c0ba98a332768a773769e995a7bdb0d659ab"
+  }
+ ],
+ "splits": []
+}

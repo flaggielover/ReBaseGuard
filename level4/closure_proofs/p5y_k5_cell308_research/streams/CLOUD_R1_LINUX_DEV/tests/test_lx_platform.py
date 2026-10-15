@@ -1675,6 +1675,54 @@ class TestAttestationPreflight(unittest.TestCase):
                 self.assertIsNone(rec)                                                    # RV59 RV60
                 self.assertTrue(any("UNAVAILABLE" in w for w in why), why)
 
+    def test_review69_ancestor_entries_are_read_by_mode(self):
+        """Review 69 S1 / S2: every ancestor of the review directory, in every commit of HEAD's history, must be a
+        directory entry: a symlink at a middle ancestor, an ancestor symlink reachable only through an `-s ours` merge,
+        a gitlink whose commit is absent (a submodule) or present, and a gitlink-mode entry naming a tree are each
+        unavailable evidence; so is an ancestor symlink checked under a caller GIT_DIR (RB6, equivalent since S4)."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        rd = L.ACCEPTANCE_REVIEW_DIR
+        top, mid = rd.split("/")[0], "/".join(rd.split("/")[:2])
+        veto = f"{sha} REJECTED\n".encode()
+        for case in ("middle_symlink", "side_branch_symlink", "gitlink_absent", "gitlink_present", "gitlink_mode_tree",
+                     "caller_git_dir"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as d:
+                repo, empty = Path(d, "r"), Path(d, "empty")
+                repo.mkdir(), empty.mkdir()
+                git_init(repo)
+                git_init(empty)
+                git_commit(repo, {"att/HOST.json": att})
+                main = self._out(repo, "rev-parse", "--abbrev-ref", "HEAD")
+                if case in ("middle_symlink", "side_branch_symlink", "caller_git_dir"):
+                    link = mid if case == "middle_symlink" else top
+                    if case == "side_branch_symlink":
+                        fixture_git(repo, "checkout", "-q", "-b", "side")
+                    git_commit(repo, {f"alt/{rd[len(link) + 1:]}/veto.md": veto})
+                    Path(repo, link).parent.mkdir(parents=True, exist_ok=True)
+                    os.symlink("../" * link.count("/") + "alt", Path(repo, link))
+                    git_commit(repo, {})
+                    if case == "side_branch_symlink":
+                        fixture_git(repo, "checkout", "-q", main)
+                        self._out(repo, "merge", "-q", "-s", "ours", "--no-edit", "side")
+                    else:
+                        fixture_git(repo, "rm", "-q", link)
+                        fixture_git(repo, "rm", "-q", "-r", "alt")
+                        git_commit(repo, {})
+                else:
+                    oid = {"gitlink_absent": "1" * 40, "gitlink_present": self._out(repo, "rev-parse", "HEAD"),
+                           "gitlink_mode_tree": self._out(repo, "rev-parse", "HEAD:att")}[case]
+                    fixture_git(repo, "update-index", "--add", "--cacheinfo", f"160000,{oid},{top}")
+                    self._out(repo, "commit", "-q", "-m", "gitlink")                        # no `add -A`
+                    fixture_git(repo, "rm", "-q", "--cached", top)
+                    self._out(repo, "commit", "-q", "-m", "rm")
+                git_commit(repo, {f"{ACC}1.md": self.accept(sha)})
+                env = {"GIT_DIR": str(empty / ".git")} if case == "caller_git_dir" else {}
+                with mock.patch.dict(os.environ, env):
+                    rec, why = self._valid_in(repo, att)
+                self.assertIsNone(rec)                                                    # RV61 RV62 RV63
+                self.assertTrue(any("UNAVAILABLE" in w for w in why), why)
+
     def test_review68_strict_fsck_and_forced_git_environment(self):
         """Review 68 P4: (a) `--strict` itself is required: a WARN-class message other than fullPathname (a
         zero-padded tree mode) refuses as unavailable evidence; (b) the forced git environment, including
@@ -1846,7 +1894,8 @@ class TestAttestationPreflight(unittest.TestCase):
         """Review 64 K7: an accepting entry must be a regular file (mode 100644 / 100755); a symlink whose target
         text holds the two lines is not a review. Review 68 P1: once a symlink was committed under the review
         directory, the history stays unavailable evidence after it is replaced; a regular file in a fresh history is
-        accepted (control)."""
+        accepted (control). Review 69 S3: the P1 history scan now refuses the HEAD symlink before the K7 mode check,
+        which is unreachable defence in depth; this test witnesses the P1 symlink refusal (RV26, RV59)."""
         att = self.attestation()
         sha = hashlib.sha256(att).hexdigest()
         with tempfile.TemporaryDirectory() as d:

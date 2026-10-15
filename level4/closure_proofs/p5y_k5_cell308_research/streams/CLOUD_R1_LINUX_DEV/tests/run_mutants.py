@@ -13,7 +13,8 @@ weaken the history-completeness guard restored after review 64 (shallow clones h
 carry review 65's mutants RX1-RX6 and weaken its L1, L3, L6 and L7 repairs; RV43-RV48 weaken review 66's M1-M4
 repairs (RV39 is narrowed to the key refusal; the lazy-fetch block is RV45); RV49-RV51 weaken review 67's N1, N2 and
 N4 repairs, and RV52-RV54 carry its surviving mutants RZ1, RZ4 and RZ5 (N5); RV55-RV58 carry review 68's mutants
-RA1-RA4 and RV59-RV60 weaken its P1 repair (RV26 then also tolerates symlinks in the history scan).
+RA1-RA4 and RV59-RV60 weaken its P1 repair (RV26 then also tolerates symlinks in the history scan); RV61-RV63 carry
+review 69's RB1, RB2 and RB4 against the mode-reading ancestor check (S1, S2).
 Every complete raw report, mutation anchor, and before/after input hash is retained.
 No scientific evaluator is imported or executed. Explicit output paths receive the evidence.
 
@@ -526,7 +527,9 @@ MUTANTS = [('M01',
     '    nspid_fields = [ln.split()[1:] for ln in st.splitlines() if ln.startswith("NSpid:")]')]),
  ('CDEX15',
   'Codex F07: malformed attestation/reference paths escape as subprocess argument exceptions',
-  [('    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):\n        return None\n',
+  [('                           stdin=subprocess.DEVNULL, env=_git_env())\n'
+    '    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):\n        return None\n',
+    '                           stdin=subprocess.DEVNULL, env=_git_env())\n'
     '    except (OSError, subprocess.SubprocessError):\n        return None\n')]),
  ('CDEX16',
   'Combined: unknown activity plus disabled state is not positive inactive evidence',
@@ -657,8 +660,9 @@ MUTANTS = [('M01',
   'Review 64 K4: a full sha inside a longer hex run no longer names the attestation',
   [('    return sha in line.lower() or any(', '    return any(')]),
  ('RV26',
-  'Review 64 K7: a symlink counts as an accepting review file (on the combined source the review-68 history scan '
-  'tolerates symlinks too, since it would otherwise refuse the same symlink)',
+  'Review 64 K7 / review 68 P1: a symlink under the review directory counts, as an accepting review at HEAD and in '
+  'the history scan (review 69 S3: the K7 HEAD mode check alone is unreachable since P1, so this witnesses the P1 '
+  'symlink refusal, like RV59)',
   [('        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):\n            continue',
     '        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob"), ("120000", "blob")):\n'
     '            continue'),
@@ -796,9 +800,22 @@ MUTANTS = [('M01',
     '            if parts[1] != b"blob":\n                continue\n')]),
  ('RV60',
   'Review 68 P1: the review directory or an ancestor may be a symlink (or other non-directory) in some commit',
-  [('    if not _review_dir_is_a_directory(repo_root):', '    if False:')])]
+  [('    if not _review_dir_is_a_directory(repo_root):', '    if False:')]),
+ ('RV61',
+  'Review 69 S2 (RB1): intermediate ancestors of the review directory are not checked',
+  [('            if mode != b"40000":\n                return False\n            level.add(oid)\n',
+    '            if mode != b"40000":\n                if depth in (0, len(parts) - 1):\n                    return False\n'
+    '                continue\n            level.add(oid)\n')]),
+ ('RV62',
+  'Review 69 S2 (RB2): the ancestor check walks only the first-parent chain',
+  [('    commits = _git(repo_root, "rev-list", "HEAD")', '    commits = _git(repo_root, "rev-list", "--first-parent", "HEAD")')]),
+ ('RV63',
+  'Review 69 S1 (RB4): a gitlink at the review directory or an ancestor is read as a directory (not descended)',
+  [('            if mode != b"40000":\n                return False\n            level.add(oid)\n',
+    '            if mode == b"160000":\n                continue\n'
+    '            if mode != b"40000":\n                return False\n            level.add(oid)\n')])]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 60}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 63}
 
 # A kill must include at least one named direct witness for the weakened property.
 # These method names are unique across the full discovered suite. They are evidence
@@ -907,6 +924,7 @@ for _method, _ids in {
     "test_review67_global_attributes_file_is_not_read": "RV51",
     "test_review68_non_directory_review_paths_refuse": "RV59 RV60",
     "test_review68_strict_fsck_and_forced_git_environment": "RV56 RV57",
+    "test_review69_ancestor_entries_are_read_by_mode": "RV61 RV62 RV63",
     "test_review64_dangling_top_entry_shadows_lower_mask": "RV19",
     "test_review64_non_utf8_historical_review_path_refuses": "RV20",
     "test_review64_side_branch_acceptance_synced_and_merged_refuses": "RV22",
@@ -1218,7 +1236,7 @@ def main(out: str | None) -> int:
     rows = []
     for mid, what, edits in MUTANTS:
         row = {"id": mid, "origin": ("combined integration" if mid.startswith("R5SYNC") or mid == "CDEX16" else
-                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-68" if mid.startswith("RV") else
+                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-69" if mid.startswith("RV") else
                            "Claude revision 5"),
                "property": what, "intended_property_test_methods": PROPERTY_WITNESSES[mid],
                "edits": [{"old": old, "new": new} for old, new in edits]}

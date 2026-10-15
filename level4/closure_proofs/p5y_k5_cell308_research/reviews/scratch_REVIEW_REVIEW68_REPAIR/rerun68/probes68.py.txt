@@ -1,0 +1,412 @@
+"""Review 68 probes (header and helpers copied from review 67's probes67.py.txt, lines 5-104).
+Synthetic git repositories only; every attestation_valid / _history_complete call passes repo_root=<synthetic repo>.
+usage: python3 -B -I probes68.py.txt <dir_with_lx_platform.py> <tmp_root> <out.json>"""
+import hashlib, json, os, shutil, subprocess, sys, tempfile, traceback, zlib
+from pathlib import Path
+
+BASE, TMP, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+CONTROL = sys.argv[4] if len(sys.argv) > 4 else ""
+sys.path.insert(0, BASE)
+import lx_platform as L  # noqa: E402
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR
+ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+LINE = f"{L.ACCEPTANCE_LINE}{SHA}"
+OK = f"review\n{LINE}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+VETO = f"{SHA} REJECTED\n".encode()
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main", "-c", "core.fsmonitor=false",
+       "-c", "protocol.file.allow=always"]
+results = {"lx_platform_sha256": hashlib.sha256(Path(BASE, "lx_platform.py").read_bytes()).hexdigest(),
+           "isolation": list(L._GIT_ISOLATION), "control": CONTROL,
+           "git_version": subprocess.run(["git", "--version"], capture_output=True, text=True).stdout.strip()}
+
+
+def git(d, *a, inp=None, check=True):
+    r = subprocess.run(["git", "-C", str(d), *CFG, *a], capture_output=True, input=inp)
+    if check and r.returncode:
+        raise RuntimeError(f"git {a}: {r.stderr.decode()[-400:]}")
+    return r.stdout.decode().strip()
+
+
+def init(d):
+    Path(d).mkdir(parents=True, exist_ok=True)
+    git(d, "init", "-q")
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+        git(d, "config", "--local", k, v)
+
+
+def commit(d, files=None, rm=()):
+    for rel, data in (files or {}).items():
+        p = Path(d, rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+    for rel in rm:
+        git(d, "rm", "-q", rel)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", "c")
+    return git(d, "rev-parse", "HEAD")
+
+
+def valid(d, path="att/HOST.json", sha=SHA):
+    try:
+        rec, why = L.attestation_valid({"path": path, "sha256": sha}, repo_root=str(d))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}"}
+
+
+def hist(d):
+    try:
+        return L._history_complete(str(d))
+    except Exception as e:
+        return f"EXC {type(e).__name__}: {e}"
+
+
+def raw(d, *a):
+    r = subprocess.run(["git", "-C", str(d), *L._GIT_ISOLATION, *a], capture_output=True, env=L._git_env())
+    return {"rc": r.returncode, "out": r.stdout.decode(errors="replace")[-600:], "err": r.stderr.decode(errors="replace")[-300:]}
+
+
+def mkcommit(d, tree, parents, msg="c", extra_headers=""):
+    body = f"tree {tree}\n" + "".join(f"parent {p}\n" for p in parents)
+    body += "author t <t@t> 1700000000 +0000\ncommitter t <t@t> 1700000000 +0000\n" + extra_headers + f"\n{msg}\n"
+    return git(d, "hash-object", "-t", "commit", "-w", "--stdin", inp=body.encode())
+
+
+def mktree_literal(d, entries):
+    """entries: list of (mode, name, oid) already sorted by the caller; written with --literally (no checks)."""
+    data = b"".join(m.encode() + b" " + n.encode() + b"\0" + bytes.fromhex(o) for m, n, o in entries)
+    return git(d, "hash-object", "-t", "tree", "-w", "--literally", "--stdin", inp=data)
+
+
+def probe(name):
+    def deco(fn):
+        try:
+            with tempfile.TemporaryDirectory(dir=TMP) as w:
+                results[name] = fn(Path(w))
+        except Exception:
+            results[name] = {"probe_error": traceback.format_exc()[-1500:]}
+        return fn
+    return deco
+
+
+# ---------------------------------------------------------------- 1. repository-configured gpg.program runs in `git log`
+GPG_SIG = ("gpgsig -----BEGIN PGP SIGNATURE-----\n \n iQEzBAABCAAdFiEEabcdefabcdefabcdefabcdefabcdefabcd\n"
+           " -----END PGP SIGNATURE-----\n")
+
+
+# copied from probes67.py.txt lines 105-119
+
+
+def signed_child(d, parent, files):
+    """A commit with `files` on top of `parent` (via the index), carrying a (fake) gpgsig header."""
+    for rel, data in files.items():
+        p = Path(d, rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+    git(d, "add", "-A")
+    tree = git(d, "write-tree")
+    c = mkcommit(d, tree, [parent], extra_headers=GPG_SIG)
+    git(d, "update-ref", "HEAD", c)
+    return c
+
+
+
+
+def wt_read(d, commit_id, rel):
+    """What a checkout of commit_id shows at rel (follows symlinks like a reader would)."""
+    wt = Path(str(d) + "_wt_" + commit_id[:8])
+    git(d, "worktree", "add", "-q", "--detach", str(wt), commit_id)
+    try:
+        p = wt / rel
+        return {"exists": p.exists(), "is_symlink": p.is_symlink(),
+                "text": p.read_text()[:200] if p.exists() and p.is_file() else None}
+    finally:
+        git(d, "worktree", "remove", "--force", str(wt))
+
+
+def fsck(d):
+    a = raw(d, "fsck", "--full", "--strict", "--no-dangling", "--no-progress")
+    return {"rc": a["rc"], "err_tail": a["err"][-200:]}
+
+
+# ---------------------------------------------------------------- A. symlinks: what git's scan reads vs what a checkout shows
+@probe("symlink_review_file_at_head_to_outside_rejection")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {"notes/veto.txt": VETO})
+    Path(d, RD).mkdir(parents=True, exist_ok=True)
+    rel_target = os.path.relpath(Path(d, "notes/veto.txt"), Path(d, RD))
+    os.symlink(rel_target, Path(d, RD, "veto.md"))
+    c = commit(d)
+    commit(d, {f"{ACC}1.md": OK})
+    return {"symlink_target": rel_target, "checkout_at_head": wt_read(d, git(d, "rev-parse", "HEAD"), f"{RD}/veto.md"),
+            "ls_tree_head": git(d, "ls-tree", "HEAD", f"{RD}/veto.md"), "fsck_strict": fsck(d),
+            "history_complete": hist(d), "result": valid(d)}
+
+
+@probe("symlink_review_file_deleted_in_history")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT, "notes/veto.txt": VETO})
+    Path(d, RD).mkdir(parents=True, exist_ok=True)
+    os.symlink(os.path.relpath(Path(d, "notes/veto.txt"), Path(d, RD)), Path(d, RD, "veto.md"))
+    c2 = commit(d)
+    commit(d, rm=[f"{RD}/veto.md", "notes/veto.txt"])
+    commit(d, {f"{ACC}1.md": OK})
+    return {"checkout_c2": wt_read(d, c2, f"{RD}/veto.md"), "fsck_strict": fsck(d), "history_complete": hist(d),
+            "result": valid(d)}
+
+
+@probe("symlinked_review_dir_in_history")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    parent = Path(d, RD).parent
+    commit(d, {f"{Path(RD).parent}/elsewhere/veto.md": VETO})
+    parent.mkdir(parents=True, exist_ok=True)
+    os.symlink("elsewhere", Path(d, RD))
+    c2 = commit(d)
+    commit(d, rm=[RD, f"{Path(RD).parent}/elsewhere/veto.md"])
+    commit(d, {f"{ACC}1.md": OK})
+    return {"ls_tree_c2_review_dir": git(d, "ls-tree", "-r", c2, "--", RD),
+            "checkout_c2": wt_read(d, c2, f"{RD}/veto.md"), "fsck_strict": fsck(d), "history_complete": hist(d),
+            "result": valid(d)}
+
+
+@probe("symlinked_ancestor_dir_in_history")
+def _(w):
+    d = w / "r"; init(d)
+    top = RD.split("/")[0]                       # e.g. level4
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {f"alt/{RD.split('/', 1)[1]}/veto.md": VETO})
+    os.symlink("alt", Path(d, top))
+    c2 = commit(d)
+    commit(d, rm=[top, f"alt/{RD.split('/', 1)[1]}/veto.md"])
+    commit(d, {f"{ACC}1.md": OK})
+    return {"checkout_c2": wt_read(d, c2, f"{RD}/veto.md"), "fsck_strict": fsck(d), "history_complete": hist(d),
+            "result": valid(d)}
+
+
+# ---------------------------------------------------------------- B. strict fsck: INFO-class messages, alternates, keys
+@probe("info_class_bad_filemode_legit")
+def _(w):
+    d = w / "r"; init(d)
+    blob = git(d, "hash-object", "-w", "--stdin", inp=b"old\n")
+    tree = mktree_literal(d, [("100664", "old.txt", blob)])
+    c0 = mkcommit(d, tree, [], msg="old")
+    git(d, "update-ref", "HEAD", c0); git(d, "reset", "-q", "--hard")
+    commit(d, {"att/HOST.json": ATT}); commit(d, {f"{ACC}1.md": OK})
+    return {"fsck_strict": raw(d, "fsck", "--full", "--strict", "--no-dangling", "--no-progress"),
+            "history_complete": hist(d), "result": valid(d)}
+
+
+def n1_source(d):
+    init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    blob = git(d, "hash-object", "-w", "--stdin", inp=VETO)
+    att_tree = git(d, "rev-parse", "HEAD:att")
+    entries = sorted([("40000", "att", att_tree), ("100644", f"{RD}/veto.md", blob)], key=lambda e: e[1] + ("/" if e[0] == "40000" else ""))
+    tree = mktree_literal(d, entries)
+    c2 = mkcommit(d, tree, [c1], msg="veto")
+    c3 = mkcommit(d, git(d, "rev-parse", f"{c1}^{{tree}}"), [c2], msg="rm")
+    git(d, "update-ref", "HEAD", c3); git(d, "reset", "-q", "--hard")
+    commit(d, {f"{ACC}1.md": OK})
+    return c2
+
+
+@probe("n1_in_alternate_shared_clone")
+def _(w):
+    src, dst = w / "src", w / "dst"
+    n1_source(src)
+    git(w, "clone", "-q", "--shared", str(src), str(dst))
+    return {"objects_local": sum(1 for _ in Path(dst, ".git/objects").rglob("*") if _.is_file()),
+            "fsck_strict_dst": fsck(dst), "history_complete": hist(dst), "result": valid(dst)}
+
+
+@probe("n1_with_fsck_key_downgrade")
+def _(w):
+    out = {}
+    for scope in ("local", "worktree", "include"):
+        d = w / scope
+        n1_source(d)
+        if scope == "local":
+            git(d, "config", "--local", "fsck.fullPathname", "ignore")
+        elif scope == "worktree":
+            git(d, "config", "--local", "extensions.worktreeConfig", "true")
+            git(d, "config", "--worktree", "fsck.fullPathname", "ignore")
+        else:
+            Path(d, ".git/x.cfg").write_text("[FSCK]\n\tFullPathName = ignore\n")
+            git(d, "config", "--local", "include.path", "x.cfg")
+        out[scope] = {"plain_fsck_strict_rc": subprocess.run(["git", "-C", str(d), "fsck", "--strict"], capture_output=True).returncode,
+                      "history_complete": hist(d), "result": valid(d)}
+    return out
+
+
+# ---------------------------------------------------------------- C. repository-configured commands: a sweep
+@probe("configured_command_sweep")
+def _(w):
+    marker = w / "m"
+    script = w / "cmd.sh"
+    script.write_text(f"#!/bin/sh\necho \"$0 $*\" >> '{marker}'\ncat >/dev/null 2>&1\nexit 0\n"); script.chmod(0o755)
+    hooks = w / "hooks"; hooks.mkdir()
+    for h in ("applypatch-msg", "pre-applypatch", "post-applypatch", "pre-commit", "pre-merge-commit", "prepare-commit-msg",
+              "commit-msg", "post-commit", "pre-rebase", "post-checkout", "post-merge", "pre-push", "pre-receive", "update",
+              "proc-receive", "post-receive", "post-update", "reference-transaction", "push-to-checkout", "pre-auto-gc",
+              "post-rewrite", "sendemail-validate", "fsmonitor-watchman", "p4-changelist", "p4-prepare-changelist",
+              "p4-post-changelist", "p4-pre-submit", "post-index-change"):
+        os.symlink(script, hooks / h)
+    out = {}
+    for case in ("valid", "rejected_order_rule"):
+        d = w / case; init(d)
+        if case == "valid":
+            c0 = commit(d, {"README": b"x\n", ".gitattributes": b"* diff=x filter=x merge=x\n"})
+            signed_child(d, c0, {"att/HOST.json": ATT})
+            commit(d, {f"{ACC}1.md": OK})
+        else:                                     # quote before blob: the order rule must refuse
+            commit(d, {"notes/quote.md": f"{LINE}\n".encode(), ".gitattributes": b"* diff=x filter=x merge=x\n"})
+            c1 = git(d, "rev-parse", "HEAD")
+            signed_child(d, c1, {"att/HOST.json": ATT})
+            commit(d, {f"{ACC}1.md": OK})
+        before = valid(d)
+        s = str(script)
+        for k, v in (("core.pager", s), ("pager.log", s), ("pager.config", s), ("pager.fsck", s), ("core.editor", s),
+                     ("sequence.editor", s), ("core.sshCommand", s), ("core.askPass", s), ("credential.helper", s),
+                     ("gpg.program", s), ("gpg.openpgp.program", s), ("gpg.ssh.program", s), ("gpg.x509.program", s),
+                     ("gpg.ssh.defaultKeyCommand", s), ("log.showSignature", "true"), ("diff.external", s),
+                     ("diff.x.textconv", s), ("diff.x.command", s), ("filter.x.clean", s), ("filter.x.smudge", s),
+                     ("filter.x.process", s), ("merge.x.driver", s), ("core.hooksPath", str(hooks)),
+                     ("core.fsmonitor", s), ("core.alternateRefsCommand", s), ("uploadpack.packObjectsHook", s),
+                     ("remote.origin.uploadpack", s), ("remote.origin.url", "ext::" + s), ("protocol.allow", "always"),
+                     ("core.untrackedCache", "true"), ("core.splitIndex", "true"), ("index.threads", "4"),
+                     ("log.mailmap", "true"), ("mailmap.file", s), ("notes.displayRef", "refs/notes/*"),
+                     ("core.preloadIndex", "true"), ("gc.auto", "1"), ("maintenance.auto", "true"),
+                     ("trace2.eventTarget", str(w / "trace2")), ("trace2.normalTarget", str(w / "trace2n")),
+                     ("color.ui", "always"), ("log.decorate", "full"), ("diff.renames", "copies"),
+                     ("diff.relative", "true"), ("log.follow", "true"), ("grep.patternType", "perl")):
+            git(d, "config", "--local", k, v)
+        after = valid(d)
+        out[case] = {"before": before, "after": after, "marker": marker.read_text() if marker.exists() else None,
+                     "trace2_written": Path(w / "trace2").exists() or Path(w / "trace2n").exists()}
+        if marker.exists():
+            marker.unlink()
+    return out
+
+
+# ---------------------------------------------------------------- D. order rule under repository diff configuration
+@probe("order_rule_diff_config")
+def _(w):
+    out = {}
+    for name, attrs, cfg in (("binary_attr", b"* binary\n", ()), ("minus_diff", b"* -diff\n", ()),
+                             ("bigfile", b"", (("core.bigFileThreshold", "1"),)),
+                             ("copies_harder", b"", (("diff.renames", "copies"), ("diff.findCopiesHarder", "true"))),
+                             ("ws_eol", b"* text eol=crlf\n", (("core.autocrlf", "true"),))):
+        d = w / name; init(d)
+        commit(d, {"notes/quote.md": f"{LINE}\n".encode(), ".gitattributes": attrs})
+        commit(d, {"att/HOST.json": ATT})
+        commit(d, {f"{ACC}1.md": OK})
+        for k, v in cfg:
+            git(d, "config", "--local", k, v)
+        out[name] = valid(d)
+    # a copy: the accepting file is a copy of the pre-blob quote file in the same commit as a deletion of the quote
+    d = w / "move_quote"; init(d)
+    commit(d, {"notes/quote.md": f"{LINE}\n".encode()})
+    commit(d, {"att/HOST.json": ATT})
+    Path(d, f"{ACC}1.md").parent.mkdir(parents=True, exist_ok=True)
+    Path(d, f"{ACC}1.md").write_bytes(OK)
+    commit(d, rm=["notes/quote.md"])
+    git(d, "config", "--local", "diff.renames", "copies")
+    out["move_quote_after_blob"] = valid(d)
+    return out
+
+
+# ---------------------------------------------------------------- E. legitimate repository shapes
+@probe("legit_shapes")
+def _(w):
+    out = {}
+    d = w / "sha256"; Path(d).mkdir()
+    git(d, "init", "-q", "--object-format=sha256")
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull)):
+        git(d, "config", "--local", k, v)
+    commit(d, {"att/HOST.json": ATT}); commit(d, {f"{ACC}1.md": OK})
+    out["sha256_object_format"] = dict(valid(d), history_complete=hist(d), head=git(d, "rev-parse", "HEAD"))
+    d = w / "sep"; g = w / "sep.git"; Path(d).mkdir()
+    git(d, "init", "-q", f"--separate-git-dir={g}")
+    commit(d, {"att/HOST.json": ATT}); commit(d, {f"{ACC}1.md": OK})
+    out["separate_git_dir"] = valid(d)
+    out["bare_mirror_of_valid"] = None
+    b = w / "bare.git"
+    git(w, "clone", "-q", "--bare", str(d), str(b))
+    out["bare_clone_of_valid"] = valid(b)
+    d = w / "packed"; init(d)
+    commit(d, {"att/HOST.json": ATT}); commit(d, {f"{ACC}1.md": OK})
+    git(d, "gc", "-q", "--aggressive")
+    git(d, "commit-graph", "write", "--reachable", "--changed-paths")
+    out["gc_and_graph"] = valid(d)
+    d = w / "gitmodules"; init(d)
+    commit(d, {"att/HOST.json": ATT, ".gitmodules": b'[submodule "s"]\n\tpath = s\n\turl = https://example.invalid/s\n'})
+    commit(d, {f"{ACC}1.md": OK})
+    out["gitmodules_present"] = valid(d)
+    return out
+
+
+# ---------------------------------------------------------------- F. exceptions
+@probe("exception_repo_roots")
+def _(w):
+    f = w / "file"; f.write_text("x")
+    out = {}
+    for name, root in (("missing", w / "nope"), ("file", f), ("empty_dir", w), ("newline", w / "a\nb"),
+                       ("dash", w / "-x")):
+        try:
+            rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": SHA}, repo_root=str(root))
+            out[name] = {"valid": rec is not None, "reasons": why}
+        except Exception as e:
+            out[name] = {"exception": f"{type(e).__name__}: {e}"}
+    try:
+        out["history_complete_on_file"] = L._history_complete(str(f))
+    except Exception as e:
+        out["history_complete_on_file"] = f"EXC {type(e).__name__}"
+    return out
+
+
+@probe("legit_shapes2")
+def _(w):
+    out = {}
+    d = w / "sparse"; init(d)
+    commit(d, {"att/HOST.json": ATT, "other/x.txt": b"x\n"}); commit(d, {f"{ACC}1.md": OK})
+    git(d, "sparse-checkout", "set", "--cone", "--sparse-index", "att")
+    out["sparse_index_checkout"] = dict(valid(d), history_complete=hist(d), fsck=fsck(d)["rc"])
+    d = w / "main"; init(d)
+    commit(d, {"att/HOST.json": ATT}); commit(d, {f"{ACC}1.md": OK})
+    git(d, "worktree", "add", "-q", "--detach", str(w / "linked"), "HEAD")
+    out["read_from_linked_worktree"] = valid(w / "linked")
+    git(d, "notes", "add", "-m", "note", "HEAD")
+    git(d, "tag", "-a", "-m", "t", "v1", "HEAD")
+    Path(d, "README").write_text("dirty\n"); git(d, "add", "README"); git(d, "stash", "-q")
+    out["notes_tag_stash"] = valid(d)
+    sub = w / "subsrc"; init(sub); commit(sub, {"a": b"a\n"})
+    d = w / "withsub"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    git(d, "-c", "protocol.file.allow=always", "submodule", "add", "-q", str(sub), "s"); git(d, "commit", "-q", "-m", "sub")
+    commit(d, {f"{ACC}1.md": OK})
+    out["with_submodule"] = valid(d)
+    d = w / "nul_msg"; init(d)
+    tree = git(d, "write-tree")
+    body = f"tree {tree}\nauthor t <t@t> 1 +0000\ncommitter t <t@t> 1 +0000\n\nmsg\0with nul\n".encode()
+    c0 = subprocess.run(["git", "-C", str(d), "hash-object", "-t", "commit", "-w", "--literally", "--stdin"], input=body,
+                        capture_output=True, check=True).stdout.decode().strip()
+    git(d, "update-ref", "HEAD", c0)
+    commit(d, {"att/HOST.json": ATT}); commit(d, {f"{ACC}1.md": OK})
+    out["nul_in_old_commit_message"] = dict(valid(d), fsck_strict=fsck(d))
+    return out
+
+
+Path(OUT).write_text(json.dumps(results, indent=1, sort_keys=True) + "\n")
+print(json.dumps({k: (v.get("result") if isinstance(v, dict) and "result" in v else "...") for k, v in results.items()}, indent=1))

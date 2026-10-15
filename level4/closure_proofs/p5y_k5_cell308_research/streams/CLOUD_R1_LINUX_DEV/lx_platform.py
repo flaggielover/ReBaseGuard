@@ -1226,26 +1226,84 @@ def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
     return r.returncode == 0
 
 
+def _cat_file_batch(repo_root, names: list, contents: bool) -> list | None:
+    """One isolated `cat-file --batch` (``contents``) or `--batch-check` call: [(object id, type, body or None)] in the
+    order of ``names``; None if git fails, any name is missing (review 69 S4: `missing` never stands for an absent path
+    here) or the output is malformed."""
+    if not names:
+        return []
+    try:
+        r = subprocess.run(["git", "-C", str(repo_root), *_GIT_ISOLATION, "cat-file",
+                            "--batch" if contents else "--batch-check"], input=("\n".join(names) + "\n").encode(),
+                           capture_output=True, timeout=60, env=_git_env())
+    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
+        return None
+    out, pos, answers = r.stdout, 0, []
+    if r.returncode != 0:
+        return None
+    for _ in names:
+        nl = out.find(b"\n", pos)
+        head = out[pos:nl].split(b" ") if nl >= 0 else []
+        if len(head) != 3 or not re.fullmatch(rb"[0-9a-f]{40,64}", head[0]) or not head[2].isdigit():
+            return None
+        pos, body = nl + 1, None
+        if contents:
+            size = int(head[2])
+            body = out[pos:pos + size]
+            if len(body) != size or out[pos + size:pos + size + 1] != b"\n":
+                return None
+            pos += size + 1
+        answers.append((head[0].decode(), head[1].decode("ascii", "replace"), body))
+    return answers if pos == len(out) else None
+
+
+def _tree_entry(data: bytes, name: bytes, width: int):
+    """(mode, object id) of the entry ``name`` in raw tree ``data``; None if absent; False if malformed."""
+    pos, found = 0, None
+    while pos < len(data):
+        sp = data.find(b" ", pos)
+        nul = data.find(b"\0", sp + 1) if sp >= 0 else -1
+        if nul < 0 or nul + 1 + width > len(data):
+            return False
+        if data[sp + 1:nul] == name:
+            found = (data[pos:sp], data[nul + 1:nul + 1 + width].hex())
+        pos = nul + 1 + width
+    return found
+
+
 def _review_dir_is_a_directory(repo_root) -> bool:
-    """Review 68 P1: in EVERY commit of HEAD's history, ACCEPTANCE_REVIEW_DIR and each of its ancestors is a directory
-    or absent. A symlink (or gitlink, or file) there would let a checkout show files at review paths that git's scan
-    never lists; such a history is unavailable evidence. One `cat-file --batch-check` reads `<commit>:<path>` for all
-    of them; only `<oid> tree <size>` and `<commit>:<path> missing` answers are accepted."""
+    """Review 68 P1 / review 69 S1: in EVERY commit of HEAD's history, ACCEPTANCE_REVIEW_DIR and each of its ancestors
+    is a directory entry (mode 40000) or absent. A symlink, gitlink (submodule) or file there would let a checkout show
+    files at review paths that git's scan never lists; such a history is unavailable evidence. The entries are read
+    by MODE from the raw trees, walking down from every commit's root tree (one `cat-file` call per depth, each tree
+    read once), so an absent submodule commit or a gitlink-mode entry naming a tree cannot pass as a directory."""
     commits = _git(repo_root, "rev-list", "HEAD")
     if not commits:
         return False
+    ids = commits.decode("ascii", "replace").split()
+    roots = _cat_file_batch(repo_root, [f"{c}^{{tree}}" for c in ids], contents=False)
+    if roots is None or any(kind != "tree" for _, kind, _ in roots):
+        return False
+    level, width = {oid for oid, _, _ in roots}, len(ids[0]) // 2
     parts = ACCEPTANCE_REVIEW_DIR.split("/")
-    names = [f"{c}:{'/'.join(parts[:i])}" for c in commits.decode("ascii", "replace").split()
-             for i in range(1, len(parts) + 1)]
-    try:
-        r = subprocess.run(["git", "-C", str(repo_root), *_GIT_ISOLATION, "cat-file", "--batch-check"],
-                           input=("\n".join(names) + "\n").encode(), capture_output=True, timeout=60, env=_git_env())
-    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
-        return False
-    answers = r.stdout.decode("utf-8", "replace").split("\n")
-    if r.returncode != 0 or answers[-1] != "" or len(answers) != len(names) + 1:
-        return False
-    return all(a == f"{n} missing" or re.fullmatch(r"[0-9a-f]{40,64} tree [0-9]+", a) for n, a in zip(names, answers))
+    for depth, name in enumerate(parts):
+        trees = _cat_file_batch(repo_root, sorted(level), contents=True)
+        if trees is None or any(kind != "tree" for _, kind, _ in trees):
+            return False
+        level = set()
+        for _, _, body in trees:
+            entry = _tree_entry(body, name.encode(), width)
+            if entry is False:
+                return False
+            if entry is None:
+                continue
+            mode, oid = entry
+            if mode != b"40000":
+                return False
+            level.add(oid)
+        if not level:
+            break
+    return True
 
 
 _VERDICT = re.compile(r"(?i:.*\bverdict\b)|\s*[A-Z][A-Z0-9_]*\s*:\s*[A-Z][A-Z0-9_]*\s*$")   # review 63 H7
@@ -1391,7 +1449,7 @@ def _acceptances(repo_root, sha: str) -> tuple:
             return [], [f"UNAVAILABLE: accepting review absent from recursive listing: {path}"]
         lines = records[path]
         if entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):
-            continue                                            # review 64 K7: a symlink is not a review file
+            continue                    # review 64 K7: a symlink is not a review file (unreachable since review 68 P1)
         verdicts = [ln for ln in lines if _VERDICT.match(ln)]
         if f"{ACCEPTANCE_LINE}{sha}" in lines and verdicts == [ACCEPTANCE_VERDICT_LINE]:
             acc.append(path)
