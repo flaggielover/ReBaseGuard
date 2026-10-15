@@ -709,6 +709,26 @@ class TestUpdatesLaunch(unittest.TestCase):
                 Path(d, "x.timer").write_text("")
                 self.assertIsNone(L.unit_enabled("x.timer", (d,)))
 
+    def test_failed_systemctl_query_is_no_reading(self):
+        """Z07: the query itself (not a patched wrapper): no stdout, an OSError or a timeout is None, never a state;
+        with systemd as PID 1 a failed query leaves the unit unknown."""
+        import types
+
+        def fake(result):
+            def run(*a, **k):
+                if isinstance(result, BaseException):
+                    raise result
+                return subprocess.CompletedProcess(a[0], 1, stdout=result, stderr="")
+            return types.SimpleNamespace(run=run, SubprocessError=subprocess.SubprocessError,
+                                         DEVNULL=subprocess.DEVNULL)
+        for res in ("", "\n", OSError("no systemctl"), subprocess.TimeoutExpired("systemctl", 30)):
+            with patched(subprocess=fake(res)):
+                self.assertIsNone(L._systemctl_query("is-enabled", "x.timer"), repr(res))
+                with patched(systemd_is_pid1=lambda *a, **k: True):
+                    self.assertIsNone(L.unit_enabled("x.timer", ()), repr(res))
+        with patched(subprocess=fake("disabled\n")):
+            self.assertEqual(L._systemctl_query("is-enabled", "x.timer"), "disabled")
+
     def test_file_mode_edge_cases(self):
         """Z02 / Z04 / G7: a .requires entry, a dangling .wants link, and a missing first root before the enabling one
         are all seen; the default search path is the full systemd.unit(5) list."""
@@ -1150,6 +1170,10 @@ class TestAttestationPreflight(unittest.TestCase):
             self.assertEqual(r["blocked"].get(k), L.UNKNOWN, k)
         self.assertEqual(self.gates(power="ABSENT")["ac_power"], L.OPEN_DECISION)
         self.assertEqual(self.gates(free_disk=True)["free_disk_ge_2GiB"], L.UNKNOWN)
+        # Q13 / G11: host_exclusive reports EVERY decision it waits on
+        self.assertEqual(r["gates"]["host_exclusive"], L.OPEN_DECISION)
+        self.assertTrue({"D-EXCL-WINDOW", "D-ALLOW-PATHS", "D-ALLOW-BASE39"} <= set(r["open_decisions"]))
+        self.assertTrue(set(r["open_decisions"]) <= set(L.OPEN_DECISIONS))
 
     def test_launch_gate_uses_a_fresh_reading(self):
         """P6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it."""
