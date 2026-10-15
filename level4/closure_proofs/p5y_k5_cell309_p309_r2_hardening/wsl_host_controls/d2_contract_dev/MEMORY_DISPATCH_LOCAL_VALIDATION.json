@@ -1,0 +1,347 @@
+{
+  "schema": "P309_D2_MEMORY_DISPATCH_PRIVATE_PYTHON_VALIDATION/1",
+  "recorded_utc": "2026-10-15T14:10:08.1839390Z",
+  "source_branch": "codex/p309-d2-memory-dispatch-dev-20261015",
+  "source_commit": "a467a32e91bcfcb5e6f4840478a58bbda10b7db4",
+  "base_commit": "78103f65ea9f30b516bd28d6a416ff8fc0781c81",
+  "publication_branch": "codex/p309-d2-memory-dispatch-validation-20261015",
+  "scope": "ONLY_21_NEW_MEMORY_DISPATCH_TESTS_AND_LIMITED_SOURCE_REVIEW",
+  "disposition": "PASS_FOR_THIS_LIMITED_IN_PROCESS_MEMORY_DISPATCH_SLICE_ONLY",
+  "formal_admission": "BLOCKED",
+  "route_accepted": false,
+  "host_accepted": false,
+  "deployment_authorized": false,
+  "installation_consent": false,
+  "pre_freeze_review": false,
+  "execution_authorized": false,
+  "qualification_authorized": false,
+  "target_execution_authorized": false,
+  "freeze_or_grants_issued": false,
+  "new_implementation_scope_authorized": false,
+  "runtime_context": {
+    "sys_version": "3.11.15 (main, Oct 15 2026, 18:48:30) [GCC 13.3.0]",
+    "sys_executable": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+    "version_info": [
+      3,
+      11,
+      15
+    ],
+    "dont_write_bytecode": true,
+    "test_modules": [
+      "test_d2_memory_dispatch"
+    ],
+    "scope": "D2_MEMORY_DISPATCH_TESTS_ONLY"
+  },
+  "runtime_context_limit": "Only same-test-process sys.version/sys.executable/version tuple/bytecode flag. No binary rehash, glibc/OpenSSL/host/process/cgroup/clock/backup inventory.",
+  "result": {
+    "tests": 21,
+    "passed": 21,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "unittest_seconds": 0.009,
+    "invocations": 1,
+    "suite": "test_d2_memory_dispatch",
+    "test_cases": [
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_all_exports_remain_blocked",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_cached_old_generation_rechecked_on_dequeue",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_calculation_exception_retains_item_and_latches_unknown",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_close_preserves_terminal_history_without_fresh_cleanup_claim",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_close_retains_fifo_for_unknown_refusals_and_cannot_reopen",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_concurrent_drain_publishes_each_request_once",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_concurrent_submit_keeps_unique_tickets",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_copies_synthetic_metadata_without_caller_alias",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_duplicate_stop_has_one_model_update_and_no_cleanup_claim",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_explicit_synthetic_factory",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_fifo_receipts_and_no_implicit_dispatch",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_full_queue_refuses_without_eviction_or_ticket_consumption",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_invalid_wire_and_public_start_never_advance_model",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_last_ticket_then_exhaustion_is_terminal",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_maximum_raw_size_is_validated_only_at_dispatch",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_paused_first_calculation_serializes_second_without_lost_update",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_queued_peer_refused_after_monitor_restart",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_queued_status_reads_dispatch_time_state",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_snapshot_and_export_mutation_cannot_change_published_model",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_submission_primitive_and_size_bounds_do_not_mutate",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_wrong_role_is_not_authenticated_by_enqueue",
+        "outcome": "ok"
+      }
+    ],
+    "test_ids_match_pinned_coordinator_result": true,
+    "old_46_tests_executed": 0,
+    "previous_host_interop_stop_suites_executed": 0
+  },
+  "execution": {
+    "executable": "wsl.exe",
+    "arguments": [
+      "-d",
+      "Ubuntu-24.04",
+      "--cd",
+      "/mnt/d/ReBaseGuard-309/workspace/p309-d2-memory-dispatch-validation-20261015/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev",
+      "--exec",
+      "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+      "-B",
+      "/mnt/d/ReBaseGuard-309/records/p309-d2-memory-dispatch-validation-20261015-220720/run-memory-dispatch-tests.py"
+    ],
+    "exit_code": 0,
+    "equivalent_unittest_command": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 -B -m unittest -v test_d2_memory_dispatch",
+    "entrypoint_note": "A same-process wrapper prints only sys.version/sys.executable/version_info/bytecode flag, checks 3.11.15, then invokes unittest through runpy. No helper subprocess inside tests.",
+    "tests_requested": 21,
+    "old_suites_rerun": false,
+    "host_queries": 0
+  },
+  "log_handling": "Raw stdout/stderr .bin preserved. Separate UTF8-decoded .txt copies for review. Parser allows a leading NUL before test-line markers to tolerate mixed UTF16 WSL launcher diagnostics; all21 IDs and outcomes must match the pinned suite. No original log modified.",
+  "limited_code_review": {
+    "disposition": "NO_NEW_CONCRETE_DEFECT_IDENTIFIED_IN_THIS_LIMITED_MEMORY_DISPATCH_REVIEW",
+    "findings": [],
+    "reviewed_files": [
+      "d2_memory_dispatch.py",
+      "test_d2_memory_dispatch.py"
+    ],
+    "observations": [
+      {
+        "source": "d2_memory_dispatch.py:MemoryDispatch.submit",
+        "assessment": "Exact bounded bytes and bounded primitive synthetic peer labels are copied before admission. Queue operations and unique ticket assignment are serialized under the same RLock. Queue-full rejects without eviction or consuming a ticket. Enqueue does not authenticate the peer or accept a broker operation."
+      },
+      {
+        "source": "d2_memory_dispatch.py:MemoryDispatch.dispatch_next/_publish",
+        "assessment": "The head request is evaluated against the current immutable model at dequeue, under the publication/removal lock. The unchanged model checks synthetic peer instance and generation before cached request handling. Duplicate stop yields no additional model revision or false cleanup claim. No callback, caller snapshot or external executor is accepted."
+      },
+      {
+        "source": "d2_memory_dispatch.py:MemoryDispatch.close/dispatch_next/submit",
+        "assessment": "Explicit close, ticket exhaustion and unexpected calculation Exception close admission and publish recovery-unknown through the unchanged model. Queue/head and terminal history remain retained; exceptions propagate rather than fabricate stop completion. Closed fixtures cannot rearm; retained entries can be drained for model refusals. This has no OS effect or persistent fence."
+      },
+      {
+        "source": "test_d2_memory_dispatch.py",
+        "assessment": "The new suite uses in-process threads/events, a synthetic calculation patch and a private ticket-boundary fixture. It checks FIFO, concurrent tickets/drain publication, delayed calculation ordering, old-G/old-peer dispatch, duplicate stop, bounded admission, unknown latching and BLOCKED exports. Imported old test modules provide message/peer/proof helpers; their test cases are not selected by the new module invocation."
+      }
+    ],
+    "retained_limitations": [
+      "Queue-full may reject stop; no priority or independent stop path exists.",
+      "A paused calculation holding the common RLock blocks close, fixture events, status and stop. No latency, fairness or independent watchdog guarantee is established.",
+      "Atomic publication in one process is not durable fencing, crash recovery or real exactly-once execution.",
+      "Synthetic peer labels and Python objects/private attributes are not authentication or an isolation boundary.",
+      "The ticket counter is set to its boundary in a fixture; this is not a 65536-message or long-duration reliability run.",
+      "No H1-H3/H5 transport, OS executor, real cleanup, protected storage, observer service or host control is implemented or validated.",
+      "This is scoped source review, not an exhaustive security audit or new implementation authorization. Existing assertions, budgets and source are unchanged."
+    ]
+  },
+  "development_budgets": {
+    "max_instance_ascii_chars": 128,
+    "max_message_bytes": 16384,
+    "max_peer_epoch": 65536,
+    "max_pending": 64,
+    "max_role_ascii_chars": 32,
+    "max_tickets": 65536,
+    "unchanged_model_events": 8192,
+    "unchanged_model_generations": 16,
+    "unchanged_model_request_ids": 4096
+  },
+  "source_verification": {
+    "result": "MATCH",
+    "canonical_current_blobs": 106,
+    "verified_base_source_and_record_count": 99,
+    "historical_binding_count": 417,
+    "protected_file_count": 20,
+    "diff": [
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/LOCAL_MEMORY_DISPATCH.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/MEMORY_DISPATCH.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/MEMORY_DISPATCH_SOURCE_SHA256.json",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/MEMORY_DISPATCH_TEST_LOG.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/MEMORY_DISPATCH_VALIDATION.json",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/d2_memory_dispatch.py",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/test_d2_memory_dispatch.py"
+    ],
+    "worktree_hashes_rechecked_after_tests": true,
+    "old46_source_and_result_unchanged": true,
+    "coordinator_memory_dispatch_record_unchanged": true,
+    "cloud_raw_log_scope": "Committed MEMORY_DISPATCH_TEST_LOG.txt canonical bytes verified; other coordinator external raw files were not fetched or independently verified."
+  },
+  "unresolved_original_blockers": [
+    {
+      "deployment_blocking": true,
+      "id": "I1",
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ],
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Runner Windows/root boundary"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I2",
+      "original_fact_questions": [
+        1,
+        5
+      ],
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Collector rights, completeness and attribution"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I3",
+      "original_fact_questions": [
+        1,
+        6
+      ],
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Enrollment and ACL/API descriptors"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I4",
+      "original_fact_questions": [
+        2
+      ],
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Fresh image/runtime provenance"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I5",
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ],
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Guest policy/unit limits and controlled launcher"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I6",
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ],
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Protected persistence and stop/recovery"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I7",
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Route, host and formal authority"
+    }
+  ],
+  "preservation": {
+    "prior_evidence_files": 277,
+    "prior_evidence_unchanged": true,
+    "prior_branch_refs": 11,
+    "prior_branch_refs_unchanged": true,
+    "old_sources_and_reviews_unchanged": true
+  },
+  "exclusions": {
+    "host_queries": 0,
+    "auxiliary_or_workload_processes_by_suite": 0,
+    "signing_helpers": 0,
+    "services_endpoints_accounts_keys_units_created": 0,
+    "elevation": 0,
+    "policy_changes": 0,
+    "host_safety_samples": 0,
+    "test_threads": "Ordinary in-process unittest threads/events only",
+    "backup_status": "HISTORICAL_UNAVAILABLE_ONLY; NO_NEW_QUERY_OR_REHASH"
+  },
+  "local_evidence_sha256": {
+    "canonical-verification.json": "e580195e9de4b85670bbaccbecb8a94c09731afaa7d403f36dd75c245944811f",
+    "canonical-verification.log": "2c48fd2dab1b846505943dd7b4c5c15f08944550a8b5d109ac2f858d25a6d9dc",
+    "execute-memory-dispatch-tests.ps1": "352c37f1b6701f608673a91f1bd13f6f5cdcbfeb0e8dc91d0bcac65bb57c2910",
+    "memory-dispatch-review.json": "0fdbb83f628a885c438cad4d44fc9c3a0615608e9d4a36c41bec012e1597d413",
+    "prior-evidence.json": "dac9f9a608a6af9ca1345dbc0353b3c7765e9c45f399fb6d5a9ea48aa7816422",
+    "prior-refs.txt": "dc18c2436c8d1f0753b8d6ef84a46ce594e9ded89f4b055ef494da4db75d91ae",
+    "run-memory-dispatch-tests.py": "63ea6c9d63bddb6a0282cacba37160758312ed7eddc751e0fbacb3bb10020c11",
+    "test-execution.json": "18b67e60b668378e1b6d365152527ba35c348b1e0744c95a88dbe7eefa5d6d45",
+    "unittest.stderr.bin": "190db754af7fe6b77c5d4c5e5b0b7b5d271577e96338eb5bf8eb00af3278e84a",
+    "unittest.stderr.txt": "cd614cd174167817557fb1a3956ef976daaf3e5ad3a62c88794d6ee2276093d5",
+    "unittest.stdout.bin": "4279205634fba26513e49cc1870a46751c459a25eb06681fb40103f6da59803d",
+    "unittest.stdout.txt": "4279205634fba26513e49cc1870a46751c459a25eb06681fb40103f6da59803d",
+    "verify-memory-dispatch-source.ps1": "d813c9986917fa7396635b7633253a6e2acc289b4577bb78cba2cea9082babef",
+    "worktree-create.txt": "128383e7175082551931fae61118bacb884307f65e93bb3159398dbb59b466e4",
+    "write-memory-dispatch-validation.ps1": "767ba2fe9dd732afa4d3b087cceb8116f4fc7f387ca031ea610dd1652ae48a40"
+  }
+}
