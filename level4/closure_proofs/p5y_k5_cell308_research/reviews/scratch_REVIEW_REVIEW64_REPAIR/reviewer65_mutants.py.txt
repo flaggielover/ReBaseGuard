@@ -1,0 +1,155 @@
+"""Review 65 mutants, classified by the pinned harness's own run_suite / classify_mutant (strict criteria), plus an
+outcome check of each mutant on a synthetic repository / input (base vs mutant).
+The pinned tree is never written: each mutant is a copy under a scratch temporary directory (LX_PLATFORM_DIR).
+usage: python3 -I reviewer65_mutants.py.txt <pinned DEV dir> <scratch tmp dir> <out.json>"""
+import errno, hashlib, importlib.util, json, os, subprocess, sys, tempfile, traceback
+from pathlib import Path
+
+DEV, TMP, OUT = sys.argv[1:4]
+spec = importlib.util.spec_from_file_location("run_mutants_pinned", Path(DEV, "tests/run_mutants.py"))
+H = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(H)                 # module level only builds the registry; main() is not called
+
+MINE = [
+    ("RX1", "replace objects honoured (--no-replace-objects dropped from the isolation)",
+     [('_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true")',
+       '_GIT_ISOLATION = ("-c", "log.showRoot=true")')],
+     ["test_review64_order_ignores_reading_configuration", "test_review63_rejection_is_permanent"], "replace"),
+    ("RX2", "info/grafts honoured (GIT_GRAFT_FILE no longer redirected)",
+     [('GIT_ATTR_NOSYSTEM="1",\n                GIT_GRAFT_FILE=os.devnull)', 'GIT_ATTR_NOSYSTEM="1")')],
+     ["test_review64_order_ignores_reading_configuration", "test_review63_rejection_is_permanent"], "grafts"),
+    ("RX3", "a full sha inside a longer hex run names the attestation only in lower case",
+     [("    return sha in line.lower() or any(", "    return sha in line or any(")],
+     ["test_review64_sha_inside_longer_hex_run_still_names_it", "test_review63_veto_words_and_references"], "upper"),
+    ("RX4", "only PermissionError (not every OSError) from a unit root becomes unknown",
+     [("        except OSError:                                         # review 64 K9: e.g. a root listable, not "
+       "searchable\n", "        except PermissionError:\n")],
+     ["test_review64_unreadable_unit_root_is_unknown_not_a_crash"], "eio"),
+    ("RX5", "the ancestry check (_strictly_after) runs without the git isolation (replace refs / grafts honoured)",
+     [('        r = subprocess.run(["git", "-C", str(repo_root), *_GIT_ISOLATION, "merge-base", "--is-ancestor", earlier,\n'
+       '                            later], capture_output=True, timeout=60, stdin=subprocess.DEVNULL, env=_git_env())',
+       '        r = subprocess.run(["git", "-C", str(repo_root), "merge-base", "--is-ancestor", earlier,\n'
+       '                            later], capture_output=True, timeout=60, stdin=subprocess.DEVNULL)')],
+     ["test_accepting_line_must_post_date_the_attested_blob", "test_review64_order_ignores_reading_configuration"],
+     "ancestry"),
+    ("RX6", "the exact-path listing need not cover every reviewed path (set equality dropped)",
+     [("    if entries is None or set(entries) != set(every):", "    if entries is None:")],
+     ["test_review64_range_like_review_names_do_not_block",
+      "test_malformed_listing_and_nonutf8_review_blob_refuse_verification"], "partial_entries"),
+]
+
+# ------------------------------------------------------------------ outcome checks (synthetic only)
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main"]
+
+
+def git(d, *a):
+    return subprocess.run(["git", "-C", str(d), *CFG, *a], check=True, capture_output=True)
+
+
+def outcome(moddir, kind):
+    """Run in a child interpreter so base and mutant modules never share state."""
+    code = r'''
+import errno, hashlib, json, os, subprocess, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1]); import lx_platform as L
+kind, work = sys.argv[2], Path(sys.argv[3])
+HW = {"machine_id_sha256": "a"*64, "product_uuid_sha256": "b"*64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR; ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+OK = f"review\n{L.ACCEPTANCE_LINE}{SHA}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+CFG = ["-c","user.name=t","-c","user.email=t@t","-c","commit.gpgsign=false","-c","core.hooksPath=/dev/null","-c","gc.auto=0"]
+def git(*a): return subprocess.run(["git","-C",str(work),*CFG,*a],check=True,capture_output=True).stdout.decode().strip()
+def commit(files=None, rm=()):
+    for k, v in (files or {}).items():
+        Path(work, k).parent.mkdir(parents=True, exist_ok=True); Path(work, k).write_bytes(v)
+    for k in rm: git("rm","-q",k)
+    git("add","-A"); git("commit","-q","--allow-empty","-m","c"); return git("rev-parse","HEAD")
+def valid():
+    try:
+        rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": SHA}, repo_root=str(work))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}"}
+work.mkdir(); git("init","-q")
+out = {}
+if kind in ("replace", "grafts"):
+    c1 = commit({"att/HOST.json": ATT}); c2 = commit({f"{RD}/veto.md": f"{SHA} REJECTED\n".encode()})
+    c3 = commit(rm=[f"{RD}/veto.md"]); c4 = commit({f"{ACC}1.md": OK})
+    if kind == "replace": git("replace", "--graft", c3)
+    else: Path(work, ".git/info").mkdir(exist_ok=True); Path(work, ".git/info/grafts").write_text(c3 + "\n")
+    out = valid()
+elif kind == "upper":
+    commit({"att/HOST.json": ATT})
+    commit({f"{ACC}1.md": OK, f"{RD}/n.md": f"blob:A{SHA.upper()} REJECTED\n".encode()})
+    out = valid()
+elif kind == "eio":
+    def boom(*a, **k): raise OSError(errno.EIO, "synthetic I/O error")
+    L.unit_enabled = boom
+    try:
+        r = L.auto_update_settings('APT::Periodic::Enable "0";\n', use_live_apt=False)
+        out = {"units": r["update_units"], "shown_disabled": r["guest_updates_shown_disabled"]}
+    except Exception as e:
+        out = {"exception": f"{type(e).__name__}: {e}"}
+elif kind == "ancestry":
+    # acceptance BEFORE the blob; a replace ref grafts the acceptance commit on top of the blob commit
+    commit({"README": b"base\n"})
+    c_acc = commit({f"{ACC}1.md": OK})
+    c_blob = commit({"att/HOST.json": ATT})
+    git("replace", "--graft", c_acc, c_blob)
+    out = valid()
+elif kind == "partial_entries":
+    commit({"att/HOST.json": ATT}); commit({f"{ACC}1.md": OK, f"{RD}/x.md": b"note\n"})
+    orig = L._git
+    def drop(repo_root, *a):
+        r = orig(repo_root, *a)
+        if a[:3] == ("ls-tree", "-z", "HEAD") and r:
+            return b"\0".join(e for e in r.split(b"\0") if not e.endswith(b"x.md"))
+        return r
+    L._git = drop
+    out = valid()
+print(json.dumps(out))
+'''
+    with tempfile.TemporaryDirectory(dir=TMP) as w:
+        p = subprocess.run([sys.executable, "-I", "-c", code, moddir, kind, str(Path(w, "repo"))], capture_output=True,
+                           text=True, timeout=300)
+    try:
+        return json.loads(p.stdout.strip().splitlines()[-1])
+    except Exception:
+        return {"child_error": p.stderr[-800:]}
+
+
+src = H.SRC.read_text()
+src_sha = hashlib.sha256(src.encode()).hexdigest()
+env = dict(os.environ)
+env.pop("LX_PLATFORM_DIR", None)
+env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONWARNINGS="error", PYTHONHASHSEED="0")
+base = H.run_suite(env)
+out = {"source_sha256": src_sha, "baseline_ran": base["ran"], "baseline_pass": H.suite_passed(base),
+       "expected_test_count": H.expected_test_count(), "mutants": []}
+with tempfile.TemporaryDirectory(dir=TMP) as based:
+    Path(based, "lx_platform.py").write_text(src)
+    for mid, what, edits, witnesses, kind in MINE:
+        mutated, counts, err = H.apply_mutation(src, edits)
+        row = {"id": mid, "property": what, "witnesses": witnesses, "anchor_counts": counts,
+               "edits": [{"old": o, "new": n} for o, n in edits]}
+        if err:
+            row.update(status="NOT_APPLIED", reasons=[err])
+        else:
+            with tempfile.TemporaryDirectory(dir=TMP) as d:
+                Path(d, "lx_platform.py").write_text(mutated)
+                suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+                row["outcome_base"] = outcome(based, kind)
+                row["outcome_mutant"] = outcome(d, kind)
+            status, reasons = H.classify_mutant(suite, base, witnesses)
+            row.update(status=status, reasons=reasons, ran=suite["ran"], returncode=suite["returncode"],
+                       failed_methods=sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]}),
+                       mutated_sha256=hashlib.sha256(mutated.encode()).hexdigest())
+        out["mutants"].append(row)
+        print(mid, row["status"], row.get("reasons"), row.get("failed_methods"), "| base:",
+              json.dumps(row.get("outcome_base"))[:160], "| mutant:", json.dumps(row.get("outcome_mutant"))[:160],
+              flush=True)
+Path(OUT).write_text(json.dumps(out, indent=1) + "\n")

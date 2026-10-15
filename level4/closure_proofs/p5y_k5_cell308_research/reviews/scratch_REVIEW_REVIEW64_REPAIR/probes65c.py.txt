@@ -1,0 +1,37 @@
+"""Review 65 probes (c): an attestation path that rev-parse reads as a range in _ordered; deeply nested JSON attestation.
+Synthetic repositories only. usage: python3 -I probes65c.py.txt <dir_with_lx_platform.py> <tmp> <out.json>"""
+import hashlib, json, subprocess, sys, tempfile
+from pathlib import Path
+sys.path.insert(0, sys.argv[1]); import lx_platform as L
+TMP, OUT = sys.argv[2], sys.argv[3]
+HW = {"machine_id_sha256": "a"*64, "product_uuid_sha256": "b"*64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+ACC = f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+C = ["-c","user.name=t","-c","user.email=t@t","-c","commit.gpgsign=false","-c","core.hooksPath=/dev/null"]
+res = {}
+def repo(files_seq):
+    w = Path(tempfile.mkdtemp(dir=TMP)); g = lambda *a: subprocess.run(["git","-C",str(w),*C,*a],check=True,capture_output=True)
+    g("init","-q")
+    for files in files_seq:
+        for k, v in files.items():
+            Path(w,k).parent.mkdir(parents=True, exist_ok=True); Path(w,k).write_bytes(v)
+        g("add","-A"); g("commit","-qm","c")
+    return w
+def valid(w, path, data):
+    sha = hashlib.sha256(data).hexdigest()
+    try:
+        rec, why = L.attestation_valid({"path": path, "sha256": sha}, repo_root=str(w)); return {"valid": rec is not None, "reasons": why}
+    except BaseException as e:
+        return {"valid": None, "exception": type(e).__name__}
+sha = hashlib.sha256(ATT).hexdigest()
+ok = f"r\n{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+w = repo([{"att/x": b"other\n", "att/x..HEAD": ATT}, {f"{ACC}1.md": ok}])
+res["attestation_path_x..HEAD_with_att/x_present"] = valid(w, "att/x..HEAD", ATT)
+w = repo([{"att/HOST.json": ATT}, {f"{ACC}1.md": ok}])
+res["control_plain_path"] = valid(w, "att/HOST.json", ATT)
+deep = b"[" * 100000 + b"]" * 100000
+w = repo([{"att/deep.json": deep}])
+res["deeply_nested_json_attestation"] = valid(w, "att/deep.json", deep)
+Path(OUT).write_text(json.dumps(res, indent=1)); print(json.dumps(res, indent=1))

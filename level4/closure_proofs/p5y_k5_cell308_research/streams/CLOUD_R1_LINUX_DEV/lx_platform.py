@@ -1158,9 +1158,16 @@ def free_disk_bytes(path) -> int | None:
 _GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true")
 
 
+_GIT_ENV_KEEP = ("PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "TMPDIR", "TZ")
+
+
 def _git_env() -> dict:
-    return dict(os.environ, GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM="1",
-                GIT_GRAFT_FILE=os.devnull)
+    """Review 65 L3: an allow-listed environment (no inherited GIT_DIR, GIT_OBJECT_DIRECTORY, alternates, namespace,
+    config parameters, ...) plus the forced isolation; L6: no lazy fetch from a promisor (git >= 2.44 honours it)."""
+    env = {k: v for k, v in os.environ.items() if k in _GIT_ENV_KEEP}
+    env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM="1",
+               GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")
+    return env
 
 
 def _git(repo_root, *args) -> bytes | None:
@@ -1172,11 +1179,25 @@ def _git(repo_root, *args) -> bytes | None:
     return r.stdout if r.returncode == 0 else None
 
 
+_LOCAL_CONFIG_REFUSED = re.compile(r"fsck\.|extensions\.partialclone$|remote\..*\.(promisor|partialclonefilter)$")
+
+
 def _history_complete(repo_root) -> bool:
-    """True only on positive evidence that HEAD's history is complete in this repository: git reports it is not a
-    shallow clone. A shallow clone, or no readable answer, is not evidence (the history-wide veto and the order rule
-    both read the whole history; a cut history can hide a deleted rejection while the HEAD tree is identical)."""
-    return _git(repo_root, "rev-parse", "--is-shallow-repository") == b"false\n"
+    """True only on positive evidence about the history this check reads (the history-wide veto and the order rule
+    both read the whole history; a cut or forged history can hide a deleted rejection while HEAD, its id and its tree
+    are identical): (1) git reports the repository is not a shallow clone; (2) review 65 L6 / L1: the repository's own
+    configuration names no partial clone / promisor (a missing object would be lazily fetched, running configured
+    commands) and no `fsck.*` key (which could downgrade fsck's checks); (3) review 65 L1: `git fsck --full --strict`
+    of every object, alternates included, and the commit-graph passes (a forged commit-graph or a rewritten object
+    fails it). Any other answer, a failure or a timeout is not evidence. This trusts git's own verification; it does
+    not detect a history rewritten consistently (new commit ids), which the ledger binding is to catch."""
+    if _git(repo_root, "rev-parse", "--is-shallow-repository") != b"false\n":
+        return False
+    names = _git(repo_root, "config", "--local", "--name-only", "--list", "-z")
+    if names is None or any(_LOCAL_CONFIG_REFUSED.match(n) for n in names.decode("utf-8", "replace").lower()
+                            .split("\0") if n):
+        return False
+    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None
 
 
 def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
@@ -1365,7 +1386,8 @@ def _ordered(repo_root, att_path: str, acc_path: str, sha: str) -> bool:
     made before or beside the blob, or a later re-introduction of the blob, refuses permanently; any git failure
     refuses. Commit order is not independence: every
     commit may come from one author (a reviewer / ledger binding is a carried condition of D-HOST-LIFETIME)."""
-    blob = (_git(repo_root, "rev-parse", f"HEAD:{att_path}") or b"").decode().strip()
+    entry = (_tree_entries(repo_root, [att_path]) or {}).get(att_path)  # review 65 L7: never a revision range
+    blob = entry[2] if entry and entry[:2] in (("100644", "blob"), ("100755", "blob")) else ""
     if not re.fullmatch(r"[0-9a-f]{40,64}", blob):
         return False
     pick = f"-S{ACCEPTANCE_LINE}{sha}"
@@ -1406,6 +1428,8 @@ def attestation_valid(ref, *, repo_root=None) -> tuple:
         rec = json.loads(data)
     except (ValueError, UnicodeDecodeError):
         return None, ["attestation is not JSON"]
+    except RecursionError:                                      # review 65 L7: deeply nested JSON
+        return None, ["attestation JSON nested too deeply"]
     if not isinstance(rec, dict) or rec.get("schema") != ATTESTATION_SCHEMA:
         return None, ["wrong or missing schema"]
     reasons = []

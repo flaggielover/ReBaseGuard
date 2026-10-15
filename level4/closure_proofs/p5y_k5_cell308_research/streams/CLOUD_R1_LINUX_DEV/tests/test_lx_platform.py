@@ -18,12 +18,15 @@ import os
 import re
 import signal
 import stat as _stat
+import struct
 import subprocess
 import sys
 import tempfile
 import time
 import unittest
+import zlib
 from pathlib import Path
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 LXDIR = os.environ.get("LX_PLATFORM_DIR", str(HERE.parent))     # the mutation harness points this at a mutant copy
@@ -814,15 +817,19 @@ class TestUpdatesLaunch(unittest.TestCase):
     def test_review64_unreadable_unit_root_is_unknown_not_a_crash(self):
         """Review 64 K9: an OSError while reading a unit root (e.g. listable but not searchable) makes the update
         settings unknown; it never escapes auto_update_settings."""
-        def boom(*a, **k):
-            raise PermissionError("synthetic: root not searchable")
-        with patched(unit_enabled=boom):
-            try:
-                r = self.settings('APT::Periodic::Enable "0";\n')
-            except OSError as e:                                                          # pragma: no cover
-                self.fail(f"OSError escaped auto_update_settings: {e!r}")
-        self.assertTrue(all(v is None for v in r["update_units"].values()), r)
-        self.assertFalse(r["guest_updates_shown_disabled"])
+        import errno
+        for exc in (PermissionError("synthetic: root not searchable"),
+                    OSError(errno.EIO, "synthetic: I/O error")):                          # review 65 RX4
+
+            def boom(*a, exc=exc, **k):
+                raise exc
+            with patched(unit_enabled=boom):
+                try:
+                    r = self.settings('APT::Periodic::Enable "0";\n')
+                except OSError as e:                                                      # pragma: no cover
+                    self.fail(f"OSError escaped auto_update_settings: {e!r}")
+            self.assertTrue(all(v is None for v in r["update_units"].values()), r)
+            self.assertFalse(r["guest_updates_shown_disabled"])
 
     def test_parser_reads_only_whole_dump_lines(self):
         """N13 (renamed): the parser accepts only whole `apt-config dump` lines; apt's own comment handling is apt's,
@@ -1316,6 +1323,198 @@ class TestAttestationPreflight(unittest.TestCase):
             self.assertIsNone(rec)                                                        # RV30
             self.assertTrue(any("history completeness" in w for w in why), why)
 
+    def _rejected_then_deleted(self, d, att):
+        """att -> rejecting review -> git rm -> valid acceptance; returns the four commit ids."""
+        sha = hashlib.sha256(att).hexdigest()
+        veto = f"{L.ACCEPTANCE_REVIEW_DIR}/veto.md"
+        git_init(d)
+        ids = []
+        for files, rm in (({"att/HOST.json": att}, None), ({veto: f"{sha} REJECTED\n".encode()}, None),
+                          ({}, veto), ({f"{ACC}1.md": self.accept(sha)}, None)):
+            if rm:
+                fixture_git(d, "rm", "-q", rm)
+            git_commit(d, files)
+            ids.append(subprocess.run(["git", "-C", str(d), "rev-parse", "HEAD"], capture_output=True, text=True,
+                                      check=True).stdout.strip())
+        return ids
+
+    @staticmethod
+    def _forge_commit_graph(d, cut_commit):
+        """Review 65 L1 (the reviewer's construction): a git-written v1 commit-graph whose CDAT parent entry for
+        ``cut_commit`` is rewritten to 'no parent', with a recomputed checksum. Objects, refs and HEAD unchanged."""
+        fixture_git(d, "-c", "commitGraph.generationVersion=1", "commit-graph", "write", "--reachable",
+                    "--no-changed-paths")
+        gp = Path(d, ".git", "objects", "info", "commit-graph")
+        b = bytearray(gp.read_bytes())
+        assert b[:4] == b"CGPH" and b[4] == 1 and b[5] == 1
+        chunks = {}
+        for i in range(b[6] + 1):
+            cid, off = struct.unpack(">4sQ", b[8 + 12 * i: 20 + 12 * i])
+            chunks[cid] = off
+        n = struct.unpack(">I", b[chunks[b"OIDF"] + 255 * 4: chunks[b"OIDF"] + 256 * 4])[0]
+        oids = [bytes(b[chunks[b"OIDL"] + 20 * i: chunks[b"OIDL"] + 20 * i + 20]).hex() for i in range(n)]
+        struct.pack_into(">II", b, chunks[b"CDAT"] + 36 * oids.index(cut_commit) + 20, 0x70000000, 0x70000000)
+        b[-20:] = hashlib.sha1(bytes(b[:-20])).digest()
+        gp.chmod(0o644)
+        gp.write_bytes(bytes(b))
+
+    def test_review65_forged_graph_and_rewritten_object_refuse(self):
+        """Review 65 L1: a forged commit-graph or a rewritten loose blob hides a deleted rejection while the HEAD id
+        and tree are unchanged and the repository is not shallow; a full strict fsck is a precondition. Positive
+        control: an honest commit-graph changes nothing."""
+        att = self.attestation()
+        with tempfile.TemporaryDirectory() as d:
+            ids = self._rejected_then_deleted(Path(d), att)
+            self.assertIsNone(self._valid_in(d, att)[0])                                  # full history: refused
+            self._forge_commit_graph(d, ids[2])
+            rec, why = self._valid_in(d, att)
+            self.assertIsNone(rec)                                                        # RV31 (graph)
+            self.assertTrue(any("history completeness" in w for w in why), why)
+            Path(d, ".git", "objects", "info", "commit-graph").unlink()
+            oid = subprocess.run(["git", "-C", d, "rev-parse", f"{ids[1]}:{L.ACCEPTANCE_REVIEW_DIR}/veto.md"],
+                                 capture_output=True, text=True, check=True).stdout.strip()
+            obj = Path(d, ".git", "objects", oid[:2], oid[2:])
+            obj.chmod(0o644)
+            obj.write_bytes(zlib.compress(b"blob 6\0draft\n"))
+            rec, why = self._valid_in(d, att)
+            self.assertIsNone(rec)                                                        # RV31 (object)
+            self.assertTrue(any("history completeness" in w for w in why), why)
+        with tempfile.TemporaryDirectory() as d:                                          # control
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att})
+            git_commit(d, {f"{ACC}1.md": self.accept(hashlib.sha256(att).hexdigest())})
+            fixture_git(d, "commit-graph", "write", "--reachable")
+            rec, why = self._valid_in(d, att)
+            self.assertIsNotNone(rec, why)
+
+    def test_review65_local_fsck_or_promisor_configuration_refuses(self):
+        """Review 65 L1 / L6: repository-local `fsck.*` keys (which could downgrade fsck) and partial-clone /
+        promisor keys refuse; a valid repository without them is accepted."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        for key, value in ((None, None), ("fsck.missingEmail", "ignore"), ("fsck.skipList", os.devnull),
+                           ("remote.origin.promisor", "true"), ("remote.origin.partialclonefilter", "blob:none")):
+            with self.subTest(key=key), tempfile.TemporaryDirectory() as d:
+                git_init(d)
+                git_commit(d, {"att/HOST.json": att})
+                git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+                if key:
+                    fixture_git(d, "config", "--local", key, value)
+                rec, why = self._valid_in(d, att)
+                if key is None:
+                    self.assertIsNotNone(rec, why)
+                else:
+                    self.assertIsNone(rec)                                                # RV32
+                    self.assertTrue(any("history completeness" in w for w in why), why)
+
+    def test_review65_partial_clone_runs_no_configured_command(self):
+        """Review 65 L6: in a blob:none partial clone a missing historical blob would be lazily fetched, running the
+        repository-configured upload-pack command; the check refuses before any fetch and runs nothing."""
+        att = self.attestation()
+        with tempfile.TemporaryDirectory() as d:
+            src, dst, marker = Path(d, "src"), Path(d, "dst"), Path(d, "fetched.marker")
+            src.mkdir()
+            self._rejected_then_deleted(src, att)
+            fixture_git(src, "config", "uploadpack.allowFilter", "true")
+            fixture_git(d, "clone", "-q", "--no-local", "--filter=blob:none", src.as_uri(), str(dst))
+            script = Path(d, "upload-pack.sh")
+            script.write_text(f"#!/bin/sh\ntouch '{marker}'\nexec git-upload-pack \"$@\"\n")
+            script.chmod(0o755)
+            fixture_git(dst, "config", "remote.origin.uploadpack", str(script))
+            rec, why = self._valid_in(dst, att)
+            self.assertIsNone(rec)
+            self.assertFalse(marker.exists(), "a configured command ran during the check")    # RV39
+
+    def test_review65_replace_refs_and_grafts_are_ignored(self):
+        """Review 65 L2 (RX1, RX2, RX5): a replace graft or an info/grafts entry that cuts the deletion commit, and a
+        replace graft that places a pre-blob acceptance after the blob, change nothing: every read, including the
+        ancestry check, ignores them."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        with tempfile.TemporaryDirectory() as d:
+            ids = self._rejected_then_deleted(Path(d), att)
+            fixture_git(d, "replace", "--graft", ids[2])
+            self.assertIsNone(self._valid_in(d, att)[0])                                  # RV33
+        with tempfile.TemporaryDirectory() as d:
+            ids = self._rejected_then_deleted(Path(d), att)
+            Path(d, ".git", "info").mkdir(exist_ok=True)
+            Path(d, ".git", "info", "grafts").write_text(ids[2] + "\n")
+            self.assertIsNone(self._valid_in(d, att)[0])                                  # RV34
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"README": b"x\n"})
+            git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+            acc = subprocess.run(["git", "-C", d, "rev-parse", "HEAD"], capture_output=True, text=True,
+                                 check=True).stdout.strip()
+            git_commit(d, {"att/HOST.json": att})
+            blob = subprocess.run(["git", "-C", d, "rev-parse", "HEAD"], capture_output=True, text=True,
+                                  check=True).stdout.strip()
+            git_commit(d, {"notes/q.md": f"quoted {L.ACCEPTANCE_LINE}{sha}\n".encode()})
+            fixture_git(d, "replace", "--graft", acc, blob)
+            self.assertIsNone(self._valid_in(d, att)[0])                                  # RV35
+
+    def test_review65_caller_git_environment_is_ignored(self):
+        """Review 65 L3: an inherited GIT_DIR (as in a hook) or object-directory variable cannot redirect the reads
+        to another repository."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        with tempfile.TemporaryDirectory() as d:
+            bad, good = Path(d, "bad"), Path(d, "good")
+            bad.mkdir(), good.mkdir()
+            self._rejected_then_deleted(bad, att)
+            git_init(good)
+            git_commit(good, {"att/HOST.json": att})
+            git_commit(good, {f"{ACC}1.md": self.accept(sha)})
+            with mock.patch.dict(os.environ, {"GIT_DIR": str(good / ".git"),
+                                              "GIT_OBJECT_DIRECTORY": str(good / ".git" / "objects")}):
+                rec, why = self._valid_in(bad, att)
+            self.assertIsNone(rec, "the caller's GIT_DIR redirected the check")             # RV40
+            self.assertTrue(any("HISTORICAL" in w for w in why), why)
+
+    def test_review65_short_exact_listing_refuses(self):
+        """Review 65 L2 (RX6): an exact-path listing that omits a reviewed path is unavailable evidence."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        rd = L.ACCEPTANCE_REVIEW_DIR
+        original = L._git
+
+        def short(repo_root, *args):
+            out = original(repo_root, *args)
+            if args[:3] == ("ls-tree", "-z", "HEAD") and out and len(args) > 5:
+                return out.split(b"\0")[0] + b"\0"                                         # first entry only
+            return out
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att})
+            git_commit(d, {f"{ACC}1.md": self.accept(sha), f"{rd}/zz_notes.md": f"{sha} REJECTED\n".encode()})
+            with patched(_git=short):
+                rec, why = self._valid_in(d, att)
+            self.assertIsNone(rec)                                                        # RV38
+            self.assertTrue(any("UNAVAILABLE" in w for w in why), why)
+
+    def test_review65_range_like_attestation_path_and_deep_json(self):
+        """Review 65 L7: (a) an attestation at `att/x..HEAD` while `att/x` exists is read by its exact path, not as a
+        revision range; (b) a deeply nested committed attestation is refused without an exception."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"att/x": b"other\n", "att/x..HEAD": att})
+            git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+            with patched(machine_identity=lambda *a, **k: self.HW):
+                rec, why = L.attestation_valid({"path": "att/x..HEAD", "sha256": sha}, repo_root=d)
+            self.assertIsNotNone(rec, why)                                                # RV41
+        deep = b"[" * 100000 + b"]" * 100000
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"att/HOST.json": deep})
+            try:
+                rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": hashlib.sha256(deep).hexdigest()},
+                                               repo_root=d)
+            except RecursionError as e:                                                   # pragma: no cover
+                self.fail(f"RecursionError escaped attestation_valid: {e!r}")             # RV42
+            self.assertIsNone(rec)
+
     def test_review64_missing_blob_commits_refuse(self):
         """Review 64 RW1: no commit found for the attested blob refuses; `all()` over nothing is not an order."""
         att = self.attestation()
@@ -1366,7 +1565,7 @@ class TestAttestationPreflight(unittest.TestCase):
         att = self.attestation()
         sha = hashlib.sha256(att).hexdigest()
         note = f"{L.ACCEPTANCE_REVIEW_DIR}/notes.md"
-        for text in (f"blob:a{sha} REJECTED\n", f"{sha}0 rejected\n"):
+        for text in (f"blob:a{sha} REJECTED\n", f"{sha}0 rejected\n", f"blob:A{sha.upper()} REJECTED\n"):  # RX3
             self.assertIsNone(self.check(att, reviews={f"{ACC}1.md": self.accept(sha), note: text.encode()})[0],
                               text)
 

@@ -1,0 +1,120 @@
+"""Review 65 record checks: recompute every sha256 bound in ledger lines 486-493 at the commit that introduced it and
+at 2275b3a0; decompress the gzip records and compare; compare review 64 and its scratch with scratchpad/review64.
+Reads git objects of the pinned worktree only (no working-tree file of the shared checkout).
+usage: python3 -I check_records65.py.txt <pinned tree> <review64 original dir> <out.json>"""
+import gzip, hashlib, json, subprocess, sys
+from pathlib import Path
+
+TREE, ORIG, OUT = sys.argv[1:4]
+NS = "level4/closure_proofs/p5y_k5_cell308_research"
+
+
+def blob(commit, path):
+    r = subprocess.run(["git", "-C", TREE, "cat-file", "blob", f"{commit}:{path}"], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+
+
+def sha(b):
+    return None if b is None else hashlib.sha256(b).hexdigest()
+
+
+ledger = blob("2275b3a0", f"{NS}/ledger/TARGET_INTEGRITY_LEDGER.jsonl").decode().splitlines()
+L = {i + 1: json.loads(x) for i, x in enumerate(ledger) if i + 1 >= 486}
+intro = {486: "f23f0032", 487: "b23ee7dd", 488: "b23ee7dd", 489: "b23ee7dd", 490: "68a38c64", 491: "c50e73f8",
+         492: "c50e73f8", 493: "2275b3a0"}
+res = {"mismatches": [], "checked": 0}
+
+
+def check(line, label, path, want, commits):
+    for c in commits:
+        got = sha(blob(c, path))
+        res["checked"] += 1
+        if got != want:
+            res["mismatches"].append({"line": line, "label": label, "path": path, "commit": c, "want": want, "got": got})
+
+
+# 486
+check(486, "brief", f"{NS}/ledger/briefs/64_reviewREVIEW63_REPAIR.txt", L[486]["brief_sha256"], ["f23f0032", "2275b3a0"])
+lf = L[486]["local_full_run"]
+check(486, "record", f"{NS}/{lf['record']}", lf["record_sha256"], ["f23f0032", "2275b3a0"])
+# 487
+check(487, "review", f"{NS}/{L[487]['review']}", L[487]["review_sha256"], ["b23ee7dd", "2275b3a0"])
+for p, h in L[487]["scratch_sha256"].items():
+    check(487, "scratch", f"{NS}/{p}", h, ["b23ee7dd", "2275b3a0"])
+# 488 (a16d2d99 inputs)
+check(488, "a16_workflow", ".github/workflows/cell-308-r5-integration.yml",
+      "7a9ee1dd4b06c47cedfab8a9fef8e86128c24cb60b657f58b70165463c0cb6dc", ["a16d2d99"])
+check(488, "a16_run_mutants", f"{NS}/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py",
+      "55a3e6e2b69069a9b77fb1b98dac1af73edeb1039b5aec379d85554da5b25d83", ["a16d2d99"])
+# 489, 490, 492 inputs
+for ln, c in ((489, "b23ee7dd"), (490, "68a38c64"), (492, "c50e73f8")):
+    for p, h in L[ln]["input_sha256"].items():
+        check(ln, "input", p, h, [c])
+for p, h in L[489]["documents"].items():
+    check(489, "document", f"{NS}/{p}", h, ["b23ee7dd", "2275b3a0"])
+check(492, "erratum", f"{NS}/{L[492]['erratum']}", L[492]["erratum_sha256"], ["c50e73f8", "2275b3a0"])
+# 2275b3a0 inputs equal c50e73f8 inputs (head adds evidence only)
+for p in L[492]["input_sha256"]:
+    if sha(blob("c50e73f8", p)) != sha(blob("2275b3a0", p)):
+        res["mismatches"].append({"line": 493, "label": "inputs differ c50e73f8 vs 2275b3a0", "path": p})
+
+# gz records
+records = {}
+for ln, rec, commit in ((486, L[486]["local_full_run"], "5e8e3d9c"),
+                        (493, L[493]["runs"][0], "68a38c64"), (493, L[493]["runs"][1], "c50e73f8")):
+    gz = blob("2275b3a0", f"{NS}/{rec['record']}")
+    check(ln, "gz", f"{NS}/{rec['record']}", rec["record_sha256"], ["2275b3a0"])
+    raw = gzip.decompress(gz)
+    hdr = gz[:10]
+    d = json.loads(raw)
+    inputs = d.get("input_sha256") or {}
+    blob_eq = {p: sha(blob(commit, p)) == h for p, h in inputs.items()}
+    counts = {}
+    for m in d.get("mutants", []):
+        counts[m.get("status")] = counts.get(m.get("status"), 0) + 1
+    records[rec["record"]] = {
+        "uncompressed_sha256": sha(raw), "claimed_uncompressed": rec.get("uncompressed_sha256"),
+        "uncompressed_ok": sha(raw) == rec.get("uncompressed_sha256"),
+        "gzip_mtime_zero": hdr[4:8] == b"\0\0\0\0", "gzip_no_name_flag": not (hdr[3] & 0x08),
+        "n_inputs": len(inputs), "inputs_equal_commit_blobs": all(blob_eq.values()) and len(inputs) == 10,
+        "inputs_after_equal_before": d.get("input_sha256_after", d.get("inputs_after")) in (None, inputs)
+                                      or d.get("input_sha256_after") == inputs,
+        "keys": sorted(d)[:40], "status_counts": counts, "total": d.get("total"), "killed": d.get("killed"),
+        "pass": d.get("pass"), "expected_test_count": d.get("expected_test_count"),
+        "inputs_unchanged": d.get("inputs_unchanged"), "full_registry_completed": d.get("full_registry_completed"),
+        "commit": commit,
+    }
+res["records"] = records
+
+# review 64 vs original
+orig = Path(ORIG)
+rv = blob("2275b3a0", f"{NS}/reviews/REVIEW_REVIEW63_REPAIR_DELTA.md")
+res["review64_identical"] = rv == (orig / "REVIEW_REVIEW63_REPAIR_DELTA.md").read_bytes()
+res["review64_sha256_orig"] = sha((orig / "REVIEW_REVIEW63_REPAIR_DELTA.md").read_bytes())
+ls = subprocess.run(["git", "-C", TREE, "ls-tree", "-r", "--name-only", "2275b3a0", "--",
+                     f"{NS}/reviews/scratch_REVIEW_REVIEW63_REPAIR/"], capture_output=True, text=True).stdout.split()
+sc = {}
+for p in ls:
+    rel = p.split("scratch_REVIEW_REVIEW63_REPAIR/", 1)[1]
+    b = blob("2275b3a0", p)
+    if rel.endswith(".json.gz"):
+        o = orig / rel[:-3]
+        sc[rel] = {"orig": str(o.name), "identical_after_gunzip": o.exists() and gzip.decompress(b) == o.read_bytes()}
+        continue
+    cands = [orig / rel, orig / rel[:-4]] if rel.endswith(".py.txt") else [orig / rel]
+    if rel.endswith("lx_platform.py.txt"):
+        cands = [orig / rel[:-4]]
+    o = next((c for c in cands if c.exists()), None)
+    sc[rel] = {"orig": None if o is None else str(o.relative_to(orig)), "identical": o is not None and o.read_bytes() == b}
+res["scratch_compare"] = sc
+committed = {p.split("scratch_REVIEW_REVIEW63_REPAIR/", 1)[1] for p in ls}
+orig_files = sorted(str(p.relative_to(orig)) for p in orig.rglob("*") if p.is_file()
+                    and not str(p.relative_to(orig)).startswith(("tree_5e8e3d9c", "tmp/")))
+res["orig_not_committed"] = [f for f in orig_files if f not in committed and f + ".gz" not in committed
+                             and (f[:-3] + ".py.txt" if f.endswith(".py") else f) not in committed
+                             and f + ".txt" not in committed]
+res["orig_tmp_and_tree_present"] = [x for x in ("tmp", "tree_5e8e3d9c") if (orig / x).exists()]
+Path(OUT).write_text(json.dumps(res, indent=1))
+print(json.dumps({k: v for k, v in res.items() if k != "scratch_compare"}, indent=1))
+print("scratch not identical:", [k for k, v in sc.items() if not (v.get("identical") or v.get("identical_after_gunzip"))])
+print("scratch files committed:", len(sc))

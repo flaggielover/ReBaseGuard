@@ -9,7 +9,8 @@ R5SYNC01-R5SYNC04 cover complete veto paths, failed veto evidence and unknown su
 RV01-RV17 carry Claude review 63's mutants W01-W07 (re-anchored where the code they targeted changed) and
 weaken its H1/H3/H6/H7 repairs; P11, Z01, Z02, Z05 and Q06 are re-anchored with the same weakening.
 RV18-RV28 carry review 64's surviving mutants (RW1-RW4, RW6) and weaken its K1, K4, K7 and K9 repairs; RV29-RV30
-weaken the history-completeness guard restored after review 64 (shallow clones hide deleted rejections).
+weaken the history-completeness guard restored after review 64 (shallow clones hide deleted rejections); RV31-RV42
+carry review 65's mutants RX1-RX6 and weaken its L1, L3, L6 and L7 repairs.
 Every complete raw report, mutation anchor, and before/after input hash is retained.
 No scientific evaluator is imported or executed. Explicit output paths receive the evidence.
 
@@ -399,13 +400,14 @@ MUTANTS = [('M01',
     '        if v is not None and (not isinstance(v, int) or v < 0):')]),
  ('Q01',
   'negative scan not recursive (a rejection in a review subdirectory ignored); on the combined source the '
-  'history-wide veto scan is made non-recursive too, and the HEAD scan keeps direct-child FILES only (review 64 '
-  'K9 reads blobs with cat-file, so a listed subdirectory would refuse as unavailable evidence instead)',
+  'history-wide veto scan is made non-recursive too, and the HEAD scan drops direct-child TREES only (review 64 '
+  'K9 reads blobs with cat-file, so a listed subdirectory would refuse as unavailable evidence instead; review 65 '
+  'L4: gitlinks stay in, as in the base)',
   [('every = _review_paths(_git(repo_root, "ls-tree", "-r", "-z", "--name-only", "HEAD", "--", '
     'ACCEPTANCE_REVIEW_DIR))',
     'every = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))\n'
     '    every = every if every is None else [p for p in every\n'
-    '                                         if _git(repo_root, "cat-file", "-t", f"HEAD:{p}") == b"blob\\n"]'),
+    '                                         if _git(repo_root, "cat-file", "-t", f"HEAD:{p}") != b"tree\\n"]'),
    ('        listing = _git(repo_root, "ls-tree", "-r", "-z", c, "--", ACCEPTANCE_REVIEW_DIR)',
     '        listing = _git(repo_root, "ls-tree", "-z", c, f"{ACCEPTANCE_REVIEW_DIR}/")')]),
  ('Q02',
@@ -667,10 +669,58 @@ MUTANTS = [('M01',
     '        return [], ["UNAVAILABLE: history completeness not established (shallow clone or unreadable)"]\n', '')]),
  ('RV30',
   'Review 64 follow-up: an unreadable completeness answer counts as complete history',
-  [('    return _git(repo_root, "rev-parse", "--is-shallow-repository") == b"false\\n"',
-    '    return _git(repo_root, "rev-parse", "--is-shallow-repository") != b"true\\n"')])]
+  [('    if _git(repo_root, "rev-parse", "--is-shallow-repository") != b"false\\n":',
+    '    if _git(repo_root, "rev-parse", "--is-shallow-repository") == b"true\\n":')]),
+ ('RV31',
+  'Review 65 L1: no full strict fsck (a forged commit-graph or a rewritten object hides a deleted rejection)',
+  [('    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None',
+    '    return True')]),
+ ('RV32',
+  'Review 65 L1 / L6: repository-local fsck.* and promisor / partial-clone keys accepted',
+  [('    if names is None or any(_LOCAL_CONFIG_REFUSED.match(n) for n in names.decode("utf-8", "replace").lower()\n'
+    '                            .split("\\0") if n):',
+    '    if names is None:')]),
+ ('RV33',
+  'Review 65 RX1: replace objects honoured by the reads',
+  [('_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true")', '_GIT_ISOLATION = ("-c", "log.showRoot=true")')]),
+ ('RV34',
+  'Review 65 RX2: info/grafts honoured by the reads',
+  [('               GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")', '               GIT_NO_LAZY_FETCH="1")')]),
+ ('RV35',
+  'Review 65 RX5: the ancestry check runs without the isolation',
+  [('["git", "-C", str(repo_root), *_GIT_ISOLATION, "merge-base", "--is-ancestor", earlier,\n'
+    '                            later], capture_output=True, timeout=60, stdin=subprocess.DEVNULL, env=_git_env())',
+    '["git", "-C", str(repo_root), "merge-base", "--is-ancestor", earlier,\n'
+    '                            later], capture_output=True, timeout=60, stdin=subprocess.DEVNULL)')]),
+ ('RV36',
+  'Review 65 RX3: a glued full sha is named only in lower case',
+  [('    return sha in line.lower() or any(', '    return sha in line or any(')]),
+ ('RV37',
+  'Review 65 RX4: only PermissionError from a unit root becomes unknown',
+  [('        except OSError:                                         # review 64 K9: e.g. a root listable, not searchable',
+    '        except PermissionError:')]),
+ ('RV38',
+  'Review 65 RX6: the exact-path listing need not cover every reviewed path',
+  [('    if entries is None or set(entries) != set(every):', '    if entries is None:')]),
+ ('RV39',
+  'Review 65 L6: partial clones accepted and lazy fetch allowed (configured commands may run)',
+  [('_LOCAL_CONFIG_REFUSED = re.compile(r"fsck\\.|extensions\\.partialclone$|remote\\..*\\.(promisor|partialclonefilter)$")',
+    '_LOCAL_CONFIG_REFUSED = re.compile(r"fsck\\.")'),
+   ('               GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")', '               GIT_GRAFT_FILE=os.devnull)')]),
+ ('RV40',
+  'Review 65 L3: the caller environment (GIT_DIR, object directories, ...) passes through to git',
+  [('    env = {k: v for k, v in os.environ.items() if k in _GIT_ENV_KEEP}', '    env = dict(os.environ)')]),
+ ('RV41',
+  'Review 65 L7: the attested blob is resolved with rev-parse HEAD:<path> (range parsing)',
+  [('    entry = (_tree_entries(repo_root, [att_path]) or {}).get(att_path)  # review 65 L7: never a revision range\n'
+    '    blob = entry[2] if entry and entry[:2] in (("100644", "blob"), ("100755", "blob")) else ""\n',
+    '    blob = (_git(repo_root, "rev-parse", f"HEAD:{att_path}") or b"").decode().strip()\n')]),
+ ('RV42',
+  'Review 65 L7: a deeply nested attestation raises out of attestation_valid',
+  [('    except RecursionError:                                      # review 65 L7: deeply nested JSON\n'
+    '        return None, ["attestation JSON nested too deeply"]\n', '')])]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 30}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 42}
 
 # A kill must include at least one named direct witness for the weakened property.
 # These method names are unique across the full discovered suite. They are evidence
@@ -761,14 +811,21 @@ for _method, _ids in {
     "test_review63_upholds_and_mask_precedence": "RV16 RV17",
     "test_review64_missing_blob_commits_refuse": "RV18",
     "test_review64_shallow_history_refuses_deleted_preboundary_rejection": "RV29 RV30",
+    "test_review65_forged_graph_and_rewritten_object_refuse": "RV31",
+    "test_review65_local_fsck_or_promisor_configuration_refuses": "RV32",
+    "test_review65_replace_refs_and_grafts_are_ignored": "RV33 RV34 RV35",
+    "test_review65_short_exact_listing_refuses": "RV38",
+    "test_review65_partial_clone_runs_no_configured_command": "RV39",
+    "test_review65_caller_git_environment_is_ignored": "RV40",
+    "test_review65_range_like_attestation_path_and_deep_json": "RV41 RV42",
     "test_review64_dangling_top_entry_shadows_lower_mask": "RV19",
     "test_review64_non_utf8_historical_review_path_refuses": "RV20",
     "test_review64_side_branch_acceptance_synced_and_merged_refuses": "RV22",
     "test_review64_order_ignores_reading_configuration": "RV23 RV24",
-    "test_review64_sha_inside_longer_hex_run_still_names_it": "RV25",
+    "test_review64_sha_inside_longer_hex_run_still_names_it": "RV25 RV36",
     "test_review64_symlink_is_not_an_accepting_review": "RV26",
     "test_review64_range_like_review_names_do_not_block": "RV27",
-    "test_review64_unreadable_unit_root_is_unknown_not_a_crash": "RV28",
+    "test_review64_unreadable_unit_root_is_unknown_not_a_crash": "RV28 RV37",
 }.items():
     for _mid in _ids.split():
         PROPERTY_WITNESSES.setdefault(_mid, []).append(_method)

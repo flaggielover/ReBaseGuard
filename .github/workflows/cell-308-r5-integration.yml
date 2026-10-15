@@ -91,8 +91,8 @@ jobs:
           assert rec['new_target_evaluations'] == 0
           assert rec['inputs_unchanged'] and rec['full_registry_completed'] and rec['pass']
           assert rec['unmutated_suite'] == 'PASS'
-          assert rec['expected_mutants'] == rec['total'] == rec['killed'] == 163
-          assert len(suites) == 164
+          assert rec['expected_mutants'] == rec['total'] == rec['killed'] == 175
+          assert len(suites) == 176
           for _, suite in suites:
               assert suite['ran'] == rec['expected_test_count']
               assert suite['errors'] == suite['skipped'] == 0

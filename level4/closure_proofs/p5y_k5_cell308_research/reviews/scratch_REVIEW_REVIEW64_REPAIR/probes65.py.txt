@@ -1,0 +1,317 @@
+"""Review 65 probes: synthetic git repositories only, scratch copy of lx_platform.py (2275b3a0 bytes).
+Never touches the real repository: every attestation_valid call passes repo_root=<synthetic repo>.
+usage: python3 -I probes65.py.txt <dir_with_lx_platform.py> <tmp_root> <out.json>"""
+import hashlib, json, os, shutil, struct, subprocess, sys, tempfile, traceback
+from pathlib import Path
+
+BASE, TMP, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+sys.path.insert(0, BASE)
+import lx_platform as L  # noqa: E402
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR
+ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+LINE = f"{L.ACCEPTANCE_LINE}{SHA}"
+OK = f"review\n{LINE}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+VETO = f"{RD}/veto.md"
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main", "-c", "protocol.file.allow=always"]
+results = {}
+
+
+def git(d, *a, check=True, env=None):
+    return subprocess.run(["git", "-C", str(d), *CFG, *a], check=check, capture_output=True,
+                          env=dict(os.environ, **(env or {})))
+
+
+def init(d):
+    Path(d).mkdir(parents=True, exist_ok=True)
+    git(d, "init", "-q")
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+        git(d, "config", "--local", k, v)
+
+
+def commit(d, files=None, rm=()):
+    for rel, data in (files or {}).items():
+        p = Path(d, rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(data, tuple) and data[0] == "symlink":
+            os.symlink(data[1], p)
+        else:
+            p.write_bytes(data)
+    for rel in rm:
+        git(d, "rm", "-q", rel)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", "c")
+    return git(d, "rev-parse", "HEAD").stdout.decode().strip()
+
+
+def valid(d, path="att/HOST.json", sha=SHA):
+    try:
+        rec, why = L.attestation_valid({"path": path, "sha256": sha}, repo_root=str(d))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}", "tb": traceback.format_exc()[-600:]}
+
+
+def shallow_answer(d):
+    r = git(d, "rev-parse", "--is-shallow-repository", check=False)
+    return r.stdout.decode().strip()
+
+
+def bad_repo(d):
+    """att -> rejecting review -> review deleted -> valid acceptance (full history refuses: HISTORICAL)."""
+    init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    c2 = commit(d, {VETO: f"{SHA} REJECTED\n".encode()})
+    c3 = commit(d, rm=[VETO])
+    c4 = commit(d, {f"{ACC}1.md": OK})
+    return [c1, c2, c3, c4]
+
+
+def run(name, fn):
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        try:
+            results[name] = fn(Path(d))
+        except Exception as e:
+            results[name] = {"probe_error": f"{type(e).__name__}: {e}", "tb": traceback.format_exc()[-800:]}
+
+
+# ---------------------------------------------------------------- commit-graph forgery
+def forge_commit_graph(d, cut_commit):
+    """Let git write a v1 commit-graph (no changed-path filters), then rewrite the CDAT parent of ``cut_commit`` to
+    'no parent' and recompute the trailing checksum. Objects, refs, HEAD and every commit id stay as they are."""
+    git(d, "-c", "commitGraph.generationVersion=1", "commit-graph", "write", "--reachable", "--no-changed-paths")
+    gp = Path(d, ".git", "objects", "info", "commit-graph")
+    b = bytearray(gp.read_bytes())
+    assert b[:4] == b"CGPH" and b[4] == 1 and b[5] == 1
+    nchunks = b[6]
+    chunks = {}
+    for i in range(nchunks + 1):
+        cid, off = struct.unpack(">4sQ", b[8 + 12 * i: 20 + 12 * i])
+        chunks[cid] = off
+    oidl, cdat = chunks[b"OIDL"], chunks[b"CDAT"]
+    n = struct.unpack(">I", b[chunks[b"OIDF"] + 255 * 4: chunks[b"OIDF"] + 256 * 4])[0]
+    oids = [bytes(b[oidl + 20 * i: oidl + 20 * i + 20]).hex() for i in range(n)]
+    pos = oids.index(cut_commit)
+    rec = cdat + 36 * pos
+    struct.pack_into(">II", b, rec + 20, 0x70000000, 0x70000000)
+    b[-20:] = hashlib.sha1(bytes(b[:-20])).digest()
+    gp.chmod(0o644)
+    gp.write_bytes(bytes(b))
+    return sorted(chunks)
+
+
+def p_commit_graph(d):
+    out = {}
+    r = d / "r"
+    c = bad_repo(r)
+    out["full_no_graph"] = valid(r)
+    git(r, "-c", "commitGraph.generationVersion=1", "commit-graph", "write", "--reachable")
+    out["full_honest_graph"] = valid(r)
+    out["chunks"] = [x.decode() for x in forge_commit_graph(r, c[2])]
+    out["is_shallow"] = shallow_answer(r)
+    out["rev_list_count_default"] = git(r, "rev-list", "--count", "HEAD").stdout.decode().strip()
+    out["rev_list_count_graph_off"] = git(r, "-c", "core.commitGraph=false", "rev-list", "--count",
+                                          "HEAD").stdout.decode().strip()
+    out["head_tree_unchanged"] = git(r, "rev-parse", "HEAD^{tree}").stdout.decode().strip()
+    out["forged_graph"] = valid(r)
+    fsck = git(r, "commit-graph", "verify", check=False)
+    out["commit_graph_verify_rc"] = fsck.returncode
+    # the same reading with core.commitGraph=false forced (candidate repair)
+    saved = L._GIT_ISOLATION
+    try:
+        L._GIT_ISOLATION = saved + ("-c", "core.commitGraph=false")
+        out["forged_graph_with_core.commitGraph=false_forced"] = valid(r)
+    finally:
+        L._GIT_ISOLATION = saved
+    return out
+
+
+def p_commit_graph_in_alternate(d):
+    """The forged graph sits in an ALTERNATE object directory; the reading repository has none of its own."""
+    out = {}
+    src, rd = d / "src", d / "reader"
+    c = bad_repo(src)
+    git(d, "clone", "-q", "--shared", src.as_uri().replace("file://", ""), str(rd))
+    out["shared_clone_before"] = valid(rd)
+    forge_commit_graph(src, c[2])
+    out["alternate_has_forged_graph"] = valid(rd)
+    out["reader_is_shallow"] = shallow_answer(rd)
+    return out
+
+
+def p_commit_graph_order(d):
+    """Order rule with a forged graph: acceptance BEFORE the blob, then the blob, then a quote; cut the blob commit's
+    parent so the pre-blob acceptance commit is unreachable."""
+    out = {}
+    init(d)
+    c1 = commit(d, {f"{ACC}1.md": OK})
+    c2 = commit(d, {"att/HOST.json": ATT})
+    c3 = commit(d, {"notes/q.md": f"quoted: {LINE}\n".encode()})
+    out["full"] = valid(d)
+    forge_commit_graph(d, c2)
+    out["forged_cut_blob_commit_parent"] = valid(d)
+    return out
+
+
+# ---------------------------------------------------------------- clone shapes
+def p_shallow_file_removed(d):
+    src, dst = d / "src", d / "dst"
+    bad_repo(src)
+    git(d, "clone", "-q", "--depth", "2", src.as_uri(), str(dst))
+    out = {"depth2": valid(dst)}
+    os.unlink(dst / ".git" / "shallow")
+    out["shallow_file_removed_is_shallow"] = shallow_answer(dst)
+    out["shallow_file_removed"] = valid(dst)
+    return out
+
+
+def p_partial(d):
+    out = {}
+    src = d / "src"
+    bad_repo(src)
+    git(src, "config", "uploadpack.allowFilter", "true")
+    git(src, "config", "uploadpack.allowAnySHA1InWant", "true")
+    for flt in ("blob:none", "tree:0"):
+        dst = d / f"dst_{flt.replace(':', '_')}"
+        git(d, "clone", "-q", "--no-local", f"--filter={flt}", src.as_uri(), str(dst))
+        out[f"{flt}_is_shallow"] = shallow_answer(dst)
+        out[f"{flt}_promisor_reachable"] = valid(dst)
+        dst2 = d / f"dst2_{flt.replace(':', '_')}"
+        git(d, "clone", "-q", "--no-local", f"--filter={flt}", src.as_uri(), str(dst2))
+        git(dst2, "remote", "set-url", "origin", str(d / "gone"))
+        out[f"{flt}_promisor_unreachable"] = valid(dst2)
+    return out
+
+
+def p_shapes(d):
+    out = {}
+    src = d / "src"
+    bad_repo(src)
+    git(d, "clone", "-q", "--bare", src.as_uri(), str(d / "bare"))
+    out["bare"] = valid(d / "bare")
+    git(d, "clone", "-q", "--mirror", src.as_uri(), str(d / "mirror"))
+    out["mirror"] = valid(d / "mirror")
+    git(src, "worktree", "add", "-q", "--detach", str(d / "wt"), "HEAD")
+    out["linked_worktree"] = valid(d / "wt")
+    git(d, "clone", "-q", "--shared", str(src), str(d / "shared"))
+    out["alternates_shared"] = valid(d / "shared")
+    sup = d / "super"
+    init(sup)
+    commit(sup, {"README": b"x\n"})
+    git(sup, "submodule", "add", "-q", src.as_uri(), "sub")
+    commit(sup)
+    out["submodule_full"] = valid(sup / "sub")
+    sup2 = d / "super2"
+    init(sup2)
+    commit(sup2, {"README": b"x\n"})
+    git(sup2, "submodule", "add", "-q", "--depth", "2", src.as_uri(), "sub")
+    out["submodule_shallow_is_shallow"] = shallow_answer(sup2 / "sub")
+    out["submodule_shallow"] = valid(sup2 / "sub")
+    return out
+
+
+def p_graft_replace(d):
+    out = {}
+    src = d / "r"
+    c = bad_repo(src)
+    git(src, "replace", "--graft", c[2])
+    out["replace_graft_cut"] = valid(src)
+    git(src, "replace", "-d", c[2])
+    Path(src, ".git", "info").mkdir(exist_ok=True)
+    Path(src, ".git", "info", "grafts").write_text(c[2] + "\n")
+    out["info_grafts_cut"] = valid(src)
+    return out
+
+
+# ---------------------------------------------------------------- caller environment
+def p_env(d):
+    out = {}
+    good, bad = d / "good", d / "bad"
+    init(good)
+    commit(good, {"att/HOST.json": ATT})
+    commit(good, {f"{ACC}1.md": OK})
+    bad_repo(bad)
+    out["good"] = valid(good)
+    out["bad"] = valid(bad)
+    saved = dict(os.environ)
+    try:
+        os.environ["GIT_DIR"] = str(good / ".git")
+        out["bad_with_GIT_DIR=good"] = valid(bad)
+    finally:
+        os.environ.clear(); os.environ.update(saved)
+    pre = d / "pre"
+    init(pre)
+    commit(pre, {f"{ACC}1.md": OK})
+    commit(pre, {"att/HOST.json": ATT})
+    commit(pre, {"notes/q.md": f"quoted: {LINE}\n".encode()})
+    out["root_acceptance_default"] = valid(pre)
+    try:
+        os.environ.update(GIT_CONFIG_COUNT="1", GIT_CONFIG_KEY_0="log.showRoot", GIT_CONFIG_VALUE_0="false")
+        out["root_acceptance_env_GIT_CONFIG_COUNT_showRoot=false"] = valid(pre)
+        os.environ.pop("GIT_CONFIG_COUNT"); os.environ.pop("GIT_CONFIG_KEY_0"); os.environ.pop("GIT_CONFIG_VALUE_0")
+        os.environ["GIT_CONFIG_PARAMETERS"] = "'log.showroot'='false'"
+        out["root_acceptance_env_GIT_CONFIG_PARAMETERS_showRoot=false"] = valid(pre)
+    finally:
+        os.environ.clear(); os.environ.update(saved)
+    return out
+
+
+# ---------------------------------------------------------------- local config and names
+def p_local_config(d):
+    out = {}
+    for key, val in (("core.bigFileThreshold", "1"), ("diff.renames", "copies"), ("log.follow", "true"),
+                     ("core.commitGraph", "false"), ("log.showSignature", "true")):
+        r = d / key
+        init(r)
+        commit(r, {f"{RD}/notes.md": b"x\n"})
+        commit(r, {f"{ACC}1.md": OK})
+        commit(r, {"att/HOST.json": ATT})
+        commit(r, {"notes/q.md": f"quoted: {LINE}\n".encode()})
+        git(r, "config", "--local", key, val)
+        out[f"pre_blob_acceptance_{key}={val}"] = valid(r)
+    return out
+
+
+def p_names(d):
+    out = {}
+    r = d / "dots"
+    init(r)
+    commit(r, {"att/a..b.json": ATT})
+    commit(r, {f"{ACC}1.md": OK})
+    out["attestation_path_with_dots"] = valid(r, path="att/a..b.json")
+    r = d / "glob"
+    init(r)
+    commit(r, {"att/HOST.json": ATT})
+    commit(r, {f"{ACC}1.md": OK, f"{RD}/*.md": b"n\n", f"{RD}/[R]x.md": b"n\n", f"{RD}/a b\tc.md": b"n\n"})
+    out["glob_like_review_names"] = valid(r)
+    r = d / "exec"
+    init(r)
+    commit(r, {"att/HOST.json": ATT})
+    commit(r, {f"{ACC}1.md": OK})
+    os.chmod(r / f"{ACC}1.md", 0o755)
+    commit(r)
+    out["accepting_mode_100755"] = valid(r)
+    r = d / "gitlink"
+    init(r)
+    commit(r, {"att/HOST.json": ATT})
+    commit(r, {f"{ACC}1.md": OK})
+    git(r, "update-index", "--add", "--cacheinfo", f"160000,{'1' * 40},{RD}/sub")
+    git(r, "commit", "-q", "-m", "gitlink")
+    out["direct_child_gitlink_plain_name"] = valid(r)
+    return out
+
+
+for name, fn in [("commit_graph_forgery", p_commit_graph), ("commit_graph_in_alternate", p_commit_graph_in_alternate),
+                 ("commit_graph_order_rule", p_commit_graph_order), ("shallow_file_removed", p_shallow_file_removed),
+                 ("partial_clone", p_partial), ("clone_shapes", p_shapes), ("graft_and_replace", p_graft_replace),
+                 ("caller_environment", p_env), ("local_config", p_local_config), ("names", p_names)]:
+    run(name, fn)
+Path(OUT).write_text(json.dumps(results, indent=1, sort_keys=True))
+print(json.dumps({k: ({kk: (vv.get("valid") if isinstance(vv, dict) else vv) for kk, vv in v.items()}
+                      if isinstance(v, dict) else v) for k, v in results.items()}, indent=1))
