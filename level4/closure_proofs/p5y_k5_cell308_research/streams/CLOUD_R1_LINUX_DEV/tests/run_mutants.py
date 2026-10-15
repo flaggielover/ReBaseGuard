@@ -398,10 +398,13 @@ MUTANTS = [('M01',
     '        if v is not None and (not isinstance(v, int) or v < 0):')]),
  ('Q01',
   'negative scan not recursive (a rejection in a review subdirectory ignored); on the combined source the '
-  'history-wide veto scan is made non-recursive too, since it would otherwise enforce the same property',
+  'history-wide veto scan is made non-recursive too, and the HEAD scan keeps direct-child FILES only (review 64 '
+  'K9 reads blobs with cat-file, so a listed subdirectory would refuse as unavailable evidence instead)',
   [('every = _review_paths(_git(repo_root, "ls-tree", "-r", "-z", "--name-only", "HEAD", "--", '
     'ACCEPTANCE_REVIEW_DIR))',
-    'every = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))'),
+    'every = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))\n'
+    '    every = every if every is None else [p for p in every\n'
+    '                                         if _git(repo_root, "cat-file", "-t", f"HEAD:{p}") == b"blob\\n"]'),
    ('        listing = _git(repo_root, "ls-tree", "-r", "-z", c, "--", ACCEPTANCE_REVIEW_DIR)',
     '        listing = _git(repo_root, "ls-tree", "-z", c, f"{ACCEPTANCE_REVIEW_DIR}/")')]),
  ('Q02',
