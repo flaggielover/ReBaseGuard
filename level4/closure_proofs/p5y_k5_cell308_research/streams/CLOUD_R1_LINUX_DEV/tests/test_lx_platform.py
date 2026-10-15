@@ -1,11 +1,12 @@
-"""Isolated, target-free tests of the DEV-ONLY Linux platform layer (lx_platform), revision 2.
+"""Isolated, target-free tests of the DEV-ONLY Linux platform layer (lx_platform), revision 4.
 
 Synthetic inputs only: planted /proc and /sys text in temporary directories, ``sleep`` / busy-loop child processes,
 temporary files and a temporary git repository. No cell, no drift, no science module, no decoy is imported or run;
 the historical candidate is only READ (``git show 142d97a9:...``) to pin two constants.
 Revision 2 added tests for every code finding of review 59 (F1, F2, F8-F15, F22, F23) and kills its mutants R01-R10.
-Revision 3 adds tests for the delta review 60's findings N1-N8, N11-N13 and kills its surviving mutants X01-X09
-(tests/run_mutants.py carries all of them).
+Revision 3 added tests for review 60's N1-N8, N11-N13 and kills its X01-X09. Revision 4 adds tests for review 61's
+P1-P2, P5-P11 and kills its Y01-Y09 (tests/run_mutants.py carries all of them). Trust-relevant inputs are no longer
+production parameters: tests change them through `patched()` on module attributes only.
 
 usage: python3 -m unittest discover -s tests -v      (from streams/CLOUD_R1_LINUX_DEV)
 """
@@ -48,6 +49,27 @@ def mkfiles(root: Path, files: dict) -> Path:
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(txt)
     return root
+
+
+class patched:
+    """Temporarily replace module attributes of lx_platform (test seams only; production has no such parameters)."""
+
+    def __init__(self, **attrs):
+        self.attrs, self.saved = attrs, {}
+
+    def __enter__(self):
+        for k, v in self.attrs.items():
+            self.saved[k] = getattr(L, k)
+            setattr(L, k, v)
+        return self
+
+    def __exit__(self, *exc):
+        for k, v in self.saved.items():
+            setattr(L, k, v)
+
+
+def attested():
+    return patched(root_attestation=lambda ref: (True, []))
 
 
 def wait_not_alive(ident, timeout=5.0) -> list:
@@ -134,6 +156,14 @@ class TestIdentity(unittest.TestCase):
             self.assertEqual(self.state(ident=rec, exists=False), L.UNKNOWN, k)
             self.assertEqual(self.state(ident=rec, stat=L.proc_stat(4242, stat_text(start=1))), L.UNKNOWN, k)
             self.assertEqual(self.state(ident=rec, boot=OTHER_BOOT), L.DEAD, k)
+    def test_malformed_records_prove_nothing(self):
+        """P9: a malformed record is UNKNOWN, never DEAD (a bad boot id would otherwise 'prove' a reboot; a negative
+        pid would address a process group)."""
+        for bad in (dict(self.ident, boot_id="garbage"), dict(self.ident, pid=-4242), dict(self.ident, pid=True),
+                    dict(self.ident, pid="4242"), dict(self.ident, starttime_ticks="777"),
+                    dict(self.ident, pidns=-1), dict(self.ident, cmdline_sha256="zz")):
+            self.assertEqual(self.state(ident=bad, exists=False), L.UNKNOWN, bad)
+
     def test_real_process_lifecycle(self):
         p = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"], start_new_session=True)
         try:
@@ -226,6 +256,22 @@ def git_show(rel: str) -> str:
 
 
 class TestAssess(unittest.TestCase):
+    def setUp(self):
+        """The CLEAN logic is tested as it would run once a reviewed journal reader exists (P7)."""
+        self._p = patched(JOURNAL_READER_REVIEWED=True)
+        self._p.__enter__()
+
+    def tearDown(self):
+        self._p.__exit__()
+
+    def test_no_reviewed_journal_reader_never_clean(self):
+        """P7: with no reviewed journal reader (the shipped state), a caller-supplied [] cannot make L' silent."""
+        a, b, s, j = self.clean_case()
+        with patched(JOURNAL_READER_REVIEWED=False):
+            r = L.assess(a, b, s, [])
+        self.assertEqual(r["status"], "AMBIGUOUS")
+        self.assertTrue(any("no reviewed journal reader" in x for x in r["reasons"]))
+
     def clean_case(self):
         return snap(0, 0, 0), snap(120 * S, 120 * S, 120 * S), [snap(60 * S, 60 * S, 60 * S)], []
 
@@ -292,7 +338,10 @@ class TestAssess(unittest.TestCase):
     def test_live_host_is_never_clean(self):
         """N13: with a well-formed (empty) journal list, this Cloud VM is still never CLEAN (no suspend_stats, no
         power supply), so a regression in those channels is detectable."""
-        r = L.assess(L.snapshot(), L.snapshot(), [], [])
+        snap0 = L.snapshot()
+        if snap0["power"] not in (None, "ABSENT") and snap0["suspend_success"] is not None:
+            self.skipTest("host exposes power and suspend_stats: a CLEAN interval is legitimate here (P10)")
+        r = L.assess(snap0, L.snapshot(), [], [])
         self.assertNotEqual(r["status"], "CLEAN")
 
 
@@ -380,25 +429,29 @@ class TestMemory(unittest.TestCase):
             self.assertIsNone(r["effective_limit"])
             self.assertIsNone(r["cgroup_min_headroom"])
             self.assertEqual(r["visible_limit_upper_bound"], 1000000000)
-            ra = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+            with attested():
+                ra = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d)
             self.assertEqual((ra["effective_limit"], ra["cgroup_min_headroom"]), (1000000000, 1000000000 - 400))
 
     def test_partial_chain_never_numeric(self):
         """F10: an unreadable limit anywhere, or an unreadable usage at a limited level, gives no number."""
         with tempfile.TemporaryDirectory() as d:
             self.v1(d, drop=("memory/a/memory.limit_in_bytes",))
-            r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+            with attested():
+                r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d)
             self.assertEqual((r["effective_limit"], r["cgroup_min_headroom"], r["visible_limit_upper_bound"]),
                              (None, None, None))
         with tempfile.TemporaryDirectory() as d:
             self.v1(d, leaf_use="?\n", mid="2000000000")      # another limited level exists: a partial min is possible
-            r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+            with attested():
+                r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d)
             self.assertIsNone(r["cgroup_min_headroom"])
 
     def test_ancestor_tighter_than_leaf(self):
         with tempfile.TemporaryDirectory() as d:
             self.v1(d, leaf=BIG, mid="500000000")
-            r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+            with attested():
+                r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d)
             self.assertEqual(r["effective_limit"], 500000000)
 
     def test_v2_root_and_memory_high(self):
@@ -407,7 +460,8 @@ class TestMemory(unittest.TestCase):
                               "x/memory.max": "8000\n", "x/memory.high": "max\n", "x/memory.current": "20\n"})
             cg = "0::/x/y\n"
             self.assertIsNone(L.memory_readings(MEMINFO, cg, d)["effective_limit"])        # root not attested
-            r = L.memory_readings(MEMINFO, cg, d, root_attested=True)
+            with attested():
+                r = L.memory_readings(MEMINFO, cg, d)
             self.assertEqual(r["cgroup"]["version"], "v2")
             self.assertEqual(r["effective_limit"], 3000)                                  # memory.high binds
             self.assertEqual(r["cgroup_min_headroom"], 2990)
@@ -415,27 +469,47 @@ class TestMemory(unittest.TestCase):
             self.assertIsNone(L._chain_values(ch, root_attested=False))                    # helper refuses directly
             self.assertIsNotNone(L._chain_values(ch, root_attested=True))
             Path(d, "x/memory.high").unlink()                                              # unreadable high
-            self.assertIsNone(L.memory_readings(MEMINFO, cg, d, root_attested=True)["effective_limit"])
+            with attested():
+                self.assertIsNone(L.memory_readings(MEMINFO, cg, d)["effective_limit"])
 
     def test_no_rfree_quantity_is_produced(self):
         r = L.memory_readings(MEMINFO, "4:memory:/\n", "/nonexistent")
         self.assertNotIn("free_memory_bytes", r)
         self.assertIn("D-MEM-FREE", r["note"])
 
-    def test_root_attestation_must_be_true(self):
-        """N3: a rejected or merely truthy attestation never yields a number."""
+    def test_root_attestation_is_derived_never_asserted(self):
+        """N3 / P2: there is no caller flag; root_attestation() needs the initial cgroup namespace, D-HOST-LIFETIME
+        decided, a valid attestation and its root_cgroup_is_real field. A non-initial or unreadable namespace blocks a
+        number whatever the attestation says (live: review 61's unshare probe inflated the limit to MemTotal)."""
+        good = ({"root_cgroup_is_real": True}, [])
+        dec = frozenset({"D-HOST-LIFETIME"})
+        with patched(ns_inode=lambda kind, pid="self": L.INIT_CGROUP_NS, DECIDED=dec, attestation_valid=lambda r: good):
+            self.assertEqual(L.root_attestation({"x": 1}), (True, []))
+        for ns in (4026532265, None):
+            with patched(ns_inode=lambda kind, pid="self", ns=ns: ns, DECIDED=dec, attestation_valid=lambda r: good):
+                self.assertFalse(L.root_attestation({"x": 1})[0], ns)
+        with patched(ns_inode=lambda kind, pid="self": L.INIT_CGROUP_NS, attestation_valid=lambda r: good):
+            self.assertFalse(L.root_attestation({"x": 1})[0])                       # D-HOST-LIFETIME open
+        for rec in ({"root_cgroup_is_real": "true"}, {}, None):
+            with patched(ns_inode=lambda kind, pid="self": L.INIT_CGROUP_NS, DECIDED=dec,
+                         attestation_valid=lambda r, rec=rec: (rec, [])):
+                self.assertFalse(L.root_attestation({"x": 1})[0], rec)
         with tempfile.TemporaryDirectory() as d:
             self.v1(d)
-            for bad in ("no", "false", "REJECTED", 1, {"accepted": False}, [True]):
-                r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=bad)
-                self.assertEqual((r["effective_limit"], r["cgroup_min_headroom"]), (None, None), bad)
-                self.assertIs(r["root_attested"], False)
+            with patched(ns_inode=lambda kind, pid="self": 4026532265, DECIDED=dec, attestation_valid=lambda r: good):
+                r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, attestation_ref={"x": 1})
+            self.assertEqual((r["effective_limit"], r["cgroup_min_headroom"], r["cgroup_ns_initial"]),
+                             (None, None, False))                                   # Y04
+            self.assertTrue(r["root_attestation_reasons"])
+            self.assertNotIn("root_attested", L.memory_readings.__code__.co_varnames[:L.memory_readings.__code__
+                                                                                    .co_argcount])
 
     def test_large_v1_limit_is_a_limit(self):
         """X08: a 2 000 000 000-byte v1 limit is a limit, not the 'unlimited' sentinel."""
         with tempfile.TemporaryDirectory() as d:
             self.v1(d, leaf="2000000000")
-            r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+            with attested():
+                r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d)
             self.assertEqual(r["effective_limit"], 2000000000)
 
     def test_cgroup_resources_whole_chain(self):
@@ -473,6 +547,15 @@ class TestBusy(unittest.TestCase):
         t0 = {(40, 1): (99, 0, "old_child", None)}
         t1 = {(40, 1): (99, 500, "old_child", None)}
         self.assertEqual(len(L.busy_processes(t0, t1, 5.0, 25, own={(99, 50)}, hz=100)), 1)
+
+    def test_exited_child_of_reused_campaign_pid_is_reported(self):
+        """Y02: an exited process whose ppid is a campaign pid but which is OLDER than the campaign process is not
+        the campaign's child (pid reuse) and is reported."""
+        t0 = {(41, 1): (99, 0, "old_exited", None)}
+        out = L.busy_processes(t0, {}, 5.0, 25, own={(99, 50)}, hz=100)
+        self.assertEqual([o["comm"] for o in out], ["old_exited"])
+        self.assertEqual(L.busy_processes({(42, 60): (99, 0, "own_child", None)}, {}, 5.0, 25, own={(99, 50)}, hz=100),
+                         [])
 
     def test_no_reading_or_unsafe_inputs_fail_closed(self):
         self.assertIsNone(L.busy_processes(None, {}, 5, 25, set()))
@@ -517,20 +600,26 @@ class TestBusy(unittest.TestCase):
         a = L.cpu_ticks()
         time.sleep(0.2)
         b = L.cpu_ticks()
+        view = L.proc_view_complete()
+        if a is None or b is None or view is not True:
+            self.assertIsNone(L.busy_processes(a, b, 0.2, 25, set(), view_complete=view))   # P10: no reading
+            return
         me = next(k for k in b if k[0] == os.getpid())
-        self.assertIsInstance(L.busy_processes(a, b, 0.2, 25, {me}, view_complete=L.proc_view_complete()), list)
+        self.assertIsInstance(L.busy_processes(a, b, 0.2, 25, {me}, view_complete=view), list)
 
 
 # ====================================================================== updates, launch context
 class TestUpdatesLaunch(unittest.TestCase):
     def settings(self, dump, **mk):
         d = tempfile.mkdtemp()
-        paths = {"timers_dir": Path(d, "timers"), "uu_binary": str(Path(d, "uu")),
+        root = Path(d, "units")
+        paths = {"unit_roots": (str(root),), "uu_binary": str(Path(d, "uu")),
                  "snapd_paths": (str(Path(d, "snapd")),), "cloud_dir": str(Path(d, "cloud")),
                  "livepatch_dir": str(Path(d, "livepatch"))}
-        Path(paths["timers_dir"]).mkdir()
+        root.mkdir()
         if mk.get("timer"):
-            Path(paths["timers_dir"], "apt-daily-upgrade.timer").write_text("")
+            Path(root, "timers.target.wants").mkdir()
+            Path(root, "timers.target.wants", "apt-daily-upgrade.timer").write_text("")
         for k in ("snapd", "cloud"):
             if mk.get(k):
                 Path(d, k).mkdir()
@@ -552,6 +641,37 @@ class TestUpdatesLaunch(unittest.TestCase):
         self.assertFalse(self.settings('APT::Periodic::Unattended-Upgrade "1";\n')["guest_updates_shown_disabled"])
         self.assertFalse(self.settings("")["guest_updates_shown_disabled"])                 # nothing positive
         self.assertFalse(L.auto_update_settings(None, use_live_apt=False)["guest_updates_shown_disabled"])
+
+    def test_unit_enabled_from_every_root(self):
+        """P8: enabled anywhere -> True; masked -> False; installed without a link -> False; an unreadable root -> None;
+        and the state of an update unit that is enabled or unknown is never 'shown disabled'."""
+        with tempfile.TemporaryDirectory() as d:
+            a, b = Path(d, "a"), Path(d, "b")
+            a.mkdir()
+            b.mkdir()
+            roots = (str(a), str(b))
+            self.assertIs(L.unit_enabled("x.timer", roots), False)
+            Path(b, "x.timer").write_text("")
+            self.assertIs(L.unit_enabled("x.timer", roots), False)
+            Path(b, "multi-user.target.wants").mkdir()
+            Path(b, "multi-user.target.wants", "x.timer").write_text("")
+            self.assertIs(L.unit_enabled("x.timer", roots), True)                   # enabled in the SECOND root
+            os.symlink("/dev/null", Path(a, "x.timer"))
+            self.assertIs(L.unit_enabled("x.timer", roots), False)                  # masked in the first root
+            bad = Path(d, "file_not_dir")
+            bad.write_text("")
+            self.assertIsNone(L.unit_enabled("y.timer", (str(bad),)))
+        off = 'APT::Periodic::Enable "0";\n'
+        with patched(unit_enabled=lambda u, roots=None: None):
+            self.assertFalse(self.settings(off)["guest_updates_shown_disabled"])  # unknown unit state
+        with patched(unit_enabled=lambda u, roots=None: u == "unattended-upgrades.service"):
+            self.assertFalse(self.settings(off)["guest_updates_shown_disabled"])
+
+    def test_systemctl_path_when_systemd_is_pid1(self):
+        for out, want in (("enabled", True), ("static", True), ("masked", False), ("disabled", False),
+                          ("bad", None), (None, None)):
+            with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u, out=out: out):
+                self.assertIs(L.unit_enabled("x.timer"), want, out)
 
     def test_parser_reads_only_whole_dump_lines(self):
         """N13 (renamed): the parser accepts only whole `apt-config dump` lines; apt's own comment handling is apt's,
@@ -703,13 +823,23 @@ class TestPins(unittest.TestCase):
                           "CLOUD_HOST_INVENTORY.json").read_text())
         r1_kernel = inv["platform"]["kernel"].split()[1]
         got = L.platform_readings()
+        if r1_kernel == got["kernel_release"]:
+            self.skipTest("this host runs the r1 kernel (P10: host-dependent)")
         self.assertNotEqual(r1_kernel, got["kernel_release"])
         self.assertIn("kernel_release", L.pin_mismatches(dict(got, kernel_release=r1_kernel), got))
 
     def test_required_members_and_pin_point(self):
         """N11: a mapped set without libm / libc / the loader is not a pin; pin_point imports a fixed list first."""
-        libc = next(k for k in L.mapped_objects() if k.endswith("libc.so.6"))
+        mo = L.mapped_objects()
+        libc = next(k for k in mo if k.endswith("libc.so.6"))
+        libm = next(k for k in mo if k.endswith("libm.so.6"))
         self.assertIsNone(L.mapped_objects(f"7f00-7f01 r-xp 0 08:01 1 {libc}\n"))
+        two = f"7f00-7f01 r-xp 0 08:01 1 {libc}\n7f02-7f03 r-xp 0 08:01 2 {libm}\n"
+        self.assertIsNone(L.mapped_objects(two))                               # Y06: no loader
+        with self.assertRaises(RuntimeError):
+            L.pin_point(())                                                    # P11: an empty list is refused
+        with self.assertRaises(RuntimeError):
+            L.pin_point()                                                      # P11: no fixed list defined yet
         got = L.pin_point(("json", "hashlib"))                            # both imported statically above
         self.assertIn("libc6", got["dpkg_versions"])
         with self.assertRaises(RuntimeError):
@@ -725,89 +855,114 @@ class TestPins(unittest.TestCase):
 
 
 # ====================================================================== attestation and preflight
+ACC = f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+
+
+def git_commit(d, files: dict, msg="c"):
+    for rel, data in files.items():
+        Path(d, rel).parent.mkdir(parents=True, exist_ok=True)
+        Path(d, rel).write_bytes(data)
+    subprocess.run(["git", "-C", d, "add", "-A"], check=True)
+    subprocess.run(["git", "-C", d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
+                    "commit", "-q", "-m", msg], check=True)
+
+
 class TestAttestationPreflight(unittest.TestCase):
     HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
 
-    def repo(self, d, files: dict):
-        subprocess.run(["git", "init", "-q", d], check=True)
-        for rel, data in files.items():
-            Path(d, rel).parent.mkdir(parents=True, exist_ok=True)
-            Path(d, rel).write_bytes(data)
-        subprocess.run(["git", "-C", d, "add", "-A"], check=True)
-        subprocess.run(["git", "-C", d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
-                        "commit", "-q", "-m", "a"], check=True)
-
     def attestation(self, **over) -> bytes:
         rec = {"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": self.HW,
-               "acceptance_record": "reviews/ACCEPT.md", "provider_image_updates": L.NO_IMAGE_CHANGE,
-               "root_cgroup_is_real": True}
+               "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}
         rec.update(over)
         return json.dumps(rec).encode()
 
-    def check(self, att: bytes, review: bytes | None = None, ref_extra=None, machine=None):
-        with tempfile.TemporaryDirectory() as d:
-            sha = hashlib.sha256(att).hexdigest()
-            files = {"att/HOST.json": att}
-            if review is None:
-                review = f"verdict\n{L.ACCEPTANCE_LINE}{sha}\n".encode()
-            files["reviews/ACCEPT.md"] = review
-            self.repo(d, files)
-            ref = {"path": "att/HOST.json", "sha256": sha, **(ref_extra or {})}
-            return L.attestation_valid(ref, repo_root=d, machine=machine or self.HW)
+    def accept(self, sha, verdict=True) -> bytes:
+        return (f"review\n{L.ACCEPTANCE_LINE}{sha}\n" + (L.ACCEPTANCE_VERDICT_LINE + "\n" if verdict else "")).encode()
 
-    def test_attestation_read_from_the_committed_file(self):
-        """N1: every fact comes from the committed file and its committed acceptance record."""
+    def check(self, att: bytes, reviews: dict | None = None, same_commit=False, machine=None, ref=None):
+        """att committed first; the review files (path -> bytes) in a SECOND commit (or the same one)."""
+        with tempfile.TemporaryDirectory() as d:
+            subprocess.run(["git", "init", "-q", d], check=True)
+            sha = hashlib.sha256(att).hexdigest()
+            revs = {f"{ACC}1.md": self.accept(sha)} if reviews is None else \
+                {k: (v.replace(b"<SHA>", sha.encode()) if isinstance(v, bytes) else v) for k, v in reviews.items()}
+            if same_commit:
+                git_commit(d, {"att/HOST.json": att, **revs})
+            else:
+                git_commit(d, {"att/HOST.json": att})
+                if revs:
+                    git_commit(d, revs)
+            with patched(machine_identity=lambda *a, **k: machine or self.HW):
+                return L.attestation_valid(ref or {"path": "att/HOST.json", "sha256": sha}, repo_root=d)
+
+    def test_attestation_read_from_committed_files(self):
         rec, why = self.check(self.attestation())
         self.assertEqual(why, [])
         self.assertEqual(rec["provider_image_updates"], L.NO_IMAGE_CHANGE)
 
+    def test_acceptance_is_found_not_named(self):
+        """P1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review
+        set, a review without the verdict line, a review that REJECTS while quoting the line, a token embedded in a
+        longer line (Y03), and an acceptance committed together with the attestation are all refused."""
+        ok = b"x\n" + L.ACCEPTANCE_LINE.encode() + b"<SHA>\n" + L.ACCEPTANCE_VERDICT_LINE.encode() + b"\n"
+        cases = {
+            "outside the set": {"notes/scratch.md": ok},
+            "wrong name in the set dir": {f"{L.ACCEPTANCE_REVIEW_DIR}/OTHER.md": ok},
+            "no verdict line": {f"{ACC}1.md": b"x\n" + L.ACCEPTANCE_LINE.encode() + b"<SHA>\n"},
+            "rejecting review quoting the line": {f"{ACC}1.md": ok + b"VERDICT: REJECTED\n"},
+            "token inside a longer line": {f"{ACC}1.md": b"REJECTED -- do NOT read as " + L.ACCEPTANCE_LINE.encode()
+                                           + b"<SHA>\n" + L.ACCEPTANCE_VERDICT_LINE.encode() + b"\n"},
+            "accepting and a separate rejecting review": {f"{ACC}1.md": ok, f"{ACC}2.md": b"<SHA> REJECTED\n"},
+            "token embedded in a non-rejecting line (Y03)": {
+                f"{ACC}1.md": b"draft, not final: " + L.ACCEPTANCE_LINE.encode() + b"<SHA>\n"
+                + L.ACCEPTANCE_VERDICT_LINE.encode() + b"\n"},
+        }
+        for name, revs in cases.items():
+            rec, why = self.check(self.attestation(), reviews=revs)
+            self.assertIsNone(rec, name)
+            self.assertTrue(why, name)
+        self.assertIsNone(self.check(self.attestation(), same_commit=True)[0])          # same commit as attestation
+        self.assertIsNone(self.check(self.attestation(), reviews={})[0])                 # no review at all
+
     def test_forged_or_unaccepted_attestations_refused(self):
-        """N1 / F8 / R02: an arbitrary committed file, wrong schema, non-True flags, another machine, a missing or
-        mismatching acceptance line, or extra caller fields are all refused."""
-        bad = [
-            (b"# README\nnot an attestation\n", None, None),
-            (self.attestation(schema="other"), None, None),
-            (self.attestation(accepted="REJECTED"), None, None),
-            (self.attestation(reviewed="true"), None, None),
-            (self.attestation(accepted=1), None, None),
-            (self.attestation(machine=dict(self.HW, machine_id_sha256="c" * 64)), None, None),
-            (self.attestation(), b"verdict: accepted\n", None),                     # no acceptance line
-            (self.attestation(), f"{L.ACCEPTANCE_LINE}{'0' * 64}\n".encode(), None),   # names another sha
-            (self.attestation(), None, {"accepted": True}),                          # caller-asserted field
-        ]
-        for att, review, extra in bad:
-            rec, why = self.check(att, review, extra)
-            self.assertIsNone(rec, (att[:40], review, extra))
-            self.assertTrue(why)
+        for att in (b"# README\nnot an attestation\n", self.attestation(schema="other"),
+                    self.attestation(accepted="REJECTED"), self.attestation(reviewed="true"),
+                    self.attestation(accepted=1), self.attestation(machine=dict(self.HW, machine_id_sha256="c" * 64))):
+            self.assertIsNone(self.check(att)[0], att[:40])
         soft = dict(self.HW, hardware_bound=False, product_uuid_sha256=None)
         self.assertIsNone(self.check(self.attestation(machine=soft), machine=soft)[0])
-        for ref in (None, {}, {"path": "att/HOST.json"}, {"path": 1, "sha256": "x"}):
+        cloned = dict(self.HW, product_uuid_sha256="d" * 64)             # Y05: same machine-id, other hardware
+        self.assertIsNone(self.check(self.attestation(), machine=cloned)[0])
+        for ref in (None, {}, {"path": "att/HOST.json"}, {"path": 1, "sha256": "x"},
+                    {"path": "att/HOST.json", "sha256": "0" * 64, "accepted": True}):
             self.assertIsNone(L.attestation_valid(ref)[0], ref)
 
     def test_reference_digest_must_match_the_committed_file(self):
-        """M25: a review accepting digest X does not make a DIFFERENT committed file pass when the reference quotes X."""
+        """M25: an accepted digest does not make a DIFFERENT committed file pass."""
         with tempfile.TemporaryDirectory() as d:
-            accepted = self.attestation()
-            other = self.attestation(provider_image_updates="anything")
+            subprocess.run(["git", "init", "-q", d], check=True)
+            accepted, other = self.attestation(), self.attestation(provider_image_updates="anything")
             x = hashlib.sha256(accepted).hexdigest()
-            self.repo(d, {"att/HOST.json": other, "att/ACCEPTED.json": accepted,
-                          "reviews/ACCEPT.md": f"{L.ACCEPTANCE_LINE}{x}\n".encode()})
-            rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": x}, repo_root=d, machine=self.HW)
-            self.assertIsNone(rec)
-            self.assertIn("sha256 mismatch", " ".join(why))
-            self.assertIsNotNone(L.attestation_valid({"path": "att/ACCEPTED.json", "sha256": x}, repo_root=d,
-                                                     machine=self.HW)[0])
+            git_commit(d, {"att/HOST.json": other, "att/ACCEPTED.json": accepted})
+            git_commit(d, {f"{ACC}1.md": self.accept(x)})
+            with patched(machine_identity=lambda *a, **k: self.HW):
+                rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": x}, repo_root=d)
+                self.assertIsNone(rec)
+                self.assertIn("sha256 mismatch", " ".join(why))
+                self.assertIsNotNone(L.attestation_valid({"path": "att/ACCEPTED.json", "sha256": x}, repo_root=d)[0])
 
     def test_uncommitted_edit_is_not_the_record(self):
         with tempfile.TemporaryDirectory() as d:
+            subprocess.run(["git", "init", "-q", d], check=True)
             att = self.attestation()
             sha = hashlib.sha256(att).hexdigest()
-            self.repo(d, {"att/HOST.json": att,
-                          "reviews/ACCEPT.md": f"{L.ACCEPTANCE_LINE}{sha}\n".encode()})
-            Path(d, "att/HOST.json").write_bytes(self.attestation(accepted=False))   # worktree edit only
-            self.assertIsNotNone(L.attestation_valid({"path": "att/HOST.json", "sha256": sha}, repo_root=d,
-                                                     machine=self.HW)[0])
+            git_commit(d, {"att/HOST.json": att})
+            git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+            Path(d, "att/HOST.json").write_bytes(self.attestation(accepted=False))
+            with patched(machine_identity=lambda *a, **k: self.HW):
+                self.assertIsNotNone(L.attestation_valid({"path": "att/HOST.json", "sha256": sha}, repo_root=d)[0])
 
+    # ---- preflight
     def rd(self, **kw):
         base = {"power": L.AC, "free_disk": 10 * 2 ** 30, "boot_id": BOOT,
                 "updates": {"guest_updates_shown_disabled": True, "provider_image_updates": L.UNKNOWN}}
@@ -820,42 +975,54 @@ class TestAttestationPreflight(unittest.TestCase):
         rec.update(over)
         return rec
 
-    def gates(self, *, decided=frozenset(), att=(None, ["none"]), upd=None, mode="execute", launched=None, **rd):
-        return L.preflight("/", mode=mode, other_job_running=False,
-                           launched=self.launch() if launched is None else launched, attestation_ref={"x": 1},
-                           readings=self.rd(**({"updates": upd} if upd is not None else {}), **rd),
-                           decided=decided, attestation_check=lambda ref: att)["gates"]
+    def gates(self, *, decided=frozenset(), att=(None, ["none"]), upd=None, mode="execute", launched=None,
+              fresh=None, **rd):
+        fresh = self.launch() if fresh is None else fresh
+        with patched(DECIDED=decided, attestation_valid=lambda ref, **k: att,
+                     launched_by_systemd=lambda *a, **k: fresh):
+            return L.preflight("/", mode=mode, other_job_running=False, launched=launched, attestation_ref={"x": 1},
+                               readings=self.rd(**({"updates": upd} if upd is not None else {}), **rd))["gates"]
+
+    def test_no_trust_parameters_in_production(self):
+        """P5 / P6: preflight takes no decided / attestation_check parameter."""
+        args = L.preflight.__code__.co_varnames[:L.preflight.__code__.co_argcount + L.preflight.__code__
+                                                .co_kwonlyargcount]
+        for bad in ("decided", "attestation_check", "machine"):
+            self.assertNotIn(bad, args)
+
+    def test_decided_is_validated(self):
+        """P5: DECIDED must be a frozenset of known D-* ids; a string (substring trick) or an unknown id raises."""
+        for bad in ("xxD-HOST-LIFETIMExx", {"D-HOST-LIFETIME"}, frozenset({"D-NOT-A-DECISION"})):
+            with self.assertRaises(ValueError):
+                self.gates(decided=bad)
 
     def test_lifetime_gates_open_while_undecided(self):
-        """N1: with D-HOST-LIFETIME open, even a valid attestation leaves both dependent gates OPEN_DECISION."""
         good = ({"provider_image_updates": L.NO_IMAGE_CHANGE}, [])
         g = self.gates(att=good)
         self.assertEqual((g["host_lifetime_attested"], g["no_automatic_os_install"]),
                          (L.OPEN_DECISION, L.OPEN_DECISION))
-        g = self.gates(att=good, decided=frozenset({"D-HOST-LIFETIME"}))
+        g = self.gates(att=good, decided=frozenset({"D-MEM-FREE"}))                  # Y01: another decision
+        self.assertEqual((g["host_lifetime_attested"], g["no_automatic_os_install"]),
+                         (L.OPEN_DECISION, L.OPEN_DECISION))
+        dec = frozenset({"D-HOST-LIFETIME"})
+        g = self.gates(att=good, decided=dec)
         self.assertEqual((g["host_lifetime_attested"], g["no_automatic_os_install"]), (L.PASS, L.PASS))
-        g = self.gates(att=(None, ["x"]), decided=frozenset({"D-HOST-LIFETIME"}))
+        g = self.gates(att=(None, ["x"]), decided=dec)
         self.assertEqual((g["host_lifetime_attested"], g["no_automatic_os_install"]), (L.UNKNOWN, L.UNKNOWN))
-        g = self.gates(att=({"provider_image_updates": "unknown"}, []), decided=frozenset({"D-HOST-LIFETIME"}))
+        g = self.gates(att=({"provider_image_updates": "unknown"}, []), decided=dec)
         self.assertEqual(g["no_automatic_os_install"], L.UNKNOWN)
-        for upd in ({}, None, {"guest_updates_shown_disabled": "true"}, {"guest_updates_shown_disabled": False}):
-            g = L.preflight("/", mode="execute", other_job_running=False, launched=self.launch(),
-                            attestation_ref=None, readings=self.rd(updates=upd), decided=frozenset({"D-HOST-LIFETIME"}),
-                            attestation_check=lambda ref: good)["gates"]
-            self.assertEqual(g["no_automatic_os_install"], L.UNKNOWN, upd)
+        for upd in ({}, {"guest_updates_shown_disabled": "true"}, {"guest_updates_shown_disabled": False}):
+            self.assertEqual(self.gates(att=good, decided=dec, upd=upd)["no_automatic_os_install"], L.UNKNOWN, upd)
 
     def test_all_favourable_still_blocked(self):
-        r = L.preflight("/", mode="execute", other_job_running=False, launched=self.launch(), attestation_ref=None,
-                        readings=self.rd(), attestation_check=lambda ref: ({"provider_image_updates":
-                                                                              L.NO_IMAGE_CHANGE}, []))
-        self.assertFalse(r["pass"])
-        self.assertEqual(set(r["blocked"]), {"lowpowermode_0", "thermal_pressure_0", "memory_pressure_normal",
-                                             "free_memory_ge_min", "host_exclusive", "host_lifetime_attested",
-                                             "no_automatic_os_install"})
-        self.assertTrue(all(v == L.OPEN_DECISION for v in r["blocked"].values()))
+        g = self.gates(att=({"provider_image_updates": L.NO_IMAGE_CHANGE}, []))
+        blocked = {k for k, v in g.items() if v != L.PASS}
+        self.assertEqual(blocked, {"lowpowermode_0", "thermal_pressure_0", "memory_pressure_normal",
+                                   "free_memory_ge_min", "host_exclusive", "host_lifetime_attested",
+                                   "no_automatic_os_install"})
+        self.assertTrue(all(g[k] == L.OPEN_DECISION for k in blocked))
 
     def test_boot_id_must_be_valid(self):
-        """N6: the boot-id gate validates the value, not just its presence."""
         for bad in ("", "garbage", 0, False, BOOT.upper()):
             self.assertEqual(self.gates(boot_id=bad)["boot_id_recorded"], L.UNKNOWN, bad)
         self.assertEqual(self.gates()["boot_id_recorded"], L.PASS)
@@ -870,32 +1037,29 @@ class TestAttestationPreflight(unittest.TestCase):
         self.assertEqual(self.gates(power="ABSENT")["ac_power"], L.OPEN_DECISION)
         self.assertEqual(self.gates(free_disk=True)["free_disk_ge_2GiB"], L.UNKNOWN)
 
-    def test_launch_record_fields_are_verified(self):
-        """F15 / N12: execute / resume need a record whose FIELDS show a systemd launch of this process."""
+    def test_launch_gate_uses_a_fresh_reading(self):
+        """P6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it."""
         self.assertEqual(self.gates()["launched_by_systemd"], L.PASS)
-        for bad in ({"pass": True}, True, "yes", self.launch(systemd_pid1=None),
-                    self.launch(unit="rebaseguard-mbs308-exec.scope"), self.launch(unit="other.service"),
-                    self.launch(invocation_id=""), self.launch(systemctl={"MainPID": 1, "InvocationID": "abc"}),
-                    self.launch(systemctl={"MainPID": os.getpid(), "InvocationID": "zzz"}), self.launch(**{"pass": 1})):
-            self.assertEqual(self.gates(launched=bad)["launched_by_systemd"], L.FAIL, bad)
-        for mode in ("execute", "resume"):
-            g = L.preflight("/", mode=mode, other_job_running=False, launched=None, attestation_ref=None,
-                            readings=self.rd())["gates"]
-            self.assertEqual(g["launched_by_systemd"], L.FAIL, mode)
-        g = L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None,
-                        readings=self.rd())["gates"]
-        self.assertNotIn("launched_by_systemd", g)
-        g = L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=True, attestation_ref=None,
-                        readings=self.rd())["gates"]
-        self.assertEqual(g["launched_by_systemd"], L.FAIL)
+        self.assertEqual(self.gates(launched=self.launch())["launched_by_systemd"], L.PASS)
+        self.assertEqual(self.gates(launched=self.launch(invocation_id="zzz"))["launched_by_systemd"], L.FAIL)
+        for bad_fresh in ({"pass": True}, self.launch(systemd_pid1=None),
+                          self.launch(unit="rebaseguard-mbs308-x.scope"),
+                          self.launch(unit="other.service"), self.launch(invocation_id=""),
+                          self.launch(systemctl={"MainPID": 1, "InvocationID": "abc"}),
+                          self.launch(systemctl={"MainPID": float(os.getpid()), "InvocationID": "abc"}),
+                          self.launch(systemctl={"MainPID": os.getpid(), "InvocationID": "zzz"}),
+                          self.launch(**{"pass": 1})):
+            self.assertEqual(self.gates(fresh=bad_fresh)["launched_by_systemd"], L.FAIL, bad_fresh)
+        self.assertNotIn("launched_by_systemd", self.gates(mode="launcher_preflight"))
+        self.assertEqual(self.gates(mode="launcher_preflight", launched=True)["launched_by_systemd"], L.FAIL)
         with self.assertRaises(ValueError):
             L.preflight("/", mode=None, other_job_running=False, launched=None, attestation_ref=None)
 
     def test_live_preflight_fails_closed_here(self):
-        r = L.preflight("/", mode="execute", other_job_running=False, launched=L.launched_by_systemd(),
-                        attestation_ref=None)
+        r = L.preflight("/", mode="execute", other_job_running=False, launched=None, attestation_ref=None)
         self.assertFalse(r["pass"])
-        self.assertEqual(r["gates"]["launched_by_systemd"], L.FAIL)
+        if L.launched_by_systemd()["pass"] is not True:
+            self.assertEqual(r["gates"]["launched_by_systemd"], L.FAIL)
         self.assertEqual(r["gates"]["host_lifetime_attested"], L.OPEN_DECISION)
 
 

@@ -1,9 +1,11 @@
-"""Mutation harness for the DEV-ONLY lx_platform tests (revision 3). Each mutant weakens one fail-closed property in a
+"""Mutation harness for the DEV-ONLY lx_platform tests (revision 4). Each mutant weakens one fail-closed property in a
 temporary copy of lx_platform.py; the unchanged test suite must FAIL against every mutant ("killed"). A surviving
 mutant means a property is untested. M01-M32 are the coordinator's; R01-R10 are review 59's mutants (reviews/
 scratch_CLOUD_R1/reviewer_mutants.py) and X01-X09 review 60's surviving mutants (reviews/scratch_CLOUD_R1_DELTA/
 reviewer60_mutants.py), each re-anchored to revision 3 with the same weakening; N01-N12 weaken the revision-3 repairs
-of review 60's findings. Target-free; nothing outside a temporary directory is written.
+of review 60's findings; Y01-Y09 are review 61's mutants (reviews/scratch_CLOUD_R1_DELTA2/reviewer61_mutants.py.txt)
+re-anchored to revision 4, and P01-P11 weaken the revision-4 repairs of review 61's findings. Target-free; nothing
+outside a temporary directory is written.
 
 usage: python3 tests/run_mutants.py [out.json]       (from streams/CLOUD_R1_LINUX_DEV)
 """
@@ -38,8 +40,8 @@ MUTANTS = [
     ("M07", "unreadable cgroup limit skipped",
      [('        if lvl["limit"] is None:\n            return None\n', '        if lvl["limit"] is None:\n            continue\n')]),
     ("M08", "missing journal channel ignored in assess",
-     [("    if not isinstance(journal_suspend_events, list):\n        reasons.append(\"AMBIGUOUS: L' journal unavailable\")",
-       "    if not isinstance(journal_suspend_events, list):\n        pass")]),
+     [("    elif not isinstance(journal_suspend_events, list):\n        reasons.append(\"AMBIGUOUS: L' journal unavailable\")",
+       "    elif False:\n        pass")]),
     ("M09", "pause channel P removed", [("            if abs(dr - dm) > SLEEP_GAP_TOL_NS:", "            if False:")]),
     ("M10", "suspend (boottime - monotonic) ignored", [("            if db - dm > SLEEP_GAP_TOL_NS:", "            if False:")]),
     ("M11", "D-MEM-FREE gate silently passes",
@@ -139,15 +141,13 @@ MUTANTS = [
     ("N01", "D-HOST-LIFETIME treated as decided", [('    lifetime_open = "D-HOST-LIFETIME" not in decided',
                                                     "    lifetime_open = False")]),
     ("N02", "attestation acceptance line not required",
-     [('    if review is None or f"{ACCEPTANCE_LINE}{want}".encode() not in review.splitlines():', "    if False:")]),
+     [('elif f"{ACCEPTANCE_LINE}{sha}" in lines and ACCEPTANCE_VERDICT_LINE in lines:', "elif ACCEPTANCE_VERDICT_LINE in lines:")]),
     ("N03", "attestation schema not checked",
      [('    if not isinstance(rec, dict) or rec.get("schema") != ATTESTATION_SCHEMA:', "    if not isinstance(rec, dict):")]),
     ("N04", "caller-asserted fields accepted in the attestation reference",
      [('set(ref) != {"path", "sha256"}', 'not {"path", "sha256"} <= set(ref)')]),
-    ("N05", "root attestation truthy again",
-     [("    root_attested = root_attested is True\n", ""),
-      ('    if root_attested is not True or not mem or "MemTotal" not in mem', '    if not root_attested or not mem or "MemTotal" not in mem'),
-      ("    if root_attested is not True:\n        return None\n    vals", "    if not root_attested:\n        return None\n    vals")]),
+    ("N05", "attestation's root_cgroup_is_real not required",
+     [('    if not why and (not isinstance(rec, dict) or rec.get("root_cgroup_is_real") is not True):', "    if False:")]),
     ("N06", "nested PID namespace view accepted", [("    if ino != INIT_PID_NS:\n        return False\n", "")]),
     ("N07", "boot id not validated", [("_g(None if not isinstance(boot, str) or boot_id(boot) is None else True)",
                                        "_g(None if boot is None else True)")]),
@@ -166,6 +166,61 @@ MUTANTS = [
      [('    return bool(rec.get("systemd_pid1") is True and', '    return bool(rec.get("pass") is True) or bool(rec.get("systemd_pid1") is True and')]),
     ("N14", "unrecognised battery status read as not discharging",
      [("            elif st not in KNOWN_NOT_DISCHARGING:\n                return None", "            else:\n                pass")]),
+    # ---- review 61's mutants, re-anchored to revision 4
+    ("Y01", "any non-empty decided set opens D-HOST-LIFETIME",
+     [('    lifetime_open = "D-HOST-LIFETIME" not in decided', "    lifetime_open = not decided")]),
+    ("Y02", "exited children of a campaign pid exempt whatever their start",
+     [("if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start and start >= own_start[ppid]):",
+       "if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start):")]),
+    ("Y03", "acceptance token matched as a substring",
+     [('elif f"{ACCEPTANCE_LINE}{sha}" in lines and', 'elif f"{ACCEPTANCE_LINE}{sha}" in "\\n".join(lines) and')]),
+    ("Y04", "cgroup namespace reading hard-wired to initial",
+     [('            "cgroup_ns_initial": ns_inode("cgroup") == INIT_CGROUP_NS,', '            "cgroup_ns_initial": True,')]),
+    ("Y05", "attestation bound to /etc/machine-id only",
+     [('    if not cur.get("hardware_bound") or rec.get("machine") != cur:',
+       '    if not cur.get("hardware_bound") or (rec.get("machine") or {}).get("machine_id_sha256") != '
+       'cur.get("machine_id_sha256"):')]),
+    ("Y06", "loader no longer a required pin member",
+     [('REQUIRED_MAPPED = ("libm.so.6", "libc.so.6", "ld-linux")', 'REQUIRED_MAPPED = ("libm.so.6", "libc.so.6")')]),
+    ("Y07", "launch record unit type not checked",
+     [('                and unit.endswith(".service") and isinstance(rec.get("invocation_id"), str)',
+       '                and isinstance(rec.get("invocation_id"), str)')]),
+    ("Y08", "merely truthy guest_updates_shown_disabled counts",
+     [('    if not isinstance(upd, dict) or upd.get("guest_updates_shown_disabled") is not True:',
+       '    if not isinstance(upd, dict) or not upd.get("guest_updates_shown_disabled"):')]),
+    ("Y09", "cgroup_resources reads the leaf only",
+     [("        for i in range(len(parts), -1, -1):\n            d = base.joinpath(*parts[:i])\n            rows.append(",
+       "        for i in range(len(parts), len(parts) - 1, -1):\n            d = base.joinpath(*parts[:i])\n            rows.append(")]),
+    # ---- weakenings of the revision-4 repairs (review 61 findings)
+    ("P01", "acceptance committed with the attestation accepted",
+     [("    acc = [a for a in acc if att_commit is not None and _added_in(base, a) not in (None, att_commit)]",
+       "    acc = acc")]),
+    ("P02", "a rejecting review ignored", [("    if rej:\n        reasons.append", "    if False:\n        reasons.append")]),
+    ("P03", "acceptance review outside the fixed name set accepted",
+     [("        if not Path(path).name.startswith(ACCEPTANCE_REVIEW_PREFIX):\n            continue\n", "")]),
+    ("P04", "verdict line not required", [("and ACCEPTANCE_VERDICT_LINE in lines:", ":")]),
+    ("P05", "non-initial cgroup namespace does not block a number",
+     [('    if ns_inode("cgroup") != INIT_CGROUP_NS:\n        why.append', "    if False:\n        why.append")]),
+    ("P06", "root attestation without D-HOST-LIFETIME decided",
+     [('    if "D-HOST-LIFETIME" not in _decided():\n        why.append', "    if False:\n        why.append")]),
+    ("P07", "DECIDED not validated",
+     [("    if not isinstance(DECIDED, frozenset) or not DECIDED <= frozenset(OPEN_DECISIONS):", "    if False:")]),
+    ("P08", "passed launch record trusted instead of a fresh reading",
+     [("        ok = launch_record_ok(fresh) and (launched is None or launched == fresh)",
+       "        ok = launch_record_ok(launched if launched is not None else fresh)")]),
+    ("P09", "MainPID type not checked",
+     [("and isinstance(mp, int) and not isinstance(mp, bool) and mp == os.getpid()", "and mp == os.getpid()")]),
+    ("P10", "journal channel counted without a reviewed reader",
+     [("    if not JOURNAL_READER_REVIEWED:\n        reasons.append", "    if False:\n        reasons.append")]),
+    ("P11", "masked unit not recognised",
+     [('        if f.is_symlink() and os.path.realpath(f) == "/dev/null":\n            return False\n', "")]),
+    ("P12", "unknown update-unit state counted as disabled",
+     [("    timer = any(v is not False for v in units.values())", "    timer = any(v is True for v in units.values())")]),
+    ("P13", "only the first unit root searched", [("    for root in unit_roots:", "    for root in unit_roots[:1]:")]),
+    ("P14", "identity record shape not validated",
+     [("    if not _ident_shape_ok(ident):\n        return UNKNOWN", '    if not isinstance(ident, dict) or not ident.get("pid"):\n        return UNKNOWN')]),
+    ("P15", "empty pin-point list accepted",
+     [("    if not mods:\n        raise RuntimeError", "    if mods is None:\n        raise RuntimeError")]),
 ]
 
 
@@ -201,6 +256,7 @@ def main(out: str | None) -> int:
            "killed": sum(r["status"] == "KILLED" for r in rows), "total": len(rows),
            "reviewer_mutants_killed": sum(r["status"] == "KILLED" for r in rows if r["id"].startswith("R")),
            "review60_mutants_killed": sum(r["status"] == "KILLED" for r in rows if r["id"].startswith("X")),
+           "review61_mutants_killed": sum(r["status"] == "KILLED" for r in rows if r["id"].startswith("Y")),
            "mutants": rows}
     text = json.dumps(rec, indent=1)
     print(text)

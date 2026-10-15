@@ -1,4 +1,4 @@
-"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 2).
+"""Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 4).
 
 STATUS: DEV_ONLY · NOT ACCEPTED BY ANY GOVERNANCE REVIEW · NOT FROZEN · NOT A CAMPAIGN NAMESPACE · NOT USABLE FOR ANY
 DESIGNATED SERIES, QUALIFICATION, FREEZE, GRANT OR TARGET STEP. Nothing in the historical candidate (142d97a9) imports
@@ -21,6 +21,15 @@ attestation must be ``is True`` and comes from a verified attestation; N4 the /p
 namespace's; N6 the boot id is validated; N7 exited / unreadable processes are not silently dropped and the campaign
 tree is keyed by (pid, starttime); N8 pid-based death evidence needs recorded, matching namespaces; N11 the pin set
 requires libm, libc and the loader; N12 execute / resume verify the launch record's fields.
+
+Revision 4 repairs the fresh delta review 61 (reviews/REVIEW_CLOUD_R1_DELTA_R3.md), whose remaining paths were all
+CALLER-ASSERTED inputs: P1 the acceptance of an attestation is found by a fixed review-path pattern with an explicit
+verdict (never named by the attestation); P2 root attestation is derived inside memory_readings from a verified
+attestation, and a non-initial or unreadable cgroup namespace always blocks a number; P5 the decided D-* set is a
+validated module constant, not a parameter; P6 execute / resume compare the launch record with a fresh reading; P7 L'
+is AMBIGUOUS until a reviewed journal reader exists; P8 update units are checked via systemctl or every unit path;
+P9 identity records are shape-validated; P11 the pin point refuses an undefined module list. Test seams are module
+attributes that tests monkeypatch, not production parameters.
 
 Design rules (all fail-closed):
 
@@ -60,6 +69,11 @@ INIT_PID_NS, INIT_CGROUP_NS = 0xEFFFFFFC, 0xEFFFFFFB          # proc_ns_init_ino
 ATTESTATION_SCHEMA = "rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1"
 ACCEPTANCE_LINE = "HOST_ATTESTATION_ACCEPTED sha256="          # a committed review accepts an attestation by this line
 DECIDED: frozenset = frozenset()   # the D-* decisions taken by an accepted review and the owner: NONE in development
+JOURNAL_READER_REVIEWED = False    # P7: L' counts only once a reviewed journal reader exists (none does)
+PIN_POINT_MODULES: tuple | None = None   # P11: the science's import list, fixed by the accepted amendment (not yet)
+ACCEPTANCE_REVIEW_DIR = "level4/closure_proofs/p5y_k5_cell308_research/reviews"   # P1: where acceptances may live
+ACCEPTANCE_REVIEW_PREFIX = "REVIEW_HOST_ATTESTATION_"                            # P1: and how they are named
+ACCEPTANCE_VERDICT_LINE = "VERDICT: HOST_ATTESTATION_ACCEPTED"
 
 OPEN_DECISIONS = {
     "D-MEM-FREE": "R-FREE quantity on Linux (macOS vm_stat free+inactive+speculative+purgeable has no Linux identity)",
@@ -162,6 +176,25 @@ def _pid_exists(pid: int) -> bool | None:
     return True
 
 
+def _ident_shape_ok(ident) -> bool:
+    """P9: pid a positive non-bool int; every RECORDED field of the right shape (boot id by the reader's regex,
+    starttime and namespace inodes non-negative non-bool ints, cmdline sha256 64 hex)."""
+    if not isinstance(ident, dict):
+        return False
+    pid = ident.get("pid")
+    if not isinstance(pid, int) or isinstance(pid, bool) or pid <= 0:
+        return False
+    b = ident.get("boot_id")
+    if b is not None and (not isinstance(b, str) or not _BOOT_ID.match(b)):
+        return False
+    for k in ("starttime_ticks", "pidns", "timens"):
+        v = ident.get(k)
+        if v is not None and (not isinstance(v, int) or isinstance(v, bool) or v < 0):
+            return False
+    c = ident.get("cmdline_sha256")
+    return c is None or (isinstance(c, str) and re.fullmatch(r"[0-9a-f]{64}", c) is not None)
+
+
 def identity_state(ident, *, current_boot: str | None = None, exists=None, stat=None, cmd=None,
                    current_ns: dict | None = None) -> str:
     """ALIVE / DEAD / UNKNOWN.
@@ -174,8 +207,8 @@ def identity_state(ident, *, current_boot: str | None = None, exists=None, stat=
     compared; ALIVE needs every field recorded and matching. Injection (tests): ``current_boot`` (``""`` = read
     failed), ``exists``, ``stat``, ``cmd``,
     ``current_ns`` ({"pidns": int|None, "timens": int|None})."""
-    if not isinstance(ident, dict) or not ident.get("pid"):
-        return UNKNOWN
+    if not _ident_shape_ok(ident):
+        return UNKNOWN                                          # P9: a malformed record proves nothing
     cur = boot_id() if current_boot is None else (current_boot or None)
     if cur is None:
         return UNKNOWN
@@ -258,7 +291,9 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
         reasons.append("AMBIGUOUS: S' suspend_stats absent")
     elif s0 != s1:
         reasons.append("CONTAMINATED: S' suspend count changed")
-    if not isinstance(journal_suspend_events, list):
+    if not JOURNAL_READER_REVIEWED:
+        reasons.append("AMBIGUOUS: L' no reviewed journal reader exists (whatever the caller passes, P7)")
+    elif not isinstance(journal_suspend_events, list):
         reasons.append("AMBIGUOUS: L' journal unavailable")
     elif journal_suspend_events:
         reasons.append(f"CONTAMINATED: L' {len(journal_suspend_events)} suspend entries")
@@ -427,7 +462,7 @@ def _chain_values(chain_rec: dict, *, root_attested: bool):
     return lims, uses
 
 
-def effective_memory_limit(chain_rec: dict, mem: dict | None, *, root_attested: bool = False) -> int | None:
+def _effective_memory_limit(chain_rec: dict, mem: dict | None, *, root_attested: bool = False) -> int | None:
     """min(MemTotal, every limit on the chain), NUMERIC ONLY if every level is readable AND the root is attested:
     ancestors hidden by a cgroup namespace cannot be seen by any reader (F10). Otherwise None (UNKNOWN)."""
     if root_attested is not True or not mem or "MemTotal" not in mem or not chain_rec.get("chain"):
@@ -449,7 +484,7 @@ def visible_limit_upper_bound(chain_rec: dict, mem: dict | None) -> int | None:
     return min([mem["MemTotal"], *[v for v in vals[0] if isinstance(v, int)]])
 
 
-def cgroup_min_headroom(chain_rec: dict, *, root_attested: bool = False) -> int | None:
+def _cgroup_min_headroom(chain_rec: dict, *, root_attested: bool = False) -> int | None:
     """min over limited levels of (limit − usage). None if the root is not attested or ANY level's limit, or any
     limited level's usage, is unreadable (F10: a partial chain never yields a number)."""
     if root_attested is not True:
@@ -499,24 +534,40 @@ def cgroup_resources(proc_cgroup_text: str | None = None, root="/sys/fs/cgroup")
     return out
 
 
+def root_attestation(attestation_ref) -> tuple:
+    """(True, []) only if ALL hold (P2): the reader's cgroup namespace is the INITIAL one (a non-initial or unreadable
+    namespace hides ancestors, whatever any record says); D-HOST-LIFETIME is decided (DECIDED); attestation_valid()
+    accepts the reference; and the committed attestation says ``root_cgroup_is_real: true``. Never a caller flag."""
+    why = []
+    if ns_inode("cgroup") != INIT_CGROUP_NS:
+        why.append("cgroup namespace not the initial one, or unreadable")
+    if "D-HOST-LIFETIME" not in _decided():
+        why.append("D-HOST-LIFETIME open")
+    rec, r = attestation_valid(attestation_ref) if not why else (None, [])
+    why += r
+    if not why and (not isinstance(rec, dict) or rec.get("root_cgroup_is_real") is not True):
+        why.append("attestation does not state root_cgroup_is_real")
+    return (not why), why
+
+
 def memory_readings(mem_text: str | None = None, proc_cgroup_text: str | None = None, root="/sys/fs/cgroup",
-                    *, root_attested: bool = False) -> dict:
+                    *, attestation_ref=None) -> dict:
     """Every Linux candidate quantity side by side, none labelled as the R-FREE quantity (D-MEM-FREE, D-MEM-WIRED).
-    ``root_attested`` counts only if it is the boolean True (N3); the caller derives it from attestation_valid()'s
-    verified record (field ``root_cgroup_is_real``), never from a flag of its own."""
+    effective_limit and headroom are numeric only if root_attestation(attestation_ref) holds (P2)."""
     mem = meminfo(mem_text)
     ch = memory_cgroup_chain(proc_cgroup_text, root)
-    root_attested = root_attested is True
+    root_attested, why = root_attestation(attestation_ref)
     return {"meminfo_MemTotal": (mem or {}).get("MemTotal"), "meminfo_MemAvailable": (mem or {}).get("MemAvailable"),
             "meminfo_MemFree": (mem or {}).get("MemFree"), "meminfo_Inactive_file": (mem or {}).get("Inactive(file)"),
             "meminfo_SwapTotal": (mem or {}).get("SwapTotal"), "cgroup": ch,
-            "root_attested": root_attested, "cgroup_ns_initial": ns_inode("cgroup") == INIT_CGROUP_NS,
-            "effective_limit": effective_memory_limit(ch, mem, root_attested=root_attested),
+            "root_attested": root_attested, "root_attestation_reasons": why,
+            "cgroup_ns_initial": ns_inode("cgroup") == INIT_CGROUP_NS,
+            "effective_limit": _effective_memory_limit(ch, mem, root_attested=root_attested),
             "visible_limit_upper_bound": visible_limit_upper_bound(ch, mem),
-            "cgroup_min_headroom": cgroup_min_headroom(ch, root_attested=root_attested),
+            "cgroup_min_headroom": _cgroup_min_headroom(ch, root_attested=root_attested),
             "note": "RAW Linux readings; none is the macOS vm_stat free+inactive+speculative+purgeable quantity of "
                     "R-FREE, and none is substituted for it (D-MEM-FREE, D-MEM-WIRED). effective_limit and headroom "
-                    "are numeric only with an attested root (hidden cgroup ancestors, H6)."}
+                    "are numeric only with a verified root attestation in the initial cgroup namespace (H6)."}
 
 
 def psi_memory(text: str | None = None) -> dict | None:
@@ -621,12 +672,55 @@ def apt_config_dump() -> str | None:
     return p.stdout if p.returncode == 0 else None
 
 
-def auto_update_settings(apt_dump: str | None = None, *, timers_dir="/etc/systemd/system/timers.target.wants",
+UNIT_ROOTS = ("/etc/systemd/system", "/run/systemd/system", "/usr/lib/systemd/system", "/lib/systemd/system")
+UPDATE_UNITS = ("apt-daily-upgrade.timer", "unattended-upgrades.service")   # units that can INSTALL packages
+
+
+def _systemctl_is_enabled(unit: str) -> str | None:
+    try:
+        r = subprocess.run(["systemctl", "is-enabled", unit], capture_output=True, text=True, timeout=30,
+                           stdin=subprocess.DEVNULL)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return r.stdout.strip() or None
+
+
+def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
+    """P8: True / False / None. With systemd as PID 1: ``systemctl is-enabled`` (enabled, enabled-runtime, static,
+    indirect, alias, linked: True; disabled, masked, masked-runtime: False; anything else: None). Without it: from the
+    files in EVERY unit root: masked (a link to /dev/null) False; a ``*.wants`` / ``*.requires`` link to the unit in
+    any root True; the unit file present without such a link False; absent everywhere False; an unreadable root None."""
+    if systemd_is_pid1() is True:
+        st = _systemctl_is_enabled(unit)
+        if st in ("enabled", "enabled-runtime", "static", "indirect", "alias", "linked", "linked-runtime"):
+            return True
+        if st in ("disabled", "masked", "masked-runtime"):
+            return False
+        return None
+    for root in unit_roots:
+        r = Path(root)
+        if not r.exists():
+            continue
+        try:
+            subs = list(r.iterdir())
+        except OSError:
+            return None
+        f = r / unit
+        if f.is_symlink() and os.path.realpath(f) == "/dev/null":
+            return False
+        for d in subs:
+            if d.name.endswith((".wants", ".requires")) and (d / unit).exists():
+                return True
+    return False                                                # present without a link, or absent everywhere
+
+
+def auto_update_settings(apt_dump: str | None = None, *, unit_roots=UNIT_ROOTS,
                          uu_binary="/usr/bin/unattended-upgrade", snapd_paths=("/usr/lib/snapd/snapd", "/snap"),
                          cloud_dir="/etc/cloud", livepatch_dir="/sys/kernel/livepatch", use_live_apt=True) -> dict:
     """Guest-visible update and reboot vectors (F11). ``guest_updates_shown_disabled`` is True only on POSITIVE
     evidence: apt-config readable and APT::Periodic::Enable "0" or APT::Periodic::Unattended-Upgrade "0" (apt then
-    runs no unattended upgrade even if the binary is installed); no enabled apt-daily-upgrade timer; no snapd; no
+    runs no unattended upgrade even if the binary is installed); no update unit enabled or of unknown state
+    (UPDATE_UNITS, via unit_enabled, P8); no snapd; no
     cloud-init directory (it may upgrade packages at boot); no applied livepatch. Anything else: not shown disabled.
     ``provider_image_updates`` is UNKNOWN from inside a guest."""
     dump = (apt_config_dump() if use_live_apt else None) if apt_dump is None else apt_dump
@@ -635,7 +729,8 @@ def auto_update_settings(apt_dump: str | None = None, *, timers_dir="/etc/system
         vals[m.group(1)] = m.group(2)
     uu_cfg = {m.group(1): m.group(2) for m in
               re.finditer(r'^Unattended-Upgrade::([\w-]+)\s+"([^"]*)";\s*$', dump or "", re.M)}
-    timer = Path(timers_dir, "apt-daily-upgrade.timer").exists()
+    units = {u: unit_enabled(u, unit_roots) for u in UPDATE_UNITS}
+    timer = any(v is not False for v in units.values())         # enabled OR unknown: not shown disabled
     snapd = any(Path(p).exists() for p in snapd_paths)
     cloud = Path(cloud_dir).exists()
     try:
@@ -646,7 +741,8 @@ def auto_update_settings(apt_dump: str | None = None, *, timers_dir="/etc/system
     shown_disabled = bool(apt_off and not timer and not snapd and not cloud and livepatch == [])
     return {"apt_config_readable": dump is not None, "apt_periodic": vals,
             "unattended_automatic_reboot": uu_cfg.get("Automatic-Reboot"),
-            "apt_daily_upgrade_timer_enabled": timer, "unattended_upgrade_present": Path(uu_binary).exists(),
+            "update_units": units, "update_unit_enabled_or_unknown": timer,
+            "unattended_upgrade_present": Path(uu_binary).exists(),
             "snapd_present": snapd, "cloud_init_present": cloud, "livepatch_applied": livepatch,
             "guest_updates_shown_disabled": shown_disabled, "provider_image_updates": UNKNOWN}
 
@@ -815,12 +911,15 @@ def _python_packages(owner_query=None) -> tuple:
 UNKNOWN_PACKAGE = "<unknown-interpreter-package>"
 
 
-def pin_point(modules: tuple) -> dict:
+def pin_point(modules: tuple | None = None) -> dict:
     """N11: read the pins at a fixed PIN POINT: every module of a fixed list (the science's imports, fixed in the
     accepted amendment) must already be imported by the caller with static ``import`` statements, so the mapped set
     does not depend on chance. This function imports nothing itself (the research quarantine scanner refuses dynamic
     imports it cannot resolve); a module of the list that is not loaded raises."""
-    missing = [m for m in modules if m not in sys.modules]
+    mods = PIN_POINT_MODULES if modules is None else modules
+    if not mods:
+        raise RuntimeError("PIN_POINT_UNDEFINED: no fixed module list (D-PIN-POINT is open)")    # P11
+    missing = [m for m in mods if m not in sys.modules]
     if missing:
         raise RuntimeError(f"PIN_POINT_NOT_REACHED: not imported: {', '.join(missing)}")
     return platform_readings()
@@ -874,49 +973,79 @@ def free_disk_bytes(path) -> int | None:
     return s.f_bavail * s.f_frsize
 
 
-# ====================================================================== host attestation (F8, F20, N1)
-def _git_blob(repo_root, path: str) -> bytes | None:
+# ====================================================================== host attestation (F8, F20, N1, P1)
+def _git(repo_root, *args) -> bytes | None:
     try:
-        r = subprocess.run(["git", "-C", str(repo_root), "show", f"HEAD:{path}"], capture_output=True, timeout=60,
+        r = subprocess.run(["git", "-C", str(repo_root), *args], capture_output=True, timeout=60,
                            stdin=subprocess.DEVNULL)
     except (OSError, subprocess.SubprocessError):
         return None
     return r.stdout if r.returncode == 0 else None
 
 
-def attestation_valid(ref, *, repo_root=None, machine=None) -> tuple:
-    """(record or None, reasons). ``ref`` = {"path", "sha256"} only: every asserted fact is read from the COMMITTED
-    attestation file, never from the caller (N1). It passes only if: the file is committed at HEAD with that sha256;
-    it is JSON with schema ATTESTATION_SCHEMA, ``reviewed is True``, ``accepted is True``, a ``machine`` equal to the
-    current hardware-bound machine_identity(), and an ``acceptance_record`` path; that review file is committed at HEAD
-    and contains the line ``HOST_ATTESTATION_ACCEPTED sha256=<the attestation's sha256>``. Returns the parsed record
-    (fields such as provider_image_updates, root_cgroup_is_real) on success. Passing this check does not pass a gate
-    while D-HOST-LIFETIME is open (preflight)."""
+def _added_in(repo_root, path: str) -> str | None:
+    """The commit that ADDED ``path`` on HEAD's history (None if unknown)."""
+    out = _git(repo_root, "log", "--diff-filter=A", "--format=%H", "HEAD", "--", path)
+    lines = (out or b"").decode(errors="replace").split()
+    return lines[-1] if lines else None
+
+
+def _acceptances(repo_root, sha: str) -> tuple:
+    """P1: scan EVERY committed file at HEAD under ACCEPTANCE_REVIEW_DIR whose name starts with
+    ACCEPTANCE_REVIEW_PREFIX. Returns (accepting paths, rejecting paths) for this attestation sha256. A file accepts it
+    only if it has the exact line ``HOST_ATTESTATION_ACCEPTED sha256=<sha>`` AND the exact line ACCEPTANCE_VERDICT_LINE
+    and no line containing REJECTED; a file that names the sha in any line and contains REJECTED rejects it."""
+    names = _git(repo_root, "ls-tree", "-r", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)
+    acc, rej = [], []
+    for path in (names or b"").decode(errors="replace").splitlines():
+        if not Path(path).name.startswith(ACCEPTANCE_REVIEW_PREFIX):
+            continue
+        lines = [ln.rstrip("\r") for ln in ((_git(repo_root, "show", f"HEAD:{path}") or b"")
+                                               .decode(errors="replace").split("\n"))]
+        names_sha = any(sha in ln for ln in lines)
+        rejected = any("REJECTED" in ln for ln in lines)
+        if names_sha and rejected:
+            rej.append(path)
+        elif f"{ACCEPTANCE_LINE}{sha}" in lines and ACCEPTANCE_VERDICT_LINE in lines:
+            acc.append(path)
+    return acc, rej
+
+
+def attestation_valid(ref, *, repo_root=None) -> tuple:
+    """(record or None, reasons). ``ref`` = exactly {"path", "sha256"}; every fact is read from committed files, none
+    from the caller. Valid only if: the file is committed at HEAD with that sha256; it is JSON with schema
+    ATTESTATION_SCHEMA, ``reviewed is True``, ``accepted is True`` and a ``machine`` equal to the current hardware-bound
+    machine_identity() (BOTH hashes, F20); at least one acceptance review exists in the fixed review set (P1:
+    _acceptances; never a path the attestation names) that was added in a DIFFERENT commit from the attestation, and no
+    review in that set rejects it. ``repo_root`` is a location (default: this repository), not an assertion."""
     if not isinstance(ref, dict) or set(ref) != {"path", "sha256"}:
         return None, ["reference must be exactly {path, sha256}"]
     path, want = ref["path"], ref["sha256"]
     if not isinstance(path, str) or not isinstance(want, str) or not re.fullmatch(r"[0-9a-f]{64}", want):
         return None, ["malformed reference"]
     base = Path(repo_root) if repo_root else Path(__file__).resolve().parents[5]
-    data = _git_blob(base, path)
+    data = _git(base, "show", f"HEAD:{path}")
     if _sha(data) != want:
         return None, ["attestation not committed at HEAD, or sha256 mismatch"]
     try:
         rec = json.loads(data)
     except (ValueError, UnicodeDecodeError):
         return None, ["attestation is not JSON"]
-    reasons = []
     if not isinstance(rec, dict) or rec.get("schema") != ATTESTATION_SCHEMA:
         return None, ["wrong or missing schema"]
+    reasons = []
     if rec.get("reviewed") is not True or rec.get("accepted") is not True:
         reasons.append("not reviewed and accepted (strict True, read from the file)")
-    cur = machine_identity() if machine is None else machine
+    cur = machine_identity()
     if not cur.get("hardware_bound") or rec.get("machine") != cur:
-        reasons.append("not bound to this hardware identity")
-    acc = rec.get("acceptance_record")
-    review = _git_blob(base, acc) if isinstance(acc, str) and acc else None
-    if review is None or f"{ACCEPTANCE_LINE}{want}".encode() not in review.splitlines():
-        reasons.append("no committed acceptance record naming this attestation's sha256")
+        reasons.append("not bound to this hardware identity (both hashes)")
+    acc, rej = _acceptances(base, want)
+    if rej:
+        reasons.append(f"rejected by {', '.join(rej)}")
+    att_commit = _added_in(base, path)
+    acc = [a for a in acc if att_commit is not None and _added_in(base, a) not in (None, att_commit)]
+    if not acc:
+        reasons.append("no acceptance review in the fixed set, added in a commit other than the attestation's")
     return (rec if not reasons else None), reasons
 
 
@@ -932,33 +1061,43 @@ _GATE_DECISION = {"ac_power": "D-POWER-ABSENT", "lowpowermode_0": "D-LPM", "ther
 MODES = ("launcher_preflight", "execute", "resume")
 
 
+def _decided() -> frozenset:
+    """P5: the module constant DECIDED, validated: a frozenset of known D-* ids (OPEN_DECISIONS), else an error."""
+    if not isinstance(DECIDED, frozenset) or not DECIDED <= frozenset(OPEN_DECISIONS):
+        raise ValueError("DECIDED must be a frozenset of known D-* ids")
+    return DECIDED
+
+
 def launch_record_ok(rec) -> bool:
-    """N12: a launch record counts only if every field shows a systemd launch of THIS process (not a 'pass' flag)."""
+    """N12: every field shows a systemd launch of THIS process; MainPID an int (not bool / float)."""
     if not isinstance(rec, dict):
         return False
     sc = rec.get("systemctl")
     unit = rec.get("unit")
+    mp = sc.get("MainPID") if isinstance(sc, dict) else None
     return bool(rec.get("systemd_pid1") is True and isinstance(unit, str) and unit.startswith(CAMPAIGN_UNIT_PREFIX)
                 and unit.endswith(".service") and isinstance(rec.get("invocation_id"), str) and rec["invocation_id"]
-                and isinstance(sc, dict) and sc.get("MainPID") == os.getpid()
+                and isinstance(mp, int) and not isinstance(mp, bool) and mp == os.getpid()
                 and sc.get("InvocationID") == rec["invocation_id"] and rec.get("pass") is True)
 
 
 def preflight(repo_path, *, mode: str, other_job_running: bool | None, launched: dict | None,
-              attestation_ref: dict | None, readings: dict | None = None, decided: frozenset = DECIDED,
-              attestation_check=None) -> dict:
-    """The Linux gate set (amendment §3). ``mode`` "launcher_preflight" may omit the launch record; "execute" and
-    "resume" need a record that launch_record_ok() accepts, else FAIL (F15, N12). Gates that depend on an open D-*
-    decision are OPEN_DECISION while it is not in ``decided`` (DECIDED is empty in development), including
-    host_lifetime_attested and the provider-image half of no_automatic_os_install (N1). pass == every gate PASS."""
+              attestation_ref: dict | None, readings: dict | None = None) -> dict:
+    """The Linux gate set (amendment §3). Gates that depend on an open D-* decision are OPEN_DECISION while it is not
+    in the validated module constant DECIDED (empty in development); that applies to host_lifetime_attested and the
+    provider-image half of no_automatic_os_install (N1, P5). The launch gate is evaluated for execute / resume, and
+    whenever a record is passed: PASS only if a FRESH launched_by_systemd() reading verifies (launch_record_ok) and any
+    passed record equals it (P6). ``readings`` (tests) overrides the four plain host readings only. pass == every gate
+    PASS."""
     if mode not in MODES:
         raise ValueError(f"mode must be one of {MODES}")
+    decided = _decided()
     r = dict(readings or {})
     power = r["power"] if "power" in r else power_source()
     free = r["free_disk"] if "free_disk" in r else free_disk_bytes(repo_path)
     boot = r["boot_id"] if "boot_id" in r else boot_id()
     upd = r["updates"] if "updates" in r else auto_update_settings()
-    att, att_reasons = (attestation_check or attestation_valid)(attestation_ref)
+    att, att_reasons = attestation_valid(attestation_ref)
     lifetime_open = "D-HOST-LIFETIME" not in decided
     if not isinstance(upd, dict) or upd.get("guest_updates_shown_disabled") is not True:
         upd_gate = UNKNOWN                                      # guest vectors not shown disabled (or no reading)
@@ -980,10 +1119,13 @@ def preflight(repo_path, *, mode: str, other_job_running: bool | None, launched:
         "host_exclusive": OPEN_DECISION,
         "host_lifetime_attested": OPEN_DECISION if lifetime_open else (PASS if isinstance(att, dict) else UNKNOWN),
     }
+    fresh = None
     if mode in ("execute", "resume") or launched is not None:
-        gates["launched_by_systemd"] = PASS if launch_record_ok(launched) else FAIL
+        fresh = launched_by_systemd()
+        ok = launch_record_ok(fresh) and (launched is None or launched == fresh)
+        gates["launched_by_systemd"] = PASS if ok else FAIL
     blocked = {k: v for k, v in gates.items() if v != PASS}
     return {"mode": mode, "gates": gates, "pass": not blocked, "blocked": blocked,
             "readings": {"power": power, "free_disk_bytes": free, "boot_id": boot, "updates": upd,
-                         "launched": launched, "attestation_reasons": att_reasons},
+                         "launched": launched, "launched_fresh": fresh, "attestation_reasons": att_reasons},
             "open_decisions": sorted({_GATE_DECISION[k] for k, v in gates.items() if v == OPEN_DECISION})}
