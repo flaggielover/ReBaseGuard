@@ -1,0 +1,92 @@
+--- /Users/suzhe/.codex/worktrees/cell308-review61/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py
++++ /tmp/cell308-claude-sync-20261015/code-review-input/lx_verified.py
+@@ -1,66 +1,51 @@
+-"""DEV_ONLY observation composition for proposed Cell-308 integration conditions A1/A2.
++"""Restricted DEV_ONLY observation composition for Cell-308 conditions A1/A2.
+ 
+-This prototype binds attestation reads to its own checkout and current machine,
+-derives the raw memory root contract only from the canonical committed verifier,
+-and composes the canonical live launch observations. Its sole public function
+-accepts a reference and observation mode, with no caller-selected root, repository,
+-machine, reader, checker, observer, launch record or decision configuration.
++The only public inputs are a committed attestation reference and an observation
++mode. Repository and current-machine binding come from the platform's canonical
++verifier; root provenance remains the platform's separate initial-namespace and
++D-HOST-LIFETIME contract. A verified record alone never grants that contract.
+ 
+-It supplies development composition only, not operational A1/A2 acceptance.
+-Every policy decision remains open, the other-campaign detector is unavailable,
+-and operational_ready is always False. Effective-limit/headroom quantities are
+-withheld; returned memory observations are RAW and establish no R-FREE/R-MEM
+-quantity or operational allowance. A5's complete static science import list and
+-pin-point wrapper remain unmet. No science, evaluator, qualification or campaign
+-is imported or executed. Observation mode names describe proposed gate checks;
+-they launch nothing and authorize no step.
++Memory output contains raw Linux observations and withholds effective limit and
++headroom. The other-campaign detector is unavailable. Every result remains
++development_only with operational_ready False and A1/A2/A5 unmet. No science,
++pin point, evaluator, qualification or campaign is imported or executed. Mode
++names select proposed gate observations; they launch nothing or authorize a step.
+ """
+ from __future__ import annotations
+-
+-from pathlib import Path
+ 
+ import lx_platform as L
+ 
+ __all__ = ("observe",)
+ 
+-_REPO_ROOT = Path(__file__).resolve().parents[5]
+-_UNDECIDED = frozenset()
+-
+-
+-def _committed_attestation(ref):
+-    """Internal binding: the verifier observes the current machine itself."""
+-    return L.attestation_valid(ref, repo_root=_REPO_ROOT)
+-
+ 
+ def observe(attestation_ref=None, *, mode="execute") -> dict:
+-    """Read DEV_ONLY infrastructure observations without accepting public seams.
+-
+-    A mechanically verified fixture can establish the raw helper's strict root
+-    input. It cannot establish real owner/reviewer authority or pass an open gate.
+-    The independent launch observer remains preflight's canonical default.
+-    """
++    """Compose canonical observations without caller-selected trust seams."""
+     if mode not in L.MODES:
+         raise ValueError(f"mode must be one of {L.MODES}")
+ 
+-    attestation, reasons = _committed_attestation(attestation_ref)
++    repo_root = L._repository_root()
++    attestation, reasons = L.attestation_valid(attestation_ref, repo_root=repo_root)
+     verified = isinstance(attestation, dict)
+-    root_attested = verified and attestation.get("root_cgroup_is_real") is True
+-    memory = dict(L.memory_readings(root_attested=root_attested))
+-    # These are never returned as usable allowances, even for a verified fixture.
++    memory = dict(L.memory_readings(attestation_ref=attestation_ref))
++    # Raw observations cannot become R-FREE/R-MEM quantities or allowances here.
+     memory.pop("effective_limit", None)
+     memory.pop("cgroup_min_headroom", None)
+ 
+     launched = L.launched_by_systemd()
+     preflight = L.preflight(
+-        _REPO_ROOT, mode=mode, other_job_running=None, launched=launched,
+-        attestation_ref=attestation_ref, decided=_UNDECIDED,
+-        attestation_check=_committed_attestation,
++        repo_root, mode=mode, other_job_running=None, launched=launched,
++        attestation_ref=attestation_ref,
+     )
+     return {
+         "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.dev-observation.v1",
+         "development_only": True,
+         "operational_ready": False,
+-        "attestation": {"verified": verified, "root_cgroup_is_real": root_attested, "reasons": reasons},
++        "attestation": {
++            "verified": verified,
++            "record_root_cgroup_is_real": verified and attestation.get("root_cgroup_is_real") is True,
++            "root_cgroup_is_real": verified and memory.get("root_attested") is True,
++            "reasons": reasons,
++        },
+         "raw_memory": {
+             "classification": "RAW_LINUX_READINGS",
+             "readings": memory,

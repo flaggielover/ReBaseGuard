@@ -1,0 +1,184 @@
+{
+  "results": [
+    {
+      "case": "_cg_val 'max'",
+      "result": "max"
+    },
+    {
+      "case": "_cg_val '7'",
+      "result": 7
+    },
+    {
+      "case": "_cg_val '\u00b2'",
+      "exception": "ValueError",
+      "message": "invalid literal for int() with base 10: '\u00b2'"
+    },
+    {
+      "case": "_cg_val '--1'",
+      "result": null
+    },
+    {
+      "case": "_cg_val '-1'",
+      "result": null
+    },
+    {
+      "case": "_cg_val '1.5'",
+      "result": null
+    },
+    {
+      "case": "_cg_val 7",
+      "exception": "AttributeError",
+      "message": "'int' object has no attribute 'strip'"
+    },
+    {
+      "case": "_cg_val True",
+      "exception": "AttributeError",
+      "message": "'bool' object has no attribute 'strip'"
+    },
+    {
+      "case": "_cg_val None",
+      "result": null
+    },
+    {
+      "case": "proc_stat utime '\u00b2'",
+      "result": null
+    },
+    {
+      "case": "proc_stat utime '1.0'",
+      "result": null
+    },
+    {
+      "case": "proc_stat utime '-1'",
+      "result": null
+    },
+    {
+      "case": "proc_stat utime '\u0661\u0660'",
+      "result": {
+        "pid": 42,
+        "comm": "worker (synthetic)",
+        "state": "S",
+        "ppid": 1,
+        "utime": 10,
+        "stime": 5,
+        "starttime": 100
+      }
+    },
+    {
+      "case": "proc_stat utime '\uff11\uff10'",
+      "result": {
+        "pid": 42,
+        "comm": "worker (synthetic)",
+        "state": "S",
+        "ppid": 1,
+        "utime": 10,
+        "stime": 5,
+        "starttime": 100
+      }
+    },
+    {
+      "case": "proc_stat headpid '00042'",
+      "result": {
+        "pid": 42,
+        "comm": "worker (synthetic)",
+        "state": "S",
+        "ppid": 1,
+        "utime": 10,
+        "stime": 5,
+        "starttime": 100
+      }
+    },
+    {
+      "case": "proc_stat headpid '+42'",
+      "result": {
+        "pid": 42,
+        "comm": "worker (synthetic)",
+        "state": "S",
+        "ppid": 1,
+        "utime": 10,
+        "stime": 5,
+        "starttime": 100
+      }
+    },
+    {
+      "case": "proc_stat headpid '\u0664\u0662'",
+      "result": {
+        "pid": 42,
+        "comm": "worker (synthetic)",
+        "state": "S",
+        "ppid": 1,
+        "utime": 10,
+        "stime": 5,
+        "starttime": 100
+      }
+    },
+    {
+      "case": "proc_stat headpid '\uff14\uff12'",
+      "result": {
+        "pid": 42,
+        "comm": "worker (synthetic)",
+        "state": "S",
+        "ppid": 1,
+        "utime": 10,
+        "stime": 5,
+        "starttime": 100
+      }
+    },
+    {
+      "case": "proc_stat headpid '43'",
+      "result": null
+    },
+    {
+      "case": "proc_view duplicate 'NSpid:42\\nNSpid:4 2\\n'",
+      "result": null
+    },
+    {
+      "case": "proc_view duplicate 'NSpid:4 2\\nNSpid:42\\n'",
+      "result": null
+    },
+    {
+      "case": "proc_view duplicate 'NSpid:42\\nNSpid:42\\n'",
+      "result": null
+    },
+    {
+      "case": "proc_view mount '36 25 0:32 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw\\n'",
+      "result": true
+    },
+    {
+      "case": "proc_view mount '36 25 0:32 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw\\n36 25 0:32 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw\\n'",
+      "result": false
+    },
+    {
+      "case": "proc_view mount '36 25 0:32 /sub /proc rw,nosuid,nodev,noexec,relatime - proc proc rw\\n'",
+      "result": false
+    },
+    {
+      "case": "proc_view mount '36 25 0:32 / /proc rw,hidepid=0,nodev,noexec,relatime - proc proc rw\\n'",
+      "result": false
+    },
+    {
+      "case": "proc_view mount '36 25 0:32 / /proc rw,nosuid,nodev,noexec,relatime - tmpfs proc rw\\n'",
+      "result": false
+    },
+    {
+      "case": "identity malformed reboot {'pid': True}",
+      "result": "UNKNOWN"
+    },
+    {
+      "case": "identity malformed reboot {'starttime_ticks': True}",
+      "result": "UNKNOWN"
+    },
+    {
+      "case": "identity malformed reboot {'boot_id': '11111111-2222-3333-4444-555555555555\\n'}",
+      "result": "UNKNOWN"
+    },
+    {
+      "case": "identity malformed reboot {'cmdline_sha256': 'x'}",
+      "result": "UNKNOWN"
+    },
+    {
+      "case": "identity malformed reboot {'pidns': True}",
+      "result": "UNKNOWN"
+    }
+  ],
+  "unexpected_host_access_attempts": []
+}

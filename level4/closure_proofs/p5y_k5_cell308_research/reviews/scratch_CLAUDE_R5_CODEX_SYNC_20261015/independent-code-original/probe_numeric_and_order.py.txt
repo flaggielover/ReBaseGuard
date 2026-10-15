@@ -1,0 +1,34 @@
+"""Additional bounded synthetic schema and ordering probes."""
+from probe_safety import *
+ROWS=[]
+def capture(case,fn):
+    try:result=fn();row={'case':case,'result':result}
+    except Exception as exc:row={'case':case,'exception':type(exc).__name__,'message':str(exc)}
+    ROWS.append(row)
+BOOT='11111111-2222-3333-4444-555555555555'
+MOUNT='36 25 0:32 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw\n'
+
+def stat_text(pid='42',ppid='1',u='10',s='5',start='100'):
+    fields=['S',ppid,'1','1','0','-1','0','0','0','0','0',u,s,'0','0','20','0','1','0',start,'0','0']
+    return f'{pid} (worker (synthetic)) '+ ' '.join(fields)+'\n'
+with guards():
+    for value in ('max','7','²','--1','-1','1.5',7,True,None):
+        with mock.patch.object(L,'_read',return_value=value):
+            capture('_cg_val '+repr(value),lambda:L._cg_val(OUT/'synthetic-missing'))
+    for value in ('²','1.0','-1','١٠','１０'):
+        capture('proc_stat utime '+repr(value),lambda value=value:L.proc_stat(42,stat_text(u=value)))
+    for value in ('00042','+42','٤٢','４２','43'):
+        capture('proc_stat headpid '+repr(value),lambda value=value:L.proc_stat(42,stat_text(pid=value)))
+    for status in ('NSpid:42\nNSpid:4 2\n','NSpid:4 2\nNSpid:42\n','NSpid:42\nNSpid:42\n'):
+        capture('proc_view duplicate '+repr(status),lambda status=status:L.proc_view_complete(status,MOUNT,pidns=L.INIT_PID_NS))
+    for m in (MOUNT,MOUNT+MOUNT,MOUNT.replace(' / /proc ',' /sub /proc '),MOUNT.replace('rw,nosuid','rw,hidepid=0'),MOUNT.replace(' - proc ',' - tmpfs ')):
+        capture('proc_view mount '+repr(m),lambda m=m:L.proc_view_complete('NSpid:42\n',m,pidns=L.INIT_PID_NS))
+    ident={'pid':42,'starttime_ticks':100,'boot_id':BOOT,'cmdline_sha256':'c'*64,'pidns':2,'timens':3}
+    state={'pid':42,'starttime':100,'ppid':1,'utime':10,'stime':5,'state':'S'}
+    for patch in ({'pid':True},{'starttime_ticks':True},{'boot_id':BOOT+'\n'},{'cmdline_sha256':'x'},{'pidns':True}):
+        capture('identity malformed reboot '+repr(patch),lambda patch=patch:L.identity_state({**ident,**patch},current_boot='aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',exists=lambda _:False,stat=lambda _:state,cmd=lambda _:'c'*64,current_ns={'pidns':2,'timens':3}))
+assert DENIED==[],DENIED
+(OUT/'numeric_order_probes.json').write_text(json.dumps({'results':ROWS,'unexpected_host_access_attempts':DENIED},indent=2,ensure_ascii=True)+'\n')
+for row in ROWS:
+    if 'exception' in row or row['case'].startswith('_cg_val'):print(json.dumps(row,ensure_ascii=True))
+print('cases',len(ROWS),'unexpected_host_attempts',len(DENIED))
