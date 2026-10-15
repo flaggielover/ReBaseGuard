@@ -1,0 +1,28 @@
+"""Brief 61: verbatim check of amendment r3 / owner brief r3 quotations (review 60's set, re-run, plus r3's new ones).
+Read-only. Same normalisation as review 60's checker."""
+import json, re, sys
+from pathlib import Path
+NS = Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research")
+def norm(s):
+    s = s.replace("**", "")
+    s = re.sub(r"^\s*>\s?", "", s, flags=re.M)
+    s = re.sub(r"^\s*[*-]\s+", "", s, flags=re.M)
+    return re.sub(r"\s+", " ", s).strip()
+exec(open(sys.argv[1]).read())   # review 60's Q list (copied from its committed checker)
+Q += [
+ ("S15 full (D-S15-NEWHOST r3)", "governance/SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1.md",
+  "Later-found MB r1 evidence is a permanent STOP for the successor, pending its own governance."),
+ ("brief R2 EVAL_CAP awake (D-PAUSE r3)", "governance/USER_DECISION_BRIEF_308_SUCCESSOR_R2.md",
+  "EVAL_CAP applies per attempt, on awake time (CLOCK_UPTIME_RAW)"),
+ ("brief R2 9 Thermal row", "governance/USER_DECISION_BRIEF_308_SUCCESSOR_R2.md", "Thermal pressure level 0"),
+ ("brief R2 9 LPM row", "governance/USER_DECISION_BRIEF_308_SUCCESSOR_R2.md", "Low Power Mode off"),
+ ("ratification kern.memorystatus", "governance/CONSTANTS_RATIFICATION_MBS308.md", "kern.memorystatus_vm_pressure_level"),
+ ("ratification lowpowermode", "governance/CONSTANTS_RATIFICATION_MBS308.md", "lowpowermode"),
+]
+amend = (NS/"governance/new_host_route_cloud_r1/PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R3.md").read_text()
+res = []
+for name, src, q in Q:
+    text = (NS / src).read_text()
+    res.append({"quote": name, "source": src, "verbatim_in_source": norm(q) in norm(text),
+                "present_in_r3": norm(q) in norm(amend)})
+print(json.dumps(res, indent=1, ensure_ascii=False))

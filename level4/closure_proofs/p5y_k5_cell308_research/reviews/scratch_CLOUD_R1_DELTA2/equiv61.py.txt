@@ -1,0 +1,64 @@
+"""Brief 61: each surviving Y-mutant changes an outcome on a synthetic input (base vs mutant). Usage: python3 -B equiv61.py"""
+import hashlib, importlib.util, json, subprocess, sys, tempfile
+from pathlib import Path
+HERE = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location("m", HERE / "reviewer61_mutants.py")
+src = (HERE / "base" / "lx_platform.py").read_text()
+MUT = {}
+txt = (HERE / "reviewer61_mutants.py").read_text()
+ns = {}
+# (header not needed)
+exec("MUTANTS = " + txt.split("MUTANTS = ", 1)[1].split("\ndef run_suite")[0], ns)
+def load(code, name):
+    d = tempfile.mkdtemp(dir=HERE / "mut_tmp"); Path(d, "lx_platform.py").write_text(code)
+    s = importlib.util.spec_from_file_location(name, Path(d, "lx_platform.py")); m = importlib.util.module_from_spec(s)
+    s.loader.exec_module(m); return m
+def mutant(mid):
+    m = src
+    for o, n in next(e for i, _, e in ns["MUTANTS"] if i == mid):
+        m = m.replace(o, n)
+    return load(m, mid)
+B = load(src, "base")
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+def repo(d, files):
+    subprocess.run(["git", "init", "-q", d], check=True)
+    for rel, data in files.items():
+        Path(d, rel).parent.mkdir(parents=True, exist_ok=True); Path(d, rel).write_bytes(data)
+    subprocess.run(["git", "-C", d, "add", "-A"], check=True)
+    subprocess.run(["git", "-C", d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "commit", "-q", "-m", "a"], check=True)
+def att(L, **o):
+    r = {"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW, "acceptance_record": "reviews/A.md",
+         "provider_image_updates": L.NO_IMAGE_CHANGE}; r.update(o); return json.dumps(r).encode()
+out = {}
+def gates(L, decided):
+    return L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None, decided=decided,
+                       readings={"power": L.AC, "free_disk": 10 * 2 ** 30, "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0",
+                                 "updates": {"guest_updates_shown_disabled": True}},
+                       attestation_check=lambda r: ({"provider_image_updates": L.NO_IMAGE_CHANGE}, []))["gates"]["host_lifetime_attested"]
+M = mutant("Y01"); out["Y01 decided={'D-MEM-FREE'} host_lifetime_attested"] = [gates(B, frozenset({"D-MEM-FREE"})), gates(M, frozenset({"D-MEM-FREE"}))]
+M = mutant("Y02"); t0 = {(40, 1): (99, 0, "old_child_exits", None)}
+out["Y02 exited child of reused campaign pid"] = [B.busy_processes(t0, {}, 5.0, 25, own={(99, 50)}, hz=100), M.busy_processes(t0, {}, 5.0, 25, own={(99, 50)}, hz=100)]
+M = mutant("Y03")
+with tempfile.TemporaryDirectory() as d:
+    a = att(B); sha = hashlib.sha256(a).hexdigest()
+    repo(d, {"att/H.json": a, "reviews/A.md": f"REJECTED -- do NOT read as {B.ACCEPTANCE_LINE}{sha}\n".encode()})
+    ref = {"path": "att/H.json", "sha256": sha}
+    out["Y03 rejecting sentence containing the token"] = [B.attestation_valid(ref, repo_root=d, machine=HW)[0] is not None,
+                                                          M.attestation_valid(ref, repo_root=d, machine=HW)[0] is not None]
+M = mutant("Y04")
+out["Y04 cgroup_ns_initial (live, initial ns here; differs only in a new cgroup ns, see ns_probe61_out)"] = [
+    B.memory_readings("MemTotal: 1 kB\n", "0::/\n", "/nonexistent")["cgroup_ns_initial"],
+    M.memory_readings("MemTotal: 1 kB\n", "0::/\n", "/nonexistent")["cgroup_ns_initial"]]
+M = mutant("Y05")
+with tempfile.TemporaryDirectory() as d:
+    clone = dict(HW, product_uuid_sha256="f" * 64)          # same /etc/machine-id (image clone), other VM
+    a = att(B, machine=clone); sha = hashlib.sha256(a).hexdigest()
+    repo(d, {"att/H.json": a, "reviews/A.md": f"{B.ACCEPTANCE_LINE}{sha}\n".encode()})
+    ref = {"path": "att/H.json", "sha256": sha}
+    out["Y05 attestation of an image-cloned VM (same machine-id, other DMI uuid)"] = [
+        B.attestation_valid(ref, repo_root=d, machine=HW)[0] is not None, M.attestation_valid(ref, repo_root=d, machine=HW)[0] is not None]
+M = mutant("Y06")
+libm = next(k for k in B.mapped_objects() if k.endswith("libm.so.6")); libc = next(k for k in B.mapped_objects() if k.endswith("libc.so.6"))
+maps = f"7f00-7f01 r-xp 0 08:01 1 {libm}\n7f02-7f03 r-xp 0 08:01 2 {libc}\n"
+out["Y06 maps with libm + libc but no loader is a valid pin"] = [B.mapped_objects(maps) is not None, M.mapped_objects(maps) is not None]
+print(json.dumps(out, indent=1, default=str))

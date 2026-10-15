@@ -1,0 +1,8 @@
+"""Brief 61: LIVE memory_readings with root_attested=True (the caller literal), in the initial and in a new cgroup ns."""
+import json, sys
+sys.path.insert(0, sys.argv[1])
+import lx_platform as L
+r = L.memory_readings(root_attested=True)
+print(json.dumps({"cgroup_ns_initial": r["cgroup_ns_initial"], "chain": [(x["path"], x["limit"], x["usage"]) for x in (r["cgroup"]["chain"] or [])],
+                  "effective_limit": r["effective_limit"], "cgroup_min_headroom": r["cgroup_min_headroom"],
+                  "MemTotal": r["meminfo_MemTotal"]}))

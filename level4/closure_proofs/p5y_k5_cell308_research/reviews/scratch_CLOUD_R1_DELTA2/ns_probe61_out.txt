@@ -1,0 +1,6 @@
+== unshare 
+{"ns_pid": 4026531836, "ns_cgroup": 4026531835, "NSpid": "NSpid:\t6684", "proc_self_cgroup": "9:name=systemd:/\n8:pids:/\n7:blkio:/\n6:freezer:/\n5:devices:/\n4:memory:/process_api/01a13cca-e9d1-77db-82ab-bbecd6993e8c/claude-code-bash\n3:cpuset:/\n2:cpuacct:/\n1:cpu:/\n0::/", "proc_view_complete": true, "cpu_ticks_n": 85, "memory_attested_in_this_ns": {"cgroup_ns_initial": true, "effective_limit": 3000, "cgroup_min_headroom": 2990}}
+== unshare --cgroup
+{"ns_pid": 4026531836, "ns_cgroup": 4026532264, "NSpid": "NSpid:\t6688", "proc_self_cgroup": "9:name=systemd:/\n8:pids:/\n7:blkio:/\n6:freezer:/\n5:devices:/\n4:memory:/\n3:cpuset:/\n2:cpuacct:/\n1:cpu:/\n0::/", "proc_view_complete": true, "cpu_ticks_n": 84, "memory_attested_in_this_ns": {"cgroup_ns_initial": false, "effective_limit": 3000, "cgroup_min_headroom": 2990}}
+== unshare --pid --fork --mount-proc
+{"ns_pid": 4026532265, "ns_cgroup": 4026531835, "NSpid": "NSpid:\t1", "proc_self_cgroup": "9:name=systemd:/\n8:pids:/\n7:blkio:/\n6:freezer:/\n5:devices:/\n4:memory:/process_api/01a13cca-e9d1-77db-82ab-bbecd6993e8c/claude-code-bash\n3:cpuset:/\n2:cpuacct:/\n1:cpu:/\n0::/", "proc_view_complete": false, "cpu_ticks_n": 1, "memory_attested_in_this_ns": {"cgroup_ns_initial": true, "effective_limit": 3000, "cgroup_min_headroom": 2990}}

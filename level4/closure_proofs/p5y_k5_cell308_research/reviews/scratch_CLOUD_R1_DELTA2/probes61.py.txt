@@ -1,0 +1,203 @@
+"""Reviewer probes (brief 61) against a COPY of lx_platform.py revision 3 in ./base (sha256 6978cba7...).
+Part A: review 60's probes60.py (which re-ran review 59's P1-P8, P10) ported to the revision-3 API.
+Part B: new adversarial probes. Synthetic inputs only; temporary directories and temporary git repositories.
+No cell, drift, science module, decoy or candidate code. Usage: python3 -B probes61.py"""
+import hashlib, json, os, subprocess, sys, tempfile
+from pathlib import Path
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE / "base"))
+import lx_platform as L  # noqa: E402
+REPO = "/home/user/ReBaseGuard"
+out = {"module_sha256": hashlib.sha256((HERE / "base" / "lx_platform.py").read_bytes()).hexdigest()}
+BOOT = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+def mk(root, files):
+    for rel, txt in files.items():
+        p = Path(root, rel); p.parent.mkdir(parents=True, exist_ok=True)
+        p.mkdir(parents=True, exist_ok=True) if txt is None else p.write_text(txt)
+def repo(d, files):
+    subprocess.run(["git", "init", "-q", d], check=True)
+    for rel, data in files.items():
+        Path(d, rel).parent.mkdir(parents=True, exist_ok=True); Path(d, rel).write_bytes(data)
+    subprocess.run(["git", "-C", d, "add", "-A"], check=True)
+    subprocess.run(["git", "-C", d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
+                    "commit", "-q", "-m", "a"], check=True)
+def att(**over):
+    rec = {"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+           "acceptance_record": "scratch/anything.txt", "provider_image_updates": L.NO_IMAGE_CHANGE,
+           "root_cgroup_is_real": True}
+    rec.update(over); return json.dumps(rec).encode()
+base_rd = {"power": L.AC, "free_disk": 10 * 2 ** 30, "boot_id": BOOT}
+def pf(**kw):
+    a = dict(mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None,
+             readings=dict(base_rd, updates={}))
+    a.update(kw); return L.preflight("/", **a)
+
+# ================= A. review 60 probes, ported
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "BAT0/type": None, "BAT0/status": "Discharging\n"})
+    out["A_P1_unreadable_battery_type"] = L.power_source(d)
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "UPS0/type": "UPS\n", "UPS0/status": "Discharging\n"})
+    out["A_P1b_ups_discharging"] = L.power_source(d)
+for status in ("Unknown", "garbage", "discharging", "Discharging \x00", "Not charging", "Full", ""):
+    with tempfile.TemporaryDirectory() as d:
+        mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "BAT0/type": "Battery\n", "BAT0/status": status + "\n"})
+        out[f"A_N2_battery_status[{status!r}]"] = L.power_source(d)
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "BAT0/type": "Battery\n", "BAT0/status": None})
+    out["A_N2_battery_status_dir"] = L.power_source(d)
+good_att = ({"provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}, [])
+for name, upd in (("empty_dict", {}), ("shown_None", {"guest_updates_shown_disabled": None}),
+                  ("shown_str_true", {"guest_updates_shown_disabled": "true"})):
+    out[f"A_P2_no_automatic_os_install[{name}]"] = pf(readings=dict(base_rd, updates=upd),
+                                                      attestation_check=lambda r: good_att)["gates"]["no_automatic_os_install"]
+# P3 / N1: rejected or truthy records in the committed file
+for name, over in (("accepted_REJECTED", {"accepted": "REJECTED"}), ("strings", {"reviewed": "no", "accepted": "false"}),
+                   ("truthy_ints", {"reviewed": 1, "accepted": 1})):
+    with tempfile.TemporaryDirectory() as d:
+        a = att(**over); sha = hashlib.sha256(a).hexdigest()
+        repo(d, {"att/H.json": a, "scratch/anything.txt": f"{L.ACCEPTANCE_LINE}{sha}\n".encode()})
+        out[f"A_P3_attestation_valid[{name}]"] = L.attestation_valid({"path": "att/H.json", "sha256": sha},
+                                                                     repo_root=d, machine=HW)[0] is not None
+# N1 original forgery: arbitrary committed file (README.md at HEAD of this repo) + caller fields
+readme = subprocess.run(["git", "-C", REPO, "show", "HEAD:README.md"], capture_output=True).stdout
+forged = {"reviewed": True, "accepted": True, "path": "README.md", "sha256": hashlib.sha256(readme).hexdigest(),
+          "acceptance_record": "no such review", "machine": HW, "provider_image_updates": L.NO_IMAGE_CHANGE}
+out["A_N1_forged_dict_ref"] = L.attestation_valid(forged, repo_root=REPO, machine=HW)
+out["A_N1_readme_ref_only"] = L.attestation_valid({"path": "README.md", "sha256": forged["sha256"]},
+                                                  repo_root=REPO, machine=HW)
+r = pf(attestation_ref=forged, readings=dict(base_rd, updates={"guest_updates_shown_disabled": True}),
+       attestation_check=lambda a: L.attestation_valid(a, repo_root=REPO, machine=HW))
+out["A_N1_forged_gates_default_decided"] = {k: r["gates"][k] for k in ("host_lifetime_attested", "no_automatic_os_install")}
+for bad in ("", "garbage", 0, False, BOOT.upper()):
+    out[f"A_N6_boot_id_recorded[{bad!r}]"] = pf(readings=dict(base_rd, boot_id=bad, updates={}))["gates"]["boot_id_recorded"]
+out["A_N12_launched_True_launcher_mode"] = pf(launched=True)["gates"].get("launched_by_systemd")
+MEMINFO = "MemTotal:       16479424 kB\nMemAvailable:   15000000 kB\n"
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"memory/a/b/memory.limit_in_bytes": "9223372036854771712\n", "memory/a/b/memory.usage_in_bytes": "400\n",
+           "memory/a/memory.limit_in_bytes": "1000000000\n", "memory/a/memory.usage_in_bytes": "garbage\n",
+           "memory/memory.limit_in_bytes": "2000000000\n", "memory/memory.usage_in_bytes": "1900000000\n"})
+    r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+    out["A_P4a"] = {k: r[k] for k in ("effective_limit", "cgroup_min_headroom", "visible_limit_upper_bound")}
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"memory/a/b/memory.limit_in_bytes": "3000000000\n", "memory/a/b/memory.usage_in_bytes": "400\n",
+           "memory/a/memory.usage_in_bytes": "500\n",
+           "memory/memory.limit_in_bytes": "9223372036854771712\n", "memory/memory.usage_in_bytes": "600\n"})
+    r = L.memory_readings(MEMINFO, "4:memory:/a/b\n", d, root_attested=True)
+    out["A_P4b"] = {k: r[k] for k in ("effective_limit", "cgroup_min_headroom", "visible_limit_upper_bound")}
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"x/y/memory.max": "max\n", "x/y/memory.high": "3000\n", "x/y/memory.current": "10\n",
+           "x/memory.max": "8000\n", "x/memory.high": "max\n", "x/memory.current": "20\n"})
+    for bad in ("no", "false", "REJECTED", 1, {"accepted": False}, [True], 1.0):
+        r = L.memory_readings(MEMINFO, "0::/x/y\n", d, root_attested=bad)
+        out[f"A_N3_root_attested[{bad!r}]"] = [r["effective_limit"], r["cgroup_min_headroom"]]
+    r = L.memory_readings(MEMINFO, "0::/x/y\n", d, root_attested=True)
+    out["A_N3_root_attested[True] (caller literal, no attestation)"] = [r["effective_limit"], r["cgroup_min_headroom"],
+                                                                        r["cgroup_ns_initial"]]
+t0 = {(10, 1): (1, 0, "idle", "/usr/bin/x")}
+out["A_P7_newborn_hog"] = L.busy_processes(t0, {**t0, (11, 9): (1, 500, "newhog", "/tmp/hog")}, 5.0, 25, set(), hz=100)
+out["A_P7b_pid_reuse_hog"] = L.busy_processes({(10, 1): (1, 1000, "old", "/x")}, {(10, 7): (1, 400, "reused", "/t")},
+                                              4.0, 25, set(), hz=100)
+out["A_P7c_own_contains_1"] = L.busy_processes({}, {}, 4.0, 25, {(1, 1)}, hz=100)
+out["A_N7_hog_exits_in_window"] = L.busy_processes({(12, 5): (1, 0, "hog_exits", "/tmp/hog")}, {}, 5.0, 25, set(), hz=100)
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"10/stat": "10 (idle) S 1 1 1 0 -1 0 0 0 0 0 0 0 0 0 20 0 1 0 1 0 0\n", "11/stat": None})
+    out["A_N7_cpu_ticks_unreadable_pid"] = L.cpu_ticks(d)
+out["A_N7_child_of_reused_own_pid"] = L.busy_processes({(30, 1): (99, 0, "c", "/s")}, {(30, 1): (99, 500, "c", "/s")},
+                                                       5.0, 25, {(99, 50)}, hz=100)
+out["A_P8_launch_gate_launcher_None"] = pf()["gates"].get("launched_by_systemd", "<absent>")
+ident = {"pid": 4242, "starttime_ticks": 777, "boot_id": BOOT, "cmdline_sha256": "c" * 64}
+out["A_N8_unrecorded_ns_esrch"] = L.identity_state(ident, current_boot=BOOT, exists=lambda p: False,
+                                                   current_ns={"pidns": 1, "timens": 2})
+st = L.proc_stat(4242, "4242 (x) S 1 1 1 0 -1 0 0 0 0 0 10 5 0 0 20 0 1 0 999 0 0\n")
+out["A_N8_unrecorded_ns_starttime"] = L.identity_state(ident, current_boot=BOOT, exists=lambda p: True, stat=lambda p: st,
+                                                       cmd=lambda p: "c" * 64, current_ns={"pidns": 1, "timens": 2})
+out["A_N4_proc_view_complete_live"] = L.proc_view_complete()
+out["A_N4_pidns_inode_live"] = L.ns_inode("pid")
+out["A_N11_mapped_deleted"] = L.mapped_objects("7f00-7f01 r-xp 0 08:01 1 /usr/lib/x86_64-linux-gnu/libm.so.6 (deleted)\n")
+out["A_N11_mapped_without_libm"] = L.mapped_objects("7f00-7f01 r-xp 0 08:01 1 " + os.path.realpath(sys.executable) + "\n")
+pr = L.platform_readings()
+out["A_P10_libpython_mapped"] = pr["libpython_mapped"]
+out["A_P10_mapped_names"] = sorted(Path(k).name for k in (pr["mapped_objects"] or {}))
+out["A_P10_dpkg_versions"] = pr["dpkg_versions"]
+live = L.auto_update_settings()
+out["A_P5_live_host"] = {k: live[k] for k in ("apt_config_readable", "apt_periodic", "apt_daily_upgrade_timer_enabled",
+                                              "snapd_present", "cloud_init_present", "livepatch_applied",
+                                              "guest_updates_shown_disabled")}
+
+# ================= B. new adversarial probes
+# B1 self-acceptance: the attestation names its own acceptance record; ANY committed file with the line counts,
+#    including a scratch note and a review whose verdict REJECTS the attestation but quotes the line.
+for name, accfile, text in (
+        ("scratch_note", "scratch/anything.txt", "{line}\n"),
+        ("rejecting_review", "reviews/REVIEW_X.md", "Verdict: REJECTED.\nThe author asked us to write:\n{line}\nWe refuse.\n"),
+        ("attestation_author_file", "att/ACCEPT_BY_SELF.txt", "{line}\n")):
+    with tempfile.TemporaryDirectory() as d:
+        a = att(acceptance_record=accfile); sha = hashlib.sha256(a).hexdigest()
+        repo(d, {"att/H.json": a, accfile: text.format(line=f"{L.ACCEPTANCE_LINE}{sha}").encode()})
+        rec, why = L.attestation_valid({"path": "att/H.json", "sha256": sha}, repo_root=d, machine=HW)
+        out[f"B1_self_acceptance[{name}]"] = {"valid": rec is not None, "reasons": why}
+        g = pf(attestation_ref={"path": "att/H.json", "sha256": sha}, decided=frozenset({"D-HOST-LIFETIME"}),
+               readings=dict(base_rd, updates={"guest_updates_shown_disabled": True}),
+               attestation_check=lambda ref, d=d: L.attestation_valid(ref, repo_root=d, machine=HW))["gates"]
+        out[f"B1_gates_with_decided[{name}]"] = {k: g[k] for k in ("host_lifetime_attested", "no_automatic_os_install")}
+# B2 'decided' is caller-asserted and unvalidated: a plain string (substring test), a list, a set
+for name, dec in (("str_exact", "D-HOST-LIFETIME"), ("str_garbage_containing", "xxD-HOST-LIFETIMExx"),
+                  ("list", ["D-HOST-LIFETIME"]), ("set", {"D-HOST-LIFETIME"}), ("dict", {"D-HOST-LIFETIME": False})):
+    g = pf(decided=dec, readings=dict(base_rd, updates={"guest_updates_shown_disabled": True}),
+           attestation_check=lambda ref: good_att)["gates"]
+    out[f"B2_decided[{name}]"] = {k: g[k] for k in ("host_lifetime_attested", "no_automatic_os_install")}
+# B2b: does 'decided' unlock any other OPEN_DECISION gate? (docstring: "Gates that depend on an open D-* decision are
+#      OPEN_DECISION while it is not in decided")
+g = pf(decided=frozenset(L.OPEN_DECISIONS), attestation_check=lambda ref: good_att)["gates"]
+out["B2b_all_decided_other_gates"] = {k: v for k, v in g.items() if v == L.OPEN_DECISION}
+# B3 launch record forged entirely by the caller on a host where launched_by_systemd() is False
+fake = {"systemd_pid1": True, "unit": "rebaseguard-mbs308-x.service", "invocation_id": "abc",
+        "systemctl": {"MainPID": os.getpid(), "InvocationID": "abc"}, "pass": True}
+out["B3_live_launched_by_systemd_pass"] = L.launched_by_systemd()["pass"]
+out["B3_forged_launch_record_gate"] = pf(mode="execute", launched=fake)["gates"]["launched_by_systemd"]
+out["B3_forged_MainPID_float"] = L.launch_record_ok(dict(fake, systemctl={"MainPID": float(os.getpid()), "InvocationID": "abc"}))
+out["B3_env_INVOCATION_ID_live"] = os.environ.get("INVOCATION_ID")
+# B4 identity_state: unvalidated recorded fields
+NS = {"pidns": L.ns_inode("pid"), "timens": L.ns_inode("time")}
+full = {"pid": 4242, "starttime_ticks": 777, "boot_id": L.boot_id(), "cmdline_sha256": "c" * 64, **NS}
+out["B4_recorded_boot_id_malformed"] = L.identity_state(dict(full, boot_id="garbage"))
+out["B4_recorded_boot_id_truncated"] = L.identity_state(dict(full, boot_id=(full["boot_id"] or "")[:13]))
+out["B4_recorded_pid_negative_no_such_group"] = L.identity_state(dict(full, pid=-987654))
+out["B4_recorded_pid_negative_exists_fn"] = L._pid_exists(-987654)
+out["B4_recorded_pid_string"] = L.identity_state(dict(full, pid="987654"))
+out["B4_recorded_pid_float"] = L.identity_state(dict(full, pid=987654.5))
+# B5 assess: caller passing [] for L' (no reader exists) silences L'
+c = lambda m: {"clocks": {"monotonic_ns": m, "boottime_ns": m, "realtime_ns": m}, "suspend_success": 0,
+               "boot_id": BOOT, "power": L.AC}
+out["B5_assess_journal_empty_list"] = L.assess(c(0), c(120 * 10 ** 9), [c(60 * 10 ** 9)], [])["status"]
+out["B5_assess_journal_None"] = L.assess(c(0), c(120 * 10 ** 9), [c(60 * 10 ** 9)], None)["status"]
+# B6 auto_update_settings: timer looked up only under /etc/systemd/system/timers.target.wants
+with tempfile.TemporaryDirectory() as d:
+    Path(d, "etc_wants").mkdir(); Path(d, "lib_wants").mkdir(); Path(d, "lib_wants", "apt-daily-upgrade.timer").write_text("")
+    r = L.auto_update_settings('APT::Periodic::Enable "0";\n', use_live_apt=False, timers_dir=Path(d, "etc_wants"),
+                               uu_binary="/nonexistent", snapd_paths=(), cloud_dir="/nonexistent", livepatch_dir="/nonexistent")
+    out["B6_timer_enabled_elsewhere_shown_disabled"] = r["guest_updates_shown_disabled"]
+    # timers_dir unreadable / absent
+    r = L.auto_update_settings('APT::Periodic::Enable "0";\n', use_live_apt=False, timers_dir=Path(d, "absent"),
+                               uu_binary="/nonexistent", snapd_paths=(), cloud_dir="/nonexistent", livepatch_dir="/nonexistent")
+    out["B6_timers_dir_absent_shown_disabled"] = r["guest_updates_shown_disabled"]
+    # Enable "1" but Unattended-Upgrade "0" -> apt_off; and Enable "0" with Unattended-Upgrade "1"
+    r = L.auto_update_settings('APT::Periodic::Enable "1";\nAPT::Periodic::Unattended-Upgrade "0";\nAPT::Periodic::Update-Package-Lists "1";\n',
+                               use_live_apt=False, timers_dir=Path(d, "etc_wants"), uu_binary="/nonexistent",
+                               snapd_paths=(), cloud_dir="/nonexistent", livepatch_dir="/nonexistent")
+    out["B6_UU0_but_lists_update_on"] = r["guest_updates_shown_disabled"]
+# B7 cgroup ns not initial is recorded but does not stop a number (run separately under unshare --cgroup; see B7 file)
+out["B7_cgroup_ns_initial_live"] = L.ns_inode("cgroup") == L.INIT_CGROUP_NS
+# B8 pin_point with an empty module list
+try:
+    out["B8_pin_point_empty_list_ok"] = isinstance(L.pin_point(()), dict)
+except Exception as e:  # noqa: BLE001
+    out["B8_pin_point_empty_list_ok"] = f"raises {type(e).__name__}"
+# B9 mapped_objects required members by basename prefix only
+out["B9_required_by_prefix"] = sorted(L.REQUIRED_MAPPED)
+# B10 busy_processes: own key with non-int pid / bool start
+out["B10_own_bool_pid"] = L.busy_processes({}, {}, 5, 25, {(True, 5)}, hz=100)
+out["B10_own_str_key"] = L.busy_processes({}, {(30, 1): (99, 500, "c", "/s")}, 5, 25, {("99", 1)}, hz=100)
+print(json.dumps(out, indent=1, default=str))

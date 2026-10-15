@@ -1,0 +1,17 @@
+"""Brief 61: are probes B4/B5/B6 pre-existing? Runs the same synthetic inputs against a module dir given as argv[1]."""
+import json, sys, tempfile
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+import lx_platform as L
+NS = {"pidns": L.ns_inode("pid"), "timens": L.ns_inode("time")}
+full = {"pid": 4242, "starttime_ticks": 777, "boot_id": L.boot_id(), "cmdline_sha256": "c" * 64, **NS}
+c = lambda m: {"clocks": {"monotonic_ns": m, "boottime_ns": m, "realtime_ns": m}, "suspend_success": 0,
+               "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0", "power": L.AC}
+out = {"B4_boot_garbage": L.identity_state(dict(full, boot_id="garbage")),
+       "B4_pid_negative": L.identity_state(dict(full, pid=-987654)),
+       "B5_journal_empty_list": L.assess(c(0), c(120 * 10 ** 9), [c(60 * 10 ** 9)], [])["status"]}
+with tempfile.TemporaryDirectory() as d:
+    r = L.auto_update_settings('APT::Periodic::Enable "0";\n', use_live_apt=False, timers_dir=Path(d, "absent"),
+                               uu_binary="/nonexistent", snapd_paths=(), cloud_dir="/nonexistent", livepatch_dir="/nonexistent")
+    out["B6_timers_dir_absent"] = r["guest_updates_shown_disabled"]
+print(json.dumps(out))

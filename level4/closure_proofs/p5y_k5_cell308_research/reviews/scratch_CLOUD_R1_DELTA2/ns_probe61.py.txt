@@ -1,0 +1,18 @@
+"""Brief 61 namespace probe (run under unshare). Reads only; imports the scratch copy."""
+import json, sys, tempfile
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+import lx_platform as L
+out = {"ns_pid": L.ns_inode("pid"), "ns_cgroup": L.ns_inode("cgroup"),
+       "NSpid": next((l for l in open("/proc/self/status") if l.startswith("NSpid")), "").strip(),
+       "proc_self_cgroup": open("/proc/self/cgroup").read().strip(),
+       "proc_view_complete": L.proc_view_complete()}
+t = L.cpu_ticks()
+out["cpu_ticks_n"] = None if t is None else len(t)
+with tempfile.TemporaryDirectory() as d:
+    for rel, txt in {"x/y/memory.max": "max\n", "x/y/memory.high": "3000\n", "x/y/memory.current": "10\n",
+                     "x/memory.max": "8000\n", "x/memory.high": "max\n", "x/memory.current": "20\n"}.items():
+        p = Path(d, rel); p.parent.mkdir(parents=True, exist_ok=True); p.write_text(txt)
+    r = L.memory_readings("MemTotal: 16479424 kB\n", "0::/x/y\n", d, root_attested=True)
+    out["memory_attested_in_this_ns"] = {k: r[k] for k in ("cgroup_ns_initial", "effective_limit", "cgroup_min_headroom")}
+print(json.dumps(out))

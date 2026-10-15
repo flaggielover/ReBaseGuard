@@ -1,0 +1,104 @@
+{
+ "base_copy_suite": {
+  "rc": 0,
+  "tail": "OK"
+ },
+ "mutants": [
+  {
+   "id": "Y01",
+   "property": "any non-empty 'decided' set opens D-HOST-LIFETIME (e.g. decided={'D-MEM-FREE'})",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -962 +962 @@\n-    lifetime_open = \"D-HOST-LIFETIME\" not in decided\n+    lifetime_open = not decided\n"
+  },
+  {
+   "id": "Y02",
+   "property": "exited-in-window loop exempts any child of a campaign PID, whatever its start time (N7 half-repair)",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -609 +609 @@\n-        if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start and start >= own_start[ppid]):\n+        if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start):\n"
+  },
+  {
+   "id": "Y03",
+   "property": "acceptance line matched as a substring anywhere in the review, not as a whole line",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -918 +918 @@\n-    if review is None or f\"{ACCEPTANCE_LINE}{want}\".encode() not in review.splitlines():\n+    if review is None or f\"{ACCEPTANCE_LINE}{want}\".encode() not in review:\n"
+  },
+  {
+   "id": "Y04",
+   "property": "cgroup namespace reading hard-wired to 'initial'",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -513 +513 @@\n-            \"root_attested\": root_attested, \"cgroup_ns_initial\": ns_inode(\"cgroup\") == INIT_CGROUP_NS,\n+            \"root_attested\": root_attested, \"cgroup_ns_initial\": True,\n"
+  },
+  {
+   "id": "Y05",
+   "property": "attestation bound to /etc/machine-id only (DMI product_uuid ignored; image-cloned VM passes)",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -914 +914 @@\n-    if not cur.get(\"hardware_bound\") or rec.get(\"machine\") != cur:\n+    if not cur.get(\"hardware_bound\") or (rec.get(\"machine\") or {}).get(\"machine_id_sha256\") != cur.get(\"machine_id_sha256\"):\n"
+  },
+  {
+   "id": "Y06",
+   "property": "the loader is no longer a required pin member",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -778 +778 @@\n-REQUIRED_MAPPED = (\"libm.so.6\", \"libc.so.6\", \"ld-linux\")   # N11: members every Linux pin must contain\n+REQUIRED_MAPPED = (\"libm.so.6\", \"libc.so.6\")   # N11: members every Linux pin must contain\n"
+  },
+  {
+   "id": "Y07",
+   "property": "launch record: unit type (.service) not checked",
+   "status": "KILLED",
+   "tail": "FAILED (failures=1)",
+   "killed_by": [
+    "test_launch_record_fields_are_verified"
+   ],
+   "diff": "@@ -942 +942 @@\n-                and unit.endswith(\".service\") and isinstance(rec.get(\"invocation_id\"), str) and rec[\"invocation_id\"]\n+                and isinstance(rec.get(\"invocation_id\"), str) and rec[\"invocation_id\"]\n"
+  },
+  {
+   "id": "Y08",
+   "property": "updates gate: a merely truthy guest_updates_shown_disabled counts",
+   "status": "KILLED",
+   "tail": "FAILED (failures=1)",
+   "killed_by": [
+    "test_lifetime_gates_open_while_undecided"
+   ],
+   "diff": "@@ -963 +963 @@\n-    if not isinstance(upd, dict) or upd.get(\"guest_updates_shown_disabled\") is not True:\n+    if not isinstance(upd, dict) or not upd.get(\"guest_updates_shown_disabled\"):\n"
+  },
+  {
+   "id": "Y09",
+   "property": "cgroup_resources reads the leaf only (N3 chain repair undone)",
+   "status": "KILLED",
+   "tail": "FAILED (errors=1)",
+   "killed_by": [
+    "test_cgroup_resources_whole_chain"
+   ],
+   "diff": "@@ -488 +488 @@\n-        for i in range(len(parts), -1, -1):\n+        for i in range(len(parts), len(parts) - 1, -1):\n"
+  }
+ ],
+ "M25_vs_tests_at_66be23c3": {
+  "unmutated": [
+   1,
+   "FAILED (errors=2)",
+   [
+    "test_constants_equal_the_candidates",
+    "test_r1_recorded_kernel_is_not_this_hosts"
+   ]
+  ],
+  "M25": [
+   1,
+   "FAILED (errors=2)",
+   [
+    "test_constants_equal_the_candidates",
+    "test_r1_recorded_kernel_is_not_this_hosts"
+   ]
+  ]
+ }
+}
