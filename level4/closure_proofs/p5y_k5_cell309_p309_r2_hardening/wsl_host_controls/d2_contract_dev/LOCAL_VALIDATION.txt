@@ -1,0 +1,51 @@
+D2 first slice: pure-memory source review and private-Python unit verification
+
+Fetch codex/p309-d2-contract-dev-20261015 and verify the coordinator's exact full
+commit. Use a separate clean worktree/new codex/p309-d2-contract-validation-20261015
+branch from that SHA. Read README.txt, D2_VALIDATION.json and SOURCE_BINDINGS.json.
+Verify the new file hashes and pinned historical/review Git blobs. Do not read
+host configuration, registry, credentials, processes, cgroups or backup drives.
+
+Scope is the user's explicit authorization of D2 pure-memory protocol/state
+library development and synthetic unit tests. No service/endpoint/account/key/
+unit creation, host query, elevation, policy change or P309 workload is included.
+No CNG/helper process or real OS executor is imported/invoked by this code.
+
+From d2_contract_dev, use the already prepared private interpreter:
+  /home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 -B -m unittest -v test_d2_wire test_d2_model
+
+Expected: 14 wire +32 model =46 tests; zero failures/errors/skips. Run only these
+new suites. Existing53/24/19 suites and original host-control/PowerShell tests
+have unchanged sources and need no rerun. The runner is normal development
+tooling; no actual worker/helper/service is launched. Runtime context may be
+recorded from sys.version/sys.executable inside the same test-run context; do
+not add a host inventory, interpreter binary rehash or extra system query.
+
+Code review focus
+- Strict H4 fields/bounds, status/stop only, no caller authority/command/property
+  injection, stale-G comparison before cache response, global ID content binding.
+- Synthetic role/monitor-instance labels and internal fixture events remain
+  visibly synthetic. They are not SO_PEERCRED, service enrollment, permits or an
+  actual start API. No public client request drives administrative transitions.
+- Stop latch, delayed completion, missing cleanup predicates, old-G dispatch,
+  terminal history, broker/monitor restart and contradictory current-identity
+  facts retain the reviewed contract. No outcome grants real authority.
+- Request/history/event budgets refuse/latch unknown without deleting fences.
+  A pure immutable reducer models serial orders only; no actual concurrent store,
+  watchdog, protected persistence, peer authentication or OS stop is claimed.
+If there is a concrete defect, preserve failure evidence and report it; do not
+modify source, assertions, budgets or counts simply to obtain a pass.
+
+Record full stdout/stderr, exit code, individual IDs, runtime context and exact
+Git blob/worktree-byte hashes separately (including CRLF handling). Store logs
+additively under a new records directory. Preserve old sources, records and refs.
+No process/temporary-directory/backup/clock audit is requested by this task.
+F: unavailability remains HISTORICAL_ONLY, not refreshed or changed here.
+
+Add only D2_LOCAL_VALIDATION.json and D2_LOCAL_SOURCE_SHA256.json here. Include
+limited code-review findings/disposition in the validation JSON; no organizational
+or formal approval is implied. Keep original D2_VALIDATION.json unchanged.
+Commit/push the separate validation branch normally, verify its exact remote HEAD
+and report results. Keep I1-I7 OPEN_RETAINED and every admission/deployment/
+execution/qualification flag BLOCKED/false. This is not the complete D2 program,
+host isolation, an actual broker, installation consent, drill or formal run.
