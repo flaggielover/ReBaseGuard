@@ -1,0 +1,74 @@
+Signed observation session prototype (development only)
+
+This is a library with synthetic tests, not a launcher, Windows agent or route
+approval. No production key or session is created by importing it. There is no
+command that can qualify, freeze, grant, signal a job or evaluate a target.
+
+Protocol
+1. A caller supplies a baseline host/guest observation, an RSA public key and an
+   independently selected SHA-256 pin of those exact PEM bytes. Automatic trust
+   in a key supplied by an envelope is not supported. Provisioning that trust
+   and isolating the actual Windows private key remain unimplemented.
+2. DevSession exclusively creates a new p309-wsl-dev-* directory outside Git
+   checkouts. It stores the immutable baseline and an append-only hash-linked
+   journal, fsyncs files/directories, and refuses existing directories. No resume
+   API exists: an orphaned directory is evidence of interruption, not permission
+   to continue. Official campaign markers, ledgers and refs are not touched.
+3. challenge() persists and returns an unpredictable nonce with a session ID,
+   baseline hash, sequence and prior journal digest. Only one may be outstanding.
+4. The proposed host signer returns exactly message_b64 and signature_b64. The
+   decoded message is a JSON object containing exactly the challenge fields and
+   payload={host: <observation>, guest: <observation>}. RSA PKCS#1 v1.5 with SHA-256
+   signs the exact UTF-8 message bytes, not a subsequently reserialized object.
+   The verifier uses OpenSSL with a 2048/3072/4096-bit RSA public key. No handwritten
+   signature primitive or private-key handling is present in the library.
+5. accept() verifies the signature, rejects duplicate/non-finite JSON, binds all
+   challenge fields and the baseline host/guest/runtime/policy identity, checks
+   the 105-second monotonic deadline, fsyncs a verification record, then checks
+   the deadline again before returning a development acknowledgment. A signature
+   is not an attestation of complete process observation or workload safety.
+6. Replays, cross-session messages, time regressions, a changed baseline, journal
+   truncation/replacement, malformed input and persistence errors end the session.
+   Thread serialization permits at most one acknowledgment of a challenge.
+   Call close() to release its descriptor; it never enables reopening the session.
+
+Boundaries
+- All success responses still say formal_admission=BLOCKED and authorization=false.
+- A configured key proves only control of its matching private key. A real bridge
+  needs an independently reviewed Windows service/account, key access policy,
+  signer policy and host/guest binding. A WSL process able to invoke Windows as
+  the same user may be able to request signatures or access same-user secrets;
+  a same-user secret or unreviewed DPAPI wrapper does not establish isolation.
+- The initial baseline is caller-selected, not owner-approved by this module.
+  The remaining diagnostic, visibility, load, isolation, NTP, resource, unit and
+  exactly-once checks are still required. A signed busy sample remains unsafe.
+- The journal detects changes against the live process's retained state. It is
+  not an external immutable anchor, a privileged store, or proof against a
+  malicious same-user process deleting the entire development session. A process
+  with authority over this verifier is outside the prototype's trust boundary.
+- fsync success is recorded behavior, not a guarantee of VHDX/NTFS power-loss
+  durability. Host crash/storage behavior still needs actual-host review.
+- Development budgets: 1 MiB messages, 256 MiB journal, 4096 records. Exhaustion
+  refuses further work. No 6-hour or 31.5-hour endurance claim is made.
+
+Local validation on the Windows/WSL host
+Use a separate development worktree. The integration branch includes exactly the
+four fixed blobs already validated in local repair 81d3d869; its separate base
+commit is not represented as the same Git commit. Preserve both existing branches.
+The new feature commit only adds dev_session.py, test_dev_session.py and this
+documentation/validation record, and can be cherry-picked onto 81d3d869 instead.
+
+In wsl_host_controls, run with the private CPython 3.11.15:
+  /home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 -B -m unittest -v test_dev_session
+Tests use fresh temporary directories and ephemeral synthetic RSA keys through
+OpenSSL. They never install a certificate or Windows service, change power/update
+policy, run the host sampler, or import project launch/qualification entrypoints.
+OpenSSL must be available; missing crypto tooling must be reported as failure.
+The existing 21 Python / 11 PowerShell results apply to their unchanged inputs;
+do not rerun them merely because new independent library files were added.
+
+Next unfinished integration: a Windows signer with separated credentials and
+authority, trusted key/baseline provisioning, complete lifetime/protected-process
+accounting and host/guest attribution, a live monitor that fails the attempt on
+bridge loss, and independent acceptance of the WSL route. This module completes
+none of those operational steps by itself.
