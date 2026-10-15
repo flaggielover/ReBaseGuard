@@ -73,6 +73,19 @@ function PowerFacts {
  finally { if($ptr -ne [IntPtr]::Zero){[void][P309ReadOnlyNative]::LocalFree($ptr)} }
  return $result
 }
+function PolicyFingerprint($policy) {
+ # Hash the exact emitted power facts. Never re-query power policy for its hash.
+ $power=[ordered]@{}
+ foreach($key in @('power_query_ok','sleep_ac_s','sleep_dc_s','hibernate_ac_s','hibernate_dc_s','scheme_sha256')) {
+  $power[$key]=$policy[$key]
+ }
+ $tasks=@($policy.update_task_states | Sort-Object identity_sha256 | ForEach-Object {
+  [ordered]@{identity_sha256=$_.identity_sha256;state=$_.state;next_run_utc=$_.next_run_utc}
+ })
+ $updates=[ordered]@{}
+ foreach($key in @($policy.update_policy_values.Keys | Sort-Object)){$updates[$key]=$policy.update_policy_values[$key]}
+ return HashText (([ordered]@{power=$power;update=$updates;tasks=$tasks}) | ConvertTo-Json -Depth 6 -Compress)
+}
 $start=ClockSnapshot
 $s0=ProcessSnapshot
 $firstQueryEnd=[Environment]::TickCount64/1000.0
@@ -138,13 +151,8 @@ try {
  $policy.event_log_cleared=@($relevant | Where-Object { $_.Id -eq 104 }).Count -gt 0
  $policy.event_query_ok=$true
 } catch { $policy.event_query_ok=$false }
-# Serialize stable ordered records. A changing schedule/state is conservatively a policy change.
-$taskFingerprint=@($policy.update_task_states | Sort-Object identity_sha256 | ForEach-Object {
- [ordered]@{identity_sha256=$_.identity_sha256;state=$_.state;next_run_utc=$_.next_run_utc}
-})
-$orderedUpdate=[ordered]@{}
-foreach($key in @($policy.update_policy_values.Keys | Sort-Object)){$orderedUpdate[$key]=$policy.update_policy_values[$key]}
-$policy.policy_sha256=HashText (([ordered]@{power=(PowerFacts);update=$orderedUpdate;tasks=$taskFingerprint}) | ConvertTo-Json -Depth 6 -Compress)
+# Serialize stable ordered records from the emitted facts, without a second power query.
+$policy.policy_sha256=PolicyFingerprint $policy
 $os=Get-CimInstance Win32_OperatingSystem
 $reg=@(Get-ChildItem -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss' | Get-ItemProperty | Where-Object DistributionName -eq $Distribution)
 if($reg.Count -ne 1){throw 'Distribution registration ambiguous'}

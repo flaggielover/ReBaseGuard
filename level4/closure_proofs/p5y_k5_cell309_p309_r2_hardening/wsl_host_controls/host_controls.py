@@ -68,12 +68,12 @@ def assess(host, guest, previous=None, now=None, phase='start', baseline=None):
     now = time.time() if now is None else now
     checks['schemas'] = host.get('schema') == SCHEMA and guest.get('schema') == 'P309_WSL_CONTROL_FACTS/1'
     checks['phase'] = phase in ('start', 'monitor')
+    age_limit = THRESHOLDS['sample_s'] + THRESHOLDS['monitor_gap_tolerance_s']
     start, end = host.get('start'), host.get('end')
-    checks['sample_continuity'] = continuity(start, end)
+    checks['sample_continuity'] = continuity(start, end, age_limit if phase == 'monitor' else None)
     elapsed = end['uptime_s'] - start['uptime_s'] if checks['sample_continuity'] else None
     checks['full_sample_duration'] = number(elapsed) and elapsed >= THRESHOLDS['sample_s']
     # Proposal: evidence age bounded by existing sample + gap allowance (105 s).
-    age_limit = THRESHOLDS['sample_s'] + THRESHOLDS['monitor_gap_tolerance_s']
     guest_time = stamp(guest.get('utc'))
     checks['freshness'] = (number(now) and clock_valid(end) and number(guest_time)
                            and 0 <= now - end['wall_s'] <= age_limit
