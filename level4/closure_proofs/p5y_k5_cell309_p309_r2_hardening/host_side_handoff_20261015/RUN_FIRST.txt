@@ -1,0 +1,39 @@
+P309 host-side handoff: audit preparation only
+
+Packet source: 2dce6244c2a9409fa7b318ddd6b8acaf289091bd.
+Runtime/audit source: 501f48cb31fd3f80d5c6dd33f1eef6b8f01b2853.
+
+The hardening checkout is not the runtime checkout. Its runner and drill files
+differ from 501f48cb. Use the exact r2 clone required by the packet for later
+worker-tier work. Do not run the hardening checkout as the r2 runtime.
+
+Read packet/HOST_READ_ONLY_AUDIT_8A.md and the execution checklist first.
+The existing sequence requires a designated host, an independent P309 session
+and credential, a non-root audit account, operator coordination and Part A.
+None of those facts is supplied or established by this archive.
+
+Verify the archive on the coordinator's machine before host delivery:
+  cd p309-host-handoff
+  sha256sum -c SHA256SUMS
+
+Do not unpack or save files onto the worker during the read-only audit.
+Use the host session's stdin delivery mechanism. Set AUDIT_CFG in that session
+to the real planned roots and the operator's Part A values (see 8A section 2).
+Feed the included, verified p309_host.py bytes into this command's standard input:
+
+python3 -B -c 'import sys,hashlib
+b=sys.stdin.buffer.read()
+if hashlib.sha256(b).hexdigest() != "ec9c8416159cf9e2e7372f97ce179a290def987007dc144591833615ca251f65":
+    sys.exit("REFUSED: audit source hash mismatch")
+exec(compile(b,"p309_host.py","exec"),{"__name__":"__main__"})' audit --config-json "$AUDIT_CFG"
+
+Return stdout to the coordinator; do not redirect it to a file on the worker.
+An audit exit code of zero is not host acceptance. Complete S-01 through S-17,
+then evaluate the evidence using HOST_VERDICT_RULES_8B.md. Keep unknowns unknown.
+No audit or drill has been performed by exporting this archive.
+
+The next dependent step is obtaining the separate host-side session and its
+actual audit evidence. This Cloud session has no configured host identity or
+host credential and cannot substitute for the designated durable worker.
+Do not install software, create accounts, change permissions, launch a drill,
+freeze, qualify, issue a grant or evaluate a target using this handoff alone.
