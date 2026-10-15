@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-15T15:42:06.6812081Z",
+  "query": "Read matching Ubuntu-24.04 HKCU Lxss registration ACL GetOwner(SecurityIdentifier); compare owner SID with current WindowsIdentity.User SID in memory; export hash and well-known role only",
+  "reason": "Initial textual ACL owner/account-name comparison cannot reliably establish SID equality",
+  "scope": "READ_ONLY_FEASIBILITY",
+  "registrations": [
+    {
+      "distribution": "Ubuntu-24.04",
+      "registry_owner_sid_sha256": "3c31830c08affd76b282da3bc73c292c4d915dd86b7059056421893aa48b3151",
+      "registry_owner_sid_equals_current_user": false,
+      "owner_is_builtin_administrators": true,
+      "owner_is_local_system": false,
+      "registration_scope": "CURRENT_USER_HKCU",
+      "raw_sid_exported": false
+    }
+  ],
+  "query_exit": 0,
+  "limitation": "Registry ACL ownership is distinct from WSL user registration scope. No DACL/isolation review or root capability test."
+}

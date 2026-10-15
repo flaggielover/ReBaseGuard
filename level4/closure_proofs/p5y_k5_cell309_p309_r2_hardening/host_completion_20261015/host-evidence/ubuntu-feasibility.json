@@ -1,0 +1,414 @@
+[
+  {
+    "id": "ubuntu_identity_and_paths",
+    "utc": "2026-10-15T15:42:24.208667+00:00",
+    "query": "Python os.getuid/geteuid/getgid/getegid/getgroups; pwd.getpwall filtered p309|rebaseguard (names hashed); lstat/os.access only enumerated P309 paths",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Name-based inventory does not identify a differently named dedicated account. Writability is current EUID access metadata, no write probe; ACL/mount effects and distinct principal isolation remain unestablished. No foreign checkout inspected.",
+    "status": "OBSERVED",
+    "query_exit": 0,
+    "result": {
+      "uid": 1000,
+      "euid": 1000,
+      "gid": 1000,
+      "egid": 1000,
+      "supplementary_group_ids": [
+        4,
+        24,
+        27,
+        30,
+        46,
+        100,
+        1000
+      ],
+      "current_account_name_sha256": "11dc88799584294b053b524569c347351dd4fda3ac5a2f97f432ae2340bfe93a",
+      "named_p309_account_candidates": [],
+      "dedicated_account_status": "NOT_FOUND_BY_NAME",
+      "metadata": [
+        {
+          "path": "$CURRENT_LINUX_HOME/p309",
+          "exists": true,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o755",
+          "type": "directory",
+          "current_euid_readable": true,
+          "current_euid_writable": true,
+          "current_euid_searchable_or_executable": true
+        },
+        {
+          "path": "$CURRENT_LINUX_HOME/p309/runtime",
+          "exists": true,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o755",
+          "type": "directory",
+          "current_euid_readable": true,
+          "current_euid_writable": true,
+          "current_euid_searchable_or_executable": true
+        },
+        {
+          "path": "$CURRENT_LINUX_HOME/p309/runtime/cpython-3.11.15",
+          "exists": true,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o755",
+          "type": "directory",
+          "current_euid_readable": true,
+          "current_euid_writable": true,
+          "current_euid_searchable_or_executable": true
+        },
+        {
+          "path": "$CURRENT_LINUX_HOME/p309/runtime/cpython-3.11.15/bin/python3.11",
+          "exists": true,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o755",
+          "type": "file",
+          "current_euid_readable": true,
+          "current_euid_writable": true,
+          "current_euid_searchable_or_executable": true
+        },
+        {
+          "path": "$CURRENT_LINUX_HOME/p309/workspace",
+          "exists": false,
+          "error_type": "FileNotFoundError",
+          "errno": 2
+        },
+        {
+          "path": "$CURRENT_LINUX_HOME/p309/scratch",
+          "exists": false,
+          "error_type": "FileNotFoundError",
+          "errno": 2
+        },
+        {
+          "path": "/mnt/d/ReBaseGuard-309/workspace",
+          "exists": true,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o777",
+          "type": "directory",
+          "current_euid_readable": true,
+          "current_euid_writable": true,
+          "current_euid_searchable_or_executable": true
+        },
+        {
+          "path": "/mnt/d/ReBaseGuard-309/workspace/p309-admission-feasibility-20261015",
+          "exists": true,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o777",
+          "type": "directory",
+          "current_euid_readable": true,
+          "current_euid_writable": true,
+          "current_euid_searchable_or_executable": true
+        }
+      ],
+      "dedicated_account_write_access": "NOT_ESTABLISHED",
+      "P309_SCRATCH_ROOT_is_set": false,
+      "scratch_paths": "Conventional P309 path inspected; no official configured scratch binding established. No directory created."
+    }
+  },
+  {
+    "id": "systemd_cgroup_metadata",
+    "utc": "2026-10-15T15:42:24.343317+00:00",
+    "query": "Read /proc/1/comm and /proc/self/cgroup; sched_getaffinity; named cgroup ancestor control metadata; systemctl --version/list-units/list-unit-files p309-r2-*; show only existing matches",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Query-process quota/affinity is not dedicated host capacity or a future execution-unit limit. No unit created/started/stopped/reset/attached; no cpu.stat sampling.",
+    "status": "OBSERVED",
+    "query_exit": 0,
+    "result": {
+      "pid1_comm": "systemd",
+      "process_cgroup": "0::/init.scope\n",
+      "availability": {
+        "systemctl": "/usr/bin/systemctl",
+        "systemd-run": "/usr/bin/systemd-run"
+      },
+      "systemd_version": {
+        "utc": "2026-10-15T15:42:24.343614+00:00",
+        "argv": [
+          "systemctl",
+          "--version"
+        ],
+        "exit": 0,
+        "stdout": "systemd 255 (255.4-1ubuntu8.14)\n+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified\n",
+        "stderr": ""
+      },
+      "affinity_cpu_count": 32,
+      "ancestor_metadata": [
+        {
+          "path": "/sys/fs/cgroup/init.scope",
+          "exists": true,
+          "uid": 0,
+          "gid": 0,
+          "mode": "0o755",
+          "type": "directory",
+          "current_euid_readable": true,
+          "current_euid_writable": false,
+          "current_euid_searchable_or_executable": true,
+          "controller_files": {
+            "cgroup.type": {
+              "value": "domain",
+              "metadata": {
+                "path": "/sys/fs/cgroup/init.scope/cgroup.type",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o644",
+                "type": "file",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": false
+              }
+            },
+            "cgroup.controllers": {
+              "value": "cpu memory pids",
+              "metadata": {
+                "path": "/sys/fs/cgroup/init.scope/cgroup.controllers",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o444",
+                "type": "file",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": false
+              }
+            },
+            "cgroup.subtree_control": {
+              "value": "",
+              "metadata": {
+                "path": "/sys/fs/cgroup/init.scope/cgroup.subtree_control",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o644",
+                "type": "file",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": false
+              }
+            },
+            "cpu.max": {
+              "value": "max 100000",
+              "metadata": {
+                "path": "/sys/fs/cgroup/init.scope/cpu.max",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o644",
+                "type": "file",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": false
+              }
+            },
+            "cpuset.cpus.effective": {
+              "errno": 2,
+              "error_type": "FileNotFoundError"
+            },
+            "cpuset.mems.effective": {
+              "errno": 2,
+              "error_type": "FileNotFoundError"
+            }
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup",
+          "exists": true,
+          "uid": 0,
+          "gid": 0,
+          "mode": "0o555",
+          "type": "directory",
+          "current_euid_readable": true,
+          "current_euid_writable": false,
+          "current_euid_searchable_or_executable": true,
+          "controller_files": {
+            "cgroup.type": {
+              "errno": 2,
+              "error_type": "FileNotFoundError"
+            },
+            "cgroup.controllers": {
+              "value": "cpuset cpu io memory hugetlb pids rdma",
+              "metadata": {
+                "path": "/sys/fs/cgroup/cgroup.controllers",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o444",
+                "type": "file",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": false
+              }
+            },
+            "cgroup.subtree_control": {
+              "value": "cpu memory pids",
+              "metadata": {
+                "path": "/sys/fs/cgroup/cgroup.subtree_control",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o644",
+                "type": "file",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": false
+              }
+            },
+            "cpu.max": {
+              "errno": 2,
+              "error_type": "FileNotFoundError"
+            },
+            "cpuset.cpus.effective": {
+              "value": "0-31",
+              "metadata": {
+                "path": "/sys/fs/cgroup/cpuset.cpus.effective",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o444",
+                "type": "file",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": false
+              }
+            },
+            "cpuset.mems.effective": {
+              "value": "0",
+              "metadata": {
+                "path": "/sys/fs/cgroup/cpuset.mems.effective",
+                "exists": true,
+                "uid": 0,
+                "gid": 0,
+                "mode": "0o444",
+                "type": "file",
+                "current_euid_readable": true,
+                "current_euid_writable": false,
+                "current_euid_searchable_or_executable": false
+              }
+            }
+          }
+        }
+      ],
+      "visible_min_finite_cpu_quota": null,
+      "effective_cpu_upper_bound_current_process": 32,
+      "existing_p309_units": {
+        "utc": "2026-10-15T15:42:24.345771+00:00",
+        "argv": [
+          "systemctl",
+          "list-units",
+          "--all",
+          "--no-legend",
+          "--plain",
+          "--no-pager",
+          "p309-r2-*"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "p309_unit_files": {
+        "utc": "2026-10-15T15:42:24.349232+00:00",
+        "argv": [
+          "systemctl",
+          "list-unit-files",
+          "--no-legend",
+          "--no-pager",
+          "p309-r2-*"
+        ],
+        "exit": 1,
+        "stdout": "",
+        "stderr": ""
+      },
+      "existing_unit_properties": [],
+      "actual_execution_unit_effective_limits_and_containment": "NOT_ESTABLISHED",
+      "delegation_authority": "Visible controller ownership/mode only; no privileged action attempted."
+    }
+  },
+  {
+    "id": "p309_policy_metadata",
+    "utc": "2026-10-15T15:42:24.353934+00:00",
+    "query": "List direct filenames only in /etc/polkit-1/rules.d, /usr/share/polkit-1/rules.d, /etc/polkit-1/localauthority/50-local.d, /etc/sudoers.d; lstat/hash only p309|rebaseguard named files",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Unreadable directories and unmatched generic rule names leave P309 authority UNKNOWN. No sudo invocation, generic rule dump or privilege evaluation.",
+    "status": "OBSERVED",
+    "query_exit": 0,
+    "result": {
+      "inventories": [
+        {
+          "directory": "/etc/polkit-1/rules.d",
+          "matches": [],
+          "status": "DENIED",
+          "errno": 13
+        },
+        {
+          "directory": "/usr/share/polkit-1/rules.d",
+          "matches": [],
+          "status": "NOT_FOUND_BY_FILENAME"
+        },
+        {
+          "directory": "/etc/polkit-1/localauthority/50-local.d",
+          "matches": [],
+          "status": "NOT_FOUND",
+          "errno": 2
+        },
+        {
+          "directory": "/etc/sudoers.d",
+          "matches": [],
+          "status": "NOT_FOUND_BY_FILENAME"
+        }
+      ],
+      "exact_P309_policy": "UNKNOWN",
+      "sudo_invoked": false,
+      "unrelated_rule_contents_read": false
+    }
+  },
+  {
+    "id": "ubuntu_integration",
+    "utc": "2026-10-15T15:42:24.354665+00:00",
+    "query": "Read allowed nonidentity /etc/wsl.conf settings; /proc/sys/fs/binfmt_misc/WSLInterop metadata; no endpoint connections",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "WSL integration availability does not establish a separate Windows token, authenticated endpoint or key/anchor protection.",
+    "status": "OBSERVED",
+    "query_exit": 0,
+    "result": {
+      "wsl_conf": {
+        "sha256": "c43bfdedddb060682d524d2dbf34d642403e49e493ae2f0bd6964ad509596aaa",
+        "selected_settings": {
+          "boot": {
+            "systemd": "true"
+          },
+          "interop": {},
+          "automount": {},
+          "network": {}
+        },
+        "default_user_matches_current": true,
+        "other_values_exported": false
+      },
+      "wsl_interop_binfmt": "enabled\ninterpreter /init\nflags: P\noffset 0\nmagic 4d5a\n",
+      "local_endpoint_names": "NOT_SPECIFIED_IN_PACKET; no arbitrary /run or other-user data scanned",
+      "client_host_isolation": "NOT_ESTABLISHED"
+    }
+  },
+  {
+    "id": "clock_observation",
+    "utc": "2026-10-15T15:42:24.355105+00:00",
+    "query": "timedatectl show --property=NTPSynchronized,NTP,CanNTP,Timezone,LocalRTC",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Point-in-time systemd state only; not independent time accuracy verification, NTP enablement, continuity or a reserved window.",
+    "status": "OBSERVED",
+    "query_exit": 0,
+    "result": {
+      "utc": "2026-10-15T15:42:24.355112+00:00",
+      "argv": [
+        "timedatectl",
+        "show",
+        "--property=NTPSynchronized,NTP,CanNTP,Timezone,LocalRTC"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  }
+]

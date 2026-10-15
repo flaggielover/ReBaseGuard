@@ -1,0 +1,98 @@
+{
+  "linux": {
+    "schema": "P309_WSL_READONLY_FACTS/1",
+    "utc": "2026-10-15T15:42:34.420501+00:00",
+    "system": "Linux",
+    "kernel": "6.6.114.1-microsoft-standard-WSL2",
+    "arch": "x86_64",
+    "pid1": "systemd",
+    "affinity_cpus": 32,
+    "available_memory_bytes": 15962669056,
+    "total_memory_bytes": 16661880832,
+    "guest_disk_free_bytes": 1021452955648,
+    "workspace_filesystem": {
+      "rc": 0,
+      "stdout": "ext4"
+    },
+    "systemd_state": {
+      "rc": 0,
+      "stdout": "running"
+    },
+    "systemd_run_available": true,
+    "python": {
+      "implementation": "CPython",
+      "version": "3.11.15"
+    },
+    "glibc": [
+      "glibc",
+      "2.39"
+    ],
+    "ntp": {
+      "rc": 0,
+      "stdout": "no"
+    },
+    "container_detection": {
+      "rc": 0,
+      "stdout": "wsl"
+    },
+    "cpu_quota": "NOT_ASSESSED_ACROSS_CGROUP_HIERARCHY",
+    "windows_host_process_visibility": "NOT_AVAILABLE_THROUGH_LINUX_PROC",
+    "clock_continuity_across_windows_sleep": "NOT_VALIDATED"
+  },
+  "windows": {
+    "schema": "P309_WINDOWS_READONLY_FACTS/1",
+    "utc": "2026-10-15T15:42:09.5066592Z",
+    "windows": {
+      "caption": "Microsoft Windows 11 \u5bb6\u5ead\u7248 \u4e2d\u6587\u7248",
+      "build": "26200",
+      "version": "10.0.26200"
+    },
+    "logical_cpus": 32.0,
+    "total_memory_bytes": 34158272512,
+    "available_memory_bytes": 11505553408,
+    "distribution": "Ubuntu-24.04",
+    "wsl_version": 2,
+    "vhdx_registered_and_present": true,
+    "backing_drive": "D:",
+    "backing_filesystem": "NTFS",
+    "backing_free_bytes": 129510592512,
+    "system_drive_free_bytes": 2280804352,
+    "host_power_and_update_policy": "NOT_ASSESSED",
+    "host_workload_exclusivity": "NOT_ASSESSED"
+  },
+  "assessment": {
+    "schema": "P309_WSL_PREPARATION_REPORT/1",
+    "scope": "DEVELOPMENT_ONLY",
+    "r2_reference": "501f48cb31fd3f80d5c6dd33f1eef6b8f01b2853",
+    "input_scope": "Caller-supplied snapshots; no host identity or freshness attestation",
+    "input_schemas_valid": true,
+    "resource_checks": {
+      "wsl2_guest_and_registration": "PASS",
+      "linux_cpu_affinity_at_least_4": "PASS",
+      "available_ram_guest_and_host_at_least_8GB": "PASS",
+      "guest_and_backing_storage_at_least_40GB": "PASS",
+      "pid1_is_systemd": "PASS",
+      "pinned_python_3_11_15": "PASS"
+    },
+    "effective_available_memory_bytes": 11505553408,
+    "effective_free_storage_bytes": 129510592512,
+    "warnings": [
+      "Resource values are instantaneous, not reserved capacity.",
+      "Logical CPU visibility does not establish dedicated physical cores.",
+      "The system-drive free-space figure is advisory and must also be monitored."
+    ],
+    "unresolved_requirements": [
+      "WSL route amendment and independent review",
+      "AWS IMDS-dependent admission has no accepted WSL replacement",
+      "Windows host workload visibility and compute exclusivity",
+      "Windows sleep, restart, update and WSL shutdown continuity",
+      "Effective cgroup CPU quota and runtime resource accounting",
+      "Private interpreter path, binary hash and glibc binding",
+      "P309 account, isolation, launch privileges and unit controls",
+      "Full current audit, worker-tier drill and pre-freeze review"
+    ],
+    "formal_admission": "BLOCKED",
+    "qualification_authorized": false,
+    "target_execution_authorized": false
+  }
+}

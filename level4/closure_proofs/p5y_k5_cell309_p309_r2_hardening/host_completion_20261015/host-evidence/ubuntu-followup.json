@@ -1,0 +1,66 @@
+{
+  "utc": "2026-10-15T15:45:15.984282+00:00",
+  "scope": "READ_ONLY_METADATA",
+  "interpreter": {
+    "path": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+    "implementation": "CPython",
+    "version": "3.11.15",
+    "sha256": "b21d680e5061c20ee39c75f0c6edf8db4220f327de45e52ab2040e15ca0cf194",
+    "glibc": [
+      "glibc",
+      "2.39"
+    ]
+  },
+  "clock": {
+    "argv": [
+      "timedatectl",
+      "show",
+      "-p",
+      "NTPSynchronized",
+      "-p",
+      "NTP",
+      "-p",
+      "CanNTP",
+      "-p",
+      "Timezone",
+      "-p",
+      "LocalRTC"
+    ],
+    "exit": 0,
+    "stdout": "Timezone=Asia/Shanghai\nLocalRTC=no\nCanNTP=yes\nNTP=yes\nNTPSynchronized=no\n",
+    "stderr": ""
+  },
+  "disk": {
+    "argv": [
+      "df",
+      "-B1",
+      "--output=fstype,size,used,avail,target",
+      "/home/suzhe/p309"
+    ],
+    "exit": 0,
+    "stdout": "Type     1B-blocks       Used         Avail Mounted on\next4 1081101176832 4655980544 1021452840960 /\n",
+    "stderr": ""
+  },
+  "updates": {
+    "argv": [
+      "systemctl",
+      "show",
+      "unattended-upgrades.service",
+      "apt-daily.timer",
+      "apt-daily-upgrade.timer",
+      "-p",
+      "Id",
+      "-p",
+      "ActiveState",
+      "-p",
+      "UnitFileState"
+    ],
+    "exit": 0,
+    "stdout": "Id=unattended-upgrades.service\nActiveState=active\nUnitFileState=enabled\n\nId=apt-daily.timer\nActiveState=active\nUnitFileState=enabled\n\nId=apt-daily-upgrade.timer\nActiveState=active\nUnitFileState=enabled\n",
+    "stderr": ""
+  },
+  "reboot_required": false,
+  "network_imds": "NOT_PROBED; container rejection already established; not formal 8a audit",
+  "tests_run": 0,
+  "host_safety_samples": 0
+}

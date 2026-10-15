@@ -1,0 +1,165 @@
+[
+  {
+    "id": "power_policy",
+    "utc": "2026-10-15T15:45:11.7262609Z",
+    "command": " & \"$env:SystemRoot\\System32\\powercfg.exe\" /query SCHEME_CURRENT SUB_SLEEP; if($LASTEXITCODE -ne 0){throw 'powercfg read failed'} ",
+    "scope": "READ_ONLY_METADATA_NO_SAMPLING",
+    "result": [
+      "电源方案 GUID: 85d583c5-cf2e-4197-80fd-3789a227a72c  (均衡模式)",
+      "  子组 GUID: 238c9fa8-0aad-41ed-83f4-97be242c8f20  (睡眠)",
+      "    GUID 别名: SUB_SLEEP",
+      "    电源设置 GUID: 29f6c1db-86da-48c5-9fdb-f2b67b1f44da  (在此时间后睡眠)",
+      "      GUID 别名: STANDBYIDLE",
+      "      最小可能的设置: 0x00000000",
+      "      最大可能的设置: 0xffffffff",
+      "      可能的设置增量: 0x00000001",
+      "      可能的设置单位: 秒",
+      "    当前交流电源设置索引: 0x00000000",
+      "    当前直流电源设置索引: 0x00000258",
+      "",
+      "    电源设置 GUID: 94ac6d29-73ce-41a6-809f-6363ba21b47e  (允许混合睡眠)",
+      "      GUID 别名: HYBRIDSLEEP",
+      "      可能的设置索引: 000",
+      "      可能的设置友好名称: 关闭",
+      "      可能的设置索引: 001",
+      "      可能的设置友好名称: 开启",
+      "    当前交流电源设置索引: 0x00000000",
+      "    当前直流电源设置索引: 0x00000000",
+      "",
+      "    电源设置 GUID: 9d7815a6-7ee4-497e-8888-515a05f02364  (在此时间后休眠)",
+      "      GUID 别名: HIBERNATEIDLE",
+      "      最小可能的设置: 0x00000000",
+      "      最大可能的设置: 0xffffffff",
+      "      可能的设置增量: 0x00000001",
+      "      可能的设置单位: 秒",
+      "    当前交流电源设置索引: 0x00000000",
+      "    当前直流电源设置索引: 0x00002a30",
+      "",
+      "    电源设置 GUID: bd3b718a-0680-4d9d-8ab2-e1d2b4ac806d  (允许使用唤醒定时器)",
+      "      GUID 别名: RTCWAKE",
+      "      可能的设置索引: 000",
+      "      可能的设置友好名称: 禁用",
+      "      可能的设置索引: 001",
+      "      可能的设置友好名称: 启用",
+      "      可能的设置索引: 002",
+      "      可能的设置友好名称: 仅限重要的唤醒计算器",
+      "    当前交流电源设置索引: 0x00000001",
+      "    当前直流电源设置索引: 0x00000000",
+      ""
+    ],
+    "status": "OBSERVED"
+  },
+  {
+    "id": "power_availability",
+    "utc": "2026-10-15T15:45:11.7986553Z",
+    "command": " & \"$env:SystemRoot\\System32\\powercfg.exe\" /a; if($LASTEXITCODE -ne 0){throw 'powercfg /a failed'} ",
+    "scope": "READ_ONLY_METADATA_NO_SAMPLING",
+    "result": [
+      "此系统上有以下睡眠状态:",
+      "    待机 (S3)",
+      "",
+      "此系统上没有以下睡眠状态:",
+      "    待机 (S1)",
+      "\t系统固件不支持此待机状态。",
+      "",
+      "    待机 (S2)",
+      "\t系统固件不支持此待机状态。",
+      "",
+      "    休眠",
+      "\t尚未启用休眠。",
+      "",
+      "    待机(S0 低电量待机)",
+      "\t系统固件不支持此待机状态。",
+      "",
+      "    混合睡眠",
+      "\t休眠不可用。",
+      "\t虚拟机监控程序不支持此待机状态。",
+      "",
+      "    快速启动",
+      "\t休眠不可用。",
+      ""
+    ],
+    "status": "OBSERVED"
+  },
+  {
+    "id": "pending_reboot",
+    "utc": "2026-10-15T15:45:11.8154207Z",
+    "command": "\n $session=Get-ItemProperty -LiteralPath 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager'\n @{windows_update=(Test-Path -LiteralPath 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired');component_servicing=(Test-Path -LiteralPath 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\RebootPending');pending_file_renames=[bool]$session.PendingFileRenameOperations;other_indicators='NOT_EXHAUSTIVE'}\n",
+    "scope": "READ_ONLY_METADATA_NO_SAMPLING",
+    "result": {
+      "other_indicators": "NOT_EXHAUSTIVE",
+      "component_servicing": false,
+      "pending_file_renames": true,
+      "windows_update": false
+    },
+    "status": "OBSERVED"
+  },
+  {
+    "id": "update_policy_selected_values",
+    "utc": "2026-10-15T15:45:11.9000710Z",
+    "command": "\n foreach($path in @('HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate','HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU','HKLM:\\SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings')){\n  if(!(Test-Path -LiteralPath $path)){@{path=$path;status='NOT_CONFIGURED'};continue}\n  $v=Get-ItemProperty -LiteralPath $path\n  $selected=[ordered]@{path=$path;status='SELECTED_VALUES_ONLY'}\n  foreach($n in @('NoAutoUpdate','AUOptions','NoAutoRebootWithLoggedOnUsers','SetActiveHours','ActiveHoursStart','ActiveHoursEnd','PauseUpdatesExpiryTime','PauseQualityUpdatesEndTime','PauseFeatureUpdatesEndTime')){if($null -ne $v.$n){$selected[$n]=$v.$n}}\n  $selected\n }\n",
+    "scope": "READ_ONLY_METADATA_NO_SAMPLING",
+    "result": [
+      {
+        "path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate",
+        "status": "NOT_CONFIGURED"
+      },
+      {
+        "path": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
+        "status": "NOT_CONFIGURED"
+      },
+      {
+        "path": "HKLM:\\SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings",
+        "status": "SELECTED_VALUES_ONLY",
+        "ActiveHoursStart": 8,
+        "ActiveHoursEnd": 2
+      }
+    ],
+    "status": "OBSERVED"
+  },
+  {
+    "id": "exact_collisions",
+    "utc": "2026-10-15T15:45:11.9507493Z",
+    "command": "\n @{paths=@('C:\\Program Files\\ReBaseGuard-P309','C:\\ProgramData\\ReBaseGuard-P309','D:\\ReBaseGuard-309\\WSL\\ReBaseGuard-P309') | ForEach-Object {@{path=$_;exists=(Test-Path -LiteralPath $_)}};service=@(Get-Service -Name ReBaseGuardP309Observer -ErrorAction SilentlyContinue | Select-Object Name,Status,StartType);distro=@(Get-ChildItem -LiteralPath 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss' | Get-ItemProperty | Where-Object DistributionName -eq ReBaseGuard-P309 | Select-Object DistributionName,Version);key_collision='NOT_QUERIED'}\n",
+    "scope": "READ_ONLY_METADATA_NO_SAMPLING",
+    "result": {
+      "distro": [],
+      "key_collision": "NOT_QUERIED",
+      "paths": [
+        {
+          "path": "C:\\Program Files\\ReBaseGuard-P309",
+          "exists": false
+        },
+        {
+          "path": "C:\\ProgramData\\ReBaseGuard-P309",
+          "exists": false
+        },
+        {
+          "path": "D:\\ReBaseGuard-309\\WSL\\ReBaseGuard-P309",
+          "exists": false
+        }
+      ],
+      "service": []
+    },
+    "status": "OBSERVED"
+  },
+  {
+    "id": "build_tool_metadata",
+    "utc": "2026-10-15T15:45:11.9812175Z",
+    "command": "\n @('C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe','C:\\Program Files\\dotnet\\dotnet.exe') | ForEach-Object {if(Test-Path -LiteralPath $_){$f=Get-Item -LiteralPath $_;@{path=$_;version=$f.VersionInfo.FileVersion;exists=$true}}else{@{path=$_;exists=$false}}}\n",
+    "scope": "READ_ONLY_METADATA_NO_SAMPLING",
+    "result": [
+      {
+        "version": "4.8.9221.0 built by: NET481REL1LAST_25H2",
+        "exists": true,
+        "path": "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe"
+      },
+      {
+        "version": "9,0,525,21509 @Commit: e36e4d1a8f8dfb08d7e3a6041459c9791d732c01",
+        "exists": true,
+        "path": "C:\\Program Files\\dotnet\\dotnet.exe"
+      }
+    ],
+    "status": "OBSERVED"
+  }
+]

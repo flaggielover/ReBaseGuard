@@ -1,0 +1,215 @@
+[
+  {
+    "id": "windows_token",
+    "utc": "2026-10-15T15:42:06.1261971Z",
+    "query": "$id=[Security.Principal.WindowsIdentity]::GetCurrent()\n  $principal=[Security.Principal.WindowsPrincipal]::new($id)\n  $privs=& \"$env:SystemRoot\\System32\\whoami.exe\" /priv /fo csv /nh\n  $rc=$LASTEXITCODE\n  [ordered]@{sid_sha256=HashText $id.User.Value;effective_token_is_administrator=$principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator);impersonation_level=$id.ImpersonationLevel.ToString();privileges_query='whoami.exe /priv /fo csv /nh';privileges_exit=$rc;privileges_csv=@($privs);powershell_version=$PSVersionTable.PSVersion.ToString();dotnet_version=[Environment]::Version.ToString()}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Token capability is not authority to change host settings; no elevation or impersonation.",
+    "result": {
+      "sid_sha256": "b5fd7d9620e5736b174b0bfaefe6a01bc6a0194429093ec0bc31783f6c6e3c26",
+      "effective_token_is_administrator": false,
+      "impersonation_level": "None",
+      "privileges_query": "whoami.exe /priv /fo csv /nh",
+      "privileges_exit": 0,
+      "privileges_csv": [
+        "\"SeShutdownPrivilege\",\"Shut down the system\",\"Disabled\"",
+        "\"SeChangeNotifyPrivilege\",\"Bypass traverse checking\",\"Enabled\"",
+        "\"SeUndockPrivilege\",\"Remove computer from docking station\",\"Disabled\"",
+        "\"SeIncreaseWorkingSetPrivilege\",\"Increase a process working set\",\"Disabled\"",
+        "\"SeTimeZonePrivilege\",\"Change the time zone\",\"Disabled\""
+      ],
+      "powershell_version": "7.6.5",
+      "dotnet_version": "10.0.11"
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "wsl_registration_owner_relation",
+    "utc": "2026-10-15T15:42:06.1887027Z",
+    "query": "$key='HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Lxss'\n  $found=@(Get-ChildItem -LiteralPath $key | ForEach-Object {\n    $v=Get-ItemProperty -LiteralPath $_.PSPath\n    if ($v.DistributionName -eq 'Ubuntu-24.04') {\n      $acl=Get-Acl -LiteralPath $_.PSPath\n      [ordered]@{distribution=$v.DistributionName;version=$v.Version;default_uid=$v.DefaultUid;registration_in_current_user_hive=$true;registry_key_owner_sha256=HashText $acl.Owner;registry_owner_matches_current_identity=($acl.Owner -eq [Security.Principal.WindowsIdentity]::GetCurrent().Name);registration_identifier_and_basepath_exported=$false}\n    }\n  })\n  [ordered]@{registrations=$found;windows_owner_boundary='Current-user WSL registration; no separate Windows token inferred from Linux UID';wsl_root_capability='UNTESTED'}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "HKCU registration/owner metadata does not prove protected observer/client isolation. No raw registry identifiers exported.",
+    "result": {
+      "registrations": [
+        {
+          "distribution": "Ubuntu-24.04",
+          "version": 2,
+          "default_uid": 1000,
+          "registration_in_current_user_hive": true,
+          "registry_key_owner_sha256": "8fb7ad1866335819249789fea3f27adb3edb1c07ff4b9273c8699b26556f2468",
+          "registry_owner_matches_current_identity": false,
+          "registration_identifier_and_basepath_exported": false
+        }
+      ],
+      "windows_owner_boundary": "Current-user WSL registration; no separate Windows token inferred from Linux UID",
+      "wsl_root_capability": "UNTESTED"
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "windows_integration_config",
+    "utc": "2026-10-15T15:42:06.2962948Z",
+    "query": "$path=Join-Path $env:USERPROFILE '.wslconfig'\n  if (!(Test-Path -LiteralPath $path)) { return @{status='NOT_FOUND';path_label='CURRENT_WINDOWS_PROFILE/.wslconfig'} }\n  $allowed='(?i)^\\s*(processors|memory|swap|localhostForwarding|networkingMode|firewall|dnsTunneling|autoProxy|nestedVirtualization|guiApplications|vmIdleTimeout|autoMemoryReclaim|sparseVhd)\\s*='\n  $lines=@(Get-Content -LiteralPath $path | Where-Object {$_ -match $allowed})\n  [ordered]@{path_label='CURRENT_WINDOWS_PROFILE/.wslconfig';sha256=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant();selected_non_identity_settings=$lines;other_values_exported=$false}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Configured keys only, not proof of effective enforcement. Paths and identity fields omitted.",
+    "result": {
+      "status": "NOT_FOUND",
+      "path_label": "CURRENT_WINDOWS_PROFILE/.wslconfig"
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "provider_Microsoft-Windows-Kernel-Process",
+    "utc": "2026-10-15T15:42:06.2997213Z",
+    "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-Kernel-Process' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+    "result": {
+      "Name": "Microsoft-Windows-Kernel-Process",
+      "Id": "22fb2cd6-0e7b-422b-a0c7-2fad1fd0e716",
+      "Discovery": "DISCOVERED_ONLY"
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "provider_Microsoft-Windows-Kernel-Power",
+    "utc": "2026-10-15T15:42:06.4251157Z",
+    "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-Kernel-Power' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+    "result": {
+      "Name": "Microsoft-Windows-Kernel-Power",
+      "Id": "331c3b3a-2005-44c2-ac5e-77220c37d6b4",
+      "Discovery": "DISCOVERED_ONLY"
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "provider_Microsoft-Windows-Hyper-V-Compute",
+    "utc": "2026-10-15T15:42:06.4362534Z",
+    "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-Hyper-V-Compute' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+    "result": {
+      "Name": "Microsoft-Windows-Hyper-V-Compute",
+      "Id": "17103e3f-3c6e-4677-bb17-3b267eb5be57",
+      "Discovery": "DISCOVERED_ONLY"
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "provider_Microsoft-Windows-Lxss",
+    "utc": "2026-10-15T15:42:06.4455227Z",
+    "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-Lxss' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+    "status": "UNKNOWN_OR_DENIED",
+    "query_exit": 1,
+    "error_type": "System.Exception",
+    "error_hresult": -2146233088,
+    "error_id": "NoMatchingProvidersFound,Microsoft.PowerShell.Commands.GetWinEventCommand"
+  },
+  {
+    "id": "provider_Microsoft-Windows-WMI-Activity",
+    "utc": "2026-10-15T15:42:06.4653559Z",
+    "query": "Get-WinEvent -ListProvider 'Microsoft-Windows-WMI-Activity' -ErrorAction Stop | Select-Object Name, Id, @{Name='Discovery';Expression={'DISCOVERED_ONLY'}}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Provider metadata presence is DISCOVERED_ONLY; no trace, event reads, auditing or complete-coverage claim.",
+    "result": {
+      "Name": "Microsoft-Windows-WMI-Activity",
+      "Id": "1418ef04-b0b4-4623-bf7e-d74ab47bbdaa",
+      "Discovery": "DISCOVERED_ONLY"
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "collector_api_binaries",
+    "utc": "2026-10-15T15:42:06.4744113Z",
+    "query": "@('advapi32.dll','tdh.dll','kernel32.dll','pdh.dll','wevtapi.dll') | ForEach-Object {\n    $f=Get-Item -LiteralPath (Join-Path \"$env:SystemRoot\\System32\" $_)\n    [ordered]@{name=$f.Name;file_version=$f.VersionInfo.FileVersion;status='DISCOVERED_ONLY'}\n  }",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Installed DLL versions only; API access/loss/protected-process coverage untested; no protected handles opened.",
+    "result": [
+      {
+        "name": "advapi32.dll",
+        "file_version": "10.0.26100.8875 (WinBuild.160101.0800)",
+        "status": "DISCOVERED_ONLY"
+      },
+      {
+        "name": "tdh.dll",
+        "file_version": "10.0.26100.9444 (WinBuild.160101.0800)",
+        "status": "DISCOVERED_ONLY"
+      },
+      {
+        "name": "kernel32.dll",
+        "file_version": "10.0.26100.9278 (WinBuild.160101.0800)",
+        "status": "DISCOVERED_ONLY"
+      },
+      {
+        "name": "pdh.dll",
+        "file_version": "10.0.26100.8875 (WinBuild.160101.0800)",
+        "status": "DISCOVERED_ONLY"
+      },
+      {
+        "name": "wevtapi.dll",
+        "file_version": "10.0.26100.8875 (WinBuild.160101.0800)",
+        "status": "DISCOVERED_ONLY"
+      }
+    ],
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "p309_windows_services",
+    "utc": "2026-10-15T15:42:06.4828966Z",
+    "query": "$s=@(Get-Service | Where-Object {$_.Name -match '(?i)(p309|rebaseguard)'} | Select-Object Name,Status,StartType)\n  [ordered]@{matching_services=$s;match_rule='case-insensitive p309 or rebaseguard';exact_proposed_service_name='NOT_SPECIFIED_IN_PACKET'}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Service metadata only. Empty name match cannot exclude differently named services; future exact service name/identity requires design.",
+    "result": {
+      "matching_services": [],
+      "match_rule": "case-insensitive p309 or rebaseguard",
+      "exact_proposed_service_name": "NOT_SPECIFIED_IN_PACKET"
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "p309_named_pipe_names",
+    "utc": "2026-10-15T15:42:06.6593302Z",
+    "query": "$matches=[System.Collections.Generic.List[string]]::new(); $count=0; $truncated=$false\n  foreach ($p in [IO.Directory]::EnumerateFiles('\\\\.\\pipe\\')) {\n    $count++; if ($count -gt 10000) {$truncated=$true;break}\n    $name=[IO.Path]::GetFileName($p)\n    if ($name -match '(?i)(p309|rebaseguard)') {$matches.Add($name)}\n  }\n  [ordered]@{matching_names=$matches.ToArray();match_rule='case-insensitive p309 or rebaseguard';bounded_enumeration_truncated=$truncated;exact_proposed_endpoint_name='NOT_SPECIFIED_IN_PACKET';connected_to_endpoints=$false}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Names only, no pipe opened/connected; race-prone snapshot, not endpoint isolation or availability guarantee.",
+    "result": {
+      "matching_names": [],
+      "match_rule": "case-insensitive p309 or rebaseguard",
+      "bounded_enumeration_truncated": false,
+      "exact_proposed_endpoint_name": "NOT_SPECIFIED_IN_PACKET",
+      "connected_to_endpoints": false
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  },
+  {
+    "id": "backup_drive_presence",
+    "utc": "2026-10-15T15:42:06.6668008Z",
+    "query": "[ordered]@{F_drive_present=[IO.Directory]::Exists('F:\\');method='Directory.Exists(F:\\) only';backup_rehashed=$false;backup_modified=$false;historical_vhdx_sha256='C800DB074A15C50940F5D552B185D98555911294A886557D2484F48A5AD03C54';digest_status='HISTORICAL_ONLY'}",
+    "scope": "READ_ONLY_FEASIBILITY",
+    "limitation": "Presence alone cannot establish backup availability/integrity/recoverability; no file reads or rehash.",
+    "result": {
+      "F_drive_present": false,
+      "method": "Directory.Exists(F:\\) only",
+      "backup_rehashed": false,
+      "backup_modified": false,
+      "historical_vhdx_sha256": "C800DB074A15C50940F5D552B185D98555911294A886557D2484F48A5AD03C54",
+      "digest_status": "HISTORICAL_ONLY"
+    },
+    "status": "OBSERVED",
+    "query_exit": 0
+  }
+]

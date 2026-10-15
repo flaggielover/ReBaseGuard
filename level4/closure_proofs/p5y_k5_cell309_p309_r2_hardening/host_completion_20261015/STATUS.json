@@ -1,0 +1,219 @@
+{
+  "schema": "P309_HOST_COMPLETION_INVESTIGATION/1",
+  "utc": "2026-10-15T15:52:51.0563600Z",
+  "source_commit": "47118d4837ab2dd5a4ff03e66263c82754769c36",
+  "publication_branch": "codex/p309-host-completion-20261015",
+  "overall_task_complete": false,
+  "formal_admission": "BLOCKED",
+  "independent_admission_review_performed": false,
+  "formal_audit_8a_executed": false,
+  "formal_verdict_8b_issued": false,
+  "disposition": "CURRENT_WSL_DESIGN_NOT_DEPLOYABLE; NATIVE_HOST_ACCESS_AND_OPERATOR_FACTS_REQUIRED",
+  "route_recommendation": "Audit originally designated native AWS worker before any mutation; not an acceptance or purchase",
+  "scope_limit": "Vendor boundary statement plus actual container/policy/resource metadata; not a local escape exploit or proof that all possible redesigned WSL architectures are impossible",
+  "installation_package_ready": false,
+  "installation_package_blocker": "No accepted containment architecture or native destination facts; cannot truthfully specify actual host mutations",
+  "unresolved_original_blockers": [
+    {
+      "deployment_blocking": true,
+      "id": "I1",
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ],
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Runner Windows/root boundary"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I2",
+      "original_fact_questions": [
+        1,
+        5
+      ],
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Collector rights, completeness and attribution"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I3",
+      "original_fact_questions": [
+        1,
+        6
+      ],
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Enrollment and ACL/API descriptors"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I4",
+      "original_fact_questions": [
+        2
+      ],
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Fresh image/runtime provenance"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I5",
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ],
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Guest policy/unit limits and controlled launcher"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I6",
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ],
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Protected persistence and stop/recovery"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I7",
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Route, host and formal authority"
+    }
+  ],
+  "source_verification": {
+    "current_files": 141,
+    "historic_bindings": 624,
+    "protected_files": 20,
+    "rereview_records": 2,
+    "result": "MATCH"
+  },
+  "windows": {
+    "schema": "P309_WINDOWS_READONLY_FACTS/1",
+    "utc": "2026-10-15T15:42:09.5066592Z",
+    "windows": {
+      "caption": "Microsoft Windows 11 家庭版 中文版",
+      "build": "26200",
+      "version": "10.0.26200"
+    },
+    "logical_cpus": 32.0,
+    "total_memory_bytes": 34158272512,
+    "available_memory_bytes": 11505553408,
+    "distribution": "Ubuntu-24.04",
+    "wsl_version": 2,
+    "vhdx_registered_and_present": true,
+    "backing_drive": "D:",
+    "backing_filesystem": "NTFS",
+    "backing_free_bytes": 129510592512,
+    "system_drive_free_bytes": 2280804352,
+    "host_power_and_update_policy": "NOT_ASSESSED",
+    "host_workload_exclusivity": "NOT_ASSESSED"
+  },
+  "linux": {
+    "schema": "P309_WSL_READONLY_FACTS/1",
+    "utc": "2026-10-15T23:42:34.420501+08:00",
+    "system": "Linux",
+    "kernel": "6.6.114.1-microsoft-standard-WSL2",
+    "arch": "x86_64",
+    "pid1": "systemd",
+    "affinity_cpus": 32,
+    "available_memory_bytes": 15962669056,
+    "total_memory_bytes": 16661880832,
+    "guest_disk_free_bytes": 1021452955648,
+    "workspace_filesystem": {
+      "rc": 0,
+      "stdout": "ext4"
+    },
+    "systemd_state": {
+      "rc": 0,
+      "stdout": "running"
+    },
+    "systemd_run_available": true,
+    "python": {
+      "implementation": "CPython",
+      "version": "3.11.15"
+    },
+    "glibc": [
+      "glibc",
+      "2.39"
+    ],
+    "ntp": {
+      "rc": 0,
+      "stdout": "no"
+    },
+    "container_detection": {
+      "rc": 0,
+      "stdout": "wsl"
+    },
+    "cpu_quota": "NOT_ASSESSED_ACROSS_CGROUP_HIERARCHY",
+    "windows_host_process_visibility": "NOT_AVAILABLE_THROUGH_LINUX_PROC",
+    "clock_continuity_across_windows_sleep": "NOT_VALIDATED"
+  },
+  "current_interpreter": {
+    "path": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+    "implementation": "CPython",
+    "version": "3.11.15",
+    "sha256": "b21d680e5061c20ee39c75f0c6edf8db4220f327de45e52ab2040e15ca0cf194",
+    "glibc": [
+      "glibc",
+      "2.39"
+    ]
+  },
+  "runtime_inventory": {
+    "sha256": "e386908060fb442cc6c23544b4826f3a0c4e0addfa5c6785e5d9cd1d79a8a62c",
+    "fresh_installed_pin": false,
+    "count": 8398,
+    "errors": [],
+    "immutable_snapshot": false,
+    "external_dependencies_complete": false
+  },
+  "historical_cloud_tests": 157,
+  "historical_math_fixtures": 18,
+  "historical_session_chain_fixtures": 12,
+  "historical_extra_time_widths": [
+    2048
+  ],
+  "tests_run_this_turn": 0,
+  "host_safety_sampling": 0,
+  "tracing_sessions_started": 0,
+  "accounts_services_keys_endpoints_units_created": 0,
+  "policy_changes": 0,
+  "installs": 0,
+  "elevations": 0,
+  "drills": 0,
+  "qualifications": 0,
+  "target_evaluations": 0,
+  "freeze_or_grants_issued": false,
+  "prior_record_files_verified_unchanged": 337,
+  "existing_branches_preserved": true,
+  "backup_rehashed": false,
+  "backup_recoverability": "NOT_ESTABLISHED; F drive unavailable in this metadata observation",
+  "external_inputs": [
+    "Authorized role and co-tenant/operator facts",
+    "Owner-designated host, separate P309 access/non-root user and safe credential location plus verified host fingerprint",
+    "Operator Part A and agreed five-second read-only audit time"
+  ],
+  "next_step": "Receive required external facts; audited native host then exact consolidated host-change/recovery package; no premature OD-R2-0(D) or installation approval request"
+}
