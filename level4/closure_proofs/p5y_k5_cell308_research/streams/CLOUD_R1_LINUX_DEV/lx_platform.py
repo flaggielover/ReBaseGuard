@@ -1153,11 +1153,14 @@ def free_disk_bytes(path) -> int | None:
 # ====================================================================== host attestation (F8, F20, N1, P1)
 # Review 64 K1: git reads are isolated from global / system configuration, replace refs and grafts, and the root
 # (or shallow-boundary) commit is always shown; pickaxe searches also pass --no-textconv / --no-ext-diff (_commits).
-# Repository-local configuration is still read. History completeness is a precondition (_history_complete): a shallow
-# clone hides commits before its boundary, e.g. a rejecting review that was later deleted (review 64 follow-up).
+# Repository-local configuration is still read; `git log` runs no signature program (review 67 N2). History
+# completeness is a precondition (_history_complete): a shallow clone hides commits before its boundary, e.g. a
+# rejecting review that was later deleted (review 64 follow-up).
 _GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true",
                   "-c", "core.commitGraph=false",               # review 66 M1: no graph data (parents or Bloom filters)
-                  "-c", "core.fsmonitor=false")                 # review 66 M2: no repository-configured fsmonitor
+                  "-c", "core.fsmonitor=false",                 # review 66 M2: no repository-configured fsmonitor
+                  "-c", "log.showSignature=false",              # review 67 N2: no signature program from `git log`
+                  "-c", f"core.attributesFile={os.devnull}")    # review 67 N4: no global attributes file via HOME
 
 
 _GIT_ENV_KEEP = ("PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "TMPDIR", "TZ")
@@ -1165,7 +1168,8 @@ _GIT_ENV_KEEP = ("PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "TMPDIR", "TZ")
 
 def _git_env() -> dict:
     """Review 65 L3: an allow-listed environment (no inherited GIT_DIR, GIT_OBJECT_DIRECTORY, alternates, namespace,
-    config parameters, ...) plus the forced isolation; L6: no lazy fetch from a promisor (git >= 2.44 honours it)."""
+    config parameters, ...) plus the forced isolation; L6: no lazy fetch from a promisor (honoured by the local Ubuntu
+    git 2.43.0, checked, and by git 2.44 and later)."""
     env = {k: v for k, v in os.environ.items() if k in _GIT_ENV_KEEP}
     env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM="1",
                GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")
@@ -1192,17 +1196,20 @@ def _history_complete(repo_root) -> bool:
     object would be lazily fetched, running configured commands) and no `fsck.*` key (which could downgrade fsck's
     checks); (3) review 65 L1: `git fsck --full` of every object, alternates included, passes (a rewritten object
     fails it). The commit-graph is never read (review 66 M1: its changed-path Bloom filters are not verified by fsck),
-    and no fsmonitor command runs (M2). Any other answer, a failure or a timeout is not evidence. This trusts git's own
-    verification at the moment of the check; it does not detect a history rewritten consistently (new commit ids), nor
-    a change made by another process between this check and the reads, which the ledger binding is to catch.
-    `--strict` is not used: it only promotes warnings (e.g. zero-padded modes in old histories) and hides nothing."""
+    and no fsmonitor command runs (M2). `--strict` is required (review 67 N1): a warning-class tree entry, e.g. one
+    whose NAME is `<review dir>/veto.md`, is invisible to the pathspec-limited history scan while a checkout shows the
+    file; strict fsck refuses it (and also refuses legitimate histories with any warning, e.g. zero-padded modes). Any
+    other answer, a failure or a timeout is not evidence. This is defence in depth, not a closure (review 67 N7): it
+    trusts git's own verification at the moment of the check; it does not detect a history rewritten consistently (new
+    commit ids), nor a change made by another process between this check and the reads, which the ledger binding is
+    to catch."""
     if _git(repo_root, "rev-parse", "--is-shallow-repository") != b"false\n":
         return False
     names = _git(repo_root, "config", "--includes", "--name-only", "--list", "-z")  # review 66 M3: every scope
     if names is None or any(_LOCAL_CONFIG_REFUSED.match(n) for n in names.decode("utf-8", "replace").lower()
                             .split("\0") if n):
         return False
-    return _git(repo_root, "fsck", "--full", "--no-dangling", "--no-progress") is not None
+    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None
 
 
 def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:

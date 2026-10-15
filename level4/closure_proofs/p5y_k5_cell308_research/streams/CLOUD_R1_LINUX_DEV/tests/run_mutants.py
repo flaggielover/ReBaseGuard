@@ -11,7 +11,8 @@ weaken its H1/H3/H6/H7 repairs; P11, Z01, Z02, Z05 and Q06 are re-anchored with 
 RV18-RV28 carry review 64's surviving mutants (RW1-RW4, RW6) and weaken its K1, K4, K7 and K9 repairs; RV29-RV30
 weaken the history-completeness guard restored after review 64 (shallow clones hide deleted rejections); RV31-RV42
 carry review 65's mutants RX1-RX6 and weaken its L1, L3, L6 and L7 repairs; RV43-RV48 weaken review 66's M1-M4
-repairs (RV39 is narrowed to the key refusal; the lazy-fetch block is RV45).
+repairs (RV39 is narrowed to the key refusal; the lazy-fetch block is RV45); RV49-RV51 weaken review 67's N1, N2 and
+N4 repairs, and RV52-RV54 carry its surviving mutants RZ1, RZ4 and RZ5 (N5).
 Every complete raw report, mutation anchor, and before/after input hash is retained.
 No scientific evaluator is imported or executed. Explicit output paths receive the evidence.
 
@@ -674,7 +675,7 @@ MUTANTS = [('M01',
     '    if _git(repo_root, "rev-parse", "--is-shallow-repository") == b"true\\n":')]),
  ('RV31',
   'Review 65 L1: no full fsck (a rewritten object hides a deleted rejection)',
-  [('    return _git(repo_root, "fsck", "--full", "--no-dangling", "--no-progress") is not None',
+  [('    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None',
     '    return True')]),
  ('RV32',
   'Review 65 L1 / L6: repository-local fsck.* and promisor / partial-clone keys accepted',
@@ -726,8 +727,8 @@ MUTANTS = [('M01',
     '')]),
  ('RV44',
   'Review 66 M2: a repository-configured fsmonitor command may run (fsck reads the index)',
-  [('                  "-c", "core.fsmonitor=false")                 # review 66 M2: no repository-configured fsmonitor',
-    '                  )')]),
+  [('                  "-c", "core.fsmonitor=false",                 # review 66 M2: no repository-configured fsmonitor\n',
+    '')]),
  ('RV45',
   'Review 66 M4 (RY1): missing objects may be fetched lazily (GIT_NO_LAZY_FETCH dropped)',
   [('               GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")', '               GIT_GRAFT_FILE=os.devnull)')]),
@@ -740,9 +741,29 @@ MUTANTS = [('M01',
   [('    if names is None or any(', '    if names is not None and any(')]),
  ('RV48',
   'Review 66 M3: configuration keys read from .git/config only (no includes, no worktree scope)',
-  [('"config", "--includes", "--name-only", "--list", "-z")', '"config", "--local", "--name-only", "--list", "-z")')])]
+  [('"config", "--includes", "--name-only", "--list", "-z")', '"config", "--local", "--name-only", "--list", "-z")')]),
+ ('RV49',
+  'Review 67 N1: fsck without --strict (warning-class tree names, e.g. fullPathname, pass the precondition)',
+  [('"fsck", "--full", "--strict", "--no-dangling"', '"fsck", "--full", "--no-dangling"')]),
+ ('RV50',
+  'Review 67 N2: `git log` honours the repository\'s log.showSignature (a configured signature program runs)',
+  [('                  "-c", "log.showSignature=false",              # review 67 N2: no signature program from `git log`\n',
+    '')]),
+ ('RV51',
+  'Review 67 N4: the global attributes file under HOME is read',
+  [('                  "-c", f"core.attributesFile={os.devnull}")    # review 67 N4: no global attributes file via HOME',
+    '                  )')]),
+ ('RV52',
+  'Review 67 N5 (RZ1): the commit-graph\'s parent data is read (only changed-path Bloom filters off)',
+  [('"-c", "core.commitGraph=false",               # review 66 M1', '"-c", "commitGraph.readChangedPaths=false",   # review 66 M1')]),
+ ('RV53',
+  'Review 67 N5 (RZ4): extensions.partialClone is not refused',
+  [('re.compile(r"fsck\\.|extensions\\.partialclone$|remote', 're.compile(r"fsck\\.|remote')]),
+ ('RV54',
+  'Review 67 N5 (RZ5): promisor keys are refused only for a remote named origin',
+  [('|remote\\..*\\.(promisor|partialclonefilter)$")', '|remote\\.origin\\.(promisor|partialclonefilter)$")')])]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 48}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 54}
 
 # A kill must include at least one named direct witness for the weakened property.
 # These method names are unique across the full discovered suite. They are evidence
@@ -833,8 +854,8 @@ for _method, _ids in {
     "test_review63_upholds_and_mask_precedence": "RV16 RV17",
     "test_review64_missing_blob_commits_refuse": "RV18",
     "test_review64_shallow_history_refuses_deleted_preboundary_rejection": "RV29 RV30",
-    "test_review65_forged_graph_and_rewritten_object_refuse": "RV31",
-    "test_review65_local_fsck_or_promisor_configuration_refuses": "RV32",
+    "test_review65_forged_graph_and_rewritten_object_refuse": "RV31 RV52",
+    "test_review65_local_fsck_or_promisor_configuration_refuses": "RV32 RV53 RV54",
     "test_review65_replace_refs_and_grafts_are_ignored": "RV33 RV34 RV35",
     "test_review65_short_exact_listing_refuses": "RV38",
     "test_review65_partial_clone_runs_no_configured_command": "RV39",
@@ -846,6 +867,9 @@ for _method, _ids in {
     "test_review66_symlink_attestation_is_refused": "RV46",
     "test_review66_unreadable_configuration_listing_refuses": "RV47",
     "test_review66_configuration_in_includes_and_worktree_scope_refuses": "RV48",
+    "test_review67_warning_class_tree_name_refuses": "RV49",
+    "test_review67_signature_program_never_runs": "RV50",
+    "test_review67_global_attributes_file_is_not_read": "RV51",
     "test_review64_dangling_top_entry_shadows_lower_mask": "RV19",
     "test_review64_non_utf8_historical_review_path_refuses": "RV20",
     "test_review64_side_branch_acceptance_synced_and_merged_refuses": "RV22",
@@ -1157,7 +1181,7 @@ def main(out: str | None) -> int:
     rows = []
     for mid, what, edits in MUTANTS:
         row = {"id": mid, "origin": ("combined integration" if mid.startswith("R5SYNC") or mid == "CDEX16" else
-                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-66" if mid.startswith("RV") else
+                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-67" if mid.startswith("RV") else
                            "Claude revision 5"),
                "property": what, "intended_property_test_methods": PROPERTY_WITNESSES[mid],
                "edits": [{"old": old, "new": new} for old, new in edits]}

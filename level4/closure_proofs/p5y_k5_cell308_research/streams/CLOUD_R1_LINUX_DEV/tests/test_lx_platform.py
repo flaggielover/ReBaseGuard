@@ -1360,8 +1360,10 @@ class TestAttestationPreflight(unittest.TestCase):
 
     def test_review65_forged_graph_and_rewritten_object_refuse(self):
         """Review 65 L1: a forged commit-graph or a rewritten loose blob hides a deleted rejection while the HEAD id
-        and tree are unchanged and the repository is not shallow; a full strict fsck is a precondition. Positive
-        control: an honest commit-graph changes nothing."""
+        and tree are unchanged and the repository is not shallow. The graph is never read (review 66 M1), so the
+        forged graph changes nothing and the rejection refuses as HISTORICAL (review 67 N5: not through fsck's graph
+        verification); a rewritten object fails the fsck precondition. Positive control: an honest commit-graph changes
+        nothing."""
         att = self.attestation()
         with tempfile.TemporaryDirectory() as d:
             ids = self._rejected_then_deleted(Path(d), att)
@@ -1369,6 +1371,7 @@ class TestAttestationPreflight(unittest.TestCase):
             self._forge_commit_graph(d, ids[2])
             rec, why = self._valid_in(d, att)
             self.assertIsNone(rec)                                  # graph never read (review 66 M1): HISTORICAL
+            self.assertTrue(any("HISTORICAL" in w for w in why), why)                     # RV52
             Path(d, ".git", "objects", "info", "commit-graph").unlink()
             oid = subprocess.run(["git", "-C", d, "rev-parse", f"{ids[1]}:{L.ACCEPTANCE_REVIEW_DIR}/veto.md"],
                                  capture_output=True, text=True, check=True).stdout.strip()
@@ -1388,22 +1391,26 @@ class TestAttestationPreflight(unittest.TestCase):
 
     def test_review65_local_fsck_or_promisor_configuration_refuses(self):
         """Review 65 L1 / L6: repository-local `fsck.*` keys (which could downgrade fsck) and partial-clone /
-        promisor keys refuse; a valid repository without them is accepted."""
+        promisor keys refuse, including `extensions.partialClone` alone and a remote not named origin (review 67
+        N5); a valid repository without them is accepted."""
         att = self.attestation()
         sha = hashlib.sha256(att).hexdigest()
         for key, value in ((None, None), ("fsck.missingEmail", "ignore"), ("fsck.skipList", os.devnull),
-                           ("remote.origin.promisor", "true"), ("remote.origin.partialclonefilter", "blob:none")):
+                           ("remote.origin.promisor", "true"), ("remote.origin.partialclonefilter", "blob:none"),
+                           ("extensions.partialClone", "origin"), ("remote.upstream.promisor", "true")):
             with self.subTest(key=key), tempfile.TemporaryDirectory() as d:
                 git_init(d)
                 git_commit(d, {"att/HOST.json": att})
                 git_commit(d, {f"{ACC}1.md": self.accept(sha)})
                 if key:
+                    if key.startswith("extensions."):
+                        fixture_git(d, "config", "--local", "core.repositoryformatversion", "1")
                     fixture_git(d, "config", "--local", key, value)
                 rec, why = self._valid_in(d, att)
                 if key is None:
                     self.assertIsNotNone(rec, why)
                 else:
-                    self.assertIsNone(rec)                                                # RV32
+                    self.assertIsNone(rec)                                                # RV32 RV53 RV54
                     self.assertTrue(any("history completeness" in w for w in why), why)
 
     def _partial_clone(self, d, att):
@@ -1548,6 +1555,78 @@ class TestAttestationPreflight(unittest.TestCase):
             git_commit(d, {})
             git_commit(d, {f"{ACC}1.md": self.accept(sha)})
             self.assertIsNone(self._valid_in(d, att)[0])                                  # RV46
+
+    @staticmethod
+    def _out(d, *args, data=None) -> str:
+        return subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@t", *args], input=data,
+                              capture_output=True, check=True).stdout.decode().strip()
+
+    def test_review67_warning_class_tree_name_refuses(self):
+        """Review 67 N1: a deleted rejection stored under a tree entry whose NAME is `<review dir>/veto.md` (fsck
+        `fullPathname`, a warning) is invisible to the pathspec-limited history scan, while the full listing (and a
+        checkout) shows the file; strict fsck refuses the history as unavailable evidence."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        veto = f"{L.ACCEPTANCE_REVIEW_DIR}/veto.md"
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att})
+            c1 = self._out(d, "rev-parse", "HEAD")
+            blob = self._out(d, "hash-object", "-w", "--stdin", data=f"{sha} REJECTED\n".encode())
+            entries = sorted([("att/", b"40000 att\0" + bytes.fromhex(self._out(d, "rev-parse", "HEAD:att"))),
+                              (veto, f"100644 {veto}\0".encode() + bytes.fromhex(blob))])
+            tree = self._out(d, "hash-object", "-t", "tree", "--literally", "-w", "--stdin",
+                             data=b"".join(e for _, e in entries))
+            c2 = self._out(d, "commit-tree", tree, "-p", c1, "-m", "veto")
+            c3 = self._out(d, "commit-tree", f"{c1}^{{tree}}", "-p", c2, "-m", "rm")
+            fixture_git(d, "update-ref", "HEAD", c3)
+            git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+            self.assertIn(veto, self._out(d, "ls-tree", "-r", "--name-only", c2).split("\n"))
+            self.assertEqual(self._out(d, "rev-list", "--full-history", "HEAD", "--", L.ACCEPTANCE_REVIEW_DIR),
+                             self._out(d, "rev-parse", "HEAD"))                           # the scan misses c2
+            rec, why = self._valid_in(d, att)
+            self.assertIsNone(rec)                                                        # RV49
+            self.assertTrue(any("history completeness" in w for w in why), why)
+
+    def test_review67_signature_program_never_runs(self):
+        """Review 67 N2: with the repository's own `log.showSignature=true` and `gpg.program`, a signed commit selected
+        by the order rule's `git log` would run that program after fsck (it could rewrite a verified object); no
+        signature program runs, and the legitimate repository is accepted (review 67 N3)."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        with tempfile.TemporaryDirectory() as d:
+            repo, marker = Path(d, "r"), Path(d, "gpg.marker")
+            repo.mkdir()
+            git_init(repo)
+            git_commit(repo, {"att/HOST.json": att})
+            raw = subprocess.run(["git", "-C", str(repo), "cat-file", "commit", "HEAD"], capture_output=True,
+                                 check=True).stdout
+            sig = b"gpgsig -----BEGIN PGP SIGNATURE-----\n \n iQEz\n -----END PGP SIGNATURE-----\n"
+            signed = self._out(repo, "hash-object", "-t", "commit", "-w", "--stdin",
+                               data=raw.replace(b"\n\n", b"\n" + sig + b"\n", 1))
+            fixture_git(repo, "update-ref", "HEAD", signed)
+            git_commit(repo, {f"{ACC}1.md": self.accept(sha)})
+            script = Path(d, "gpg.sh")
+            script.write_text(f"#!/bin/sh\ntouch '{marker}'\nexit 1\n")
+            script.chmod(0o755)
+            fixture_git(repo, "config", "--local", "log.showSignature", "true")
+            fixture_git(repo, "config", "--local", "gpg.program", str(script))
+            rec, why = self._valid_in(repo, att)
+            self.assertFalse(marker.exists(), "a repository-configured signature program ran")  # RV50
+            self.assertIsNotNone(rec, why)
+
+    def test_review67_global_attributes_file_is_not_read(self):
+        """Review 67 N4: the isolation reads no global attributes file (`core.attributesFile` defaults to
+        `$HOME/.config/git/attributes`, and HOME is kept for git)."""
+        with tempfile.TemporaryDirectory() as d:
+            home, repo = Path(d, "home"), Path(d, "r")
+            Path(home, ".config", "git").mkdir(parents=True)
+            Path(home, ".config", "git", "attributes").write_text("* diff=probe67\n")
+            repo.mkdir()
+            git_init(repo)
+            with mock.patch.dict(os.environ, {"HOME": str(home)}):
+                out = L._git(repo, "check-attr", "diff", "--", "x")
+            self.assertEqual(out, b"x: diff: unspecified\n")                              # RV51
 
     def test_review65_replace_refs_and_grafts_are_ignored(self):
         """Review 65 L2 (RX1, RX2, RX5): a replace graft or an info/grafts entry that cuts the deletion commit, and a

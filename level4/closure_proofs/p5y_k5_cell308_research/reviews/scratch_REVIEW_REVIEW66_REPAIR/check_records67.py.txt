@@ -1,0 +1,82 @@
+"""Review 67 records check (read-only on the pinned worktree's git objects; no target files).
+usage: python3 -B -I check_records67.py.txt <pinned tree> <scratchpad root> <out.json>"""
+import gzip, hashlib, json, subprocess, sys
+from pathlib import Path
+
+TREE, SP, OUT = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
+NS = "level4/closure_proofs/p5y_k5_cell308_research"
+LEDGER = f"{NS}/ledger/TARGET_INTEGRITY_LEDGER.jsonl"
+
+
+def show(commit, path):
+    r = subprocess.run(["git", "-C", str(TREE), "show", f"{commit}:{path}"], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+
+
+def sha(b):
+    return None if b is None else hashlib.sha256(b).hexdigest()
+
+
+out = {"bindings": [], "problems": []}
+lines = show("2f39e9f4", LEDGER).decode().splitlines()
+recs = {i: json.loads(lines[i - 1]) for i in range(500, len(lines) + 1)}
+
+
+def check(line, commit_intro, path, want):
+    row = {"line": line, "path": path, "want": want}
+    for c in (commit_intro, "2f39e9f4"):
+        row[c] = sha(show(c, path if path.startswith((".github", "level4")) else f"{NS}/{path}"))
+    row["ok"] = row[commit_intro] == want and row["2f39e9f4"] == want
+    out["bindings"].append(row)
+    if not row["ok"]:
+        out["problems"].append(row)
+
+
+check(500, "3adeabaa", recs[500]["brief"], recs[500]["brief_sha256"])
+check(501, "2288bec1", recs[501]["review"], recs[501]["review_sha256"])
+for p, h in recs[501]["scratch_sha256"].items():
+    check(501, "2288bec1", p, h)
+for p, h in recs[503]["input_sha256"].items():
+    check(503, "2288bec1", p, h)
+for p, h in recs[503]["documents"].items():
+    check(503, "2288bec1", p, h)
+check(504, "2f39e9f4", recs[504]["record"], recs[504]["record_sha256"])
+
+# m6: the bound-but-omitted file (original in scratchpad/review65)
+m6 = recs[502]["m6"]
+orig = SP / "review65" / Path(m6["file"]).name
+ob = orig.read_bytes() if orig.exists() else None
+low = (ob or b"").lower()
+out["m6"] = {"original_exists": orig.exists(), "size": None if ob is None else len(ob), "sha256": sha(ob),
+             "matches_binding": sha(ob) == m6["sha256"],
+             "committed_at_2f39e9f4": show("2f39e9f4", f"{NS}/{m6['file']}") is not None,
+             "has_signed_url_markers": any(k in low for k in (b"sig=", b"x-amz-signature", b"se=", b"sv=", b"token")),
+             "looks_like_job_log": b"##[" in (ob or b"") or b"Run " in (ob or b"")}
+
+# compressed record
+gz = show("2f39e9f4", f"{NS}/{recs[504]['record']}")
+raw = gzip.decompress(gz)
+out["gz"] = {"sha256": sha(gz), "uncompressed_sha256": sha(raw), "want_uncompressed": recs[504]["uncompressed_sha256"],
+             "header_mtime": int.from_bytes(gz[4:8], "little"), "flags": gz[3], "xfl": gz[8]}
+rec = json.loads(raw)
+out["gz"]["top_keys"] = sorted(rec)[:60]
+ih = rec.get("input_sha256") or {}
+iha = rec.get("input_sha256_after") or {}
+out["gz"]["inputs"] = {}
+for p, h in ih.items():
+    blob = sha(show("2288bec1", p)) if p.startswith((".github", "level4")) else None
+    out["gz"]["inputs"][p] = {"record": h, "after": iha.get(p), "ledger503": recs[503]["input_sha256"].get(p),
+                              "blob_2288bec1": blob, "blob_2f39e9f4": sha(show("2f39e9f4", p))}
+for k in ("utc", "finished_utc", "started_utc", "python", "source_commit", "expected_mutants", "total", "killed",
+          "pass", "unmutated_suite", "expected_test_count", "inputs_unchanged", "full_registry_completed",
+          "new_target_evaluations", "status_counts"):
+    if k in rec:
+        out["gz"][k] = rec[k]
+rows = rec.get("mutants") or rec.get("rows") or []
+out["gz"]["rows"] = len(rows)
+out["gz"]["status_counts_recomputed"] = {}
+for r in rows:
+    out["gz"]["status_counts_recomputed"][r.get("status")] = out["gz"]["status_counts_recomputed"].get(r.get("status"), 0) + 1
+Path(OUT).write_text(json.dumps(out, indent=1) + "\n")
+print(json.dumps({"n_bindings": len(out["bindings"]), "problems": out["problems"], "m6": out["m6"],
+                  "gz": {k: v for k, v in out["gz"].items() if k != "inputs"}}, indent=1))
