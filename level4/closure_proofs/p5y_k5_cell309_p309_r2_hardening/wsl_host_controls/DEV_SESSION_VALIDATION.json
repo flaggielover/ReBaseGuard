@@ -1,0 +1,40 @@
+{
+  "schema": "P309_DEV_SESSION_VALIDATION/1",
+  "utc": "2026-10-15T11:31:29.101221+00:00",
+  "source_base": "9b9fdf438812349a6adefe87826fb235946511e0",
+  "canonical_candidate": "398a416024bf47c829826d4dc3242503a355867b",
+  "windows_validated_repair_reported": "81d3d86922b098fa50b826bc360a6b8854c7f177",
+  "canonical_candidate_bindings_verified": 4,
+  "repair_blob_bindings_match_windows_record": 4,
+  "source_sha256": {
+    "dev_session.py": "4cf63fd0778270606f31195d50b10ee72cfd28cebe6ba814cc64c3e40d0a7c7c",
+    "test_dev_session.py": "3a87ffcf59c1b708e4c2ff19efdbcddfdc57f4bf0ead91f3882d4572ea0738b9",
+    "DEV_SESSION.txt": "17ff1895ff53e033ea378c0010e9345779a249fa88de38f16579b8ecd4f202b7"
+  },
+  "tests": {
+    "command": "python3 -B -m unittest -v test_dev_session",
+    "passed": 21,
+    "failures": 0,
+    "errors": 0,
+    "python": "3.12.14",
+    "openssl": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+    "private_python_3_11_15_execution": "PENDING on the Windows/WSL host",
+    "windows_crypto_interoperability": "NOT_IMPLEMENTED_OR_TESTED"
+  },
+  "protected_sources": {
+    "files_checked": 20,
+    "all_match": true
+  },
+  "scope": "DEVELOPMENT_ONLY; ephemeral synthetic keys and temporary records only",
+  "formal_admission": "BLOCKED",
+  "qualification_authorized": false,
+  "target_execution_authorized": false,
+  "operational_gaps": [
+    "Windows signer and separated key/service account",
+    "Trusted baseline/public-key provisioning and independent bridge review",
+    "Complete lifetime/protected-process observation and attribution",
+    "Live monitor and failure enforcement",
+    "Actual-host persistence and long-window validation",
+    "Accepted AWS/WSL route amendment"
+  ]
+}
