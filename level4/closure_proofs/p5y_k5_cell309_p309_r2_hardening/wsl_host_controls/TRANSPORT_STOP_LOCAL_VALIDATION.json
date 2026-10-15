@@ -1,0 +1,2428 @@
+{
+  "schema": "P309_TRANSPORT_STOP_LOCAL_VALIDATION/1",
+  "scope": "DEVELOPMENT_ONLY",
+  "utc": "2026-10-15T12:37:14.6326297Z",
+  "validated_commit": "4184850d16455e20d4728c154cd8f56e8a492cb2",
+  "validation_branch": "codex/p309-wsl-transport-stop-validation-20261015",
+  "python_version": "3.11.15",
+  "python_executable": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+  "python_sha256": "b21d680e5061c20ee39c75f0c6edf8db4220f327de45e52ab2040e15ca0cf194",
+  "openssl": "OpenSSL 3.0.13 30 Jan 2024",
+  "openssl_package": "3.0.13-0ubuntu3.16",
+  "command": "python3.11 -B -m unittest -v test_transport_stop test_windows_transport_stop",
+  "result": {
+    "exit_code": 0,
+    "tests": 19,
+    "audited_wall_seconds": 20.070685386657715,
+    "actual_local_execution": true,
+    "skipped": 0,
+    "passed_test_ids": [
+      "test_transport_stop.LinkArguments.test_invalid_scope_or_timeout_is_refused_before_monitor_or_signer_use",
+      "test_transport_stop.LocalTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+      "test_transport_stop.LocalTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+      "test_transport_stop.LocalTransportStop.test_close_is_one_shot_and_does_not_own_signer_cleanup",
+      "test_transport_stop.LocalTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+      "test_transport_stop.LocalTransportStop.test_concurrent_request_stops_without_second_signature",
+      "test_transport_stop.LocalTransportStop.test_helper_exit_automatically_stops_without_manual_bridge_notification",
+      "test_transport_stop.LocalTransportStop.test_malformed_payload_stops_before_signing",
+      "test_transport_stop.LocalTransportStop.test_safe_then_busy_flows_through_link",
+      "test_transport_stop.LocalTransportStop.test_tampered_signature_stops_without_manual_bridge_notification",
+      "test_windows_transport_stop.WindowsTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+      "test_windows_transport_stop.WindowsTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+      "test_windows_transport_stop.WindowsTransportStop.test_close_is_one_shot_and_does_not_own_signer_cleanup",
+      "test_windows_transport_stop.WindowsTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+      "test_windows_transport_stop.WindowsTransportStop.test_concurrent_request_stops_without_second_signature",
+      "test_windows_transport_stop.WindowsTransportStop.test_helper_exit_automatically_stops_without_manual_bridge_notification",
+      "test_windows_transport_stop.WindowsTransportStop.test_malformed_payload_stops_before_signing",
+      "test_windows_transport_stop.WindowsTransportStop.test_safe_then_busy_flows_through_link",
+      "test_windows_transport_stop.WindowsTransportStop.test_tampered_signature_stops_without_manual_bridge_notification"
+    ],
+    "errors": 0,
+    "failures": 0,
+    "counts": {
+      "test_transport_stop": 10,
+      "test_windows_transport_stop": 9
+    },
+    "unittest_elapsed_seconds": 19.73
+  },
+  "windows_signers": [
+    {
+      "algorithm": "RSA-PKCS1-v1_5-SHA256",
+      "key_bits": 2048,
+      "key_ephemeral": true,
+      "key_name": null,
+      "powershell": "7.6.5",
+      "provider": "System.Security.Cryptography.RSACng",
+      "public_pem_sha256": "880b85429e1c2f55fa6373bf310ad7f615b5460940cd562f758de228d692a2f3",
+      "runtime": "10.0.11",
+      "schema": "P309_SYNTHETIC_WINDOWS_SIGNER/1",
+      "scope": "SYNTHETIC_ONLY"
+    },
+    {
+      "algorithm": "RSA-PKCS1-v1_5-SHA256",
+      "key_bits": 2048,
+      "key_ephemeral": true,
+      "key_name": null,
+      "powershell": "7.6.5",
+      "provider": "System.Security.Cryptography.RSACng",
+      "public_pem_sha256": "654ffbf6b6161b8f558b01b250b18816ce0a1ece5a72a330c8433bb7104874be",
+      "runtime": "10.0.11",
+      "schema": "P309_SYNTHETIC_WINDOWS_SIGNER/1",
+      "scope": "SYNTHETIC_ONLY"
+    },
+    {
+      "algorithm": "RSA-PKCS1-v1_5-SHA256",
+      "key_bits": 2048,
+      "key_ephemeral": true,
+      "key_name": null,
+      "powershell": "7.6.5",
+      "provider": "System.Security.Cryptography.RSACng",
+      "public_pem_sha256": "393dc50b46c7c3892482d4246499fd34ab250482a72f26deaa886b2542d6eee7",
+      "runtime": "10.0.11",
+      "schema": "P309_SYNTHETIC_WINDOWS_SIGNER/1",
+      "scope": "SYNTHETIC_ONLY"
+    },
+    {
+      "algorithm": "RSA-PKCS1-v1_5-SHA256",
+      "key_bits": 2048,
+      "key_ephemeral": true,
+      "key_name": null,
+      "powershell": "7.6.5",
+      "provider": "System.Security.Cryptography.RSACng",
+      "public_pem_sha256": "a1246a12c9a229c00906de086e8bae2cc87095656b593c1f8998a5adab6cf388",
+      "runtime": "10.0.11",
+      "schema": "P309_SYNTHETIC_WINDOWS_SIGNER/1",
+      "scope": "SYNTHETIC_ONLY"
+    },
+    {
+      "algorithm": "RSA-PKCS1-v1_5-SHA256",
+      "key_bits": 2048,
+      "key_ephemeral": true,
+      "key_name": null,
+      "powershell": "7.6.5",
+      "provider": "System.Security.Cryptography.RSACng",
+      "public_pem_sha256": "1a38ffe9d8187eb9cd181ff1b2d89214a5ded0cb0387ff788965b257e468eae4",
+      "runtime": "10.0.11",
+      "schema": "P309_SYNTHETIC_WINDOWS_SIGNER/1",
+      "scope": "SYNTHETIC_ONLY"
+    },
+    {
+      "algorithm": "RSA-PKCS1-v1_5-SHA256",
+      "key_bits": 2048,
+      "key_ephemeral": true,
+      "key_name": null,
+      "powershell": "7.6.5",
+      "provider": "System.Security.Cryptography.RSACng",
+      "public_pem_sha256": "770f40e4f053f959ecac70953d00081f76cde91389b1c492184d16a2a1e41d3e",
+      "runtime": "10.0.11",
+      "schema": "P309_SYNTHETIC_WINDOWS_SIGNER/1",
+      "scope": "SYNTHETIC_ONLY"
+    },
+    {
+      "algorithm": "RSA-PKCS1-v1_5-SHA256",
+      "key_bits": 2048,
+      "key_ephemeral": true,
+      "key_name": null,
+      "powershell": "7.6.5",
+      "provider": "System.Security.Cryptography.RSACng",
+      "public_pem_sha256": "df683a8e7fd3b6f1cf177d66c6251aa0122ac00fc630eaef86663a2fb3ea9a51",
+      "runtime": "10.0.11",
+      "schema": "P309_SYNTHETIC_WINDOWS_SIGNER/1",
+      "scope": "SYNTHETIC_ONLY"
+    },
+    {
+      "algorithm": "RSA-PKCS1-v1_5-SHA256",
+      "key_bits": 2048,
+      "key_ephemeral": true,
+      "key_name": null,
+      "powershell": "7.6.5",
+      "provider": "System.Security.Cryptography.RSACng",
+      "public_pem_sha256": "60db62360fec4364257218499bea45bc20a1cd4839a1cdf074451b32594555cd",
+      "runtime": "10.0.11",
+      "schema": "P309_SYNTHETIC_WINDOWS_SIGNER/1",
+      "scope": "SYNTHETIC_ONLY"
+    },
+    {
+      "algorithm": "RSA-PKCS1-v1_5-SHA256",
+      "key_bits": 2048,
+      "key_ephemeral": true,
+      "key_name": null,
+      "powershell": "7.6.5",
+      "provider": "System.Security.Cryptography.RSACng",
+      "public_pem_sha256": "4a5406dbf51e6f9bf6c4d218dc2f9e7730b2442c481527902efe273ac892d009",
+      "runtime": "10.0.11",
+      "schema": "P309_SYNTHETIC_WINDOWS_SIGNER/1",
+      "scope": "SYNTHETIC_ONLY"
+    }
+  ],
+  "synthetic_stop_records": [
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 674,
+            "pid": 674,
+            "ppid": 673,
+            "sid": 673,
+            "start_ticks": 2383,
+            "state": "R"
+          },
+          {
+            "pgid": 674,
+            "pid": 675,
+            "ppid": 674,
+            "sid": 673,
+            "start_ticks": 2383,
+            "state": "R"
+          },
+          {
+            "pgid": 674,
+            "pid": 676,
+            "ppid": 675,
+            "sid": 673,
+            "start_ticks": 2383,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 674,
+            "wait_status": 9
+          },
+          {
+            "pid": 676,
+            "wait_status": 9
+          },
+          {
+            "pid": 675,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 682,
+            "pid": 682,
+            "ppid": 681,
+            "sid": 681,
+            "start_ticks": 2614,
+            "state": "R"
+          },
+          {
+            "pgid": 682,
+            "pid": 683,
+            "ppid": 682,
+            "sid": 681,
+            "start_ticks": 2614,
+            "state": "R"
+          },
+          {
+            "pgid": 682,
+            "pid": 684,
+            "ppid": 683,
+            "sid": 681,
+            "start_ticks": 2614,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 682,
+            "wait_status": 9
+          },
+          {
+            "pid": 683,
+            "wait_status": 9
+          },
+          {
+            "pid": 684,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_close_is_one_shot_and_does_not_own_signer_cleanup",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 691,
+            "pid": 691,
+            "ppid": 690,
+            "sid": 690,
+            "start_ticks": 2841,
+            "state": "R"
+          },
+          {
+            "pgid": 691,
+            "pid": 692,
+            "ppid": 691,
+            "sid": 690,
+            "start_ticks": 2841,
+            "state": "R"
+          },
+          {
+            "pgid": 691,
+            "pid": 693,
+            "ppid": 692,
+            "sid": 690,
+            "start_ticks": 2841,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 691,
+            "wait_status": 9
+          },
+          {
+            "pid": 692,
+            "wait_status": 9
+          },
+          {
+            "pid": 693,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 698,
+            "pid": 698,
+            "ppid": 697,
+            "sid": 697,
+            "start_ticks": 2864,
+            "state": "R"
+          },
+          {
+            "pgid": 698,
+            "pid": 699,
+            "ppid": 698,
+            "sid": 697,
+            "start_ticks": 2864,
+            "state": "R"
+          },
+          {
+            "pgid": 698,
+            "pid": 700,
+            "ppid": 699,
+            "sid": 697,
+            "start_ticks": 2864,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 698,
+            "wait_status": 9
+          },
+          {
+            "pid": 700,
+            "wait_status": 9
+          },
+          {
+            "pid": 699,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_concurrent_request_stops_without_second_signature",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 708,
+            "pid": 708,
+            "ppid": 707,
+            "sid": 707,
+            "start_ticks": 2888,
+            "state": "R"
+          },
+          {
+            "pgid": 708,
+            "pid": 709,
+            "ppid": 708,
+            "sid": 707,
+            "start_ticks": 2888,
+            "state": "R"
+          },
+          {
+            "pgid": 708,
+            "pid": 710,
+            "ppid": 709,
+            "sid": 707,
+            "start_ticks": 2888,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 708,
+            "wait_status": 9
+          },
+          {
+            "pid": 710,
+            "wait_status": 9
+          },
+          {
+            "pid": 709,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_helper_exit_automatically_stops_without_manual_bridge_notification",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 718,
+            "pid": 718,
+            "ppid": 717,
+            "sid": 717,
+            "start_ticks": 2914,
+            "state": "R"
+          },
+          {
+            "pgid": 718,
+            "pid": 719,
+            "ppid": 718,
+            "sid": 717,
+            "start_ticks": 2914,
+            "state": "R"
+          },
+          {
+            "pgid": 718,
+            "pid": 720,
+            "ppid": 719,
+            "sid": 717,
+            "start_ticks": 2914,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 718,
+            "wait_status": 9
+          },
+          {
+            "pid": 719,
+            "wait_status": 9
+          },
+          {
+            "pid": 720,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_malformed_payload_stops_before_signing",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 726,
+            "pid": 726,
+            "ppid": 725,
+            "sid": 725,
+            "start_ticks": 2937,
+            "state": "R"
+          },
+          {
+            "pgid": 726,
+            "pid": 727,
+            "ppid": 726,
+            "sid": 725,
+            "start_ticks": 2937,
+            "state": "R"
+          },
+          {
+            "pgid": 726,
+            "pid": 728,
+            "ppid": 727,
+            "sid": 725,
+            "start_ticks": 2937,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 726,
+            "wait_status": 9
+          },
+          {
+            "pid": 727,
+            "wait_status": 9
+          },
+          {
+            "pid": 728,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_safe_then_busy_flows_through_link",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 733,
+            "pid": 733,
+            "ppid": 732,
+            "sid": 732,
+            "start_ticks": 2960,
+            "state": "R"
+          },
+          {
+            "pgid": 733,
+            "pid": 734,
+            "ppid": 733,
+            "sid": 732,
+            "start_ticks": 2960,
+            "state": "R"
+          },
+          {
+            "pgid": 733,
+            "pid": 735,
+            "ppid": 734,
+            "sid": 732,
+            "start_ticks": 2960,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 733,
+            "wait_status": 9
+          },
+          {
+            "pid": 734,
+            "wait_status": 9
+          },
+          {
+            "pid": 735,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "candidate_observations_refused",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 1,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_transport_stop.LocalTransportStop.test_tampered_signature_stops_without_manual_bridge_notification",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 748,
+            "pid": 748,
+            "ppid": 747,
+            "sid": 747,
+            "start_ticks": 2987,
+            "state": "R"
+          },
+          {
+            "pgid": 748,
+            "pid": 749,
+            "ppid": 748,
+            "sid": 747,
+            "start_ticks": 2988,
+            "state": "R"
+          },
+          {
+            "pgid": 748,
+            "pid": 750,
+            "ppid": 749,
+            "sid": 747,
+            "start_ticks": 2988,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 748,
+            "wait_status": 9
+          },
+          {
+            "pid": 749,
+            "wait_status": 9
+          },
+          {
+            "pid": 750,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "local_openssl_and_explicit_transport_double",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "signed_observation_or_persistence_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 764,
+            "pid": 764,
+            "ppid": 763,
+            "sid": 763,
+            "start_ticks": 3079,
+            "state": "R"
+          },
+          {
+            "pgid": 764,
+            "pid": 765,
+            "ppid": 764,
+            "sid": 763,
+            "start_ticks": 3079,
+            "state": "R"
+          },
+          {
+            "pgid": 764,
+            "pid": 766,
+            "ppid": 765,
+            "sid": 763,
+            "start_ticks": 3079,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 764,
+            "wait_status": 9
+          },
+          {
+            "pid": 765,
+            "wait_status": 9
+          },
+          {
+            "pid": 766,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "actual_windows_cng_with_disclosed_blocking_fault_injection",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 779,
+            "pid": 779,
+            "ppid": 778,
+            "sid": 778,
+            "start_ticks": 3393,
+            "state": "R"
+          },
+          {
+            "pgid": 779,
+            "pid": 780,
+            "ppid": 779,
+            "sid": 778,
+            "start_ticks": 3393,
+            "state": "R"
+          },
+          {
+            "pgid": 779,
+            "pid": 781,
+            "ppid": 780,
+            "sid": 778,
+            "start_ticks": 3393,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 779,
+            "wait_status": 9
+          },
+          {
+            "pid": 781,
+            "wait_status": 9
+          },
+          {
+            "pid": 780,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "actual_windows_cng_with_disclosed_blocking_fault_injection",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_close_is_one_shot_and_does_not_own_signer_cleanup",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 789,
+            "pid": 789,
+            "ppid": 788,
+            "sid": 788,
+            "start_ticks": 3698,
+            "state": "R"
+          },
+          {
+            "pgid": 789,
+            "pid": 790,
+            "ppid": 789,
+            "sid": 788,
+            "start_ticks": 3698,
+            "state": "R"
+          },
+          {
+            "pgid": 789,
+            "pid": 791,
+            "ppid": 790,
+            "sid": 788,
+            "start_ticks": 3698,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 789,
+            "wait_status": 9
+          },
+          {
+            "pid": 791,
+            "wait_status": 9
+          },
+          {
+            "pid": 790,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "actual_windows_cng_with_disclosed_blocking_fault_injection",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 798,
+            "pid": 798,
+            "ppid": 797,
+            "sid": 797,
+            "start_ticks": 3795,
+            "state": "R"
+          },
+          {
+            "pgid": 798,
+            "pid": 799,
+            "ppid": 798,
+            "sid": 797,
+            "start_ticks": 3795,
+            "state": "R"
+          },
+          {
+            "pgid": 798,
+            "pid": 800,
+            "ppid": 799,
+            "sid": 797,
+            "start_ticks": 3795,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 798,
+            "wait_status": 9
+          },
+          {
+            "pid": 800,
+            "wait_status": 9
+          },
+          {
+            "pid": 799,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "actual_windows_cng_with_disclosed_blocking_fault_injection",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_concurrent_request_stops_without_second_signature",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 809,
+            "pid": 809,
+            "ppid": 808,
+            "sid": 808,
+            "start_ticks": 3902,
+            "state": "R"
+          },
+          {
+            "pgid": 809,
+            "pid": 810,
+            "ppid": 809,
+            "sid": 808,
+            "start_ticks": 3902,
+            "state": "R"
+          },
+          {
+            "pgid": 809,
+            "pid": 811,
+            "ppid": 810,
+            "sid": 808,
+            "start_ticks": 3902,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 809,
+            "wait_status": 9
+          },
+          {
+            "pid": 811,
+            "wait_status": 9
+          },
+          {
+            "pid": 810,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "actual_windows_cng_with_disclosed_blocking_fault_injection",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_helper_exit_automatically_stops_without_manual_bridge_notification",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 820,
+            "pid": 820,
+            "ppid": 819,
+            "sid": 819,
+            "start_ticks": 4000,
+            "state": "R"
+          },
+          {
+            "pgid": 820,
+            "pid": 821,
+            "ppid": 820,
+            "sid": 819,
+            "start_ticks": 4000,
+            "state": "R"
+          },
+          {
+            "pgid": 820,
+            "pid": 822,
+            "ppid": 821,
+            "sid": 819,
+            "start_ticks": 4000,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 820,
+            "wait_status": 9
+          },
+          {
+            "pid": 821,
+            "wait_status": 9
+          },
+          {
+            "pid": 822,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "actual_windows_cng_with_disclosed_blocking_fault_injection",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_malformed_payload_stops_before_signing",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 831,
+            "pid": 831,
+            "ppid": 830,
+            "sid": 830,
+            "start_ticks": 4102,
+            "state": "R"
+          },
+          {
+            "pgid": 831,
+            "pid": 832,
+            "ppid": 831,
+            "sid": 830,
+            "start_ticks": 4102,
+            "state": "R"
+          },
+          {
+            "pgid": 831,
+            "pid": 833,
+            "ppid": 832,
+            "sid": 830,
+            "start_ticks": 4102,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 831,
+            "wait_status": 9
+          },
+          {
+            "pid": 832,
+            "wait_status": 9
+          },
+          {
+            "pid": 833,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "actual_windows_cng_with_disclosed_blocking_fault_injection",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "bridge_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_safe_then_busy_flows_through_link",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 840,
+            "pid": 840,
+            "ppid": 839,
+            "sid": 839,
+            "start_ticks": 4204,
+            "state": "R"
+          },
+          {
+            "pgid": 840,
+            "pid": 841,
+            "ppid": 840,
+            "sid": 839,
+            "start_ticks": 4204,
+            "state": "R"
+          },
+          {
+            "pgid": 840,
+            "pid": 842,
+            "ppid": 841,
+            "sid": 839,
+            "start_ticks": 4204,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 840,
+            "wait_status": 9
+          },
+          {
+            "pid": 841,
+            "wait_status": 9
+          },
+          {
+            "pid": 842,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "actual_windows_cng_with_disclosed_blocking_fault_injection",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "candidate_observations_refused",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 1,
+        "watchdog_active": false
+      }
+    },
+    {
+      "bystander_alive": true,
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_tampered_signature_stops_without_manual_bridge_notification",
+      "fixture": {
+        "formal_admission": "BLOCKED",
+        "kind": "stopped",
+        "members": [
+          {
+            "pgid": 855,
+            "pid": 855,
+            "ppid": 854,
+            "sid": 854,
+            "start_ticks": 4307,
+            "state": "R"
+          },
+          {
+            "pgid": 855,
+            "pid": 856,
+            "ppid": 855,
+            "sid": 854,
+            "start_ticks": 4307,
+            "state": "R"
+          },
+          {
+            "pgid": 855,
+            "pid": 857,
+            "ppid": 856,
+            "sid": 854,
+            "start_ticks": 4307,
+            "state": "R"
+          }
+        ],
+        "owned_tree_reaped": true,
+        "qualification_authorized": false,
+        "reaped": [
+          {
+            "pid": 855,
+            "wait_status": 9
+          },
+          {
+            "pid": 857,
+            "wait_status": 9
+          },
+          {
+            "pid": 856,
+            "wait_status": 9
+          }
+        ],
+        "sigkill_required": true,
+        "target_execution_authorized": false,
+        "trigger": "controller_eof"
+      },
+      "signer": "actual_windows_cng_with_disclosed_blocking_fault_injection",
+      "stop": {
+        "formal_admission": "BLOCKED",
+        "qualification_authorized": false,
+        "reason": "signed_observation_or_persistence_failed",
+        "scope": "DEVELOPMENT_ONLY",
+        "stop_requested": true,
+        "target_execution_authorized": false,
+        "valid_observations": 0,
+        "watchdog_active": false
+      }
+    }
+  ],
+  "synthetic_link_records": [
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_signer_timeout",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_signer_timeout",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_close_is_one_shot_and_does_not_own_signer_cleanup",
+      "link": {
+        "closed": true,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "link_closed",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+      "link": {
+        "closed": true,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "link_closed",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_concurrent_request_stops_without_second_signature",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "concurrent_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_helper_exit_automatically_stops_without_manual_bridge_notification",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_signer_failed",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_malformed_payload_stops_before_signing",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_safe_then_busy_flows_through_link",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_transport_stop.LocalTransportStop.test_tampered_signature_stops_without_manual_bridge_notification",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "local_openssl_and_explicit_transport_double"
+    },
+    {
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_signer_timeout",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "actual_windows_cng_with_disclosed_blocking_fault_injection"
+    },
+    {
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_signer_timeout",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "actual_windows_cng_with_disclosed_blocking_fault_injection"
+    },
+    {
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_close_is_one_shot_and_does_not_own_signer_cleanup",
+      "link": {
+        "closed": true,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "link_closed",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "actual_windows_cng_with_disclosed_blocking_fault_injection"
+    },
+    {
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+      "link": {
+        "closed": true,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "link_closed",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "actual_windows_cng_with_disclosed_blocking_fault_injection"
+    },
+    {
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_concurrent_request_stops_without_second_signature",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "concurrent_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": true,
+        "target_execution_authorized": false
+      },
+      "transport": "actual_windows_cng_with_disclosed_blocking_fault_injection"
+    },
+    {
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_helper_exit_automatically_stops_without_manual_bridge_notification",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_signer_failed",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "actual_windows_cng_with_disclosed_blocking_fault_injection"
+    },
+    {
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_malformed_payload_stops_before_signing",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "actual_windows_cng_with_disclosed_blocking_fault_injection"
+    },
+    {
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_safe_then_busy_flows_through_link",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "actual_windows_cng_with_disclosed_blocking_fault_injection"
+    },
+    {
+      "case": "test_windows_transport_stop.WindowsTransportStop.test_tampered_signature_stops_without_manual_bridge_notification",
+      "link": {
+        "closed": false,
+        "formal_admission": "BLOCKED",
+        "observation_pending": false,
+        "qualification_authorized": false,
+        "reason": "synthetic_observation_refused",
+        "scope": "SYNTHETIC_ONLY",
+        "signer_pending": false,
+        "target_execution_authorized": false
+      },
+      "transport": "actual_windows_cng_with_disclosed_blocking_fault_injection"
+    }
+  ],
+  "pending_signer_while_tree_reaped_cases": [
+    "test_transport_stop.LocalTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+    "test_transport_stop.LocalTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+    "test_transport_stop.LocalTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+    "test_transport_stop.LocalTransportStop.test_concurrent_request_stops_without_second_signature",
+    "test_windows_transport_stop.WindowsTransportStop.test_blocked_error_cleanup_does_not_delay_tree_stop",
+    "test_windows_transport_stop.WindowsTransportStop.test_blocked_signer_times_out_stops_and_discards_late_valid_response",
+    "test_windows_transport_stop.WindowsTransportStop.test_close_publishes_stop_before_waiting_for_inflight_signer",
+    "test_windows_transport_stop.WindowsTransportStop.test_concurrent_request_stops_without_second_signature"
+  ],
+  "windows_fault_injection": "Two owned helper exits via invalid synthetic request; blocked signing/cleanup are explicit Python fault injections",
+  "cleanup": {
+    "before_zombies": [],
+    "remaining_observed_processes": [],
+    "new_temporary_directories": [],
+    "after_zombies": [],
+    "temporary_directories_before": [],
+    "new_zombies": [],
+    "scope": "Test cleanup identity audit, not complete host process visibility",
+    "temporary_directories_after": [],
+    "observed_process_identities": [
+      {
+        "pid": 668,
+        "ppid": 667,
+        "state": "R",
+        "start_ticks": 2340
+      },
+      {
+        "pid": 669,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2367
+      },
+      {
+        "pid": 670,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2374
+      },
+      {
+        "pid": 671,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 2377
+      },
+      {
+        "pid": 673,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 2379
+      },
+      {
+        "pgid": 674,
+        "pid": 674,
+        "ppid": 673,
+        "sid": 673,
+        "start_ticks": 2383,
+        "state": "R"
+      },
+      {
+        "pgid": 674,
+        "pid": 675,
+        "ppid": 674,
+        "sid": 673,
+        "start_ticks": 2383,
+        "state": "R"
+      },
+      {
+        "pgid": 674,
+        "pid": 676,
+        "ppid": 675,
+        "sid": 673,
+        "start_ticks": 2383,
+        "state": "R"
+      },
+      {
+        "pid": 679,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 2604
+      },
+      {
+        "pid": 681,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 2605
+      },
+      {
+        "pgid": 682,
+        "pid": 682,
+        "ppid": 681,
+        "sid": 681,
+        "start_ticks": 2614,
+        "state": "R"
+      },
+      {
+        "pgid": 682,
+        "pid": 683,
+        "ppid": 682,
+        "sid": 681,
+        "start_ticks": 2614,
+        "state": "R"
+      },
+      {
+        "pgid": 682,
+        "pid": 684,
+        "ppid": 683,
+        "sid": 681,
+        "start_ticks": 2614,
+        "state": "R"
+      },
+      {
+        "pid": 687,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2828
+      },
+      {
+        "pid": 688,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 2834
+      },
+      {
+        "pid": 690,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2836
+      },
+      {
+        "pgid": 691,
+        "pid": 691,
+        "ppid": 690,
+        "sid": 690,
+        "start_ticks": 2841,
+        "state": "R"
+      },
+      {
+        "pgid": 691,
+        "pid": 692,
+        "ppid": 691,
+        "sid": 690,
+        "start_ticks": 2841,
+        "state": "R"
+      },
+      {
+        "pgid": 691,
+        "pid": 693,
+        "ppid": 692,
+        "sid": 690,
+        "start_ticks": 2841,
+        "state": "R"
+      },
+      {
+        "pid": 695,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 2859
+      },
+      {
+        "pid": 697,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2861
+      },
+      {
+        "pgid": 698,
+        "pid": 698,
+        "ppid": 697,
+        "sid": 697,
+        "start_ticks": 2864,
+        "state": "R"
+      },
+      {
+        "pgid": 698,
+        "pid": 699,
+        "ppid": 698,
+        "sid": 697,
+        "start_ticks": 2864,
+        "state": "R"
+      },
+      {
+        "pgid": 698,
+        "pid": 700,
+        "ppid": 699,
+        "sid": 697,
+        "start_ticks": 2864,
+        "state": "R"
+      },
+      {
+        "pid": 704,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2877
+      },
+      {
+        "pid": 705,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 2883
+      },
+      {
+        "pid": 707,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 2884
+      },
+      {
+        "pgid": 708,
+        "pid": 708,
+        "ppid": 707,
+        "sid": 707,
+        "start_ticks": 2888,
+        "state": "R"
+      },
+      {
+        "pgid": 708,
+        "pid": 709,
+        "ppid": 708,
+        "sid": 707,
+        "start_ticks": 2888,
+        "state": "R"
+      },
+      {
+        "pgid": 708,
+        "pid": 710,
+        "ppid": 709,
+        "sid": 707,
+        "start_ticks": 2888,
+        "state": "R"
+      },
+      {
+        "pid": 714,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2902
+      },
+      {
+        "pid": 715,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 2907
+      },
+      {
+        "pid": 717,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2909
+      },
+      {
+        "pgid": 718,
+        "pid": 718,
+        "ppid": 717,
+        "sid": 717,
+        "start_ticks": 2914,
+        "state": "R"
+      },
+      {
+        "pgid": 718,
+        "pid": 719,
+        "ppid": 718,
+        "sid": 717,
+        "start_ticks": 2914,
+        "state": "R"
+      },
+      {
+        "pgid": 718,
+        "pid": 720,
+        "ppid": 719,
+        "sid": 717,
+        "start_ticks": 2914,
+        "state": "R"
+      },
+      {
+        "pid": 723,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 2931
+      },
+      {
+        "pid": 725,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2932
+      },
+      {
+        "pgid": 726,
+        "pid": 726,
+        "ppid": 725,
+        "sid": 725,
+        "start_ticks": 2937,
+        "state": "R"
+      },
+      {
+        "pgid": 726,
+        "pid": 727,
+        "ppid": 726,
+        "sid": 725,
+        "start_ticks": 2937,
+        "state": "R"
+      },
+      {
+        "pgid": 726,
+        "pid": 728,
+        "ppid": 727,
+        "sid": 725,
+        "start_ticks": 2937,
+        "state": "R"
+      },
+      {
+        "pid": 730,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 2955
+      },
+      {
+        "pid": 732,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 2956
+      },
+      {
+        "pgid": 733,
+        "pid": 733,
+        "ppid": 732,
+        "sid": 732,
+        "start_ticks": 2960,
+        "state": "R"
+      },
+      {
+        "pgid": 733,
+        "pid": 734,
+        "ppid": 733,
+        "sid": 732,
+        "start_ticks": 2960,
+        "state": "R"
+      },
+      {
+        "pid": 738,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2961
+      },
+      {
+        "pgid": 733,
+        "pid": 735,
+        "ppid": 734,
+        "sid": 732,
+        "start_ticks": 2960,
+        "state": "R"
+      },
+      {
+        "pid": 740,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2962
+      },
+      {
+        "pid": 744,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 2966
+      },
+      {
+        "pid": 745,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 2984
+      },
+      {
+        "pid": 747,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 2984
+      },
+      {
+        "pgid": 748,
+        "pid": 748,
+        "ppid": 747,
+        "sid": 747,
+        "start_ticks": 2987,
+        "state": "R"
+      },
+      {
+        "pgid": 748,
+        "pid": 749,
+        "ppid": 748,
+        "sid": 747,
+        "start_ticks": 2988,
+        "state": "R"
+      },
+      {
+        "pgid": 748,
+        "pid": 750,
+        "ppid": 749,
+        "sid": 747,
+        "start_ticks": 2988,
+        "state": "R"
+      },
+      {
+        "pid": 755,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 2989
+      },
+      {
+        "pid": 756,
+        "ppid": 668,
+        "state": "D",
+        "start_ticks": 3006
+      },
+      {
+        "pid": 757,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 3007
+      },
+      {
+        "pid": 761,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 3074
+      },
+      {
+        "pid": 763,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 3075
+      },
+      {
+        "pgid": 764,
+        "pid": 764,
+        "ppid": 763,
+        "sid": 763,
+        "start_ticks": 3079,
+        "state": "R"
+      },
+      {
+        "pgid": 764,
+        "pid": 765,
+        "ppid": 764,
+        "sid": 763,
+        "start_ticks": 3079,
+        "state": "R"
+      },
+      {
+        "pgid": 764,
+        "pid": 766,
+        "ppid": 765,
+        "sid": 763,
+        "start_ticks": 3079,
+        "state": "R"
+      },
+      {
+        "pid": 775,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 3321
+      },
+      {
+        "pid": 776,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 3385
+      },
+      {
+        "pid": 778,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 3388
+      },
+      {
+        "pgid": 779,
+        "pid": 779,
+        "ppid": 778,
+        "sid": 778,
+        "start_ticks": 3393,
+        "state": "R"
+      },
+      {
+        "pgid": 779,
+        "pid": 780,
+        "ppid": 779,
+        "sid": 778,
+        "start_ticks": 3393,
+        "state": "R"
+      },
+      {
+        "pgid": 779,
+        "pid": 781,
+        "ppid": 780,
+        "sid": 778,
+        "start_ticks": 3393,
+        "state": "R"
+      },
+      {
+        "pid": 784,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 3632
+      },
+      {
+        "pid": 785,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 3632
+      },
+      {
+        "pid": 786,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 3693
+      },
+      {
+        "pid": 788,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 3694
+      },
+      {
+        "pgid": 789,
+        "pid": 789,
+        "ppid": 788,
+        "sid": 788,
+        "start_ticks": 3698,
+        "state": "R"
+      },
+      {
+        "pgid": 789,
+        "pid": 790,
+        "ppid": 789,
+        "sid": 788,
+        "start_ticks": 3698,
+        "state": "R"
+      },
+      {
+        "pgid": 789,
+        "pid": 791,
+        "ppid": 790,
+        "sid": 788,
+        "start_ticks": 3698,
+        "state": "R"
+      },
+      {
+        "pid": 794,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 3733
+      },
+      {
+        "pid": 795,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 3789
+      },
+      {
+        "pid": 797,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 3791
+      },
+      {
+        "pgid": 798,
+        "pid": 798,
+        "ppid": 797,
+        "sid": 797,
+        "start_ticks": 3795,
+        "state": "R"
+      },
+      {
+        "pgid": 798,
+        "pid": 799,
+        "ppid": 798,
+        "sid": 797,
+        "start_ticks": 3795,
+        "state": "R"
+      },
+      {
+        "pgid": 798,
+        "pid": 800,
+        "ppid": 799,
+        "sid": 797,
+        "start_ticks": 3795,
+        "state": "R"
+      },
+      {
+        "pid": 804,
+        "ppid": 668,
+        "state": "D",
+        "start_ticks": 3835
+      },
+      {
+        "pid": 805,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 3836
+      },
+      {
+        "pid": 806,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 3895
+      },
+      {
+        "pid": 808,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 3897
+      },
+      {
+        "pgid": 809,
+        "pid": 809,
+        "ppid": 808,
+        "sid": 808,
+        "start_ticks": 3902,
+        "state": "R"
+      },
+      {
+        "pgid": 809,
+        "pid": 810,
+        "ppid": 809,
+        "sid": 808,
+        "start_ticks": 3902,
+        "state": "R"
+      },
+      {
+        "pgid": 809,
+        "pid": 811,
+        "ppid": 810,
+        "sid": 808,
+        "start_ticks": 3902,
+        "state": "R"
+      },
+      {
+        "pid": 816,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 3937
+      },
+      {
+        "pid": 817,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 3993
+      },
+      {
+        "pid": 819,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 3994
+      },
+      {
+        "pgid": 820,
+        "pid": 820,
+        "ppid": 819,
+        "sid": 819,
+        "start_ticks": 4000,
+        "state": "R"
+      },
+      {
+        "pgid": 820,
+        "pid": 821,
+        "ppid": 820,
+        "sid": 819,
+        "start_ticks": 4000,
+        "state": "R"
+      },
+      {
+        "pgid": 820,
+        "pid": 822,
+        "ppid": 821,
+        "sid": 819,
+        "start_ticks": 4000,
+        "state": "R"
+      },
+      {
+        "pid": 826,
+        "ppid": 668,
+        "state": "D",
+        "start_ticks": 4041
+      },
+      {
+        "pid": 827,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 4041
+      },
+      {
+        "pid": 828,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 4098
+      },
+      {
+        "pid": 830,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 4099
+      },
+      {
+        "pgid": 831,
+        "pid": 831,
+        "ppid": 830,
+        "sid": 830,
+        "start_ticks": 4102,
+        "state": "R"
+      },
+      {
+        "pgid": 831,
+        "pid": 832,
+        "ppid": 831,
+        "sid": 830,
+        "start_ticks": 4102,
+        "state": "R"
+      },
+      {
+        "pgid": 831,
+        "pid": 833,
+        "ppid": 832,
+        "sid": 830,
+        "start_ticks": 4102,
+        "state": "R"
+      },
+      {
+        "pid": 835,
+        "ppid": 668,
+        "state": "D",
+        "start_ticks": 4138
+      },
+      {
+        "pid": 836,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 4138
+      },
+      {
+        "pid": 837,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 4198
+      },
+      {
+        "pid": 839,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 4200
+      },
+      {
+        "pgid": 840,
+        "pid": 840,
+        "ppid": 839,
+        "sid": 839,
+        "start_ticks": 4204,
+        "state": "R"
+      },
+      {
+        "pgid": 840,
+        "pid": 841,
+        "ppid": 840,
+        "sid": 839,
+        "start_ticks": 4204,
+        "state": "R"
+      },
+      {
+        "pgid": 840,
+        "pid": 842,
+        "ppid": 841,
+        "sid": 839,
+        "start_ticks": 4204,
+        "state": "R"
+      },
+      {
+        "pid": 846,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 4208
+      },
+      {
+        "pid": 848,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 4211
+      },
+      {
+        "pid": 851,
+        "ppid": 668,
+        "state": "Z",
+        "start_ticks": 4247
+      },
+      {
+        "pid": 852,
+        "ppid": 668,
+        "state": "S",
+        "start_ticks": 4303
+      },
+      {
+        "pid": 854,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 4304
+      },
+      {
+        "pgid": 855,
+        "pid": 855,
+        "ppid": 854,
+        "sid": 854,
+        "start_ticks": 4307,
+        "state": "R"
+      },
+      {
+        "pgid": 855,
+        "pid": 856,
+        "ppid": 855,
+        "sid": 854,
+        "start_ticks": 4307,
+        "state": "R"
+      },
+      {
+        "pgid": 855,
+        "pid": 857,
+        "ppid": 856,
+        "sid": 854,
+        "start_ticks": 4307,
+        "state": "R"
+      },
+      {
+        "pid": 861,
+        "ppid": 668,
+        "state": "R",
+        "start_ticks": 4310
+      }
+    ]
+  },
+  "source_bindings": "TRANSPORT_STOP_LOCAL_SOURCE_SHA256.json",
+  "coordinator_source_hashes_match": true,
+  "unchanged_canonical_sources_verified": 34,
+  "protected_sources_verified": 20,
+  "old_24_and_53_suites_rerun": false,
+  "prior_evidence_files_unchanged": 165,
+  "backup_reverification": {
+    "status": "UNAVAILABLE",
+    "backup_modified": false,
+    "historical_hashes_not_claimed_as_fresh": true,
+    "reason": "F: absent"
+  },
+  "evidence_directory": "D:\\ReBaseGuard-309\\records\\p309-transport-stop-validation-20261015-203418",
+  "log_sha256": {
+    "transport-stop-19.stdout.txt": "56176775696DA404B192446F5A5634BB92ACFE210D378B58A4D6CF7AB08179DF",
+    "run-transport-stop-audit.py": "980467B85DF4BB4FD46CE172A5632D68AA6C6403A3AF89FE6B9575E458ACC37E",
+    "test-transport-stop-19.sh": "269CD73F1BC7BB21DB1C27D8AFDB379C2A44E5020DB1CCB25AD30F9EFC3A18D3",
+    "backup-verification.json": "6C8FA9135B4E033C27B477DF2391692AA633A0C84CC4061A465EA5C94298349C",
+    "transport-stop-19.stderr.txt": "507BF1866858338A292E22E9F820CFF027522CBABFFA8822F08253CDDF715DED",
+    "verify-transport-stop-bindings.py": "14E7DCB2A4875BCC2129FE2D483116A9EADD4EC50A53FB62B2DB2479239053A8",
+    "transport-stop-execution.stderr.txt": "54CBF66986B07C80BF2026411B2799FB4DC82C6DA7CA94D20AE1B1C7C8417977",
+    "transport-stop-execution-audit.json": "6AC7FA236431AABA6238818A746C6F330B4583AFF9A19A3F35814A3DF9F72E32",
+    "transport-stop-execution.stdout.txt": "8C217B39A1772BD97CB1DEC5F7CA9D8365DD60DB6F05EF4F1565A5E72587929F",
+    "preservation-after.json": "5B6EDC4CD5AC364BD42252263F69626D4999F837A3D964BBDF58736EA6209AA8"
+  },
+  "formal_admission": "BLOCKED",
+  "qualification_authorized": false,
+  "target_execution_authorized": false,
+  "actual_p309_workloads": 0
+}
