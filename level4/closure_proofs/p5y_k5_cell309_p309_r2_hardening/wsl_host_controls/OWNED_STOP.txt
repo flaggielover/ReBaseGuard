@@ -1,0 +1,106 @@
+Synthetic owned-tree termination prototype (development only)
+
+Base: 77daad147add610253afc6eee717066f97aaecd1, the published native
+Windows/WSL 53-test validation. Existing implementation, tests and evidence
+files are unchanged. This addition demonstrates actual OS termination of a
+fixed synthetic Linux tree. It never launches P309 computation or qualification.
+
+Implementation and boundaries
+- SyntheticOwnedTree accepts only a stop Event, explicit synthetic_only=True,
+  and a boolean cooperative/stubborn fixture mode. It accepts no executable,
+  command, external PID, session directory, production grant or resume state.
+- A dedicated subprocess starts a new session and enables child-subreaper
+  status for itself only. It forks a fixed, idle, three-generation process tree
+  in a separate process group. It does not alter the caller's subreaper state.
+- Before each group signal, the supervisor checks its direct child's pinned
+  /proc start ticks, parent, process group and session. It deliberately retains
+  that unreaped group leader through the final signal: a zombie anchor still
+  reserves the numeric PID/PGID. A mismatch refuses the signal, never broadens
+  its target. No process-name matching, global enumeration or foreign PID attach
+  is used to select signal recipients.
+- Stop causes controller-pipe EOF. The supervisor sends SIGTERM, allows 0.1
+  seconds, then SIGKILL, and reaps all three descendants before acknowledging.
+  The controller confirms the exact member/reaped sets, exit status and blocked
+  authorization fields. Timeout, EOF or malformed acknowledgement is an error,
+  never a successful termination claim. Close is idempotent after success and
+  never restarts the fixture. The event-to-EOF thread takes no session/monitor
+  lock, so blocked verification or persistence need not block fixture stopping.
+- Independent fixture bounds: supervisor input lease five seconds, worker
+  lifetime eight seconds, readiness budget two seconds, post-kill reap budget
+  three seconds. These are fixed synthetic fixture limits, not changes to any
+  P309 thresholds. Controller polling is 0.01 seconds. OS scheduling can exceed
+  requested waits; this does not establish a real-time response guarantee.
+- The subreaper resolves orphan/zombie cleanup during successful tests without
+  depending on PID 1. Supervisor crash/SIGKILL is not proven recoverable: the
+  fixed worker lifetime limits live activity but cannot guarantee orphan reaping
+  if the host's init fails to reap. Startup/cleanup failure remains unconfirmed.
+- Process groups are suitable here only because this fixed code never escapes
+  them. This is not containment for arbitrary or hostile work: descendants can
+  ordinarily setsid/setpgid; same-user interference, process stopping, host
+  suspension, reboot and kernel failures are outside this demonstration.
+- Test keys and signed payloads remain synthetic. The real Windows variant
+  uses the existing unnamed ephemeral CNG helper, not a production trust root.
+  Transport EOF/timeout is represented by an explicit bridge_failed call;
+  an operational transport supervisor and real workload controller are still
+  missing. No continuous host collector or official launcher is connected.
+- All reports remain formal_admission=BLOCKED, qualification_authorized=false,
+  target_execution_authorized=false. Production key isolation, complete host
+  process observation, workload attribution, durable rollback protection and
+  formal AWS/WSL route acceptance remain open. No long-run guarantee is claimed.
+
+Evidence provided by the new tests
+test_owned_stop: 10 actual Linux/unit fault-injection cases. Three generations,
+cooperative SIGTERM, stubborn SIGKILL, exact reaping including zombie absence,
+bystander survival, explicit scope, identity mismatch, EOF, fixed lease expiry,
+one-shot close and refusal of timeout/invalid acknowledgement success.
+test_owned_stop_chain: seven local OpenSSL-signed monitor/controller cases.
+test_windows_owned_stop: the same seven cases with actual Windows CNG signing.
+The seven cases cover safe-then-busy, invalid signature, bridge failure, missing
+next sample, watchdog while verification is blocked, watchdog while diagnostic
+persistence is blocked, and refusal to launch after a pre-existing stop.
+Each terminating chain records owned PIDs, start ticks, wait statuses, the
+monitor stop reason and a still-live independent bystander. These are real
+synthetic process terminations, not actual P309 workload termination tests.
+
+Windows/WSL local validation instructions
+1. Fetch codex/p309-wsl-owned-stop-dev-20261015. Resolve its full commit and
+   compare it with the coordinator's exact supplied SHA before execution.
+   Use a clean separate worktree based on that exact commit, for example
+   D:\ReBaseGuard-309\workspace\p309-owned-stop-validation-20261015, and a new
+   codex/p309-wsl-owned-stop-validation-20261015 branch. Preserve old checkouts,
+   branch heads, evidence files, backup and manifest. Do not install software,
+   configure services/keys, change Windows policy, or invoke official P309 tools.
+2. Read this file and OWNED_STOP_VALIDATION.json. Verify every source_sha256
+   against canonical Git blob bytes. Check working bytes and CRLF normalization
+   separately. Verify protected_sources.json and that the 25 canonical sources
+   recorded by MONITOR_LOCAL_SOURCE_SHA256.json still match. The diff from
+   77daad147 must contain additions only under wsl_host_controls.
+3. In Ubuntu, use the existing private interpreter
+   /home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11, not system Python.
+   Keep temporary sessions outside Git on Linux ext4. Set P309_WINDOWS_PWSH to
+   the same existing /mnt/c/.../pwsh.exe path used in the earlier actual tests.
+   From wsl_host_controls, execute only the three new suites:
+
+   python3.11 -B -m unittest -v test_owned_stop test_owned_stop_chain test_windows_owned_stop
+
+   Expected: 10 + 7 + 7 = 24 methods, zero failures/errors/skips. Windows absence
+   must fail rather than skip. These tests start only bounded idle fixture trees,
+   independent idle bystanders, ephemeral OpenSSL/CNG helpers and test threads.
+   They do not collect actual host samples, allocate the P309 workload, run
+   drills, freeze, grant, qualify or evaluate. The old 53-test inputs are unchanged
+   and do not need another run unless a genuine new concern is identified.
+4. Record full stdout/stderr, exit status, individual IDs, runtimes, interpreter
+   hash, OpenSSL and Windows signer metadata, actual source hashes and the
+   SYNTHETIC_STOP_CHAIN records. Confirm owned fixture processes and supervisor
+   processes are gone, no new zombies from the tests remain, and temporary test
+   directories are removed. Distinguish successful fixture reaping from general
+   host/process visibility or P309 admission; neither is implied.
+5. Preserve the coordinator validation JSON unchanged. Add separate
+   OWNED_STOP_LOCAL_VALIDATION.json and OWNED_STOP_LOCAL_SOURCE_SHA256.json;
+   store complete logs under a new D:\ReBaseGuard-309\records directory. Recheck
+   prior evidence hashes and protected refs without editing existing records.
+   Preserve the existing F: backup and manifest; do not regenerate or rewrite
+   them. Commit only the two new local validation JSON files, push the separate
+   validation branch normally, verify its remote HEAD and report exact results.
+   If a source check or test fails, preserve the failure evidence and do not
+   change implementation, counts or thresholds to manufacture a passing result.
