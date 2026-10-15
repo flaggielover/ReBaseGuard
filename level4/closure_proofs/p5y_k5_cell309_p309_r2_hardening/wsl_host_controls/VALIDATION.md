@@ -9,7 +9,10 @@ Base commit: `657ec3da602b396835b17b93d9235d7ed18e2cb7`.
 * 57 standard-library imports (explicit requirements plus static r2 import
   inventory) passed, as did compression/hash/SSL/SQLite/ctypes checks.
 * Multiprocessing fork, spawn, forkserver, locks and shared memory passed.
-* Original r2 source hashes and threshold constants remain unchanged.
+* Source hashes and threshold constants remain unchanged from the user-selected
+  preparation base 657ec3da. That base already differs from accepted reference
+  501f48cb in code/r2h_rehearse.py, r2h_replica.py and r2h_validator.py; this work
+  changes none of those files and does not assert the two historical trees match.
 * Live 60-second process sample, guest facts and offline diagnostic completed.
   Observed resources passed the preparation floors. Visibility, start CPU
   quietness, pending reboot, power policy and update/window coverage did not pass.
