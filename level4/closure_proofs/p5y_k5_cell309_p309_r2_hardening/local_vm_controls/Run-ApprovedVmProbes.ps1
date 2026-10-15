@@ -11,7 +11,13 @@ $principal=[Security.Principal.WindowsPrincipal]::new([Security.Principal.Window
 if($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){throw 'VM probes must run without elevation'}
 $state=Get-CimInstance Win32_OptionalFeature -Filter "Name='HypervisorPlatform'"
 if($state.InstallState -ne 1){throw 'WHP is not reported enabled; no fallback or pending-reboot launch'}
-$available=(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory * 1KB
+$os=Get-CimInstance Win32_OperatingSystem
+$preparation=Get-Content -LiteralPath $a.feature_preparation_result -Raw | ConvertFrom-Json
+if($preparation.restart_needed -isnot [bool] -or -not $preparation.boot_before){throw 'Missing actual feature preparation result'}
+if($preparation.restart_needed -and $os.LastBootUpTime.ToUniversalTime().ToString('o') -eq $preparation.boot_before){
+ throw 'Required manual reboot has not occurred; do not launch the VM'
+}
+$available=$os.FreePhysicalMemory * 1KB
 if($available -lt (8000000000L + 805306368L)){throw 'Host memory headroom is below 8 GB plus probe cap'}
 $evidence=[IO.Path]::GetFullPath($EvidenceDirectory)
 if(-not $evidence.StartsWith('D:\ReBaseGuard-309\records\',[StringComparison]::OrdinalIgnoreCase)){throw 'Unexpected evidence root'}

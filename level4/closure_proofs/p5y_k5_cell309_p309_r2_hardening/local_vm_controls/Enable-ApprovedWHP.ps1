@@ -17,9 +17,10 @@ if(-not $evidence.StartsWith($base,[StringComparison]::OrdinalIgnoreCase)){throw
 if(Test-Path -LiteralPath $evidence){throw 'Evidence directory exists; choose a fresh attempt, never overwrite'}
 New-Item -ItemType Directory -Path $evidence | Out-Null
 $before=Get-WindowsOptionalFeature -Online -FeatureName HypervisorPlatform
+$bootBefore=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o')
 $before | Select-Object FeatureName,State,RestartRequired | ConvertTo-Json | Set-Content "$evidence\feature-before.json"
 if($before.State.ToString() -eq 'Enabled'){
- @{changed=$false;restart_performed=$false;admission='BLOCKED'} | ConvertTo-Json | Set-Content "$evidence\result.json"
+ @{changed=$false;restart_needed=$false;restart_performed=$false;boot_before=$bootBefore;admission='BLOCKED'} | ConvertTo-Json | Set-Content "$evidence\result.json"
  return
 }
 if($before.State.ToString() -ne 'Disabled'){throw 'Pending/removed/unknown feature state requires investigation, not blind enable'}
@@ -34,6 +35,6 @@ try {
  Get-WindowsOptionalFeature -Online -FeatureName HypervisorPlatform |
   Select-Object FeatureName,State,RestartRequired | ConvertTo-Json | Set-Content "$evidence\feature-after.json"
 }
-@{changed=$true;restart_performed=$false;admission='BLOCKED';
+@{changed=$true;restart_needed=[bool]$result.RestartNeeded;restart_performed=$false;boot_before=$bootBefore;admission='BLOCKED';
   note='If RestartNeeded or pending state, return to user for the approved manual restart; do not run VM yet'} |
  ConvertTo-Json | Set-Content "$evidence\result.json"
