@@ -1,0 +1,19 @@
+{
+  "native_guard_unit_checks": 12,
+  "formal_admission": "BLOCKED",
+  "exit_code": 0,
+  "historical_tests_repeated": 0,
+  "new_tests": 16,
+  "real_vm_started": false,
+  "arguments": [
+    "-d",
+    "Ubuntu-24.04",
+    "--cd",
+    "/mnt/d/ReBaseGuard-309/workspace/p309-local-vm-dev-20261016/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_vm_controls",
+    "--exec",
+    "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+    "-B",
+    "-c",
+    "import sys,ssl,unittest; print(sys.version,sys.executable,ssl.OPENSSL_VERSION,flush=True); assert sys.version_info[:3]==(3,11,15); suite=unittest.defaultTestLoader.loadTestsFromName(\"test_archive_parsers\"); result=unittest.TextTestRunner(verbosity=2).run(suite); sys.exit(not result.wasSuccessful())"
+  ]
+}

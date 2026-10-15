@@ -1,0 +1,136 @@
+[
+  {
+    "name": "virtualization_features",
+    "utc": "2026-10-15T16:24:11.5857513Z",
+    "query": "Get-CimInstance Win32_OptionalFeature -Filter \"Name='HypervisorPlatform' OR Name='VirtualMachinePlatform' OR Name='Microsoft-Hyper-V-All' OR Name='Microsoft-Windows-Subsystem-Linux'\" | Select-Object Name,InstallState",
+    "result": [
+      {
+        "Name": "VirtualMachinePlatform",
+        "InstallState": 1
+      },
+      {
+        "Name": "HypervisorPlatform",
+        "InstallState": 2
+      },
+      {
+        "Name": "Microsoft-Windows-Subsystem-Linux",
+        "InstallState": 1
+      }
+    ],
+    "status": "OBSERVED"
+  },
+  {
+    "name": "hypervisor_and_cpu",
+    "utc": "2026-10-15T16:24:12.3768053Z",
+    "query": " [ordered]@{hypervisor_present=(Get-CimInstance Win32_ComputerSystem).HypervisorPresent;processors=@(Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors,VirtualizationFirmwareEnabled,SecondLevelAddressTranslationExtensions)} ",
+    "result": {
+      "hypervisor_present": true,
+      "processors": [
+        {
+          "Name": "13th Gen Intel(R) Core(TM) i9-13900HX",
+          "NumberOfCores": 24,
+          "NumberOfLogicalProcessors": 32,
+          "VirtualizationFirmwareEnabled": false,
+          "SecondLevelAddressTranslationExtensions": false
+        }
+      ]
+    },
+    "status": "OBSERVED"
+  },
+  {
+    "name": "existing_vm_tools",
+    "utc": "2026-10-15T16:24:13.5248166Z",
+    "query": "@('qemu-system-x86_64.exe','qemu-img.exe','VBoxManage.exe','vmrun.exe','dotnet.exe','csc.exe') | ForEach-Object {$n=$_;$c=Get-Command $n -ErrorAction SilentlyContinue;@{name=$n;path=$c.Source;found=[bool]$c}}",
+    "result": [
+      {
+        "found": false,
+        "name": "qemu-system-x86_64.exe",
+        "path": null
+      },
+      {
+        "found": false,
+        "name": "qemu-img.exe",
+        "path": null
+      },
+      {
+        "found": false,
+        "name": "VBoxManage.exe",
+        "path": null
+      },
+      {
+        "found": false,
+        "name": "vmrun.exe",
+        "path": null
+      },
+      {
+        "found": true,
+        "name": "dotnet.exe",
+        "path": "C:\\Program Files\\dotnet\\dotnet.exe"
+      },
+      {
+        "found": false,
+        "name": "csc.exe",
+        "path": null
+      }
+    ],
+    "status": "OBSERVED"
+  },
+  {
+    "name": "known_vm_paths",
+    "utc": "2026-10-15T16:24:13.8536672Z",
+    "query": "@('C:\\Program Files\\qemu\\qemu-system-x86_64.exe','D:\\qemu\\qemu-system-x86_64.exe','C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe','C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmrun.exe','C:\\Windows\\System32\\WinHvPlatform.dll') | ForEach-Object {if(Test-Path -LiteralPath $_){$f=Get-Item -LiteralPath $_;@{path=$_;exists=$true;file_version=$f.VersionInfo.FileVersion}}else{@{path=$_;exists=$false}}}",
+    "result": [
+      {
+        "exists": false,
+        "path": "C:\\Program Files\\qemu\\qemu-system-x86_64.exe"
+      },
+      {
+        "exists": false,
+        "path": "D:\\qemu\\qemu-system-x86_64.exe"
+      },
+      {
+        "exists": false,
+        "path": "C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe"
+      },
+      {
+        "exists": false,
+        "path": "C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmrun.exe"
+      },
+      {
+        "exists": true,
+        "file_version": "10.0.26100.9278 (WinBuild.160101.0800)",
+        "path": "C:\\Windows\\System32\\WinHvPlatform.dll"
+      }
+    ],
+    "status": "OBSERVED"
+  },
+  {
+    "name": "dotnet_sdks",
+    "utc": "2026-10-15T16:24:13.8671465Z",
+    "query": "& 'C:\\Program Files\\dotnet\\dotnet.exe' --list-sdks; if($LASTEXITCODE -ne 0){throw 'SDK query failed'}",
+    "result": "9.0.300 [C:\\Program Files\\dotnet\\sdk]",
+    "status": "OBSERVED"
+  },
+  {
+    "name": "resource_snapshot",
+    "utc": "2026-10-15T16:24:14.0015518Z",
+    "query": " $o=Get-CimInstance Win32_OperatingSystem;@{available_memory_bytes=[int64]$o.FreePhysicalMemory*1024;total_memory_bytes=[int64]$o.TotalVisibleMemorySize*1024;volumes=@(Get-CimInstance Win32_LogicalDisk -Filter \"DeviceID='C:' OR DeviceID='D:'\" | Select-Object DeviceID,FileSystem,FreeSpace)} ",
+    "result": {
+      "available_memory_bytes": 9939406848,
+      "volumes": [
+        {
+          "DeviceID": "C:",
+          "FileSystem": "NTFS",
+          "FreeSpace": 2259435520
+        },
+        {
+          "DeviceID": "D:",
+          "FileSystem": "NTFS",
+          "FreeSpace": 128521383936
+        }
+      ],
+      "total_memory_bytes": 34158272512
+    },
+    "status": "OBSERVED"
+  }
+]
