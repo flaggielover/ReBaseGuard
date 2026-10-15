@@ -1,0 +1,80 @@
+Implementation contract to resolve the next Windows/WSL host-control gaps
+Development design only; this packet does not authorize deploying host changes,
+production keys/services or formal execution.
+
+First work package: protected observation origin and trustworthy transport
+Problem: synthetic_windows_signer.ps1 signs message bytes supplied by its caller.
+This is correct for its interoperability fixture. Copying that interface into a
+production signer would let the requesting workload invent its own green facts.
+A different identity alone does not fix that input contract.
+
+Required proposed interface
+- Guest request contains only a pinned protocol version, approved run/guest
+  identity binding, session/challenge/sequence and previous checkpoint. No host
+  CPU/policy facts, coverage attestations, executable paths, commands or arbitrary
+  bytes-to-sign are accepted as authoritative caller input.
+- The observer obtains host identity/clocks, process/lifetime/resource facts and
+  policy/update/maintenance observations itself through reviewed APIs. It builds
+  and signs the response from its own fixed schema. Denied reads, lost events,
+  missing intervals or unknown ownership remain explicit refusals.
+- The guest public-key pin must come from a separately controlled configuration,
+  never the first untrusted hello. Configuration, code and the signing key must
+  not be writable/replaceable by the execution principal. Non-exportable CNG key
+  attributes alone do not establish these ACL/identity properties.
+- Identify the actual Windows service/execution principals and WSL owner before
+  choosing endpoint/key ACLs. A Linux UID change within a WSL distribution is
+  not evidence of a separate Windows token. Review what the distribution owner,
+  local administrator and guest root can change; state the supported boundary
+  explicitly rather than claiming protection against the host administrator.
+- Use an authenticated local endpoint with a bounded fixed protocol and client
+  authorization. Reject alternate clients, unexpected identity/boot/runtime,
+  oversized/duplicate/malformed fields and replay. No network listener, remote
+  command interface or certificate/key export is required by this design.
+- The observer owns a protected monotonic session/checkpoint anchor independent
+  of guest-writable journals. Specify write ordering, startup recovery, partial
+  record behavior and rollback detection. Unknown recovery stops the session;
+  a restart does not silently reopen/resume the official attempt. Do not touch
+  the original exactly-once ledgers/grants while prototyping this contract.
+
+Acceptance evidence needed before any accepted observer claim
+- The actual execution principal cannot alter observer code/config/key/anchor;
+  recorded tests must distinguish Windows identity from Linux UID permission.
+- An authenticated client cannot supply a fabricated safe host sample for signing.
+  Real collection errors and fabricated complete-coverage claims are refused.
+- Kernel/lifetime accounting covers the required short-lived/protected activity
+  with explicit loss/error reporting. Read-only capability discovery cannot
+  prove this; controlled trace validation is a later reviewed work item.
+- Define CPU accounting units/interval lower bounds and independently validate
+  host/guest deduplication. Never exempt vmmemWSL, an executable name, a user-
+  editable allowlist or every process in the owning Windows account by default.
+- Prior accepted resource/CPU/suspend thresholds remain intact. Any different
+  WSL semantic route is explicit, pinned, independently reviewed and recorded.
+
+Second work package: owned execution and continuous control
+- Use a reviewed non-root account and a bounded systemd/cgroup execution unit,
+  with the required unit properties/limits and explicit control of delegation.
+  Inspect who can request a transient unit and which properties they can supply;
+  a unit-name prefix does not by itself document the full privilege boundary.
+- Propose a fixed launcher/control interface; no arbitrary command or foreign
+  PID attach API. Validate the actual unit's properties, UID, ControlGroup,
+  resource limits and scratch/isolation paths before any workload authorization.
+- A stop must kill the entire owned cgroup, including descendants that change
+  sessions/process groups, and verify it is empty. Killing the fixed synthetic
+  process group is insufficient evidence for that controller. No such controller
+  is implemented or deployed by the current preparation code.
+- Supervisor/observer exit, transport loss, resource/policy change and stale facts
+  must reach a control path independent of blocked collection/verification writes.
+  Specify what host suspension, WSL shutdown and lost guest scheduling imply;
+  do not infer a real-time or never-resume guarantee from a Python polling loop.
+- Distinguish stop request, OS stop acknowledgement and completed cleanup. A lost
+  acknowledgement never counts as an empty cgroup. Late evidence never revives
+  work. Persisted records and rerun decisions retain exactly-once semantics.
+
+Review/deployment prerequisites for later work
+The next audit supplies facts, not privileges. Afterwards a concrete proposed
+host-change packet can list the exact account/service/endpoint/key/anchor paths,
+ACLs, transient-unit control, build/source pins, startup/stop behavior, expected
+settings changes, verification and removal/rollback. Do not execute placeholder
+install commands or change Windows/Ubuntu policy as part of this design.
+AF-2/WSL route acceptance, host selection, owner/operator window and independent
+review remain distinct from developer tests and from OD-R2-0(D). None is inferred.

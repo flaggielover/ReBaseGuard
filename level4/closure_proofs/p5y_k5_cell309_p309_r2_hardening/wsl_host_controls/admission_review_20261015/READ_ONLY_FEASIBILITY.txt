@@ -1,0 +1,82 @@
+Next Windows-local task: host-control feasibility facts, read-only
+
+Use the exact coordinator-supplied commit on
+codex/p309-wsl-admission-review-20261015. Read REVIEW.txt and
+IMPLEMENTATION_SEQUENCE.txt first. This task does NOT repeat any synthetic suites
+and does not perform host safety sampling or a formal 8a audit/verdict.
+
+Goal
+Discover the current identities/privileges and available observation/control
+interfaces needed to make the proposed next changes exact and reviewable. Keep
+unknowns explicit. An installed command/provider or administrator token does not
+prove collection completeness, safe ACLs or authority to change configuration.
+
+Working and evidence scope
+- Use a separate clean worktree under D:\ReBaseGuard-309\workspace, on a new
+  codex/p309-wsl-feasibility-20261015 branch from the exact supplied SHA. Preserve
+  existing worktrees/refs and all evidence. Verify STATUS.json and
+  EVIDENCE_BINDINGS.json against canonical Git blobs before using this packet.
+- Save raw command logs locally in a new D:\ReBaseGuard-309\records directory.
+  Do not print secrets, credential locations/values, private key material, raw
+  machine identifiers, raw Windows account names/SIDs or unrelated user paths.
+  Commit only a redacted result JSON plus canonical source/evidence hashes.
+- Existing Windows PowerShell 5.1/7 and Ubuntu/private Python may run bounded
+  read-only queries. If a query requires elevation or access is denied, record
+  UNKNOWN/DENIED and continue other independent items. Do not elevate or change
+  permissions to make a query succeed. Preserve exact command/exit evidence.
+
+Read-only questions to answer
+1. Current Windows token: record hashed SID, whether the current effective token
+   is an administrator, and the token's current enabled/disabled privileges where
+   a read-only query permits. Identify the ownership relation of the current
+   WSL registration to that Windows user without exporting raw registry values.
+   Do not create or impersonate another identity. Do not enter WSL as root to
+   demonstrate a potential boundary; report that capability as untested.
+2. Current Ubuntu execution context: UID/EUID/groups, whether a dedicated P309
+   account already exists, and whether the runtime/workspace/scratch locations
+   are owned/writable by that account. Inspect metadata only on the named P309
+   paths. Do not inspect or read any cell-308 checkout or other users' data.
+   Do not create a scratch directory, change ownership or test privileged writes.
+3. systemd/cgroups: version and PID 1, availability of systemd-run/systemctl,
+   current process cgroup path/effective quota and visible controller/delegation
+   metadata. Query existing p309-r2-* units/properties only if any exist; do not
+   start, stop, reset, attach to or create a unit. If no actual execution unit
+   exists, its effective limits/containment remain NOT_ESTABLISHED.
+4. Privilege policy: inventory readable polkit/sudo configuration FILE METADATA
+   and hashes pertinent to P309 only, without invoking sudo or evaluating a
+   permission by privileged action. Where no exact P309 configuration can be
+   identified, say UNKNOWN/NOT_FOUND rather than assuming a generic rule is safe.
+   Do not dump unrelated rules, credentials or entire security-policy trees.
+5. Windows collector capabilities: read-only discovery of relevant installed
+   ETW/provider/API names/versions and current query-access failures, if bounded
+   enumeration is available. Do not start a trace, enable auditing, register a
+   provider, load a driver, open protected process handles to probe privilege,
+   activate logging or collect a process CPU sample. Installed-provider presence
+   must be labelled DISCOVERED_ONLY, never COMPLETE_COVERAGE.
+6. Local endpoint/identity options: inventory relevant existing Windows/WSL
+   integration settings and whether proposed service/endpoint names are already
+   in use by querying metadata only. Do not connect to unrelated named pipes,
+   create endpoints, generate keys/certificates or request a production signature.
+   If read-only evidence cannot establish client/host isolation, leave it open.
+7. Clock capability: query existing Ubuntu timedatectl synchronization/state
+   read-only if available. Do not enable NTP or change clocks/services. Treat this
+   as an observation with time/source, not a reservation or continuity guarantee.
+8. Backup: check only whether F: is present. If absent, retain the latest
+   UNAVAILABLE status and historical-only digest. Do not request a new backup,
+   mount or write it, or rehash the VHDX simply for this feasibility task.
+
+Deliverable and continuation
+Create FEASIBILITY_LOCAL_REPORT.json and FEASIBILITY_LOCAL_SOURCE_SHA256.json
+additively in this review directory. Record each question with the actual query,
+UTC, scope, result/error, limitation and evidence-file hash. Keep raw logs outside
+Git and redact account/path identity in the committed report. Include a concrete
+list of proposed changes still needing design/review, without applying them.
+Verify old evidence hashes/protected refs remain unchanged; do not rewrite earlier
+records. Commit only those two new JSON files, push the separate feasibility
+branch normally and verify its remote HEAD. Report exact observations and any
+unavailable items. No pass/fail percentage or formal host verdict is requested.
+
+No software, service, account, production key, endpoint, trace, power/update
+policy, ACL, sudo/polkit rule, cgroup/unit or execution state is changed. No drill,
+freeze, grant, qualification or target evaluation is started. Keep all formal
+admission/execution/qualification flags BLOCKED/false.

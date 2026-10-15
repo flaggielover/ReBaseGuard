@@ -1,0 +1,104 @@
+P309 Windows/WSL development evidence and remaining admission work
+2026-10-15; evidence base b2b18a262739714a3aceb1f69eef3294962a3e34
+
+Disposition: DEVELOPMENT_EVIDENCE_CONSOLIDATED; formal admission BLOCKED.
+Route acceptance, qualification and target execution remain false. Cell 309 OPEN.
+This is a coordinator status/implementation packet, not an independent admission
+review, host verdict 8b, pre-freeze review, host-change approval or run authority.
+It changes no runtime, tests, thresholds, official launcher, guards or ledgers.
+The development checkout is NOT the accepted r2 runtime tree: compared with
+501f48cb it has pre-existing runner/drill/config differences and lacks several
+accepted governance records. EVIDENCE_BINDINGS.json lists the full scoped diff.
+Matching the 20 protected baseline files does not imply whole-tree equivalence.
+Do not launch an official drill or run from this development checkout.
+
+What the current evidence establishes
+- Private CPython 3.11.15 and its exact interpreter digest were recorded on the
+  Windows/Ubuntu host. System Python remained unchanged in those local records.
+- The published monitor validation has 53 passing native tests; fixed-tree stop
+  validation has 24; automatic transport-stop validation has 19. Their 96 unique
+  Python unittest IDs belong to THREE separate historical runs, not a single
+  96-test invocation or long-duration experiment. All recorded source bindings
+  still match the evidence-base Git tree. Older host-control/PowerShell results
+  remain separate historical results. No tests were repeated for this packet.
+- Those tests establish scoped signing interoperability, development replay and
+  monitor behavior, real termination/reaping of a fixed idle Linux tree, live
+  bystander preservation, and automatic transport fault/timeout propagation.
+  They do not establish truth of real host observations or arbitrary workload
+  containment. Blocking cases explicitly distinguish injected delays from actual
+  Windows helper exits. Late signed output never restores a stopped link.
+- Latest local evidence: 18 stop-tree records, 18 link records, eight cases with
+  a signer still pending after tree reaping, nine separate Windows helpers, and
+  cleanup observations for 117 test-related identities. These counts describe
+  that test audit only. They are not a complete host process inventory.
+- 165 prior D: evidence files were reported unchanged by the latest native run.
+  F: was ABSENT during that run: backup and manifest were not newly verified.
+  Historical VHDX digest C800DB074A15C50940F5D552B185D98555911294A886557D2484F48A5AD03C54
+  is reference data only. No current backup availability/recoverability is claimed.
+
+The eight original readiness requirements, preserved in their original order
+1. WSL route amendment and independent review
+   OPEN. The native r2 reference remains 501f48cb31fd3f80d5c6dd33f1eef6b8f01b2853.
+   No formal route amendment or acceptance is present. Native container detection
+   is unchanged. An independent reviewer must assess a precisely pinned proposed
+   route before an official integration is considered.
+2. AWS IMDS-dependent admission has no accepted WSL replacement
+   OPEN. Proposed host/boot/guest identity, non-preemption, dedicated capacity and
+   maintenance mappings remain proposals. Absence of IMDS does not satisfy them.
+   Windows CPU type and WSL quota alone do not prove dedicated compute capacity.
+3. Windows host workload visibility and compute exclusivity
+   PARTIAL DEVELOPMENT ONLY. CPU snapshots, PID-reuse checks and fail-closed
+   diagnostics exist; real sampler coverage is BEST_EFFORT, never complete.
+   Short-lived/protected activity and host/guest ownership/deduplication remain
+   unresolved. The signer signs caller bytes and does not attest their truth.
+4. Windows sleep, restart, update and WSL shutdown continuity
+   PARTIAL DEVELOPMENT ONLY. Policy/event collection, identity/deadline checks,
+   cumulative suspend tests and synthetic stopping exist. There is no accepted
+   protected live collector, maintenance/operator window or real workload stop
+   controller. Old power/reboot observations are historical, not current audit
+   results. No six-hour/31.5-hour continuity guarantee follows from short tests.
+5. Effective cgroup CPU quota and runtime resource accounting
+   PARTIAL DEVELOPMENT ONLY. A prior process saw affinity/effective quota 32 and
+   host/guest resource minima were observed. The future execution unit has not
+   been created/audited. Runtime-enforced unit quota, limits, accounting and
+   host/VM attribution remain unestablished. Virtual disk capacity never replaces
+   free space on its actual D: backing drive. No resources have been reserved.
+6. Private interpreter path, binary hash and glibc binding
+   DEVELOPMENT PREPARATION RECORDED. Exact CPython 3.11.15 path/hash, glibc and
+   native test results exist. This does not create a formal freeze or a later
+   runtime binding. Recheck the chosen runtime when that stage is authorized;
+   keep the existing source and system-Python records intact.
+7. P309 account, isolation, launch privileges and unit controls
+   OPEN. No separately constrained Windows observer identity/trust configuration
+   is implemented. No actual P309 account/polkit/unit isolation is evidenced.
+   The fixed process group is deliberately non-escaping test code, not a real
+   cgroup execution adapter. Caller-writable journals are not an independently
+   protected persistent anti-rollback anchor.
+8. Full current audit, worker-tier drill and pre-freeze review
+   NOT STARTED FOR THIS WSL ROUTE. Development records are not audit 8a, verdict
+   8b, worker-tier drill 8d or an independent pre-freeze review. OD-R2-0(D) stays
+   OPEN. The conditions O-1..O-10 in OWNER_RETURN_CONDITION.md have not been shown;
+   this packet does not request that decision or issue any freeze/grant/run.
+
+Implementation order
+1. Read-only feasibility audit in READ_ONLY_FEASIBILITY.txt. Determine actual
+   Windows/WSL identities, current privilege boundaries and unit/collector
+   capabilities without installing, activating traces, changing policy or
+   running a host safety sample. Unknown capability remains unknown.
+2. Turn those facts into an exact isolated observer/bridge and execution-unit
+   design as described in IMPLEMENTATION_SEQUENCE.txt. Produce a reviewable
+   change list with named paths, identities, permissions and rollback steps
+   before host changes are proposed. No deployment is part of this packet.
+3. Independently review collector completeness, attribution, protected trust and
+   route semantics. Faults/unknowns must remain blocking. Prepare an isolated
+   implementation against those reviewed contracts; retain original r2 bytes.
+4. Collect the complete current audit and follow the required host-change,
+   host-acceptance, drill and pre-freeze sequence when separately authorized.
+   Synthetic tests alone never advance the formal gate.
+
+Evidence navigation
+STATUS.json records counts/status with precise validation commits and digests.
+EVIDENCE_BINDINGS.json binds source/evidence blobs and governance references.
+All historical records are preserved; these five files add a new status view.
+The original unresolved list is taken from wsl_readiness/inspect_wsl.py. Detailed
+native requirements and return conditions remain in host_side_packet_501f48cb/.
