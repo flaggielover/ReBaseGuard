@@ -1,0 +1,132 @@
+P309 broker authority and per-generation lifecycle contract (DR-02)
+Design revision only; D2 is target-free library work, not an OS launcher.
+The following supersedes original broker operation/start-authority ambiguity.
+
+Authority decision
+D2 PUBLIC API HAS NO START. M may request status or stop only. R and U have no
+control.sock access. No socket request can arm/rearm/reset or choose a unit,
+command, PID, user, resource property or environment. No green observation,
+reconnect, successful cleanup or valid signature creates start authority.
+D2 libraries may model transitions using internal synthetic events, but cannot
+start/stop a real unit, issue administrative permits or create host state.
+
+A later D3 installation/acceptance contract MAY introduce a separate trusted
+administrative action for ONE fixed idle-test start. That action is NOT H1-H4,
+not M's privilege, and is not implemented or authorized by this revision.
+It would require a newly reviewed one-use permit, pinned fixed idle code/unit/
+runtime/resource policy and a new generation. No actual P309 start operation is
+defined. Native launcher adaptation and all formal authority remain I5/I7.
+
+Generation and owned-instance binding
+G is an opaque broker-created non-reused generation identifier, bound internally
+to broker boot/epoch, authorized monitor instance, fixed code/runtime/policy and
+the one prospective unit invocation. The caller supplies G only for comparison;
+it cannot create or select the owned PID/unit/cgroup. Binding a queued request
+to an actual instance happens again at dispatch, not only at receipt.
+Root-controlled instance records capture locally obtained manager invocation
+identity and cgroup identity/handle. No completed-stop claim may rely on a unit
+name or PID alone. Unit replacement, missing identity, reused names or mismatched
+manager/cgroup facts means RECOVERY_UNKNOWN, never a signal to an unrelated
+unit. Precise kernel/manager evidence is still unimplemented under I5/I6.
+
+States
+UNARMED: no active G, no launch permission. Fresh install can enter this state
+  only through trusted initialization proving no owned/in-flight instance.
+ARMED: prospective G allocated by a later explicit administrative permit; no unit
+  started. Permit can be consumed once or revoked by stop, never by M's request.
+STARTING: permit consumed and start intent/fence recorded; unit start is pending.
+RUNNING: exact owned invocation established and no stop has latched.
+STOP_REQUESTED: irreversible stop latch for G; no start/continuation success.
+CLEANUP_PENDING: stop/exit is being verified; no stopped/empty/reaped claim yet.
+STOPPED: terminal G with confirmed owned-unit exit, empty cgroup and completed
+  cleanup, no unresolved start/stop operation/descriptor/acknowledgement.
+RECOVERY_UNKNOWN: terminal uncertainty for G/epoch; start/rearm/continuation
+  forbidden, including after reconnect or restart.
+ARMED/STARTING/RUNNING transitions below specify future semantics only; they do
+not enable those states through a D2 public operation.
+
+Transition rules
+1. UNARMED -> ARMED only by the later separately reviewed administrative action.
+   Without that action, no input drives this transition. status(null) is read-
+   only; stop(null) is GENERATION_REQUIRED and never a future-start reservation.
+2. ARMED -> STARTING only by the later internal fixed-start action. Consume its
+   one-use permit before issuing any OS start. Duplicate/concurrent starts are
+   refused, never retried or translated into another invocation/generation.
+3. ARMED/STARTING/RUNNING -> STOP_REQUESTED on a validated same-G stop, bound
+   monitor loss, stale/unknown facts, owned exit or internal safety failure.
+   Publish the irreversible in-memory stop latch before waiting for persistence/
+   manager/cleanup. Failure to persist or establish state fences prevents start
+   and leads to RECOVERY_UNKNOWN; it cannot justify delaying the independent
+   safety stop path or acknowledging a completed stop.
+4. If stop arrives before OS-start dispatch, suppress dispatch and revoke the
+   consumed/prospective permit. If start is already in flight, retain ownership
+   tracking, latch stop and immediately stop the resulting owned invocation when
+   its identity is known. Late start completion NEVER enters RUNNING or returns
+   start success. In-flight start uncertainty is RECOVERY_UNKNOWN, not STOPPED.
+5. STOP_REQUESTED -> CLEANUP_PENDING as the fixed stop/exit path is tracked.
+   Repeated same-G stop is idempotent, including during start/cleanup. Receipt
+   confirms only stop-requested; it never says the unit has already ended.
+6. CLEANUP_PENDING -> STOPPED only with current exact invocation/cgroup evidence,
+   populated=0, unit exit/reaping proof, no in-flight manager operation capable
+   of launching/signalling later work, and completed cleanup. A generation with
+   no launched unit still needs proof that no start remains in flight. Lost
+   acknowledgement keeps cleanup pending; identity/persistence/recovery failure
+   yields RECOVERY_UNKNOWN. Zero visible PIDs or a socket EOF is insufficient.
+7. STOPPED is terminal. While G remains current, repeated same-G status/stop
+   reports that G's stored terminal evidence; it never resets it. No connected
+   peer can turn STOPPED into ARMED. RECOVERY_UNKNOWN is also terminal, and must
+   not report STOPPED.
+8. On broker boot/restart, any old generation, uncertain state record, absent
+   required anchor or unidentified existing unit gives RECOVERY_UNKNOWN with
+   stop intent retained. Do not auto-start, auto-resume or initialize UNARMED
+   merely because the socket can bind. Reconnect does not renew authority or
+   clear stop. Administrative reconciliation is a separate future procedure.
+   Immutable old-G terminal records are not rewritten on restart. A NEW broker-
+   epoch RECOVERY_UNKNOWN guard can coexist with an old historical STOPPED
+   record; that old record is not proof of current OS quiescence and cannot
+   clear the new guard. The transition to uncertainty applies to nonterminal
+   generation state/new-epoch guard, not to rewriting a terminal record.
+
+Requests, concurrency and stale queues
+H4 schema: fixed protocol, request_id, operation in {status,stop}, generation.
+No other fields. status may use null to discover current state/G; this is read-
+only, never a health/permission renewal. stop requires an exact non-null G.
+Peer validation from CHANNELS.txt occurs before any operation is dispatched.
+Same request ID with different content is refused. Identical repeat stop for G
+has at-most-one side effect and reports that G's current stop/cleanup status;
+it does not manufacture a cached completed acknowledgement. Retention/budgets
+must be bounded and specified in D2; state/dedup exhaustion stops/refuses rather
+than silently discarding the stop fence to permit reuse.
+
+Every queued operation is checked under the broker's lifecycle serialization
+against its generation and instance before acting. A well-formed old-G stop
+returns STALE_GENERATION/no-current-state-change after a new G is prepared.
+Generation comparison precedes deduplication/cached-response handling; an old
+completed-stop response cannot bypass the stale check or refer to the new G.
+It must not stop the new invocation, revive the old one, renew liveness, or be
+relabelled to current G. A status query for old G can return its retained history
+or STALE_GENERATION; neither affects current G. Independent real channel-loss
+or deadline failures remain generation-bound safety events, not consequences
+inferred merely from receipt of a stale message.
+An accepted stop latch is independent of a blocked start/verification/storage
+operation; I6 still requires an implementable independently supervised control
+path. Serialization alone is not proof of prompt stop or correct kernel action.
+
+Fresh DEVELOPMENT generation after STOPPED (future rule, not D2 API)
+No automatic rearm. A later explicitly reviewed administrative procedure must:
+confirm old-G terminal cleanup and zero in-flight operations/handles, retain its
+immutable final record, retire old-G connections/queues, issue a fresh one-use
+fixed-idle permit, allocate a non-reused G and bind the new monitor/epoch/policy.
+Old messages remain labelled old G and are refused at dispatch. No rearm from
+RECOVERY_UNKNOWN until separate administrative reconciliation is specified and
+reviewed. No record deletion/reset or reconnect stands in for that procedure.
+This is never formal P309 retry authority and never creates a grant/freeze.
+
+Recovery/rollback ordering correction (carries forward I6)
+First revoke any future-start capability and latch stop for G. KEEP B and its
+owned-instance tracking alive while stopping/reaping/verifying work; only after
+confirmed cleanup may M/relay, B and then S be shut down in the reviewed order.
+If B is unavailable or cannot prove ownership/cleanup, retain RECOVERY_UNKNOWN
+and quarantine; a separately reviewed administrative recovery path must resolve
+the exact instance. Do not tear down the only control path first, guess a PID,
+signal a replacement unit, unregister a distribution or delete evidence.

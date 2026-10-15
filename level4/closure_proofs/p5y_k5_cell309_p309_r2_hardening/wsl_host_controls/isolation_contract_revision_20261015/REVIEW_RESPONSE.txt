@@ -1,0 +1,52 @@
+Response to pinned design review ff5a981714b132a552e921086ec5fec6c72a876c
+Original reviewed design c2d477e984e10ce9bafca82b793f8de9974e656c is preserved.
+This is a proposed contract correction, NOT an independent closure decision.
+Both findings: CORRECTION_PROPOSED_AWAITING_REREVIEW. Formal admission BLOCKED.
+
+DR-01 (MEDIUM): endpoint roles and authentication
+CHANNELS.txt now maps H1-H5 with explicit application server/client principals,
+fixed launch tuple, message directions, protected parent/socket ownership and
+descriptor handling. New p309-relay is distinct from p309-monitor/p309-runner.
+monitor-ingress.sock is R -> M only. control.sock is M -> ROOT BROKER only.
+Root/systemd creates both socket endpoints; dedicated services receive only
+their own listeners. Accepted-peer credentials are locally derived, not claims
+in a message. The text explicitly avoids assuming socket-activation client-side
+SO_PEERCRED equals the final monitor handler's UID. Wrong peers/tuples/endpoints
+cannot fall back to the broker. No relay start/root-command interface is added.
+Evidence of actual ACL/peer/descriptor enforcement remains I1/I3/I5, not supplied.
+
+DR-02 (MEDIUM): fixed-test start authority and execution generations
+LIFECYCLE.txt removes start entirely from D2 public operations, and CHANNELS.txt
+makes the matrix agree: M has status/stop only; R/U no control access. A possible
+later fixed-idle start belongs only to a separately reviewed administrative action
+outside all client channels. The revision defines broker-owned G, UNARMED,
+ARMED, STARTING, RUNNING, STOP_REQUESTED, CLEANUP_PENDING, STOPPED and
+RECOVERY_UNKNOWN, including duplicate/concurrent start/stop, stop during start,
+stale queued requests, late completion, lost acknowledgement and restart.
+STOPPED/RECOVERY_UNKNOWN remain terminal. Fresh development G requires a new
+administrative permit/procedure and complete old-G cleanup, never reconnect.
+No formal launch or retry authority is inferred. No D2 library is implemented
+by this revision, and no actual lifecycle/control behavior is claimed tested.
+
+Additional review observation: rollback order
+LIFECYCLE.txt explicitly keeps the broker/tracking path alive until owned-work
+stop/reaping is confirmed. Unavailable/unknown control means quarantine and an
+independently specified administrative recovery path, not teardown/guessing.
+This clarifies the original recovery intent without resolving I6.
+
+Original blockers I1-I7
+All copied intact into REVISION.json with deployment_blocking=true and
+status=OPEN_RETAINED. No finding severity or original review disposition is
+rewritten. Endpoint/UID checks, Windows/root isolation, observation completeness,
+unit resources, persistence and formal route/launcher acceptance remain unproven.
+F: status is historical UNAVAILABLE; this revision does not query the host/drive.
+The original facts/evidence, native runtime/guards/thresholds and review files
+are unchanged. Changes add only this contract revision directory.
+
+Verification in this coordinator turn
+Canonical review digest and 79 current/247 historical source bindings checked.
+Revision JSON/document consistency and SHA-256 checked; no unit tests, workload
+processes, host sampling, trace, administrator/root action, installation or
+P309 execution.
+Document/state consistency is not evidence of runtime enforcement. Independent
+re-review is requested by REREVIEW.txt before the affected D2 contracts proceed.

@@ -1,0 +1,308 @@
+{
+  "backup_status": "UNAVAILABLE_IN_PINNED_HISTORICAL_EVIDENCE; NO_NEW_QUERY",
+  "base_review_commit": "ff5a981714b132a552e921086ec5fec6c72a876c",
+  "broker_client_authority": {
+    "p309-monitor": [
+      "status",
+      "stop"
+    ],
+    "p309-relay": [],
+    "p309-runner": []
+  },
+  "broker_d2_operations": [
+    "status",
+    "stop"
+  ],
+  "broker_d2_start_allowed": false,
+  "broker_restart_policy": "Create a new-epoch RECOVERY_UNKNOWN guard; preserve old terminal records and never use their history as current OS cleanup proof or rearm authority.",
+  "channels": [
+    {
+      "authority": "observer-owned facts/signature only",
+      "client": "enrolled Windows operator relay W",
+      "endpoint": "\\\\.\\pipe\\ReBaseGuard-P309-Observer-v1",
+      "id": "H1",
+      "server": "Windows observer S"
+    },
+    {
+      "authority": "byte forwarding only",
+      "client": "guest relay R",
+      "endpoint": "inherited stdio; fixed WSL distribution/user/executable tuple",
+      "id": "H2",
+      "server": "No socket server; W owns child pipes"
+    },
+    {
+      "application_unit": "rebaseguard-p309-monitor.service",
+      "client": "p309-relay R",
+      "endpoint": "/run/rebaseguard-p309/monitor-ingress.sock",
+      "id": "H3",
+      "operations": [
+        "observer_request",
+        "signed_observer_reply",
+        "transport_failure"
+      ],
+      "server": "guest monitor M via root/systemd-activated listener",
+      "socket_group": "p309-relay",
+      "socket_mode": "0660",
+      "socket_owner": "root",
+      "socket_unit": "rebaseguard-p309-ingress.socket"
+    },
+    {
+      "application_unit": "rebaseguard-p309-control.service",
+      "client": "p309-monitor M",
+      "endpoint": "/run/rebaseguard-p309/control.sock",
+      "id": "H4",
+      "operations": [
+        "status",
+        "stop"
+      ],
+      "server": "root broker B via root/systemd-activated listener",
+      "socket_group": "p309-monitor",
+      "socket_mode": "0660",
+      "socket_owner": "root",
+      "socket_unit": "rebaseguard-p309-control.socket"
+    },
+    {
+      "authority": "no OS launch in D2; no caller unit/PID/command/property inputs",
+      "client": "root broker B",
+      "endpoint": "fixed internal owned-instance interface",
+      "id": "H5",
+      "server": "system manager"
+    }
+  ],
+  "deployment_authorized": false,
+  "disposition": "CORRECTIONS_PROPOSED_AWAITING_INDEPENDENT_REREVIEW",
+  "execution_authorized": false,
+  "findings": [
+    {
+      "corrective_contract": "CHANNELS.txt",
+      "id": "DR-01",
+      "independently_closed": false,
+      "original_severity": "MEDIUM",
+      "status": "CORRECTION_PROPOSED_AWAITING_REREVIEW"
+    },
+    {
+      "corrective_contract": "LIFECYCLE.txt",
+      "id": "DR-02",
+      "independently_closed": false,
+      "original_severity": "MEDIUM",
+      "status": "CORRECTION_PROPOSED_AWAITING_REREVIEW"
+    }
+  ],
+  "formal_admission": "BLOCKED",
+  "freeze_or_grants_issued": false,
+  "fresh_generation_policy": "No D2 arm/rearm/reset; future separately reviewed administrative allocation after immutable old terminal cleanup and retiring old queues/connections",
+  "future_acceptance_cases": [
+    "Wrong R/M/U peer, substituted tuple/endpoint and inherited control descriptor rejected",
+    "Socket activation credential/activation ownership measured, not assumed",
+    "D2 start/arm/rearm/reset input refused for every client",
+    "Duplicate/concurrent future start cannot create a second invocation",
+    "Stop during start suppresses dispatch or stops the tracked late invocation; never RUNNING after stop",
+    "Old-G queued stop/dedup reply cannot affect fresh G",
+    "Lost cleanup ACK does not become completed stop",
+    "Broker/monitor restart or unknown persistence cannot resume/rearm",
+    "Successful text rereview does not resolve I1-I7 or authorize host action"
+  ],
+  "guest_relay_launch_tuple": {
+    "caller_arguments_allowed": false,
+    "distribution": "ReBaseGuard-P309",
+    "executable": "/usr/local/libexec/rebaseguard-p309/relay-ingress",
+    "shell": false,
+    "user": "p309-relay"
+  },
+  "host_accepted": false,
+  "host_configuration_changes": 0,
+  "installation_consent": false,
+  "irreversible_stop_states": [
+    "STOP_REQUESTED",
+    "CLEANUP_PENDING",
+    "STOPPED",
+    "RECOVERY_UNKNOWN"
+  ],
+  "later_start_authority": "Separate later reviewed administrative action only; not implemented, not client API, not authorized by this revision",
+  "new_host_evidence_queries": 0,
+  "old_generation_policy": "Well-formed old-G stop is STALE_GENERATION after replacement; compare G at dispatch before cached reply; no effect on current G or liveness",
+  "original_design_commit": "c2d477e984e10ce9bafca82b793f8de9974e656c",
+  "original_review_disposition_preserved": "CHANGES_REQUIRED",
+  "pre_freeze_review": false,
+  "preservation_scope": "Original design/review and all existing source files unchanged. Local 221-file/8-ref preservation remains attributed to original review; coordinator did not read those raw files.",
+  "qualification_authorized": false,
+  "recorded_utc": "2026-10-15T13:22:15.432857+00:00",
+  "roles": {
+    "B": "root privileged broker",
+    "M": "p309-monitor",
+    "R": "p309-relay",
+    "S": "Windows observer service",
+    "U": "p309-runner",
+    "W": "enrolled Windows operator relay"
+  },
+  "rollback_order": "Revoke future-start/latch stop; keep B/tracking until confirmed cleanup; then stop M/relay, B and S. Unknown control means quarantine, not guessed signals/destructive removal.",
+  "route_accepted": false,
+  "schema": "P309_ISOLATION_CONTRACT_REVISION/2",
+  "scope": "ADDITIVE_DESIGN_CORRECTION_ONLY",
+  "socket_parent": {
+    "group": "root",
+    "mode": "0755",
+    "nonroot_writable": false,
+    "owner": "root",
+    "path": "/run/rebaseguard-p309"
+  },
+  "source_verification": {
+    "canonical_review_digest_checked": true,
+    "current_blobs_checked": 79,
+    "historical_bindings_checked": 247
+  },
+  "state_edges": [
+    [
+      "UNARMED",
+      "ARMED",
+      "later administrative permit only"
+    ],
+    [
+      "ARMED",
+      "STARTING",
+      "later internal one-use fixed-idle action only"
+    ],
+    [
+      "ARMED",
+      "STOP_REQUESTED",
+      "same-G stop or bound safety failure"
+    ],
+    [
+      "STARTING",
+      "STOP_REQUESTED",
+      "same-G stop; suppress or track/stop in-flight start"
+    ],
+    [
+      "STARTING",
+      "RUNNING",
+      "exact instance established and no stop latch"
+    ],
+    [
+      "RUNNING",
+      "STOP_REQUESTED",
+      "same-G stop, owned exit or bound safety failure"
+    ],
+    [
+      "STOP_REQUESTED",
+      "CLEANUP_PENDING",
+      "tracked fixed stop/exit"
+    ],
+    [
+      "CLEANUP_PENDING",
+      "STOPPED",
+      "all identity/empty/reaping/no-inflight/cleanup proofs complete"
+    ],
+    [
+      "NONTERMINAL_GENERATION_OR_NEW_EPOCH",
+      "RECOVERY_UNKNOWN",
+      "recovery/identity/persistence failure or restart uncertainty; old terminal records remain immutable"
+    ]
+  ],
+  "states": [
+    "UNARMED",
+    "ARMED",
+    "STARTING",
+    "RUNNING",
+    "STOP_REQUESTED",
+    "CLEANUP_PENDING",
+    "STOPPED",
+    "RECOVERY_UNKNOWN"
+  ],
+  "target_execution_authorized": false,
+  "terminal_states": [
+    "STOPPED",
+    "RECOVERY_UNKNOWN"
+  ],
+  "tests_run": 0,
+  "unresolved_original_blockers": [
+    {
+      "deployment_blocking": true,
+      "id": "I1",
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ],
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Runner Windows/root boundary"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I2",
+      "original_fact_questions": [
+        1,
+        5
+      ],
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Collector rights, completeness and attribution"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I3",
+      "original_fact_questions": [
+        1,
+        6
+      ],
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Enrollment and ACL/API descriptors"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I4",
+      "original_fact_questions": [
+        2
+      ],
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Fresh image/runtime provenance"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I5",
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ],
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Guest policy/unit limits and controlled launcher"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I6",
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ],
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Protected persistence and stop/recovery"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I7",
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Route, host and formal authority"
+    }
+  ],
+  "workload_processes_started": 0
+}

@@ -1,0 +1,37 @@
+Re-review of DR-01/DR-02 contract corrections only
+
+Fetch codex/p309-wsl-isolation-contract-revision-20261015; verify exact full SHA
+supplied by coordinator. Use a separate clean worktree/review branch. Read this
+directory's CHANNELS.txt, LIFECYCLE.txt, REVIEW_RESPONSE.txt, REVISION.json and
+SOURCE_BINDINGS.json. Verify canonical bindings before assessing the revision.
+Base review ff5a981714b132a552e921086ec5fec6c72a876c and original design remain
+historical inputs. This revision supersedes their specified channel/lifecycle
+contract portions only; all remaining original limits/I1-I7 remain in force.
+
+Assess DR-01
+- H1-H5 roles and authority are unambiguous; R -> monitor-ingress.sock -> M is
+  separate from M -> control.sock -> root B. Root/systemd socket activation,
+  ownership, exact tuple, message directions and peer/descriptor rules agree.
+- Pay attention to socket-activation peer credential semantics and the added
+  p309-relay role; do not infer that present host ACLs or authentication work.
+Assess DR-02
+- D2 has no public start/arm/rearm/reset. The operation/access matrix agrees.
+- Broker-generated G binds internal instance/lifecycle; duplicate/concurrent,
+  stop-during-start, old-G queued requests, late completion, lost cleanup ACK,
+  reconnect/reboot and later explicit development rearm rules are coherent.
+- STOPPED/RECOVERY_UNKNOWN cannot reopen by client input. Recovery/rollback
+  retains control until cleanup or reports uncertainty. No official retry/run.
+Retain I1-I7. Text corrections cannot establish privileges, coverage, isolation,
+durability or OS termination. Classify findings as contract-level only.
+
+Add only CONTRACT_REREVIEW_LOCAL.json and CONTRACT_REREVIEW_LOCAL_SOURCE_SHA256.json
+in this directory. Reference exact source hashes and DR IDs, state whether each
+correction satisfies its contract-level request, list any new concrete ambiguity,
+and keep remaining deployment blockers separate. A possible disposition is
+ACCEPTABLE_FOR_D2_CONTRACT_IMPLEMENTATION_ONLY; that is not route/host/deployment/
+pre-freeze acceptance. Preserve original CHANGES_REQUIRED review and all history.
+Record source/read-only-review evidence additively; push a separate
+codex/p309-wsl-isolation-contract-rereview-20261015 branch normally and verify its
+HEAD. Do not edit the revision to hide findings, rerun tests, query host state,
+elevate, create identities/endpoints/keys/services/units or start any workload.
+All formal admission/deployment/execution/qualification flags stay BLOCKED/false.

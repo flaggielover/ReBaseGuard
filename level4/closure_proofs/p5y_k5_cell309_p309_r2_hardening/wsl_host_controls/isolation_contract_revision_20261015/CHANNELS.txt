@@ -1,0 +1,112 @@
+P309 isolation contract revision: explicit channel roles (DR-01)
+Review base ff5a981714b132a552e921086ec5fec6c72a876c; design only.
+This revises the channel/identity parts of original DESIGN sections2/3/5 and
+the Linux access matrix. Original files/review remain immutable historical input.
+All other original limits and I1-I7 remain open. No implementation/deployment.
+
+Roles
+S = Windows observer, NT SERVICE\ReBaseGuardP309Observer (proposed virtual account)
+W = Windows operator relay, the explicitly enrolled Windows operator SID
+R = NEW guest relay-only role p309-relay, locked non-root account/group
+M = guest monitor p309-monitor, locked non-root account/group
+B = privileged guest control broker, root
+U = guest idle/worker role p309-runner, locked non-root account/group
+No supplementary membership between R/M/U. Root/Windows owner/admin remain trusted.
+The service S is not assumed to own or enter W's per-user WSL distribution.
+
+Each hop, server/client and authority
+H1: W -> S, \\.\pipe\ReBaseGuard-P309-Observer-v1.
+    S owns the authenticated local server. W is the enrolled Windows client.
+    Fixed observer challenge/session request only; S collects/signs host facts.
+    Windows identity/access masks/pin enrollment stay unresolved under I3.
+H2: W -> R, child inherited stdin/stdout, not a root or monitor endpoint.
+    W starts only the fixed tuple:
+      wsl.exe --distribution ReBaseGuard-P309 --user p309-relay --exec
+      /usr/local/libexec/rebaseguard-p309/relay-ingress
+    Resolve the Windows wsl.exe path from trusted configuration, never PATH or
+    a request. R is a bounded byte-forwarder; no shell, caller arguments, unit/
+    PID/command fields or Windows interop capability is granted inside R/U.
+    W owns the child pipe handles; R consumes fd0/fd1 only. Error output is
+    bounded diagnostics. Changing distribution/user/executable requires a new
+    protected enrollment/config review, never a field in a relay message.
+H3: R -> M, /run/rebaseguard-p309/monitor-ingress.sock.
+    M is the APPLICATION SERVER; R is the only permitted client UID.
+    Root/systemd creates/listens on this socket through proposed
+    rebaseguard-p309-ingress.socket, Accept=no, SocketUser=root,
+    SocketGroup=p309-relay, SocketMode=0660. Only the listening descriptor is
+    passed to rebaseguard-p309-monitor.service running as M. M does not create
+    or replace the filesystem endpoint. R has connect access, no directory
+    write, no listening-descriptor inheritance and no control.sock access.
+H4: M -> B, /run/rebaseguard-p309/control.sock.
+    B is the APPLICATION SERVER; M is the only permitted client UID.
+    This name means ROOT BROKER CONTROL ONLY, never relay/monitor ingress.
+    Root/systemd creates/listens through proposed
+    rebaseguard-p309-control.socket, Accept=no, SocketUser=root,
+    SocketGroup=p309-monitor, SocketMode=0660. Listening descriptor goes only
+    to rebaseguard-p309-control.service running as B. Protocol is status/stop
+    only in D2; lifecycle/generation rules are in LIFECYCLE.txt.
+H5: B -> systemd/cgroup manager, fixed internal control of its OWNED instance.
+    R/M/U receive no generic system-manager privilege. B accepts no caller
+    unit/UID/PID/environment/property map or command. D2 does not launch a unit.
+    A later reviewed administrative start is separate from H1-H4 and never
+    inferred from a valid observation or socket connection.
+
+Filesystem endpoint parent
+/run/rebaseguard-p309 is root:root0755, created by trusted runtime setup;
+it is not writable by R/M/U. Both socket inodes are root-owned. Ordinary search
+permission does not confer connect permission. Root/systemd owns recreation;
+clients never unlink, bind over, chmod, repair or adopt an unexpected endpoint.
+Collision/missing/wrong owner/mode/activation binding is a refusal, not fallback.
+Explicit expected owner/group IDs come from root-controlled local configuration,
+not names/IDs submitted over the wire. Numeric UID reuse needs enrollment renewal.
+
+Peer validation and descriptor contract
+- M obtains SO_PEERCRED on accepted H3 connections and checks exact configured R
+  UID plus the enrolled relay instance/channel binding. B independently obtains
+  SO_PEERCRED on H4 and checks configured M UID plus the expected monitor instance
+  for the current generation. Do not accept a claimed UID/PID or infer identity
+  merely from a process name. Instance binding uses locally obtained peer PID/
+  start identity and trusted service enrollment; it remains unimplemented I3/I5.
+- Client-side peer credential semantics under socket activation are NOT assumed
+  to show the final handler UID. The listener was created by root/systemd. Verify
+  the root-protected endpoint and manager-to-service activation binding; later
+  controlled checks must determine actual credential behavior. Never assert
+  SO_PEERCRED==M on H3 just because M consumes the listening descriptor.
+- Only the designated service receives each LISTEN_FDS descriptor, with validated
+  activation metadata, expected socket type/address and no unexpected listeners.
+  Set CLOEXEC on listener/accepted/control descriptors. Do not accept SCM_RIGHTS
+  or peer-supplied descriptors as authority; reject unexpected ancillary data.
+- H2 helper receives no H3/H4 listening descriptor, H4 client descriptor, journal/
+  key/config handle or privileged manager connection. It closes unexpected guest
+  descriptors above fd2. Unit launch by B does not inherit monitor/broker fds;
+  U receives only its explicitly configured stdio. No worker is forked from M.
+  Actual Windows handle and Linux fd inheritance need later controlled evidence.
+
+H3 message directions
+M -> R -> W -> S: bounded observer request for M's current enrolled session,
+challenge, sequence and previous checkpoint; no caller host CPU/policy facts.
+S -> W -> R -> M: bounded signed observer envelope, or transport-failure notice.
+M verifies signatures, exact outstanding challenge, host/guest/runtime binding,
+freshness/coverage and diagnostic facts. R/W are forwarding paths, not sources
+of authenticated safe facts. A transport-failure notice can stop; it never grants
+start/continuation. H3 rejects broker operations and arbitrary commands/fields.
+
+Linux access matrix (supersedes the corresponding original rows)
+Object                              B/root       M                 R              U
+monitor-ingress.sock                create/own   activated server  connect        none
+control.sock                        server/own   status/stop client none           none
+/run/rebaseguard-p309 parent         create       search only       search only    search only
+broker state/manager connection      own          fixed API only    none           none
+ingress helper code                  maintain     no write          execute only   no write
+trusted monitor/runtime parents      maintain     execute only      no write       runtime r-x
+workspace/scratch                    maintain     needed metadata   none           designated rw
+No row grants M/R/U start, arm, rearm, reset or arbitrary-manager access.
+
+Failure behavior
+H1/H2/H3 failure, substituted tuple, wrong peer, bad envelope, missing interval or
+unexpected endpoint makes M's affected session terminal and publishes stop for
+its associated generation. An unvalidated H3 message is never forwarded as a
+broker command. H4 authentication failure executes no requested action; the
+independent generation-bound monitor-loss path must stop already-owned work.
+Do not route around failed H3 via H4 or weaken peers/ACLs to reconnect. Exact
+watchdog/failure enforcement remains I6, not something this text proves deployed.
