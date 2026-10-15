@@ -1,0 +1,444 @@
+{
+  "schema": "P309_D2_PRIVATE_PYTHON_LOCAL_VALIDATION/1",
+  "recorded_utc": "2026-10-15T13:54:12.4061729Z",
+  "source_branch": "codex/p309-d2-contract-dev-20261015",
+  "source_commit": "0f0b2bf53983657a79e7c4f9e782b68b985d8aed",
+  "base_contract_rereview_commit": "29a9b8a4db4b3376dafb195fc051083b9d964bc3",
+  "publication_branch": "codex/p309-d2-contract-validation-20261015",
+  "scope": "ONLY_46_NEW_PURE_MEMORY_TESTS_AND_LIMITED_SOURCE_REVIEW",
+  "disposition": "PASS_FOR_THIS_LIMITED_D2_H4_MODEL_SLICE_ONLY",
+  "formal_admission": "BLOCKED",
+  "route_accepted": false,
+  "host_accepted": false,
+  "deployment_authorized": false,
+  "installation_consent": false,
+  "pre_freeze_review": false,
+  "execution_authorized": false,
+  "qualification_authorized": false,
+  "target_execution_authorized": false,
+  "freeze_or_grants_issued": false,
+  "log_format_note": "Raw stderr contains a UTF16 WSL launcher diagnostic followed by UTF8 unittest output. The first test line has a preceding NUL from that boundary. Parsing permits only leading NUL bytes before test-line markers and requires the exact 46 pinned IDs/outcomes; original binary/text logs remain unchanged. No host settings queried or changed.",
+  "runtime_context": {
+    "sys_version": "3.11.15 (main, Oct 15 2026, 18:48:30) [GCC 13.3.0]",
+    "sys_executable": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+    "version_info": [
+      3,
+      11,
+      15
+    ],
+    "dont_write_bytecode": true,
+    "test_modules": [
+      "test_d2_wire",
+      "test_d2_model"
+    ],
+    "scope": "D2_PURE_MEMORY_TESTS_ONLY"
+  },
+  "runtime_context_limit": "Recorded sys.version/sys.executable/version_info and bytecode flag in the same test process. No interpreter binary rehash, glibc/OpenSSL inventory, host/clock/process/cgroup/backup query. Runtime is private CPython3.11.15, not the coordinator Cloud Python run.",
+  "result": {
+    "tests": 46,
+    "passed": 46,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "unittest_seconds": 0.229,
+    "suite_counts": {
+      "test_d2_wire": 14,
+      "test_d2_model": 32
+    },
+    "test_cases": [
+      {
+        "id": "test_d2_wire.ControlWire.test_current_status_and_generation_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_duplicate_fields_at_any_depth_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_exact_fields_reject_commands_and_claimed_facts",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_fingerprint_binds_semantics_with_canonical_order",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_generation_is_exact_or_null_and_stop_needs_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_missing_fields_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_no_start_arm_rearm_reset_or_generic_manager",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_nonfinite_numbers_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_nonobject_and_deep_json_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_protocol_is_fixed",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_raw_byte_budget_and_exact_type",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_request_id_is_exact_lowercase_hex",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_request_is_immutable",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_strict_utf8_and_no_bom",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_changed_content_request_id_is_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_completed_stop_is_terminal_and_duplicate_returns_model_only_proof",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_different_monitor_instance_in_same_epoch_is_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_duplicate_internal_start_cannot_dispatch_twice",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_event_budget_never_rolls_over_or_clears_unknown_guard",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_every_missing_cleanup_predicate_prevents_completion",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_explicit_synthetic_factory_scope",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_finite_start_stop_completion_interleavings_never_reopen_after_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_generation_budget_preserves_all_terminal_records",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_identical_stop_is_idempotent_without_budget_growth",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_mismatched_late_cleanup_invalidates_current_quiescence_not_history",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_mismatched_late_completion_preserves_stopped_history_but_sets_guard",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_mismatched_start_identity_enters_unknown",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_monitor_restart_within_broker_epoch_stops_and_invalidates_old_instance",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_new_fixture_generation_requires_old_terminal_cleanup",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_old_generation_cached_stop_is_stale_before_dedup",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_only_simulated_monitor_instance_can_dispatch",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_owned_exit_needs_cleanup_proof",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_public_start_arm_reset_and_claimed_identity_never_mutate",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_recovery_failure_preserves_terminal_record_and_refuses_rearm",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_request_budget_retains_fences_and_does_not_acknowledge_cleanup",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_request_id_cannot_be_repurposed_across_retained_generations",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_restart_preserves_old_stopped_history_but_not_current_quiescence",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_restart_with_live_generation_is_unknown_and_old_peer_invalid",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stale_status_and_request_flood_do_not_mutate_current_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_status_does_not_allocate_or_start_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_before_dispatch_suppresses_start",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_during_inflight_start_rejects_early_cleanup_and_late_running",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_returns_new_snapshot_and_never_os_completion",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_while_armed_revokes_start_and_can_only_cleanup",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_without_generation_cannot_reserve_future_authority",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_synthetic_proof_cannot_arrive_through_wire_or_numeric_booleans",
+        "outcome": "ok"
+      }
+    ],
+    "test_ids_exactly_match_pinned_coordinator_list": true,
+    "invocations": 1,
+    "old_suites_rerun": false
+  },
+  "execution": {
+    "executable": "wsl.exe",
+    "arguments": [
+      "-d",
+      "Ubuntu-24.04",
+      "--cd",
+      "/mnt/d/ReBaseGuard-309/workspace/p309-d2-contract-validation-20261015/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev",
+      "--exec",
+      "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+      "-B",
+      "/mnt/d/ReBaseGuard-309/records/p309-d2-contract-validation-20261015-215056/run-d2-local-tests.py"
+    ],
+    "exit_code": 0,
+    "equivalent_unittest_command": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11 -B -m unittest -v test_d2_wire test_d2_model",
+    "entrypoint_note": "A same-process wrapper prints only sys.version/sys.executable/version_info/bytecode flag, checks 3.11.15, then invokes unittest through runpy. No helper subprocess inside tests.",
+    "tests_requested": 46,
+    "old_suites_rerun": false,
+    "host_queries": 0
+  },
+  "limited_code_review": {
+    "disposition": "NO_NEW_CONCRETE_DEFECT_IDENTIFIED_WITHIN_REVIEWED_SLICE",
+    "files": [
+      "d2_control_wire.py",
+      "d2_broker_model.py",
+      "test_d2_wire.py",
+      "test_d2_model.py"
+    ],
+    "findings": [],
+    "observations": [
+      {
+        "source": "d2_control_wire.py:parse_request/_pairs/valid_id/Request.fingerprint",
+        "assessment": "Raw bytes bounded at16384; exact four fields, fixed protocol, exact lowercase-hex IDs and status/stop only. Duplicate/nonfinite/UTF8/type/shape errors refuse. Wire contains no command, OS identity, property or proof authority."
+      },
+      {
+        "source": "d2_broker_model.py:BrokerModel.dispatch",
+        "assessment": "Synthetic peer role/epoch/monitor-instance checked before wire parsing; generation comparison precedes any binding/cache lookup. Request-ID fingerprints remain global across retained generations; stale requests return without bookkeeping or current-state changes. Status can add bounded request bookkeeping but cannot arm/start/renew liveness."
+      },
+      {
+        "source": "d2_broker_model.py:_latch/_fixture_event/_SyntheticCleanup",
+        "assessment": "Pure fixture transitions preserve irreversible stop, suppress unissued start and reject late RUNNING; all cleanup predicates and no known pending start are required. Restart/monitor restart and contradictory current identity set unknown without rewriting terminal history. No actual OS completion or peer credential claim."
+      },
+      {
+        "source": "d2_broker_model.py:MAX_REQUEST_IDS/MAX_GENERATIONS/MAX_EVENTS/_unknown",
+        "assessment": "4096 request bindings,16 generation records and8192 accepted-event counter are development model budgets. Exhaustion retains fences/history and unknown guard; no eviction/reset/accepted production threshold change."
+      },
+      {
+        "source": "Both libraries and both new suites",
+        "assessment": "Source imports are dataclasses/enum/json/hashlib/re/itertools/unittest plus the two local modules and test message helper. No subprocess, OS executor, socket, CNG signer, key, service, host collector or filesystem-persistence path is imported/invoked by this code."
+      }
+    ],
+    "limitations": [
+      "This is not an exhaustive security audit or complete D2 result. H1-H3/H5, real authentication/enrollment, OS manager/cgroup control, protected persistence and independent watchdog are absent.",
+      "SyntheticPeer and fixture proof/identity labels are caller-created models, not a security boundary. Python constructors/private fixture helpers are not production authority.",
+      "Immutable reducer snapshots model serial orders and finite interleavings only, not atomic concurrent storage or guaranteed kernel stop. No additional tests or probes were added.",
+      "Passing existing assertions does not prove every state or input; no source/assertion/budget/count was modified to obtain a pass."
+    ]
+  },
+  "source_verification": {
+    "result": "MATCH",
+    "current_canonical_blobs": 97,
+    "historical_source_and_review_blobs": 89,
+    "historical_manifest_bindings": 328,
+    "protected_files": 20,
+    "source_diff": [
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/D2_VALIDATION.json",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/LOCAL_VALIDATION.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/README.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/SOURCE_BINDINGS.json",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/d2_broker_model.py",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/d2_control_wire.py",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/test_d2_model.py",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/test_d2_wire.py"
+    ],
+    "worktree_byte_hashes_rechecked_after_tests": true,
+    "coordinator_validation_unchanged": true,
+    "cloud_raw_logs": "Not locally retrieved or claimed revalidated; coordinator JSON/source bindings preserved as pinned historical evidence."
+  },
+  "unresolved_original_blockers": [
+    {
+      "deployment_blocking": true,
+      "id": "I1",
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ],
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Runner Windows/root boundary"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I2",
+      "original_fact_questions": [
+        1,
+        5
+      ],
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Collector rights, completeness and attribution"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I3",
+      "original_fact_questions": [
+        1,
+        6
+      ],
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Enrollment and ACL/API descriptors"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I4",
+      "original_fact_questions": [
+        2
+      ],
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Fresh image/runtime provenance"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I5",
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ],
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Guest policy/unit limits and controlled launcher"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I6",
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ],
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Protected persistence and stop/recovery"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I7",
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Route, host and formal authority"
+    }
+  ],
+  "preservation": {
+    "prior_evidence_files": 254,
+    "prior_evidence_unchanged": true,
+    "prior_branch_refs": 10,
+    "prior_branch_refs_unchanged": true,
+    "old_source_and_review_files_unchanged": true
+  },
+  "exclusions": {
+    "host_queries": 0,
+    "helper_or_signer_processes": 0,
+    "keys_created": 0,
+    "endpoints_created": 0,
+    "services_created": 0,
+    "units_created": 0,
+    "elevation": 0,
+    "workload_processes": 0,
+    "host_policy_changes": 0,
+    "old_test_suites_rerun": 0,
+    "backup_status": "HISTORICAL_UNAVAILABLE_ONLY; NO_NEW_QUERY_OR_REHASH"
+  },
+  "local_evidence_sha256": {
+    "assembly-attempt1.json": "0ddc6fcc66f53671065c2466bed17bb72f2b20a8d82ef10366cc46270fff64ed",
+    "canonical-verification.json": "2e807c37069e705cabc3d629e36362d37b98350be130ba9aaa9928de1ec8a450",
+    "canonical-verification.log": "d68a4c867b2392e5f82baf9d55c36c6be23b9b16c9285354cd6f471dddb93433",
+    "execute-d2-tests.ps1": "5394f008edc5d3d6c7d7cc7c0b67b5ecbf1ae1281b9a3592cf684dcb48d53eeb",
+    "prior-evidence.json": "1192eab60f95a1c20332155003072435539dcce4e2a754d9b8aaa489c644dbbd",
+    "prior-refs.txt": "de53db4edbe6b708e0858d0542120e70db4212afffd933e3c0a3b7a4b0da9826",
+    "run-d2-local-tests.py": "d780a683a334cdcda3c1705ffdfef259553041f7606b52e350d53048c0bca135",
+    "test-execution.json": "a7f246f845cba6cd401ec48871f0dc051d132ab0b47e3ea07d6ff350c602fdb9",
+    "unittest.stderr.bin": "3ac7837344e09549ef97eb968c3e08f58245c8b4ca1f1505652bf58678cd93c9",
+    "unittest.stderr.txt": "d6cdeb0ccba51103a89085ef77f4161f6a78fd4cb71806721cf7c641c4dbff42",
+    "unittest.stdout.bin": "67655aa3d682f74fec3350b7f8e4a1e3f7c32e1c8588440e2c2d22a61ed0d821",
+    "unittest.stdout.txt": "67655aa3d682f74fec3350b7f8e4a1e3f7c32e1c8588440e2c2d22a61ed0d821",
+    "verify-d2-source.ps1": "856983c635b3c0e458ea97f65a3e7545d76532a478ab300c119539805c78dff0",
+    "worktree-create.txt": "0aad2ebc19aa47c3b8f9ef9f60be2aec4d4e7792c8688a1cc0ff0c604944b574",
+    "write-d2-local-validation-v2.ps1": "75700bfd5d97a3374aa0d2978b9fd004be066ede6ee2466c2bf7b44f542b3a4b",
+    "write-d2-local-validation.ps1": "a4bb0f5976bed9c00ad74cafd108531a75c8eb8b9482414067306e62201a4111"
+  }
+}
