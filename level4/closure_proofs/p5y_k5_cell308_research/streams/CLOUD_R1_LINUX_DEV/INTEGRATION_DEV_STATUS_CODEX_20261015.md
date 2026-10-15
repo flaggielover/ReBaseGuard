@@ -4,7 +4,7 @@ Development only. No designated series, qualification, freeze, grant, adoption o
 
 ## Source lineage
 
-The integration starts from Claude's revision 5 at `37c62102c0e2e22563760173fb04a1fcf66d5e2f`. It selectively incorporates complementary repairs from Codex input `7eb3ba4d03f3b7898109073c83eb9b08f4589354`. Both original branches and their historical reports remain intact. Claude's proposed amendment r5 and owner brief r5 remain proposed; this technical integration does not replace them or decide any D-* item.
+The integration starts from Claude's revision 5 at `37c62102c0e2e22563760173fb04a1fcf66d5e2f`. It selectively incorporates complementary repairs from Codex input `7eb3ba4d03f3b7898109073c83eb9b08f4589354`. Both original branches and their historical reports remain intact. Claude's proposed amendment r5 and owner brief r5 remain proposed; this technical integration does not replace them or decide any D-* item. The separate proposed technical supplement, `governance/new_host_route_cloud_r1/PROPOSED_R5_INTEGRATION_TECHNICAL_SUPPLEMENT_CODEX_20261015.md`, corrects the historical-veto, historical mutation-credit and caller-interface descriptions. Its independent factual R2 delta is FIT_WITH_CARRIED_CONDITIONS; this supplies no owner or governance acceptance.
 
 The earlier Codex draft PR2 contains a separate development line. Its 136 tests and 80 strict mutation kills apply only to that named input. Claude's historical revision-5 records contain 87 passing tests and 113 nonzero-exit mutation outcomes; four mutation rows have error-only tails, so that record does not establish 113 intended-property assertion kills. Neither historical total is evidence for the combined source.
 
@@ -22,10 +22,16 @@ The combined mutation harness must run the baseline first, preserve complete tra
 
 ## Current validation state
 
-Implementation and fresh validation are in progress. No passing count, mutation result or fresh review verdict is claimed for the combined source here. Historical result files remain unchanged. New results will be recorded under an origin-qualified integration path and bound to the exact committed input.
+The first native Linux run, [38680983939](https://github.com/flaggielover/ReBaseGuard/actions/runs/38680983939), tested commit `7eb9bbd999a1ec07d31a15f0b391fcc32ffa4d6b` and **failed** its strict full-run gate: 191 baseline tests passed; all 133 mutations completed, with 126 valid property kills and seven ERROR outcomes. Those seven receive no kill credit. The complete original archive and its GitHub metadata are preserved unchanged under the integration evidence path; the independent failed-run report verifies all 10 source bindings and all 410 manifest entries.
+
+The rejected rows were M24, N04, N06, N08, P04, Q07 and CDEX16. Test-only repairs add list/count assertions before indexing, bind the synthetic repository explicitly, give distinct content cases distinct subtest identities, compute composition results independently, and isolate synthetic Git fixtures from automatic maintenance and hooks. The cause of N06's original cleanup error is unproven; no cleanup exception is ignored or retried. A focused 12-test baseline and all seven selected mutation checks pass their strict criteria with zero unittest errors/skips. These selected checks do not replace a fresh native full run.
+
+The current three test files and unchanged product/harness/workflow inputs are bound by `reviews/scratch_CLAUDE_R5_CODEX_SYNC_20261015/R2_TEST_FIXTURE_SOURCE_FREEZE.json`. The independently bound test-only repair review found no concrete material issue and preserved all direct assertions (`independent-code-r2-test-fix-addendum/REPORT.md`, SHA-256 `aaee89675ffdcdb478fa38264fb610fe2eef80c5f0130632a05959fddb91832e`). The full native R2 run is pending. Historical and first-run records remain unchanged; no full passing disposition is claimed.
 
 ## Limits
 
 Synthetic process, filesystem, Git and crash-injection tests do not establish actual-host lifetime, power-loss durability, complete visibility above a cgroup namespace root, Linux/macOS rule equivalence, reviewer authority, or scientific correctness. All operational prerequisites remain unmet.
 
 Required review evidence is deliberately conservative: unreadable/non-UTF-8 listings or review blobs refuse verification. A direct directory whose name matches the accepting-review filename pattern also refuses as unavailable evidence. These availability limits grant no acceptance and remain distinct from actual reviewer authority.
+
+Synthetic crash-injection runs may include child-process exceptions. Any claim of zero unittest errors refers to the structured unittest result; it does not assert that every process ran without a runtime exception. Mutation credit additionally requires the intended property assertion and agreement with the complete raw trace.

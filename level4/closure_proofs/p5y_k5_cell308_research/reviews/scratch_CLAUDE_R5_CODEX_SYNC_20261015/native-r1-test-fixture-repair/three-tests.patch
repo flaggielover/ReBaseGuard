@@ -1,0 +1,85 @@
+diff --git a/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py b/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py
+index 858db830..2dfc8028 100644
+--- a/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py
++++ b/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py
+@@ -937,0 +938,14 @@ ACC = f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}"
++GIT_FIXTURE_CONFIG = {"gc.auto": "0", "maintenance.auto": "false", "core.hooksPath": os.devnull,
++                      "core.fsmonitor": "false"}
++
++
++def fixture_git(d, *args):
++    options = [option for key, value in GIT_FIXTURE_CONFIG.items() for option in ("-c", f"{key}={value}")]
++    return subprocess.run(["git", "-C", str(d), *options, *args], check=True)
++
++
++def git_init(d):
++    fixture_git(d, "init", "-q")
++    # Local settings also apply to the platform's read-only Git calls in this fixture.
++    for key, value in GIT_FIXTURE_CONFIG.items():
++        fixture_git(d, "config", "--local", key, value)
+@@ -944,3 +958,3 @@ def git_commit(d, files: dict, msg="c"):
+-    subprocess.run(["git", "-C", d, "add", "-A"], check=True)
+-    subprocess.run(["git", "-C", d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
+-                    "commit", "-q", "-m", msg], check=True)
++    fixture_git(d, "add", "-A")
++    fixture_git(d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
++                "commit", "-q", "-m", msg)
+@@ -964 +978 @@ class TestAttestationPreflight(unittest.TestCase):
+-            subprocess.run(["git", "init", "-q", d], check=True)
++            git_init(d)
+@@ -1029 +1043 @@ class TestAttestationPreflight(unittest.TestCase):
+-                subprocess.run(["git", "init", "-q", d], check=True)
++                git_init(d)
+@@ -1033 +1047 @@ class TestAttestationPreflight(unittest.TestCase):
+-                        subprocess.run(["git", "-C", d, "mv", "tmp/acc.md", f"{ACC}1.md"], check=True)
++                        fixture_git(d, "mv", "tmp/acc.md", f"{ACC}1.md")
+@@ -1055,3 +1069,6 @@ class TestAttestationPreflight(unittest.TestCase):
+-        for ref in (None, {}, {"path": "att/HOST.json"}, {"path": 1, "sha256": "x"},
+-                    {"path": "att/HOST.json", "sha256": "0" * 64, "accepted": True}):
+-            self.assertIsNone(L.attestation_valid(ref)[0], ref)
++        with tempfile.TemporaryDirectory() as d:
++            self.repo = Path(d)
++            git_init(self.repo)
++            for ref in (None, {}, {"path": "att/HOST.json"}, {"path": 1, "sha256": "x"},
++                        {"path": "att/HOST.json", "sha256": "0" * 64, "accepted": True}):
++                self.assertIsNone(L.attestation_valid(ref, repo_root=self.repo)[0], ref)
+@@ -1062 +1079 @@ class TestAttestationPreflight(unittest.TestCase):
+-            subprocess.run(["git", "init", "-q", d], check=True)
++            git_init(d)
+@@ -1095 +1112 @@ class TestAttestationPreflight(unittest.TestCase):
+-            subprocess.run(["git", "init", "-q", d], check=True)
++            git_init(d)
+diff --git a/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py b/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py
+index c7c95e73..eb54b260 100644
+--- a/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py
++++ b/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py
+@@ -272,2 +272,2 @@ class TestVerifiedObservation(unittest.TestCase):
+-        for reviews in cases:
+-            with self.subTest(reviews=list(reviews)):
++        for case_index, reviews in enumerate(cases):
++            with self.subTest(case_index=case_index, reviews=list(reviews)):
+diff --git a/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py b/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py
+index 477a10e0..14d52d01 100644
+--- a/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py
++++ b/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py
+@@ -187,0 +188,2 @@ class TestCpuWindowEvidence(unittest.TestCase):
++        self.assertIsInstance(born, list)
++        self.assertEqual(len(born), 1)
+@@ -190,0 +193,2 @@ class TestCpuWindowEvidence(unittest.TestCase):
++        self.assertIsInstance(exited, list)
++        self.assertEqual(len(exited), 1)
+@@ -473,2 +477 @@ class TestUnitQueryEvidence(unittest.TestCase):
+-                with self.subTest(supervisor=supervisor), \
+-                        mock.patch.object(L, "systemd_is_pid1", return_value=supervisor), \
++                with mock.patch.object(L, "systemd_is_pid1", return_value=supervisor), \
+@@ -477 +480 @@ class TestUnitQueryEvidence(unittest.TestCase):
+-                    self.assertIs(L.unit_enabled("synthetic-update.service", unit_roots=()), expected)
++                    unit = L.unit_enabled("synthetic-update.service", unit_roots=())
+@@ -481,2 +484,5 @@ class TestUnitQueryEvidence(unittest.TestCase):
+-                self.assertIs(result["guest_updates_shown_disabled"], supervisor is False)
+-                self.assertIs(result["update_unit_enabled_or_unknown"], supervisor is not False)
++                with self.subTest(supervisor=supervisor, evidence="unit"):
++                    self.assertIs(unit, expected)
++                with self.subTest(supervisor=supervisor, evidence="updates"):
++                    self.assertIs(result["guest_updates_shown_disabled"], supervisor is False)
++                    self.assertIs(result["update_unit_enabled_or_unknown"], supervisor is not False)

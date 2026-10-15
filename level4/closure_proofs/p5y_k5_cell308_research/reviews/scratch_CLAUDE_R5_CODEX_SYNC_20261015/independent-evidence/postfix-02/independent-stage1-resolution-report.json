@@ -1,0 +1,82 @@
+{
+  "stage": "1 independent harness/workflow review after two classifier hardening revisions",
+  "status": "STAGE_1_SYNTHETIC_CONTROLS_PASS; STAGE_2_NATIVE_EVIDENCE_PENDING",
+  "input_binding": {
+    "snapshot_utc": "2026-10-15T04:14:26.417256+00:00",
+    "files": [
+      {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py",
+        "sha256": "ac3800d5742ff6e5dcb5da8b3d909d8dece0c1863b87ef95d8140ee95fb01179",
+        "bytes": 54517,
+        "snapshot": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py"
+      },
+      {
+        "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+        "sha256": "5b4d62828dbe2bd3094b2f7325acc2a68d00543895a8018111130de3c7caea2a",
+        "bytes": 16282,
+        "snapshot": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py"
+      },
+      {
+        "path": ".github/workflows/cell308-r5-integration.yml",
+        "sha256": "837de2a31a2e3fbc9b56001a2b901c2f196d94405ae10d4fe77942454167c701",
+        "bytes": 4365,
+        "snapshot": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/.github/workflows/cell308-r5-integration.yml"
+      }
+    ]
+  },
+  "original_stage1_preserved": true,
+  "original_preservation_checks": {
+    "stage1-binding.json": true,
+    "stage1-top-ast.json": true,
+    "independent_classifier_probes.py": true,
+    "independent-classifier-probes.json": true,
+    "independent-stage1-report.json": true,
+    "stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py": true,
+    "stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py": true,
+    "stage1-inputs/.github/workflows/cell308-r5-integration.yml": true
+  },
+  "registry_and_literal_transforms_unchanged_from_independently_checked_133": true,
+  "probes": {
+    "fresh_original_case_replays": 24,
+    "adjacent_metadata_and_raw_trace_cases": 22,
+    "actual_two_test_synthetic_runner_cases": 5,
+    "mocked_sidecar_decoder_cases": 13,
+    "total_postfix_independent_cases": 64,
+    "mismatches": 0
+  },
+  "resolved_findings": [
+    "IE-01: RuntimeError message with fake AssertionError suffix cannot receive credit; runner object identity determines exception type",
+    "IE-01: fake traceback marker only inside message rejected; genuine AssertionError messages containing RuntimeError text remain valid",
+    "IE-02: duplicate identical failure records and duplicate executed IDs rejected; distinct subtests retained",
+    "Postfix-01: raw trace missing terminal AssertionError line rejected",
+    "Postfix-01: nonobject JSON metadata returns ERROR instead of classifier crash",
+    "Postfix-01: event test ID/parent/description incoherence rejected"
+  ],
+  "preserved_controls": [
+    "Expected registry IDs and witness keys equal 133 unique mutants",
+    "Each literal edit anchor occurs exactly once in locked platform source and all 133 mutated texts parse",
+    "Baseline first, inherited LX_PLATFORM_DIR cleared; all mutant suites use full discovery",
+    "Exact executed test ID sequence required to match baseline",
+    "Counts/raw FAIL/ERROR descriptions/metadata events/exception identity/frames agree",
+    "Errors/skips/expected failures/unexpected successes/warnings/unraisables/timeouts/launch failures/incoherent exits refused",
+    "Complete raw streams plus raw structured metadata retained; workflow exports raw metadata files",
+    "Before/after development Python and CI workflow hashes agree; workflow exact github.sha checkout plus clean-tree checks",
+    "Workflow artifact gates 133 mutations, 134 suites, expected full test counts and synthetic/Linux/dev-only/zero-target-evaluation labels"
+  ],
+  "limitations": [
+    "This is a source and synthetic harness-control review. It does not establish the final native CI outcome.",
+    "The private controlled-runner sidecar is authoritative under the hash-bound trusted runner/tests; this is not an attestation against arbitrary in-process tampering.",
+    "The only locally executed unittest fixture contained two synthetic methods under this evidence folder. No development product or test module, scientific evaluator, production or governance path executed.",
+    "Final exact source commit, complete input manifest and native full CI artifacts still required; direct intended-property failures will be checked against exact source frames, not merely any AssertionError."
+  ],
+  "raw_evidence": {
+    "binding.json": "d638d44054e030346a40887be419b4de20df5e8ab667aa8c05322ab272ebf892",
+    "top-ast.json": "a014e35fb74228735ee9b14e345644c6e267c1dc6431eeb42cf92e48165dc68f",
+    "fresh_classifier_probes.py": "4c3ddbc358e10b734b8f44c967e7aa6f35b6883bfee04a573f8dc47302dd82d7",
+    "fresh-classifier-probes.json": "6fbcd2a49992afe28ed71ea94b6e80a81d4a73564320566997f2126046c6ab34",
+    "actual_synthetic_runner_probes.py": "3ca9ae88ba4cdda279c3508200d37106af8adc98a39842ed8d6ed07c70b1b265",
+    "actual-synthetic-runner-probes.json": "737cbfa5a868228b0ade7a49a9aca0a039c76d8dfcd27264a96ca22f94fc3b18",
+    "sidecar_decoder_probes.py": "339ca58e75236dd5a193d1b733790045f21fcb32ba3ec2b22298de3d58ef4546",
+    "sidecar-decoder-probes.json": "6983ad72718cc6042ff576ab2d5729f28e84b882ea12d6177af937d8c2cf48fa"
+  }
+}

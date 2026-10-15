@@ -1,0 +1,21 @@
+"""Run only the 25 pure harness controls from the independent snapshot.
+No development product/test module is imported. Host metadata functions are
+stubbed during mocked-main controls; the one runner integration fixture is synthetic.
+"""
+import ast, hashlib, importlib.util, io, json, sys, unittest
+from pathlib import Path
+from unittest import mock
+BASE=Path('/tmp/cell308-claude-sync-20261015/independent-evidence/path-delta')
+DEV=BASE/'inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'
+for name in ('run_mutants.py','test_mutation_harness.py'):ast.parse((DEV/'tests'/name).read_text())
+sys.path.insert(0,str(DEV/'tests'))
+import run_mutants as H
+spec=importlib.util.spec_from_file_location('independent_controls_only',DEV/'tests/test_mutation_harness.py');C=importlib.util.module_from_spec(spec);spec.loader.exec_module(C)
+suite=unittest.defaultTestLoader.loadTestsFromModule(C)
+output=io.StringIO()
+with mock.patch.object(H.platform,'release',return_value='SYNTHETIC-NO-HOST'),mock.patch.object(H.platform,'machine',return_value='SYNTHETIC-NO-HOST'),mock.patch.object(H.platform,'system',return_value='SYNTHETIC-NO-HOST'),mock.patch.object(H.platform,'python_implementation',return_value='CPython'):
+    result=unittest.TextTestRunner(stream=output,verbosity=2).run(suite)
+loaded=[name for name in sys.modules if name in ('lx_platform','lx_verified','lx_inventory','lx_portmap','test_lx_platform','test_lx_verified','test_sync_boundaries')]
+rec={'scope':'Only 25 pure harness controls; source inputs are independently snapshotted; host metadata functions stubbed; synthetic runner fixture only','harness_sha256':hashlib.sha256((DEV/'tests/run_mutants.py').read_bytes()).hexdigest(),'controls_sha256':hashlib.sha256((DEV/'tests/test_mutation_harness.py').read_bytes()).hexdigest(),'ran':result.testsRun,'successful':result.wasSuccessful(),'failures':[(str(t),trace) for t,trace in result.failures],'errors':[(str(t),trace) for t,trace in result.errors],'skipped':[(str(t),why) for t,why in result.skipped],'product_test_modules_imported':loaded,'raw_unittest_output':output.getvalue()}
+(BASE/'25-control-recheck.json').write_text(json.dumps(rec,indent=2)+'\n');(BASE/'25-control-recheck.stderr.txt').write_text(output.getvalue())
+print(json.dumps({k:v for k,v in rec.items() if k!='raw_unittest_output'},indent=2))

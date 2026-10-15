@@ -1,0 +1,89 @@
+--- 7eb9bbd999a1ec07d31a15f0b391fcc32ffa4d6b:level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py
++++ /Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py
+@@ -935,15 +935,29 @@
+ 
+ # ====================================================================== attestation and preflight
+ ACC = f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}"
++GIT_FIXTURE_CONFIG = {"gc.auto": "0", "maintenance.auto": "false", "core.hooksPath": os.devnull,
++                      "core.fsmonitor": "false"}
++
++
++def fixture_git(d, *args):
++    options = [option for key, value in GIT_FIXTURE_CONFIG.items() for option in ("-c", f"{key}={value}")]
++    return subprocess.run(["git", "-C", str(d), *options, *args], check=True)
++
++
++def git_init(d):
++    fixture_git(d, "init", "-q")
++    # Local settings also apply to the platform's read-only Git calls in this fixture.
++    for key, value in GIT_FIXTURE_CONFIG.items():
++        fixture_git(d, "config", "--local", key, value)
+ 
+ 
+ def git_commit(d, files: dict, msg="c"):
+     for rel, data in files.items():
+         Path(d, rel).parent.mkdir(parents=True, exist_ok=True)
+         Path(d, rel).write_bytes(data)
+-    subprocess.run(["git", "-C", d, "add", "-A"], check=True)
+-    subprocess.run(["git", "-C", d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
+-                    "commit", "-q", "-m", msg], check=True)
++    fixture_git(d, "add", "-A")
++    fixture_git(d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
++                "commit", "-q", "-m", msg)
+ 
+ 
+ class TestAttestationPreflight(unittest.TestCase):
+@@ -961,7 +975,7 @@
+     def check(self, att: bytes, reviews: dict | None = None, same_commit=False, machine=None, ref=None):
+         """att committed first; the review files (path -> bytes) in a SECOND commit (or the same one)."""
+         with tempfile.TemporaryDirectory() as d:
+-            subprocess.run(["git", "init", "-q", d], check=True)
++            git_init(d)
+             sha = hashlib.sha256(att).hexdigest()
+             revs = {f"{ACC}1.md": self.accept(sha)} if reviews is None else \
+                 {k: (v.replace(b"<SHA>", sha.encode()) if isinstance(v, bytes) else v) for k, v in reviews.items()}
+@@ -1026,11 +1040,11 @@
+ 
+         def run(steps):
+             with tempfile.TemporaryDirectory() as d:
+-                subprocess.run(["git", "init", "-q", d], check=True)
++                git_init(d)
+                 for st in steps:
+                     if st == "mv":
+                         Path(d, ACC).parent.mkdir(parents=True, exist_ok=True)
+-                        subprocess.run(["git", "-C", d, "mv", "tmp/acc.md", f"{ACC}1.md"], check=True)
++                        fixture_git(d, "mv", "tmp/acc.md", f"{ACC}1.md")
+                         git_commit(d, {})
+                     else:
+                         git_commit(d, st)
+@@ -1052,14 +1066,17 @@
+         self.assertIsNone(self.check(self.attestation(machine=soft), machine=soft)[0])
+         cloned = dict(self.HW, product_uuid_sha256="d" * 64)             # Y05: same machine-id, other hardware
+         self.assertIsNone(self.check(self.attestation(), machine=cloned)[0])
+-        for ref in (None, {}, {"path": "att/HOST.json"}, {"path": 1, "sha256": "x"},
+-                    {"path": "att/HOST.json", "sha256": "0" * 64, "accepted": True}):
+-            self.assertIsNone(L.attestation_valid(ref)[0], ref)
++        with tempfile.TemporaryDirectory() as d:
++            self.repo = Path(d)
++            git_init(self.repo)
++            for ref in (None, {}, {"path": "att/HOST.json"}, {"path": 1, "sha256": "x"},
++                        {"path": "att/HOST.json", "sha256": "0" * 64, "accepted": True}):
++                self.assertIsNone(L.attestation_valid(ref, repo_root=self.repo)[0], ref)
+ 
+     def test_reference_digest_must_match_the_committed_file(self):
+         """M25: an accepted digest does not make a DIFFERENT committed file pass."""
+         with tempfile.TemporaryDirectory() as d:
+-            subprocess.run(["git", "init", "-q", d], check=True)
++            git_init(d)
+             accepted, other = self.attestation(), self.attestation(provider_image_updates="anything")
+             x = hashlib.sha256(accepted).hexdigest()
+             git_commit(d, {"att/HOST.json": other, "att/ACCEPTED.json": accepted})
+@@ -1092,7 +1109,7 @@
+ 
+     def test_uncommitted_edit_is_not_the_record(self):
+         with tempfile.TemporaryDirectory() as d:
+-            subprocess.run(["git", "init", "-q", d], check=True)
++            git_init(d)
+             att = self.attestation()
+             sha = hashlib.sha256(att).hexdigest()
+             git_commit(d, {"att/HOST.json": att})

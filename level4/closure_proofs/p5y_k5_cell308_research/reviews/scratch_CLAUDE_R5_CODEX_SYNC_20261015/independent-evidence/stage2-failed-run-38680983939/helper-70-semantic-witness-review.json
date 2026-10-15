@@ -1,0 +1,2946 @@
+{
+  "schema": "CELL308_FAILED_RUN_MRXNY_SEMANTIC_WITNESS_REVIEW_V1",
+  "review_kind": "Independent read-only semantic attribution of already-recorded native failures; no program execution",
+  "native_run_id": "38680983939",
+  "source_commit": "7eb9bbd999a1ec07d31a15f0b391fcc32ffa4d6b",
+  "overall_native_run_status": "FAILED",
+  "overall_native_status_counts": {
+    "KILLED": 126,
+    "SURVIVED": 0,
+    "ERROR": 7,
+    "NOT_APPLIED": 0
+  },
+  "overall_native_pass": false,
+  "scope": {
+    "groups": [
+      "M",
+      "R",
+      "X",
+      "N",
+      "Y"
+    ],
+    "rows": 74,
+    "counts": {
+      "KILLED": 70,
+      "ERROR": 4
+    },
+    "excluded_error_ids": [
+      "M24",
+      "N04",
+      "N06",
+      "N08"
+    ],
+    "R5SYNC_in_scope": false
+  },
+  "inputs_read": [
+    {
+      "path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-failed-run-38680983939-structural-audit.json",
+      "sha256": "19d65cfdbee788fa01c8f642d15638e1bc22e07c47093b5871ab1b42df4226d5"
+    },
+    {
+      "path": "/tmp/cell308-claude-sync-20261015/native-38680983939/mutations.json",
+      "sha256": "3ccc4d615114396775acbc4e1f2c7bc8e5a7619336a228fcb5dc8f65a723ba8c"
+    },
+    {
+      "path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py",
+      "sha256": "5d0e3b2b93441d438d574ce68fcc652337c16cb3209a98a3d0765d76f6e481cc"
+    },
+    {
+      "path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "sha256": "b6ec81b5f4d65537e8dd9bc319c84e68e410eeafe7e0fe2f855aa3c5cdfb1dd4"
+    }
+  ],
+  "method": "Manually compare each frozen mutation edit, intended test method, source assertion and surrounding fixture with native raw AssertionError details. AST parsing and literal evaluation inspect data only. The existing structural audit supplies direct assertion frame cross-links; its semantic conclusions are not assumed.",
+  "execution_performed": {
+    "harness": false,
+    "product": false,
+    "tests": false,
+    "mutants": false,
+    "host_probes": false,
+    "repository_searches": false
+  },
+  "conclusion": {
+    "property_relevant_killed_rows": 70,
+    "unrelated_intended_assertion_rows": [],
+    "environmental_or_setup_intended_assertion_rows": [],
+    "error_rows_credited_as_kills": 0,
+    "full_pass_claim": false,
+    "governance_or_route_acceptance_claim": false
+  },
+  "coverage_qualifications": [
+    {
+      "ids": [
+        "M16"
+      ],
+      "note": "StaleTmp exception witness is a relevant consequence of tmp=p, not independent proof of atomic or crash-durable writes."
+    },
+    {
+      "ids": [
+        "M23"
+      ],
+      "note": "Observed assertion is unreadable power-supply type fallback at line 373, not the later unsupported USB string fixture."
+    },
+    {
+      "ids": [
+        "R04",
+        "R09"
+      ],
+      "note": "Observed failures compare exact constants against a historical Git oracle; the recorded numeric assertion demonstrates the oracle succeeded, and no historical candidate source was read in this review."
+    },
+    {
+      "ids": [
+        "N02"
+      ],
+      "note": "The shared failing case carries a Y03 label but lacks the full standalone acceptance line required by N02; it is relevant to both edits."
+    },
+    {
+      "ids": [
+        "Y04"
+      ],
+      "note": "Observed tuple mismatch is cgroup_ns_initial metadata only; effective_limit and headroom remain None."
+    },
+    {
+      "ids": [
+        "M17",
+        "N12",
+        "Y06"
+      ],
+      "note": "Native platform/library reads initialize fixtures, but the intended failing assertions inspect explicitly overwritten unreadable values or explicit incomplete mapped-object text."
+    },
+    {
+      "ids": [
+        "M24",
+        "N04",
+        "N06",
+        "N08"
+      ],
+      "note": "Intended assertions exist but native ERROR status prohibits kill credit regardless of those assertion failures."
+    }
+  ],
+  "rows": [
+    {
+      "id": "M01",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "failed boot-id read treated as a reboot (DEAD)",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if cur is None:\n        return UNKNOWN\n",
+          "replacement": "    if cur is None:\n        return DEAD\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_failed_readings_are_unknown_never_dead"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestIdentity",
+          "method": "test_failed_readings_are_unknown_never_dead",
+          "line": 130,
+          "end_line": 130,
+          "text": "self.assertEqual(self.state(boot=\"\"), L.UNKNOWN)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_failed_readings_are_unknown_never_dead (test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'DEAD' != 'UNKNOWN'\n- DEAD\n+ UNKNOWN"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic empty current boot-id reaches the unknown-boot branch; the recorded DEAD versus UNKNOWN directly witnesses failed boot reads being treated as reboot evidence."
+    },
+    {
+      "id": "M02",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unreadable /proc/<pid>/stat treated as DEAD",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    st = (stat or proc_stat)(pid)\n    if st is None:\n        return UNKNOWN\n",
+          "replacement": "    st = (stat or proc_stat)(pid)\n    if st is None:\n        return DEAD\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_failed_readings_are_unknown_never_dead"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestIdentity",
+          "method": "test_failed_readings_are_unknown_never_dead",
+          "line": 132,
+          "end_line": 133,
+          "text": "self.assertEqual(L.identity_state(self.ident, current_boot=BOOT, exists=lambda p: True,\n                                          stat=lambda p: None, cmd=lambda p: \"c\" * 64, current_ns=NS), L.UNKNOWN)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_failed_readings_are_unknown_never_dead (test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'DEAD' != 'UNKNOWN'\n- DEAD\n+ UNKNOWN"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The test passes stat=lambda p: None with matching boot, namespaces and command; DEAD versus UNKNOWN directly witnesses unreadable process stat being treated as death."
+    },
+    {
+      "id": "M03",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "incomplete identity record reported ALIVE",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    return ALIVE if complete else UNKNOWN",
+          "replacement": "    return ALIVE"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_unrecorded_fields"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestIdentity",
+          "method": "test_unrecorded_fields",
+          "line": 146,
+          "end_line": 146,
+          "text": "self.assertEqual(self.state(ident=partial), L.UNKNOWN, k)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_unrecorded_fields (test_lx_platform.TestIdentity.test_unrecorded_fields)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'ALIVE' != 'UNKNOWN'\n- ALIVE\n+ UNKNOWN\n : boot_id"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The first missing-field fixture sets boot_id=None in an otherwise valid identity. ALIVE versus UNKNOWN directly witnesses incomplete identity being accepted; no claim is made that every later loop variant ran."
+    },
+    {
+      "id": "M04",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "zombie read as DEAD again (the withdrawn L-ID-1)",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "if st.get(\"state\") in (\"Z\", \"X\"):\n        return UNKNOWN",
+          "replacement": "if st.get(\"state\") in (\"Z\", \"X\"):\n        return DEAD"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_zombie_is_never_proof_of_death"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestIdentity",
+          "method": "test_zombie_is_never_proof_of_death",
+          "line": 127,
+          "end_line": 127,
+          "text": "self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.UNKNOWN, s)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_zombie_is_never_proof_of_death (test_lx_platform.TestIdentity.test_zombie_is_never_proof_of_death)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'DEAD' != 'UNKNOWN'\n- DEAD\n+ UNKNOWN\n : Z"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The first synthetic zombie state is Z; DEAD versus UNKNOWN directly witnesses the edited zombie/dead-task branch. The later X case is not separately credited."
+    },
+    {
+      "id": "M05",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "pid reuse (other starttime) not detected",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "st[\"starttime\"] != ident[\"starttime_ticks\"]",
+          "replacement": "False"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_positive_death_evidence"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestIdentity",
+          "method": "test_positive_death_evidence",
+          "line": 121,
+          "end_line": 121,
+          "text": "self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(start=778))), L.DEAD)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_positive_death_evidence (test_lx_platform.TestIdentity.test_positive_death_evidence)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'ALIVE' != 'DEAD'\n- ALIVE\n+ DEAD"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic stat has starttime 778 versus recorded 777; ALIVE versus DEAD directly witnesses the removed PID-reuse comparison."
+    },
+    {
+      "id": "M06",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "no power supply exposed read as AC",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if not entries:\n        return \"ABSENT\"\n",
+          "replacement": "    if not entries:\n        return AC\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_power_classes"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPowerThermal",
+          "method": "test_power_classes",
+          "line": 353,
+          "end_line": 353,
+          "text": "self.assertEqual(L.power_source(d), \"ABSENT\")",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_power_classes (test_lx_platform.TestPowerThermal.test_power_classes)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'AC' != 'ABSENT'\n- AC\n+ ABSENT"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "A newly created empty temporary power-supply directory produces AC versus ABSENT, directly witnessing the changed empty-inventory return."
+    },
+    {
+      "id": "M07",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unreadable cgroup limit skipped",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        if lvl[\"limit\"] is None:\n            return None\n",
+          "replacement": "        if lvl[\"limit\"] is None:\n            continue\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_partial_chain_never_numeric"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestMemory",
+          "method": "test_partial_chain_never_numeric",
+          "line": 443,
+          "end_line": 444,
+          "text": "self.assertEqual((r[\"effective_limit\"], r[\"cgroup_min_headroom\"], r[\"visible_limit_upper_bound\"]),\n                             (None, None, None))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_partial_chain_never_numeric (test_lx_platform.TestMemory.test_partial_chain_never_numeric)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Tuples differ: (1000000000, 999999600, 1000000000) != (None, None, None)"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The middle synthetic cgroup limit file is absent while root attestation is patched true. Numeric tuple versus (None,None,None) directly witnesses skipping an unreadable ancestor limit."
+    },
+    {
+      "id": "M08",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "missing journal channel ignored in assess",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    elif not isinstance(journal_suspend_events, list):\n        reasons.append(\"AMBIGUOUS: L' journal unavailable\")",
+          "replacement": "    elif False:\n        pass"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_missing_channels_never_clean"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAssess",
+          "method": "test_missing_channels_never_clean",
+          "line": 307,
+          "end_line": 307,
+          "text": "self.assertEqual(L.assess(a, b, s, None)[\"status\"], \"AMBIGUOUS\")",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_missing_channels_never_clean (test_lx_platform.TestAssess.test_missing_channels_never_clean)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'CLEAN' != 'AMBIGUOUS'\n- CLEAN\n+ AMBIGUOUS"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "An otherwise clean synthetic interval passes journal=None. CLEAN versus AMBIGUOUS directly witnesses omission of the unavailable-journal channel."
+    },
+    {
+      "id": "M09",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "pause channel P removed",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "            if abs(dr - dm) > SLEEP_GAP_TOL_NS:",
+          "replacement": "            if False:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_pause_channel_is_ambiguous"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAssess",
+          "method": "test_pause_channel_is_ambiguous",
+          "line": 302,
+          "end_line": 302,
+          "text": "self.assertEqual(r[\"status\"], \"AMBIGUOUS\")",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_pause_channel_is_ambiguous (test_lx_platform.TestAssess.test_pause_channel_is_ambiguous)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'CLEAN' != 'AMBIGUOUS'\n- CLEAN\n+ AMBIGUOUS"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic realtime clock gains 3 seconds while monotonic/boottime stay aligned. CLEAN versus AMBIGUOUS directly witnesses removal of pause channel P."
+    },
+    {
+      "id": "M10",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "suspend (boottime - monotonic) ignored",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "            if db - dm > SLEEP_GAP_TOL_NS:",
+          "replacement": "            if False:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_suspend_detected_just_above_tolerance"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAssess",
+          "method": "test_suspend_detected_just_above_tolerance",
+          "line": 296,
+          "end_line": 296,
+          "text": "self.assertEqual(L.assess(a, b, s, j)[\"status\"], \"CONTAMINATED\")",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_suspend_detected_just_above_tolerance (test_lx_platform.TestAssess.test_suspend_detected_just_above_tolerance)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'CLEAN' != 'CONTAMINATED'\n- CLEAN\n+ CONTAMINATED"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic boottime clock gains 3 seconds relative to monotonic. CLEAN versus CONTAMINATED directly witnesses removal of suspend-gap detection."
+    },
+    {
+      "id": "M11",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "D-MEM-FREE gate silently passes",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        \"free_memory_ge_min\": OPEN_DECISION,",
+          "replacement": "        \"free_memory_ge_min\": PASS,"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_all_favourable_still_blocked"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_all_favourable_still_blocked",
+          "line": 1176,
+          "end_line": 1178,
+          "text": "self.assertEqual(blocked, {\"lowpowermode_0\", \"thermal_pressure_0\", \"memory_pressure_normal\",\n                                   \"free_memory_ge_min\", \"host_exclusive\", \"host_lifetime_attested\",\n                                   \"no_automatic_os_install\"})",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_all_favourable_still_blocked (test_lx_platform.TestAttestationPreflight.test_all_favourable_still_blocked)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Items in the second set but not the first:\n'free_memory_ge_min'"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The exact blocked-gate set loses free_memory_ge_min. The missing member directly witnesses that unresolved D-MEM-FREE was changed to PASS."
+    },
+    {
+      "id": "M12",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "attestation 'reviewed' not required",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if rec.get(\"reviewed\") is not True or rec.get(\"accepted\") is not True:",
+          "replacement": "    if rec.get(\"accepted\") is not True:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_forged_or_unaccepted_attestations_refused"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "line": 1050,
+          "end_line": 1050,
+          "text": "self.assertIsNone(self.check(att)[0], att[:40])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': 'true', 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : b'{\"schema\": \"rebaseguard.p5y.k5.newhost-c'"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native failure prints the accepted record with reviewed=\"true\" (a string), matching the loop fixture. Acceptance instead of None directly witnesses loss of the exact reviewed=True check."
+    },
+    {
+      "id": "M13",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "provider image updates pass without an attested token",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        upd_gate = PASS if isinstance(att, dict) and att.get(\"provider_image_updates\") == NO_IMAGE_CHANGE else UNKNOWN",
+          "replacement": "        upd_gate = PASS"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_lifetime_gates_open_while_undecided"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_lifetime_gates_open_while_undecided",
+          "line": 1167,
+          "end_line": 1167,
+          "text": "self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]), (L.UNKNOWN, L.UNKNOWN))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_lifetime_gates_open_while_undecided (test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Tuples differ: ('UNKNOWN', 'PASS') != ('UNKNOWN', 'UNKNOWN')"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "D-HOST-LIFETIME is explicitly decided but the attestation is None. The recorded pair (UNKNOWN,PASS) versus (UNKNOWN,UNKNOWN) directly witnesses unconditional provider-update acceptance."
+    },
+    {
+      "id": "M14",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "update vectors other than apt ignored",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    shown_disabled = bool(apt_off and not timer and not snapd and not cloud and livepatch == [])",
+          "replacement": "    shown_disabled = bool(apt_off)"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_positive_evidence_only"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestUpdatesLaunch",
+          "method": "test_positive_evidence_only",
+          "line": 670,
+          "end_line": 670,
+          "text": "self.assertFalse(self.settings(off, **kw)[\"guest_updates_shown_disabled\"], kw)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_positive_evidence_only (test_lx_platform.TestUpdatesLaunch.test_positive_evidence_only)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "True is not false : {'timer': True}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native loop message is {timer: True}; otherwise disabled APT is combined with an enabled update timer. True versus False directly witnesses discarding non-APT update vectors."
+    },
+    {
+      "id": "M15",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "launched_by_systemd skips the MainPID check",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "rec.get(\"MainPID\") == os.getpid()\n              and ",
+          "replacement": ""
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_launched_by_systemd_requires_everything"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestUpdatesLaunch",
+          "method": "test_launched_by_systemd_requires_everything",
+          "line": 779,
+          "end_line": 779,
+          "text": "self.assertFalse(L.launched_by_systemd(**args)[\"pass\"], kw)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_launched_by_systemd_requires_everything (test_lx_platform.TestUpdatesLaunch.test_launched_by_systemd_requires_everything)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "True is not false : {'show': <function TestUpdatesLaunch.test_launched_by_systemd_requires_everything.<locals>.<lambda> at 0x7fd99742e8e0>}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The source loop tests an otherwise valid launch with show returning MainPID=1 after the unreadable-show case. The changed MainPID predicate makes pass True, directly witnessing loss of current-process binding; the callable representation in stderr does not itself name its return value."
+    },
+    {
+      "id": "M16",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "durable_write writes the target in place",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    tmp = p.with_name(p.name + \".tmp\")\n",
+          "replacement": "    tmp = p\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_stale_tmp_is_a_named_state"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestDurableWrite",
+          "method": "test_stale_tmp_is_a_named_state",
+          "line": 835,
+          "end_line": 835,
+          "text": "self.assertRaises(L.StaleTmp)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_stale_tmp_is_a_named_state (test_lx_platform.TestDurableWrite.test_stale_tmp_is_a_named_state)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "StaleTmp not raised"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "A pre-existing r.tmp is planted, and the edited tmp=p path bypasses it; StaleTmp not raised directly witnesses the stale-temporary-path consequence of in-place writing. This is mutation-relevant but is not by itself a full atomicity or crash-durability proof."
+    },
+    {
+      "id": "M17",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unreadable pin counts as a match",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    return [k for k in PIN_KEYS if unreadable(pins.get(k)) or got.get(k) != pins.get(k)]",
+          "replacement": "    return [k for k in PIN_KEYS if got.get(k) != pins.get(k)]"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_unreadable_pins_never_match"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPins",
+          "method": "test_unreadable_pins_never_match",
+          "line": 897,
+          "end_line": 897,
+          "text": "self.assertIn(next(iter(bad)), L.pin_mismatches(pins, pins), bad)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_unreadable_pins_never_match (test_lx_platform.TestPins.test_unreadable_pins_never_match)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'python_sha256' not found in [] : {'python_sha256': None}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native message identifies python_sha256=None. Comparing the same unreadable pin dictionary with itself returns no mismatch, directly witnessing deletion of the unreadable-value predicate. platform_readings supplies initial fixture data, but the failing assertion is about the deliberately overwritten None."
+    },
+    {
+      "id": "M18",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "busy_processes uses lifetime ticks instead of the window",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        used = ticks1 - prev[1] if prev is not None else ticks1",
+          "replacement": "        used = ticks1"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_window_not_lifetime_and_reuse_and_birth"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_window_not_lifetime_and_reuse_and_birth",
+          "line": 554,
+          "end_line": 554,
+          "text": "self.assertEqual(set(busy), {\"spiker\", \"newborn\", \"reused_pid\"})",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Items in the first set but not the second:\n'old_hog'"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Synthetic old_hog has unchanged lifetime ticks across the window. Its unexpected inclusion directly witnesses use of lifetime CPU ticks instead of their delta."
+    },
+    {
+      "id": "M19",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "empty cmdline (failed read) hashed as a command",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    return hashlib.sha256(data).hexdigest() if data else None",
+          "replacement": "    return hashlib.sha256(data or b\"\").hexdigest() if data is not None else None"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_empty_cmdline_is_a_failed_read"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestIdentity",
+          "method": "test_empty_cmdline_is_a_failed_read",
+          "line": 107,
+          "end_line": 107,
+          "text": "self.assertIsNone(L.cmdline_sha256(1, b\"\"))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_empty_cmdline_is_a_failed_read (test_lx_platform.TestIdentity.test_empty_cmdline_is_a_failed_read)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Explicit cmdline bytes b\"\" return the SHA-256 of empty bytes instead of None, directly witnessing failed empty cmdline reads becoming apparently valid commands."
+    },
+    {
+      "id": "M20",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "UNKNOWN gates not reported as blocking",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    blocked = {k: v for k, v in gates.items() if v != PASS}",
+          "replacement": "    blocked = {k: v for k, v in gates.items() if v not in (PASS, UNKNOWN)}"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_unknowns_never_pass_and_are_reported"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_unknowns_never_pass_and_are_reported",
+          "line": 1193,
+          "end_line": 1193,
+          "text": "self.assertEqual(r[\"blocked\"].get(k), L.UNKNOWN, k)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_unknowns_never_pass_and_are_reported (test_lx_platform.TestAttestationPreflight.test_unknowns_never_pass_and_are_reported)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "None != 'UNKNOWN' : ac_power"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The module readers are patched to unknown values. blocked.get(ac_power) is absent while gates[ac_power] is UNKNOWN, directly witnessing omission of unknown blockers."
+    },
+    {
+      "id": "M21",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "headroom computed over levels with unreadable usage",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "            if not isinstance(use, int):\n                return None\n",
+          "replacement": "            if not isinstance(use, int):\n                continue\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_partial_chain_never_numeric"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestMemory",
+          "method": "test_partial_chain_never_numeric",
+          "line": 449,
+          "end_line": 449,
+          "text": "self.assertIsNone(r[\"cgroup_min_headroom\"])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_partial_chain_never_numeric (test_lx_platform.TestMemory.test_partial_chain_never_numeric)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "1999999500 is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic leaf usage is unreadable and another finite ancestor exists. Partial numeric headroom versus None directly witnesses skipping missing usage in the minimum."
+    },
+    {
+      "id": "M22",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "namespace mismatch ignored",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        if type(ident.get(k)) is not int or ident[k] <= 0 or not isinstance(ns, dict) \\\n                or type(ns.get(k)) is not int or ns.get(k) != ident[k]:\n            return UNKNOWN",
+          "replacement": "        if False:\n            return UNKNOWN"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_namespace_mismatch_is_unknown"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestIdentity",
+          "method": "test_namespace_mismatch_is_unknown",
+          "line": 138,
+          "end_line": 138,
+          "text": "self.assertEqual(self.state(ns=dict(NS, pidns=1)), L.UNKNOWN)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_namespace_mismatch_is_unknown (test_lx_platform.TestIdentity.test_namespace_mismatch_is_unknown)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'ALIVE' != 'UNKNOWN'\n- ALIVE\n+ UNKNOWN"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic current pid namespace differs from the recorded namespace. ALIVE versus UNKNOWN directly witnesses omission of namespace comparison."
+    },
+    {
+      "id": "M23",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unknown power-supply type skipped",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        else:\n            return None\n    if discharging:",
+          "replacement": "        else:\n            continue\n    if discharging:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_failed_or_unknown_supplies_are_unknown"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPowerThermal",
+          "method": "test_failed_or_unknown_supplies_are_unknown",
+          "line": 373,
+          "end_line": 373,
+          "text": "self.assertIsNone(L.power_source(d))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_failed_or_unknown_supplies_are_unknown (test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'AC' is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native failure is the unreadable-type case: BAT1/type is a directory, not the later unsupported USB type string. AC versus None exercises the actual edited fallback that now skips an unrecognized or unreadable type. This supports the fallback weakness, while the human property label is narrower than the observed fixture."
+    },
+    {
+      "id": "M24",
+      "native_status": "ERROR",
+      "native_reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "weakened_property": "process born in the window not counted",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        prev = t0.get((pid, start))\n",
+          "replacement": "        prev = t0.get((pid, start))\n        if prev is None:\n            continue\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_window_not_lifetime_and_reuse_and_birth"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_window_not_lifetime_and_reuse_and_birth",
+          "line": 554,
+          "end_line": 554,
+          "text": "self.assertEqual(set(busy), {\"spiker\", \"newborn\", \"reused_pid\"})",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Items in the second set but not the first:\n'newborn'\n'reused_pid'"
+      ],
+      "assessment": "ERROR_EXCLUDED_FROM_KILL_CREDIT",
+      "kill_credit": false,
+      "environmental_or_setup_assertion": null,
+      "rationale": "The intended synthetic birth/reuse assertion exists and fails, but native status is ERROR because the suite also reports a unittest error. It is excluded from kill credit without reinterpretation."
+    },
+    {
+      "id": "M25",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "attestation file sha256 not verified",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if _sha(data) != want:",
+          "replacement": "    if False:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_reference_digest_must_match_the_committed_file"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_reference_digest_must_match_the_committed_file",
+          "line": 1069,
+          "end_line": 1069,
+          "text": "self.assertIsNone(rec)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'anything', 'root_cgroup_is_real': True} is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The reference digest belongs to ACCEPTED.json while HOST.json contains different committed bytes. Acceptance of HOST.json instead of None directly witnesses removal of file-digest binding."
+    },
+    {
+      "id": "M26",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "attestation not bound to the hardware identity",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if not cur.get(\"hardware_bound\") or rec.get(\"machine\") != cur:",
+          "replacement": "    if False:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_forged_or_unaccepted_attestations_refused"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "line": 1050,
+          "end_line": 1050,
+          "text": "self.assertIsNone(self.check(att)[0], att[:40])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : b'{\"schema\": \"rebaseguard.p5y.k5.newhost-c'"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native failure prints the loop fixture with a different machine_id_sha256 from the patched current hardware identity. Acceptance instead of None directly witnesses omission of attestation-to-machine equality."
+    },
+    {
+      "id": "M27",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "v2 root accepted as unlimited without attestation",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "            if root_attested is not True:\n                return None\n            continue",
+          "replacement": "            continue"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_v2_root_and_memory_high"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestMemory",
+          "method": "test_v2_root_and_memory_high",
+          "line": 470,
+          "end_line": 470,
+          "text": "self.assertIsNone(L._chain_values(ch, root_attested=False))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_v2_root_and_memory_high (test_lx_platform.TestMemory.test_v2_root_and_memory_high)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "([3000, 8000], [10, 20]) is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The helper is called on a v2 chain with root_attested=False. Returning numeric chain values instead of None directly witnesses removal of the helper root-attestation guard. The witness is at helper level, not a claim of accepted numeric top-level memory output."
+    },
+    {
+      "id": "M28",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "effective_limit numeric without root attestation",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if root_attested is not True or not mem or \"MemTotal\" not in mem",
+          "replacement": "    if not mem or \"MemTotal\" not in mem"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_v1_needs_root_attestation_for_a_number"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestMemory",
+          "method": "test_v1_needs_root_attestation_for_a_number",
+          "line": 430,
+          "end_line": 430,
+          "text": "self.assertIsNone(r[\"effective_limit\"])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_v1_needs_root_attestation_for_a_number (test_lx_platform.TestMemory.test_v1_needs_root_attestation_for_a_number)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "1000000000 is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "A synthetic v1 hierarchy without any root attestation returns effective_limit=1000000000 rather than None, directly witnessing deletion of the top-level attestation guard."
+    },
+    {
+      "id": "M29",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "execute / resume pass the launch gate without a launch record",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if mode in (\"execute\", \"resume\") or launched is not None:",
+          "replacement": "    if launched is not None:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_launch_gate_uses_a_fresh_reading"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_launch_gate_uses_a_fresh_reading",
+          "line": 1204,
+          "end_line": 1204,
+          "text": "self.assertIn(\"launched_by_systemd\", gates)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'launched_by_systemd' not found in {'ac_power': 'PASS', 'lowpowermode_0': 'OPEN_DECISION', 'thermal_pressure_0': 'OPEN_DECISION', 'free_disk_ge_2GiB': 'PASS', 'memory_pressure_normal': 'OPEN_DECISION', 'free_memory_ge_min': 'OPEN_DECISION', 'boot_id_recorded': 'PASS', 'no_other_campaign_job': 'PASS', 'no_automatic_os_install': 'OPEN_DECISION', 'host_exclusive': 'OPEN_DECISION', 'host_lifetime_attested': 'OPEN_DECISION'}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Execute mode supplies no prior launch record. The required launched_by_systemd gate is missing, directly witnessing mutation of the mode-based inclusion condition; this is a gate-presence invariant."
+    },
+    {
+      "id": "M30",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "mapped shared objects (libm) not pinned",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "\"python_sys_version\", \"mapped_objects\", \"dpkg_versions\",",
+          "replacement": "\"python_sys_version\", \"dpkg_versions\","
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_pin_set_covers_libm_libc_loader"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPins",
+          "method": "test_pin_set_covers_libm_libc_loader",
+          "line": 863,
+          "end_line": 865,
+          "text": "self.assertEqual(set(L.PIN_KEYS), {\"python_executable\", \"python_sha256\", \"python_sys_version\",\n                                           \"mapped_objects\", \"dpkg_versions\", \"livepatch\", \"os_id\", \"os_version_id\",\n                                           \"os_version\", \"kernel_release\", \"machine\", \"glibc\"})",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_pin_set_covers_libm_libc_loader (test_lx_platform.TestPins.test_pin_set_covers_libm_libc_loader)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Items in the second set but not the first:\n'mapped_objects'"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The PIN_KEYS set omits mapped_objects at the first assertion, directly witnessing loss of mapped-library pin coverage before later native platform-reading assertions run."
+    },
+    {
+      "id": "M31",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "incomplete /proc view accepted",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "dt_s <= 0 or proc_view_complete() is not True:",
+          "replacement": "dt_s <= 0:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_view_is_read_not_assumed"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_view_is_read_not_assumed",
+          "line": 542,
+          "end_line": 542,
+          "text": "self.assertIsNone(L.busy_processes({}, {}, 5, 25, set()), view)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_view_is_read_not_assumed (test_lx_platform.TestBusy.test_view_is_read_not_assumed)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "[] is not None : False"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "proc_view_complete is patched False in the first loop iteration. An empty busy-process list rather than None directly witnesses treating an incomplete view as a valid reading."
+    },
+    {
+      "id": "M32",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "own may contain init",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "            or any(k[0] in (0, 1) for k in own):",
+          "replacement": "            or False:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_no_reading_or_unsafe_inputs_fail_closed"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_no_reading_or_unsafe_inputs_fail_closed",
+          "line": 585,
+          "end_line": 585,
+          "text": "self.assertIsNone(L.busy_processes({}, {}, 5, 25, {(1, 1)}))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_no_reading_or_unsafe_inputs_fail_closed (test_lx_platform.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "[] is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Synthetic own={(1,1)} is rejected as unsafe by the intended assertion; [] versus None directly witnesses removal of the init-ownership restriction."
+    },
+    {
+      "id": "R01",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unreadable Battery status skipped (a failed read can yield AC)",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "            elif st not in KNOWN_NOT_DISCHARGING:\n                return None",
+          "replacement": "            elif st not in KNOWN_NOT_DISCHARGING:\n                continue"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_failed_or_unknown_supplies_are_unknown"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPowerThermal",
+          "method": "test_failed_or_unknown_supplies_are_unknown",
+          "line": 369,
+          "end_line": 369,
+          "text": "self.assertIsNone(L.power_source(d))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_failed_or_unknown_supplies_are_unknown (test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'AC' is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "A synthetic Mains supply is online and Battery/type exists while its status is absent. AC versus None directly witnesses skipping an unreadable battery status."
+    },
+    {
+      "id": "R02",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "host attestation accepted when the 'accepted' key is merely present (e.g. 'REJECTED')",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "rec.get(\"accepted\") is not True",
+          "replacement": "\"accepted\" not in rec"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_forged_or_unaccepted_attestations_refused"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "line": 1050,
+          "end_line": 1050,
+          "text": "self.assertIsNone(self.check(att)[0], att[:40])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': 'REJECTED', 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : b'{\"schema\": \"rebaseguard.p5y.k5.newhost-c'"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native failure prints accepted=\"REJECTED\". Acceptance instead of None directly witnesses treating key presence as exact accepted=True."
+    },
+    {
+      "id": "R03",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "durable_write never fsyncs the data",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        os.fsync(fd)\n",
+          "replacement": "        pass\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_fsyncs_file_then_directory"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestDurableWrite",
+          "method": "test_fsyncs_file_then_directory",
+          "line": 818,
+          "end_line": 818,
+          "text": "self.assertEqual(calls, [\"file\", \"dir\"])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_fsyncs_file_then_directory (test_lx_platform.TestDurableWrite.test_fsyncs_file_then_directory)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Lists differ: ['dir'] != ['file', 'dir']"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The fsync spy records only [dir] rather than [file,dir], directly witnessing removal of the data fsync. The assertion checks call order and presence, not power-loss persistence."
+    },
+    {
+      "id": "R04",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "suspend / pause tolerance raised from 2 s to 25 s",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "SLEEP_GAP_TOL_NS = 2_000_000_000 ",
+          "replacement": "SLEEP_GAP_TOL_NS = 25_000_000_000"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_constants_equal_the_candidates"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAssess",
+          "method": "test_constants_equal_the_candidates",
+          "line": 287,
+          "end_line": 287,
+          "text": "self.assertEqual((L.SLEEP_GAP_TOL_NS, L.MAX_SAMPLE_GAP_S), (tol, gap))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_constants_equal_the_candidates (test_lx_platform.TestAssess.test_constants_equal_the_candidates)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Tuples differ: (25000000000, 180) != (2000000000, 180)"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The constant-equality assertion records (25000000000,180) versus (2000000000,180), directly witnessing the changed tolerance. Its historical Git oracle succeeded before the assertion; this is a value invariant rather than an environment/setup failure. The historical source was not read during this review."
+    },
+    {
+      "id": "R05",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "hidden name allow-list for the Cloud session controller in busy_processes",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        if owned((pid, start), ppid, t1):\n            continue\n        prev",
+          "replacement": "        if (pid, start) in own or comm in (\"claude\", \"environment-man\", \"process_api\"):\n            continue\n        prev"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_no_name_or_path_allowlist"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_no_name_or_path_allowlist",
+          "line": 594,
+          "end_line": 594,
+          "text": "self.assertEqual(len(L.busy_processes(t0, t1, 1.0, 25, set(), hz=100)), 1, comm)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_no_name_or_path_allowlist (test_lx_platform.TestBusy.test_no_name_or_path_allowlist)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "0 != 1 : claude"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native message identifies comm=claude. A synthetic 100%-busy unowned task yields zero rather than one result, directly witnessing the introduced name exemption. Other allowlist names are not individually credited after this first failure."
+    },
+    {
+      "id": "R06",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "package versions and glibc dropped from PIN_KEYS",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": " \"dpkg_versions\",\n",
+          "replacement": "\n"
+        },
+        {
+          "original": "\"machine\", \"glibc\")",
+          "replacement": "\"machine\")"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_pin_set_covers_libm_libc_loader"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPins",
+          "method": "test_pin_set_covers_libm_libc_loader",
+          "line": 863,
+          "end_line": 865,
+          "text": "self.assertEqual(set(L.PIN_KEYS), {\"python_executable\", \"python_sha256\", \"python_sys_version\",\n                                           \"mapped_objects\", \"dpkg_versions\", \"livepatch\", \"os_id\", \"os_version_id\",\n                                           \"os_version\", \"kernel_release\", \"machine\", \"glibc\"})",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_pin_set_covers_libm_libc_loader (test_lx_platform.TestPins.test_pin_set_covers_libm_libc_loader)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Items in the second set but not the first:\n'glibc'\n'dpkg_versions'"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The PIN_KEYS equality assertion reports missing glibc and dpkg_versions, directly witnessing both removed pin fields before later native platform-reading assertions run."
+    },
+    {
+      "id": "R07",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "stopped (T/t) and uninterruptible (D) tasks read as DEAD",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if st.get(\"state\") in (\"Z\", \"X\"):\n        return UNKNOWN",
+          "replacement": "    if st.get(\"state\") in (\"T\", \"t\", \"D\"):\n        return DEAD\n    if st.get(\"state\") in (\"Z\", \"X\"):\n        return UNKNOWN"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_live_task_states_are_alive"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestIdentity",
+          "method": "test_live_task_states_are_alive",
+          "line": 116,
+          "end_line": 116,
+          "text": "self.assertEqual(self.state(stat=L.proc_stat(4242, stat_text(state=s))), L.ALIVE, s)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_live_task_states_are_alive (test_lx_platform.TestIdentity.test_live_task_states_are_alive)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'DEAD' != 'ALIVE'\n- DEAD\n+ ALIVE\n : D"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native first failing live-state fixture is D. DEAD versus ALIVE directly witnesses classifying a live uninterruptible task as dead; later T/t loop variants are not separately credited."
+    },
+    {
+      "id": "R08",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "durable_write never fsyncs the directory after the rename",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        os.fsync(dfd)\n",
+          "replacement": "        pass\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_fsyncs_file_then_directory"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestDurableWrite",
+          "method": "test_fsyncs_file_then_directory",
+          "line": 818,
+          "end_line": 818,
+          "text": "self.assertEqual(calls, [\"file\", \"dir\"])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_fsyncs_file_then_directory (test_lx_platform.TestDurableWrite.test_fsyncs_file_then_directory)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Lists differ: ['file'] != ['file', 'dir']"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The fsync spy records only [file] rather than [file,dir], directly witnessing removal of the directory fsync after rename. This checks call sequence, not a power-loss experiment."
+    },
+    {
+      "id": "R09",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "maximum sample spacing raised from 180 s to 390 s",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "MAX_SAMPLE_GAP_S = 180 ",
+          "replacement": "MAX_SAMPLE_GAP_S = 390 "
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_constants_equal_the_candidates"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAssess",
+          "method": "test_constants_equal_the_candidates",
+          "line": 287,
+          "end_line": 287,
+          "text": "self.assertEqual((L.SLEEP_GAP_TOL_NS, L.MAX_SAMPLE_GAP_S), (tol, gap))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_constants_equal_the_candidates (test_lx_platform.TestAssess.test_constants_equal_the_candidates)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Tuples differ: (2000000000, 390) != (2000000000, 180)"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The constant-equality assertion records (2000000000,390) versus (2000000000,180), directly witnessing changed maximum sample spacing. Its historical Git oracle succeeded before the assertion; the historical source was not read during this review."
+    },
+    {
+      "id": "R10",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "assess checks power only at start and end, not at the samples",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    power = [x.get(\"power\") if isinstance(x, dict) else None for x in seq]",
+          "replacement": "    power = [x.get(\"power\") if isinstance(x, dict) else None for x in (start, end)]"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_power_checked_at_every_sample"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAssess",
+          "method": "test_power_checked_at_every_sample",
+          "line": 317,
+          "end_line": 317,
+          "text": "self.assertEqual(L.assess(a, b, [mid], j)[\"status\"], \"CONTAMINATED\")",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_power_checked_at_every_sample (test_lx_platform.TestAssess.test_power_checked_at_every_sample)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'CLEAN' != 'CONTAMINATED'\n- CLEAN\n+ CONTAMINATED"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Start and end remain AC while a synthetic intermediate sample is BATTERY. CLEAN versus CONTAMINATED directly witnesses ignoring intermediate power observations."
+    },
+    {
+      "id": "X01",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "/proc 'subset=' no longer refused",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "return not (\"hidepid=\" in opts or \"subset=\" in opts)",
+          "replacement": "return not (\"hidepid=\" in opts)"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_proc_view"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_proc_view",
+          "line": 605,
+          "end_line": 606,
+          "text": "self.assertFalse(REAL_PROC_VIEW(st, f\"23 28 0:22 / /proc rw,{opt} - proc proc rw\\n\",\n                                                  pidns=L.INIT_PID_NS), opt)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_proc_view (test_lx_platform.TestBusy.test_proc_view)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "True is not false : subset=pid"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native loop message is subset=pid. A synthetic proc mount with that option returns True rather than False, directly witnessing removal of the subset exclusion."
+    },
+    {
+      "id": "X02",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "no /proc mount line counts as a complete view",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if not candidates:\n        return None\n",
+          "replacement": "    if not candidates:\n        return True\n"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_proc_view"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_proc_view",
+          "line": 607,
+          "end_line": 607,
+          "text": "self.assertIsNone(REAL_PROC_VIEW(st, \"23 28 0:22 / /sys rw - sysfs sysfs rw\\n\", pidns=L.INIT_PID_NS))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_proc_view (test_lx_platform.TestBusy.test_proc_view)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "True is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic mountinfo contains only sysfs and no proc mount. True versus None directly witnesses treating absence of a proc mount as a complete view."
+    },
+    {
+      "id": "X03",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unreadable livepatch counts as none applied",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "livepatch == [])",
+          "replacement": "livepatch in ([], None))"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_positive_evidence_only"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestUpdatesLaunch",
+          "method": "test_positive_evidence_only",
+          "line": 670,
+          "end_line": 670,
+          "text": "self.assertFalse(self.settings(off, **kw)[\"guest_updates_shown_disabled\"], kw)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_positive_evidence_only (test_lx_platform.TestUpdatesLaunch.test_positive_evidence_only)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "True is not false : {'livepatch': 'unreadable'}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native loop message is livepatch=unreadable; the fixture path is a file that cannot be listed. True versus False directly witnesses treating unavailable livepatch data as an empty applied-patch list."
+    },
+    {
+      "id": "X04",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "K' monotonic-ahead-of-boottime channel removed",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "                elif db - dm < -SLEEP_GAP_TOL_NS:\n                    reasons.append(\"AMBIGUOUS: K' monotonic advanced more than boottime\")\n",
+          "replacement": ""
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_monotonic_ahead_of_boottime_and_absent_samples"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAssess",
+          "method": "test_monotonic_ahead_of_boottime_and_absent_samples",
+          "line": 338,
+          "end_line": 338,
+          "text": "self.assertEqual(L.assess(a, b, s, j)[\"status\"], \"AMBIGUOUS\")",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_monotonic_ahead_of_boottime_and_absent_samples (test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'CLEAN' != 'AMBIGUOUS'\n- CLEAN\n+ AMBIGUOUS"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Synthetic monotonic gains 3 seconds and realtime gains the same amount to silence pause channel P, while boottime does not. CLEAN versus AMBIGUOUS directly isolates removal of the monotonic-ahead K-prime condition."
+    },
+    {
+      "id": "X05",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "durable_write read-back verification removed",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if got != want:",
+          "replacement": "    if False:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_read_back_mismatch_is_detected"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestDurableWrite",
+          "method": "test_read_back_mismatch_is_detected",
+          "line": 828,
+          "end_line": 828,
+          "text": "self.assertRaises(OSError)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_read_back_mismatch_is_detected (test_lx_platform.TestDurableWrite.test_read_back_mismatch_is_detected)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "OSError not raised"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The injected renamed-stage callback overwrites output bytes. OSError not raised directly witnesses removed read-back digest verification; this is an intentionally corrupted synthetic file, not an incidental I/O error."
+    },
+    {
+      "id": "X06",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "absent samples no longer AMBIGUOUS",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if not isinstance(samples, list):\n        reasons.append(\"AMBIGUOUS: samples absent\")\n",
+          "replacement": ""
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_monotonic_ahead_of_boottime_and_absent_samples"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAssess",
+          "method": "test_monotonic_ahead_of_boottime_and_absent_samples",
+          "line": 340,
+          "end_line": 340,
+          "text": "self.assertEqual(L.assess(a, b, None, j)[\"status\"], \"AMBIGUOUS\")",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_monotonic_ahead_of_boottime_and_absent_samples (test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'CLEAN' != 'AMBIGUOUS'\n- CLEAN\n+ AMBIGUOUS"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "An otherwise clean synthetic interval passes samples=None. CLEAN versus AMBIGUOUS directly witnesses deletion of absent-samples refusal."
+    },
+    {
+      "id": "X07",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "a transient .scope accepted as the campaign unit",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "if last.startswith(prefix) and last.endswith(\".service\"):",
+          "replacement": "if last.startswith(prefix) and last.endswith((\".service\", \".scope\")):"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_launched_by_systemd_requires_everything"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestUpdatesLaunch",
+          "method": "test_launched_by_systemd_requires_everything",
+          "line": 779,
+          "end_line": 779,
+          "text": "self.assertFalse(L.launched_by_systemd(**args)[\"pass\"], kw)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_launched_by_systemd_requires_everything (test_lx_platform.TestUpdatesLaunch.test_launched_by_systemd_requires_everything)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "True is not false : {'proc_cgroup_text': '0::/system.slice/rebaseguard-mbs308-exec.scope\\n'}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native failure prints the .scope cgroup fixture. pass=True instead of False directly witnesses accepting a transient scope as the required service unit."
+    },
+    {
+      "id": "X08",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "v1 'unlimited' sentinel lowered to 1 GiB",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "UNLIMITED_CGROUP_V1 = 2 ** 62 ",
+          "replacement": "UNLIMITED_CGROUP_V1 = 2 ** 30 "
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_large_v1_limit_is_a_limit"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestMemory",
+          "method": "test_large_v1_limit_is_a_limit",
+          "line": 514,
+          "end_line": 514,
+          "text": "self.assertEqual(r[\"effective_limit\"], 2000000000)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_large_v1_limit_is_a_limit (test_lx_platform.TestMemory.test_large_v1_limit_is_a_limit)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "16874930176 != 2000000000"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "A synthetic 2000000000-byte v1 limit yields MemTotal (16874930176) instead of that finite limit, directly witnessing the lowered unlimited sentinel."
+    },
+    {
+      "id": "X09",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unknown interpreter package drops out of the pin",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "return (owner_query() or UNKNOWN_PACKAGE, f\"libpython{v}-stdlib\")",
+          "replacement": "return tuple(x for x in (owner_query(), f\"libpython{v}-stdlib\") if x)"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_unknown_interpreter_package_never_matches"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPins",
+          "method": "test_unknown_interpreter_package_never_matches",
+          "line": 930,
+          "end_line": 930,
+          "text": "self.assertIn(L.UNKNOWN_PACKAGE, pk)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_unknown_interpreter_package_never_matches (test_lx_platform.TestPins.test_unknown_interpreter_package_never_matches)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'<unknown-interpreter-package>' not found in ('libpython3.12-stdlib',)"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "A patched owner_query returns None and UNKNOWN_PACKAGE is absent from the resulting package tuple, directly witnessing omission of the unknown-interpreter placeholder before any later package-version comparison."
+    },
+    {
+      "id": "N01",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "D-HOST-LIFETIME treated as decided",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    lifetime_open = \"D-HOST-LIFETIME\" not in decided",
+          "replacement": "    lifetime_open = False"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_lifetime_gates_open_while_undecided"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_lifetime_gates_open_while_undecided",
+          "line": 1158,
+          "end_line": 1159,
+          "text": "self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]),\n                         (L.OPEN_DECISION, L.OPEN_DECISION))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_lifetime_gates_open_while_undecided (test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Tuples differ: ('PASS', 'PASS') != ('OPEN_DECISION', 'OPEN_DECISION')"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "With no decisions and an otherwise valid attestation, both lifetime-related gates become PASS instead of OPEN_DECISION, directly witnessing forced lifetime_open=False."
+    },
+    {
+      "id": "N02",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "attestation acceptance line not required",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "if f\"{ACCEPTANCE_LINE}{sha}\" in lines and verdicts == [ACCEPTANCE_VERDICT_LINE]:",
+          "replacement": "if verdicts == [ACCEPTANCE_VERDICT_LINE]:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_acceptance_is_found_not_named"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_acceptance_is_found_not_named",
+          "line": 1001,
+          "end_line": 1001,
+          "text": "self.assertIsNone(rec, name)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : token embedded in a non-rejecting line (Y03)"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native failing case is labeled Y03 but contains a valid verdict plus a token embedded in a longer non-rejecting line, with no exact standalone acceptance line. Accepting it directly witnesses removal of the whole acceptance-line requirement. The shared case label does not make the semantic witness unrelated."
+    },
+    {
+      "id": "N03",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "attestation schema not checked",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if not isinstance(rec, dict) or rec.get(\"schema\") != ATTESTATION_SCHEMA:",
+          "replacement": "    if not isinstance(rec, dict):"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_forged_or_unaccepted_attestations_refused"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "line": 1050,
+          "end_line": 1050,
+          "text": "self.assertIsNone(self.check(att)[0], att[:40])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'schema': 'other', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : b'{\"schema\": \"other\", \"reviewed\": true, \"a'"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native loop record has schema=\"other\". Acceptance instead of None directly witnesses removal of the exact schema comparison."
+    },
+    {
+      "id": "N04",
+      "native_status": "ERROR",
+      "native_reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "weakened_property": "caller-asserted fields accepted in the attestation reference",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "set(ref) != {\"path\", \"sha256\"}",
+          "replacement": "not {\"path\", \"sha256\"} <= set(ref)"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_reference_rejects_extra_fields_even_if_otherwise_valid"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "line": 1078,
+          "end_line": 1078,
+          "text": "self.assertIsNone(rec)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None"
+      ],
+      "assessment": "ERROR_EXCLUDED_FROM_KILL_CREDIT",
+      "kill_credit": false,
+      "environmental_or_setup_assertion": null,
+      "rationale": "The explicit extra-field reference assertion exists and fails, but the native suite has a unittest error and status ERROR. It remains excluded from kill credit."
+    },
+    {
+      "id": "N05",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "attestation's root_cgroup_is_real not required",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if not why and (not isinstance(rec, dict) or rec.get(\"root_cgroup_is_real\") is not True):",
+          "replacement": "    if False:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_root_attestation_is_derived_never_asserted"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestMemory",
+          "method": "test_root_attestation_is_derived_never_asserted",
+          "line": 497,
+          "end_line": 497,
+          "text": "self.assertFalse(L.root_attestation({\"x\": 1})[0], rec)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_root_attestation_is_derived_never_asserted (test_lx_platform.TestMemory.test_root_attestation_is_derived_never_asserted)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "True is not false : {'root_cgroup_is_real': 'true'}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native fixture has root_cgroup_is_real=\"true\", a string, with namespace and decision prerequisites patched valid. True versus False directly witnesses loss of the exact boolean root-cgroup attestation requirement."
+    },
+    {
+      "id": "N06",
+      "native_status": "ERROR",
+      "native_reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "weakened_property": "nested PID namespace view accepted",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if ino != INIT_PID_NS:\n        return False\n",
+          "replacement": ""
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_proc_view"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_proc_view",
+          "line": 602,
+          "end_line": 602,
+          "text": "self.assertFalse(REAL_PROC_VIEW(st, mi, pidns=4026532265))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_proc_view (test_lx_platform.TestBusy.test_proc_view)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "True is not false"
+      ],
+      "assessment": "ERROR_EXCLUDED_FROM_KILL_CREDIT",
+      "kill_credit": false,
+      "environmental_or_setup_assertion": null,
+      "rationale": "The synthetic nested-PID-namespace assertion exists and fails, but the native suite also reports a unittest error and status ERROR. It remains excluded from kill credit."
+    },
+    {
+      "id": "N07",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "boot id not validated",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "_g(None if not isinstance(boot, str) or boot_id(boot) is None else True)",
+          "replacement": "_g(None if boot is None else True)"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_boot_id_must_be_valid"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_boot_id_must_be_valid",
+          "line": 1183,
+          "end_line": 1183,
+          "text": "self.assertEqual(self.gates(boot_id=bad)[\"boot_id_recorded\"], L.UNKNOWN, bad)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_boot_id_must_be_valid (test_lx_platform.TestAttestationPreflight.test_boot_id_must_be_valid)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'PASS' != 'UNKNOWN'\n- PASS\n+ UNKNOWN\n :"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native first failing boot fixture is the empty string. PASS versus UNKNOWN directly witnesses replacing recognized boot-id validation with a non-None check."
+    },
+    {
+      "id": "N08",
+      "native_status": "ERROR",
+      "native_reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "weakened_property": "exited processes not reported",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "in t0.items():\n        if (pid, start) not in t1",
+          "replacement": "in {}.items():\n        if (pid, start) not in t1"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_exited_in_window_is_reported"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_exited_in_window_is_reported",
+          "line": 562,
+          "end_line": 562,
+          "text": "self.assertEqual(out, [{\"pid\": 30, \"comm\": \"short_hog\", \"exe\": None, \"pct\": None, \"exited_in_window\": True}])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Lists differ: [] != [{'pid': 30, 'comm': 'short_hog', 'exe': N[39 chars]rue}]"
+      ],
+      "assessment": "ERROR_EXCLUDED_FROM_KILL_CREDIT",
+      "kill_credit": false,
+      "environmental_or_setup_assertion": null,
+      "rationale": "The intended exited-process fixture assertion exists and fails, but the native suite also reports a unittest error and status ERROR. It remains excluded from kill credit."
+    },
+    {
+      "id": "N09",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unreadable existing process skipped",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "            if Path(f\"{proc_root}/{pid}\").exists():\n                return None\n",
+          "replacement": ""
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_unreadable_existing_process_fails_the_snapshot"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_unreadable_existing_process_fails_the_snapshot",
+          "line": 617,
+          "end_line": 617,
+          "text": "self.assertIsNone(L.cpu_ticks(d))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_unreadable_existing_process_fails_the_snapshot (test_lx_platform.TestBusy.test_unreadable_existing_process_fails_the_snapshot)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{(7, 777): (1, 15, 'py (x) y', None)} is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic process directory 8 exists without readable stat while process 7 is valid. A partial snapshot dictionary rather than None directly witnesses dropping unreadable extant processes."
+    },
+    {
+      "id": "N10",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "campaign children exempt by pid alone",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        return key in own or (ppid in own_start and (ppid, own_start[ppid]) in snapshot\n                              and key[1] >= own_start[ppid])",
+          "replacement": "        return key in own or ppid in own_start"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_reused_campaign_pid_does_not_exempt_children"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_reused_campaign_pid_does_not_exempt_children",
+          "line": 568,
+          "end_line": 568,
+          "text": "self.assertEqual(len(L.busy_processes(t0, t1, 5.0, 25, own={(99, 50)}, hz=100)), 1)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_reused_campaign_pid_does_not_exempt_children (test_lx_platform.TestBusy.test_reused_campaign_pid_does_not_exempt_children)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "0 != 1"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Synthetic child starttime 1 is older than campaign identity (99,50), and that parent is absent from the snapshot. Zero rather than one busy task directly witnesses exemption based on parent PID alone."
+    },
+    {
+      "id": "N11",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unrecorded namespace lets pid evidence count (revision-2 behaviour)",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        if type(ident.get(k)) is not int or ident[k] <= 0 or not isinstance(ns, dict) \\\n                or type(ns.get(k)) is not int or ns.get(k) != ident[k]:",
+          "replacement": "        if ident.get(k) is not None and (type(ident[k]) is not int or ident[k] <= 0\n                or not isinstance(ns, dict) or type(ns.get(k)) is not int or ns.get(k) != ident[k]):"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_unrecorded_namespace_never_proves_death"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestIdentity",
+          "method": "test_unrecorded_namespace_never_proves_death",
+          "line": 158,
+          "end_line": 158,
+          "text": "self.assertEqual(self.state(ident=rec, exists=False), L.UNKNOWN, k)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_unrecorded_namespace_never_proves_death (test_lx_platform.TestIdentity.test_unrecorded_namespace_never_proves_death)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'DEAD' != 'UNKNOWN'\n- DEAD\n+ UNKNOWN\n : pidns"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native missing-field fixture is pidns=None and exists=False. DEAD versus UNKNOWN directly witnesses allowing PID absence evidence without recorded namespace identity."
+    },
+    {
+      "id": "N12",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "pin without libm / libc / loader accepted",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if not all(any(n == r or n.startswith(r) for n in names) for r in REQUIRED_MAPPED):\n        return None",
+          "replacement": "    if False:\n        return None"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_required_members_and_pin_point"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPins",
+          "method": "test_required_members_and_pin_point",
+          "line": 911,
+          "end_line": 911,
+          "text": "self.assertIsNone(L.mapped_objects(f\"7f00-7f01 r-xp 0 08:01 1 {libc}\\n\"))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_required_members_and_pin_point (test_lx_platform.TestPins.test_required_members_and_pin_point)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'/usr/lib/x86_64-linux-gnu/libc.so.6': '3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf'} is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic maps text lists only the known libc path. A dictionary rather than None directly witnesses acceptance of a mapped pin set missing libm and loader. Native library discovery supplies a fixture path, but the failing assertion checks explicit incomplete maps text."
+    },
+    {
+      "id": "N13",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "launch record trusted on its 'pass' flag",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    return bool(rec.get(\"systemd_pid1\") is True and",
+          "replacement": "    return bool(rec.get(\"pass\") is True) or bool(rec.get(\"systemd_pid1\") is True and"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_launch_gate_uses_a_fresh_reading"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_launch_gate_uses_a_fresh_reading",
+          "line": 1217,
+          "end_line": 1217,
+          "text": "self.assertEqual(self.gates(fresh=bad_fresh).get(\"launched_by_systemd\"), L.FAIL, bad_fresh)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'PASS' != 'FAIL'\n- PASS\n+ FAIL\n : {'pass': True}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native bad fresh record is only {pass: True}. PASS versus FAIL directly witnesses trusting that flag without launch identity fields."
+    },
+    {
+      "id": "N14",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "unrecognised battery status read as not discharging",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "            elif st not in KNOWN_NOT_DISCHARGING:\n                return None",
+          "replacement": "            else:\n                pass"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_unrecognised_battery_status_is_unknown"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPowerThermal",
+          "method": "test_unrecognised_battery_status_is_unknown",
+          "line": 387,
+          "end_line": 387,
+          "text": "self.assertIsNone(L.power_source(d), st)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_unrecognised_battery_status_is_unknown (test_lx_platform.TestPowerThermal.test_unrecognised_battery_status_is_unknown)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'AC' is not None : Unknown"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native first battery-status fixture is Unknown. AC versus None directly witnesses treating an unrecognized status as a known non-discharging state."
+    },
+    {
+      "id": "Y01",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "any non-empty decided set opens D-HOST-LIFETIME",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    lifetime_open = \"D-HOST-LIFETIME\" not in decided",
+          "replacement": "    lifetime_open = not decided"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_lifetime_gates_open_while_undecided"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_lifetime_gates_open_while_undecided",
+          "line": 1161,
+          "end_line": 1162,
+          "text": "self.assertEqual((g[\"host_lifetime_attested\"], g[\"no_automatic_os_install\"]),\n                         (L.OPEN_DECISION, L.OPEN_DECISION))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_lifetime_gates_open_while_undecided (test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Tuples differ: ('PASS', 'PASS') != ('OPEN_DECISION', 'OPEN_DECISION')"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Only D-MEM-FREE is decided, with D-HOST-LIFETIME absent. Both lifetime gates PASS versus OPEN_DECISION directly witnesses incorrectly using non-emptiness of the decision set."
+    },
+    {
+      "id": "Y02",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "exited children of a campaign pid exempt whatever their start",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "if (pid, start) not in t1 and not owned((pid, start), ppid, t0):",
+          "replacement": "if (pid, start) not in t1 and (pid, start) not in own and ppid not in own_start:"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_exited_child_of_reused_campaign_pid_is_reported"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestBusy",
+          "method": "test_exited_child_of_reused_campaign_pid_is_reported",
+          "line": 575,
+          "end_line": 575,
+          "text": "self.assertEqual([o[\"comm\"] for o in out], [\"old_exited\"])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_exited_child_of_reused_campaign_pid_is_reported (test_lx_platform.TestBusy.test_exited_child_of_reused_campaign_pid_is_reported)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Lists differ: [] != ['old_exited']"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Synthetic exited child starttime 1 predates campaign identity (99,50). The omitted old_exited row directly witnesses PID-only exemption of exited children."
+    },
+    {
+      "id": "Y03",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "acceptance token matched as a substring",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "if f\"{ACCEPTANCE_LINE}{sha}\" in lines and",
+          "replacement": "if f\"{ACCEPTANCE_LINE}{sha}\" in \"\\n\".join(lines) and"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_acceptance_is_found_not_named"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_acceptance_is_found_not_named",
+          "line": 1001,
+          "end_line": 1001,
+          "text": "self.assertIsNone(rec, name)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : token embedded in a non-rejecting line (Y03)"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native failing fixture embeds the token in a longer non-rejecting line. Acceptance rather than None directly witnesses substring matching of the acceptance token."
+    },
+    {
+      "id": "Y04",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "cgroup namespace reading hard-wired to initial",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "            \"cgroup_ns_initial\": ns_inode(\"cgroup\") == INIT_CGROUP_NS,",
+          "replacement": "            \"cgroup_ns_initial\": True,"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_root_attestation_is_derived_never_asserted"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestMemory",
+          "method": "test_root_attestation_is_derived_never_asserted",
+          "line": 502,
+          "end_line": 503,
+          "text": "self.assertEqual((r[\"effective_limit\"], r[\"cgroup_min_headroom\"], r[\"cgroup_ns_initial\"]),\n                             (None, None, False))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_root_attestation_is_derived_never_asserted (test_lx_platform.TestMemory.test_root_attestation_is_derived_never_asserted)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Tuples differ: (None, None, True) != (None, None, False)"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Namespace reader is patched to a non-initial cgroup namespace. The tuple is (None,None,True) rather than (None,None,False), directly witnessing false namespace metadata. The numeric outputs remain None in this observed witness, so it is not evidence of an accepted numeric limit."
+    },
+    {
+      "id": "Y05",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "attestation bound to /etc/machine-id only",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if not cur.get(\"hardware_bound\") or rec.get(\"machine\") != cur:",
+          "replacement": "    if not cur.get(\"hardware_bound\") or (rec.get(\"machine\") or {}).get(\"machine_id_sha256\") != cur.get(\"machine_id_sha256\"):"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_forged_or_unaccepted_attestations_refused"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_forged_or_unaccepted_attestations_refused",
+          "line": 1054,
+          "end_line": 1054,
+          "text": "self.assertIsNone(self.check(self.attestation(), machine=cloned)[0])",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Current and recorded hardware have equal machine_id_sha256 but different product_uuid_sha256. Acceptance instead of None directly witnesses machine-id-only binding."
+    },
+    {
+      "id": "Y06",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "loader no longer a required pin member",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "REQUIRED_MAPPED = (\"libm.so.6\", \"libc.so.6\", \"ld-linux\")",
+          "replacement": "REQUIRED_MAPPED = (\"libm.so.6\", \"libc.so.6\")"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_required_members_and_pin_point"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestPins",
+          "method": "test_required_members_and_pin_point",
+          "line": 913,
+          "end_line": 913,
+          "text": "self.assertIsNone(L.mapped_objects(two))",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_required_members_and_pin_point (test_lx_platform.TestPins.test_required_members_and_pin_point)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "{'/usr/lib/x86_64-linux-gnu/libc.so.6': '3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf', '/usr/lib/x86_64-linux-gnu/libm.so.6': 'fce00b6f25f459cf4ae0b7fae4257909a1a8a86f9149e7c029a5d617baf1ccd0'} is not None"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "Synthetic maps text lists libc and libm but no loader. A dictionary rather than None directly witnesses removal of the required loader member. Native library discovery supplies the two fixture paths; the assertion checks the deliberately incomplete maps text."
+    },
+    {
+      "id": "Y07",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "launch record unit type not checked",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "                and unit.endswith(\".service\") and isinstance(rec.get(\"invocation_id\"), str)",
+          "replacement": "                and isinstance(rec.get(\"invocation_id\"), str)"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_launch_gate_uses_a_fresh_reading"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_launch_gate_uses_a_fresh_reading",
+          "line": 1217,
+          "end_line": 1217,
+          "text": "self.assertEqual(self.gates(fresh=bad_fresh).get(\"launched_by_systemd\"), L.FAIL, bad_fresh)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'PASS' != 'FAIL'\n- PASS\n+ FAIL\n : {'systemd_pid1': True, 'unit': 'rebaseguard-mbs308-x.scope', 'invocation_id': 'abc', 'systemctl': {'MainPID': 117319, 'InvocationID': 'abc'}, 'pass': True}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native fresh record is otherwise valid but its unit ends .scope. PASS versus FAIL directly witnesses removal of the .service suffix requirement."
+    },
+    {
+      "id": "Y08",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "merely truthy guest_updates_shown_disabled counts",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "    if not isinstance(upd, dict) or upd.get(\"guest_updates_shown_disabled\") is not True:",
+          "replacement": "    if not isinstance(upd, dict) or not upd.get(\"guest_updates_shown_disabled\"):"
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_lifetime_gates_open_while_undecided"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestAttestationPreflight",
+          "method": "test_lifetime_gates_open_while_undecided",
+          "line": 1171,
+          "end_line": 1171,
+          "text": "self.assertEqual(self.gates(att=good, decided=dec, upd=upd)[\"no_automatic_os_install\"], L.UNKNOWN, upd)",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_lifetime_gates_open_while_undecided (test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "'PASS' != 'UNKNOWN'\n- PASS\n+ UNKNOWN\n : {'guest_updates_shown_disabled': 'true'}"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The native update fixture has guest_updates_shown_disabled=\"true\" (a string). PASS versus UNKNOWN directly witnesses accepting truthiness instead of exact True."
+    },
+    {
+      "id": "Y09",
+      "native_status": "KILLED",
+      "native_reasons": [],
+      "weakened_property": "cgroup_resources reads the leaf only",
+      "property_matches_raw": true,
+      "mutation_edits": [
+        {
+          "original": "        for i in range(len(parts), -1, -1):\n            d = base.joinpath(*parts[:i])\n            rows.append(",
+          "replacement": "        for i in range(len(parts), len(parts) - 1, -1):\n            d = base.joinpath(*parts[:i])\n            rows.append("
+        }
+      ],
+      "intended_property_test_methods": [
+        "test_cgroup_resources_whole_chain"
+      ],
+      "intended_methods_match_frozen_registry": true,
+      "intended_assertions": [
+        {
+          "frozen_source_path": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage2-source-commit/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "repository_path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+          "class": "TestMemory",
+          "method": "test_cgroup_resources_whole_chain",
+          "line": 523,
+          "end_line": 523,
+          "text": "self.assertEqual(set(rows), {\"/x/y\", \"/x\", \"/\"})",
+          "structural_assertion_first_line_matches": true,
+          "recorded_failure_name": "test_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)",
+          "in_raw_and_controlled_trace": true
+        }
+      ],
+      "native_intended_assertion_messages": [
+        "Items in the second set but not the first:\n'/x'\n'/'"
+      ],
+      "assessment": "PROPERTY_RELEVANT_WITNESS",
+      "kill_credit": true,
+      "environmental_or_setup_assertion": false,
+      "rationale": "The synthetic resource hierarchy contains leaf /x/y and ancestor /x. Missing /x and / from the returned path set directly witnesses reading the leaf only; later value checks are not credited after the set assertion fails."
+    }
+  ]
+}

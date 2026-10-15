@@ -269,8 +269,8 @@ class TestVerifiedObservation(unittest.TestCase):
             {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}SYNTHETIC.md": f"{L.ACCEPTANCE_LINE}<SHA>\n"},
             {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}SYNTHETIC.md": text + "Verdict: extra\n"},
         )
-        for reviews in cases:
-            with self.subTest(reviews=list(reviews)):
+        for case_index, reviews in enumerate(cases):
+            with self.subTest(case_index=case_index, reviews=list(reviews)):
                 # Remove prior reviews inside this synthetic repository only.
                 for old in (self.repo / L.ACCEPTANCE_REVIEW_DIR).rglob("*"):
                     if old.is_file():

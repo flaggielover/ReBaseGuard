@@ -1,0 +1,78 @@
+"""Independent post-fix synthetic probes. Imports only the AST-reviewed harness snapshot."""
+import ast
+import copy
+import hashlib
+import importlib.util
+import json
+import re
+from pathlib import Path
+BASE=Path('/tmp/cell308-claude-sync-20261015/independent-evidence')
+OUT=BASE/'postfix-01'
+P=OUT/'inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py'
+tree=ast.parse(P.read_text())
+assert all(not n.decorator_list for n in tree.body if isinstance(n,(ast.FunctionDef,ast.ClassDef)))
+spec=importlib.util.spec_from_file_location('independent_postfix01_harness',P); H=importlib.util.module_from_spec(spec); spec.loader.exec_module(H)
+METHOD='test_intended_property'; OTHERMETHOD='test_unrelated_property'
+IDS=['test_fixture.TestSynthetic.'+METHOD,'test_fixture.TestSynthetic.'+OTHERMETHOD]
+NAME=METHOD+' ('+IDS[0]+')'; OTHER=OTHERMETHOD+' ('+IDS[1]+')'
+FRAME={'file':'fixture.py','line':1,'function':METHOD}
+
+def meta(text,rc,exception_type='builtins.AssertionError',exact=True):
+    count=re.findall(r'^Ran (\d+) tests? in',text,re.M)
+    events=[]
+    for kind,header in [('failure','FAIL'),('error','ERROR')]:
+        for name in re.findall('^'+header+r': (.+)$',text,re.M):
+            m=re.match(r'([^ ]+) \(([^)]+)\)',name)
+            parent=m.group(2) if m else IDS[0]
+            events.append({'kind':kind,'test_id':parent,'parent_test_id':parent,'description':name,'exception_type':exception_type if kind=='failure' else 'builtins.RuntimeError','is_exact_assertion_error':exact if kind=='failure' else False,'traceback_frames':[dict(FRAME)]})
+    return {'schema':'CELL308_CONTROLLED_UNITTEST_RESULT_V1','ran':int(count[0]) if count else 2,'successful':rc==0,'executed_test_ids':IDS.copy(),'events':events,'skipped':0,'expected_failures':0,'unexpected_successes':0}
+
+def record(text,rc=1,metadata='auto',stdout='',**kwargs):
+    if metadata=='auto': metadata=meta(text,rc)
+    return H._suite_record(['python','independent synthetic only'],{},returncode=rc,stdout=stdout,stderr=text,elapsed_s=.001,result_metadata=metadata,**kwargs)
+base_text='-'*70+'\nRan 2 tests in 0.001s\n\nOK\n'
+baseline=record(base_text,0)
+old=json.loads((BASE/'independent-classifier-probes.json').read_text())
+rows=[]
+for r in old['probes']:
+    s=r['suite']; label=r['case']; md=meta(s['stderr'],s['returncode'])
+    if label in {'fake_assertion_after_runtime_error_message','traceback_marker_only_in_message','fake_assertion_in_stdout_only','fake_assertion_before_runtime_terminal'}:
+        for event in md['events']: event.update(exception_type='builtins.RuntimeError',is_exact_assertion_error=False)
+    if label=='fully_qualified_assertion_subclass_not_base':
+        for event in md['events']: event.update(exception_type='custom.MyAssertionError',is_exact_assertion_error=False)
+    rec=record(s['stderr'],s['returncode'],md,s['stdout'],timed_out=s['timed_out'],launch_error=s['launch_error'])
+    status,reasons=H.classify_mutant(rec,baseline,[METHOD])
+    rows.append({'group':'24-case fresh replay','case':label,'expected':r['expected'],'actual':status,'matches_expectation':status==r['expected'],'reasons':reasons,'suite':rec})
+valid=old['probes'][0]['suite']['stderr']
+valid_md=meta(valid,1)
+adjacent=[]
+def add(label,text=valid,md=None,expected='ERROR',rc=1):
+    adjacent.append((label,text,copy.deepcopy(valid_md if md is None else md),expected,rc))
+add('missing_metadata',md={})
+add('nonobject_metadata',md=['not','object'])
+for key,value in [('schema','unknown'),('ran',True),('successful',1),('events',{}),('executed_test_ids',[True,IDS[1]]),('skipped',-1)]:
+    md=copy.deepcopy(valid_md);md[key]=value;add('bad_metadata_'+key,md=md)
+md=copy.deepcopy(valid_md);md['executed_test_ids']=[IDS[0],IDS[0]];add('duplicate_executed_id',md=md)
+md=copy.deepcopy(valid_md);md['executed_test_ids']=IDS[::-1];add('changed_executed_id_order',md=md)
+md=copy.deepcopy(valid_md);md['events'][0]['parent_test_id']='missing.test';add('missing_executed_parent',md=md)
+md=copy.deepcopy(valid_md);md['events'][0]['exception_type']='builtins.RuntimeError';add('runtime_type_with_true_boolean',md=md)
+md=copy.deepcopy(valid_md);md['events'][0]['is_exact_assertion_error']=False;add('assertion_type_with_false_boolean',md=md)
+md=copy.deepcopy(valid_md);md['events'][0]['traceback_frames']=[];add('missing_traceback_frames',md=md)
+md=copy.deepcopy(valid_md);md['events'][0]['traceback_frames'][0]['file']='different.py';add('metadata_raw_frame_mismatch',md=md)
+md=copy.deepcopy(valid_md);md['events'][0]['description']=OTHER;add('metadata_raw_description_mismatch',md=md)
+md=copy.deepcopy(valid_md);md['successful']=True;add('metadata_success_with_raw_failure',md=md)
+md=copy.deepcopy(valid_md);md['events']=[];add('metadata_no_failure_with_raw_failure',md=md)
+md=copy.deepcopy(valid_md);md['events'][0]['test_id']=IDS[1];md['events'][0]['parent_test_id']=IDS[1];add('event_identity_disagrees_with_description',md=md)
+add('truncated_before_terminal_exception',text=valid.replace('AssertionError: intended property failed\n',''))
+add('genuine_assertion_message_contains_runtime_error_suffix',text=valid.replace('AssertionError: intended property failed','AssertionError: intended property failed\nRuntimeError: quoted message suffix'),expected='KILLED')
+add('genuine_assertion_message_contains_fake_traceback_marker',text=valid.replace('AssertionError: intended property failed','AssertionError: message\nTraceback (most recent call last):\n  File "unrelated.py", line 42, in fake\nRuntimeError: quoted'),expected='KILLED')
+for label,text,md,expected,rc in adjacent:
+    rec=record(text,rc,md)
+    try: status,reasons=H.classify_mutant(rec,baseline,[METHOD])
+    except Exception as exc: status,reasons='EXCEPTION',[type(exc).__name__+': '+str(exc)]
+    rows.append({'group':'adjacent metadata/raw integrity','case':label,'expected':expected,'actual':status,'matches_expectation':status==expected,'reasons':reasons,'suite':rec})
+rec={'harness_sha256':hashlib.sha256(P.read_bytes()).hexdigest(),'product_imported':False,'full_suite_or_mutants_executed':False,'original_24_fresh_replays':24,'adjacent_count':len(adjacent),'probe_count':len(rows),'mismatches':[r['case'] for r in rows if not r['matches_expectation']],'probes':rows}
+(OUT/'fresh-classifier-probes.json').write_text(json.dumps(rec,indent=2)+'\n')
+print(json.dumps({k:v for k,v in rec.items() if k!='probes'},indent=2))
+for r in rows:
+    if not r['matches_expectation']: print(json.dumps({k:v for k,v in r.items() if k!='suite'}))

@@ -1,0 +1,205 @@
+{
+  "verdict": "FAILED_NATIVE_VALIDATION",
+  "full_pass": false,
+  "run_id": 38680983939,
+  "run_attempt": 1,
+  "source_commit": "7eb9bbd999a1ec07d31a15f0b391fcc32ffa4d6b",
+  "github_run_url": "https://github.com/flaggielover/ReBaseGuard/actions/runs/38680983939",
+  "artifact_id": 11948636749,
+  "artifact_name": "cell308-r5-synthetic-7eb9bbd999a1ec07d31a15f0b391fcc32ffa4d6b-38680983939-1",
+  "archive_sha256": "bbed6afeb266779155054632736eefe5bfd2596c301f2a729b616eb976bbb4e1",
+  "archive_matches_GitHub_digest": true,
+  "all_411_archive_files_match_download": true,
+  "all_410_manifest_entries_hash_match": true,
+  "original_failed_artifact_unchanged": true,
+  "all_10_exact_commit_inputs_match_freeze": true,
+  "four_code_review_hashes_match": {
+    "lx_platform.py": true,
+    "lx_verified.py": true,
+    "tests/test_sync_boundaries.py": true,
+    "tests/test_lx_verified.py": true
+  },
+  "baseline": {
+    "status": "PASS",
+    "test_methods": 191,
+    "errors": 0,
+    "skips": 0
+  },
+  "mutants": {
+    "total": 133,
+    "fully_executed": 133,
+    "KILLED": 126,
+    "ERROR": 7,
+    "SURVIVED": 0,
+    "NOT_APPLIED": 0,
+    "all_133_anchors_unique_parseable_and_mutant_hashes_bound": true,
+    "all_133_structured_event_raw_report_test_identity_checks_coherent": true,
+    "errors_get_zero_kill_credit": true,
+    "test_methods_per_mutant": 191,
+    "full_suites_including_baseline": 134,
+    "top_level_method_executions": 25594
+  },
+  "credited_witness_review": {
+    "all_126_have_property_relevant_direct_intended_assertions": true,
+    "independent_primary_review_rows": 56,
+    "helper_review_rows": 70,
+    "no_unrelated_or_setup_intended_witnesses_found": true,
+    "qualifications": [
+      "R5SYNC04 kill credit rests on the supervisor=None unit_enabled assertion at test_sync_boundaries.py477. Its extra parent failure at481 may inspect stale result after subTest suppressed the prior assertion; that secondary failure does not independently establish auto-update composition coverage.",
+      "M23 native witness exercises unreadable power type fallback (type path is a directory), not the later USB-type fixture.",
+      "N02 shared fixture is labeled for Y03 but lacks an exact whole acceptance line, so its assertion is relevant to N02 substring acceptance weakening.",
+      "M16 witness establishes the stale-temporary-file consequence asserted by its test; no broader crash property inferred.",
+      "Y04 witness is a metadata tuple change; numeric outputs remain None.",
+      "CDEX15 direct witness is a self.fail AssertionError converting the observed escaped ValueError/UnicodeError boundary into an intended no-exception property failure.",
+      "No scientific or operational pin point/evaluator result is claimed. Native legacy pin_point helper calls use only empty/None/stdlib-only fixtures."
+    ]
+  },
+  "seven_rejections": [
+    {
+      "id": "M24",
+      "status": "ERROR",
+      "kill_credit": false,
+      "summary": "FAILED (failures=4, errors=1)",
+      "reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "category": "fixture indexing",
+      "root_attribution": "IndexError on born[0] after weakened birth detection returns an empty list.",
+      "source_path": "tests/test_sync_boundaries.py",
+      "source_line": 188,
+      "source_line_text": "        self.assertEqual(born[0][\"pid\"], 43)",
+      "bounded_repair_direction": "Add explicit cardinality/schema assertion before indexing; preserve born-in-window property.",
+      "actual_error_types": [
+        "builtins.IndexError"
+      ],
+      "intended_assertion_present_but_not_credited": true
+    },
+    {
+      "id": "N04",
+      "status": "ERROR",
+      "kill_credit": false,
+      "summary": "FAILED (failures=3, errors=1)",
+      "reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "category": "fixture implicit repository assumption",
+      "root_attribution": "Malformed-reference loop calls attestation_valid(ref) without repo_root. Mutant bypasses early exact-schema refusal and resolves repository from shallow temporary mutant module; parents[5] raises IndexError.",
+      "source_path": "tests/test_lx_platform.py",
+      "source_line": 1057,
+      "source_line_text": "            self.assertIsNone(L.attestation_valid(ref)[0], ref)",
+      "bounded_repair_direction": "Bind malformed reference probes to an explicit synthetic repository, preserving direct exact-schema assertions.",
+      "actual_error_types": [
+        "builtins.IndexError"
+      ],
+      "intended_assertion_present_but_not_credited": true
+    },
+    {
+      "id": "N06",
+      "status": "ERROR",
+      "kill_credit": false,
+      "summary": "FAILED (failures=1, errors=1)",
+      "reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "category": "synthetic repository cleanup error; specific cause unproven",
+      "root_attribution": "OSError errno39 Directory not empty: .git during TemporaryDirectory cleanup in unrelated commit-order fixture. Intended proc-view assertion also fails. Raw evidence does not identify a background child or establish mutation causality.",
+      "source_path": "tests/test_lx_platform.py",
+      "source_line": 1028,
+      "source_line_text": "            with tempfile.TemporaryDirectory() as d:",
+      "bounded_repair_direction": "Review deterministic synthetic Git fixture lifecycle; do not count this run as a kill or infer a specific child from the trace.",
+      "actual_error_types": [
+        "builtins.OSError"
+      ],
+      "intended_assertion_present_but_not_credited": true
+    },
+    {
+      "id": "N08",
+      "status": "ERROR",
+      "kill_credit": false,
+      "summary": "FAILED (failures=3, errors=1)",
+      "reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "category": "fixture indexing",
+      "root_attribution": "IndexError on exited[0] after weakened exited-process reporting returns an empty list.",
+      "source_path": "tests/test_sync_boundaries.py",
+      "source_line": 191,
+      "source_line_text": "        self.assertTrue(exited[0][\"exited_in_window\"])",
+      "bounded_repair_direction": "Add explicit cardinality/schema assertion before indexing; preserve exited-in-window property.",
+      "actual_error_types": [
+        "builtins.IndexError"
+      ],
+      "intended_assertion_present_but_not_credited": true
+    },
+    {
+      "id": "P04",
+      "status": "ERROR",
+      "kill_credit": false,
+      "summary": "FAILED (failures=3)",
+      "reasons": [
+        "DUPLICATE_FAILURE_TEST_ID",
+        "DUPLICATE_FAILURE_DESCRIPTION"
+      ],
+      "category": "genuine duplicate fixture subtest identity",
+      "root_attribution": "Two different review-content cases use the identical reviews=list(reviews) label and thus identical full failing subtest IDs/descriptions. Both are real AssertionError events, but strict duplicate identity rejection is correct.",
+      "source_path": "tests/test_lx_verified.py",
+      "source_line": 273,
+      "source_line_text": "            with self.subTest(reviews=list(reviews)):",
+      "bounded_repair_direction": "Include a stable case index or content-case label in the fixture subTest; retain duplicate rejection.",
+      "actual_error_types": [],
+      "intended_assertion_present_but_not_credited": true
+    },
+    {
+      "id": "Q07",
+      "status": "ERROR",
+      "kill_credit": false,
+      "summary": "FAILED (failures=4, errors=1)",
+      "reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "category": "fixture subtest continuation",
+      "root_attribution": "subTest suppresses an earlier unit-state AssertionError before result is assigned; an assertion after the context references unbound result.",
+      "source_path": "tests/test_sync_boundaries.py",
+      "source_line": 481,
+      "source_line_text": "                self.assertIs(result[\"guest_updates_shown_disabled\"], supervisor is False)",
+      "bounded_repair_direction": "Keep dependent observation/composition assertions in the same subTest scope or otherwise avoid dependent use after an interrupted case.",
+      "actual_error_types": [
+        "builtins.UnboundLocalError"
+      ],
+      "intended_assertion_present_but_not_credited": true
+    },
+    {
+      "id": "CDEX16",
+      "status": "ERROR",
+      "kill_credit": false,
+      "summary": "FAILED (failures=2, errors=1)",
+      "reasons": [
+        "UNITTEST_ERRORS"
+      ],
+      "category": "fixture subtest continuation",
+      "root_attribution": "Same unbound result path as Q07 after an intended unit-state assertion fails within subTest.",
+      "source_path": "tests/test_sync_boundaries.py",
+      "source_line": 481,
+      "source_line_text": "                self.assertIs(result[\"guest_updates_shown_disabled\"], supervisor is False)",
+      "bounded_repair_direction": "Keep dependent observation/composition assertions in the same subTest scope or otherwise avoid dependent use after an interrupted case.",
+      "actual_error_types": [
+        "builtins.UnboundLocalError"
+      ],
+      "intended_assertion_present_but_not_credited": true
+    }
+  ],
+  "rejection_policy_assessment": "Classifier correctly retained six suites with unittest errors and one suite with duplicate real subtest identities as ERROR. Existing assertion failures in those rows do not authorize reclassification to KILLED.",
+  "N06_attribution_limit": "Evidence proves synthetic Git tempfile cleanup failed with OSError errno39 for .git. Specific background process, maintenance task, or mutation causality is unproven.",
+  "audit_scope": "Read-only source/evidence correctness. No product/tests/scientific evaluator executed by auditor; no host/governance/production/route acceptance.",
+  "original_all_pass_gate_auditor_output_retained": "stage2-failed-run-38680983939-structural-audit.json",
+  "audit_tool_display_qualification": "Unittest may repeat a parent progress/status display after a subTest failure. Exact unique executed test IDs remain191; adjacent display repetitions are normalized for display comparison only. Duplicate failing IDs/descriptions remain rejected.",
+  "bindings": {
+    "bounded-failed-run-report.json": "92a3c7fe7b0819f5c6d4e1025133179037b0f5c0c6c2a3c25b63c2fdd2a695f0",
+    "seven-rejections-raw.json": "56b4f7210b788903cec53444b2a6effa4a06ee3b380515e47d1d5073a07a84e9",
+    "own-56-semantic-witness-review.json": "e883f9a74c13c7db44a9a98471ed9b0037e231e6b5af2981d7cb0af7fcd51ad6",
+    "helper-70-semantic-witness-review.json": "28e8dc7ac8c79aba9d36b10ad4edd564fb040f9cb86cf28048b6c801a91d97aa",
+    "independent-archive-verification.json": "a259f4524649b2fa89007cee14e73cc3b08b1457627b2fd448f11cb6181be73f",
+    "../stage2-failed-run-38680983939-structural-audit.json": "19d65cfdbee788fa01c8f642d15638e1bc22e07c47093b5871ab1b42df4226d5",
+    "../stage2-source-commit/exact-commit-binding-report.json": "5b734f8bf14888be2edfc7982dded8f322143b91a91185cbb7d388b715a6428d"
+  }
+}
