@@ -1,12 +1,13 @@
 {
- "lx_platform_sha256": "6978cba7e10521e00b78428b02c10f6455ab2baa43c90cfa9a4a0b8c8934897c",
- "tests_sha256": "e7f9b2d60d45eb338082068ccd8d6d1ac0441135665b808c453aac133f44495f",
+ "lx_platform_sha256": "90362161c5e57279f9e76ba58c054f790304a2f28b4456bf0ff6cecbbf5f145f",
+ "tests_sha256": "e48a94b0a636aa0c5dfe59bd0d6ea812ae94104ab8eb2f1c889182bbc176fe9d",
  "unmutated_suite": "PASS",
  "unmutated_tail": "OK",
- "killed": 65,
- "total": 65,
+ "killed": 89,
+ "total": 89,
  "reviewer_mutants_killed": 10,
  "review60_mutants_killed": 9,
+ "review61_mutants_killed": 9,
  "mutants": [
   {
    "id": "M01",
@@ -90,7 +91,7 @@
    "id": "M14",
    "property": "update vectors other than apt ignored",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (failures=2)"
   },
   {
    "id": "M15",
@@ -180,7 +181,7 @@
    "id": "M29",
    "property": "execute / resume pass the launch gate without a launch record",
    "status": "KILLED",
-   "suite_tail": "FAILED (errors=1)"
+   "suite_tail": "FAILED (errors=2)"
   },
   {
    "id": "M30",
@@ -336,11 +337,11 @@
    "id": "N04",
    "property": "caller-asserted fields accepted in the attestation reference",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (errors=1)"
   },
   {
    "id": "N05",
-   "property": "root attestation truthy again",
+   "property": "attestation's root_cgroup_is_real not required",
    "status": "KILLED",
    "suite_tail": "FAILED (failures=1)"
   },
@@ -360,7 +361,7 @@
    "id": "N08",
    "property": "exited processes not reported",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (failures=2)"
   },
   {
    "id": "N09",
@@ -397,6 +398,150 @@
    "property": "unrecognised battery status read as not discharging",
    "status": "KILLED",
    "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "Y01",
+   "property": "any non-empty decided set opens D-HOST-LIFETIME",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y02",
+   "property": "exited children of a campaign pid exempt whatever their start",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y03",
+   "property": "acceptance token matched as a substring",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y04",
+   "property": "cgroup namespace reading hard-wired to initial",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y05",
+   "property": "attestation bound to /etc/machine-id only",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y06",
+   "property": "loader no longer a required pin member",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y07",
+   "property": "launch record unit type not checked",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y08",
+   "property": "merely truthy guest_updates_shown_disabled counts",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y09",
+   "property": "cgroup_resources reads the leaf only",
+   "status": "KILLED",
+   "suite_tail": "FAILED (errors=1)"
+  },
+  {
+   "id": "P01",
+   "property": "acceptance committed with the attestation accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P02",
+   "property": "a rejecting review ignored",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P03",
+   "property": "acceptance review outside the fixed name set accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P04",
+   "property": "verdict line not required",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P05",
+   "property": "non-initial cgroup namespace does not block a number",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P06",
+   "property": "root attestation without D-HOST-LIFETIME decided",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P07",
+   "property": "DECIDED not validated",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P08",
+   "property": "passed launch record trusted instead of a fresh reading",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P09",
+   "property": "MainPID type not checked",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P10",
+   "property": "journal channel counted without a reviewed reader",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P11",
+   "property": "masked unit not recognised",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P12",
+   "property": "unknown update-unit state counted as disabled",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P13",
+   "property": "only the first unit root searched",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P14",
+   "property": "identity record shape not validated",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P15",
+   "property": "empty pin-point list accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
   }
  ]
 }
