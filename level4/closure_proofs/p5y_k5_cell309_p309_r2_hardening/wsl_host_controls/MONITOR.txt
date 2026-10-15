@@ -1,0 +1,73 @@
+Observation monitor prototype and pipe failure handling (development only)
+
+Base: 9b5613d321b29264bd9ed48a1ac8ff02c81db943. Original candidate,
+repair, session and interoperability records remain historical and unchanged.
+
+What is implemented
+- ObservationMonitor binds each signed payload to the immutable DevSession
+  baseline and the last successful observation, then runs the existing start/
+  monitor diagnostics. A valid signature alone never permits continuation.
+- Initial baseline checks must pass. Busy, stale, unknown-visibility, changed
+  identity, invalid-signature, session, storage or transport failures latch stop.
+  The latch has no reset API. Clearing a consumer's Event cannot clear it.
+- An optional explicitly started watchdog watches a monotonic deadline in its
+  own thread. It can set stop_requested while verification or diagnostic fsync
+  is blocked; it acquires neither the session nor operation lock to publish stop.
+  Polling is 0.01..1 seconds, with 0.25 seconds as the default. This polling
+  latency is disclosed; there is no claim of instantaneous OS scheduling.
+- The 105-second development deadline retains sample + gap allowances. Issuing
+  another challenge never extends it. Evidence age reduces the next deadline,
+  so a delayed arrival is not a fresh 105-second window. Request the next sample
+  promptly: adding another 60-second sleep between 60-second collections can
+  exhaust this conservative deadline. This is a proposal, not a claim of exact
+  equivalence with an accepted native-host monitoring loop.
+- Diagnostic decisions are fsynced into the existing session journal before a
+  successful diagnostic response. A watchdog stop during that I/O prevents a
+  successful response even if the earlier diagnostic was green.
+- The synthetic Windows pipe client now serializes complete transactions,
+  refuses reuse after request failure/closure, closes stdout/stderr even when
+  child cleanup times out, and preserves an idempotent close result. A cleanup
+  timeout is still an error: closing descriptors does not prove Windows exited.
+
+What this does not implement
+stop_requested is a development event, not a signal to a production workload.
+There is no launcher, evaluator, host collector, OS policy change or process
+termination in ObservationMonitor. A controlling transport must call bridge_failed
+on EOF/timeout, and an independently reviewed execution controller must actually
+stop its owned work. Authentication/privilege isolation, complete lifetime and
+protected-process visibility, guest/host attribution, host durability, route
+acceptance and actual-run authorization remain outstanding. No 6-hour or
+31.5-hour guarantee is claimed. Every response retains BLOCKED/false.
+
+Starting and stopping
+Create the development session in a new p309-wsl-dev-* directory outside Git,
+construct the monitor from it, and explicitly call start_watchdog() for autonomous
+liveness checks. Without that call, only explicit poll/challenge/accept calls
+check liveness; status reports watchdog_active to distinguish the modes.
+Always observe stop_requested. Bound transport operations and allow them to
+return before close(); Python does not safely cancel blocked worker threads.
+Only ephemeral synthetic keys/observations are authorized for these examples.
+
+Local validation
+Fetch codex/p309-wsl-monitor-dev-20261015 into a separate worktree from 9b5613d3.
+Read MONITOR_VALIDATION.json and inspect the diff before executing. In the
+wsl_host_controls directory use the prepared private CPython 3.11.15:
+
+  python3.11 -B -m unittest -v test_pipe_failures test_observation_monitor test_dev_session test_windows_interop
+
+There are 4 transport-double tests, 16 synthetic monitor tests, 21 session tests
+and 12 actual Windows interoperability tests (53 methods total). Set the existing
+P309_WINDOWS_PWSH path as in WINDOWS_INTEROP.md. The extra interoperability case
+feeds real Windows signatures into safe then busy synthetic monitor observations.
+All tests use ephemeral test keys/records, synthetic payloads and test doubles;
+the Windows interoperability subset also starts the existing unnamed-key CNG
+helper. No real host sampling, certificates, accounts, services, power/update
+settings, drills, qualification, grants, freezes or targets are involved.
+
+Reruns are justified here because dev_session.py, the pipe client and the
+interoperability suite changed. The earlier host-control 21 Python / sampler
+11 PowerShell results concern unchanged inputs and need no repetition.
+
+Record actual local source hashes and results additively and push the separate
+development branch. Preserve earlier logs and branch heads. Do not reinterpret
+the Cloud 41-test result as a private-Python or Windows 53-test result.

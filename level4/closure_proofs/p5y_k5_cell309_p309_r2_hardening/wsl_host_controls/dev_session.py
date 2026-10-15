@@ -279,6 +279,19 @@ class DevSession:
             self.fd = None
 
     @serialized
+    def record_monitor_decision(self, decision):
+        """Persist a diagnostic decision, never an execution permission."""
+        try:
+            if (not isinstance(decision, dict) or decision.get('formal_admission') != 'BLOCKED'
+                    or decision.get('qualification_authorized') is not False
+                    or decision.get('target_execution_authorized') is not False):
+                raise SessionError('monitor decision must retain development boundaries')
+            self._append('monitor_diagnostic', decision)
+        except Exception:
+            self.terminal = True
+            raise
+
+    @serialized
     def close(self):
         try:
             if self.fd is not None and not self.terminal:

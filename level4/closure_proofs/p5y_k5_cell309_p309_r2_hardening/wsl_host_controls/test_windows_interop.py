@@ -1,6 +1,7 @@
 """Real Windows CNG signatures, synthetic observations, WSL/OpenSSL verification."""
 import base64
 import copy
+import datetime as dt
 import json
 from pathlib import Path
 import shutil
@@ -10,6 +11,7 @@ import unittest
 
 import dev_session as D
 import host_controls as H
+from observation_monitor import ObservationMonitor, MonitorError
 from synthetic_windows_bridge import WindowsSyntheticSigner, MAX_MESSAGE
 from test_host_controls import fixture
 
@@ -148,6 +150,36 @@ class WindowsInterop(unittest.TestCase):
                 with self.assertRaises(RuntimeError):
                     signer.request(request)
                 self.assertNotEqual(signer.process.wait(timeout=10), 0)
+
+    def test_real_windows_signatures_feed_fail_stop_monitor(self):
+        session = self.create()
+        clock = {'mono': 1000.0, 'wall': 1060.0}
+        monitor = ObservationMonitor(session, monotonic=lambda: clock['mono'], wall_clock=lambda: clock['wall'])
+        latest = copy.deepcopy(self.payload)
+        try:
+            for busy in (False, True):
+                token = monitor.challenge()
+                payload = copy.deepcopy(latest)
+                for name in ('wall_s', 'uptime_s', 'active_s'):
+                    payload['host']['start'][name] = latest['host']['end'][name] + 1
+                    payload['host']['end'][name] = latest['host']['end'][name] + 61
+                payload['guest']['utc'] = dt.datetime.fromtimestamp(
+                    payload['host']['end']['wall_s'], dt.timezone.utc).isoformat()
+                clock['mono'] += 61
+                clock['wall'] = payload['host']['end']['wall_s']
+                if busy:
+                    payload['host']['process_observation']['rows'][0]['cpu_fraction'] = .500001
+                envelope = self.signer.sign(D.canonical(dict(token, payload=payload)))
+                if busy:
+                    with self.assertRaises(MonitorError):
+                        monitor.accept(envelope)
+                    self.assertTrue(monitor.stop_requested.is_set())
+                else:
+                    self.assertEqual(monitor.accept(envelope)['formal_admission'], 'BLOCKED')
+                latest = payload
+            self.assertEqual(monitor.status()['valid_observations'], 1)
+        finally:
+            monitor.close()
 
     def test_client_budget_and_helper_eof(self):
         signer = WindowsSyntheticSigner()

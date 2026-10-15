@@ -1,5 +1,6 @@
 """Bounded test-only pipe client. No production trust or credential provisioning."""
 import base64
+import functools
 import hashlib
 import json
 import os
@@ -7,10 +8,19 @@ from pathlib import Path
 import select
 import subprocess
 import tempfile
+import threading
 import time
 
 MAX_MESSAGE = 1_048_576
 MAX_RESPONSE = 1_500_000
+
+
+def serialized(method):
+    @functools.wraps(method)
+    def locked(self, *args, **kwargs):
+        with self._lock:
+            return method(self, *args, **kwargs)
+    return locked
 
 
 class WindowsSyntheticSigner:
@@ -26,6 +36,9 @@ class WindowsSyntheticSigner:
         command = ("& ([scriptblock]::Create([IO.File]::ReadAllText('" + quoted +
                    "'))) -SyntheticOnly -KeyBits " + str(bits))
         self.errors = tempfile.TemporaryFile()
+        self._lock = threading.RLock()
+        self._closed = False
+        self.exit_code = None
         self.process = None
         self.buffer = b''
         try:
@@ -49,7 +62,10 @@ class WindowsSyntheticSigner:
             self.close()
             raise
 
+    @serialized
     def receive(self, timeout=30):
+        if self._closed:
+            raise RuntimeError('Windows synthetic helper is closed')
         deadline = time.monotonic() + timeout
         while b'\n' not in self.buffer:
             remaining = deadline - time.monotonic()
@@ -69,7 +85,17 @@ class WindowsSyntheticSigner:
             raise RuntimeError('Windows helper returned a non-object')
         return value
 
+    @serialized
     def request(self, value):
+        if self._closed:
+            raise RuntimeError('Windows synthetic helper is closed')
+        try:
+            return self._request(value)
+        except Exception:
+            self.close()
+            raise
+
+    def _request(self, value):
         raw = json.dumps(value, separators=(',', ':'), allow_nan=False).encode('ascii') + b'\n'
         if len(raw) > 1_400_000:
             raise ValueError('synthetic transport budget exceeded')
@@ -95,6 +121,7 @@ class WindowsSyntheticSigner:
             os.set_blocking(fd, True)
         return self.receive()
 
+    @serialized
     def sign(self, message):
         if type(message) is not bytes or not 0 < len(message) <= MAX_MESSAGE:
             raise ValueError('synthetic message must be 1..1048576 bytes')
@@ -112,19 +139,27 @@ class WindowsSyntheticSigner:
         return {k: v for k, v in dict(self.hello, public_pem_sha256=self.pin).items()
                 if k != 'public_key_b64'}
 
+    @serialized
     def close(self):
-        code = None
-        if self.process is not None:
-            if self.process.stdin and not self.process.stdin.closed:
-                self.process.stdin.close()
+        if self._closed:
+            return self.exit_code
+        self._closed = True
+        try:
+            if self.process is not None:
+                if self.process.stdin and not self.process.stdin.closed:
+                    self.process.stdin.close()
+                try:
+                    self.exit_code = self.process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    self.process.kill()  # Only this owned synthetic helper.
+                    self.exit_code = self.process.wait(timeout=10)
+            return self.exit_code
+        finally:
             try:
-                code = self.process.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                self.process.kill()  # Only this owned synthetic helper.
-                code = self.process.wait(timeout=10)
-            self.process.stdout.close()
-        self.errors.close()
-        return code
+                if self.process is not None and self.process.stdout:
+                    self.process.stdout.close()
+            finally:
+                self.errors.close()
 
     def __enter__(self):
         return self

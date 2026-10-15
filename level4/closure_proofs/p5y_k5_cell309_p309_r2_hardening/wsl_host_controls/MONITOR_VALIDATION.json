@@ -1,0 +1,43 @@
+{
+  "schema": "P309_OBSERVATION_MONITOR_DEV_VALIDATION/1",
+  "utc": "2026-10-15T11:49:36.196927+00:00",
+  "base_commit": "9b5613d321b29264bd9ed48a1ac8ff02c81db943",
+  "python": "3.12.14",
+  "openssl": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+  "source_sha256": {
+    "dev_session.py": "59f536943096d61af65fa27a1cc3f39d7252a5b459f2ecb93a75a041ff5a07d2",
+    "synthetic_windows_bridge.py": "bb7fabb5f9829b2ed1515884e7beceac10418cae949b9bbef24638f60d30bd2b",
+    "test_pipe_failures.py": "096b32b59f4ebd4f5360ecb6ef0ee3977137511fd65a29d14da3ed91d33405a1",
+    "observation_monitor.py": "435deb91f09365e2c4c91c1ed458ce0e88283affd75855542341ab88ce00eb74",
+    "test_observation_monitor.py": "3960d7530cc667c68400fb22a19dcde56346d4ad805cd4fc6502099da00a10fc",
+    "test_windows_interop.py": "f0f0b49eb0108fd6ded373de40b4b54618ba64934f855cb4755673d9deecbd3a",
+    "MONITOR.txt": "d0674a5d23626dccbf6779be60ccfd35e5c4b401f5ae3fc64edec4761b3ba598"
+  },
+  "test_method_counts": {
+    "test_pipe_failures.py": 4,
+    "test_observation_monitor.py": 16,
+    "test_dev_session.py": 21,
+    "test_windows_interop.py": 12
+  },
+  "coordinator_validation": {
+    "tests_passed": 41,
+    "failures": 0,
+    "errors": 0,
+    "command": "python3 -B -m unittest -v test_pipe_failures test_observation_monitor test_dev_session",
+    "windows_interop_12_tests": "NOT_RUN: Windows executable is unavailable here",
+    "private_python_3_11_15": "PENDING on the host"
+  },
+  "protected_source_hashes_unchanged": 20,
+  "scope": "DEVELOPMENT_ONLY",
+  "known_limits": [
+    "Watchdog stop event is not an owned-workload termination executor",
+    "Windows signer/service/key isolation is not implemented",
+    "CIM/protected and short-lived process coverage remains incomplete",
+    "No route acceptance or long-duration guarantee",
+    "close requires bounded in-flight operations to return; it does not forcibly cancel Python threads"
+  ],
+  "formal_admission": "BLOCKED",
+  "qualification_authorized": false,
+  "target_execution_authorized": false,
+  "new_target_evaluations": 0
+}
