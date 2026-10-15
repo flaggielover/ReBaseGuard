@@ -405,14 +405,18 @@ MUTANTS = [('M01',
   'negative scan not recursive (a rejection in a review subdirectory ignored); on the combined source the '
   'history-wide veto scan is made non-recursive too, and the HEAD scan drops direct-child TREES only (review 64 '
   'K9 reads blobs with cat-file, so a listed subdirectory would refuse as unavailable evidence instead; review 65 '
-  'L4: gitlinks stay in, as in the base)',
+  'L4: gitlinks stay in, as in the base; review 68 P1: the non-recursive history listing skips subdirectory TREES, '
+  'which the base\'s recursive listing never shows, so the regular-file check still refuses symlinks and gitlinks)',
   [('every = _review_paths(_git(repo_root, "ls-tree", "-r", "-z", "--name-only", "HEAD", "--", '
     'ACCEPTANCE_REVIEW_DIR))',
     'every = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))\n'
     '    every = every if every is None else [p for p in every\n'
     '                                         if _git(repo_root, "cat-file", "-t", f"HEAD:{p}") != b"tree\\n"]'),
    ('        listing = _git(repo_root, "ls-tree", "-r", "-z", c, "--", ACCEPTANCE_REVIEW_DIR)',
-    '        listing = _git(repo_root, "ls-tree", "-z", c, f"{ACCEPTANCE_REVIEW_DIR}/")')]),
+    '        listing = _git(repo_root, "ls-tree", "-z", c, f"{ACCEPTANCE_REVIEW_DIR}/")'),
+   ('            if parts[0] not in (b"100644", b"100755"):          # review 68 P1',
+    '            if parts[1] == b"tree":\n                continue\n'
+    '            if parts[0] not in (b"100644", b"100755"):          # review 68 P1')]),
  ('Q02',
   'accepting set recursive (reviewer scratch can accept)',
   [('tree = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))',
