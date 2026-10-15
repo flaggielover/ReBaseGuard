@@ -1,0 +1,104 @@
+{
+ "base_copy_suite": {
+  "rc": 0,
+  "tail": "OK"
+ },
+ "mutants": [
+  {
+   "id": "Z01",
+   "property": "a rejecting review counts only if REJECTED is on the same line as the sha",
+   "status": "KILLED",
+   "tail": "FAILED (failures=1)",
+   "killed_by": [
+    "test_acceptance_is_found_not_named"
+   ],
+   "diff": "@@ -1006 +1006 @@\n-        rejected = any(\"REJECTED\" in ln for ln in lines)\n+        rejected = any(\"REJECTED\" in ln and sha in ln for ln in lines)\n"
+  },
+  {
+   "id": "Z02",
+   "property": "update units enabled through a *.requires link are not seen",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -712 +712 @@\n-            if d.name.endswith((\".wants\", \".requires\")) and (d / unit).exists():\n+            if d.name.endswith(\".wants\") and (d / unit).exists():\n"
+  },
+  {
+   "id": "Z03",
+   "property": "systemctl is-enabled: enabled-runtime / indirect / alias / linked read as disabled",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -695 +695 @@\n-        if st in (\"enabled\", \"enabled-runtime\", \"static\", \"indirect\", \"alias\", \"linked\", \"linked-runtime\"):\n+        if st in (\"enabled\", \"static\"):\n@@ -697 +697 @@\n-        if st in (\"disabled\", \"masked\", \"masked-runtime\"):\n+        if st in (\"disabled\", \"masked\", \"masked-runtime\", \"enabled-runtime\", \"indirect\", \"alias\", \"linked\", \"linked-runtime\"):\n"
+  },
+  {
+   "id": "Z04",
+   "property": "a missing unit root ends the search (later roots never read)",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -703 +703 @@\n-            continue\n+            return False\n"
+  },
+  {
+   "id": "Z05",
+   "property": "an acceptance review whose adding commit is unknown (e.g. renamed in) counts",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -1046 +1046 @@\n-    acc = [a for a in acc if att_commit is not None and _added_in(base, a) not in (None, att_commit)]\n+    acc = [a for a in acc if att_commit is not None and _added_in(base, a) != att_commit]\n"
+  },
+  {
+   "id": "Z06",
+   "property": "an attestation whose adding commit is unknown accepts any review with a known adding commit",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -1046 +1046 @@\n-    acc = [a for a in acc if att_commit is not None and _added_in(base, a) not in (None, att_commit)]\n+    acc = [a for a in acc if _added_in(base, a) not in (None, att_commit)]\n"
+  },
+  {
+   "id": "Z07",
+   "property": "a failed `systemctl is-enabled` (empty stdout) reads as 'disabled'",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -685 +685 @@\n-    return r.stdout.strip() or None\n+    return r.stdout.strip() or \"disabled\"\n"
+  },
+  {
+   "id": "Z08",
+   "property": "only an UNREADABLE cgroup namespace blocks root attestation (a non-initial one passes)",
+   "status": "KILLED",
+   "tail": "FAILED (failures=1)",
+   "killed_by": [
+    "test_root_attestation_is_derived_never_asserted"
+   ],
+   "diff": "@@ -542 +542 @@\n-    if ns_inode(\"cgroup\") != INIT_CGROUP_NS:\n+    if ns_inode(\"cgroup\") is None:\n"
+  },
+  {
+   "id": "Z09",
+   "property": "launch gate evaluated only for execute / resume (a record passed in launcher mode is ignored)",
+   "status": "KILLED",
+   "tail": "FAILED (errors=1)",
+   "killed_by": [
+    "test_launch_gate_uses_a_fresh_reading"
+   ],
+   "diff": "@@ -1123 +1123 @@\n-    if mode in (\"execute\", \"resume\") or launched is not None:\n+    if mode in (\"execute\", \"resume\"):\n"
+  },
+  {
+   "id": "Z10",
+   "property": "busy_processes: view reading omitted by the caller is still treated as complete (already the default; mutant makes None also pass)",
+   "status": "KILLED",
+   "tail": "FAILED (failures=1)",
+   "killed_by": [
+    "test_no_reading_or_unsafe_inputs_fail_closed"
+   ],
+   "diff": "@@ -643 +643 @@\n-    if t0 is None or t1 is None or dt_s <= 0 or view_complete is not True:\n+    if t0 is None or t1 is None or dt_s <= 0 or view_complete is False:\n"
+  },
+  {
+   "id": "Z11",
+   "property": "a positive non-int (bool) starttime in a record passes the shape check",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -192 +192 @@\n-        if v is not None and (not isinstance(v, int) or isinstance(v, bool) or v < 0):\n+        if v is not None and (not isinstance(v, int) or v < 0):\n"
+  }
+ ]
+}

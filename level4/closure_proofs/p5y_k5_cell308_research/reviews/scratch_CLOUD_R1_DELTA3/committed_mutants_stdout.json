@@ -1,0 +1,547 @@
+{
+ "lx_platform_sha256": "90362161c5e57279f9e76ba58c054f790304a2f28b4456bf0ff6cecbbf5f145f",
+ "tests_sha256": "e48a94b0a636aa0c5dfe59bd0d6ea812ae94104ab8eb2f1c889182bbc176fe9d",
+ "unmutated_suite": "PASS",
+ "unmutated_tail": "OK",
+ "killed": 89,
+ "total": 89,
+ "reviewer_mutants_killed": 10,
+ "review60_mutants_killed": 9,
+ "review61_mutants_killed": 9,
+ "mutants": [
+  {
+   "id": "M01",
+   "property": "failed boot-id read treated as a reboot (DEAD)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M02",
+   "property": "unreadable /proc/<pid>/stat treated as DEAD",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M03",
+   "property": "incomplete identity record reported ALIVE",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M04",
+   "property": "zombie read as DEAD again (the withdrawn L-ID-1)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "M05",
+   "property": "pid reuse (other starttime) not detected",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M06",
+   "property": "no power supply exposed read as AC",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M07",
+   "property": "unreadable cgroup limit skipped",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "M08",
+   "property": "missing journal channel ignored in assess",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M09",
+   "property": "pause channel P removed",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M10",
+   "property": "suspend (boottime - monotonic) ignored",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M11",
+   "property": "D-MEM-FREE gate silently passes",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M12",
+   "property": "attestation 'reviewed' not required",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M13",
+   "property": "provider image updates pass without an attested token",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M14",
+   "property": "update vectors other than apt ignored",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "M15",
+   "property": "launched_by_systemd skips the MainPID check",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M16",
+   "property": "durable_write writes the target in place",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=3)"
+  },
+  {
+   "id": "M17",
+   "property": "unreadable pin counts as a match",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "M18",
+   "property": "busy_processes uses lifetime ticks instead of the window",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M19",
+   "property": "empty cmdline (failed read) hashed as a command",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M20",
+   "property": "UNKNOWN gates not reported as blocking",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M21",
+   "property": "headroom computed over levels with unreadable usage",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M22",
+   "property": "namespace mismatch ignored",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "M23",
+   "property": "unknown power-supply type skipped",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M24",
+   "property": "process born in the window not counted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M25",
+   "property": "attestation file sha256 not verified",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M26",
+   "property": "attestation not bound to the hardware identity",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M27",
+   "property": "v2 root accepted as unlimited without attestation",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M28",
+   "property": "effective_limit numeric without root attestation",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=3)"
+  },
+  {
+   "id": "M29",
+   "property": "execute / resume pass the launch gate without a launch record",
+   "status": "KILLED",
+   "suite_tail": "FAILED (errors=2)"
+  },
+  {
+   "id": "M30",
+   "property": "mapped shared objects (libm) not pinned",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=3)"
+  },
+  {
+   "id": "M31",
+   "property": "incomplete /proc view accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "M32",
+   "property": "own may contain init",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R01",
+   "property": "unreadable Battery status skipped (a failed read can yield AC)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "R02",
+   "property": "host attestation accepted when the 'accepted' key is merely present (e.g. 'REJECTED')",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R03",
+   "property": "durable_write never fsyncs the data",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R04",
+   "property": "suspend / pause tolerance raised from 2 s to 25 s",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=4)"
+  },
+  {
+   "id": "R05",
+   "property": "hidden name allow-list for the Cloud session controller in busy_processes",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "R06",
+   "property": "package versions and glibc dropped from PIN_KEYS",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=4)"
+  },
+  {
+   "id": "R07",
+   "property": "stopped (T/t) and uninterruptible (D) tasks read as DEAD",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R08",
+   "property": "durable_write never fsyncs the directory after the rename",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "R09",
+   "property": "maximum sample spacing raised from 180 s to 390 s",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "R10",
+   "property": "assess checks power only at start and end, not at the samples",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X01",
+   "property": "/proc 'subset=' no longer refused",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X02",
+   "property": "no /proc mount line counts as a complete view",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X03",
+   "property": "unreadable livepatch counts as none applied",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X04",
+   "property": "K' monotonic-ahead-of-boottime channel removed",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X05",
+   "property": "durable_write read-back verification removed",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X06",
+   "property": "absent samples no longer AMBIGUOUS",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X07",
+   "property": "a transient .scope accepted as the campaign unit",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X08",
+   "property": "v1 'unlimited' sentinel lowered to 1 GiB",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "X09",
+   "property": "unknown interpreter package drops out of the pin",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N01",
+   "property": "D-HOST-LIFETIME treated as decided",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=3)"
+  },
+  {
+   "id": "N02",
+   "property": "attestation acceptance line not required",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N03",
+   "property": "attestation schema not checked",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N04",
+   "property": "caller-asserted fields accepted in the attestation reference",
+   "status": "KILLED",
+   "suite_tail": "FAILED (errors=1)"
+  },
+  {
+   "id": "N05",
+   "property": "attestation's root_cgroup_is_real not required",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N06",
+   "property": "nested PID namespace view accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N07",
+   "property": "boot id not validated",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N08",
+   "property": "exited processes not reported",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "N09",
+   "property": "unreadable existing process skipped",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N10",
+   "property": "campaign children exempt by pid alone",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N11",
+   "property": "unrecorded namespace lets pid evidence count (revision-2 behaviour)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N12",
+   "property": "pin without libm / libc / loader accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N13",
+   "property": "launch record trusted on its 'pass' flag",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "N14",
+   "property": "unrecognised battery status read as not discharging",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "Y01",
+   "property": "any non-empty decided set opens D-HOST-LIFETIME",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y02",
+   "property": "exited children of a campaign pid exempt whatever their start",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y03",
+   "property": "acceptance token matched as a substring",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y04",
+   "property": "cgroup namespace reading hard-wired to initial",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y05",
+   "property": "attestation bound to /etc/machine-id only",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y06",
+   "property": "loader no longer a required pin member",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y07",
+   "property": "launch record unit type not checked",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y08",
+   "property": "merely truthy guest_updates_shown_disabled counts",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Y09",
+   "property": "cgroup_resources reads the leaf only",
+   "status": "KILLED",
+   "suite_tail": "FAILED (errors=1)"
+  },
+  {
+   "id": "P01",
+   "property": "acceptance committed with the attestation accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P02",
+   "property": "a rejecting review ignored",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P03",
+   "property": "acceptance review outside the fixed name set accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P04",
+   "property": "verdict line not required",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P05",
+   "property": "non-initial cgroup namespace does not block a number",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P06",
+   "property": "root attestation without D-HOST-LIFETIME decided",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P07",
+   "property": "DECIDED not validated",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P08",
+   "property": "passed launch record trusted instead of a fresh reading",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P09",
+   "property": "MainPID type not checked",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P10",
+   "property": "journal channel counted without a reviewed reader",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P11",
+   "property": "masked unit not recognised",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P12",
+   "property": "unknown update-unit state counted as disabled",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P13",
+   "property": "only the first unit root searched",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P14",
+   "property": "identity record shape not validated",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "P15",
+   "property": "empty pin-point list accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  }
+ ]
+}

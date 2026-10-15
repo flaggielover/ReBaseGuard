@@ -1,0 +1,107 @@
+"""Brief 62: for each SURVIVING reviewer mutant, show a synthetic input whose outcome differs between revision 4
+(./base copy) and the mutant. Mutant sources are rebuilt from reviewer62_mutants.MUTANTS-equivalent edits.
+Synthetic only (temporary dirs and git repos). Usage: python3 -B equiv62.py"""
+import hashlib, importlib.util, json, os, subprocess, sys, tempfile, types
+from pathlib import Path
+HERE = Path(__file__).resolve().parent
+SRC = (HERE / "base" / "lx_platform.py").read_text()
+spec_src = (HERE / "reviewer62_mutants.py").read_text()
+MUTANTS = {}
+ns = {}
+exec("MUTANTS = " + spec_src.split("MUTANTS = ", 1)[1].split("\n\n\ndef run_suite")[0], ns)
+for mid, what, edits in ns["MUTANTS"]:
+    m = SRC
+    for old, new in edits:
+        m = m.replace(old, new)
+    MUTANTS[mid] = m
+
+
+def load(src, name):
+    d = tempfile.mkdtemp(dir=HERE / "mut_tmp")
+    Path(d, "lx_platform.py").write_text(src)
+    spec = importlib.util.spec_from_file_location(name, Path(d, "lx_platform.py"))
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    return mod
+
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+
+
+def git(d, *a):
+    subprocess.run(["git", "-C", d, *a], check=True, capture_output=True)
+
+
+def commit(d, files=None, msg="c"):
+    for rel, data in (files or {}).items():
+        Path(d, rel).parent.mkdir(parents=True, exist_ok=True); Path(d, rel).write_bytes(data)
+    git(d, "add", "-A")
+    git(d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "commit", "-q", "-m", msg)
+
+
+def case_unit(L, layout):
+    with tempfile.TemporaryDirectory() as d:
+        roots = []
+        for i, (exists, link_dir) in enumerate(layout):
+            r = Path(d, f"r{i}"); roots.append(str(r))
+            if exists:
+                r.mkdir()
+                if link_dir:
+                    Path(r, link_dir).mkdir()
+                    os.symlink("/dev/zero", Path(r, link_dir, "apt-daily-upgrade.timer"))
+        L.systemd_is_pid1 = lambda *a, **k: False
+        return L.unit_enabled("apt-daily-upgrade.timer", tuple(roots))
+
+
+def case_systemctl(L, out):
+    L.systemd_is_pid1 = lambda *a, **k: True
+    if out is None:   # a failed systemctl: rc 1, empty stdout (e.g. no bus)
+        L.subprocess = types.SimpleNamespace(run=lambda *a, **k: subprocess.CompletedProcess(a, 1, "", "Failed to connect to bus"),
+                                             SubprocessError=subprocess.SubprocessError, DEVNULL=subprocess.DEVNULL)
+        return L.unit_enabled("apt-daily-upgrade.timer")
+    L._systemctl_is_enabled = lambda u: out
+    return L.unit_enabled("apt-daily-upgrade.timer")
+
+
+def case_rename(L, which):
+    """which='review': the acceptance review is renamed into place; 'att': the attestation is renamed into place."""
+    L.machine_identity = lambda *a, **k: HW
+    pfx = f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+    a = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW}).encode()
+    sha = hashlib.sha256(a).hexdigest()
+    acc = f"x\n{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+    with tempfile.TemporaryDirectory() as d:
+        git(d, "init", "-q")
+        if which == "review":
+            commit(d, {"att/H.json": a, "drafts/acc.md": acc})          # acceptance written WITH the attestation
+            Path(d, pfx + "1.md").parent.mkdir(parents=True, exist_ok=True)
+            git(d, "mv", "drafts/acc.md", pfx + "1.md"); commit(d)       # then renamed into the fixed set
+        else:
+            commit(d, {"drafts/H.json": a})
+            commit(d, {pfx + "1.md": acc})
+            Path(d, "att").mkdir(); git(d, "mv", "drafts/H.json", "att/H.json"); commit(d)
+        rec, why = L.attestation_valid({"path": "att/H.json", "sha256": sha}, repo_root=d)
+        return {"valid": rec is not None, "reasons": why}
+
+
+def case_bool_start(L):
+    boot = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"; nsr = {"pidns": 1, "timens": 2}
+    ident = {"pid": 4242, "starttime_ticks": True, "boot_id": boot, "cmdline_sha256": "c" * 64, **nsr}
+    st = L.proc_stat(4242, "4242 (x) S 1 1 1 0 -1 0 0 0 0 0 10 5 0 0 20 0 1 0 777 0 0\n")
+    return L.identity_state(ident, current_boot=boot, exists=lambda p: True, stat=lambda p: st, cmd=lambda p: "c" * 64,
+                            current_ns=nsr)
+
+
+CASES = {
+    "Z02": ("unit enabled only by a *.requires link", lambda L: case_unit(L, [(True, "multi-user.target.requires")])),
+    "Z03": ("systemctl is-enabled says 'indirect'", lambda L: case_systemctl(L, "indirect")),
+    "Z04": ("first unit root missing, unit wanted in the second", lambda L: case_unit(L, [(False, None), (True, "timers.target.wants")])),
+    "Z05": ("acceptance review renamed into the fixed set", lambda L: case_rename(L, "review")),
+    "Z06": ("attestation renamed into place", lambda L: case_rename(L, "att")),
+    "Z07": ("systemctl is-enabled fails with empty stdout", lambda L: case_systemctl(L, None)),
+    "Z11": ("recorded starttime_ticks=True (bool)", case_bool_start),
+}
+(HERE / "mut_tmp").mkdir(exist_ok=True)
+res = {}
+for mid, (what, fn) in CASES.items():
+    res[mid] = {"input": what, "revision4": fn(load(SRC, f"b_{mid}")), "mutant": fn(load(MUTANTS[mid], f"m_{mid}"))}
+print(json.dumps(res, indent=1, default=str))

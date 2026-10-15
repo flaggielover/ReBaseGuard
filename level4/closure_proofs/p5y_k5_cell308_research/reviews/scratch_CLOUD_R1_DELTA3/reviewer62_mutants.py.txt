@@ -1,0 +1,70 @@
+"""Reviewer mutants (brief 62) against a COPY of lx_platform.py revision 4 (./base, sha256 90362161...). Each mutant is
+written to a temporary directory under this scratch dir; the UNCHANGED repository suite is run against it via
+LX_PLATFORM_DIR with -B. Nothing in the repository is written. Usage: python3 -B reviewer62_mutants.py"""
+import difflib, json, os, subprocess, sys, tempfile
+from pathlib import Path
+HERE = Path(__file__).resolve().parent
+SRC = HERE / "base" / "lx_platform.py"
+TESTS = Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests")
+MUTANTS = [
+ ("Z01", "a rejecting review counts only if REJECTED is on the same line as the sha",
+  [('        rejected = any("REJECTED" in ln for ln in lines)',
+    '        rejected = any("REJECTED" in ln and sha in ln for ln in lines)')]),
+ ("Z02", "update units enabled through a *.requires link are not seen",
+  [('d.name.endswith((".wants", ".requires"))', 'd.name.endswith(".wants")')]),
+ ("Z03", "systemctl is-enabled: enabled-runtime / indirect / alias / linked read as disabled",
+  [('        if st in ("enabled", "enabled-runtime", "static", "indirect", "alias", "linked", "linked-runtime"):\n'
+    '            return True\n        if st in ("disabled", "masked", "masked-runtime"):',
+    '        if st in ("enabled", "static"):\n            return True\n'
+    '        if st in ("disabled", "masked", "masked-runtime", "enabled-runtime", "indirect", "alias", "linked", '
+    '"linked-runtime"):')]),
+ ("Z04", "a missing unit root ends the search (later roots never read)",
+  [("        if not r.exists():\n            continue\n", "        if not r.exists():\n            return False\n")]),
+ ("Z05", "an acceptance review whose adding commit is unknown (e.g. renamed in) counts",
+  [("_added_in(base, a) not in (None, att_commit)]", "_added_in(base, a) != att_commit]")]),
+ ("Z06", "an attestation whose adding commit is unknown accepts any review with a known adding commit",
+  [("    acc = [a for a in acc if att_commit is not None and _added_in(base, a)",
+    "    acc = [a for a in acc if _added_in(base, a)")]),
+ ("Z07", "a failed `systemctl is-enabled` (empty stdout) reads as 'disabled'",
+  [("    return r.stdout.strip() or None\n\n\ndef unit_enabled", "    return r.stdout.strip() or \"disabled\"\n\n\ndef unit_enabled")]),
+ ("Z08", "only an UNREADABLE cgroup namespace blocks root attestation (a non-initial one passes)",
+  [('    if ns_inode("cgroup") != INIT_CGROUP_NS:\n        why.append', '    if ns_inode("cgroup") is None:\n        why.append')]),
+ ("Z09", "launch gate evaluated only for execute / resume (a record passed in launcher mode is ignored)",
+  [('    if mode in ("execute", "resume") or launched is not None:', '    if mode in ("execute", "resume"):')]),
+ ("Z10", "busy_processes: view reading omitted by the caller is still treated as complete (already the default; "
+         "mutant makes None also pass)",
+  [("    if t0 is None or t1 is None or dt_s <= 0 or view_complete is not True:",
+    "    if t0 is None or t1 is None or dt_s <= 0 or view_complete is False:")]),
+ ("Z11", "a positive non-int (bool) starttime in a record passes the shape check",
+  [('        if v is not None and (not isinstance(v, int) or isinstance(v, bool) or v < 0):',
+    '        if v is not None and (not isinstance(v, int) or v < 0):')]),
+]
+
+
+def run_suite(d):
+    env = dict(os.environ, LX_PLATFORM_DIR=d, PYTHONDONTWRITEBYTECODE="1")
+    p = subprocess.run([sys.executable, "-B", "-m", "unittest", "discover", "-s", str(TESTS)], cwd=str(TESTS.parent),
+                       env=env, capture_output=True, text=True, timeout=900)
+    fails = sorted({ln.split()[1] for ln in p.stderr.splitlines() if ln.startswith(("FAIL:", "ERROR:"))})
+    return p.returncode, (p.stderr.strip().splitlines() or [""])[-1], fails
+
+
+src = SRC.read_text()
+rows = []
+scratch = HERE / "mut_tmp"; scratch.mkdir(exist_ok=True)
+for mid, what, edits in MUTANTS:
+    m = src
+    for old, new in edits:
+        assert m.count(old) == 1, (mid, old)
+        m = m.replace(old, new)
+    diff = "".join(difflib.unified_diff(src.splitlines(True), m.splitlines(True), n=0))
+    diff = "".join(l for l in diff.splitlines(True) if not l.startswith(("---", "+++")))
+    with tempfile.TemporaryDirectory(dir=scratch) as d:
+        Path(d, "lx_platform.py").write_text(m)
+        rc, tail, fails = run_suite(d)
+    rows.append({"id": mid, "property": what, "status": "KILLED" if rc else "SURVIVED", "tail": tail, "killed_by": fails,
+                 "diff": diff})
+with tempfile.TemporaryDirectory(dir=scratch) as d:
+    Path(d, "lx_platform.py").write_text(src)
+    rc, tail, _ = run_suite(d)
+print(json.dumps({"base_copy_suite": {"rc": rc, "tail": tail}, "mutants": rows}, indent=1))

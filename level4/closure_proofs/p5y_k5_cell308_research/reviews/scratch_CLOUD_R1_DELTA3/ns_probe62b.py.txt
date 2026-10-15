@@ -1,0 +1,9 @@
+"""Brief 62: in a nested PID namespace, busy_processes with view_complete OMITTED (default True) vs read. Reads only."""
+import json, sys, time
+sys.path.insert(0, sys.argv[1])
+import lx_platform as L
+a = L.cpu_ticks(); time.sleep(0.2); b = L.cpu_ticks()
+print(json.dumps({"ns_pid": L.ns_inode("pid"), "proc_view_complete": L.proc_view_complete(), "cpu_ticks_n": len(b or {}),
+                  "busy_view_omitted": L.busy_processes(a, b, 0.2, 25, set()),
+                  "busy_view_read": L.busy_processes(a, b, 0.2, 25, set(), view_complete=L.proc_view_complete())},
+                 default=str))

@@ -1,0 +1,23 @@
+"""Brief 62 namespace probe (run under unshare). Imports the scratch COPY (argv[1]); trust inputs patched on the copy's
+module attributes. Reads only."""
+import json, sys
+sys.path.insert(0, sys.argv[1])
+import lx_platform as L
+good = ({"root_cgroup_is_real": True, "provider_image_updates": L.NO_IMAGE_CHANGE}, [])
+out = {"ns_pid": L.ns_inode("pid"), "ns_cgroup": L.ns_inode("cgroup"),
+       "cgroup_ns_initial": L.ns_inode("cgroup") == L.INIT_CGROUP_NS,
+       "proc_view_complete": L.proc_view_complete()}
+L.DECIDED = frozenset({"D-HOST-LIFETIME"})
+L.attestation_valid = lambda ref, **k: good          # strongest favourable attestation, injected on the copy
+ok, why = L.root_attestation({"path": "x", "sha256": "0" * 64})
+r = L.memory_readings(attestation_ref={"path": "x", "sha256": "0" * 64})
+out.update({"root_attestation": [ok, why], "effective_limit": r["effective_limit"],
+            "cgroup_min_headroom": r["cgroup_min_headroom"], "visible_limit_upper_bound": r["visible_limit_upper_bound"],
+            "chain": [(x["path"], x["limit"]) for x in (r["cgroup"]["chain"] or [])], "MemTotal": r["meminfo_MemTotal"]})
+a = L.cpu_ticks()
+b = L.cpu_ticks()
+out["cpu_ticks_n"] = None if b is None else len(b)
+own = {k for k in (b or {}) if k[0] == __import__("os").getpid()}
+out["busy_view_omitted"] = L.busy_processes(a, b, 0.2, 25, own)
+out["busy_view_read"] = L.busy_processes(a, b, 0.2, 25, own, view_complete=L.proc_view_complete())
+print(json.dumps(out, default=str))

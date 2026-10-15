@@ -1,0 +1,295 @@
+"""Reviewer probes (brief 62) against a COPY of lx_platform.py revision 4 in ./base (sha256 90362161...).
+Part A: review 61's probes61.py part A, ported to the revision-4 API (trust inputs changed by patching module
+attributes of the COPY, as the brief allows). Part B: review 61's B1-B10, ported. Part G: new adversarial probes.
+Synthetic inputs only; temporary directories and temporary git repositories. No cell, drift, science module, decoy or
+candidate code. Usage: python3 -B probes62.py"""
+import contextlib, hashlib, json, os, subprocess, sys, tempfile
+from pathlib import Path
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE / "base"))
+import lx_platform as L  # noqa: E402
+out = {"module_sha256": hashlib.sha256((HERE / "base" / "lx_platform.py").read_bytes()).hexdigest()}
+BOOT = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+ACCDIR = L.ACCEPTANCE_REVIEW_DIR
+PFX = L.ACCEPTANCE_REVIEW_PREFIX
+
+
+@contextlib.contextmanager
+def patched(**attrs):
+    saved = {k: getattr(L, k) for k in attrs}
+    for k, v in attrs.items():
+        setattr(L, k, v)
+    try:
+        yield
+    finally:
+        for k, v in saved.items():
+            setattr(L, k, v)
+
+
+def mk(root, files):
+    for rel, txt in files.items():
+        p = Path(root, rel); p.parent.mkdir(parents=True, exist_ok=True)
+        p.mkdir(parents=True, exist_ok=True) if txt is None else p.write_text(txt)
+
+
+def commit(d, files, msg="c"):
+    for rel, data in files.items():
+        Path(d, rel).parent.mkdir(parents=True, exist_ok=True)
+        if data is None:
+            Path(d, rel).unlink()
+        else:
+            Path(d, rel).write_bytes(data)
+    subprocess.run(["git", "-C", d, "add", "-A"], check=True)
+    subprocess.run(["git", "-C", d, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false",
+                    "commit", "-q", "-m", msg], check=True)
+
+
+def init(d):
+    subprocess.run(["git", "init", "-q", d], check=True)
+
+
+def att(**over):
+    rec = {"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+           "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}
+    rec.update(over); return json.dumps(rec).encode()
+
+
+def accept_text(sha, extra=b""):
+    return b"x\n" + f"{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode() + extra
+
+
+def valid(d, sha, path="att/H.json"):
+    with patched(machine_identity=lambda *a, **k: HW):
+        rec, why = L.attestation_valid({"path": path, "sha256": sha}, repo_root=d)
+    return {"valid": rec is not None, "reasons": why}
+
+
+base_rd = {"power": L.AC, "free_disk": 10 * 2 ** 30, "boot_id": BOOT}
+
+
+def pf(**kw):
+    a = dict(mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None,
+             readings=dict(base_rd, updates={}))
+    a.update(kw); return L.preflight("/", **a)
+
+
+good_att = ({"provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}, [])
+
+# ================= A. review 61 part A (review 59 / 60 probes), ported
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "BAT0/type": None, "BAT0/status": "Discharging\n"})
+    out["A_P1_unreadable_battery_type"] = L.power_source(d)
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "UPS0/type": "UPS\n", "UPS0/status": "Discharging\n"})
+    out["A_P1b_ups_discharging"] = L.power_source(d)
+for status in ("Unknown", "garbage", "discharging", "Discharging \x00", "Not charging", "Full", ""):
+    with tempfile.TemporaryDirectory() as d:
+        mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "BAT0/type": "Battery\n", "BAT0/status": status + "\n"})
+        out[f"A_N2_battery_status[{status!r}]"] = L.power_source(d)
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "BAT0/type": "Battery\n", "BAT0/status": None})
+    out["A_N2_battery_status_dir"] = L.power_source(d)
+for name, upd in (("empty_dict", {}), ("shown_None", {"guest_updates_shown_disabled": None}),
+                  ("shown_str_true", {"guest_updates_shown_disabled": "true"})):
+    with patched(attestation_valid=lambda r, **k: good_att, DECIDED=frozenset({"D-HOST-LIFETIME"})):
+        out[f"A_P2_no_automatic_os_install[{name}]"] = pf(readings=dict(base_rd, updates=upd))["gates"]["no_automatic_os_install"]
+for name, over in (("accepted_REJECTED", {"accepted": "REJECTED"}), ("strings", {"reviewed": "no", "accepted": "false"}),
+                   ("truthy_ints", {"reviewed": 1, "accepted": 1})):
+    with tempfile.TemporaryDirectory() as d:
+        init(d); a = att(**over); sha = hashlib.sha256(a).hexdigest()
+        commit(d, {"att/H.json": a}); commit(d, {f"{ACCDIR}/{PFX}1.md": accept_text(sha)})
+        out[f"A_P3_attestation_valid[{name}]"] = valid(d, sha)["valid"]
+REPO = "/home/user/ReBaseGuard"
+readme = subprocess.run(["git", "-C", REPO, "show", "HEAD:README.md"], capture_output=True).stdout
+forged = {"reviewed": True, "accepted": True, "path": "README.md", "sha256": hashlib.sha256(readme).hexdigest(),
+          "acceptance_record": "no such review", "machine": HW, "provider_image_updates": L.NO_IMAGE_CHANGE}
+with patched(machine_identity=lambda *a, **k: HW):
+    out["A_N1_forged_dict_ref"] = L.attestation_valid(forged, repo_root=REPO)
+    out["A_N1_readme_ref_only"] = L.attestation_valid({"path": "README.md", "sha256": forged["sha256"]}, repo_root=REPO)
+for bad in ("", "garbage", 0, False, BOOT.upper()):
+    out[f"A_N6_boot_id_recorded[{bad!r}]"] = pf(readings=dict(base_rd, boot_id=bad, updates={}))["gates"]["boot_id_recorded"]
+out["A_N12_launched_True_launcher_mode"] = pf(launched=True)["gates"].get("launched_by_systemd")
+MEMINFO = "MemTotal:       16479424 kB\nMemAvailable:   15000000 kB\n"
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"x/y/memory.max": "max\n", "x/y/memory.high": "3000\n", "x/y/memory.current": "10\n",
+           "x/memory.max": "8000\n", "x/memory.high": "max\n", "x/memory.current": "20\n"})
+    r = L.memory_readings(MEMINFO, "0::/x/y\n", d)
+    out["A_N3_no_attestation_default"] = [r["effective_limit"], r["cgroup_min_headroom"], r["root_attestation_reasons"]]
+    for bad in (True, "yes", 1, {"root_cgroup_is_real": True}):
+        r = L.memory_readings(MEMINFO, "0::/x/y\n", d, attestation_ref=bad)
+        out[f"A_N3_attestation_ref[{bad!r}]"] = [r["effective_limit"], r["cgroup_min_headroom"]]
+    try:
+        L.memory_readings(MEMINFO, "0::/x/y\n", d, root_attested=True)
+        out["A_N3_root_attested_kw"] = "accepted"
+    except TypeError as e:
+        out["A_N3_root_attested_kw"] = f"TypeError: {e}"
+out["A_P7_newborn_hog"] = L.busy_processes({(10, 1): (1, 0, "idle", "/x")},
+                                           {(10, 1): (1, 0, "idle", "/x"), (11, 9): (1, 500, "newhog", "/tmp/hog")},
+                                           5.0, 25, set(), hz=100)
+out["A_P7c_own_contains_1"] = L.busy_processes({}, {}, 4.0, 25, {(1, 1)}, hz=100)
+out["A_N7_hog_exits_in_window"] = L.busy_processes({(12, 5): (1, 0, "hog_exits", "/tmp/hog")}, {}, 5.0, 25, set(), hz=100)
+with tempfile.TemporaryDirectory() as d:
+    mk(d, {"10/stat": "10 (idle) S 1 1 1 0 -1 0 0 0 0 0 0 0 0 0 20 0 1 0 1 0 0\n", "11/stat": None})
+    out["A_N7_cpu_ticks_unreadable_pid"] = L.cpu_ticks(d)
+ident = {"pid": 4242, "starttime_ticks": 777, "boot_id": BOOT, "cmdline_sha256": "c" * 64}
+out["A_N8_unrecorded_ns_esrch"] = L.identity_state(ident, current_boot=BOOT, exists=lambda p: False,
+                                                   current_ns={"pidns": 1, "timens": 2})
+NSR = {"pidns": 1, "timens": 2}
+stZ = L.proc_stat(4242, "4242 (x) Z 1 1 1 0 -1 0 0 0 0 0 10 5 0 0 20 0 1 0 777 0 0\n")
+out["A_F2_zombie_full_record"] = L.identity_state(dict(ident, **NSR), current_boot=BOOT, exists=lambda p: True,
+                                                  stat=lambda p: stZ, cmd=lambda p: None, current_ns=NSR)
+out["A_N4_proc_view_complete_live"] = L.proc_view_complete()
+out["A_N11_mapped_deleted"] = L.mapped_objects("7f00-7f01 r-xp 0 08:01 1 /usr/lib/x86_64-linux-gnu/libm.so.6 (deleted)\n")
+
+# ================= B. review 61's B1-B10, ported
+# B1: the three self-acceptance cases of review 61, now with no acceptance_record field honoured
+for name, accfile, text in (
+        ("scratch_note", "scratch/anything.txt", "{line}\n{verdict}\n"),
+        ("rejecting_review", "reviews/REVIEW_X.md", "Verdict: REJECTED.\n{line}\n{verdict}\nWe refuse.\n"),
+        ("attestation_author_file", "att/ACCEPT_BY_SELF.txt", "{line}\n{verdict}\n")):
+    with tempfile.TemporaryDirectory() as d:
+        init(d); a = att(acceptance_record=accfile); sha = hashlib.sha256(a).hexdigest()
+        commit(d, {"att/H.json": a})
+        commit(d, {accfile: text.format(line=f"{L.ACCEPTANCE_LINE}{sha}", verdict=L.ACCEPTANCE_VERDICT_LINE).encode()})
+        out[f"B1_self_acceptance[{name}]"] = valid(d, sha)
+# B2: DECIDED of a wrong type / unknown id
+for name, dec in (("str", "xxD-HOST-LIFETIMExx"), ("set", {"D-HOST-LIFETIME"}), ("list", ["D-HOST-LIFETIME"]),
+                  ("unknown_id", frozenset({"D-FOO"}))):
+    try:
+        with patched(DECIDED=dec, attestation_valid=lambda r, **k: good_att):
+            g = pf(readings=dict(base_rd, updates={"guest_updates_shown_disabled": True}))["gates"]
+        out[f"B2_DECIDED[{name}]"] = {k: g[k] for k in ("host_lifetime_attested", "no_automatic_os_install")}
+    except ValueError as e:
+        out[f"B2_DECIDED[{name}]"] = f"ValueError: {e}"
+with patched(DECIDED=frozenset(L.OPEN_DECISIONS), attestation_valid=lambda r, **k: good_att):
+    g = pf(readings=dict(base_rd, updates={"guest_updates_shown_disabled": True}))["gates"]
+out["B2b_all_decided_still_open"] = {k: v for k, v in g.items() if v == L.OPEN_DECISION}
+out["B2c_preflight_params"] = list(L.preflight.__code__.co_varnames[:L.preflight.__code__.co_argcount
+                                                                    + L.preflight.__code__.co_kwonlyargcount])
+# B3: caller-built launch record on this non-systemd host
+fake = {"systemd_pid1": True, "unit": "rebaseguard-mbs308-x.service", "invocation_id": "abc",
+        "systemctl": {"MainPID": os.getpid(), "InvocationID": "abc"}, "pass": True}
+out["B3_live_launched_by_systemd_pass"] = L.launched_by_systemd()["pass"]
+out["B3_forged_record_execute"] = pf(mode="execute", launched=fake)["gates"]["launched_by_systemd"]
+out["B3_forged_record_launcher"] = pf(mode="launcher_preflight", launched=fake)["gates"]["launched_by_systemd"]
+out["B3_execute_no_record"] = pf(mode="execute")["gates"]["launched_by_systemd"]
+out["B3_float_MainPID"] = L.launch_record_ok(dict(fake, systemctl={"MainPID": float(os.getpid()), "InvocationID": "abc"}))
+# B4: malformed recorded fields
+NSL = {"pidns": L.ns_inode("pid"), "timens": L.ns_inode("time")}
+full = {"pid": 4242, "starttime_ticks": 777, "boot_id": L.boot_id(), "cmdline_sha256": "c" * 64, **NSL}
+for name, rec in (("boot_garbage", dict(full, boot_id="garbage")), ("boot_trunc", dict(full, boot_id=full["boot_id"][:13])),
+                  ("pid_negative", dict(full, pid=-987654)), ("pid_str", dict(full, pid="987654")),
+                  ("pid_float", dict(full, pid=987654.5)), ("pid_bool", dict(full, pid=True)),
+                  ("boot_upper", dict(full, boot_id=full["boot_id"].upper()))):
+    out[f"B4_{name}"] = L.identity_state(rec)
+c = lambda m: {"clocks": {"monotonic_ns": m, "boottime_ns": m, "realtime_ns": m}, "suspend_success": 0,
+               "boot_id": BOOT, "power": L.AC}
+out["B5_assess_journal_empty_list"] = L.assess(c(0), c(120 * 10 ** 9), [c(60 * 10 ** 9)], [])["status"]
+out["B5_assess_journal_None"] = L.assess(c(0), c(120 * 10 ** 9), [c(60 * 10 ** 9)], None)["status"]
+
+
+def upd_with_roots(roots):
+    return L.auto_update_settings('APT::Periodic::Enable "0";\n', use_live_apt=False, unit_roots=roots,
+                                  uu_binary="/nonexistent", snapd_paths=(), cloud_dir="/nonexistent",
+                                  livepatch_dir="/nonexistent")
+
+
+with tempfile.TemporaryDirectory() as d, patched(systemd_is_pid1=lambda *a, **k: False):
+    e, lib = Path(d, "etc"), Path(d, "lib"); e.mkdir(); lib.mkdir()
+    Path(lib, "timers.target.wants").mkdir(); Path(lib, "apt-daily-upgrade.timer").write_text("[Timer]\n")
+    os.symlink(str(Path(lib, "apt-daily-upgrade.timer")), Path(lib, "timers.target.wants", "apt-daily-upgrade.timer"))
+    out["B6_timer_enabled_in_second_root_shown_disabled"] = upd_with_roots((str(e), str(lib)))["guest_updates_shown_disabled"]
+    out["B6_all_roots_absent_shown_disabled"] = upd_with_roots((str(Path(d, "nope1")), str(Path(d, "nope2"))))["guest_updates_shown_disabled"]
+out["B7_cgroup_ns_initial_live"] = L.ns_inode("cgroup") == L.INIT_CGROUP_NS
+for name, mods in (("empty", ()), ("default_None", None), ("caller_list_sys", ("sys",))):
+    try:
+        r = L.pin_point(mods) if mods is not None else L.pin_point()
+        out[f"B8_pin_point[{name}]"] = "returns a pin" if isinstance(r, dict) else repr(r)
+    except RuntimeError as e:
+        out[f"B8_pin_point[{name}]"] = f"raises: {e}"
+out["B10_own_bool_pid"] = L.busy_processes({}, {}, 5, 25, {(True, 5)}, hz=100)
+out["B10_own_str_key"] = L.busy_processes({}, {(30, 1): (99, 500, "c", "/s")}, 5, 25, {("99", 1)}, hz=100)
+
+# ================= G. new adversarial probes (brief 62)
+# G1: acceptance file in a SUBDIRECTORY of the fixed review dir (e.g. a reviewer scratch dir) counts
+with tempfile.TemporaryDirectory() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a})
+    commit(d, {f"{ACCDIR}/scratch_ANY/{PFX}note.txt": accept_text(sha)})
+    out["G1_acceptance_in_scratch_subdir"] = valid(d, sha)
+# G2: acceptance file ADDED earlier as a placeholder, then its acceptance lines written IN THE SAME COMMIT as the
+#     attestation (the 'different commit' rule binds the path's first add, not the accepting text)
+with tempfile.TemporaryDirectory() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {f"{ACCDIR}/{PFX}1.md": b"placeholder, review pending\n"})
+    commit(d, {"att/H.json": a, f"{ACCDIR}/{PFX}1.md": accept_text(sha)})
+    out["G2_acceptance_written_in_attestation_commit"] = valid(d, sha)
+# G3: attestation path added earlier as a placeholder; the ATTESTED BYTES and the acceptance written in ONE commit
+with tempfile.TemporaryDirectory() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": b"{}"})
+    commit(d, {"att/H.json": a, f"{ACCDIR}/{PFX}1.md": accept_text(sha)})
+    out["G3_attested_bytes_and_acceptance_same_commit"] = valid(d, sha)
+# G4: acceptance committed BEFORE the attestation existed (sha named in advance)
+with tempfile.TemporaryDirectory() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {f"{ACCDIR}/{PFX}1.md": accept_text(sha)})
+    commit(d, {"att/H.json": a})
+    out["G4_acceptance_predates_attestation"] = valid(d, sha)
+# G5: a rejecting text that does not use the literal token REJECTED (lower case, NOT ACCEPTED, WITHDRAWN)
+for name, extra in (("lowercase_rejected", b"Final: rejected. This acceptance is void.\n"),
+                    ("NOT_ACCEPTED", b"VERDICT: HOST_ATTESTATION_NOT_ACCEPTED\n"),
+                    ("WITHDRAWN", b"ACCEPTANCE WITHDRAWN on 2026-10-16; see later review\n")):
+    with tempfile.TemporaryDirectory() as d:
+        init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+        commit(d, {"att/H.json": a}); commit(d, {f"{ACCDIR}/{PFX}1.md": accept_text(sha, extra)})
+        out[f"G5_negative_without_token[{name}]"] = valid(d, sha)
+# G6: a REJECTED review in the reviews dir but outside the prefix set is ignored
+with tempfile.TemporaryDirectory() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a}); commit(d, {f"{ACCDIR}/{PFX}1.md": accept_text(sha)})
+    commit(d, {f"{ACCDIR}/REVIEW_CLOUD_R1_LATER.md": f"Attestation {sha}: REJECTED (hardware changed)\n".encode()})
+    out["G6_rejection_outside_prefix_ignored"] = valid(d, sha)
+# G7: a later rejection is permanent (a superseding acceptance cannot clear it): fail-closed, informational
+with tempfile.TemporaryDirectory() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a}); commit(d, {f"{ACCDIR}/{PFX}1.md": accept_text(sha, b"No finding was REJECTED.\n")})
+    out["G7_acceptance_mentioning_word_REJECTED"] = valid(d, sha)
+# G8: preflight 'readings' is still a production parameter: caller-asserted host readings give PASS
+live_power = L.power_source()
+g = L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None,
+                readings={"power": L.AC, "free_disk": 10 ** 13, "boot_id": BOOT})["gates"]
+g_live = L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None)["gates"]
+out["G8_live_power_source"] = live_power
+out["G8_live_gates"] = {k: g_live[k] for k in ("ac_power", "free_disk_ge_2GiB", "boot_id_recorded")}
+out["G8_caller_readings_gates"] = {k: g[k] for k in ("ac_power", "free_disk_ge_2GiB", "boot_id_recorded")}
+# G9: busy_processes defaults view_complete=True: an omitted view reading is treated as a complete /proc view
+t0 = {(10, 1): (1, 0, "idle", "/x")}
+out["G9_busy_view_omitted"] = L.busy_processes(t0, t0, 5.0, 25, set(), hz=100)
+out["G9_busy_view_None"] = L.busy_processes(t0, t0, 5.0, 25, set(), hz=100, view_complete=None)
+# G10: unit_enabled with a DANGLING .wants link (systemd adds the dependency by link name, target unused)
+with tempfile.TemporaryDirectory() as d, patched(systemd_is_pid1=lambda *a, **k: False):
+    r = Path(d, "etc"); r.mkdir(); Path(r, "timers.target.wants").mkdir()
+    os.symlink("/lib/systemd/system/NO_SUCH/apt-daily-upgrade.timer", Path(r, "timers.target.wants", "apt-daily-upgrade.timer"))
+    out["G10_dangling_wants_link_unit_enabled"] = L.unit_enabled("apt-daily-upgrade.timer", (str(r),))
+    out["G10_dangling_wants_link_shown_disabled"] = upd_with_roots((str(r),))["guest_updates_shown_disabled"]
+# G11: a unit root outside UNIT_ROOTS (/usr/local/lib/systemd/system, generator dirs) is never searched
+out["G11_UNIT_ROOTS"] = list(L.UNIT_ROOTS)
+# G12: systemd PID 1: is-enabled 'disabled' while the timer is ACTIVE (pulled in by Wants= or started at runtime)
+with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u: "disabled"):
+    out["G12_is_enabled_disabled_timer_active_unit_enabled"] = L.unit_enabled("apt-daily-upgrade.timer")
+    out["G12_shown_disabled"] = L.auto_update_settings('APT::Periodic::Enable "0";\n', use_live_apt=False,
+                                                       uu_binary="/nonexistent", snapd_paths=(), cloud_dir="/nonexistent",
+                                                       livepatch_dir="/nonexistent")["guest_updates_shown_disabled"]
+# G13: proc_view_complete with caller-asserted pidns + texts -> True (production parameter, informational)
+out["G13_proc_view_caller_texts"] = L.proc_view_complete("NSpid:\t5\n", "1 2 0:1 / /proc rw - proc proc rw\n",
+                                                         pidns=L.INIT_PID_NS)
+# G14: memory_readings with caller-supplied meminfo / cgroup text in production signature (no number while
+#      root_attestation fails; with it patched, the caller's MemTotal becomes the allowance) -- informational
+with tempfile.TemporaryDirectory() as d, patched(root_attestation=lambda ref: (True, [])):
+    mk(d, {"memory/memory.limit_in_bytes": "9223372036854771712\n", "memory/memory.usage_in_bytes": "1\n"})
+    out["G14_caller_meminfo_with_attested_root"] = L.memory_readings("MemTotal: 999999999 kB\n", "4:memory:/\n", d)["effective_limit"]
+# G15: launched_by_systemd with an env containing INVOCATION_ID but no unit (this host) -> not pass
+out["G15_env_only"] = L.launched_by_systemd(env={"INVOCATION_ID": "abc"})["pass"]
+print(json.dumps(out, indent=1, default=str))

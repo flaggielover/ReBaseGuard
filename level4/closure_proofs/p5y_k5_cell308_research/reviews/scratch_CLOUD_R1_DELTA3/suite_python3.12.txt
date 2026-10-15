@@ -1,0 +1,131 @@
+test_clean_needs_every_channel (test_lx_platform.TestAssess.test_clean_needs_every_channel) ... ok
+test_constants_equal_the_candidates (test_lx_platform.TestAssess.test_constants_equal_the_candidates)
+R04 / R09: the tolerance and spacing are the accepted mbs308_host values (read from 142d97a9). ... ok
+test_live_host_is_never_clean (test_lx_platform.TestAssess.test_live_host_is_never_clean)
+N13: with a well-formed (empty) journal list, this Cloud VM is still never CLEAN (no suspend_stats, no ... ok
+test_missing_channels_never_clean (test_lx_platform.TestAssess.test_missing_channels_never_clean) ... ok
+test_monotonic_ahead_of_boottime_and_absent_samples (test_lx_platform.TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples)
+X04 / X06: monotonic advancing more than boottime, or samples absent, is AMBIGUOUS, never CLEAN. ... ok
+test_no_reviewed_journal_reader_never_clean (test_lx_platform.TestAssess.test_no_reviewed_journal_reader_never_clean)
+P7: with no reviewed journal reader (the shipped state), a caller-supplied [] cannot make L' silent. ... ok
+test_pause_channel_is_ambiguous (test_lx_platform.TestAssess.test_pause_channel_is_ambiguous) ... ok
+test_power_checked_at_every_sample (test_lx_platform.TestAssess.test_power_checked_at_every_sample)
+R10: a battery reading in the middle of the interval contaminates it. ... ok
+test_reboot_battery_suspendcount_journal (test_lx_platform.TestAssess.test_reboot_battery_suspendcount_journal) ... ok
+test_sample_spacing_boundary (test_lx_platform.TestAssess.test_sample_spacing_boundary)
+R09: 180 s spacing is covered, 181 s is not. ... ok
+test_suspend_detected_just_above_tolerance (test_lx_platform.TestAssess.test_suspend_detected_just_above_tolerance) ... ok
+test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)
+P1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... ok
+test_all_favourable_still_blocked (test_lx_platform.TestAttestationPreflight.test_all_favourable_still_blocked) ... ok
+test_attestation_read_from_committed_files (test_lx_platform.TestAttestationPreflight.test_attestation_read_from_committed_files) ... ok
+test_boot_id_must_be_valid (test_lx_platform.TestAttestationPreflight.test_boot_id_must_be_valid) ... ok
+test_decided_is_validated (test_lx_platform.TestAttestationPreflight.test_decided_is_validated)
+P5: DECIDED must be a frozenset of known D-* ids; a string (substring trick) or an unknown id raises. ... ok
+test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok
+test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)
+P6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it. ... ok
+test_lifetime_gates_open_while_undecided (test_lx_platform.TestAttestationPreflight.test_lifetime_gates_open_while_undecided) ... ok
+test_live_preflight_fails_closed_here (test_lx_platform.TestAttestationPreflight.test_live_preflight_fails_closed_here) ... ok
+test_no_trust_parameters_in_production (test_lx_platform.TestAttestationPreflight.test_no_trust_parameters_in_production)
+P5 / P6: preflight takes no decided / attestation_check parameter. ... ok
+test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)
+M25: an accepted digest does not make a DIFFERENT committed file pass. ... ok
+test_uncommitted_edit_is_not_the_record (test_lx_platform.TestAttestationPreflight.test_uncommitted_edit_is_not_the_record) ... ok
+test_unknowns_never_pass_and_are_reported (test_lx_platform.TestAttestationPreflight.test_unknowns_never_pass_and_are_reported) ... ok
+test_boot_id (test_lx_platform.TestBootMachine.test_boot_id) ... ok
+test_machine_identity_hashes_and_hardware_binding (test_lx_platform.TestBootMachine.test_machine_identity_hashes_and_hardware_binding) ... ok
+test_exited_child_of_reused_campaign_pid_is_reported (test_lx_platform.TestBusy.test_exited_child_of_reused_campaign_pid_is_reported)
+Y02: an exited process whose ppid is a campaign pid but which is OLDER than the campaign process is not ... ok
+test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)
+N7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok
+test_live_snapshot (test_lx_platform.TestBusy.test_live_snapshot) ... ok
+test_no_name_or_path_allowlist (test_lx_platform.TestBusy.test_no_name_or_path_allowlist)
+R05 / D-ALLOW-PATHS: no process is exempt by name or path, including the Cloud session controller. ... ok
+test_no_reading_or_unsafe_inputs_fail_closed (test_lx_platform.TestBusy.test_no_reading_or_unsafe_inputs_fail_closed) ... ok
+test_proc_view (test_lx_platform.TestBusy.test_proc_view)
+N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok
+test_reused_campaign_pid_does_not_exempt_children (test_lx_platform.TestBusy.test_reused_campaign_pid_does_not_exempt_children)
+N7: own is keyed by (pid, starttime); a child of a reused pid (older than the campaign process) counts. ... ok
+test_unreadable_existing_process_fails_the_snapshot (test_lx_platform.TestBusy.test_unreadable_existing_process_fails_the_snapshot)
+N7: a /proc/<pid> that exists but cannot be read makes the whole snapshot None. ... ok
+test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok
+test_crash_injection_old_or_new_never_partial (test_lx_platform.TestDurableWrite.test_crash_injection_old_or_new_never_partial)
+SIGKILL at each stage: complete OLD or complete NEW bytes, never a mix (SIGKILL is not a power loss). ... ok
+test_fsyncs_file_then_directory (test_lx_platform.TestDurableWrite.test_fsyncs_file_then_directory)
+R03 / R08: the data and the directory are both fsync'd, in that order. ... ok
+test_read_back_mismatch_is_detected (test_lx_platform.TestDurableWrite.test_read_back_mismatch_is_detected)
+X05: if the bytes on disk after the rename are not the bytes written, durable_write raises. ... ok
+test_roundtrip (test_lx_platform.TestDurableWrite.test_roundtrip) ... ok
+test_stale_tmp_is_a_named_state (test_lx_platform.TestDurableWrite.test_stale_tmp_is_a_named_state)
+F23: a stale tmp raises StaleTmp and is left in place. ... ok
+test_tmp_symlink_refused (test_lx_platform.TestDurableWrite.test_tmp_symlink_refused) ... ok
+test_alive_only_when_all_fields_match (test_lx_platform.TestIdentity.test_alive_only_when_all_fields_match) ... ok
+test_detached_child_survives_parent_death (test_lx_platform.TestIdentity.test_detached_child_survives_parent_death)
+A new-session grandchild survives SIGKILL of its parent (ALIVE); after its own kill it is never ALIVE again ... ok
+test_empty_cmdline_is_a_failed_read (test_lx_platform.TestIdentity.test_empty_cmdline_is_a_failed_read) ... ok
+test_failed_readings_are_unknown_never_dead (test_lx_platform.TestIdentity.test_failed_readings_are_unknown_never_dead) ... ok
+test_live_task_states_are_alive (test_lx_platform.TestIdentity.test_live_task_states_are_alive)
+R07: stopped (T, t), uninterruptible (D), running (R), idle (I) tasks are live. ... ok
+test_malformed_records_prove_nothing (test_lx_platform.TestIdentity.test_malformed_records_prove_nothing)
+P9: a malformed record is UNKNOWN, never DEAD (a bad boot id would otherwise 'prove' a reboot; a negative ... ok
+test_malformed_stat_is_none (test_lx_platform.TestIdentity.test_malformed_stat_is_none) ... ok
+test_namespace_mismatch_is_unknown (test_lx_platform.TestIdentity.test_namespace_mismatch_is_unknown)
+F14: a reader in another PID / time namespace cannot prove anything about the recorded pid. ... ok
+test_parse_comm_with_spaces_and_parens (test_lx_platform.TestIdentity.test_parse_comm_with_spaces_and_parens) ... ok
+test_positive_death_evidence (test_lx_platform.TestIdentity.test_positive_death_evidence) ... ok
+test_real_process_lifecycle (test_lx_platform.TestIdentity.test_real_process_lifecycle) ... ok
+test_unrecorded_fields (test_lx_platform.TestIdentity.test_unrecorded_fields)
+N-2: a field never recorded is never compared (cannot prove death) and blocks ALIVE. ... ok
+test_unrecorded_namespace_never_proves_death (test_lx_platform.TestIdentity.test_unrecorded_namespace_never_proves_death)
+N8: without recorded namespaces, ESRCH or a starttime difference proves nothing (UNKNOWN); a boot-id change ... ok
+test_zombie_is_never_proof_of_death (test_lx_platform.TestIdentity.test_zombie_is_never_proof_of_death)
+F2: a zombie / dead task reads UNKNOWN (macOS O-4 outcome), never DEAD. ... ok
+test_zombie_leader_with_live_thread_is_not_dead (test_lx_platform.TestIdentity.test_zombie_leader_with_live_thread_is_not_dead)
+Review 59 probe P6 as a test: the main thread exits (pthread_exit) while a worker thread computes; the ... ok
+test_ancestor_tighter_than_leaf (test_lx_platform.TestMemory.test_ancestor_tighter_than_leaf) ... ok
+test_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)
+N3: cpu.max / cpuset / pids.max are read at every level, so an ancestor's limit is visible. ... ok
+test_large_v1_limit_is_a_limit (test_lx_platform.TestMemory.test_large_v1_limit_is_a_limit)
+X08: a 2 000 000 000-byte v1 limit is a limit, not the 'unlimited' sentinel. ... ok
+test_meminfo_units (test_lx_platform.TestMemory.test_meminfo_units) ... ok
+test_no_rfree_quantity_is_produced (test_lx_platform.TestMemory.test_no_rfree_quantity_is_produced) ... ok
+test_partial_chain_never_numeric (test_lx_platform.TestMemory.test_partial_chain_never_numeric)
+F10: an unreadable limit anywhere, or an unreadable usage at a limited level, gives no number. ... ok
+test_root_attestation_is_derived_never_asserted (test_lx_platform.TestMemory.test_root_attestation_is_derived_never_asserted)
+N3 / P2: there is no caller flag; root_attestation() needs the initial cgroup namespace, D-HOST-LIFETIME ... ok
+test_v1_needs_root_attestation_for_a_number (test_lx_platform.TestMemory.test_v1_needs_root_attestation_for_a_number) ... ok
+test_v2_root_and_memory_high (test_lx_platform.TestMemory.test_v2_root_and_memory_high) ... ok
+test_every_pin_key_is_compared (test_lx_platform.TestPins.test_every_pin_key_is_compared)
+R06: changing any one pinned value is a mismatch. ... ok
+test_libm_change_with_same_glibc_string (test_lx_platform.TestPins.test_libm_change_with_same_glibc_string)
+The review-59 case: libc6 8.7 vs 8.9 both report 'glibc 2.39'; the package version and libm digest differ. ... ok
+test_pin_set_covers_libm_libc_loader (test_lx_platform.TestPins.test_pin_set_covers_libm_libc_loader)
+F1: the mapped shared objects (incl. libm.so.6, libc.so.6, the loader) and package versions are pinned. ... ok
+test_r1_recorded_kernel_is_not_this_hosts (test_lx_platform.TestPins.test_r1_recorded_kernel_is_not_this_hosts)
+N13 (renamed and sharpened): the kernel the 2026-10-04 inventory recorded is not this host's, so a pin set ... ok
+test_required_members_and_pin_point (test_lx_platform.TestPins.test_required_members_and_pin_point)
+N11: a mapped set without libm / libc / the loader is not a pin; pin_point imports a fixed list first. ... ok
+test_unknown_interpreter_package_never_matches (test_lx_platform.TestPins.test_unknown_interpreter_package_never_matches)
+X09: an interpreter whose dpkg owner is unknown keeps a placeholder whose version is None. ... ok
+test_unreadable_pins_never_match (test_lx_platform.TestPins.test_unreadable_pins_never_match) ... ok
+test_failed_or_unknown_supplies_are_unknown (test_lx_platform.TestPowerThermal.test_failed_or_unknown_supplies_are_unknown)
+F9 / R01: an unreadable type, an unreadable battery status, or an unknown supply type is never AC. ... ok
+test_power_classes (test_lx_platform.TestPowerThermal.test_power_classes) ... ok
+test_thermal_raw_only (test_lx_platform.TestPowerThermal.test_thermal_raw_only) ... ok
+test_unrecognised_battery_status_is_unknown (test_lx_platform.TestPowerThermal.test_unrecognised_battery_status_is_unknown)
+N2: only Discharging and the known not-discharging statuses are read; anything else is UNKNOWN. ... ok
+test_launched_by_systemd_requires_everything (test_lx_platform.TestUpdatesLaunch.test_launched_by_systemd_requires_everything) ... ok
+test_live_host_not_launched (test_lx_platform.TestUpdatesLaunch.test_live_host_not_launched) ... ok
+test_parser_reads_only_whole_dump_lines (test_lx_platform.TestUpdatesLaunch.test_parser_reads_only_whole_dump_lines)
+N13 (renamed): the parser accepts only whole `apt-config dump` lines; apt's own comment handling is apt's, ... ok
+test_positive_evidence_only (test_lx_platform.TestUpdatesLaunch.test_positive_evidence_only) ... ok
+test_reboot_vector_recorded_and_provider_unknown (test_lx_platform.TestUpdatesLaunch.test_reboot_vector_recorded_and_provider_unknown) ... ok
+test_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1) ... ok
+test_unit_enabled_from_every_root (test_lx_platform.TestUpdatesLaunch.test_unit_enabled_from_every_root)
+P8: enabled anywhere -> True; masked -> False; installed without a link -> False; an unreadable root -> None; ... ok
+
+----------------------------------------------------------------------
+Ran 83 tests in 5.978s
+
+OK
