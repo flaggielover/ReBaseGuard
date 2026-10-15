@@ -10,7 +10,8 @@ RV01-RV17 carry Claude review 63's mutants W01-W07 (re-anchored where the code t
 weaken its H1/H3/H6/H7 repairs; P11, Z01, Z02, Z05 and Q06 are re-anchored with the same weakening.
 RV18-RV28 carry review 64's surviving mutants (RW1-RW4, RW6) and weaken its K1, K4, K7 and K9 repairs; RV29-RV30
 weaken the history-completeness guard restored after review 64 (shallow clones hide deleted rejections); RV31-RV42
-carry review 65's mutants RX1-RX6 and weaken its L1, L3, L6 and L7 repairs.
+carry review 65's mutants RX1-RX6 and weaken its L1, L3, L6 and L7 repairs; RV43-RV48 weaken review 66's M1-M4
+repairs (RV39 is narrowed to the key refusal; the lazy-fetch block is RV45).
 Every complete raw report, mutation anchor, and before/after input hash is retained.
 No scientific evaluator is imported or executed. Explicit output paths receive the evidence.
 
@@ -641,8 +642,8 @@ MUTANTS = [('M01',
     '    line_commits = _commits(repo_root, pick, "--first-parent", "HEAD")\n')]),
  ('RV23',
   'Review 64 K1: the reading repository may hide the root / boundary commit (log.showRoot not forced)',
-  [('_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true")',
-    '_GIT_ISOLATION = ("--no-replace-objects",)')]),
+  [('_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true",\n',
+    '_GIT_ISOLATION = ("--no-replace-objects",\n')]),
  ('RV24',
   'Review 64 K1: a textconv driver may rewrite what the pickaxe searches',
   [('"--no-patch", "--no-textconv", "--no-ext-diff",', '"--no-patch", "--no-ext-diff",')]),
@@ -672,8 +673,8 @@ MUTANTS = [('M01',
   [('    if _git(repo_root, "rev-parse", "--is-shallow-repository") != b"false\\n":',
     '    if _git(repo_root, "rev-parse", "--is-shallow-repository") == b"true\\n":')]),
  ('RV31',
-  'Review 65 L1: no full strict fsck (a forged commit-graph or a rewritten object hides a deleted rejection)',
-  [('    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None',
+  'Review 65 L1: no full fsck (a rewritten object hides a deleted rejection)',
+  [('    return _git(repo_root, "fsck", "--full", "--no-dangling", "--no-progress") is not None',
     '    return True')]),
  ('RV32',
   'Review 65 L1 / L6: repository-local fsck.* and promisor / partial-clone keys accepted',
@@ -682,7 +683,8 @@ MUTANTS = [('M01',
     '    if names is None:')]),
  ('RV33',
   'Review 65 RX1: replace objects honoured by the reads',
-  [('_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true")', '_GIT_ISOLATION = ("-c", "log.showRoot=true")')]),
+  [('_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true",\n',
+    '_GIT_ISOLATION = ("-c", "log.showRoot=true",\n')]),
  ('RV34',
   'Review 65 RX2: info/grafts honoured by the reads',
   [('               GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")', '               GIT_NO_LAZY_FETCH="1")')]),
@@ -703,10 +705,10 @@ MUTANTS = [('M01',
   'Review 65 RX6: the exact-path listing need not cover every reviewed path',
   [('    if entries is None or set(entries) != set(every):', '    if entries is None:')]),
  ('RV39',
-  'Review 65 L6: partial clones accepted and lazy fetch allowed (configured commands may run)',
+  'Review 65 L6: partial-clone / promisor keys accepted by the precondition (review 66 M4: the lazy-fetch block is '
+  'RV45, a separate mutant)',
   [('_LOCAL_CONFIG_REFUSED = re.compile(r"fsck\\.|extensions\\.partialclone$|remote\\..*\\.(promisor|partialclonefilter)$")',
-    '_LOCAL_CONFIG_REFUSED = re.compile(r"fsck\\.")'),
-   ('               GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")', '               GIT_GRAFT_FILE=os.devnull)')]),
+    '_LOCAL_CONFIG_REFUSED = re.compile(r"fsck\\.")')]),
  ('RV40',
   'Review 65 L3: the caller environment (GIT_DIR, object directories, ...) passes through to git',
   [('    env = {k: v for k, v in os.environ.items() if k in _GIT_ENV_KEEP}', '    env = dict(os.environ)')]),
@@ -718,9 +720,29 @@ MUTANTS = [('M01',
  ('RV42',
   'Review 65 L7: a deeply nested attestation raises out of attestation_valid',
   [('    except RecursionError:                                      # review 65 L7: deeply nested JSON\n'
-    '        return None, ["attestation JSON nested too deeply"]\n', '')])]
+    '        return None, ["attestation JSON nested too deeply"]\n', '')]), ('RV43',
+  'Review 66 M1: the commit-graph (and its unverified changed-path Bloom filters) is read',
+  [('                  "-c", "core.commitGraph=false",               # review 66 M1: no graph data (parents or Bloom filters)\n',
+    '')]),
+ ('RV44',
+  'Review 66 M2: a repository-configured fsmonitor command may run (fsck reads the index)',
+  [('                  "-c", "core.fsmonitor=false")                 # review 66 M2: no repository-configured fsmonitor',
+    '                  )')]),
+ ('RV45',
+  'Review 66 M4 (RY1): missing objects may be fetched lazily (GIT_NO_LAZY_FETCH dropped)',
+  [('               GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")', '               GIT_GRAFT_FILE=os.devnull)')]),
+ ('RV46',
+  'Review 66 M4 (RY3): the attested entry need not be a regular file',
+  [('    blob = entry[2] if entry and entry[:2] in (("100644", "blob"), ("100755", "blob")) else ""',
+    '    blob = entry[2] if entry else ""')]),
+ ('RV47',
+  'Review 66 M4 (RY5): an unreadable configuration listing counts as clean',
+  [('    if names is None or any(', '    if names is not None and any(')]),
+ ('RV48',
+  'Review 66 M3: configuration keys read from .git/config only (no includes, no worktree scope)',
+  [('"config", "--includes", "--name-only", "--list", "-z")', '"config", "--local", "--name-only", "--list", "-z")')])]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 42}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 48}
 
 # A kill must include at least one named direct witness for the weakened property.
 # These method names are unique across the full discovered suite. They are evidence
@@ -818,6 +840,12 @@ for _method, _ids in {
     "test_review65_partial_clone_runs_no_configured_command": "RV39",
     "test_review65_caller_git_environment_is_ignored": "RV40",
     "test_review65_range_like_attestation_path_and_deep_json": "RV41 RV42",
+    "test_review66_forged_bloom_filter_is_never_read": "RV43",
+    "test_review66_fsmonitor_command_never_runs": "RV44",
+    "test_review66_lazy_fetch_blocked_even_past_the_precondition": "RV45",
+    "test_review66_symlink_attestation_is_refused": "RV46",
+    "test_review66_unreadable_configuration_listing_refuses": "RV47",
+    "test_review66_configuration_in_includes_and_worktree_scope_refuses": "RV48",
     "test_review64_dangling_top_entry_shadows_lower_mask": "RV19",
     "test_review64_non_utf8_historical_review_path_refuses": "RV20",
     "test_review64_side_branch_acceptance_synced_and_merged_refuses": "RV22",
@@ -1129,7 +1157,7 @@ def main(out: str | None) -> int:
     rows = []
     for mid, what, edits in MUTANTS:
         row = {"id": mid, "origin": ("combined integration" if mid.startswith("R5SYNC") or mid == "CDEX16" else
-                           "Codex" if mid.startswith("CDEX") else "Claude review 63" if mid.startswith("RV") else
+                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-66" if mid.startswith("RV") else
                            "Claude revision 5"),
                "property": what, "intended_property_test_methods": PROPERTY_WITNESSES[mid],
                "edits": [{"old": old, "new": new} for old, new in edits]}

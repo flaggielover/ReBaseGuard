@@ -1368,8 +1368,7 @@ class TestAttestationPreflight(unittest.TestCase):
             self.assertIsNone(self._valid_in(d, att)[0])                                  # full history: refused
             self._forge_commit_graph(d, ids[2])
             rec, why = self._valid_in(d, att)
-            self.assertIsNone(rec)                                                        # RV31 (graph)
-            self.assertTrue(any("history completeness" in w for w in why), why)
+            self.assertIsNone(rec)                                  # graph never read (review 66 M1): HISTORICAL
             Path(d, ".git", "objects", "info", "commit-graph").unlink()
             oid = subprocess.run(["git", "-C", d, "rev-parse", f"{ids[1]}:{L.ACCEPTANCE_REVIEW_DIR}/veto.md"],
                                  capture_output=True, text=True, check=True).stdout.strip()
@@ -1407,23 +1406,148 @@ class TestAttestationPreflight(unittest.TestCase):
                     self.assertIsNone(rec)                                                # RV32
                     self.assertTrue(any("history completeness" in w for w in why), why)
 
+    def _partial_clone(self, d, att):
+        """A blob:none partial clone of a repository whose deleted rejection blob is therefore missing locally, with
+        a configured upload-pack that writes a marker when it runs. Returns (clone, marker)."""
+        src, dst, marker = Path(d, "src"), Path(d, "dst"), Path(d, "fetched.marker")
+        src.mkdir()
+        self._rejected_then_deleted(src, att)
+        fixture_git(src, "config", "uploadpack.allowFilter", "true")
+        fixture_git(d, "clone", "-q", "--no-local", "--filter=blob:none", src.as_uri(), str(dst))
+        script = Path(d, "upload-pack.sh")
+        script.write_text(f"#!/bin/sh\ntouch '{marker}'\nexec git-upload-pack \"$@\"\n")
+        script.chmod(0o755)
+        fixture_git(dst, "config", "remote.origin.uploadpack", str(script))
+        return dst, marker
+
     def test_review65_partial_clone_runs_no_configured_command(self):
-        """Review 65 L6: in a blob:none partial clone a missing historical blob would be lazily fetched, running the
-        repository-configured upload-pack command; the check refuses before any fetch and runs nothing."""
+        """Review 65 L6: a blob:none partial clone (its promisor keys are in its own configuration) is refused by the
+        completeness precondition, and the repository-configured upload-pack command does not run."""
         att = self.attestation()
         with tempfile.TemporaryDirectory() as d:
-            src, dst, marker = Path(d, "src"), Path(d, "dst"), Path(d, "fetched.marker")
-            src.mkdir()
-            self._rejected_then_deleted(src, att)
-            fixture_git(src, "config", "uploadpack.allowFilter", "true")
-            fixture_git(d, "clone", "-q", "--no-local", "--filter=blob:none", src.as_uri(), str(dst))
-            script = Path(d, "upload-pack.sh")
-            script.write_text(f"#!/bin/sh\ntouch '{marker}'\nexec git-upload-pack \"$@\"\n")
-            script.chmod(0o755)
-            fixture_git(dst, "config", "remote.origin.uploadpack", str(script))
+            dst, marker = self._partial_clone(d, att)
             rec, why = self._valid_in(dst, att)
             self.assertIsNone(rec)
-            self.assertFalse(marker.exists(), "a configured command ran during the check")    # RV39
+            self.assertTrue(any("history completeness" in w for w in why), why)            # RV39
+            self.assertFalse(marker.exists(), "a configured command ran during the check")
+
+    def test_review66_lazy_fetch_blocked_even_past_the_precondition(self):
+        """Review 66 M4 (RY1): independently of the configuration check, no missing object is fetched lazily: with the
+        precondition bypassed, a partial clone's missing rejection blob is unavailable evidence and the configured
+        upload-pack does not run."""
+        att = self.attestation()
+        with tempfile.TemporaryDirectory() as d:
+            dst, marker = self._partial_clone(d, att)
+            with patched(_history_complete=lambda repo_root: True):
+                rec, why = self._valid_in(dst, att)
+            self.assertIsNone(rec)
+            self.assertFalse(marker.exists(), "a missing object was fetched lazily")       # RV45
+
+    def test_review66_forged_bloom_filter_is_never_read(self):
+        """Review 66 M1: a commit-graph's changed-path Bloom filters are not verified by fsck or `commit-graph
+        verify`; zeroing the rejection commit's filter would hide it from the history-wide scan. The graph is never
+        read, so the rejection still refuses; an honest Bloom graph changes nothing (positive control)."""
+        att = self.attestation()
+        with tempfile.TemporaryDirectory() as d:
+            ids = self._rejected_then_deleted(Path(d), att)
+            fixture_git(d, "commit-graph", "write", "--reachable", "--changed-paths")
+            gp = Path(d, ".git", "objects", "info", "commit-graph")
+            b = bytearray(gp.read_bytes())
+            chunks = {}
+            for i in range(b[6] + 1):
+                cid, off = struct.unpack(">4sQ", b[8 + 12 * i: 20 + 12 * i])
+                chunks[cid] = off
+            n = struct.unpack(">I", b[chunks[b"OIDF"] + 255 * 4: chunks[b"OIDF"] + 256 * 4])[0]
+            oids = [bytes(b[chunks[b"OIDL"] + 20 * i: chunks[b"OIDL"] + 20 * i + 20]).hex() for i in range(n)]
+            ends = [struct.unpack(">I", b[chunks[b"BIDX"] + 4 * i: chunks[b"BIDX"] + 4 * i + 4])[0]
+                    for i in range(n)]
+            k = oids.index(ids[1])
+            for j in range(chunks[b"BDAT"] + 12 + (ends[k - 1] if k else 0), chunks[b"BDAT"] + 12 + ends[k]):
+                b[j] = 0
+            b[-20:] = hashlib.sha1(bytes(b[:-20])).digest()
+            gp.chmod(0o644)
+            gp.write_bytes(bytes(b))
+            rec, why = self._valid_in(d, att)
+            self.assertIsNone(rec)                                                        # RV43
+            self.assertTrue(any("HISTORICAL" in w for w in why), why)
+        with tempfile.TemporaryDirectory() as d:                                          # control
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att})
+            git_commit(d, {f"{ACC}1.md": self.accept(hashlib.sha256(att).hexdigest())})
+            fixture_git(d, "commit-graph", "write", "--reachable", "--changed-paths")
+            rec, why = self._valid_in(d, att)
+            self.assertIsNotNone(rec, why)
+
+    def test_review66_fsmonitor_command_never_runs(self):
+        """Review 66 M2: a repository-local core.fsmonitor command (fsck reads the index) never runs during the
+        check."""
+        att = self.attestation()
+        with tempfile.TemporaryDirectory() as d:
+            repo, marker = Path(d, "r"), Path(d, "fsmonitor.marker")
+            repo.mkdir()
+            git_init(repo)
+            git_commit(repo, {"att/HOST.json": att})
+            git_commit(repo, {f"{ACC}1.md": self.accept(hashlib.sha256(att).hexdigest())})
+            script = Path(d, "fsmonitor.sh")
+            script.write_text(f"#!/bin/sh\ntouch '{marker}'\nexit 1\n")
+            script.chmod(0o755)
+            fixture_git(repo, "config", "--local", "core.fsmonitor", str(script))      # overrides the fixture's false
+            rec, why = self._valid_in(repo, att)
+            self.assertIsNotNone(rec, why)
+            self.assertFalse(marker.exists(), "the repository's fsmonitor command ran")       # RV44
+
+    def test_review66_configuration_in_includes_and_worktree_scope_refuses(self):
+        """Review 66 M3: an `fsck.*` or promisor key reached through `include.path` or the worktree configuration
+        scope refuses like one written directly."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        for how in ("include", "worktree"):
+            with self.subTest(how=how), tempfile.TemporaryDirectory() as d:
+                git_init(d)
+                git_commit(d, {"att/HOST.json": att})
+                git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+                self.assertIsNotNone(self._valid_in(d, att)[0])                           # control before
+                if how == "include":
+                    inc = Path(d, "extra.cfg")
+                    inc.write_text("[fsck]\n\tbadTimezone = ignore\n")
+                    fixture_git(d, "config", "--local", "include.path", str(inc))
+                else:
+                    fixture_git(d, "config", "--local", "core.repositoryformatversion", "1")
+                    fixture_git(d, "config", "--local", "extensions.worktreeConfig", "true")
+                    fixture_git(d, "config", "--worktree", "fsck.badTimezone", "ignore")
+                rec, why = self._valid_in(d, att)
+                self.assertIsNone(rec)                                                    # RV48
+                self.assertTrue(any("history completeness" in w for w in why), why)
+
+    def test_review66_unreadable_configuration_listing_refuses(self):
+        """Review 66 M4 (RY5): a configuration listing that cannot be read is not a clean configuration."""
+        att = self.attestation()
+        original = L._git
+
+        def no_config(repo_root, *args):
+            return None if args[:1] == ("config",) else original(repo_root, *args)
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att})
+            git_commit(d, {f"{ACC}1.md": self.accept(hashlib.sha256(att).hexdigest())})
+            self.assertIsNotNone(self._valid_in(d, att)[0])                               # control
+            with patched(_git=no_config):
+                rec, why = self._valid_in(d, att)
+            self.assertIsNone(rec)                                                        # RV47
+            self.assertTrue(any("history completeness" in w for w in why), why)
+
+    def test_review66_symlink_attestation_is_refused(self):
+        """Review 66 M4 (RY3): the attested entry must be a regular file; a symlink whose target text is the
+        attestation JSON is not an attestation file."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            Path(d, "att").mkdir()
+            os.symlink(att.decode(), Path(d, "att", "HOST.json"))
+            git_commit(d, {})
+            git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+            self.assertIsNone(self._valid_in(d, att)[0])                                  # RV46
 
     def test_review65_replace_refs_and_grafts_are_ignored(self):
         """Review 65 L2 (RX1, RX2, RX5): a replace graft or an info/grafts entry that cuts the deletion commit, and a

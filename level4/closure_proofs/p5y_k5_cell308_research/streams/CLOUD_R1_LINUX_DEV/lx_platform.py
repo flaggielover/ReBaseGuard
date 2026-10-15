@@ -1155,7 +1155,9 @@ def free_disk_bytes(path) -> int | None:
 # (or shallow-boundary) commit is always shown; pickaxe searches also pass --no-textconv / --no-ext-diff (_commits).
 # Repository-local configuration is still read. History completeness is a precondition (_history_complete): a shallow
 # clone hides commits before its boundary, e.g. a rejecting review that was later deleted (review 64 follow-up).
-_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true")
+_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true",
+                  "-c", "core.commitGraph=false",               # review 66 M1: no graph data (parents or Bloom filters)
+                  "-c", "core.fsmonitor=false")                 # review 66 M2: no repository-configured fsmonitor
 
 
 _GIT_ENV_KEEP = ("PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "TMPDIR", "TZ")
@@ -1186,18 +1188,21 @@ def _history_complete(repo_root) -> bool:
     """True only on positive evidence about the history this check reads (the history-wide veto and the order rule
     both read the whole history; a cut or forged history can hide a deleted rejection while HEAD, its id and its tree
     are identical): (1) git reports the repository is not a shallow clone; (2) review 65 L6 / L1: the repository's own
-    configuration names no partial clone / promisor (a missing object would be lazily fetched, running configured
-    commands) and no `fsck.*` key (which could downgrade fsck's checks); (3) review 65 L1: `git fsck --full --strict`
-    of every object, alternates included, and the commit-graph passes (a forged commit-graph or a rewritten object
-    fails it). Any other answer, a failure or a timeout is not evidence. This trusts git's own verification; it does
-    not detect a history rewritten consistently (new commit ids), which the ledger binding is to catch."""
+    configuration, read with includes in every scope (review 66 M3), names no partial clone / promisor (a missing
+    object would be lazily fetched, running configured commands) and no `fsck.*` key (which could downgrade fsck's
+    checks); (3) review 65 L1: `git fsck --full` of every object, alternates included, passes (a rewritten object
+    fails it). The commit-graph is never read (review 66 M1: its changed-path Bloom filters are not verified by fsck),
+    and no fsmonitor command runs (M2). Any other answer, a failure or a timeout is not evidence. This trusts git's own
+    verification at the moment of the check; it does not detect a history rewritten consistently (new commit ids), nor
+    a change made by another process between this check and the reads, which the ledger binding is to catch.
+    `--strict` is not used: it only promotes warnings (e.g. zero-padded modes in old histories) and hides nothing."""
     if _git(repo_root, "rev-parse", "--is-shallow-repository") != b"false\n":
         return False
-    names = _git(repo_root, "config", "--local", "--name-only", "--list", "-z")
+    names = _git(repo_root, "config", "--includes", "--name-only", "--list", "-z")  # review 66 M3: every scope
     if names is None or any(_LOCAL_CONFIG_REFUSED.match(n) for n in names.decode("utf-8", "replace").lower()
                             .split("\0") if n):
         return False
-    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None
+    return _git(repo_root, "fsck", "--full", "--no-dangling", "--no-progress") is not None
 
 
 def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
