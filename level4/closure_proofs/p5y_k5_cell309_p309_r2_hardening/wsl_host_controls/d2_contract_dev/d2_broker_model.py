@@ -7,7 +7,7 @@ There is no callback, executor, persistence, socket, credential query or start A
 from dataclasses import dataclass, replace
 from enum import Enum
 
-from d2_control_wire import parse_request, WireError
+from d2_control_wire import parse_request, WireError, valid_id
 
 MAX_REQUEST_IDS = 4096
 MAX_GENERATIONS = 16
@@ -138,9 +138,7 @@ class BrokerModel:
 
     def dispatch(self, raw, *, peer):
         """Only public client surface. Never accepts caller instance/OS inputs."""
-        if (type(peer) is not SyntheticPeer or type(peer.role) is not str or peer.role != 'p309-monitor' or
-                type(peer.monitor_epoch) is not int or peer.monitor_epoch != self.epoch or
-                type(peer.monitor_instance) is not str or peer.monitor_instance != self.monitor_instance):
+        if not _monitor_matches(self, peer):
             return Outcome(self, self._receipt('PEER_REFUSED', hide_state=True))
         try:
             request = parse_request(raw)
@@ -173,6 +171,43 @@ class BrokerModel:
             model = model._with_generation(g)
         return Outcome(model, model._receipt('STOPPED_MODEL' if g.state == State.STOPPED else 'STOP_REQUESTED_MODEL',
                                              duplicate=duplicate))
+
+
+def _monitor_matches(model, peer):
+    return (type(peer) is SyntheticPeer and type(peer.role) is str and peer.role == 'p309-monitor'
+            and type(peer.monitor_epoch) is int and peer.monitor_epoch == model.epoch
+            and type(peer.monitor_instance) is str and peer.monitor_instance == model.monitor_instance)
+
+
+def _internal_stop(model, *, generation, peer):
+    """Owner-internal MODEL safety event, never an H4 operation or OS action.
+
+    The same synthetic monitor and dispatch-time G checks apply. Ordinary wire
+    request-ID bindings are neither consulted, changed nor evicted: a client
+    cannot reserve an internal safety event by occupying an ID. This is not an
+    independent watchdog or authority/serialization boundary.
+    """
+    if type(model) is not BrokerModel:
+        raise ValueError('synthetic broker snapshot required')
+    if not _monitor_matches(model, peer):
+        return Outcome(model, model._receipt('PEER_REFUSED', hide_state=True))
+    if not valid_id(generation) or generation != model.current_id:
+        return Outcome(model, model._receipt('STALE_GENERATION', hide_state=True,
+                       requested=generation if valid_id(generation) else None))
+    if model.epoch_unknown:
+        return Outcome(model, model._receipt('RECOVERY_UNKNOWN'))
+    g = model._current()
+    if g.state == State.STOPPED:
+        return Outcome(model, model._receipt('STOPPED_MODEL', duplicate=True))
+    if g.state == State.RECOVERY_UNKNOWN:
+        return Outcome(model, model._receipt('RECOVERY_UNKNOWN', duplicate=True))
+    if g.stop_latched:
+        return Outcome(model, model._receipt('STOP_REQUESTED_MODEL', duplicate=True))
+    if model.event_count >= MAX_EVENTS:
+        unknown = model._unknown(exhausted=True)
+        return Outcome(unknown, unknown._receipt('MODEL_BUDGET_EXHAUSTED'))
+    stopped = replace(model._with_generation(_latch(g)), event_count=model.event_count + 1)
+    return Outcome(stopped, stopped._receipt('STOP_REQUESTED_MODEL'))
 
 
 def _latch(g):

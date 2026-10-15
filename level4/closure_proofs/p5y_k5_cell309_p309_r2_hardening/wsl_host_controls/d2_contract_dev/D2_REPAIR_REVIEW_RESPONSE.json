@@ -1,0 +1,181 @@
+{
+  "findings": [
+    {
+      "baseline_expected_failure": "test_d2_review_regressions.ReviewRegressions.test_new_challenge_does_not_extend_observation_liveness",
+      "changed_files": [
+        "d2_session.py"
+      ],
+      "disposition": "IMPLEMENTED_AND_REGRESSION_TESTED; INDEPENDENT_REREVIEW_PENDING",
+      "id": "R1",
+      "passing_regressions": [
+        "test_d2_review_regressions.ReviewRegressions.test_new_challenge_does_not_extend_observation_liveness",
+        "test_d2_review_regressions.ReviewRegressions.test_independent_liveness_deadline_checked_after_verification",
+        "test_d2_review_regressions.ReviewRegressions.test_exact_liveness_boundary_still_accepts_valid_signed_observation",
+        "test_d2_review_regressions.ReviewRegressions.test_pending_tick_never_replaces_observation_deadline"
+      ],
+      "reported_issue": "New challenge replaces observation liveness deadline",
+      "severity": "P1"
+    },
+    {
+      "baseline_expected_failure": "test_d2_review_regressions.ReviewRegressions.test_status_cannot_occupy_internal_same_generation_stop",
+      "changed_files": [
+        "d2_broker_model.py",
+        "d2_chain.py"
+      ],
+      "disposition": "IMPLEMENTED_AND_REGRESSION_TESTED; INDEPENDENT_REREVIEW_PENDING",
+      "id": "R2",
+      "passing_regressions": [
+        "test_d2_review_regressions.ReviewRegressions.test_status_cannot_occupy_internal_same_generation_stop",
+        "test_d2_review_regressions.ReviewRegressions.test_internal_stop_is_idempotent_and_allocates_no_request_id",
+        "test_d2_review_regressions.ReviewRegressions.test_internal_stop_with_full_request_table_retains_all_fences",
+        "test_d2_review_regressions.ReviewRegressions.test_internal_stop_stale_generation_cannot_touch_replacement",
+        "test_d2_review_regressions.ReviewRegressions.test_internal_stop_requires_non_null_exact_generation_and_synthetic_monitor",
+        "test_d2_review_regressions.ReviewRegressions.test_id_collision_during_armed_or_inflight_start_still_latches_stop",
+        "test_d2_review_regressions.ReviewRegressions.test_internal_stop_budget_exhaustion_latches_unknown_without_erasing_history"
+      ],
+      "reported_issue": "Ordinary status can occupy fixed stop request ID and leave RUNNING",
+      "severity": "P1"
+    },
+    {
+      "baseline_expected_failure": "test_d2_review_regressions.ReviewRegressions.test_sample_end_not_future_at_receipt_despite_verification_delay",
+      "changed_files": [
+        "d2_session.py"
+      ],
+      "disposition": "IMPLEMENTED_AND_REGRESSION_TESTED; INDEPENDENT_REREVIEW_PENDING",
+      "id": "R3",
+      "passing_regressions": [
+        "test_d2_review_regressions.ReviewRegressions.test_sample_end_not_future_at_receipt_despite_verification_delay"
+      ],
+      "reported_issue": "Facts future at receipt become accepted after verification delay",
+      "severity": "P2"
+    },
+    {
+      "baseline_expected_failure": "test_d2_review_regressions.ReviewRegressions.test_negative_modulus_rejected_at_every_supported_width",
+      "changed_files": [
+        "d2_signature.py"
+      ],
+      "disposition": "IMPLEMENTED_AND_REGRESSION_TESTED; INDEPENDENT_REREVIEW_PENDING",
+      "id": "R4",
+      "passing_regressions": [
+        "test_d2_review_regressions.ReviewRegressions.test_negative_modulus_rejected_at_every_supported_width",
+        "test_d2_review_regressions.ReviewRegressions.test_zero_even_and_negative_public_numbers_refused_while_positive_supported"
+      ],
+      "reported_issue": "Negative odd RSA modulus passes width/parity constructor validation",
+      "severity": "P2"
+    },
+    {
+      "baseline_expected_failure": null,
+      "changed_files": [
+        "signed_protocol_vectors.py",
+        "test_d2_review_regressions.py"
+      ],
+      "disposition": "IMPLEMENTED_AND_REGRESSION_TESTED; INDEPENDENT_REREVIEW_PENDING",
+      "id": "A1",
+      "passing_regressions": [
+        "test_d2_review_regressions.RealSignedProtocol.test_all_18_public_protocol_signatures_verify_without_mock",
+        "test_d2_review_regressions.RealSignedProtocol.test_real_session_roundtrip_preserves_raw_bytes_sequence_and_checkpoint",
+        "test_d2_review_regressions.RealSignedProtocol.test_real_chain_two_valid_observations_then_valid_signed_busy_stop",
+        "test_d2_review_regressions.RealSignedProtocol.test_real_tampering_wrong_key_and_wrong_pin_are_refused",
+        "test_d2_review_regressions.RealSignedProtocol.test_real_signed_replay_cross_session_and_old_checkpoint_cannot_resume",
+        "test_d2_review_regressions.RealSignedProtocol.test_valid_real_signature_still_grants_no_actual_host_or_execution_authority"
+      ],
+      "reported_issue": "Positive Session/Chain needs real valid protocol signatures without mock",
+      "severity": "ACCEPTANCE_EVIDENCE"
+    }
+  ],
+  "formal_admission": "BLOCKED",
+  "independent_rereview_completed": false,
+  "review_source": "USER_SUPPLIED_INDEPENDENT_STATIC_REVIEW; Windows-local original reports not read/hashed in Cloud",
+  "reviewed_commit": "1e8aa3318bf75aab8e7150b75440f3575f073d80",
+  "schema": "P309_D2_REPAIR_REVIEW_RESPONSE/1",
+  "unresolved_original_blockers": [
+    {
+      "deployment_blocking": true,
+      "id": "I1",
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ],
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Runner Windows/root boundary"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I2",
+      "original_fact_questions": [
+        1,
+        5
+      ],
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Collector rights, completeness and attribution"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I3",
+      "original_fact_questions": [
+        1,
+        6
+      ],
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Enrollment and ACL/API descriptors"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I4",
+      "original_fact_questions": [
+        2
+      ],
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Fresh image/runtime provenance"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I5",
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ],
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Guest policy/unit limits and controlled launcher"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I6",
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ],
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Protected persistence and stop/recovery"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I7",
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Route, host and formal authority"
+    }
+  ]
+}

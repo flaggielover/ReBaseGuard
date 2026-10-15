@@ -1,0 +1,41 @@
+test_new_challenge_does_not_extend_observation_liveness (test_d2_review_regressions.ReviewRegressions.test_new_challenge_does_not_extend_observation_liveness) ... FAIL
+test_status_cannot_occupy_internal_same_generation_stop (test_d2_review_regressions.ReviewRegressions.test_status_cannot_occupy_internal_same_generation_stop) ... FAIL
+test_sample_end_not_future_at_receipt_despite_verification_delay (test_d2_review_regressions.ReviewRegressions.test_sample_end_not_future_at_receipt_despite_verification_delay) ... FAIL
+test_negative_modulus_rejected_at_every_supported_width (test_d2_review_regressions.ReviewRegressions.test_negative_modulus_rejected_at_every_supported_width) ... FAIL
+
+======================================================================
+FAIL: test_new_challenge_does_not_extend_observation_liveness (test_d2_review_regressions.ReviewRegressions.test_new_challenge_does_not_extend_observation_liveness)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/p309-d2-review-baseline-20261015/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/test_d2_review_regressions.py", line 60, in test_new_challenge_does_not_extend_observation_liveness
+    self.assertTrue(failed.session.terminal)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_status_cannot_occupy_internal_same_generation_stop (test_d2_review_regressions.ReviewRegressions.test_status_cannot_occupy_internal_same_generation_stop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/p309-d2-review-baseline-20261015/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/test_d2_review_regressions.py", line 68, in test_status_cannot_occupy_internal_same_generation_stop
+    self.assertEqual(failed.broker._current().state, B.State.STOP_REQUESTED)
+AssertionError: <State.RUNNING: 'RUNNING'> != <State.STOP_REQUESTED: 'STOP_REQUESTED'>
+
+======================================================================
+FAIL: test_sample_end_not_future_at_receipt_despite_verification_delay (test_d2_review_regressions.ReviewRegressions.test_sample_end_not_future_at_receipt_despite_verification_delay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/p309-d2-review-baseline-20261015/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/test_d2_review_regressions.py", line 85, in test_sample_end_not_future_at_receipt_despite_verification_delay
+    self.assertTrue(failed.session.terminal)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_negative_modulus_rejected_at_every_supported_width (test_d2_review_regressions.ReviewRegressions.test_negative_modulus_rejected_at_every_supported_width)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/p309-d2-review-baseline-20261015/level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/d2_contract_dev/test_d2_review_regressions.py", line 93, in test_negative_modulus_rejected_at_every_supported_width
+    with self.assertRaises(ValueError):
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.006s
+
+FAILED (failures=4)

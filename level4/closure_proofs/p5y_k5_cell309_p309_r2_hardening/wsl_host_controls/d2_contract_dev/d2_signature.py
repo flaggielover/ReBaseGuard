@@ -17,7 +17,7 @@ class PublicNumbers:
     e: int
 
     def __post_init__(self):
-        if (type(self.n) is not int or self.n.bit_length() not in (2048, 3072, 4096)
+        if (type(self.n) is not int or self.n <= 0 or self.n.bit_length() not in (2048, 3072, 4096)
                 or self.n % 2 != 1 or type(self.e) is not int
                 or not 3 <= self.e <= 0xffffffff or self.e % 2 != 1):
             raise ValueError('bounded RSA public numbers required')

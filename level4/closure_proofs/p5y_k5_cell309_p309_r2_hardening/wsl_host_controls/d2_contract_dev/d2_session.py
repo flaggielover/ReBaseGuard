@@ -85,11 +85,13 @@ class Session:
             return self
         if not self._time_ok(now_ms):
             return self._fail('CLOCK_INVALID')
-        anchor = self.issued_ms if self.pending is not None else self.liveness_anchor_ms
-        # Without an outstanding challenge, liveness is tied to the last accepted
-        # observation. Repeated ticks MUST NOT renew that anchor.
-        if now_ms - anchor > RESPONSE_LIMIT_MS:
-            return self._fail('RESPONSE_TIMEOUT' if self.pending else 'MONITOR_GAP')
+        # Response and observation liveness are independent deadlines. A late
+        # challenge cannot replace the anchor of the last accepted observation
+        # or add another105s of grace. Both checks also run after verification.
+        if self.pending is not None and now_ms - self.issued_ms > RESPONSE_LIMIT_MS:
+            return self._fail('RESPONSE_TIMEOUT')
+        if now_ms - self.liveness_anchor_ms > RESPONSE_LIMIT_MS:
+            return self._fail('MONITOR_GAP')
         return replace(self, last_tick_ms=now_ms)
 
     def transport_lost(self):
@@ -140,7 +142,7 @@ class Session:
         duration = facts.interval_end_ms - facts.interval_start_ms
         if not MIN_INTERVAL_MS <= duration <= RESPONSE_LIMIT_MS:
             return self._fail('INTERVAL_INVALID')
-        if (facts.interval_start_ms < self.issued_ms or facts.interval_end_ms > completed_ms
+        if (facts.interval_start_ms < self.issued_ms or facts.interval_end_ms > now_ms
                 or completed_ms - facts.interval_end_ms > RESPONSE_LIMIT_MS):
             return self._fail('INTERVAL_NOT_CURRENT')
         if (self.previous_interval_end_ms is not None and

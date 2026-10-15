@@ -4,11 +4,8 @@ No queue worker, timer, executor or real safety path. Synchronous verification
 can block its caller; independent enforcement and durable fencing remain I6.
 """
 from dataclasses import dataclass, replace
-import hashlib
 
 import d2_broker_model as B
-from d2_control_wire import PROTOCOL
-import d2_observer as O
 from d2_session import Session
 
 
@@ -30,11 +27,10 @@ class Chain:
             session = session._fail('BROKER_NOT_ACTIVE_FOR_SESSION')
         if not session.terminal:
             return replace(self, session=session)
-        request_id = hashlib.sha256(('D2_SESSION_STOP/1:' + session.session_id + ':' +
-                                    session.generation).encode('ascii')).hexdigest()[:32]
-        raw = O.canonical(dict(protocol=PROTOCOL, request_id=request_id,
-                               operation='stop', generation=session.generation))
-        outcome = self.broker.dispatch(raw, peer=self.monitor)
+        # Safety events are not ordinary client requests: client ID allocation
+        # must not block their latch. The private reducer independently checks
+        # captured synthetic monitor context and the associated G at dispatch.
+        outcome = B._internal_stop(self.broker, generation=session.generation, peer=self.monitor)
         return replace(self, session=session, broker=outcome.model, stop_receipt=outcome.receipt)
 
     def request(self, nonce, *, now_ms):

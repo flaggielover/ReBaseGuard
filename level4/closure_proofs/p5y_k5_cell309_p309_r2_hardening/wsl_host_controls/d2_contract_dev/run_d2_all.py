@@ -11,7 +11,7 @@ import time
 import unittest
 
 MODULES = ('test_d2_wire', 'test_d2_model', 'test_d2_memory_dispatch',
-           'test_d2_ingress', 'test_d2_complete')
+           'test_d2_ingress', 'test_d2_complete', 'test_d2_review_regressions')
 
 
 def main():
@@ -56,7 +56,8 @@ def main():
                   elapsed_seconds=time.monotonic() - started, invocations=1, test_cases=cases,
                   suite_counts={name: sum(c['id'].startswith(name + '.') for c in cases) for name in MODULES},
                   public_rsa_known_answer_cases=54, public_rsa_positive_cases=9,
-                  positive_session_crypto_boundary='EXPLICIT_SYNTHETIC_MOCK; NOT_SIGNED_HOST_E2E',
+                  real_signed_protocol_fixtures=18,
+                  positive_session_crypto_boundary='OLD_POLICY_FIXTURES_USE_EXPLICIT_MOCK; NEW_PROTOCOL_SESSION_CHAIN_TESTS_USE_REAL_VERIFICATION_WITHOUT_MOCKS; NO_ACTUAL_HOST_ATTESTATION',
                   formal_admission='BLOCKED', deployment_authorized=False,
                   execution_authorized=False, qualification_authorized=False,
                   target_execution_authorized=False)

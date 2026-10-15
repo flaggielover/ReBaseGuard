@@ -1,0 +1,107 @@
+P309 D2 consolidated review repair, 2026-10-15
+Reviewed base: 1e8aa3318bf75aab8e7150b75440f3575f073d80
+Branch: codex/p309-d2-review-repair-20261015
+Disposition: REPAIR_COMPLETE_FOR_INDEPENDENT_REREVIEW; formal admission BLOCKED.
+
+The user's supplied independent review found four mandatory code defects and
+required a real valid signed-protocol acceptance case. All five items are handled
+in one repair batch. The supplied findings are attributed to the user report;
+the Windows-local Markdown/JSON originals were not accessible or independently
+hashed in Cloud. Their four code counterexamples were independently reproduced
+against the EXACT reviewed Git commit in a separate detached worktree.
+
+Before/after evidence
+Four selected regression methods on the original commit failed as expected:
+new-challenge liveness extension, occupied fixed stop ID, future-at-receipt sample
+and negative RSA modulus. There were4 failures,0 errors/skips. The original
+tracked source was not changed. The failures are preserved, not hidden or
+counted as infrastructure errors. After repair, ONE full aggregate invocation
+on Cloud CPython3.11.15 passed157/157 methods: the137 prior methods plus20 new
+regression/real-protocol methods; zero failures/errors/skips. The54 public NIST
+RSA cases and18 new signed-protocol fixtures are SUBCASES, not extra methods.
+No historical result is relabelled as a repaired/native result.
+
+Fix R1: independent deadlines
+Session.tick checks response age against issued_ms AND observation liveness
+against liveness_anchor_ms. Requesting a new challenge never replaces/extends
+the latter. Both deadlines are checked at receipt and after verification.
+With a first observation accepted at60000ms, a request at165000ms is allowed
+exactly at the existing105s boundary, but a response at225000ms now terminates
+with MONITOR_GAP. A valid response at165000ms still passes;165001ms after
+verification fails. The105s allowance is unchanged and is not added twice.
+
+Fix R2: owner-internal, same-G MODEL stop
+Chain._sync invokes the private broker _internal_stop reducer, without allocating
+an ordinary client request ID. It checks the same synthetic monitor role/epoch/
+instance and exact non-null current G before any state change. An occupied/full
+ordinary request table cannot block the latch; its bindings are preserved.
+Ordinary changed-content request-ID reuse remains REQUEST_ID_REUSED. Old-G and
+wrong-peer internal events leave the current model unchanged. Repeats are
+idempotent; event-budget exhaustion retains fences and latches unknown. ARMED
+stop suppresses fixture start, in-flight completion never reenters RUNNING, and
+all cleanup predicates remain required. This is private reference-model policy,
+NOT a new H4 operation, privilege boundary, independent actuator or OS stop path.
+One old assertion changes from1 ordinary ID to0 because internal failure events
+now allocate no client ID; explicit collision/full-table regressions verify the
+stronger behavior. No thresholds/budgets or public dedup rules are weakened.
+
+Fix R3: facts must already exist at receipt
+interval_end_ms must be <=now_ms (the synthetic receipt time), while the existing
+post-verification freshness/deadline checks remain. A correctly signed sample
+ending at90000ms, received at60000ms and verified at90000ms, is rejected as
+INTERVAL_NOT_CURRENT. Verification time cannot make future-at-receipt facts valid.
+
+Fix R4: positive RSA modulus
+PublicNumbers explicitly requires n>0 before bit-width/parity/fingerprint use.
+Tests reject negative odd moduli at all2048/3072/4096 supported widths, zero and
+even values. Positive public vectors still verify. The reviewed defect was a
+constructor/exception boundary, not a demonstrated signature-verification bypass.
+
+Acceptance A1: actual valid synthetic protocol signatures, NO verification mock
+signed_protocol_vectors.py contains18 pre-generated PUBLIC message/signature
+fixtures, with three existing published NIST public keys (2048/3072/4096,e65537).
+Each key has first/second/busy/future/late-second/exact-boundary messages. The
+first message preserves signed CRLF/whitespace. Tests verify all18 mathematically
+and deliver real valid envelopes through Session AND Chain, including two valid
+observations followed by a validly signed busy observation causing MODEL stop.
+They check sequence/checkpoint continuity, signature/message/key/pin substitution,
+replay and cross-session rejection. The new suite imports no mock/patch helper
+and performs no runtime signing. Earlier policy-isolation tests retain their
+explicit mocks and are not presented as real-signature evidence.
+
+Fixture generation uses the ALREADY PUBLISHED NIST test exponents from the
+previously downloaded content-pinned CAVP artifact. No new RSA key, private-key
+object, certificate, keystore, CNG helper or signing service is created. The
+offline development builder uses fixed test arithmetic solely to produce these
+synthetic protocol fixtures; it is kept in external evidence, not imported by
+the libraries/tests. Only public n/e/message/signature values are committed;
+no d,p,q are committed. SIGNED_PROTOCOL_VECTORS.txt details provenance and hashes.
+This addresses the missing signed-protocol UNIT acceptance evidence, not real
+Windows observer identity/collection, production key enrollment or host truth.
+
+Preservation and retained limits
+Only four D2 library files, its aggregate runner and one matching old test
+assertion are modified; new regressions/fixtures/evidence are additive. Existing
+validation/source-binding files remain immutable historical records. Original
+native/host controls, exactly-once/grant/freeze protections, all20 protected
+sources and source history remain unchanged. D2_REPAIR_SOURCE_SHA256.json binds
+the before/after bytes and historical references; D2_REPAIR_REVIEW_RESPONSE.json
+maps each finding to regression evidence. D2_REPAIR_VALIDATION.json records both
+the expected original failures and the repaired aggregate result.
+
+I1-I7 ALL remain OPEN_RETAINED/deployment-blocking. The ordinary bounded queue
+may still reject stop when full, shared-lock/synchronous work can block its
+caller, and this internal model latch does NOT establish an independent real
+safety path. No protected persistence/rollback anchor, complete process coverage,
+real clock/suspend continuity, actual cgroup cleanup or official route is proved.
+All time/identity/coverage/cleanup inputs remain synthetic. No host query, real
+service/endpoint/account/key/unit, elevation, policy change, safety sample,
+workload, drill, freeze/grant, qualification or target; F: status is historical.
+
+Validation entrypoint (already executed here)
+  python3.11 -B run_d2_all.py --output-dir NEW_EXTERNAL_RECORD_DIRECTORY
+Requires CPython3.11.15 and a new directory outside Git. Current expected count
+is157, superseding the old137 description in the historical RUN_ALL.txt. Runtime
+here is the independent CLOUD3.11.15 build, not the private Windows/WSL binary.
+No extra Windows test handoff is required to complete this repair batch.
+Independent rereview remains required; these tests do not grant D2/D3/D4 approval.

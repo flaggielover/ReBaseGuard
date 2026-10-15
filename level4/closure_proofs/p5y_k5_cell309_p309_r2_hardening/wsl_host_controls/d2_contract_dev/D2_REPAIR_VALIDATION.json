@@ -1,0 +1,1072 @@
+{
+  "actual_services_endpoints_accounts_units_created": 0,
+  "aggregate_run_count_repaired": 1,
+  "authorization": "Existing D2 pure-memory development/testing/additive publication scope; repairs address supplied independent review. Real signature fixtures use already-public fixed NIST test parameters, no new key generation or production/host scope.",
+  "backup_status": "HISTORICAL_ONLY; NO_NEW_QUERY_OR_REHASH",
+  "base_current_bindings_verified": 132,
+  "baseline_counterexamples": {
+    "errors": 0,
+    "expected_counterexamples": true,
+    "failures": 4,
+    "skipped": 0,
+    "source_commit": "1e8aa3318bf75aab8e7150b75440f3575f073d80",
+    "sys_version": "3.11.15 (main, Aug  7 2026, 02:25:55) [Clang 22.1.3 ]",
+    "test_ids": [
+      "test_d2_review_regressions.ReviewRegressions.test_new_challenge_does_not_extend_observation_liveness",
+      "test_d2_review_regressions.ReviewRegressions.test_status_cannot_occupy_internal_same_generation_stop",
+      "test_d2_review_regressions.ReviewRegressions.test_sample_end_not_future_at_receipt_despite_verification_delay",
+      "test_d2_review_regressions.ReviewRegressions.test_negative_modulus_rejected_at_every_supported_width"
+    ],
+    "tests": 4,
+    "tracked_base_sources_unchanged": true
+  },
+  "branch": "codex/p309-d2-review-repair-20261015",
+  "crypto_evidence": {
+    "actual_windows_host_attestation_tested": false,
+    "earlier_policy_unit_mocks_retained_explicitly": true,
+    "exponent": 65537,
+    "extra_unittest_methods_from_subcases": 0,
+    "fixture_generation": {
+      "fixtures": [
+        {
+          "bits": 2048,
+          "label": "first",
+          "message_sha256": "7cfa833ad8bfea72700f6cd8c3efcd83694a0a75af94a36fcbf3ad69d38c4710",
+          "reference_verifier_valid": true,
+          "signature_sha256": "e9c9b1c6479ab0a666ae8e5657902f82348ab6a92c010b71dbb8354dc7b3f06e"
+        },
+        {
+          "bits": 2048,
+          "label": "second",
+          "message_sha256": "102e5898c1e8687e0901d0cccccae6003f73f895c03fbbc4c9f316be8b970375",
+          "reference_verifier_valid": true,
+          "signature_sha256": "3d4c4cf0bb02ad20bf3265dec79ebe70592c1336682c46f32c7d7d2b13b7acb7"
+        },
+        {
+          "bits": 2048,
+          "label": "busy",
+          "message_sha256": "1d06e63bb9b51b0b535bc3e1b314fa048c0b6ffb8c9c6e859c9f9f44efba60f7",
+          "reference_verifier_valid": true,
+          "signature_sha256": "bfc656bb836d6f4e7ebaca33008d64aaf8f076de026bc3d6c9d37d6790305ca5"
+        },
+        {
+          "bits": 2048,
+          "label": "future",
+          "message_sha256": "02b45c490399f7d5034070ded9cfd8f1963cd2d03cc5d7da98bb2a1579775290",
+          "reference_verifier_valid": true,
+          "signature_sha256": "0ef608248d6e41f827442b3de8d267267394e63d69d0172225f530db56b27631"
+        },
+        {
+          "bits": 2048,
+          "label": "late_second",
+          "message_sha256": "2860f5a5b658c8efa4edfc235fba4049ee2329c41fd2d71628d4466a12d28b6d",
+          "reference_verifier_valid": true,
+          "signature_sha256": "bb2a93b3bd41d4ce7a0ff7097f172f224d25456d36bfe3f52c2924f7e4e2bdb5"
+        },
+        {
+          "bits": 2048,
+          "label": "boundary_second",
+          "message_sha256": "7d33228a93bc3f6287ccd5a7585f7097b917ff0f46615ec25920bf2ea3e257da",
+          "reference_verifier_valid": true,
+          "signature_sha256": "95779a27198a7ddde98e3c65c3137cc099c7cbf0c4f9e3b9855ae9e5bedd31bc"
+        },
+        {
+          "bits": 3072,
+          "label": "first",
+          "message_sha256": "7cfa833ad8bfea72700f6cd8c3efcd83694a0a75af94a36fcbf3ad69d38c4710",
+          "reference_verifier_valid": true,
+          "signature_sha256": "31d65729ebbd86db7eedd7ae4173a2e07c7e557182179f52fee9c02ac9c5e09b"
+        },
+        {
+          "bits": 3072,
+          "label": "second",
+          "message_sha256": "716ddb147555e90264d306d0997a1cb66a7d0c447868b82f57728748052ed9b0",
+          "reference_verifier_valid": true,
+          "signature_sha256": "be6ca27d9b64b356c05cd7435ef222c220d3b0ccb3144a82bd7ada9ab665ee5b"
+        },
+        {
+          "bits": 3072,
+          "label": "busy",
+          "message_sha256": "952ecdf70af871f2d69b03c44b7304434cd15750dfcdb657d900d5f27dea99ff",
+          "reference_verifier_valid": true,
+          "signature_sha256": "53471752f2ca7436d20f61082cee1080902478de1985d7bc10c3d3f27eb1a9bb"
+        },
+        {
+          "bits": 3072,
+          "label": "future",
+          "message_sha256": "02b45c490399f7d5034070ded9cfd8f1963cd2d03cc5d7da98bb2a1579775290",
+          "reference_verifier_valid": true,
+          "signature_sha256": "fe5a7c9d1c1b48fafe94346e54263f2e6fa1dab1a08db63c5f114808ad27e66a"
+        },
+        {
+          "bits": 3072,
+          "label": "late_second",
+          "message_sha256": "667cc411017dba0edd8a25559f4e17a4430a54b6cc89ec9cc7d3b3333459bdc5",
+          "reference_verifier_valid": true,
+          "signature_sha256": "35381b655ad78ae55d93bd873a2e9259c01c89b7c2d530aa1fd2a6dd0a8e5ac6"
+        },
+        {
+          "bits": 3072,
+          "label": "boundary_second",
+          "message_sha256": "bae6bc5c674187299e97ad6d0aefc3a987dde795790b89952ab0ab2cf428066a",
+          "reference_verifier_valid": true,
+          "signature_sha256": "15f67ffc26b57e619fa5296211757eab817601d152b4778308803fe74bca4ce3"
+        },
+        {
+          "bits": 4096,
+          "label": "first",
+          "message_sha256": "7cfa833ad8bfea72700f6cd8c3efcd83694a0a75af94a36fcbf3ad69d38c4710",
+          "reference_verifier_valid": true,
+          "signature_sha256": "06a172359259c79c71a52eb7d97176876911e42a2099115769a852b1b0b6a8c2"
+        },
+        {
+          "bits": 4096,
+          "label": "second",
+          "message_sha256": "f3cca69eabf7a5a65f9808182e59f07b121cb529add5df7fe70f6da67b3f72fa",
+          "reference_verifier_valid": true,
+          "signature_sha256": "c70979c588f544f4b94a0fb0f2d626b2d381f7d2117bb623f0687eef07d45cce"
+        },
+        {
+          "bits": 4096,
+          "label": "busy",
+          "message_sha256": "6c00f82e54dee112763d5b8729072605baf421392ce6d173557c66a4a6f9cd43",
+          "reference_verifier_valid": true,
+          "signature_sha256": "22456e7a9023988c4e2070fe40fb2f44bf1b0237d2e23282dee9ee16df79bedb"
+        },
+        {
+          "bits": 4096,
+          "label": "future",
+          "message_sha256": "02b45c490399f7d5034070ded9cfd8f1963cd2d03cc5d7da98bb2a1579775290",
+          "reference_verifier_valid": true,
+          "signature_sha256": "cb31931d2d717022610fcf8d71c7cb394371c36d07a9b603aed6a7be80821646"
+        },
+        {
+          "bits": 4096,
+          "label": "late_second",
+          "message_sha256": "7262d1708ae189e7aec99975a30097c3c84e8ec28141897599f0a7a874b5f4b7",
+          "reference_verifier_valid": true,
+          "signature_sha256": "fe47cd8590e49500a9a837e80cb0a74bf505be0b5c0a71a71b1f5f4c162207a2"
+        },
+        {
+          "bits": 4096,
+          "label": "boundary_second",
+          "message_sha256": "61ea8be3f7f498e216ccdb7ed1b9539efa4a1ae53a7e7f834417d4ebece939e7",
+          "reference_verifier_valid": true,
+          "signature_sha256": "3385dc7ef923e2e5b16976789783b69fcc9f889dc6e7f1bf951c2e1a19fe87a6"
+        }
+      ],
+      "keys_generated": 0,
+      "private_parameters_committed": false,
+      "production_keys_used": 0,
+      "runtime_signing_by_tests": false,
+      "signature_fixtures": 18,
+      "source_is_preexisting_public_test_data": true,
+      "source_sha256": "dd8de3c0920e3b75059491e9c5d84f2e399b2a652869977eeb863489eb7dd151"
+    },
+    "new_keys_generated": 0,
+    "new_real_signed_protocol_fixtures": 18,
+    "offline_published_test_exponents_used": true,
+    "private_numbers_committed": false,
+    "production_keys_or_services_used": false,
+    "public_nist_subcases": 54,
+    "real_session_and_chain_verification_mocked": false,
+    "rsa_bits": [
+      2048,
+      3072,
+      4096
+    ],
+    "runtime_signing_in_tests": false
+  },
+  "deployment_authorized": false,
+  "direct_imports": {
+    "d2_broker_model.py": [
+      "d2_control_wire",
+      "dataclasses",
+      "enum"
+    ],
+    "d2_chain.py": [
+      "d2_broker_model",
+      "d2_session",
+      "dataclasses"
+    ],
+    "d2_session.py": [
+      "d2_ingress_model",
+      "d2_ingress_wire",
+      "d2_observer",
+      "d2_signature",
+      "dataclasses"
+    ],
+    "d2_signature.py": [
+      "dataclasses",
+      "hashlib",
+      "hmac"
+    ],
+    "run_d2_all.py": [
+      "argparse",
+      "json",
+      "pathlib",
+      "sys",
+      "time",
+      "unittest"
+    ],
+    "signed_protocol_vectors.py": [],
+    "test_d2_complete.py": [
+      "base64",
+      "d2_broker_model",
+      "d2_chain",
+      "d2_ingress_model",
+      "d2_ingress_wire",
+      "d2_observer",
+      "d2_session",
+      "d2_signature",
+      "dataclasses",
+      "json",
+      "public_rsa_vectors",
+      "unittest",
+      "unittest.mock"
+    ],
+    "test_d2_review_regressions.py": [
+      "d2_broker_model",
+      "d2_chain",
+      "d2_observer",
+      "d2_signature",
+      "dataclasses",
+      "hashlib",
+      "signed_protocol_vectors",
+      "test_d2_complete",
+      "unittest"
+    ]
+  },
+  "disposition": "FOUR_CODE_FIXES_AND_REAL_SIGNATURE_EVIDENCE_COMPLETE_FOR_REREVIEW; NOT_INDEPENDENT_ACCEPTANCE",
+  "evidence_directory": "/workspace/p309-d2-review-repair-evidence-20261015",
+  "evidence_sha256": {
+    "baseline-counterexamples.json": "3bb88012848e4a9dd31a4957e5892da0f487577505d50e577814ff10a5e18e9c",
+    "baseline-counterexamples.log": "8943192e25c2cc07f8e959fd012d81d2a1e76b5ab771e463f13a58336bd1beb6",
+    "generate_protocol_fixtures.py": "190807191568f2127f2b25ebb44f009de9f4a4eed5fb81209689c7ec6bd96cb7",
+    "repaired-run-1/result.json": "abe1b414ce90aa29e925a369be9c125f4584dd8b7e3b6e3c7d5e687ccdbcb780",
+    "repaired-run-1/unittest.log": "5dca0d9e76f0936c00741e71968f416618ca5c8111e89d05a1feec31b7e6f49d",
+    "signed-fixture-generation.json": "1eefabbe33ec0494254c61d8c0687c88c6bc4b74f7497dcb9072144c0836e682",
+    "source-verification.json": "0cd45c3552e2fcafd2c471ab9a6fd52218c2ef25d998b8fa4a201d59079d3372"
+  },
+  "execution_authorized": false,
+  "formal_admission": "BLOCKED",
+  "freeze_or_grants_issued": false,
+  "historical_bindings_verified": 624,
+  "historical_validation_records_unchanged": true,
+  "host_accepted": false,
+  "independent_rereview_completed": false,
+  "installation_consent": false,
+  "intentional_modified_source_count": 6,
+  "new_production_keys_created": 0,
+  "new_target_evaluations": 0,
+  "old_test_assertion_change": {
+    "after": "ordinary request binding count=0",
+    "before": "ordinary request binding count=1",
+    "file": "test_d2_complete.py",
+    "method": "StopComposition.test_repeated_failure_is_idempotent_without_binding_growth",
+    "reason": "Internal safety events now allocate no ordinary request ID. New occupied-ID/full-table tests preserve normal changed-content rejection and all stored fences."
+  },
+  "p309_host_queries": 0,
+  "protected_source_count_unchanged": 20,
+  "qualification_authorized": false,
+  "raw_baseline_counterexample_log": "D2_REPAIR_BASELINE_COUNTEREXAMPLES.log",
+  "raw_repaired_log": "D2_REPAIR_TEST_LOG.txt",
+  "recorded_date": "2026-10-15",
+  "repaired_aggregate_result": {
+    "deployment_authorized": false,
+    "dont_write_bytecode": true,
+    "elapsed_seconds": 1.7249654330007615,
+    "errors": 0,
+    "execution_authorized": false,
+    "failures": 0,
+    "formal_admission": "BLOCKED",
+    "invocations": 1,
+    "modules": [
+      "test_d2_wire",
+      "test_d2_model",
+      "test_d2_memory_dispatch",
+      "test_d2_ingress",
+      "test_d2_complete",
+      "test_d2_review_regressions"
+    ],
+    "positive_session_crypto_boundary": "OLD_POLICY_FIXTURES_USE_EXPLICIT_MOCK; NEW_PROTOCOL_SESSION_CHAIN_TESTS_USE_REAL_VERIFICATION_WITHOUT_MOCKS; NO_ACTUAL_HOST_ATTESTATION",
+    "public_rsa_known_answer_cases": 54,
+    "public_rsa_positive_cases": 9,
+    "qualification_authorized": false,
+    "real_signed_protocol_fixtures": 18,
+    "scope": "D2_PURE_MEMORY_AGGREGATE_DEVELOPMENT_VALIDATION_ONLY",
+    "skipped": 0,
+    "successful": true,
+    "suite_counts": {
+      "test_d2_complete": 42,
+      "test_d2_ingress": 28,
+      "test_d2_memory_dispatch": 21,
+      "test_d2_model": 32,
+      "test_d2_review_regressions": 20,
+      "test_d2_wire": 14
+    },
+    "sys_executable": "/workspace/p309-d2-test-runtime/cpython-3.11.15-linux-x86_64-gnu/bin/python3.11",
+    "sys_version": "3.11.15 (main, Aug  7 2026, 02:25:55) [Clang 22.1.3 ]",
+    "target_execution_authorized": false,
+    "test_cases": [
+      {
+        "id": "test_d2_wire.ControlWire.test_current_status_and_generation_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_duplicate_fields_at_any_depth_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_exact_fields_reject_commands_and_claimed_facts",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_fingerprint_binds_semantics_with_canonical_order",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_generation_is_exact_or_null_and_stop_needs_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_missing_fields_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_no_start_arm_rearm_reset_or_generic_manager",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_nonfinite_numbers_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_nonobject_and_deep_json_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_protocol_is_fixed",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_raw_byte_budget_and_exact_type",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_request_id_is_exact_lowercase_hex",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_request_is_immutable",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_wire.ControlWire.test_strict_utf8_and_no_bom",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_changed_content_request_id_is_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_completed_stop_is_terminal_and_duplicate_returns_model_only_proof",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_different_monitor_instance_in_same_epoch_is_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_duplicate_internal_start_cannot_dispatch_twice",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_event_budget_never_rolls_over_or_clears_unknown_guard",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_every_missing_cleanup_predicate_prevents_completion",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_explicit_synthetic_factory_scope",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_finite_start_stop_completion_interleavings_never_reopen_after_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_generation_budget_preserves_all_terminal_records",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_identical_stop_is_idempotent_without_budget_growth",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_mismatched_late_cleanup_invalidates_current_quiescence_not_history",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_mismatched_late_completion_preserves_stopped_history_but_sets_guard",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_mismatched_start_identity_enters_unknown",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_monitor_restart_within_broker_epoch_stops_and_invalidates_old_instance",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_new_fixture_generation_requires_old_terminal_cleanup",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_old_generation_cached_stop_is_stale_before_dedup",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_only_simulated_monitor_instance_can_dispatch",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_owned_exit_needs_cleanup_proof",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_public_start_arm_reset_and_claimed_identity_never_mutate",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_recovery_failure_preserves_terminal_record_and_refuses_rearm",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_request_budget_retains_fences_and_does_not_acknowledge_cleanup",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_request_id_cannot_be_repurposed_across_retained_generations",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_restart_preserves_old_stopped_history_but_not_current_quiescence",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_restart_with_live_generation_is_unknown_and_old_peer_invalid",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stale_status_and_request_flood_do_not_mutate_current_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_status_does_not_allocate_or_start_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_before_dispatch_suppresses_start",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_during_inflight_start_rejects_early_cleanup_and_late_running",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_returns_new_snapshot_and_never_os_completion",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_while_armed_revokes_start_and_can_only_cleanup",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_stop_without_generation_cannot_reserve_future_authority",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_model.BrokerPolicy.test_synthetic_proof_cannot_arrive_through_wire_or_numeric_booleans",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_all_exports_remain_blocked",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_cached_old_generation_rechecked_on_dequeue",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_calculation_exception_retains_item_and_latches_unknown",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_close_preserves_terminal_history_without_fresh_cleanup_claim",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_close_retains_fifo_for_unknown_refusals_and_cannot_reopen",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_concurrent_drain_publishes_each_request_once",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_concurrent_submit_keeps_unique_tickets",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_copies_synthetic_metadata_without_caller_alias",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_duplicate_stop_has_one_model_update_and_no_cleanup_claim",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_explicit_synthetic_factory",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_fifo_receipts_and_no_implicit_dispatch",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_full_queue_refuses_without_eviction_or_ticket_consumption",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_invalid_wire_and_public_start_never_advance_model",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_last_ticket_then_exhaustion_is_terminal",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_maximum_raw_size_is_validated_only_at_dispatch",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_paused_first_calculation_serializes_second_without_lost_update",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_queued_peer_refused_after_monitor_restart",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_queued_status_reads_dispatch_time_state",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_snapshot_and_export_mutation_cannot_change_published_model",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_submission_primitive_and_size_bounds_do_not_mutate",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_memory_dispatch.MemoryDispatch.test_wrong_role_is_not_authenticated_by_enqueue",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_all_states_export_false_authority_and_no_raw_payload",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_duplicate_or_second_response_cannot_advance",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_every_challenge_component_mismatch_is_terminal",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_explicit_private_fixture_setup_only",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_loss_after_staging_discards_bytes_without_observation_acceptance",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_malformed_message_and_h4_command_latch_associated_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_matching_response_only_stages_unverified_bytes",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_other_session_or_sequence_cannot_reuse_staged_message",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_payload_safe_claims_and_dummy_signature_never_authorize",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_snapshot_and_diagnostic_are_not_mutable_aliases",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_terminal_state_does_not_reopen_or_replace_first_failure",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_transport_failure_only_latches_locally_bound_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressStaging.test_wrong_synthetic_peer_cannot_stage_or_route_control",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_base64_strict_type_alphabet_padding_and_budget",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_challenge_tokens_and_sequence_are_exact",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_direction_and_protocol_do_not_cross_into_h4",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_duplicate_fields_at_all_json_layers_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_envelope_and_inner_fields_are_exact",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_failure_notice_fixed_reason_and_no_asserted_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_input_exact_bytes_and_returned_values_immutable",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_message_and_frame_byte_boundaries",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_nonfinite_numbers_in_opaque_payload_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_original_unicode_crlf_whitespace_bytes_preserved",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_outbound_exact_challenge_shape",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_payload_is_opaque_untrusted_object",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_request_rejects_claimed_facts_identity_and_commands",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_strict_utf8_root_types_bom_and_recursion",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_ingress.IngressWire.test_supported_signature_lengths_are_shapes_not_validation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.ObserverContract.test_bad_enrollment_and_duplicates_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.ObserverContract.test_checkpoints_bind_both_message_and_signature",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.ObserverContract.test_client_request_contains_no_host_facts",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.ObserverContract.test_enrollment_must_match_fixture_owned_configuration",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.ObserverContract.test_explicit_fixture_and_fact_types",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.ObserverContract.test_fixture_owned_facts_construct_response_not_client_claims",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.ObserverContract.test_injected_facts_commands_and_generic_sign_input_rejected",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.PublicVerification.test_all_public_nist_sha256_known_answers",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.PublicVerification.test_message_signature_and_key_substitution_rejected",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.PublicVerification.test_public_number_budget_and_immutability",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.PublicVerification.test_range_length_and_exact_types_rejected",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_deadline_exact_boundary_and_expiry_during_verification",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_factory_rejects_unscoped_bindings_and_exports_remain_blocked",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_host_boot_service_and_enrollment_changes_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_idle_tick_and_new_request_cannot_renew_liveness",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_interval_duration_order_and_future_facts_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_malformed_signed_payload_never_becomes_host_facts",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_nonce_reuse_across_synthetic_observations_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_real_verifier_rejects_dummy_signature_in_protocol_message",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_regressing_and_invalid_fake_time_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_replayed_response_without_or_with_new_challenge_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_request_binds_one_outstanding_challenge",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_session_budget_retains_fences_and_terminal_failure",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_synthetic_verified_observation_advances_only_model_sequence",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_two_synthetic_verified_intervals_chain_checkpoint",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_unknown_coverage_busy_or_unstable_policy_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_verifier_exception_is_terminal_without_completion",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_wrong_peer_and_transport_failure_terminal",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_wrong_pin_refused_before_verifier",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.SessionContract.test_wrong_session_baseline_sequence_nonce_and_checkpoint",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_cleanup_requires_all_predicates_and_late_ack_updates_model_only",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_exactly_once_model_fence_retained_when_budget_exhausts",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_inflight_start_completion_after_failure_never_running",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_monitor_or_broker_restart_cannot_resume_session",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_no_fixture_start_or_foreign_pid_unit_in_client_data",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_no_unscoped_factory_and_all_chain_exports_blocked",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_old_session_stop_never_affects_replacement_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_real_forgery_rejection_requests_stop_of_owned_generation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_repeated_failure_is_idempotent_without_binding_growth",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_stop_while_armed_suppresses_fixture_start",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_synthetic_valid_then_busy_chain_stops_without_start_authority",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_complete.StopComposition.test_timeout_transport_loss_wrong_peer_and_h4_injection_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.RealSignedProtocol.test_all_18_public_protocol_signatures_verify_without_mock",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.RealSignedProtocol.test_real_chain_two_valid_observations_then_valid_signed_busy_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.RealSignedProtocol.test_real_session_roundtrip_preserves_raw_bytes_sequence_and_checkpoint",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.RealSignedProtocol.test_real_signed_replay_cross_session_and_old_checkpoint_cannot_resume",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.RealSignedProtocol.test_real_tampering_wrong_key_and_wrong_pin_are_refused",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.RealSignedProtocol.test_valid_real_signature_still_grants_no_actual_host_or_execution_authority",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_exact_liveness_boundary_still_accepts_valid_signed_observation",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_id_collision_during_armed_or_inflight_start_still_latches_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_independent_liveness_deadline_checked_after_verification",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_internal_stop_budget_exhaustion_latches_unknown_without_erasing_history",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_internal_stop_is_idempotent_and_allocates_no_request_id",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_internal_stop_requires_non_null_exact_generation_and_synthetic_monitor",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_internal_stop_stale_generation_cannot_touch_replacement",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_internal_stop_with_full_request_table_retains_all_fences",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_negative_modulus_rejected_at_every_supported_width",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_new_challenge_does_not_extend_observation_liveness",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_pending_tick_never_replaces_observation_deadline",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_sample_end_not_future_at_receipt_despite_verification_delay",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_status_cannot_occupy_internal_same_generation_stop",
+        "outcome": "ok"
+      },
+      {
+        "id": "test_d2_review_regressions.ReviewRegressions.test_zero_even_and_negative_public_numbers_refused_while_positive_supported",
+        "outcome": "ok"
+      }
+    ],
+    "tests": 157,
+    "version_info": [
+      3,
+      11,
+      15
+    ]
+  },
+  "repaired_source_sha256": {
+    "D2_REPAIR.txt": "a5ab9dcabd5796c35629002d7a1fce780e3e20e0219af1b5d616be0e15be4236",
+    "D2_REPAIR_BASELINE_COUNTEREXAMPLES.log": "8943192e25c2cc07f8e959fd012d81d2a1e76b5ab771e463f13a58336bd1beb6",
+    "D2_REPAIR_REVIEW_RESPONSE.json": "94b42520d7a1e16b08e76e81d1d4a7e9290fb316357d3aea50a3c32293727108",
+    "D2_REPAIR_TEST_LOG.txt": "5dca0d9e76f0936c00741e71968f416618ca5c8111e89d05a1feec31b7e6f49d",
+    "SIGNED_PROTOCOL_VECTORS.txt": "c18760ff5a516d8044f15c1d9db03d293d33e94d5ac2044d9e57bc5423283ee6",
+    "d2_broker_model.py": "ab38cab150c7d0f2f9808a92ea8898474f0907a1542a1fd2a2881cf8b96cd9f0",
+    "d2_chain.py": "10df0557b6cc82e1127533a313557515db894834881433d977dc758a258a1ac3",
+    "d2_session.py": "9207c62bad46d377cc2f37fbe8737bc023018d330de1669edd1f86f1fd8364d3",
+    "d2_signature.py": "bd3094e8674e8d06aaac65f8c76d69f877b04a5872fef116b4aaa959186ffc43",
+    "run_d2_all.py": "4b8bebc10bb0ff351cb7246504a0fa5ebd6d1cfa05c8a5b7dbc3cf25c1fb24fb",
+    "signed_protocol_vectors.py": "2e7d606869d65cec02570e80f84e4bb1e8caa5164e011ed0b5f32d868a26aee7",
+    "test_d2_complete.py": "65d48ac57fd9b05e0048e4d767c4306acd8558efbec63f6d71da12740078d465",
+    "test_d2_review_regressions.py": "c40ba0d5c4cd78640efc1bc3de34addeaa44708256b66f8e75959ab4a6d8a570"
+  },
+  "retained_limitations": [
+    "I1-I7 all remain deployment-blocking",
+    "Ordinary queue can reject stop when full; shared locks/synchronous verification can block callers",
+    "Private same-G model latch is not an independent real OS stop path or authority boundary",
+    "Fake clocks, identity labels, coverage/fact booleans and cleanup predicates do not prove actual host state",
+    "No protected persistence/cross-restart replay anchor, real collection/ACL/enrollment, cgroup cleanup or official route established",
+    "Actual valid protocol signatures attest synthetic test messages only, not a real Windows observer or production key trust"
+  ],
+  "review_response_file": "D2_REPAIR_REVIEW_RESPONSE.json",
+  "reviewed_base_commit": "1e8aa3318bf75aab8e7150b75440f3575f073d80",
+  "route_accepted": false,
+  "runtime_context": "Independent Cloud CPython3.11.15; no private Windows/WSL final test run claimed. No runtime installation this repair batch.",
+  "schema": "P309_D2_CONSOLIDATED_REVIEW_REPAIR_VALIDATION/1",
+  "static_review_limit": "Focused source/contract checks and regressions; no exhaustive security audit or independent rereview claimed.",
+  "target_execution_authorized": false,
+  "unchanged_base_bindings": 126,
+  "unresolved_original_blockers": [
+    {
+      "deployment_blocking": true,
+      "id": "I1",
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ],
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Runner Windows/root boundary"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I2",
+      "original_fact_questions": [
+        1,
+        5
+      ],
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Collector rights, completeness and attribution"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I3",
+      "original_fact_questions": [
+        1,
+        6
+      ],
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Enrollment and ACL/API descriptors"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I4",
+      "original_fact_questions": [
+        2
+      ],
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Fresh image/runtime provenance"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I5",
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ],
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Guest policy/unit limits and controlled launcher"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I6",
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ],
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Protected persistence and stop/recovery"
+    },
+    {
+      "deployment_blocking": true,
+      "id": "I7",
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ],
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "review_does_not_resolve": true,
+      "status": "OPEN_RETAINED",
+      "topic": "Route, host and formal authority"
+    }
+  ],
+  "windows_319_historical_evidence_preservation": "USER_REPORTED_ONLY; files not accessible/rehashed in Cloud",
+  "windows_or_ubuntu_configuration_changes": 0,
+  "workload_or_signing_helper_processes_by_tests": 0
+}

@@ -444,7 +444,7 @@ class StopComposition(unittest.TestCase):
         again = first.transport_lost().tick(now_ms=0)
         self.assertEqual(again.broker, first.broker)
         self.assertTrue(again.stop_receipt.duplicate)
-        self.assertEqual(len(again.broker.bindings), 1)
+        self.assertEqual(len(again.broker.bindings), 0)  # internal safety path allocates no client ID
         self.assertEqual(again.session.reason, 'TRANSPORT_LOST')
 
     def test_exactly_once_model_fence_retained_when_budget_exhausts(self):
