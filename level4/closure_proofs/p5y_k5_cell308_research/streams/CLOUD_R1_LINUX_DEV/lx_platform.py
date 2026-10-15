@@ -844,9 +844,10 @@ def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
     indirect, alias, linked or linked-runtime; False only with recognized inactive / failed activity plus disabled /
     masked / masked-runtime, or not-found with no unit file in any root; None otherwise (a failed query is never
     'disabled').
-    Without systemd: from every root of the unit search path: masked (a link to /dev/null) False; an entry for the unit
-    in any ``*.wants`` / ``*.requires`` directory, even a dangling link (systemd adds the dependency by link name),
-    True; otherwise False; an unreadable root None."""
+    Without systemd: from every root of the unit search path: masked (the HIGHEST-precedence entry for the unit is a
+    link to /dev/null; a lower-precedence mask is overridden, review 63 H6) False; otherwise an entry for the unit in
+    any ``*.wants`` / ``*.requires`` / ``*.upholds`` directory, even a dangling link (systemd adds the dependency by
+    link name), True; otherwise False; an unreadable root None."""
     supervisor = systemd_is_pid1()
     if supervisor is True:
         act = _systemctl_is_active(unit)
@@ -864,6 +865,7 @@ def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
         return None
     if supervisor is not False:
         return None
+    first, wanted = None, False
     for root in unit_roots:
         r = Path(root)
         if not r.exists():
@@ -873,13 +875,15 @@ def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
         except OSError:
             return None
         f = r / unit
-        if f.is_symlink() and os.path.realpath(f) == "/dev/null":
-            return False
+        if first is None and (f.is_symlink() or f.exists()):
+            first = f                                           # review 63 H6: the highest-precedence entry decides
         for d in subs:
             e = d / unit
-            if d.name.endswith((".wants", ".requires")) and (e.is_symlink() or e.exists()):
-                return True
-    return False                                                # present without a link, or absent everywhere
+            if d.name.endswith((".wants", ".requires", ".upholds")) and (e.is_symlink() or e.exists()):
+                wanted = True
+    if first is not None and first.is_symlink() and os.path.realpath(first) == "/dev/null":
+        return False                                            # masked: no dependency can start it
+    return wanted                                               # present without a link, or absent everywhere
 
 
 def auto_update_settings(apt_dump: str | None = None, *, unit_roots=UNIT_ROOTS,
@@ -1151,12 +1155,6 @@ def _git(repo_root, *args) -> bytes | None:
     return r.stdout if r.returncode == 0 else None
 
 
-def _first_commit(repo_root, *args) -> str | None:
-    out = _git(repo_root, "log", "--format=%H", "--reverse", *args)
-    lines = (out or b"").decode(errors="replace").split()
-    return lines[0] if lines else None
-
-
 def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
     """``later`` is a strict descendant of ``earlier`` on HEAD's history."""
     if not earlier or not later or earlier == later:
@@ -1169,8 +1167,64 @@ def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
     return r.returncode == 0
 
 
-_VERDICT = re.compile(r"^\s*verdict\s*:", re.I)
+_VERDICT = re.compile(r"(?i:.*\bverdict\b)|\s*[A-Z][A-Z0-9_]*\s*:\s*[A-Z][A-Z0-9_]*\s*$")   # review 63 H7
 _NEGATIVE = re.compile(r"reject|withdraw|not[ _-]?accepted|revoke", re.I)
+_NEGATIVE_MORE = re.compile(r"refus|unaccept|declin|needs[ _-]?revision|veto", re.I)          # review 63 H3
+_HEX_TOKEN = re.compile(r"[0-9A-Fa-f]{8,64}")
+
+
+def _names_sha(line: str, sha: str) -> bool:
+    """Review 63 H3: a line refers to the attestation by its full sha256 or any prefix of at least 8 hex digits, in
+    either case."""
+    return any(sha.startswith(t.lower()) for t in _HEX_TOKEN.findall(line))
+
+
+def _vetoing(lines: list, sha: str) -> bool:
+    """A file that names the sha (H3: any case, >= 8-hex prefix) and anywhere carries a negative word (reject,
+    withdraw, not accepted, revoke, refus*, unaccept*, declin*, needs revision, veto; case-insensitive) or a
+    verdict-like line other than ACCEPTANCE_VERDICT_LINE vetoes the attestation."""
+    if not any(_names_sha(ln, sha) for ln in lines):
+        return False
+    return any(_NEGATIVE.search(ln) or _NEGATIVE_MORE.search(ln)
+               or (_VERDICT.match(ln) and ln != ACCEPTANCE_VERDICT_LINE) for ln in lines)
+
+
+def _historical_review_blobs(repo_root, current: set) -> list | None:
+    """Review 63 H3: every (blob, path) that existed under ACCEPTANCE_REVIEW_DIR in ANY commit of HEAD's full
+    history (side branches included) and is not one of the ``current`` HEAD paths' blobs, with its UTF-8 lines. A
+    rejection therefore survives `git rm`, `git mv` out of the directory and later edits. None if any listing or blob
+    is unavailable or not UTF-8."""
+    commits = _git(repo_root, "rev-list", "--full-history", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)
+    if commits is None:
+        return None
+    seen = {}
+    for c in commits.decode("ascii", errors="replace").split():
+        listing = _git(repo_root, "ls-tree", "-r", "-z", c, "--", ACCEPTANCE_REVIEW_DIR)
+        if listing is None or (listing and not listing.endswith(b"\0")):
+            return None
+        for entry in filter(None, listing.split(b"\0")):
+            meta, sep, name = entry.partition(b"\t")
+            parts = meta.split()
+            if not sep or len(parts) != 3:
+                return None
+            if parts[1] != b"blob":
+                continue
+            try:
+                seen.setdefault(parts[2].decode("ascii"), name.decode("utf-8", errors="strict"))
+            except UnicodeDecodeError:
+                return None
+    out = []
+    for oid, path in seen.items():
+        if oid in current:
+            continue
+        data = _git(repo_root, "cat-file", "blob", oid)
+        if data is None:
+            return None
+        try:
+            out.append((oid, path, [ln.rstrip("\r") for ln in data.decode("utf-8", errors="strict").split("\n")]))
+        except UnicodeDecodeError:
+            return None
+    return out
 
 
 def _review_paths(data: bytes | None) -> list | None:
@@ -1189,9 +1243,11 @@ def _review_paths(data: bytes | None) -> list | None:
 def _acceptances(repo_root, sha: str) -> tuple:
     """G1-G3. The fixed set: DIRECT children of ACCEPTANCE_REVIEW_DIR, committed at HEAD, named
     ``REVIEW_HOST_ATTESTATION_*.md`` (no subdirectory, so no reviewer scratch). A file accepts only if it holds the
-    exact line ``HOST_ATTESTATION_ACCEPTED sha256=<sha>`` and exactly ONE verdict line (case-insensitive ``VERDICT:``),
-    which is ACCEPTANCE_VERDICT_LINE. Any committed file anywhere under the review directory (recursively) that names
-    the sha and carries a negative word (reject, withdraw, not accepted, revoke; case-insensitive) rejects it.
+    exact line ``HOST_ATTESTATION_ACCEPTED sha256=<sha>`` and exactly ONE verdict-like line (any line containing the
+    word "verdict" in any case, or a bare ``KEY: VALUE`` line of capitals; review 63 H7), which is
+    ACCEPTANCE_VERDICT_LINE. Any file anywhere under the review directory (recursively) that names the sha and vetoes
+    it (_vetoing) rejects it, whether committed at HEAD or present in ANY commit of HEAD's full history (review 63 H3:
+    a rejection is permanent; removing or moving the file, or editing it, does not lift it).
     Returns (accepting paths, rejecting paths). Unavailable or unrecognized review evidence returns no acceptances
     and an explicit unavailable-evidence sentinel in the rejecting list; it can never establish verification.
     """
@@ -1209,8 +1265,15 @@ def _acceptances(repo_root, sha: str) -> tuple:
         except UnicodeDecodeError:
             return [], [f"UNAVAILABLE: review blob is not UTF-8: {path}"]
         records[path] = lines
-        if any(sha in ln for ln in lines) and any(_NEGATIVE.search(ln) for ln in lines):
+        if _vetoing(lines, sha):
             rej.append(path)
+    current = (_git(repo_root, "rev-parse", *[f"HEAD:{p}" for p in every]) or b"").decode("ascii", "replace").split()
+    if len(current) != len(every):
+        return [], ["UNAVAILABLE: current review blob ids unreadable"]
+    history = _historical_review_blobs(repo_root, set(current))
+    if history is None:
+        return [], ["UNAVAILABLE: review history unreadable or not UTF-8"]
+    rej += [f"HISTORICAL: {path} (blob {oid[:12]})" for oid, path, lines in history if _vetoing(lines, sha)]
     for path in tree:
         name = Path(path).name
         if not (name.startswith(ACCEPTANCE_REVIEW_PREFIX) and name.endswith(".md")) or path in rej:
@@ -1224,18 +1287,41 @@ def _acceptances(repo_root, sha: str) -> tuple:
     return acc, rej
 
 
+def _commits(repo_root, *args) -> list | None:
+    """Every commit of the selected history matched by ``args``, merge commits included (their diff against EACH
+    parent, `--diff-merges=separate`; git's default shows no merge diff, so a blob or line introduced by a merge would
+    be invisible: review 63 H1); de-duplicated; None if git fails or prints anything but commit ids."""
+    out = _git(repo_root, "log", "--format=%H", "--no-patch", "--diff-merges=separate", *args)
+    if out is None:
+        return None
+    try:
+        ids = out.decode("ascii").split()
+    except UnicodeDecodeError:
+        return None
+    if not all(re.fullmatch(r"[0-9a-f]{40,64}", c) for c in ids):
+        return None
+    return list(dict.fromkeys(ids))
+
+
 def _ordered(repo_root, att_path: str, acc_path: str, sha: str) -> bool:
-    """G2: the commit that introduced the ACCEPTING LINE is a strict descendant of the commit that introduced the
-    attested BLOB (by object id, not by path name). Commit order is not independence: every commit may come from one
-    author (stated in the amendment; a reviewer / ledger binding is a carried condition of D-HOST-LIFETIME)."""
+    """G2 / review 63 H1: EVERY commit of HEAD's history that adds or removes the attested BLOB (by object id, not by
+    path name) is a strict ancestor of EVERY commit that adds or removes the ACCEPTING LINE anywhere in the
+    repository; merge commits count on both sides, and no commit is chosen by date. The search is repository-wide on
+    purpose: a line written next to the attestation and later moved (git mv) into ``acc_path`` keeps its true commits,
+    and a line can enter ``acc_path`` only by an addition (a repository-wide change, so covered) or by a move of an
+    earlier one; a path-limited search would see the move instead. Side effects (fail-closed): a quote of the line
+    made before or beside the blob, or a later re-introduction of the blob, refuses permanently; any git failure
+    refuses. Commit order is not independence: every
+    commit may come from one author (a reviewer / ledger binding is a carried condition of D-HOST-LIFETIME)."""
     blob = (_git(repo_root, "rev-parse", f"HEAD:{att_path}") or b"").decode().strip()
     if not re.fullmatch(r"[0-9a-f]{40,64}", blob):
         return False
-    att_commit = _first_commit(repo_root, f"--find-object={blob}", "HEAD")
-    # repository-wide, not limited to acc_path: a line written next to the attestation and later moved (git mv) into
-    # the review set keeps its true first commit (review 62's rename case)
-    line_commit = _first_commit(repo_root, f"-S{ACCEPTANCE_LINE}{sha}", "HEAD")
-    return _strictly_after(repo_root, att_commit, line_commit)
+    pick = f"-S{ACCEPTANCE_LINE}{sha}"
+    blob_commits = _commits(repo_root, f"--find-object={blob}", "HEAD")
+    line_commits = _commits(repo_root, pick, "HEAD")
+    if not blob_commits or not line_commits:
+        return False
+    return all(_strictly_after(repo_root, b, c) for b in blob_commits for c in line_commits)
 
 
 def _repository_root() -> Path:
@@ -1250,7 +1336,9 @@ def attestation_valid(ref, *, repo_root=None) -> tuple:
     machine_identity() (BOTH hashes, F20); at least one acceptance review exists in the fixed review set (P1 / G1 / G3:
     _acceptances; never a path the attestation names) whose accepting line was introduced strictly after the attested
     blob (G2: _ordered), and no review under the review directory rejects it.
-    ``repo_root`` is a location (default: this repository), not an assertion."""
+    ``repo_root`` is a TEST SEAM (default: this repository). It selects which repository's committed files are read,
+    so a caller-chosen repository can supply its own attestation and reviews (review 63 H5): a reviewed caller never
+    passes it, and the restricted observer binds the canonical repository internally."""
     if not isinstance(ref, dict) or set(ref) != {"path", "sha256"}:
         return None, ["reference must be exactly {path, sha256}"]
     path, want = ref["path"], ref["sha256"]

@@ -15,7 +15,7 @@ permissions:
 jobs:
   synthetic-only:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 90
     env:
       DEV: level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV
       PYTHON_EXE: /usr/bin/python3.12
@@ -75,8 +75,8 @@ jobs:
           assert rec['new_target_evaluations'] == 0
           assert rec['inputs_unchanged'] and rec['full_registry_completed'] and rec['pass']
           assert rec['unmutated_suite'] == 'PASS'
-          assert rec['expected_mutants'] == rec['total'] == rec['killed'] == 133
-          assert len(suites) == 134
+          assert rec['expected_mutants'] == rec['total'] == rec['killed'] == 150
+          assert len(suites) == 151
           for _, suite in suites:
               assert suite['ran'] == rec['expected_test_count']
               assert suite['errors'] == suite['skipped'] == 0

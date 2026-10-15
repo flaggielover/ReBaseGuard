@@ -1,0 +1,512 @@
+"""Reviewer probes (brief 63) against a COPY of lx_platform.py revision 5 in ./base (sha256 8ccddf85...).
+Part A: review 62's part A, ported to the revision-5 API (preflight readings and busy_processes' view are changed only
+by patching module attributes of the COPY). Part B: review 62's B1-B10, ported. Part G: review 62's G1-G15, ported.
+Part H: new adversarial probes. Synthetic inputs only; temporary directories and temporary git repositories under the
+scratch dir. No cell, drift, science module, decoy or candidate code. Usage: python3 -B probes63.py"""
+import contextlib, hashlib, json, os, subprocess, sys, tempfile
+from pathlib import Path
+HERE = Path(__file__).resolve().parent
+TMP = HERE / "tmp"
+TMP.mkdir(exist_ok=True)
+sys.path.insert(0, str(HERE / "base"))
+import lx_platform as L  # noqa: E402
+out = {"module_sha256": hashlib.sha256((HERE / "base" / "lx_platform.py").read_bytes()).hexdigest()}
+BOOT = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+ACCDIR = L.ACCEPTANCE_REVIEW_DIR
+PFX = L.ACCEPTANCE_REVIEW_PREFIX
+ACC = f"{ACCDIR}/{PFX}1.md"
+
+
+def tdir():
+    return tempfile.TemporaryDirectory(dir=TMP)
+
+
+@contextlib.contextmanager
+def patched(**attrs):
+    saved = {k: getattr(L, k) for k in attrs}
+    for k, v in attrs.items():
+        setattr(L, k, v)
+    try:
+        yield
+    finally:
+        for k, v in saved.items():
+            setattr(L, k, v)
+
+
+def mk(root, files):
+    for rel, txt in files.items():
+        p = Path(root, rel); p.parent.mkdir(parents=True, exist_ok=True)
+        p.mkdir(parents=True, exist_ok=True) if txt is None else p.write_text(txt)
+
+
+GENV = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t",
+            GIT_COMMITTER_EMAIL="t@t")
+
+
+def git(d, *a, date=None, check=True):
+    env = dict(GENV)
+    if date:
+        env.update(GIT_AUTHOR_DATE=date, GIT_COMMITTER_DATE=date)
+    return subprocess.run(["git", "-C", d, "-c", "commit.gpgsign=false", *a], check=check, env=env,
+                          capture_output=True)
+
+
+def commit(d, files, msg="c", date=None):
+    for rel, data in files.items():
+        Path(d, rel).parent.mkdir(parents=True, exist_ok=True)
+        if data is None:
+            Path(d, rel).unlink()
+        else:
+            Path(d, rel).write_bytes(data)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", msg, date=date)
+
+
+def init(d):
+    subprocess.run(["git", "init", "-q", "-b", "main", d], check=True)
+
+
+def att(**over):
+    rec = {"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+           "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}
+    rec.update(over); return json.dumps(rec).encode()
+
+
+def accept_text(sha, extra=b""):
+    return b"x\n" + f"{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode() + extra
+
+
+def valid(d, sha, path="att/H.json"):
+    with patched(machine_identity=lambda *a, **k: HW):
+        rec, why = L.attestation_valid({"path": path, "sha256": sha}, repo_root=d)
+    return {"valid": rec is not None, "reasons": why}
+
+
+base_rd = {"power": L.AC, "free_disk": 10 * 2 ** 30, "boot_id": BOOT, "updates": {}}
+
+
+def readers(rd):
+    real_boot = L.boot_id
+
+    def fb(text=None):
+        if text is None:
+            return rd["boot_id"]
+        return real_boot(text) if isinstance(text, str) else None
+    return patched(power_source=lambda *a, **k: rd["power"], free_disk_bytes=lambda *a, **k: rd["free_disk"],
+                   boot_id=fb, auto_update_settings=lambda *a, **k: rd["updates"])
+
+
+def pf(rd=None, **kw):
+    a = dict(mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None)
+    a.update(kw)
+    with readers(dict(base_rd, **(rd or {}))):
+        return L.preflight("/", **a)
+
+
+good_att = ({"provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}, [])
+VIEW_TRUE = lambda: patched(proc_view_complete=lambda *a, **k: True)
+
+# ================= A. review 62 part A, ported
+with tdir() as d:
+    mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "BAT0/type": None, "BAT0/status": "Discharging\n"})
+    out["A_P1_unreadable_battery_type"] = L.power_source(d)
+with tdir() as d:
+    mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "UPS0/type": "UPS\n", "UPS0/status": "Discharging\n"})
+    out["A_P1b_ups_discharging"] = L.power_source(d)
+for status in ("Unknown", "garbage", "discharging", "Discharging \x00", "Not charging", "Full", ""):
+    with tdir() as d:
+        mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "BAT0/type": "Battery\n", "BAT0/status": status + "\n"})
+        out[f"A_N2_battery_status[{status!r}]"] = L.power_source(d)
+with tdir() as d:
+    mk(d, {"AC/type": "Mains\n", "AC/online": "1\n", "BAT0/type": "Battery\n", "BAT0/status": None})
+    out["A_N2_battery_status_dir"] = L.power_source(d)
+for name, upd in (("empty_dict", {}), ("shown_None", {"guest_updates_shown_disabled": None}),
+                  ("shown_str_true", {"guest_updates_shown_disabled": "true"}), ("None", None)):
+    with patched(attestation_valid=lambda r, **k: good_att, DECIDED=frozenset({"D-HOST-LIFETIME"})):
+        out[f"A_P2_no_automatic_os_install[{name}]"] = pf({"updates": upd})["gates"]["no_automatic_os_install"]
+for name, over in (("accepted_REJECTED", {"accepted": "REJECTED"}), ("strings", {"reviewed": "no", "accepted": "false"}),
+                   ("truthy_ints", {"reviewed": 1, "accepted": 1})):
+    with tdir() as d:
+        init(d); a = att(**over); sha = hashlib.sha256(a).hexdigest()
+        commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha)})
+        out[f"A_P3_attestation_valid[{name}]"] = valid(d, sha)["valid"]
+REPO = "/tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review63/tree_37c62102"
+readme = subprocess.run(["git", "-C", REPO, "show", "HEAD:README.md"], capture_output=True).stdout
+forged = {"reviewed": True, "accepted": True, "path": "README.md", "sha256": hashlib.sha256(readme).hexdigest(),
+          "acceptance_record": "no such review", "machine": HW, "provider_image_updates": L.NO_IMAGE_CHANGE}
+with patched(machine_identity=lambda *a, **k: HW):
+    out["A_N1_forged_dict_ref"] = L.attestation_valid(forged, repo_root=REPO)
+    out["A_N1_readme_ref_only"] = L.attestation_valid({"path": "README.md", "sha256": forged["sha256"]}, repo_root=REPO)
+for bad in ("", "garbage", 0, False, BOOT.upper(), None):
+    out[f"A_N6_boot_id_recorded[{bad!r}]"] = pf({"boot_id": bad})["gates"]["boot_id_recorded"]
+out["A_N12_launched_True_launcher_mode"] = pf(launched=True)["gates"].get("launched_by_systemd")
+MEMINFO = "MemTotal:       16479424 kB\nMemAvailable:   15000000 kB\n"
+with tdir() as d:
+    mk(d, {"x/y/memory.max": "max\n", "x/y/memory.high": "3000\n", "x/y/memory.current": "10\n",
+           "x/memory.max": "8000\n", "x/memory.high": "max\n", "x/memory.current": "20\n"})
+    r = L.memory_readings(MEMINFO, "0::/x/y\n", d)
+    out["A_N3_no_attestation_default"] = [r["effective_limit"], r["cgroup_min_headroom"], r["root_attestation_reasons"]]
+    for bad in (True, "yes", 1, {"root_cgroup_is_real": True}):
+        r = L.memory_readings(MEMINFO, "0::/x/y\n", d, attestation_ref=bad)
+        out[f"A_N3_attestation_ref[{bad!r}]"] = [r["effective_limit"], r["cgroup_min_headroom"]]
+    try:
+        L.memory_readings(MEMINFO, "0::/x/y\n", d, root_attested=True)
+        out["A_N3_root_attested_kw"] = "accepted"
+    except TypeError as e:
+        out["A_N3_root_attested_kw"] = f"TypeError: {e}"
+with VIEW_TRUE():
+    out["A_P7_newborn_hog"] = L.busy_processes({(10, 1): (1, 0, "idle", "/x")},
+                                               {(10, 1): (1, 0, "idle", "/x"), (11, 9): (1, 500, "newhog", "/tmp/hog")},
+                                               5.0, 25, set(), hz=100)
+    out["A_P7c_own_contains_1"] = L.busy_processes({}, {}, 4.0, 25, {(1, 1)}, hz=100)
+    out["A_N7_hog_exits_in_window"] = L.busy_processes({(12, 5): (1, 0, "hog_exits", "/tmp/hog")}, {}, 5.0, 25, set(),
+                                                       hz=100)
+with tdir() as d:
+    mk(d, {"10/stat": "10 (idle) S 1 1 1 0 -1 0 0 0 0 0 0 0 0 0 20 0 1 0 1 0 0\n", "11/stat": None})
+    out["A_N7_cpu_ticks_unreadable_pid"] = L.cpu_ticks(d)
+ident = {"pid": 4242, "starttime_ticks": 777, "boot_id": BOOT, "cmdline_sha256": "c" * 64}
+out["A_N8_unrecorded_ns_esrch"] = L.identity_state(ident, current_boot=BOOT, exists=lambda p: False,
+                                                   current_ns={"pidns": 1, "timens": 2})
+NSR = {"pidns": 1, "timens": 2}
+stZ = L.proc_stat(4242, "4242 (x) Z 1 1 1 0 -1 0 0 0 0 0 10 5 0 0 20 0 1 0 777 0 0\n")
+out["A_F2_zombie_full_record"] = L.identity_state(dict(ident, **NSR), current_boot=BOOT, exists=lambda p: True,
+                                                  stat=lambda p: stZ, cmd=lambda p: None, current_ns=NSR)
+out["A_N4_proc_view_complete_live"] = L.proc_view_complete()
+out["A_N11_mapped_deleted"] = L.mapped_objects("7f00-7f01 r-xp 0 08:01 1 /usr/lib/x86_64-linux-gnu/libm.so.6 (deleted)\n")
+
+# ================= B. review 62's B1-B10, ported
+for name, accfile, text in (
+        ("scratch_note", "scratch/anything.txt", "{line}\n{verdict}\n"),
+        ("rejecting_review", "reviews/REVIEW_X.md", "Verdict: REJECTED.\n{line}\n{verdict}\nWe refuse.\n"),
+        ("attestation_author_file", "att/ACCEPT_BY_SELF.txt", "{line}\n{verdict}\n")):
+    with tdir() as d:
+        init(d); a = att(acceptance_record=accfile); sha = hashlib.sha256(a).hexdigest()
+        commit(d, {"att/H.json": a})
+        commit(d, {accfile: text.format(line=f"{L.ACCEPTANCE_LINE}{sha}", verdict=L.ACCEPTANCE_VERDICT_LINE).encode()})
+        out[f"B1_self_acceptance[{name}]"] = valid(d, sha)
+for name, dec in (("str", "xxD-HOST-LIFETIMExx"), ("set", {"D-HOST-LIFETIME"}), ("list", ["D-HOST-LIFETIME"]),
+                  ("unknown_id", frozenset({"D-FOO"}))):
+    try:
+        with patched(DECIDED=dec, attestation_valid=lambda r, **k: good_att):
+            g = pf({"updates": {"guest_updates_shown_disabled": True}})["gates"]
+        out[f"B2_DECIDED[{name}]"] = {k: g[k] for k in ("host_lifetime_attested", "no_automatic_os_install")}
+    except ValueError as e:
+        out[f"B2_DECIDED[{name}]"] = f"ValueError: {e}"
+with patched(DECIDED=frozenset(L.OPEN_DECISIONS), attestation_valid=lambda r, **k: good_att):
+    g = pf({"updates": {"guest_updates_shown_disabled": True}})["gates"]
+out["B2b_all_decided_still_open"] = {k: v for k, v in g.items() if v == L.OPEN_DECISION}
+out["B2b_all_decided_gates"] = g
+out["B2c_preflight_params"] = list(L.preflight.__code__.co_varnames[:L.preflight.__code__.co_argcount
+                                                                    + L.preflight.__code__.co_kwonlyargcount])
+fake = {"systemd_pid1": True, "unit": "rebaseguard-mbs308-x.service", "invocation_id": "abc",
+        "systemctl": {"MainPID": os.getpid(), "InvocationID": "abc"}, "pass": True}
+out["B3_live_launched_by_systemd_pass"] = L.launched_by_systemd()["pass"]
+out["B3_forged_record_execute"] = pf(mode="execute", launched=fake)["gates"]["launched_by_systemd"]
+out["B3_forged_record_launcher"] = pf(mode="launcher_preflight", launched=fake)["gates"]["launched_by_systemd"]
+out["B3_execute_no_record"] = pf(mode="execute")["gates"]["launched_by_systemd"]
+out["B3_float_MainPID"] = L.launch_record_ok(dict(fake, systemctl={"MainPID": float(os.getpid()), "InvocationID": "abc"}))
+NSL = {"pidns": L.ns_inode("pid"), "timens": L.ns_inode("time")}
+full = {"pid": 4242, "starttime_ticks": 777, "boot_id": L.boot_id(), "cmdline_sha256": "c" * 64, **NSL}
+for name, rec in (("boot_garbage", dict(full, boot_id="garbage")), ("boot_trunc", dict(full, boot_id=full["boot_id"][:13])),
+                  ("pid_negative", dict(full, pid=-987654)), ("pid_str", dict(full, pid="987654")),
+                  ("pid_float", dict(full, pid=987654.5)), ("pid_bool", dict(full, pid=True)),
+                  ("boot_upper", dict(full, boot_id=full["boot_id"].upper())),
+                  ("starttime_bool", dict(full, starttime_ticks=True)), ("pidns_bool", dict(full, pidns=True)),
+                  ("timens_bool", dict(full, timens=False))):
+    out[f"B4_{name}"] = L.identity_state(rec)
+c = lambda m: {"clocks": {"monotonic_ns": m, "boottime_ns": m, "realtime_ns": m}, "suspend_success": 0,
+               "boot_id": BOOT, "power": L.AC}
+out["B5_assess_journal_empty_list"] = L.assess(c(0), c(120 * 10 ** 9), [c(60 * 10 ** 9)], [])["status"]
+out["B5_assess_journal_None"] = L.assess(c(0), c(120 * 10 ** 9), [c(60 * 10 ** 9)], None)["status"]
+
+
+def upd_with_roots(roots):
+    return L.auto_update_settings('APT::Periodic::Enable "0";\n', use_live_apt=False, unit_roots=roots,
+                                  uu_binary="/nonexistent", snapd_paths=(), cloud_dir="/nonexistent",
+                                  livepatch_dir="/nonexistent")
+
+
+with tdir() as d, patched(systemd_is_pid1=lambda *a, **k: False):
+    e, lib = Path(d, "etc"), Path(d, "lib"); e.mkdir(); lib.mkdir()
+    Path(lib, "timers.target.wants").mkdir(); Path(lib, "apt-daily-upgrade.timer").write_text("[Timer]\n")
+    os.symlink(str(Path(lib, "apt-daily-upgrade.timer")), Path(lib, "timers.target.wants", "apt-daily-upgrade.timer"))
+    out["B6_timer_enabled_in_second_root_shown_disabled"] = upd_with_roots((str(e), str(lib)))["guest_updates_shown_disabled"]
+    out["B6_all_roots_absent_shown_disabled"] = upd_with_roots((str(Path(d, "nope1")), str(Path(d, "nope2"))))["guest_updates_shown_disabled"]
+out["B7_cgroup_ns_initial_live"] = L.ns_inode("cgroup") == L.INIT_CGROUP_NS
+for name, mods in (("empty", ()), ("default_None", None), ("constant_sys", ("sys",))):
+    try:
+        with patched(PIN_POINT_MODULES=mods):
+            r = L.pin_point()
+        out[f"B8_pin_point[{name}]"] = "returns a pin" if isinstance(r, dict) else repr(r)
+    except RuntimeError as e:
+        out[f"B8_pin_point[{name}]"] = f"raises: {e}"
+try:
+    L.pin_point(("sys",))
+    out["B8_pin_point_caller_list"] = "accepted"
+except TypeError as e:
+    out["B8_pin_point_caller_list"] = f"TypeError: {e}"
+with VIEW_TRUE():
+    out["B10_own_bool_pid"] = L.busy_processes({}, {}, 5, 25, {(True, 5)}, hz=100)
+    out["B10_own_str_key"] = L.busy_processes({}, {(30, 1): (99, 500, "c", "/s")}, 5, 25, {("99", 1)}, hz=100)
+
+# ================= G. review 62's G1-G15, ported
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a})
+    commit(d, {f"{ACCDIR}/scratch_ANY/{PFX}note.txt": accept_text(sha)})
+    out["G1_acceptance_in_scratch_subdir"] = valid(d, sha)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a})
+    commit(d, {f"{ACCDIR}/scratch_ANY/{PFX}note.md": accept_text(sha)})
+    out["G1b_acceptance_md_in_scratch_subdir"] = valid(d, sha)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {ACC: b"placeholder, review pending\n"})
+    commit(d, {"att/H.json": a, ACC: accept_text(sha)})
+    out["G2_acceptance_written_in_attestation_commit"] = valid(d, sha)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": b"{}"})
+    commit(d, {"att/H.json": a, ACC: accept_text(sha)})
+    out["G3_attested_bytes_and_acceptance_same_commit"] = valid(d, sha)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a, "drafts/acc.md": accept_text(sha)})
+    Path(d, ACC).parent.mkdir(parents=True, exist_ok=True)
+    git(d, "mv", "drafts/acc.md", ACC); commit(d, {})
+    out["Z05eq_rename_into_set"] = valid(d, sha)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {ACC: accept_text(sha)})
+    commit(d, {"att/H.json": a})
+    out["G4_acceptance_predates_attestation"] = valid(d, sha)
+for name, extra in (("lowercase_rejected", b"Final: rejected. This acceptance is void.\n"),
+                    ("NOT_ACCEPTED", b"VERDICT: HOST_ATTESTATION_NOT_ACCEPTED\n"),
+                    ("WITHDRAWN", b"ACCEPTANCE WITHDRAWN on 2026-10-16; see later review\n")):
+    with tdir() as d:
+        init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+        commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha, extra)})
+        out[f"G5_negative_without_token[{name}]"] = valid(d, sha)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha)})
+    commit(d, {f"{ACCDIR}/REVIEW_CLOUD_R1_LATER.md": f"Attestation {sha}: REJECTED (hardware changed)\n".encode()})
+    out["G6_rejection_outside_prefix"] = valid(d, sha)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha, b"No finding was REJECTED.\n")})
+    out["G7_acceptance_mentioning_word_REJECTED"] = valid(d, sha)
+out["G8_preflight_has_readings_param"] = "readings" in out["B2c_preflight_params"]
+try:
+    L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None,
+                readings={"power": L.AC})
+    out["G8_readings_kw"] = "accepted"
+except TypeError as e:
+    out["G8_readings_kw"] = f"TypeError: {e}"
+out["G8_live_power_source"] = L.power_source()
+g_live = L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None)
+out["G8_live_gates"] = g_live["gates"]
+out["G8_live_open_decisions"] = g_live["open_decisions"]
+t0 = {(10, 1): (1, 0, "idle", "/x")}
+try:
+    L.busy_processes(t0, t0, 5.0, 25, set(), hz=100, view_complete=True)
+    out["G9_view_complete_kw"] = "accepted"
+except TypeError as e:
+    out["G9_view_complete_kw"] = f"TypeError: {e}"
+out["G9_busy_live_view"] = L.busy_processes(t0, t0, 5.0, 25, set(), hz=100)
+for v in (False, None):
+    with patched(proc_view_complete=lambda *a, vv=v, **k: vv):
+        out[f"G9_busy_view[{v}]"] = L.busy_processes(t0, t0, 5.0, 25, set(), hz=100)
+with tdir() as d, patched(systemd_is_pid1=lambda *a, **k: False):
+    r = Path(d, "etc"); r.mkdir(); Path(r, "timers.target.wants").mkdir()
+    os.symlink("/lib/systemd/system/NO_SUCH/apt-daily-upgrade.timer", Path(r, "timers.target.wants", "apt-daily-upgrade.timer"))
+    out["G10_dangling_wants_link_unit_enabled"] = L.unit_enabled("apt-daily-upgrade.timer", (str(r),))
+    out["G10_dangling_wants_link_shown_disabled"] = upd_with_roots((str(r),))["guest_updates_shown_disabled"]
+out["G11_UNIT_ROOTS"] = list(L.UNIT_ROOTS)
+with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u: "disabled",
+             _systemctl_is_active=lambda u: "active"):
+    out["G12_disabled_but_active_unit_enabled"] = L.unit_enabled("apt-daily-upgrade.timer")
+    out["G12_shown_disabled"] = upd_with_roots(L.UNIT_ROOTS)["guest_updates_shown_disabled"]
+with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u: "not-found",
+             _systemctl_is_active=lambda u: "inactive"):
+    with tdir() as d:
+        out["G9b_not_found_no_files"] = L.unit_enabled("unattended-upgrades.service", (d,))
+out["G13_proc_view_caller_texts"] = L.proc_view_complete("NSpid:\t5\n", "1 2 0:1 / /proc rw - proc proc rw\n",
+                                                         pidns=L.INIT_PID_NS)
+with tdir() as d, patched(root_attestation=lambda ref: (True, [])):
+    mk(d, {"memory/memory.limit_in_bytes": "9223372036854771712\n", "memory/memory.usage_in_bytes": "1\n"})
+    out["G14_caller_meminfo_with_attested_root"] = L.memory_readings("MemTotal: 999999999 kB\n", "4:memory:/\n", d)["effective_limit"]
+out["G15_env_only"] = L.launched_by_systemd(env={"INVOCATION_ID": "abc"})["pass"]
+
+# ================= H. new adversarial probes (brief 63)
+# H1: a DIRECTORY named REVIEW_HOST_ATTESTATION_x.md whose two (empty) member files are NAMED as the acceptance and
+#     verdict lines; `git show HEAD:<tree>` lists the names one per line. Committed TOGETHER with the attested blob.
+#     A later commit anywhere quotes the line (e.g. a review reporting it), which gives -S a 'first' commit.
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    dirp = f"{ACCDIR}/{PFX}1.md"
+    commit(d, {"att/H.json": a, f"{dirp}/{L.ACCEPTANCE_LINE}{sha}": b"", f"{dirp}/{L.ACCEPTANCE_VERDICT_LINE}": b""})
+    out["H1a_dir_listing_only"] = valid(d, sha)
+    commit(d, {"notes/later_review_quote.md": f"The set holds `{L.ACCEPTANCE_LINE}{sha}`.\n".encode()})
+    out["H1b_dir_listing_plus_later_quote"] = valid(d, sha)
+    out["H1_git_show_tree"] = git(d, "show", f"HEAD:{dirp}").stdout.decode()
+# H2: evil merge. The acceptance file AND the attested blob are introduced together by one merge commit (merges are
+#     invisible to `git log -S` / `--find-object` by default). Later: an identical copy of the attested bytes anywhere
+#     (find-object then finds that commit) and a later quote of the line anywhere (-S then finds that commit).
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"base": b"0"})
+    git(d, "checkout", "-q", "-b", "side"); commit(d, {"s": b"1"}); git(d, "checkout", "-q", "main")
+    commit(d, {"m": b"1"})
+    git(d, "merge", "-q", "--no-ff", "--no-commit", "side")
+    Path(d, "att").mkdir(); Path(d, "att/H.json").write_bytes(a)
+    Path(d, ACC).parent.mkdir(parents=True, exist_ok=True); Path(d, ACC).write_bytes(accept_text(sha))
+    git(d, "add", "-A"); git(d, "commit", "-q", "-m", "evil merge: attestation + acceptance together")
+    out["H2a_evil_merge_only"] = valid(d, sha)
+    commit(d, {"archive/H_copy.json": a})
+    out["H2b_plus_copy_of_blob"] = valid(d, sha)
+    commit(d, {"notes/q.md": f"{L.ACCEPTANCE_LINE}{sha}\n".encode()})
+    out["H2c_plus_later_quote"] = valid(d, sha)
+# H3: acceptance written on a branch forked BEFORE the attestation existed (its history never contains the blob),
+#     committed later in wall time; main gets the blob and, later, a quote of the line; the review branch is merged.
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"base": b"0"}, date="2026-10-01T00:00:00Z")
+    git(d, "checkout", "-q", "-b", "review"); git(d, "checkout", "-q", "main")
+    commit(d, {"att/H.json": a}, date="2026-10-02T00:00:00Z")
+    commit(d, {"notes/q.md": f"{L.ACCEPTANCE_LINE}{sha}\n".encode()}, date="2026-10-03T00:00:00Z")
+    git(d, "checkout", "-q", "review")
+    commit(d, {ACC: accept_text(sha)}, date="2026-10-04T00:00:00Z")
+    git(d, "checkout", "-q", "main")
+    git(d, "merge", "-q", "--no-ff", "-m", "merge review", "review", date="2026-10-05T00:00:00Z")
+    out["H3_acceptance_from_branch_without_blob"] = valid(d, sha)
+    acc_commit = git(d, "log", "--format=%H", "--diff-filter=A", "HEAD", "--", ACC).stdout.decode().split()
+    att_c = git(d, "log", "--format=%H", "--diff-filter=A", "HEAD", "--", "att/H.json").stdout.decode().split()
+    out["H3_acc_commit_descends_from_blob_commit"] = git(d, "merge-base", "--is-ancestor", att_c[0], acc_commit[0],
+                                                         check=False).returncode == 0
+# H3b: same, but the acceptance branch commit is written BEFORE the attestation (date-forged later)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"base": b"0"}, date="2026-10-01T00:00:00Z")
+    git(d, "checkout", "-q", "-b", "review")
+    commit(d, {ACC: accept_text(sha)}, date="2026-10-09T00:00:00Z")   # actually made first; dated later
+    git(d, "checkout", "-q", "main")
+    commit(d, {"att/H.json": a}, date="2026-10-02T00:00:00Z")
+    commit(d, {"notes/q.md": f"{L.ACCEPTANCE_LINE}{sha}\n".encode()}, date="2026-10-03T00:00:00Z")
+    git(d, "merge", "-q", "--no-ff", "-m", "merge review", "review", date="2026-10-10T00:00:00Z")
+    out["H3b_acceptance_written_first_on_branch"] = valid(d, sha)
+# H3c: control: same as H3 without the later quote on main
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"base": b"0"}, date="2026-10-01T00:00:00Z")
+    git(d, "checkout", "-q", "-b", "review"); git(d, "checkout", "-q", "main")
+    commit(d, {"att/H.json": a}, date="2026-10-02T00:00:00Z")
+    git(d, "checkout", "-q", "review")
+    commit(d, {ACC: accept_text(sha)}, date="2026-10-04T00:00:00Z")
+    git(d, "checkout", "-q", "main")
+    git(d, "merge", "-q", "--no-ff", "-m", "merge review", "review", date="2026-10-05T00:00:00Z")
+    out["H3c_control_no_quote"] = valid(d, sha)
+# H4: a rejecting review that is later DELETED (git rm) or moved out of reviews/: the rejection disappears
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha)})
+    rj = f"{ACCDIR}/REVIEW_LATER.md"
+    commit(d, {rj: f"Attestation {sha}: REJECTED (hardware changed)\n".encode()})
+    out["H4a_rejected"] = valid(d, sha)
+    commit(d, {rj: None})
+    out["H4b_after_git_rm_of_rejection"] = valid(d, sha)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha)})
+    rj = f"{ACCDIR}/REVIEW_LATER.md"
+    commit(d, {rj: f"Attestation {sha}: REJECTED\n".encode()})
+    Path(d, "archive").mkdir(); git(d, "mv", rj, "archive/REVIEW_LATER.md"); commit(d, {})
+    out["H4c_after_moving_rejection_out_of_reviews"] = valid(d, sha)
+# H5: rejections the scan does not see
+rejections = {
+    "non_ascii_path": (f"{ACCDIR}/REVIEW_RéJECTION.md", "Attestation {sha}: REJECTED\n"),
+    "path_with_quote_char": (f'{ACCDIR}/REVIEW_"LATER".md', "Attestation {sha}: REJECTED\n"),
+    "abbreviated_sha": (f"{ACCDIR}/REVIEW_LATER.md", "Attestation {short}…: REJECTED\n"),
+    "uppercase_sha": (f"{ACCDIR}/REVIEW_LATER.md", "Attestation {upper}: REJECTED\n"),
+    "path_only": (f"{ACCDIR}/REVIEW_LATER.md", "Attestation att/H.json: REJECTED\n"),
+    "word_refused": (f"{ACCDIR}/REVIEW_LATER.md", "Attestation {sha}: REFUSED; acceptance void\n"),
+    "word_unaccepted": (f"{ACCDIR}/REVIEW_LATER.md", "Attestation {sha}: UNACCEPTED\n"),
+    "verdict_declined": (f"{ACCDIR}/REVIEW_LATER.md", "VERDICT: HOST_ATTESTATION_DECLINED\nsha256={sha}\n"),
+    "verdict_needs_revision": (f"{ACCDIR}/REVIEW_LATER.md", "VERDICT: NEEDS_REVISION\nattestation {sha}\n"),
+    "in_ledger_not_reviews": ("ledger/LEDGER.jsonl", '{{"attestation": "{sha}", "verdict": "REJECTED"}}\n'),
+    "utf16_review": (f"{ACCDIR}/REVIEW_LATER.md", None),
+}
+for name, (rp, text) in rejections.items():
+    with tdir() as d:
+        init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+        commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha)})
+        body = (f"Attestation {sha}: REJECTED\n".encode("utf-16") if text is None
+                else text.format(sha=sha, short=sha[:8], upper=sha.upper()).encode())
+        commit(d, {rp: body})
+        out[f"H5_rejection_unseen[{name}]"] = valid(d, sha)["valid"]
+# H6: a second, negative verdict inside the accepting file in a form the VERDICT regex does not match
+for name, extra in (("md_bold", b"**Verdict:** NEEDS_REVISION\n"), ("heading", b"## Verdict - DECLINED\n"),
+                    ("bullet", b"* VERDICT: HOST_ATTESTATION_DECLINED\n"), ("other_key", b"DEV_CODE: NOT_FAIL_CLOSED\n")):
+    with tdir() as d:
+        init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+        commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha, extra)})
+        out[f"H6_second_verdict_hidden[{name}]"] = valid(d, sha)["valid"]
+# H7: attestation_valid with a caller-chosen repo_root (a synthetic repository): accepted
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha)})
+    out["H7_caller_repo_root_accepted"] = valid(d, sha)["valid"]
+# H8: identity_state test seams give ALIVE / DEAD from caller callables (no reading taken)
+NSC = {"pidns": 1, "timens": 2}
+idf = dict(ident, **NSC)
+stR = L.proc_stat(4242, "4242 (x) S 1 1 1 0 -1 0 0 0 0 0 10 5 0 0 20 0 1 0 777 0 0\n")
+out["H8_identity_state_caller_ALIVE"] = L.identity_state(idf, current_boot=BOOT, exists=lambda p: True,
+                                                         stat=lambda p: stR, cmd=lambda p: "c" * 64, current_ns=NSC)
+out["H8_identity_state_caller_DEAD"] = L.identity_state(idf, current_boot=BOOT, exists=lambda p: False, current_ns=NSC)
+# H9: busy_processes' remaining caller parameters: hz, dt_s and threshold_pct turn a hog into 'no busy process'
+hog0 = {(20, 3): (1, 0, "hog", "/tmp/hog")}
+hog1 = {(20, 3): (1, 500, "hog", "/tmp/hog")}
+with VIEW_TRUE():
+    out["H9_hog_hz100"] = L.busy_processes(hog0, hog1, 5.0, 25, set(), hz=100)
+    out["H9_hog_hz_1e9"] = L.busy_processes(hog0, hog1, 5.0, 25, set(), hz=10 ** 9)
+    out["H9_hog_dt_1e9"] = L.busy_processes(hog0, hog1, 1e9, 25, set(), hz=100)
+    out["H9_hog_threshold_1e9"] = L.busy_processes(hog0, hog1, 5.0, 1e9, set(), hz=100)
+    out["H9_empty_snapshots"] = L.busy_processes({}, {}, 5.0, 25, set())
+with tdir() as d:
+    out["H9_cpu_ticks_empty_proc_root"] = L.cpu_ticks(d)
+# H10: preflight's repo_path is a caller location that decides free_disk_ge_2GiB
+g_root = L.preflight("/", mode="launcher_preflight", other_job_running=False, launched=None, attestation_ref=None)
+g_none = L.preflight("/nonexistent-review63", mode="launcher_preflight", other_job_running=False, launched=None,
+                     attestation_ref=None)
+out["H10_free_disk_gate_repo_root"] = g_root["gates"]["free_disk_ge_2GiB"]
+out["H10_free_disk_gate_nonexistent"] = g_none["gates"]["free_disk_ge_2GiB"]
+# H11: file-mode unit detection: an *.upholds link (systemd >= 249 starts and restarts the unit) is not seen; a
+#      lower-precedence mask shadowed by a real unit file in a higher-precedence root still reads as masked
+with tdir() as d, patched(systemd_is_pid1=lambda *a, **k: False):
+    r = Path(d, "etc"); r.mkdir(); Path(r, "multi-user.target.upholds").mkdir()
+    os.symlink("/lib/systemd/system/unattended-upgrades.service",
+               Path(r, "multi-user.target.upholds", "unattended-upgrades.service"))
+    out["H11a_upholds_link_unit_enabled"] = L.unit_enabled("unattended-upgrades.service", (str(r),))
+with tdir() as d, patched(systemd_is_pid1=lambda *a, **k: False):
+    hi, lo, ven = Path(d, "etc"), Path(d, "run"), Path(d, "lib")
+    for p in (hi, lo, ven):
+        p.mkdir()
+    Path(hi, "apt-daily-upgrade.timer").write_text("[Timer]\nOnCalendar=daily\n")       # admin copy (wins)
+    os.symlink("/dev/null", Path(lo, "apt-daily-upgrade.timer"))                        # runtime mask, shadowed
+    Path(ven, "timers.target.wants").mkdir()
+    os.symlink(str(Path(ven, "apt-daily-upgrade.timer")), Path(ven, "timers.target.wants", "apt-daily-upgrade.timer"))
+    out["H11b_shadowed_mask_unit_enabled"] = L.unit_enabled("apt-daily-upgrade.timer", (str(hi), str(lo), str(ven)))
+# H12: systemd PID 1: is-active 'refreshing' / 'deactivating' with is-enabled 'disabled'
+for act in ("refreshing", "deactivating", "maintenance", ""):
+    with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u: "disabled",
+                 _systemctl_is_active=lambda u, x=act: x or None):
+        out[f"H12_is_active[{act!r}]"] = L.unit_enabled("apt-daily-upgrade.timer")
+# H13: an earlier quote of the line (before the blob) blocks every later acceptance (fail-closed, informational)
+with tdir() as d:
+    init(d); a = att(); sha = hashlib.sha256(a).hexdigest()
+    commit(d, {"notes/plan.md": f"expected: {L.ACCEPTANCE_LINE}{sha}\n".encode()})
+    commit(d, {"att/H.json": a}); commit(d, {ACC: accept_text(sha)})
+    out["H13_earlier_quote_blocks"] = valid(d, sha)
+print(json.dumps(out, indent=1, default=str))

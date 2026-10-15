@@ -1,0 +1,57 @@
+"""Reviewer mutants (brief 63) against a COPY of lx_platform.py revision 5 (./base, sha256 8ccddf85...). Each mutant is
+written to a temporary directory under this scratch dir; the UNCHANGED repository suite is run against it via
+LX_PLATFORM_DIR with -B. Nothing in the repository is written. Usage: python3 -B reviewer63_mutants.py"""
+import difflib, json, os, subprocess, sys, tempfile
+from pathlib import Path
+HERE = Path(__file__).resolve().parent
+SRC = HERE / "base" / "lx_platform.py"
+TESTS = Path("/tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review63/tree_37c62102/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests")
+MUTANTS = [
+ ("W01", "the LATEST commit that touches the accepting line is taken as 'first' (order check on the wrong commit)",
+  [("    return lines[0] if lines else None", "    return lines[-1] if lines else None")]),
+ ("W02", "an upper-case cmdline digest passes the record shape check (a malformed record can then prove DEAD)",
+  [('re.fullmatch(r"[0-9a-f]{64}", c) is not None)', 're.fullmatch(r"[0-9a-fA-F]{64}", c) is not None)')]),
+ ("W03", "an upper-case boot id passes the record shape check (a malformed record can then prove DEAD)",
+  [('    if b is not None and (not isinstance(b, str) or not _BOOT_ID.match(b)):',
+    '    if b is not None and (not isinstance(b, str) or not _BOOT_ID.match(b.lower())):')]),
+ ("W04", "not-found: a dangling unit link in a root is not a unit file (reads as not enabled)",
+  [("        found |= f.is_symlink() or f.exists()", "        found |= f.exists()")]),
+ ("W05", "not-found: a unit root that is not a directory is skipped (unknown becomes not enabled)",
+  [("        if not r.is_dir():\n            return None\n        f = r / unit", "        if not r.is_dir():\n            continue\n        f = r / unit")]),
+ ("W06", "'revoke' is not a negative word",
+  [('_NEGATIVE = re.compile(r"reject|withdraw|not[ _-]?accepted|revoke", re.I)',
+    '_NEGATIVE = re.compile(r"reject|withdraw|not[ _-]?accepted", re.I)')]),
+ ("W07", "not-found: only the last root decides whether a unit file exists",
+  [("        found |= f.is_symlink() or f.exists()", "        found = f.is_symlink() or f.exists()")]),
+ ("W08", "a failed is-enabled query after a failed is-active query, with not-found, reads as not enabled",
+  [('        if st == "not-found":', '        if st in ("not-found", None):')]),
+]
+
+
+def run_suite(d):
+    env = dict(os.environ, LX_PLATFORM_DIR=d, PYTHONDONTWRITEBYTECODE="1")
+    p = subprocess.run([sys.executable, "-B", "-m", "unittest", "discover", "-s", str(TESTS)], cwd=str(TESTS.parent),
+                       env=env, capture_output=True, text=True, timeout=900)
+    fails = sorted({ln.split()[1] for ln in p.stderr.splitlines() if ln.startswith(("FAIL:", "ERROR:"))})
+    return p.returncode, (p.stderr.strip().splitlines() or [""])[-1], fails
+
+
+src = SRC.read_text()
+rows = []
+scratch = HERE / "mut_tmp"; scratch.mkdir(exist_ok=True)
+for mid, what, edits in MUTANTS:
+    m = src
+    for old, new in edits:
+        assert m.count(old) == 1, (mid, old)
+        m = m.replace(old, new)
+    diff = "".join(difflib.unified_diff(src.splitlines(True), m.splitlines(True), n=0))
+    diff = "".join(l for l in diff.splitlines(True) if not l.startswith(("---", "+++")))
+    with tempfile.TemporaryDirectory(dir=scratch) as d:
+        Path(d, "lx_platform.py").write_text(m)
+        rc, tail, fails = run_suite(d)
+    rows.append({"id": mid, "property": what, "status": "KILLED" if rc else "SURVIVED", "tail": tail, "killed_by": fails,
+                 "diff": diff})
+with tempfile.TemporaryDirectory(dir=scratch) as d:
+    Path(d, "lx_platform.py").write_text(src)
+    rc, tail, _ = run_suite(d)
+print(json.dumps({"base_copy_suite": {"rc": rc, "tail": tail}, "mutants": rows}, indent=1))

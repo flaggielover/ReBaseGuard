@@ -168,6 +168,14 @@ class TestIdentity(unittest.TestCase):
                     dict(self.ident, timens=False)):                                    # Z11: bools are not ints
             self.assertEqual(self.state(ident=bad, exists=False), L.UNKNOWN, bad)
 
+    def test_review63_shape_rejects_uppercase_digest_and_boot_id(self):
+        """Review 63 W02 / W03: the reader writes lower-case hex; an upper-case cmdline digest or boot id is a malformed
+        record, so it proves nothing (UNKNOWN), never DEAD by a 'differing' digest or boot id."""
+        for bad in (dict(self.ident, cmdline_sha256="C" * 64), dict(self.ident, boot_id=BOOT.upper())):
+            self.assertEqual(self.state(ident=bad, exists=False), L.UNKNOWN, bad)
+            self.assertEqual(self.state(ident=bad, exists=True), L.UNKNOWN, bad)
+        self.assertEqual(self.state(exists=False), L.DEAD)                       # control: the well-formed record
+
     def test_real_process_lifecycle(self):
         p = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"], start_new_session=True)
         try:
@@ -754,6 +762,43 @@ class TestUpdatesLaunch(unittest.TestCase):
                      "/etc/systemd/system.control"):
             self.assertIn(root, L.UNIT_ROOTS)
 
+    def test_review63_not_found_unit_file_search_complete(self):
+        """Review 63 W04 / W05 / W07: with systemd as PID 1, an inactive not-found unit is 'not enabled' only if NO
+        root holds a unit file or link: a dangling link counts, a root that is not a directory is unreadable (unknown),
+        and a file in an earlier root is not forgotten when a later root lacks it."""
+        with tempfile.TemporaryDirectory() as d:
+            a, b, empty = Path(d, "a"), Path(d, "b"), Path(d, "empty")
+            for x in (a, b, empty):
+                x.mkdir()
+            os.symlink(str(Path(d, "nowhere")), Path(a, "x.timer"))                        # dangling link
+            Path(b, "y.timer").write_text("")                                             # a real file
+            as_file = Path(d, "as_file")
+            as_file.write_text("")                                                        # a root that is a file
+            with patched(systemd_is_pid1=lambda *a, **k: True, _systemctl_is_enabled=lambda u: "not-found",
+                         _systemctl_is_active=lambda u: "inactive"):
+                self.assertIsNone(L.unit_enabled("x.timer", (str(a), str(empty))))         # W04
+                self.assertIsNone(L.unit_enabled("z.timer", (str(as_file), str(empty))))   # W05
+                self.assertIsNone(L.unit_enabled("y.timer", (str(b), str(empty))))         # W07
+                self.assertIs(L.unit_enabled("z.timer", (str(empty), str(a))), False)      # control: none anywhere
+
+    def test_review63_upholds_and_mask_precedence(self):
+        """Review 63 H6 (file mode): an *.upholds link enables the unit; a mask counts only as the HIGHEST-precedence
+        entry: a real unit file in an earlier root overrides a /dev/null link in a later one."""
+        with tempfile.TemporaryDirectory() as d:
+            hi, lo = Path(d, "hi"), Path(d, "lo")
+            hi.mkdir(), lo.mkdir()
+            Path(lo, "multi-user.target.upholds").mkdir()
+            Path(lo, "multi-user.target.upholds", "u.service").write_text("")
+            self.assertIs(L.unit_enabled("u.service", (str(hi), str(lo))), True)
+            Path(hi, "x.timer").write_text("[Timer]\n")                                   # real file, higher
+            os.symlink("/dev/null", Path(lo, "x.timer"))                                  # mask, lower
+            Path(lo, "timers.target.wants").mkdir()
+            Path(lo, "timers.target.wants", "x.timer").write_text("")
+            self.assertIs(L.unit_enabled("x.timer", (str(hi), str(lo))), True)
+            os.symlink("/dev/null", Path(hi, "m.timer"))                                  # mask, highest
+            Path(lo, "timers.target.wants", "m.timer").write_text("")
+            self.assertIs(L.unit_enabled("m.timer", (str(hi), str(lo))), False)           # control: a real mask
+
     def test_parser_reads_only_whole_dump_lines(self):
         """N13 (renamed): the parser accepts only whole `apt-config dump` lines; apt's own comment handling is apt's,
         and is relied on by reading the dump rather than the configuration files."""
@@ -1056,6 +1101,114 @@ class TestAttestationPreflight(unittest.TestCase):
         self.assertIsNone(run([{"att/HOST.json": att, "tmp/acc.md": line}, "mv"]))
         self.assertIsNone(run([{f"{ACC}1.md": line}, {"att/HOST.json": att}]))           # acceptance first
         self.assertIsNone(self.check(self.attestation(), reviews={})[0])                 # no review at all
+
+    def _repo_run(self, att, steps):
+        """Synthetic history: each step is a dict (commit those files), ("rm", path), ("mv", src, dst),
+        ("branch", name), ("checkout", name) or ("merge", name, extra_files_or_None)."""
+        sha = hashlib.sha256(att).hexdigest()
+        ident = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false"]
+        with tempfile.TemporaryDirectory() as d:
+            git_init(d)
+            for st in steps:
+                if isinstance(st, dict):
+                    git_commit(d, st)
+                elif st[0] == "rm":
+                    fixture_git(d, "rm", "-q", st[1])
+                    git_commit(d, {})
+                elif st[0] == "mv":
+                    Path(d, st[2]).parent.mkdir(parents=True, exist_ok=True)
+                    fixture_git(d, "mv", st[1], st[2])
+                    git_commit(d, {})
+                elif st[0] == "branch":
+                    fixture_git(d, "branch", st[1])
+                elif st[0] == "checkout":
+                    fixture_git(d, "checkout", "-q", st[1])
+                elif st[0] == "merge":
+                    fixture_git(d, *ident, "merge", "-q", "--no-ff", "--no-commit", st[1])
+                    for rel, data in (st[2] or {}).items():
+                        Path(d, rel).parent.mkdir(parents=True, exist_ok=True)
+                        Path(d, rel).write_bytes(data)
+                    fixture_git(d, "add", "-A")
+                    fixture_git(d, *ident, "commit", "-q", "-m", "merge")
+            with patched(machine_identity=lambda *a, **k: self.HW):
+                return L.attestation_valid({"path": "att/HOST.json", "sha256": sha}, repo_root=d)
+
+    def test_review63_order_every_commit_merges_and_side_branches(self):
+        """Review 63 H1 / W01: EVERY commit that adds the attested blob precedes EVERY commit that adds the accepting
+        line, merges included: an evil merge introducing both (then a copy of the blob and a quote of the line), an
+        acceptance made before the blob and quoted later, and an acceptance on a branch forked before the blob are
+        refused; an acceptance on a branch forked after the blob, merged later, is accepted."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        line = f"{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+        quote = f"quoted: {L.ACCEPTANCE_LINE}{sha}\n".encode()
+        base = {"README": b"base\n"}
+        evil = [base, ("branch", "side"), ("checkout", "side"), {"s.txt": b"s\n"}, ("checkout", "-"),
+                {"m.txt": b"m\n"}, ("merge", "side", {"att/HOST.json": att, f"{ACC}1.md": line}),
+                {"att/COPY.json": att}, {"notes/q.md": quote}]
+        self.assertIsNone(self._repo_run(att, evil)[0])                                   # RV08
+        first = [base, {f"{ACC}1.md": line}, {"att/HOST.json": att}, {"notes/q.md": quote}]
+        self.assertIsNone(self._repo_run(att, first)[0])                                  # RV01 (W01)
+        side = [base, ("branch", "side"), ("checkout", "side"), {f"{ACC}1.md": line}, ("checkout", "-"),
+                {"att/HOST.json": att}, {"notes/q.md": quote}, ("merge", "side", None)]
+        self.assertIsNone(self._repo_run(att, side)[0])
+        good = [base, {"att/HOST.json": att}, ("branch", "side"), ("checkout", "side"), {f"{ACC}1.md": line},
+                ("checkout", "-"), {"m.txt": b"m\n"}, ("merge", "side", None)]
+        rec, why = self._repo_run(att, good)
+        self.assertIsNotNone(rec, why)                                                    # control: legitimate merge
+
+    def test_review63_veto_words_and_references(self):
+        """Review 63 H3 / W06: a review naming the attestation by its full sha in any case or by a >= 8-hex prefix
+        vetoes it with any negative word (incl. revoke, refused, unaccepted, declined, needs revision, veto) or with a
+        verdict other than the accepting one; unrelated or neutral mentions do not."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        ok = self.accept(sha)
+        note = f"{L.ACCEPTANCE_REVIEW_DIR}/notes.md"
+        vetoes = {"revoked (W06)": f"{sha} revoked\n", "upper-case abbreviated": f"{sha[:10].upper()} REJECTED\n",
+                  "refused": f"{sha}\nrefused\n", "unaccepted": f"{sha} is unaccepted\n",
+                  "declined": f"{sha[:8]} declined\n", "needs revision": f"{sha}\nNEEDS_REVISION\n",
+                  "veto": f"veto {sha}\n", "other verdict": f"{sha}\nVERDICT: FIT_WITH_CONDITIONS\n"}
+        for name, text in vetoes.items():
+            self.assertIsNone(self.check(att, reviews={f"{ACC}1.md": ok, note: text.encode()})[0], name)
+        for name, text in {"neutral mention": f"{sha} noted\n",
+                           "other sha rejected": f"{'0' * 12} REJECTED\n"}.items():
+            rec, why = self.check(att, reviews={f"{ACC}1.md": ok, note: text.encode()})
+            self.assertIsNotNone(rec, (name, why))
+
+    def test_review63_rejection_is_permanent(self):
+        """Review 63 H3: a rejection anywhere in HEAD's full history under the review directory survives `git rm`,
+        `git mv` out of the directory, and a side branch that adds and removes it; an unreadable (non-UTF-8)
+        historical review blob refuses verification; an unrelated removed review does not."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        ok = self.accept(sha)
+        veto = f"{L.ACCEPTANCE_REVIEW_DIR}/veto.md"
+        bad = f"{sha} REJECTED\n".encode()
+        cases = {
+            "removed": [{"att/HOST.json": att}, {veto: bad}, ("rm", veto), {f"{ACC}1.md": ok}],
+            "moved out": [{"att/HOST.json": att}, {veto: bad}, ("mv", veto, "elsewhere/veto.md"), {f"{ACC}1.md": ok}],
+            "side branch": [{"att/HOST.json": att}, ("branch", "side"), ("checkout", "side"), {veto: bad},
+                            ("rm", veto), ("checkout", "-"), {f"{ACC}1.md": ok}, ("merge", "side", None)],
+            "non-UTF-8 history": [{"att/HOST.json": att}, {veto: b"\xff\xfe" + bad}, ("rm", veto),
+                                  {f"{ACC}1.md": ok}],
+        }
+        for name, steps in cases.items():
+            self.assertIsNone(self._repo_run(att, steps)[0], name)
+        rec, why = self._repo_run(att, [{"att/HOST.json": att}, {veto: b"draft notes\n"}, ("rm", veto),
+                                        {f"{ACC}1.md": ok}])
+        self.assertIsNotNone(rec, why)                                                    # control
+
+    def test_review63_verdict_like_lines_refuse_acceptance(self):
+        """Review 63 H7: an accepting file holds exactly one verdict-like line: formatted verdicts (**Verdict:**,
+        '## Verdict -', '* VERDICT:') and bare KEY: VALUE verdict lines (DEV_CODE: NOT_FAIL_CLOSED) refuse it."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        for extra in ("**Verdict:** fine", "## Verdict - fine", "* VERDICT: ok", "DEV_CODE: NOT_FAIL_CLOSED"):
+            body = self.accept(sha) + (extra + "\n").encode()
+            self.assertIsNone(self.check(att, reviews={f"{ACC}1.md": body})[0], extra)
+        rec, why = self.check(att, reviews={f"{ACC}1.md": self.accept(sha) + b"Reviewed on a synthetic host.\n"})
+        self.assertIsNotNone(rec, why)                                                    # control: plain prose
 
     def test_forged_or_unaccepted_attestations_refused(self):
         for att in (b"# README\nnot an attestation\n", self.attestation(schema="other"),
