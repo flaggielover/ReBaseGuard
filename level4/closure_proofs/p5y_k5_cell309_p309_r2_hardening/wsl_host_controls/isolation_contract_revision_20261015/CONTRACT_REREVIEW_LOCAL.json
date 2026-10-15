@@ -1,0 +1,270 @@
+{
+  "schema": "P309_ISOLATION_CONTRACT_LOCAL_REREVIEW/1",
+  "reviewed_source_branch": "codex/p309-wsl-isolation-contract-revision-20261015",
+  "reviewed_source_commit": "14a63b4f25935396b288a545476fe808deac85f8",
+  "base_review_commit": "ff5a981714b132a552e921086ec5fec6c72a876c",
+  "original_design_commit": "c2d477e984e10ce9bafca82b793f8de9974e656c",
+  "publication_branch": "codex/p309-wsl-isolation-contract-rereview-20261015",
+  "scope": "DR_01_DR_02_CONTRACT_CORRECTIONS_ONLY",
+  "disposition": "ACCEPTABLE_FOR_D2_CONTRACT_IMPLEMENTATION_ONLY",
+  "disposition_reason": "Both original requests are satisfied at the design-contract level by this exact revision. Endpoint roles and client authority agree across CHANNELS/LIFECYCLE/REVISION, and lifecycle rules cover the identified stop/restart/generation ambiguity. No new concrete contradiction was identified within this limited rereview. This does not establish implementation correctness, host capability or deployment authority; all I1-I7 remain open.",
+  "formal_admission": "BLOCKED",
+  "route_accepted": false,
+  "host_accepted": false,
+  "deployment_authorized": false,
+  "installation_consent": false,
+  "pre_freeze_review": false,
+  "execution_authorized": false,
+  "qualification_authorized": false,
+  "target_execution_authorized": false,
+  "freeze_or_grants_issued": false,
+  "tests_run": 0,
+  "new_host_evidence_queries": 0,
+  "host_configuration_changes": 0,
+  "workload_processes_started": 0,
+  "revision_files_changed": false,
+  "original_review_disposition_preserved": "CHANGES_REQUIRED",
+  "finding_assessments": [
+    {
+      "id": "DR-01",
+      "original_severity": "MEDIUM",
+      "contract_correction_satisfies_request": true,
+      "status": "SATISFIED_AT_CONTRACT_LEVEL_ONLY",
+      "implementation_or_host_closure": false,
+      "corrective_source": "CHANNELS.txt",
+      "corrective_source_sha256": "f32a2e97a34a65a1720df67ec6fab9a01d99bbad71aa6880ccfbe0fd59b8ecdd",
+      "assessment": "H1-H5 now distinguish observer, Windows relay, new relay-only guest role, monitor, root broker and manager. The fixed WSL tuple enters as p309-relay through inherited stdio. H3 is R -> monitor-ingress.sock -> M; H4 is M -> control.sock -> B. The old ambiguous monitor/control endpoint is explicitly superseded. Root/systemd listener creation is distinguished from application-server identity, and the access matrix matches these roles.",
+      "checks": [
+        {
+          "references": [
+            "CHANNELS.txt:7-52",
+            "REVISION.json:roles,channels,guest_relay_launch_tuple"
+          ],
+          "result": "Roles, fixed tuple and H1-H5 ownership/authority agree; S does not assume ownership of W's per-user distribution; no shell/request-controlled executable or broker manager command is introduced."
+        },
+        {
+          "references": [
+            "CHANNELS.txt:32-47",
+            "CHANNELS.txt:54-61",
+            "CHANNELS.txt:94-103"
+          ],
+          "result": "Distinct root-owned endpoints and non-client-writable parent are proposed; R is H3 client only, M is H3 application server/H4 status-stop client, B is H4 server. Unexpected endpoint identity/collision/activation binding is refusal."
+        },
+        {
+          "references": [
+            "CHANNELS.txt:63-83"
+          ],
+          "result": "Server-side accepted-connection peer identity is locally obtained. Client-side socket-activation credentials are explicitly not assumed to equal the final handler UID. Activation binding, exact enrolled peer instance, listener validation, CLOEXEC, rejection of unexpected ancillary descriptors and closure of unexpected inherited fds are stated as requirements, not observed enforcement."
+        },
+        {
+          "references": [
+            "CHANNELS.txt:85-92",
+            "CHANNELS.txt:105-112"
+          ],
+          "result": "Observer-request and signed-reply directions are explicit; relay bytes do not attest safe facts or become broker commands. Failure cannot route around H3/H4 or grant start; independent monitor-loss stop remains generation-bound and unimplemented under I6."
+        }
+      ],
+      "remaining_conditions": [
+        "I1/I3/I5 retain actual interop/ACL/peer/descriptor/instance-binding proof, exact enrollment and authentication implementation. No local sockets, identities or activation units were queried or created.",
+        "D2 must implement/refuse against this fixed contract without assuming that UNIX credential or Windows handle semantics have been measured here. Exact implementation details and separately authorized acceptance cases remain future work."
+      ],
+      "new_concrete_ambiguities_identified": []
+    },
+    {
+      "id": "DR-02",
+      "original_severity": "MEDIUM",
+      "contract_correction_satisfies_request": true,
+      "status": "SATISFIED_AT_CONTRACT_LEVEL_ONLY",
+      "implementation_or_host_closure": false,
+      "corrective_source": "LIFECYCLE.txt",
+      "corrective_source_sha256": "add52c79a2a34e5653326dc07d757881c6c485094755f194e84b5e149c9dd3c3",
+      "assessment": "D2 public authority is consistently status/stop only, with no client start/arm/rearm/reset and no real unit launch/stop by D2 libraries. Broker-created non-reused G is bound internally to the prospective invocation and checked again at dispatch. Future start is explicitly outside H1-H4, administrative, unimplemented and separately reviewed. State and recovery rules remove the original start/lifecycle ambiguity without authorizing formal retries.",
+      "checks": [
+        {
+          "references": [
+            "LIFECYCLE.txt:5-18",
+            "CHANNELS.txt:40-52",
+            "CHANNELS.txt:94-103",
+            "REVISION.json:broker_d2_operations,broker_client_authority,broker_d2_start_allowed"
+          ],
+          "result": "Operation list and access matrix agree: M status/stop; R/U no broker authority. Internal synthetic transitions are not OS-control capability or administrative permits."
+        },
+        {
+          "references": [
+            "LIFECYCLE.txt:20-46",
+            "LIFECYCLE.txt:49-65"
+          ],
+          "result": "G cannot select caller PID/unit/cgroup; exact instance binding is rechecked at dispatch. One-use future permit and concurrent-start refusal are explicit. Stop before dispatch suppresses start; in-flight start remains tracked and its late completion cannot enter RUNNING or report success."
+        },
+        {
+          "references": [
+            "LIFECYCLE.txt:55-78",
+            "LIFECYCLE.txt:111-113"
+          ],
+          "result": "Stop latch precedes blocking persistence/manager/cleanup and is irreversible. Repeated stop is idempotent; receipt is not completion. STOPPED requires exact instance exit/reaping, empty cgroup and no unresolved in-flight operation/cleanup. Lost acknowledgement stays pending/unknown. Independent enforceable stop is still I6, not proven by serialization."
+        },
+        {
+          "references": [
+            "LIFECYCLE.txt:79-88",
+            "REVISION.json:broker_restart_policy,state_edges,terminal_states"
+          ],
+          "result": "Restart creates a new-epoch RECOVERY_UNKNOWN guard and preserves immutable historical terminal records. Historical STOPPED is not fresh OS quiescence or rearm authority. This resolves the potential tension between terminal old state and new restart uncertainty; neither clients nor reconnect reopen it."
+        },
+        {
+          "references": [
+            "LIFECYCLE.txt:90-110"
+          ],
+          "result": "Schema is fixed, generation required for stop and peer validation precedes dispatch. Changed-content request-ID reuse is refused. Dispatch-time generation check precedes dedup/cached replies, so a valid old-G request cannot stop or renew a new invocation. Old-G history/stale responses do not change current state. Exhausted dedup/state budgets refuse/stop rather than erase fences."
+        },
+        {
+          "references": [
+            "LIFECYCLE.txt:115-123"
+          ],
+          "result": "Fresh development G requires later separately reviewed administrative rearm, confirmed old cleanup, immutable history, retired queues/connections and fresh permit/monitor/epoch/policy. RECOVERY_UNKNOWN requires separate reconciliation; no record deletion/reconnect creates authority."
+        },
+        {
+          "references": [
+            "LIFECYCLE.txt:125-132",
+            "REVISION.json:rollback_order"
+          ],
+          "result": "Rollback retains B and ownership tracking until cleanup; unavailable/uncertain broker means quarantine and separately reviewed recovery. No guessed PID/replacement-unit action or destructive unregister is proposed. This satisfies the related ordering clarification while preserving I6."
+        }
+      ],
+      "remaining_conditions": [
+        "Exact D2 request/state/dedup budgets must be pinned during library implementation. No persisted fence, OS manager/cgroup identity, independent watchdog or cleanup behavior is established by this text.",
+        "I5/I6/I7 retain actual broker/launch/control integration, durability, recovery, resource limits and formal route authority. Any future idle rearm protocol must be reviewed separately; no real or formal P309 start is defined here."
+      ],
+      "new_concrete_ambiguities_identified": []
+    }
+  ],
+  "new_findings": [],
+  "new_findings_scope_limit": "No new concrete ambiguity found within DR-01/DR-02 text correction scope. This is not an exhaustive security audit or a claim that the system is free of implementation defects.",
+  "historical_record_handling": {
+    "original_review_retained_byte_for_byte": true,
+    "original_CHANGES_REQUIRED_not_rewritten": true,
+    "revision_supersedes": "Only specified channel/identity/access-matrix and lifecycle contract portions; all other original design constraints stay in force.",
+    "F_drive_status": "UNAVAILABLE_IN_PINNED_HISTORICAL_EVIDENCE_ONLY; NO_NEW_QUERY",
+    "historical_test_counts": "Not rerun or combined; no test pass count claimed for this rereview."
+  },
+  "limits": [
+    "Contract-level satisfaction does not close I1-I7 or prove installed ACLs, identities, socket authentication, Windows/root isolation, collector privileges/completeness, resource reservation, protected durability, suspension semantics or whole-cgroup termination.",
+    "No host query, WSL command, test, elevation, installation, identity/endpoint/key/service/unit creation, policy change or workload occurred.",
+    "Only repository fetch/worktree/static reads, canonical hashing, preservation checks and additive review record publication were performed.",
+    "ACCEPTABLE_FOR_D2_CONTRACT_IMPLEMENTATION_ONLY describes contract readiness; this turn neither implements D2 nor authorizes host deployment, route/host acceptance, a drill, freeze/grant, qualification, pre-freeze review or target execution."
+  ],
+  "recorded_utc": "2026-10-15T13:31:14.0764496Z",
+  "source_binding_verification": {
+    "canonical_current_blobs": 87,
+    "declared_source_evidence_count": 81,
+    "historical_manifest_bindings_checked": 247,
+    "protected_sources_checked": 20,
+    "result": "MATCH",
+    "source_diff": [
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_contract_revision_20261015/CHANNELS.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_contract_revision_20261015/LIFECYCLE.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_contract_revision_20261015/REREVIEW.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_contract_revision_20261015/REVIEW_RESPONSE.txt",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_contract_revision_20261015/REVISION.json",
+      "A\tlevel4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/wsl_host_controls/isolation_contract_revision_20261015/SOURCE_BINDINGS.json"
+    ],
+    "method": "SHA256 of exact git cat-file blob bytes; no text pipeline used for canonical bytes"
+  },
+  "unresolved_original_blockers": [
+    {
+      "id": "I1",
+      "topic": "Runner Windows/root boundary",
+      "remaining": "Prove effective interop/automount denial and alternate-path/inherited-descriptor behavior in a separately authorized fixed test. No claim of proven exploit or isolation.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        1,
+        2,
+        6
+      ]
+    },
+    {
+      "id": "I2",
+      "topic": "Collector rights, completeness and attribution",
+      "remaining": "Exact virtual-account rights, loss/protected/lifetime coverage and host/guest CPU ownership/deduplication are unproven. No privilege fallback or complete-coverage override.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        1,
+        5
+      ]
+    },
+    {
+      "id": "I3",
+      "topic": "Enrollment and ACL/API descriptors",
+      "remaining": "Resolve exact operator/service identities and access masks, service/client peer authentication, independently pinned public key and full pre-enrollment guest bootstrap protocol.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        1,
+        6
+      ]
+    },
+    {
+      "id": "I4",
+      "topic": "Fresh image/runtime provenance",
+      "remaining": "Pin image/source/build/entire installed runtime tree and actual new binary/glibc hashes; proposed distribution/path collisions must be checked before creation. Current private digest is historical, not a new-build pin.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        2
+      ]
+    },
+    {
+      "id": "I5",
+      "topic": "Guest policy/unit limits and controlled launcher",
+      "remaining": "Actual polkit/delegation policy unknown; fixed privileged broker unimplemented. Exact memory headroom, CPU/capacity/accounting values and future official adapter require review; current query-process limits prove none of these.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "I6",
+      "topic": "Protected persistence and stop/recovery",
+      "remaining": "Protected anchor publication/rollback handling and independent control path are unimplemented; specify WSL suspension/restart/supervisor-death semantics without implying a real-time guarantee. Bound journal/log growth for the longest window and establish fresh C: state-store space/parent ACLs; no current capacity or durability claim.",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        3,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "I7",
+      "topic": "Route, host and formal authority",
+      "remaining": "No accepted WSL metadata/container/launcher replacement, host verdict, operator window, worker-tier drill or pre-freeze review. This design does not request OD-R2-0(D).",
+      "deployment_blocking": true,
+      "status": "OPEN_RETAINED",
+      "review_does_not_resolve": true,
+      "original_fact_questions": [
+        1,
+        3,
+        5,
+        6
+      ]
+    }
+  ],
+  "preservation": {
+    "previous_evidence_files_checked": 236,
+    "previous_evidence_unchanged": true,
+    "previous_branch_refs_checked": 9,
+    "previous_branch_refs_unchanged": true,
+    "backup_not_accessed": true,
+    "original_design_unchanged": true
+  }
+}
