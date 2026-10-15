@@ -54,6 +54,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import platform as _platform
 import re
@@ -154,8 +155,10 @@ def machine_identity(machine_id_path="/etc/machine-id", dmi_path="/sys/class/dmi
 # ====================================================================== process identity (R2 / N-2 / O-4 semantics)
 def proc_stat(pid: int, text: str | None = None) -> dict | None:
     """Parse /proc/<pid>/stat (``comm`` may contain spaces and parentheses: split at the LAST ')')."""
-    text = _read(f"/proc/{int(pid)}/stat") if text is None else text
-    if not text:
+    if type(pid) is not int or pid <= 0:
+        return None
+    text = _read(f"/proc/{pid}/stat") if text is None else text
+    if not isinstance(text, str) or not text:
         return None
     lp, rp = text.find("("), text.rfind(")")
     if lp < 0 or rp < lp:
@@ -163,8 +166,12 @@ def proc_stat(pid: int, text: str | None = None) -> dict | None:
     try:
         head_pid = int(text[:lp].strip())
         rest = text[rp + 1:].split()
-        return {"pid": head_pid, "comm": text[lp + 1:rp], "state": rest[0], "ppid": int(rest[1]),
-                "utime": int(rest[11]), "stime": int(rest[12]), "starttime": int(rest[19])}
+        record = {"pid": head_pid, "comm": text[lp + 1:rp], "state": rest[0], "ppid": int(rest[1]),
+                  "utime": int(rest[11]), "stime": int(rest[12]), "starttime": int(rest[19])}
+        if head_pid != pid or record["state"] not in ("R", "S", "D", "T", "t", "I", "Z", "X") \
+                or any(record[k] < 0 for k in ("ppid", "utime", "stime", "starttime")):
+            return None
+        return record
     except (ValueError, IndexError):
         return None
 
@@ -204,7 +211,7 @@ def _ident_shape_ok(ident) -> bool:
     if not isinstance(pid, int) or isinstance(pid, bool) or pid <= 0:
         return False
     b = ident.get("boot_id")
-    if b is not None and (not isinstance(b, str) or not _BOOT_ID.match(b)):
+    if b is not None and (not isinstance(b, str) or not _BOOT_ID.fullmatch(b)):
         return False
     for k in ("starttime_ticks", "pidns", "timens"):
         v = ident.get(k)
@@ -227,33 +234,52 @@ def identity_state(ident, *, current_boot: str | None = None, exists=None, stat=
     failed), ``exists``, ``stat``, ``cmd``,
     ``current_ns`` ({"pidns": int|None, "timens": int|None})."""
     if not _ident_shape_ok(ident):
-        return UNKNOWN                                          # P9: a malformed record proves nothing
-    cur = boot_id() if current_boot is None else (current_boot or None)
+        return UNKNOWN
+    cur = boot_id() if current_boot is None else (boot_id(current_boot) if isinstance(current_boot, str) else None)
     if cur is None:
         return UNKNOWN
-    if ident.get("boot_id") and ident["boot_id"] != cur:
+    recorded_boot = ident.get("boot_id")
+    if recorded_boot is not None and (not isinstance(recorded_boot, str) or boot_id(recorded_boot) is None):
+        return UNKNOWN
+    if recorded_boot is not None and boot_id(recorded_boot) != cur:
         return DEAD
     ns = current_ns if current_ns is not None else {"pidns": ns_inode("pid"), "timens": ns_inode("time")}
     for k in ("pidns", "timens"):
         # N8: pid numbers, ESRCH and starttimes mean something only in the recorder's namespaces; an unrecorded or
         # different namespace makes every pid-based reading UNKNOWN (a boot-id change, above, stays positive evidence)
-        if ident.get(k) is None or ns.get(k) != ident[k]:
+        if type(ident.get(k)) is not int or ident[k] <= 0 or not isinstance(ns, dict) \
+                or type(ns.get(k)) is not int or ns.get(k) != ident[k]:
             return UNKNOWN
     pid = ident["pid"]
     ex = (exists or _pid_exists)(pid)
-    if ex is None:
+    if type(ex) is not bool:
         return UNKNOWN
     if ex is False:
         return DEAD
     st = (stat or proc_stat)(pid)
     if st is None:
         return UNKNOWN
+    if not isinstance(st, dict) or type(st.get("pid")) is not int or st["pid"] != pid:
+        return UNKNOWN
     if st.get("state") in ("Z", "X"):
+        return UNKNOWN
+    if st.get("state") not in ("R", "S", "D", "T", "t", "I"):
+        return UNKNOWN
+    if any(type(st.get(k)) is not int or st[k] < 0 for k in ("ppid", "utime", "stime")):
+        return UNKNOWN
+    if type(st.get("starttime")) is not int or st["starttime"] < 0:
+        return UNKNOWN
+    if ident.get("starttime_ticks") is not None and (
+            type(ident["starttime_ticks"]) is not int or ident["starttime_ticks"] < 0):
         return UNKNOWN
     if ident.get("starttime_ticks") is not None and st["starttime"] != ident["starttime_ticks"]:
         return DEAD
     cs = (cmd or cmdline_sha256)(pid)
-    if cs is None:
+    if not isinstance(cs, str) or not re.fullmatch(r"[0-9a-f]{64}", cs):
+        return UNKNOWN
+    recorded_cmd = ident.get("cmdline_sha256")
+    if recorded_cmd is not None and (not isinstance(recorded_cmd, str)
+                                     or not re.fullmatch(r"[0-9a-f]{64}", recorded_cmd)):
         return UNKNOWN
     if ident.get("cmdline_sha256") and cs != ident["cmdline_sha256"]:
         return DEAD
@@ -270,10 +296,22 @@ def clocks() -> dict:
             "realtime_ns": time.clock_gettime_ns(time.CLOCK_REALTIME), "epoch_s": int(time.time())}
 
 
+def _nint(text, *, signed: bool = False) -> int | None:
+    """A bounded ASCII decimal text reading; malformed / unavailable evidence stays unknown."""
+    if not isinstance(text, str):
+        return None
+    t = text.strip()
+    if len(t.lstrip("-")) > 4300 or re.fullmatch(r"-?[0-9]+" if signed else r"[0-9]+", t) is None:
+        return None
+    try:
+        return int(t)
+    except ValueError:                           # includes the interpreter's configured integer-digit limit
+        return None
+
+
 def suspend_success_count(text: str | None = None) -> int | None:
     text = _read("/sys/power/suspend_stats/success") if text is None else text
-    t = (text or "").strip()
-    return int(t) if t.isdigit() else None
+    return _nint(text)
 
 
 def snapshot(*, power_root="/sys/class/power_supply", suspend_text: str | None = None) -> dict:
@@ -288,28 +326,46 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     (AMBIGUOUS only; NOT a pause detector: a hypervisor pause invisible to both guest clocks is silent, D-PAUSE);
     boot-id change; power at EVERY reading; sample spacing. CLEAN only if every channel exists and none fires."""
     reasons = []
+    if not isinstance(start, dict) or not isinstance(end, dict):
+        return {"status": "AMBIGUOUS", "clean": False, "reasons": ["AMBIGUOUS: endpoint record malformed"]}
     seq = [start, *(samples if isinstance(samples, list) else []), end]
+    valid_clocks = all(isinstance(x, dict) and isinstance(x.get("clocks"), dict)
+                       and all(type(x["clocks"].get(k)) is int and x["clocks"][k] >= 0
+                               for k in ("monotonic_ns", "boottime_ns", "realtime_ns")) for x in seq)
+    if not valid_clocks:
+        reasons.append("AMBIGUOUS: clock records must contain nonnegative integer nanoseconds")
     try:
-        c0, c1 = start["clocks"], end["clocks"]
-        dm = c1["monotonic_ns"] - c0["monotonic_ns"]
-        db = c1["boottime_ns"] - c0["boottime_ns"]
-        dr = c1["realtime_ns"] - c0["realtime_ns"]
-        if dm <= 0 or db <= 0:
-            reasons.append("AMBIGUOUS: K' clocks not increasing")
-        else:
-            if db - dm > SLEEP_GAP_TOL_NS:
-                reasons.append(f"CONTAMINATED: K' suspended {(db - dm) // 10 ** 9} s")
-            elif db - dm < -SLEEP_GAP_TOL_NS:
-                reasons.append("AMBIGUOUS: K' monotonic advanced more than boottime")
-            if abs(dr - dm) > SLEEP_GAP_TOL_NS:
-                reasons.append(f"AMBIGUOUS: P wall time diverged from monotonic by {(dr - dm) // 10 ** 6} ms")
+        if not valid_clocks:
+            raise TypeError("invalid clock record")
+        pairs = list(zip(seq, seq[1:]))
+        if len(seq) > 2:
+            pairs.append((start, end))
+        for before, after in pairs:
+            c0, c1 = before["clocks"], after["clocks"]
+            dm = c1["monotonic_ns"] - c0["monotonic_ns"]
+            db = c1["boottime_ns"] - c0["boottime_ns"]
+            dr = c1["realtime_ns"] - c0["realtime_ns"]
+            if dm <= 0 or db <= 0:
+                reasons.append("AMBIGUOUS: K' clocks not increasing")
+            else:
+                if db - dm > SLEEP_GAP_TOL_NS:
+                    reasons.append(f"CONTAMINATED: K' suspended {(db - dm) // 10 ** 9} s")
+                elif db - dm < -SLEEP_GAP_TOL_NS:
+                    reasons.append("AMBIGUOUS: K' monotonic advanced more than boottime")
+                if abs(dr - dm) > SLEEP_GAP_TOL_NS:
+                    reasons.append(f"AMBIGUOUS: P wall time diverged from monotonic by {(dr - dm) // 10 ** 6} ms")
     except (KeyError, TypeError):
         reasons.append("AMBIGUOUS: K'/P clocks absent")
-    s0, s1 = (start or {}).get("suspend_success"), (end or {}).get("suspend_success")
-    if not isinstance(s0, int) or not isinstance(s1, int):
+    counts = [x.get("suspend_success") if isinstance(x, dict) else None for x in seq]
+    if any(type(count) is not int or count < 0 for count in counts):
         reasons.append("AMBIGUOUS: S' suspend_stats absent")
-    elif s0 != s1:
+    elif any(before > after for before, after in zip(counts, counts[1:])):
+        reasons.append("AMBIGUOUS: S' suspend count decreased or reset")
+    elif any(before != after for before, after in zip(counts, counts[1:])):
         reasons.append("CONTAMINATED: S' suspend count changed")
+    if any(not isinstance(x, dict) or type(x.get("suspend_success")) is not int
+           or x["suspend_success"] < 0 for x in seq):
+        reasons.append("AMBIGUOUS: a suspend counter reading is malformed")
     if not JOURNAL_READER_REVIEWED:
         reasons.append("AMBIGUOUS: L' no reviewed journal reader exists (whatever the caller passes, P7)")
     elif not isinstance(journal_suspend_events, list):
@@ -317,7 +373,7 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     elif journal_suspend_events:
         reasons.append(f"CONTAMINATED: L' {len(journal_suspend_events)} suspend entries")
     boots = [x.get("boot_id") if isinstance(x, dict) else None for x in seq]
-    if any(b is None for b in boots):
+    if any(not isinstance(b, str) or boot_id(b) is None for b in boots):
         reasons.append("AMBIGUOUS: a boot_id reading is absent")
     elif len(set(boots)) > 1:
         reasons.append("CONTAMINATED: boot_id changed (reboot)")
@@ -329,6 +385,8 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     if not isinstance(samples, list):
         reasons.append("AMBIGUOUS: samples absent")
     try:
+        if not valid_clocks:
+            raise TypeError("invalid sample clock record")
         ts = [x["clocks"]["monotonic_ns"] for x in seq]
         steps = [b - a for a, b in zip(ts, ts[1:])]
         if any(d < 0 for d in steps):
@@ -384,14 +442,14 @@ def thermal_zones(root="/sys/class/thermal") -> list | None:
         return None
     out = []
     for z in zs:
-        t = (_read(z / "temp") or "").strip()
+        t = _read(z / "temp")
         trips = []
         for tp in sorted(z.glob("trip_point_*_type")):
             k = tp.name[:-len("_type")]
-            tv = (_read(z / f"{k}_temp") or "").strip()
-            trips.append({"type": (_read(tp) or "").strip(), "temp_mC": int(tv) if tv.lstrip("-").isdigit() else None})
+            tv = _read(z / f"{k}_temp")
+            trips.append({"type": (_read(tp) or "").strip(), "temp_mC": _nint(tv, signed=True)})
         out.append({"zone": z.name, "type": (_read(z / "type") or "").strip() or None,
-                    "temp_mC": int(t) if t.lstrip("-").isdigit() else None, "trips": trips})
+                    "temp_mC": _nint(t, signed=True), "trips": trips})
     return out
 
 
@@ -409,10 +467,10 @@ def meminfo(text: str | None = None) -> dict | None:
 
 
 def _cg_val(path):
-    t = (_read(path) or "").strip()
-    if t == "max":
+    text = _read(path)
+    if isinstance(text, str) and text.strip() == "max":
         return "max"
-    return int(t) if t.isdigit() else None
+    return _nint(text)
 
 
 def _proc_cgroup_paths(text: str) -> tuple:
@@ -610,21 +668,36 @@ def proc_view_complete(status_text: str | None = None, mountinfo_text: str | Non
     st = _read("/proc/self/status") if status_text is None else status_text
     mi = _read("/proc/self/mountinfo") if mountinfo_text is None else mountinfo_text
     ino = ns_inode("pid") if pidns == -1 else pidns
-    if not st or not mi or ino is None:
+    if not isinstance(st, str) or not st or not isinstance(mi, str) or not mi or ino is None:
+        return None
+    if type(ino) is not int or ino <= 0:
         return None
     if ino != INIT_PID_NS:
         return False
-    nspid = next((ln.split()[1:] for ln in st.splitlines() if ln.startswith("NSpid:")), None)
-    if nspid is None:
+    nspid_fields = [ln.partition(":")[2].split() for ln in st.splitlines() if ln.startswith("NSpid:")]
+    if len(nspid_fields) != 1:
         return None
+    nspid = nspid_fields[0]
     if len(nspid) > 1:
         return False
-    for ln in mi.splitlines():
-        f = ln.split()
-        if len(f) > 4 and f[4] == "/proc":
-            opts = " ".join(f[5:])
-            return not ("hidepid=" in opts or "subset=" in opts)
-    return None
+    if len(nspid) != 1 or not re.fullmatch(r"0*[1-9][0-9]*", nspid[0]):
+        return None
+    candidates = [ln.split() for ln in mi.splitlines() if len(ln.split()) > 4 and ln.split()[4] == "/proc"]
+    if not candidates:
+        return None
+    if len(candidates) != 1:
+        return False
+    f = candidates[0]
+    if not re.fullmatch(r"0*[1-9][0-9]*", f[0]) or not re.fullmatch(r"0*[1-9][0-9]*", f[1]) \
+            or not re.fullmatch(r"[0-9]+:[0-9]+", f[2]):
+        return None
+    if "-" not in f:
+        return None
+    separator = f.index("-")
+    if separator < 6 or len(f) < separator + 4 or f[3] != "/" or f[separator + 1] != "proc":
+        return False
+    opts = " ".join(f[5:])
+    return not ("hidepid=" in opts or "subset=" in opts)
 
 
 def cpu_ticks(proc_root="/proc") -> dict | None:
@@ -657,26 +730,58 @@ def busy_processes(t0: dict | None, t1: dict | None, dt_s: float, threshold_pct:
     absent from t0 (born in the window, or a reused pid) is charged ALL its ticks to the window. ``own`` (the campaign
     tree) is a set of (pid, starttime) keys (N7); a child is exempt only if its parent key is in ``own`` and it started
     no earlier than that parent. Pid 0 / 1 may not be in ``own``. Nothing is allowed by name or path (D-ALLOW-PATHS).
-    None (no reading) if a snapshot is missing, dt <= 0, ``own`` is malformed or unsafe, or a FRESH proc_view_complete()
-    reading is not True (G6: the view is read here, never assumed by a default)."""
-    if t0 is None or t1 is None or dt_s <= 0 or proc_view_complete() is not True:
+    None (no reading) if a snapshot is missing, dt <= 0, ``own`` is malformed or unsafe, or a FRESH
+    proc_view_complete() reading is not True (G6: the view is read here, never assumed by a default)."""
+    if not isinstance(t0, dict) or not isinstance(t1, dict) or not isinstance(dt_s, (int, float)) \
+            or isinstance(dt_s, bool) or abs(dt_s) > sys.float_info.max or not math.isfinite(dt_s) \
+            or dt_s <= 0 or proc_view_complete() is not True:
+        return None
+    if not isinstance(threshold_pct, (int, float)) or isinstance(threshold_pct, bool) \
+            or abs(threshold_pct) > sys.float_info.max or not math.isfinite(threshold_pct) or threshold_pct < 0:
         return None
     if not isinstance(own, (set, frozenset)) or not all(isinstance(k, tuple) and len(k) == 2 for k in own) \
             or any(k[0] in (0, 1) for k in own):
         return None
-    hz = hz or os.sysconf("SC_CLK_TCK")
+    hz = os.sysconf("SC_CLK_TCK") if hz is None else hz
+    if type(hz) is not int or hz <= 0:
+        return None
+    def valid_key(key):
+        return isinstance(key, tuple) and len(key) == 2 and type(key[0]) is int and key[0] > 0 \
+            and type(key[1]) is int and key[1] >= 0
+    if not all(valid_key(key) for key in own) or len({key[0] for key in own}) != len(own):
+        return None
+    for snapshot in (t0, t1):
+        for key, record in snapshot.items():
+            if not valid_key(key) or not isinstance(record, (list, tuple)) or len(record) != 4:
+                return None
+            if type(record[0]) is not int or record[0] < 0 or type(record[1]) is not int or record[1] < 0:
+                return None
+        if len({key[0] for key in snapshot}) != len(snapshot):
+            return None
+    if any(t1[key][1] < t0[key][1] for key in t0.keys() & t1.keys()):
+        return None
     own_start = {pid: start for pid, start in own}
+    def owned(key, ppid, snapshot):
+        return key in own or (ppid in own_start and (ppid, own_start[ppid]) in snapshot
+                              and key[1] >= own_start[ppid])
     out = []
     for (pid, start), (ppid, ticks1, comm, exe) in t1.items():
-        if (pid, start) in own or (ppid in own_start and start >= own_start[ppid]):
+        if owned((pid, start), ppid, t1):
             continue
         prev = t0.get((pid, start))
         used = ticks1 - prev[1] if prev is not None else ticks1
-        pct = 100.0 * used / hz / dt_s
+        if used < 0:
+            return None
+        try:
+            pct = 100.0 * used / hz / dt_s
+        except OverflowError:
+            return None
+        if not math.isfinite(pct):
+            return None
         if pct > threshold_pct:
             out.append({"pid": pid, "comm": comm, "exe": exe, "pct": round(pct, 1), "born_in_window": prev is None})
     for (pid, start), (ppid, _t, comm, exe) in t0.items():
-        if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start and start >= own_start[ppid]):
+        if (pid, start) not in t1 and not owned((pid, start), ppid, t0):
             out.append({"pid": pid, "comm": comm, "exe": exe, "pct": None, "exited_in_window": True})
     return out
 
@@ -736,12 +841,14 @@ def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
 
     With systemd as PID 1: True if ``systemctl is-active`` reports active / activating / reloading (a disabled unit
     can still be running, pulled in by another unit), or ``is-enabled`` reports enabled, enabled-runtime, static,
-    indirect, alias, linked or linked-runtime; False if is-enabled reports disabled / masked / masked-runtime, or
-    not-found with no unit file in any root; None otherwise (a failed query is never 'disabled').
+    indirect, alias, linked or linked-runtime; False only with recognized inactive / failed activity plus disabled /
+    masked / masked-runtime, or not-found with no unit file in any root; None otherwise (a failed query is never
+    'disabled').
     Without systemd: from every root of the unit search path: masked (a link to /dev/null) False; an entry for the unit
     in any ``*.wants`` / ``*.requires`` directory, even a dangling link (systemd adds the dependency by link name),
     True; otherwise False; an unreadable root None."""
-    if systemd_is_pid1() is True:
+    supervisor = systemd_is_pid1()
+    if supervisor is True:
         act = _systemctl_is_active(unit)
         if act in ("active", "activating", "reloading"):
             return True
@@ -749,9 +856,13 @@ def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
         if st in ("enabled", "enabled-runtime", "static", "indirect", "alias", "linked", "linked-runtime"):
             return True
         if st in ("disabled", "masked", "masked-runtime"):
-            return False
+            return False if act in ("inactive", "failed") else None
         if st == "not-found":
+            if act not in ("inactive", "failed"):
+                return None
             return False if _unit_files(unit, unit_roots) is False else None
+        return None
+    if supervisor is not False:
         return None
     for root in unit_roots:
         r = Path(root)
@@ -1035,7 +1146,7 @@ def _git(repo_root, *args) -> bytes | None:
     try:
         r = subprocess.run(["git", "-C", str(repo_root), *args], capture_output=True, timeout=60,
                            stdin=subprocess.DEVNULL)
-    except (OSError, subprocess.SubprocessError):
+    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
         return None
     return r.stdout if r.returncode == 0 else None
 
@@ -1050,13 +1161,29 @@ def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
     """``later`` is a strict descendant of ``earlier`` on HEAD's history."""
     if not earlier or not later or earlier == later:
         return False
-    r = subprocess.run(["git", "-C", str(repo_root), "merge-base", "--is-ancestor", earlier, later],
-                       capture_output=True, timeout=60, stdin=subprocess.DEVNULL)
+    try:
+        r = subprocess.run(["git", "-C", str(repo_root), "merge-base", "--is-ancestor", earlier, later],
+                           capture_output=True, timeout=60, stdin=subprocess.DEVNULL)
+    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
+        return False
     return r.returncode == 0
 
 
 _VERDICT = re.compile(r"^\s*verdict\s*:", re.I)
 _NEGATIVE = re.compile(r"reject|withdraw|not[ _-]?accepted|revoke", re.I)
+
+
+def _review_paths(data: bytes | None) -> list | None:
+    """Git -z names are whole paths, never quoted or split on tab/newline; bad evidence refuses verification."""
+    if not isinstance(data, bytes) or (data and not data.endswith(b"\0")):
+        return None
+    if not data:
+        return []
+    try:
+        paths = [path.decode("utf-8", errors="strict") for path in data[:-1].split(b"\0")]
+    except UnicodeDecodeError:
+        return None
+    return paths if all(paths) else None
 
 
 def _acceptances(repo_root, sha: str) -> tuple:
@@ -1065,21 +1192,32 @@ def _acceptances(repo_root, sha: str) -> tuple:
     exact line ``HOST_ATTESTATION_ACCEPTED sha256=<sha>`` and exactly ONE verdict line (case-insensitive ``VERDICT:``),
     which is ACCEPTANCE_VERDICT_LINE. Any committed file anywhere under the review directory (recursively) that names
     the sha and carries a negative word (reject, withdraw, not accepted, revoke; case-insensitive) rejects it.
-    Returns (accepting paths, rejecting paths)."""
-    tree = _git(repo_root, "ls-tree", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/")
-    every = _git(repo_root, "ls-tree", "-r", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)
-    acc, rej = [], []
-    for path in (every or b"").decode(errors="replace").splitlines():
-        lines = [ln.rstrip("\r") for ln in ((_git(repo_root, "show", f"HEAD:{path}") or b"")
-                                               .decode(errors="replace").split("\n"))]
+    Returns (accepting paths, rejecting paths). Unavailable or unrecognized review evidence returns no acceptances
+    and an explicit unavailable-evidence sentinel in the rejecting list; it can never establish verification.
+    """
+    tree = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))
+    every = _review_paths(_git(repo_root, "ls-tree", "-r", "-z", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR))
+    if tree is None or every is None:
+        return [], ["UNAVAILABLE: acceptance review listing unreadable or malformed"]
+    acc, rej, records = [], [], {}
+    for path in every:
+        data = _git(repo_root, "show", f"HEAD:{path}")
+        if data is None:
+            return [], [f"UNAVAILABLE: review blob unreadable: {path}"]
+        try:
+            lines = [ln.rstrip("\r") for ln in data.decode("utf-8", errors="strict").split("\n")]
+        except UnicodeDecodeError:
+            return [], [f"UNAVAILABLE: review blob is not UTF-8: {path}"]
+        records[path] = lines
         if any(sha in ln for ln in lines) and any(_NEGATIVE.search(ln) for ln in lines):
             rej.append(path)
-    for path in (tree or b"").decode(errors="replace").splitlines():
+    for path in tree:
         name = Path(path).name
         if not (name.startswith(ACCEPTANCE_REVIEW_PREFIX) and name.endswith(".md")) or path in rej:
             continue
-        lines = [ln.rstrip("\r") for ln in ((_git(repo_root, "show", f"HEAD:{path}") or b"")
-                                               .decode(errors="replace").split("\n"))]
+        if path not in records:
+            return [], [f"UNAVAILABLE: accepting review absent from recursive listing: {path}"]
+        lines = records[path]
         verdicts = [ln for ln in lines if _VERDICT.match(ln)]
         if f"{ACCEPTANCE_LINE}{sha}" in lines and verdicts == [ACCEPTANCE_VERDICT_LINE]:
             acc.append(path)
@@ -1100,6 +1238,11 @@ def _ordered(repo_root, att_path: str, acc_path: str, sha: str) -> bool:
     return _strictly_after(repo_root, att_commit, line_commit)
 
 
+def _repository_root() -> Path:
+    """Canonical repository containing this development platform; a private reader seam for synthetic tests."""
+    return Path(__file__).resolve().parents[5]
+
+
 def attestation_valid(ref, *, repo_root=None) -> tuple:
     """(record or None, reasons). ``ref`` = exactly {"path", "sha256"}; every fact is read from committed files, none
     from the caller. Valid only if: the file is committed at HEAD with that sha256; it is JSON with schema
@@ -1113,8 +1256,10 @@ def attestation_valid(ref, *, repo_root=None) -> tuple:
     path, want = ref["path"], ref["sha256"]
     if not isinstance(path, str) or not isinstance(want, str) or not re.fullmatch(r"[0-9a-f]{64}", want):
         return None, ["malformed reference"]
-    base = Path(repo_root) if repo_root else Path(__file__).resolve().parents[5]
+    base = Path(repo_root) if repo_root else _repository_root()
     data = _git(base, "show", f"HEAD:{path}")
+    if data is None:
+        return None, ["attestation not committed at HEAD"]
     if _sha(data) != want:
         return None, ["attestation not committed at HEAD, or sha256 mismatch"]
     try:

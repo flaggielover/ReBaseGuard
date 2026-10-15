@@ -339,13 +339,10 @@ class TestAssess(unittest.TestCase):
         a, b, s, j = self.clean_case()
         self.assertEqual(L.assess(a, b, None, j)["status"], "AMBIGUOUS")
 
-    def test_live_host_is_never_clean(self):
-        """N13: with a well-formed (empty) journal list, this Cloud VM is still never CLEAN (no suspend_stats, no
-        power supply), so a regression in those channels is detectable."""
-        snap0 = L.snapshot()
-        if snap0["power"] not in (None, "ABSENT") and snap0["suspend_success"] is not None:
-            self.skipTest("host exposes power and suspend_stats: a CLEAN interval is legitimate here (P10)")
-        r = L.assess(snap0, L.snapshot(), [], [])
+    def test_absent_host_channels_are_never_clean(self):
+        """An absent power/counter fixture is ambiguous on every runner, without a host-dependent skip."""
+        a, b, _, _ = self.clean_case()
+        r = L.assess(dict(a, power="ABSENT", suspend_success=None), b, [], [])
         self.assertNotEqual(r["status"], "CLEAN")
 
 
@@ -523,6 +520,7 @@ class TestMemory(unittest.TestCase):
                               "x/y/pids.max": "max\n", "x/cpu.max": "200000 100000\n", "x/pids.max": "512\n"})
             r = L.cgroup_resources("0::/x/y\n", d)
             rows = {row["path"]: row for row in r["v2"]}
+            self.assertEqual(set(rows), {"/x/y", "/x", "/"})                    # Y09: ancestry is the property
             self.assertEqual((rows["/x/y"]["cpu.max"], rows["/x"]["cpu.max"], rows["/x"]["pids.max"]),
                              ("max 100000", "200000 100000", "512"))
             self.assertIsNone(rows["/"]["cpu.max"])                                     # unreadable stays None
@@ -575,8 +573,11 @@ class TestBusy(unittest.TestCase):
         t0 = {(41, 1): (99, 0, "old_exited", None)}
         out = L.busy_processes(t0, {}, 5.0, 25, own={(99, 50)}, hz=100)
         self.assertEqual([o["comm"] for o in out], ["old_exited"])
-        self.assertEqual(L.busy_processes({(42, 60): (99, 0, "own_child", None)}, {}, 5.0, 25, own={(99, 50)}, hz=100),
-                         [])
+        unobserved = {(42, 60): (99, 0, "unobserved_parent", None)}
+        self.assertEqual([o["comm"] for o in L.busy_processes(unobserved, {}, 5.0, 25, own={(99, 50)}, hz=100)],
+                         ["unobserved_parent"])
+        observed = {(42, 60): (99, 0, "own_child", None), (99, 50): (1, 0, "campaign", None)}
+        self.assertEqual(L.busy_processes(observed, {}, 5.0, 25, own={(99, 50)}, hz=100), [])
 
     def test_no_reading_or_unsafe_inputs_fail_closed(self):
         self.assertIsNone(L.busy_processes(None, {}, 5, 25, set()))
@@ -631,6 +632,14 @@ class TestBusy(unittest.TestCase):
 
 # ====================================================================== updates, launch context
 class TestUpdatesLaunch(unittest.TestCase):
+    def setUp(self):
+        """File-mode fixtures have a known non-systemd supervisor; systemctl cases override it explicitly."""
+        self._supervisor = patched(systemd_is_pid1=lambda *a, **k: False)
+        self._supervisor.__enter__()
+
+    def tearDown(self):
+        self._supervisor.__exit__()
+
     def settings(self, dump, **mk):
         d = tempfile.mkdtemp()
         root = Path(d, "units")
@@ -769,7 +778,7 @@ class TestUpdatesLaunch(unittest.TestCase):
             args.update(kw)
             self.assertFalse(L.launched_by_systemd(**args)["pass"], kw)
 
-    def test_live_host_not_launched(self):
+    def test_known_nonsystemd_context_not_launched(self):
         self.assertFalse(L.launched_by_systemd()["pass"])
 
 
@@ -888,17 +897,11 @@ class TestPins(unittest.TestCase):
             self.assertIn(next(iter(bad)), L.pin_mismatches(pins, pins), bad)
         self.assertIsNone(L.mapped_objects("7f00-7f01 r-xp 0 08:01 1 /nonexistent/libx.so.1\n"))
 
-    def test_r1_recorded_kernel_is_not_this_hosts(self):
-        """N13 (renamed and sharpened): the kernel the 2026-10-04 inventory recorded is not this host's, so a pin set
-        taken there fails here on that key."""
-        inv = json.loads((HERE.parents[2] / "governance" / "new_host_route_cloud_r1" /
-                          "CLOUD_HOST_INVENTORY.json").read_text())
-        r1_kernel = inv["platform"]["kernel"].split()[1]
+    def test_changed_kernel_never_matches_the_recorded_pin(self):
+        """A changed kernel pin fails on every runner, without a host-dependent skip or inventory input."""
         got = L.platform_readings()
-        if r1_kernel == got["kernel_release"]:
-            self.skipTest("this host runs the r1 kernel (P10: host-dependent)")
-        self.assertNotEqual(r1_kernel, got["kernel_release"])
-        self.assertIn("kernel_release", L.pin_mismatches(dict(got, kernel_release=r1_kernel), got))
+        different = got["kernel_release"] + "-synthetic-changed"
+        self.assertIn("kernel_release", L.pin_mismatches(dict(got, kernel_release=different), got))
 
     def test_required_members_and_pin_point(self):
         """N11: a mapped set without libm / libc / the loader is not a pin; pin_point imports a fixed list first."""
@@ -1067,6 +1070,26 @@ class TestAttestationPreflight(unittest.TestCase):
                 self.assertIn("sha256 mismatch", " ".join(why))
                 self.assertIsNotNone(L.attestation_valid({"path": "att/ACCEPTED.json", "sha256": x}, repo_root=d)[0])
 
+    def test_reference_rejects_extra_fields_even_if_otherwise_valid(self):
+        """N04: exact reference schema refuses extra assertions on a genuinely accepted committed blob."""
+        att = self.attestation()
+        ref = {"path": "att/HOST.json", "sha256": hashlib.sha256(att).hexdigest(), "accepted": True}
+        rec, why = self.check(att, ref=ref)
+        self.assertIsNone(rec)
+        self.assertIn("reference must be exactly", " ".join(why))
+
+    def test_absent_blob_is_refused_before_hash_or_json(self):
+        """CDEX17: missing committed bytes never reach hashing; this is separate from M25's valid mismatch."""
+        hashed = []
+        def spy_sha(data):
+            hashed.append(data)
+            return "0" * 64
+        with patched(_git=lambda *a: None, _sha=spy_sha):
+            rec, why = L.attestation_valid({"path": "att/ABSENT.json", "sha256": "a" * 64}, repo_root=".")
+        self.assertIsNone(rec)
+        self.assertEqual(hashed, [])
+        self.assertIn("not committed at HEAD", " ".join(why))
+
     def test_uncommitted_edit_is_not_the_record(self):
         with tempfile.TemporaryDirectory() as d:
             subprocess.run(["git", "init", "-q", d], check=True)
@@ -1177,11 +1200,13 @@ class TestAttestationPreflight(unittest.TestCase):
 
     def test_launch_gate_uses_a_fresh_reading(self):
         """P6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it."""
-        self.assertEqual(self.gates()["launched_by_systemd"], L.PASS)
-        self.assertEqual(self.gates(launched=self.launch())["launched_by_systemd"], L.PASS)
-        self.assertEqual(self.gates(launched=self.launch(invocation_id="zzz"))["launched_by_systemd"], L.FAIL)
+        gates = self.gates()
+        self.assertIn("launched_by_systemd", gates)                             # M29: required execute gate
+        self.assertEqual(gates.get("launched_by_systemd"), L.PASS)
+        self.assertEqual(self.gates(launched=self.launch()).get("launched_by_systemd"), L.PASS)
+        self.assertEqual(self.gates(launched=self.launch(invocation_id="zzz")).get("launched_by_systemd"), L.FAIL)
         not_launched = {"systemd_pid1": False, "unit": None, "invocation_id": None, "systemctl": None, "pass": False}
-        self.assertEqual(self.gates(launched=self.launch(), fresh=not_launched)["launched_by_systemd"], L.FAIL)  # P08
+        self.assertEqual(self.gates(launched=self.launch(), fresh=not_launched).get("launched_by_systemd"), L.FAIL)  # P08
         for bad_fresh in ({"pass": True}, self.launch(systemd_pid1=None),
                           self.launch(unit="rebaseguard-mbs308-x.scope"),
                           self.launch(unit="other.service"), self.launch(invocation_id=""),
@@ -1189,9 +1214,11 @@ class TestAttestationPreflight(unittest.TestCase):
                           self.launch(systemctl={"MainPID": float(os.getpid()), "InvocationID": "abc"}),
                           self.launch(systemctl={"MainPID": os.getpid(), "InvocationID": "zzz"}),
                           self.launch(**{"pass": 1})):
-            self.assertEqual(self.gates(fresh=bad_fresh)["launched_by_systemd"], L.FAIL, bad_fresh)
+            self.assertEqual(self.gates(fresh=bad_fresh).get("launched_by_systemd"), L.FAIL, bad_fresh)
         self.assertNotIn("launched_by_systemd", self.gates(mode="launcher_preflight"))
-        self.assertEqual(self.gates(mode="launcher_preflight", launched=True)["launched_by_systemd"], L.FAIL)
+        gates = self.gates(mode="launcher_preflight", launched=True)
+        self.assertIn("launched_by_systemd", gates)                             # Z09: supplied record is checked
+        self.assertEqual(gates.get("launched_by_systemd"), L.FAIL)
         with self.assertRaises(ValueError):
             L.preflight("/", mode=None, other_job_running=False, launched=None, attestation_ref=None)
 
@@ -1199,7 +1226,7 @@ class TestAttestationPreflight(unittest.TestCase):
         r = L.preflight("/", mode="execute", other_job_running=False, launched=None, attestation_ref=None)
         self.assertFalse(r["pass"])
         if L.launched_by_systemd()["pass"] is not True:
-            self.assertEqual(r["gates"]["launched_by_systemd"], L.FAIL)
+            self.assertEqual(r["gates"].get("launched_by_systemd"), L.FAIL)
         self.assertEqual(r["gates"]["host_lifetime_attested"], L.OPEN_DECISION)
 
 

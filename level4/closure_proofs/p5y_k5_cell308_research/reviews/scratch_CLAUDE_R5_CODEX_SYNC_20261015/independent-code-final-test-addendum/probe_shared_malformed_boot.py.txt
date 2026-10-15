@@ -1,0 +1,11 @@
+from probe_safety import *
+
+def snap(seconds):
+    ns=seconds*10**9
+    return {'clocks':{'monotonic_ns':ns,'boottime_ns':ns,'realtime_ns':ns},'suspend_success':7,'boot_id':'malformed-boot','power':L.AC}
+with guards(),mock.patch.object(L,'JOURNAL_READER_REVIEWED',True):
+    result=L.assess(snap(0),snap(30),[snap(10),snap(20)],[])
+assert result=={'status':'AMBIGUOUS','clean':False,'reasons':['AMBIGUOUS: a boot_id reading is absent']},result
+assert DENIED==[],DENIED
+(OUT/'shared_malformed_boot_probe.json').write_text(json.dumps({'result':result,'all_boot_values_identical':True,'other_channels_valid':True,'unexpected_host_access_attempts':DENIED},indent=2)+'\n')
+print(json.dumps(result,indent=2))
