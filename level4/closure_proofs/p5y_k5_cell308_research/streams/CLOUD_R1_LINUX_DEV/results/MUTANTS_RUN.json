@@ -1,13 +1,14 @@
 {
- "lx_platform_sha256": "90362161c5e57279f9e76ba58c054f790304a2f28b4456bf0ff6cecbbf5f145f",
- "tests_sha256": "e48a94b0a636aa0c5dfe59bd0d6ea812ae94104ab8eb2f1c889182bbc176fe9d",
+ "lx_platform_sha256": "8ccddf8531716fc2bc1c96a70f7b29c547586fcc74099adfcb7320fd8dea7169",
+ "tests_sha256": "2002dc8d996100afc24fc29a973225e0f1013bb579122976df770e43d0f264e8",
  "unmutated_suite": "PASS",
  "unmutated_tail": "OK",
- "killed": 89,
- "total": 89,
+ "killed": 113,
+ "total": 113,
  "reviewer_mutants_killed": 10,
  "review60_mutants_killed": 9,
  "review61_mutants_killed": 9,
+ "review62_mutants_killed": 11,
  "mutants": [
   {
    "id": "M01",
@@ -455,9 +456,9 @@
   },
   {
    "id": "P01",
-   "property": "acceptance committed with the attestation accepted",
+   "property": "acceptance committed with the attestation accepted (no order check)",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (failures=2)"
   },
   {
    "id": "P02",
@@ -527,9 +528,9 @@
   },
   {
    "id": "P13",
-   "property": "only the first unit root searched",
+   "property": "only the first unit root searched (file mode)",
    "status": "KILLED",
-   "suite_tail": "FAILED (failures=1)"
+   "suite_tail": "FAILED (failures=2)"
   },
   {
    "id": "P14",
@@ -540,6 +541,150 @@
   {
    "id": "P15",
    "property": "empty pin-point list accepted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Z01",
+   "property": "a rejecting review counts only if the negative word is on the same line as the sha",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Z02",
+   "property": "update units enabled through a *.requires link are not seen",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Z03",
+   "property": "systemctl is-enabled: enabled-runtime / indirect / alias / linked read as disabled",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Z04",
+   "property": "a missing unit root ends the search (later roots never read)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Z05",
+   "property": "accepting line's first commit looked up by path only (a git mv into the set resets it)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Z06",
+   "property": "accepting line in the same commit as the attested blob counts as later",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=2)"
+  },
+  {
+   "id": "Z07",
+   "property": "a failed systemctl query (empty stdout) reads as 'disabled'",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Z08",
+   "property": "only an UNREADABLE cgroup namespace blocks root attestation (a non-initial one passes)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Z09",
+   "property": "launch gate evaluated only for execute / resume (a record passed in launcher mode is ignored)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (errors=1)"
+  },
+  {
+   "id": "Z10",
+   "property": "an unreadable /proc view (None) treated as complete",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Z11",
+   "property": "a bool starttime in a record passes the shape check",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q01",
+   "property": "negative scan not recursive (a rejection in a review subdirectory ignored)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q02",
+   "property": "accepting set recursive (reviewer scratch can accept)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q03",
+   "property": "negative words matched case-sensitively",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q04",
+   "property": "a second (conflicting) verdict line tolerated",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q05",
+   "property": "accepting file suffix not required",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q06",
+   "property": "attested commit found by path, not by blob (placeholder attestation filled later)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q07",
+   "property": "systemctl is-active not consulted (a running but disabled update unit reads as off)",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q08",
+   "property": "is-enabled not-found read as disabled without checking the unit files",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q09",
+   "property": "dangling .wants / .requires link not counted",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q10",
+   "property": "preflight power reading replaced by a constant AC",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q11",
+   "property": "preflight free-disk reading replaced by a constant",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q12",
+   "property": "transient / generator roots dropped from the unit search path",
+   "status": "KILLED",
+   "suite_tail": "FAILED (failures=1)"
+  },
+  {
+   "id": "Q13",
+   "property": "host_exclusive reports only its first open decision",
    "status": "KILLED",
    "suite_tail": "FAILED (failures=1)"
   }
