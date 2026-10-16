@@ -1,0 +1,64 @@
+{
+  "completeness": "complete",
+  "deferred": [],
+  "documentType": "codex-security.coverage",
+  "excludePaths": [],
+  "explicitExclusions": [],
+  "includePaths": [
+    "."
+  ],
+  "inventoryStrategy": "diff",
+  "mode": "branch_diff",
+  "openQuestions": [],
+  "resolvedDeferred": [
+    {
+      "id": "full-static-review",
+      "reason": "All47 immutable changed files and all27 canonical inventory items reviewed;46 manifest entries verified; fresh-context architecture reconciled; all3 candidates validated,1 reportable attack path completed,2 security candidates suppressed with concrete readiness defects preserved. No in-scope review work remains."
+    }
+  ],
+  "scanId": "2b0afe33-d593-4325-95db-5a2313e50159",
+  "schemaVersion": "1.0",
+  "surfaces": [
+    {
+      "candidateId": "candidate-09ac43da6bd341ec",
+      "disposition": "rejected",
+      "id": "candidate-09ac43da6bd341ec",
+      "label": "Fixed-name ETW cleanup ownership candidate",
+      "notes": "Rejected only as a security vulnerability: no lower-trust session-creation authority established. Confirmed execution-readiness defect remains: no successful per-run creation receipt and Stop(0) can adopt a matching competing session.",
+      "receiptRefs": []
+    },
+    {
+      "candidateId": "candidate-d7b9e361643dd85d",
+      "disposition": "rejected",
+      "id": "candidate-d7b9e361643dd85d",
+      "label": "Fixture descendant cleanup accounting candidate",
+      "notes": "Rejected only as a security vulnerability: fixture is fixed200-ms work with no attacker input. Confirmed readiness/evidence defect remains: external owned_helpers_exited omits descendants after controller failure.",
+      "receiptRefs": []
+    },
+    {
+      "disposition": "reported",
+      "id": "i2-windows",
+      "label": "Windows elevated I2 harness and ETW capture",
+      "notes": "All source reviewed. Elevated writable-script finding; fixed-name cleanup and fixture descendant evidence defects retained as readiness blockers. Token, ABI, loss, deadlines, ACL/collision and evidence claims inspected.",
+      "receiptRefs": [
+        "artifacts/01_context/supplied-execution-path-acls.json"
+      ]
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "guest-primitives",
+      "label": "Guest owned-instance and guardian primitives",
+      "notes": "All three files reviewed, generation/pidfd/cgroup/FIFO/timeout/cleanup paths inspected. Future root broker and deployment remain absent and cannot be accepted.",
+      "receiptRefs": []
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "provenance",
+      "label": "Build scripts and all retained provenance records",
+      "notes": "Six preparation scripts plus all changed records reviewed.47 files total,27 canonical items.46/46 manifest hashes and sizes match. PowerShell version filename mismatch and partial prior-review export recorded.",
+      "receiptRefs": [
+        "artifacts/01_context/static-artifact-checks.json"
+      ]
+    }
+  ]
+}

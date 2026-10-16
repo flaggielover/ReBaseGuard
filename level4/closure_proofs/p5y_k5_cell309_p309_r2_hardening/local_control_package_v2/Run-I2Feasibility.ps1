@@ -1,0 +1,126 @@
+param([Parameter(Mandatory=$true)][byte[]]$ApprovalBytes,
+      [Parameter(Mandatory=$true)][string]$VerifiedHarnessSha256)
+$ErrorActionPreference='Stop'
+Set-StrictMode -Version Latest
+# Execute only the already-hashed in-memory ScriptBlock, through the approved
+# EncodedCommand. Never elevate this mutable file path or adjacent pin files.
+if($PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSVersion.Minor -ne 1) {throw 'Windows PowerShell 5.1 required'}
+$root='C:\ProgramData\ReBaseGuardP309-I2-Feasibility-v2'
+$candidate='D:\ReBaseGuard-309\records\p309-local-control-package-preparation-20261016-01\i2-repair-v2\EtwCapture-v2.exe'
+$binarySha256='416700022cb57e76e54735c8486a8bd2b90663966727c28af27fc9830d8114ad'
+function Hash-Bytes([byte[]]$bytes) {
+    $hash=[Security.Cryptography.SHA256]::Create()
+    try { [BitConverter]::ToString($hash.ComputeHash($bytes)).Replace('-','').ToLowerInvariant() } finally {$hash.Dispose()}
+}
+$approval=[Text.Encoding]::UTF8.GetString($ApprovalBytes) | ConvertFrom-Json
+if($approval.scope -cne 'P309_I2_SINGLE_NATIVE_FEASIBILITY_V2' -or $approval.capture_count -ne 1 -or
+   $approval.binary_sha256 -cne $binarySha256 -or $approval.harness_sha256 -cne $VerifiedHarnessSha256 -or
+   [string]::IsNullOrWhiteSpace($approval.human_message_reference)) {throw 'approval binding refused'}
+$identity=[Security.Principal.WindowsIdentity]::GetCurrent()
+if(-not ([Security.Principal.WindowsPrincipal]::new($identity)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {throw 'explicit UAC-approved entry required'}
+$bytes=[IO.File]::ReadAllBytes($candidate)
+if((Hash-Bytes $bytes) -cne $binarySha256) {throw 'binary changed'}
+if(([IO.DriveInfo]::new('C')).AvailableFreeSpace -lt 1GB) {throw 'insufficient evidence space'}
+if([IO.Directory]::Exists($root) -or [IO.File]::Exists($root)) {throw 'root collision; never adopt'}
+foreach($parent in @('C:\','C:\ProgramData')) {
+    if(([IO.File]::GetAttributes($parent) -band [IO.FileAttributes]::ReparsePoint) -ne 0) {throw 'reparse parent'}
+}
+$parentPins=@{
+    'C:\'='O:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464G:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464D:PAI(A;;LC;;;AU)(A;OICIIO;SDGXGWGR;;;AU)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;BU)(A;;0x1000a1;;;S-1-15-3-65536-1888954469-739942743-1668119174-2468466756-4239452838-1296943325-355587736-700089176)'
+    'C:\ProgramData'='O:SYG:SYD:PAI(A;OICIIO;GA;;;CO)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;BU)(A;CI;DCLCRPCR;;;BU)'
+}
+foreach($parent in $parentPins.Keys) {
+    $security=[IO.DirectoryInfo]::new($parent).GetAccessControl()
+    if($security.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]'Owner,Group,Access') -cne $parentPins[$parent]) {throw 'system parent ACL changed; no capture'}
+}
+$admins=[Security.Principal.SecurityIdentifier]::new('S-1-5-32-544')
+$system=[Security.Principal.SecurityIdentifier]::new('S-1-5-18')
+$acl=[Security.AccessControl.DirectorySecurity]::new()
+$acl.SetAccessRuleProtection($true,$false);$acl.SetOwner($admins)
+$inherit=[Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit'
+foreach($sid in @($admins,$system)) {
+    $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new($sid,'FullControl',$inherit,'None','Allow'))
+}
+$acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new($identity.User,'ReadAndExecute',$inherit,'None','Allow'))
+# Framework CreateDirectory supplies the security descriptor at creation; it
+# never resets an existing directory's ACL. A raced user-created directory cannot
+# set its owner to BUILTIN\Administrators. Reject it before writing any content.
+$directory=[IO.Directory]::CreateDirectory($root,$acl)
+$check=$directory.GetAccessControl()
+if($check.GetOwner([Security.Principal.SecurityIdentifier]).Value -cne $admins.Value -or
+   -not $check.AreAccessRulesProtected -or
+   $check.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access) -cne
+      $acl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Access) -or
+   ($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {throw 'fresh root security differs'}
+function Write-New([string]$name,[byte[]]$content) {
+    $f=[IO.FileStream]::new((Join-Path $root $name),[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read)
+    try {$f.Write($content,0,$content.Length);$f.Flush($true)} finally {$f.Dispose()}
+}
+function Write-Json([string]$name,$value) {Write-New $name ([Text.Encoding]::UTF8.GetBytes(($value | ConvertTo-Json -Depth 10)))}
+Write-New 'EtwCapture.exe' $bytes
+Write-New 'approval-used.json' $ApprovalBytes
+Write-Json 'preflight.json' ([ordered]@{utc=[DateTime]::UtcNow.ToString('o');root_sddl=$check.Sddl;harness_sha256=$VerifiedHarnessSha256;binary_sha256=$binarySha256;scope=$approval.scope;admission='BLOCKED'})
+
+function Start-Owned([string]$mode,[string]$label) {
+    $psi=[Diagnostics.ProcessStartInfo]::new()
+    $psi.FileName=Join-Path $root 'EtwCapture.exe';$psi.Arguments=$mode
+    $psi.UseShellExecute=$false;$psi.CreateNoWindow=$true;$psi.WorkingDirectory=$root
+    $psi.RedirectStandardOutput=$true;$psi.RedirectStandardError=$true
+    $psi.EnvironmentVariables.Clear()
+    $psi.EnvironmentVariables['SystemRoot']='C:\Windows';$psi.EnvironmentVariables['WINDIR']='C:\Windows'
+    $psi.EnvironmentVariables['PATH']='C:\Windows\System32'
+    $psi.EnvironmentVariables['TEMP']=$root;$psi.EnvironmentVariables['TMP']=$root
+    $process=[Diagnostics.Process]::Start($psi);$held=$process.Handle
+    [pscustomobject]@{P=$process;Handle=$held;Label=$label;Out=$process.StandardOutput.ReadToEndAsync();Err=$process.StandardError.ReadToEndAsync()}
+}
+function Save-Owned($owned) {
+    if($null -eq $owned -or -not $owned.P.HasExited) {return}
+    Write-New ($owned.Label+'.stdout.txt') ([Text.Encoding]::UTF8.GetBytes($owned.Out.Result))
+    Write-New ($owned.Label+'.stderr.txt') ([Text.Encoding]::UTF8.GetBytes($owned.Err.Result))
+}
+$guard=$null;$sampler=$null;$prequery=$null;$final=$null;$failure=$null;$dispatched=$false
+try {
+    $prequery=Start-Owned '--query-name-readonly' 'preexisting-session'
+    if(-not $prequery.P.WaitForExit(5000) -or $prequery.P.ExitCode -ne 0) {throw 'preexisting/unknown session; no capture'}
+    $guard=Start-Owned '--guard-approved' 'guard';$dispatched=$true
+    $ready=[Diagnostics.Stopwatch]::StartNew()
+    while(-not [IO.File]::Exists((Join-Path $root 'session-created.json'))) {
+        if($guard.P.HasExited -or $ready.ElapsedMilliseconds -gt 5000) {throw 'successful creation not acknowledged'}
+        Start-Sleep -Milliseconds 25
+    }
+    $sampler=Start-Owned '--sample-approved' 'sampler'
+    if(-not $sampler.P.WaitForExit(70000)) {throw 'sampler timeout; creator deadline retained'}
+    if($sampler.P.ExitCode -ne 0) {throw 'sampler failed'}
+} catch {$failure=$_.Exception.Message}
+finally {
+    if($null -ne $guard -and (-not $guard.P.WaitForExit(85000) -or $guard.P.ExitCode -ne 0)) {$failure='creator/deadline failed; no name-based stop or adoption'}
+    # Sampler owns no children or session. Kill only its retained exact handle
+    # after the creator deadline, then require confirmed exit. Never kill guard
+    # while StartTrace/StopTrace may still be in flight.
+    if($null -ne $sampler -and -not $sampler.P.HasExited) {
+        try {$sampler.P.Kill();if(-not $sampler.P.WaitForExit(5000)) {$failure='sampler cleanup UNKNOWN'}} catch {$failure='sampler cleanup UNKNOWN'}
+    }
+    $final=Start-Owned '--query-name-readonly' 'final-session-query'
+    $absent=$final.P.WaitForExit(5000) -and $final.P.ExitCode -eq 0
+    $exited=$true
+    foreach($owned in @($guard,$sampler,$prequery,$final)) {
+        if($null -ne $owned -and -not $owned.P.HasExited) {$exited=$false}
+        Save-Owned $owned
+    }
+    $fixtures=$false
+    if([IO.File]::Exists((Join-Path $root 'guard-clean.json'))) {
+        $rows=@([IO.File]::ReadAllLines((Join-Path $root 'guard.jsonl')) | ForEach-Object {$_ | ConvertFrom-Json} |
+            Where-Object {$_.PSObject.Properties.Name -contains 'job_total'})
+        $fixtures=$rows.Count -eq 3
+        foreach($row in $rows) {if($row.job_total -ne 1 -or $row.job_active -ne 0 -or $row.exit_code -ne 0) {$fixtures=$false}}
+    }
+    if(-not $absent -or -not $exited -or -not $fixtures) {$failure='session/helper/fixture cleanup not established; UNKNOWN'}
+    Write-Json 'RESULT.json' ([ordered]@{utc=[DateTime]::UtcNow.ToString('o');capture_dispatched=$dispatched;capture_count=([int]$dispatched);
+        result=$(if($null -eq $failure){'CAPTURE_COMPLETED_REQUIRES_OFFLINE_ANALYSIS'}else{'FAILED_OR_UNKNOWN'});failure=$failure;
+        session_absent=$absent;helpers_exited=$exited;all_three_fixture_jobs_empty=$fixtures;coverage_complete=$false;admission='BLOCKED';I1_I7='OPEN_RETAINED'})
+    $manifest=foreach($f in $directory.GetFiles()) {[ordered]@{file=$f.Name;size=$f.Length;sha256=(Hash-Bytes ([IO.File]::ReadAllBytes($f.FullName)))}}
+    Write-Json 'SHA256SUMS.json' @($manifest)
+    # No elevated writes under the AU-writable D: hierarchy. After completion,
+    # the ordinary owner copies records there and verifies every digest.
+}
+if($null -ne $failure) {throw $failure}

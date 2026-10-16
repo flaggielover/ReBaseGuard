@@ -1,0 +1,149 @@
+{
+  "documentType": "codex-security.findings",
+  "findings": [
+    {
+      "attackPath": {
+        "dataflow": {
+          "evidenceRefs": [
+            "self-check",
+            "elevated-entry"
+          ],
+          "outcome": "Arbitrary administrator command execution",
+          "sink": "Elevated PowerShell evaluation",
+          "source": "Mutable Run-I2Feasibility.ps1 bytes",
+          "summary": "Authenticated Users file write -> elevated PowerShell file load -> attacker statements -> administrator actions"
+        },
+        "evidenceRefs": [
+          "self-check",
+          "elevated-entry"
+        ],
+        "impact": {
+          "level": "high",
+          "why": "Substituted PowerShell can perform arbitrary administrator actions."
+        },
+        "likelihood": {
+          "level": "medium",
+          "why": "Local access plus operator elevated invocation are required; the candidate remains unexecuted and blocked."
+        },
+        "reachability": {
+          "attacker": "Local authenticated user distinct from trusted owner/admin",
+          "entrypoint": "Prepared elevated script path",
+          "outcome": "Administrator authority for substituted script",
+          "summary": "Exact saved file ACL permits the write; a human elevated invocation remains necessary. No public ingress or installed service is introduced."
+        },
+        "summary": "A local authenticated writer modifies the harness before the administrator launches it. Elevated PowerShell executes the replacement code, which can omit the self-hash block."
+      },
+      "codeEvidence": [
+        {
+          "code": "if($approval.scope -cne 'P309_I2_SINGLE_NATIVE_FEASIBILITY_V1' -or\n   $approval.capture_count -ne 1 -or\n   $approval.binary_sha256 -cne $pins.binary_sha256 -or\n   $approval.harness_sha256 -cne (Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash.ToLowerInvariant() -or\n   [string]::IsNullOrWhiteSpace($approval.human_message_reference)) {throw 'approval binding refused'}",
+          "endLine": 15,
+          "explanation": "The editable script itself chooses whether to compare its on-disk bytes; an Authenticated Users writer can remove this block or prepend statements, which PowerShell evaluates before the supposed integrity gate.",
+          "id": "self-check",
+          "label": "Self-hash runs inside the loaded script",
+          "language": "powershell",
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v1/windows/Run-I2Feasibility.ps1",
+          "role": "root_control",
+          "startLine": 11
+        },
+        {
+          "code": "$identity=[Security.Principal.WindowsIdentity]::GetCurrent()\nif(-not ([Security.Principal.WindowsPrincipal]::new($identity)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {throw 'explicit UAC-approved elevated entry required'}",
+          "endLine": 17,
+          "explanation": "The intended invocation already has an administrator token. Attacker-provided script statements inherit that authority; this check cannot authenticate who wrote them.",
+          "id": "elevated-entry",
+          "label": "Entrypoint expects administrator authority",
+          "language": "powershell",
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v1/windows/Run-I2Feasibility.ps1",
+          "role": "sink",
+          "startLine": 16
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "rationale": "Immutable source confirms evaluation-before-self-check; saved ACL evidence for the exact script confirms the distinct lower-trust writer. No dynamic exploit was performed."
+      },
+      "extensions": {
+        "artifactPaths": [
+          "artifacts/01_context/supplied-execution-path-acls.json"
+        ],
+        "candidateId": "candidate-5ded5b6af6f9dfdd"
+      },
+      "findingId": "csf_4a441982603758ecfe183ec2",
+      "fingerprints": {
+        "algorithm": "codex-security/v1",
+        "primary": "codex-security/v1:sha256:e4b1f75bc366ce605dd1025a1481a0375ff5a39432de6da89245a7f5625cd52b"
+      },
+      "identity": {
+        "anchor": "candidate-5ded5b6af6f9dfdd"
+      },
+      "locations": [
+        {
+          "endLine": 17,
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v1/windows/Run-I2Feasibility.ps1",
+          "role": "entrypoint",
+          "startLine": 1
+        },
+        {
+          "endLine": 14,
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v1/windows/Run-I2Feasibility.ps1",
+          "role": "root_control",
+          "startLine": 13
+        }
+      ],
+      "occurrenceId": "occ_f8d5d6d9bccbd7a7f068aa1c",
+      "preventiveControls": [
+        "Keep all privilege-granting bootstrap bytes and fixed digests outside lower-trust writable custody."
+      ],
+      "provenance": {
+        "reviewer": "Independent static diff reviewer; supplied ACL evidence from engineering coordinator",
+        "source": "local_plugin"
+      },
+      "remediation": "Use a separately trusted bootstrap to read script bytes, compare them to an immutable approved digest before any evaluation, then execute those exact verified bytes without reopening a mutable path. Bind adjacent pins in the trusted bootstrap or the verified payload. Protect the executable/evidence ancestor custody, use a trusted absolute interpreter with profiles disabled, and do not rely on self-hashing or current-directory ownership.",
+      "remediationTests": [
+        "In an isolated authorized test, change the mutable input before verification and ensure no payload statement executes.",
+        "Change the source path after verification and prove only the verified in-memory bytes execute.",
+        "Reject untrusted parent/reparse replacement and altered pins; retain refusal evidence."
+      ],
+      "rootCause": {
+        "evidenceRefs": [
+          "self-check",
+          "elevated-entry"
+        ],
+        "summary": "The integrity boundary is placed inside the object it is meant to authenticate. The operator passes a mutable path to elevated PowerShell; PowerShell loads and starts the script before line14 compares its path hash to the approval record. The exact script is writable by Authenticated Users, so a distinct lower-trust writer can change the code that performs the check. Adjacent pins and later protected binary staging do not establish trusted custody of the script bytes before evaluation."
+      },
+      "ruleId": "privileged-load.mutable-powershell-entrypoint",
+      "severity": {
+        "changeConditions": "A trusted bootstrap verifying exact bytes before evaluation and executing the same bytes with trusted interpreter configuration and fixed pins would remove this path. An unattended privileged launcher would increase likelihood.",
+        "level": "medium",
+        "rationale": "Arbitrary administrator code execution has high impact. Exploitation requires local write access and an administrator launching this unexecuted candidate, so likelihood is medium. No actual elevated run or compromise occurred."
+      },
+      "summary": "An authenticated local user can replace the prepared Run-I2Feasibility.ps1, whose saved exact-path DACL grants Authenticated Users Modify. If the operator then invokes that file in elevated PowerShell, substituted statements execute before or instead of its self-hash check. The later protected EtwCapture.exe copy cannot authenticate the already executing harness.",
+      "taxonomy": {
+        "category": "Privileged code loading from a less-trusted writable file",
+        "cwe": [
+          "CWE-829"
+        ]
+      },
+      "title": "Launching the writable harness elevated allows local users to execute administrator commands",
+      "validation": {
+        "assertions": [
+          "The script self-check occurs after PowerShell begins evaluating the supplied file.",
+          "The saved ACL evidence applies to the precise executable script path, not merely its working directory.",
+          "Protected binary copy cannot retroactively protect the script entrypoint."
+        ],
+        "evidenceRefs": [
+          "self-check",
+          "elevated-entry"
+        ],
+        "limitations": [
+          "No live write, elevation or exploit performed.",
+          "ACL evidence was read from a supplied saved record, not independently queried.",
+          "Requires the human operator to launch the prepared path elevated."
+        ],
+        "method": "Static immutable-source trace and supplied exact-path ACL record",
+        "summary": "The saved script DACL contains (A;ID;0x1301bf;;;AU), allowing authenticated writers. The source puts its own digest check inside the intended elevated script. No external protected loader is included in this diff."
+      }
+    }
+  ],
+  "scanId": "2b0afe33-d593-4325-95db-5a2313e50159",
+  "schemaVersion": "1.0"
+}

@@ -1,0 +1,39 @@
+{
+  "completeness": "complete",
+  "deferred": [],
+  "documentType": "codex-security.coverage",
+  "excludePaths": [],
+  "explicitExclusions": [],
+  "includePaths": [
+    "."
+  ],
+  "inventoryStrategy": "diff",
+  "mode": "branch_diff",
+  "openQuestions": [],
+  "resolvedDeferred": [
+    {
+      "id": "review-all-changed-files",
+      "reason": "All 49 immutable changed files reviewed, 30 canonical review items closed, archive consistency checked, empty candidate set recorded, and independent architecture pass reconciled. No in-scope work remains."
+    }
+  ],
+  "scanId": "b89e3095-d57b-4ada-881c-c11b3fbdcc87",
+  "schemaVersion": "1.0",
+  "surfaces": [
+    {
+      "disposition": "no_issue_found",
+      "id": "v4-controls",
+      "label": "V4 guard, approval harness, runtime preflight and pure verdict",
+      "notes": "All six changed executable/source files reviewed. Process creation/quoting, fixed arguments, private Job ownership, identity, limits, watchdog/finally handling, reparse/hash checks, approval/evidence gates, synthetic tests. Fresh-context independent architecture review reconciled against exact consumers.",
+      "receiptRefs": []
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "changed-records",
+      "label": "All 43 changed non-executable artifacts",
+      "notes": "All manifests, attributes, approval records, preparation logs, V3 failure evidence, V4 actual events/observations and limitations reviewed. 49 changed paths: 19 detached_v4, 16 V4 results, 14 V3 results; 30 canonical source/JSON inventory items plus 19 text/log/attribute artifacts. All 46 manifest entries match immutable Git blob hashes (and sizes where supplied). Runtime archive manifest: 222 unique paths, 459552711 bytes, no extras; actual deployed files not queried.",
+      "receiptRefs": [
+        "artifacts/01_context/static-artifact-checks.json"
+      ]
+    }
+  ]
+}
