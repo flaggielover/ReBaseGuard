@@ -1,0 +1,56 @@
+{
+  "schema": "P309_VM_DIAGNOSTIC_BINDINGS/3",
+  "source_files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    {
+      "path": "OwnedVmDiagnostic.cs",
+      "sha256": "22b5a1b9e4f390e980e0faddb48275c4dcb3004e8d0cea88f98eef2802fc9212"
+    },
+    {
+      "path": "REVIEW_AND_APPROVAL.md",
+      "sha256": "539e5e0e3e72e9e6e5a4571919de9269dce47bff52fa13733cd5909fe86f13b3"
+    },
+    {
+      "path": "Run-ApprovedDiagnostic.ps1",
+      "sha256": "4718c7d37dfe231195a35675b94b55cd395400e40166a404cdffd1047d97b19a"
+    },
+    {
+      "path": "RuntimePreflight.ps1",
+      "sha256": "4b8b19da7f0df778dee6656c8217d5fcee363654903561a8116cda7982799ad7"
+    },
+    {
+      "path": "Stage-ApprovedRuntime.ps1",
+      "sha256": "341faca37707606fbe0d9997c7892fe61401d6d222264f4731ca64aa15ba23c6"
+    },
+    {
+      "path": "Test-ApprovalGate.ps1",
+      "sha256": "4e319e12e41aa426f6d5b44da652031897d8386602511ad5da2f0cb81bced26e"
+    },
+    {
+      "path": "Test-RuntimePreflight.ps1",
+      "sha256": "3a94330c505977db6a6a020b63553e68b3e902256f4becac206703ef1410de6b"
+    }
+  ],
+  "guard_sha256": "efa49236f623771d960249718e1b823ed815a31f9d0a1b06944e4a76a1f79509",
+  "compiler_sha256": "46809206887326d2d24db1eff1f3064de972c3451abe766b49111450a5e08e00",
+  "build_command": "csc.exe /nologo /target:exe /platform:x64 /optimize+ /out:<records>\\OwnedVmDiagnostic-v3.exe <diagnostic_v3>\\OwnedVmDiagnostic.cs",
+  "harness_sha256": "4718c7d37dfe231195a35675b94b55cd395400e40166a404cdffd1047d97b19a",
+  "staging_sha256": "341faca37707606fbe0d9997c7892fe61401d6d222264f4731ca64aa15ba23c6",
+  "preflight_sha256": "4b8b19da7f0df778dee6656c8217d5fcee363654903561a8116cda7982799ad7",
+  "runtime_hashlist_sha256": "48abd49ab20d074a4dea88306418a6c6c3e4374b81e7e1eb21a10929d2159238",
+  "checks": {
+    "pure_csharp": 27,
+    "runtime_fixture_regressions": 7,
+    "actual_extras_preserved": 5,
+    "actual_source_files_verified": 222,
+    "actual_contaminated_root_rejected": true,
+    "approval_rejections": 4
+  },
+  "staging_performed": false,
+  "real_vm_executed": false,
+  "admission": "BLOCKED",
+  "independent_review": false
+}
