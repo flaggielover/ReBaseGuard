@@ -117,3 +117,4 @@ that, the owner had appointed Claude session `session_01VGbYdSMrEaoYpdb386rCWk` 
 after its Phase 1, which found eligibility not established; that session produced no review. Rows B1–B3 above are not
 edited.
 | B1C | B1_CORRECTION_CONFIRMATION_CLOUD_R1.txt | correction package for the single bounded correction confirmation by the SAME external reviewer B1 (B1-External (Codex)); pin 02fb4d39 (corrections at f9b28704); for the OWNER to forward (prepared, not sent) | external | not sent | no (tail-figure scan: see the ledger line) |
+| B3-C | B3_CORRECTION_CONFIRMATION_CLOUD_R1.txt | the SAME external reviewer B3-External, through the owner: single bounded confirmation of the B3 correction round at b047237a (prepared, not forwarded; no further round) | external | not forwarded | no (tail-figure scan: see the ledger line) |
