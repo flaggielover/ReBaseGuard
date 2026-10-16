@@ -1,0 +1,42 @@
+{
+  "completeness": "complete",
+  "deferred": [],
+  "documentType": "codex-security.coverage",
+  "excludePaths": [],
+  "explicitExclusions": [],
+  "includePaths": [
+    "."
+  ],
+  "inventoryStrategy": "diff",
+  "mode": "branch_diff",
+  "openQuestions": [],
+  "resolvedDeferred": [
+    {
+      "id": "v4-review-all",
+      "reason": "All 41 changed files and 20 authoritative inventory items accounted; protected custody source trace and one seeded candidate validation complete; all 32 named private artifacts, 6 source bindings and 5 sealed exports compared. No unresolved candidate or new reportable issue remains."
+    }
+  ],
+  "scanId": "7db198e0-7ca1-43da-b2e1-dea6a6074497",
+  "schemaVersion": "1.0",
+  "surfaces": [
+    {
+      "candidateId": "candidate-0634671cf2d370cf",
+      "disposition": "rejected",
+      "id": "v4-custody",
+      "label": "Protected build custody and prior finding repair",
+      "notes": "Prior csf_25f671586cf62df1813f5007 is technically repaired for this snapshot: exact prior byte-array hashes precede use, creation-time owner/SYSTEM/BA-only DACL separates other AU/sandbox writers, private source/object/output held through compilation/linking. Existing trusted owner and OS/toolchain assumptions retained; no formal finding-state mutation.",
+      "receiptRefs": [
+        "artifacts/01_context/protected-build-static-checks.json"
+      ]
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "v4-bindings",
+      "label": "Dependent pins and all historical/changed evidence",
+      "notes": "All 41 changed files/20 inventory items accounted. 32 named private manifest entries match sizes/hashes; 27 archived counterparts identical; 6 current source bindings match private/Git; 4 production files each change only 2 path/hash lines; 5 sealed prior report files and prior FINAL_BINDINGS identical. PE imports/manifest/template pin match. Build-end snapshot excludes itself and later-added execution-text file by documented design.",
+      "receiptRefs": [
+        "artifacts/01_context/protected-build-static-checks.json"
+      ]
+    }
+  ]
+}
