@@ -1,0 +1,11 @@
+[Unit]
+Description=P309 separate root administrative action socket candidate
+[Socket]
+ListenSequentialPacket=/run/rebaseguard-p309/admin-v9.sock
+SocketUser=root
+SocketGroup=root
+SocketMode=0600
+DirectoryMode=0755
+Accept=no
+FileDescriptorName=admin-v9
+Service=rebaseguard-p309-control.service

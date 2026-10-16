@@ -1,0 +1,12 @@
+[Unit]
+Description=P309 v9 fixed idle gate internal channel (candidate)
+[Socket]
+ListenSequentialPacket=/run/rebaseguard-p309/launch-gate-v9.sock
+SocketUser=root
+SocketGroup=p309-runner
+SocketMode=0660
+DirectoryMode=0755
+Accept=no
+FileDescriptorName=gate-v9
+Service=rebaseguard-p309-control.service
+# Broker validates this descriptor alongside (not instead of) H4 control socket.

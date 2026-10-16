@@ -1,0 +1,12 @@
+[Unit]
+Description=P309 fixed status-stop H4 socket candidate
+[Socket]
+ListenSequentialPacket=/run/rebaseguard-p309/control.sock
+SocketUser=root
+SocketGroup=p309-monitor
+SocketMode=0660
+DirectoryMode=0755
+Accept=no
+FileDescriptorName=control-v9
+Service=rebaseguard-p309-control.service
+# No install/enable section; source is not permission to create the endpoint.

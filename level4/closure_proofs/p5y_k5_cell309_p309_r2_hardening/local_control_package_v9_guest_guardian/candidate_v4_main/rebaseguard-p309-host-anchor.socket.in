@@ -1,0 +1,11 @@
+[Unit]
+Description=P309 fixed root H2 relay endpoint candidate
+[Socket]
+ListenSequentialPacket=/run/rebaseguard-p309/host-anchor-v10.sock
+SocketUser=root
+SocketGroup=root
+SocketMode=0600
+DirectoryMode=0755
+FileDescriptorName=host-anchor-v10
+Service=rebaseguard-p309-host-h2-relay.service
+RemoveOnStop=no

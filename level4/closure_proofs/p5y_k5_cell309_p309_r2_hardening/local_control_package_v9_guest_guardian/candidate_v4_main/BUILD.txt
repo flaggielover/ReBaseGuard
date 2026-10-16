@@ -1,0 +1,51 @@
+V4 BUILD RECIPE; SOURCE PREPARATION ONLY, NOT EXECUTED BY THIS WORKER
+
+Linux x86_64 C11, glibc headers, genuine libsystemd headers/runtime sd-bus,
+pthread, OpenSSL 3 headers/libcrypto required. No install/run in this recipe.
+Build only explicit files below in a fresh private output directory; no source
+wildcard and never link intermediate_unconnected/authority_unavailable.c.
+Include .inc files via manager_authority.c only.
+
+Parent verified build inputs (not target-guest compatibility):
+headers /home/suzhe/p309/builds/guest-v9-build-inputs-20261016-01/include
+libsystemd /usr/lib/x86_64-linux-gnu/libsystemd.so.0.38.0
+SHA256 b10be60fc80ea6910df1b253658e638bd29f3d1aeeb3798006fc66972366cb94
+systemd255.4-1ubuntu8.18, glibc2.39, OpenSSL3.0.13.
+Target signed image has systemd family255.4-1ubuntu8.17: ABI not established.
+
+Compiler flags for ALL translation units (do not downgrade Werror on failure):
+-std=c11 -O2 -Wall -Wextra -Wformat=2 -Werror -pthread
+-I/home/suzhe/p309/builds/guest-v9-build-inputs-20261016-01/include
+Link full explicit pinned systemd .so path above, -lcrypto -pthread.
+
+Outputs and exact source lists:
+guardian-v9: guardian_v9.c manager_authority.c anchor_crypto.c anchor_transport.c
+fixed-gate-v9: fixed_gate_v9.c manager_authority.c anchor_crypto.c anchor_transport.c
+control-broker-v9: control_broker_v9.c broker_link.c h4_wire.c h4_replay.c manager_authority.c anchor_crypto.c anchor_transport.c
+idle-owned-v9: idle_owned_v9.c (no systemd/crypto needed)
+admin-helper-v9: admin_helper_v9.c (no systemd/crypto needed)
+host-h2-relay-v11: host_h2_relay_v11.c bootstrap_wire.c manager_authority.c anchor_crypto.c anchor_transport.c
+
+Separate pure-test binaries (no production entry or actual APIs):
+test_h4_wire: test_h4_wire.c h4_wire.c
+test_v4_pure: test_v4_pure.c h4_replay.c (same production inline headers)
+test_bootstrap_wire: test_bootstrap_wire.c bootstrap_wire.c -lcrypto
+Use the same full warning flags. bootstrap test has only synthetic byte-vector
+HMAC inputs, no real seed/keys/file/VM access. Its expected digest was derived
+with Windows Python standard hmac; actual OpenSSL C execution awaits parent.
+Windows MSVC /std:c11 /experimental:c11atomics /W4 /WX actual test_v4_pure build
+and run passed in v4-pure-tests-msvc (logs outside immutable candidate).
+This tests pure helper logic, not Linux API/IPC/FD/systemd/cryptographic integration.
+
+Historical v3 parent native build: guardian/gate/idle/admin/parser compiled;
+broker failed -Werror unused-result on fallback write. v4 uses checked bounded
+held-FD stop helper. Parent ran only pure H4 parser8 assertions; no production
+binary. Those v3 records/sources remain unchanged.
+Test source has 8 assertions; no native test result is claimed in this snapshot.
+Existing 8 Python guardian protocol tests are historical and do not test C/API.
+
+After build, record compiler/linker/source/output hashes, exact command/exit/log,
+readelf -d and readelf --version-info (metadata only). Preserve failed outputs.
+No invocation of the six production binaries, systemctl, cgroup creation/kill,
+key generation, host queries or VM actions is authorized by this recipe.
+Real guest ABI/property/FD/cancellation acceptance is separately approved work.

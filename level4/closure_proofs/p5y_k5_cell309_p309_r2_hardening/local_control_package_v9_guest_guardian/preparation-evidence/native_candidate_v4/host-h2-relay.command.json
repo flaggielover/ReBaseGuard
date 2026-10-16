@@ -1,0 +1,30 @@
+{
+  "name": "host-h2-relay",
+  "argv": [
+    "/usr/bin/x86_64-linux-gnu-gcc-13",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Wformat=2",
+    "-Werror",
+    "-pthread",
+    "-I/home/suzhe/p309/builds/guest-v9-build-inputs-20261016-01/include",
+    "host_h2_relay_v11.c",
+    "bootstrap_wire.c",
+    "manager_authority.c",
+    "anchor_crypto.c",
+    "anchor_transport.c",
+    "/usr/lib/x86_64-linux-gnu/libsystemd.so.0.38.0",
+    "-lcrypto",
+    "-pthread",
+    "-Wl,-z,relro,-z,now",
+    "-o",
+    "host-h2-relay-v11"
+  ],
+  "exit": 0,
+  "timeout": false,
+  "cleanup_errors": [],
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,12 @@
+[Unit]
+Description=P309 v9 internal root guardian handoff (candidate, not installed)
+[Socket]
+ListenSequentialPacket=/run/rebaseguard-p309/guardian-v9.sock
+SocketUser=root
+SocketGroup=root
+SocketMode=0600
+DirectoryMode=0755
+Accept=no
+FileDescriptorName=guardian-v9
+Service=rebaseguard-p309-guardian.service
+# No [Install], no automatic enable/start in this source package.

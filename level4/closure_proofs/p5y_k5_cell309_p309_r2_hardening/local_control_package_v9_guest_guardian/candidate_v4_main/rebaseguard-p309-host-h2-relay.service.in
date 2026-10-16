@@ -1,0 +1,30 @@
+[Unit]
+Description=P309 fixed DEV bootstrap and H2 relay candidate
+Requires=rebaseguard-p309-host-anchor.socket
+After=rebaseguard-p309-host-anchor.socket
+Before=rebaseguard-p309-control.service
+[Service]
+Type=exec
+User=root
+Group=root
+ExecStart=/usr/local/libexec/rebaseguard-p309/host-h2-relay-v11
+Sockets=rebaseguard-p309-host-anchor.socket
+Restart=no
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/rebaseguard-p309-control
+RestrictAddressFamilies=AF_UNIX
+LimitCORE=0
+TasksMax=4
+MemoryMax=96M
+StandardInput=null
+StandardOutput=null
+StandardError=journal
+# Actual fixed virtio node and fw_cfg root-only ownership/modes must be installed
+# and verified. No PrivateDevices=yes: that hides the required fixed port.
+# No root secret generation, automatic reconnect or fence deletion.
+# Installer must start this fixed service before approved bootstrap transaction;
+# merely installing the socket is not timely guest-boot initialization.
