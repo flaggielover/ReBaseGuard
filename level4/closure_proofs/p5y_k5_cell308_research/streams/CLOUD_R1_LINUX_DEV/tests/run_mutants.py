@@ -15,7 +15,7 @@ repairs (RV39 is narrowed to the key refusal; the lazy-fetch block is RV45); RV4
 N4 repairs, and RV52-RV54 carry its surviving mutants RZ1, RZ4 and RZ5 (N5); RV55-RV58 carry review 68's mutants
 RA1-RA4 and RV59-RV60 weaken its P1 repair (RV26 then also tolerates symlinks in the history scan); RV61-RV63 carry
 review 69's RB1, RB2 and RB4 against the mode-reading ancestor check (S1, S2); RV64-RV70 carry review 70's RC1-RC5
-and RC7 and weaken its duplicate-entry repair (T1-T5).
+and RC7 and weaken its duplicate-entry repair (T1-T5); RV71-RV74 carry review 71's RD1, RD5, RD2 and RD3 (U1-U3).
 Every complete raw report, mutation anchor, and before/after input hash is retained.
 No scientific evaluator is imported or executed. Explicit output paths receive the evidence.
 
@@ -841,9 +841,23 @@ MUTANTS = [('M01',
   [('        if len(head) != 3 or not re.fullmatch',
     '        if len(head) == 2 and head[1] == b"missing":\n            pos = nl + 1\n'
     '            answers.append(("0" * 40, "tree", b"" if contents else None))\n            continue\n'
-    '        if len(head) != 3 or not re.fullmatch')])]
+    '        if len(head) != 3 or not re.fullmatch')]),
+ ('RV71',
+  'Review 71 U1 (RD1): root commits\' own trees are skipped by the ancestor walk',
+  [('    commits = _git(repo_root, "rev-list", "HEAD")', '    commits = _git(repo_root, "rev-list", "--min-parents=1", "HEAD")')]),
+ ('RV72',
+  'Review 71 U3 (RD5): tree entries match any name that starts with the component (prefix siblings over-refused)',
+  [('        if data[sp + 1:nul] == name:', '        if data[sp + 1:nul].startswith(name):')]),
+ ('RV73',
+  'Review 71 U2 (RD2): duplicate tree entries are refused only when their modes differ',
+  [('            if found is not None:\n                return False\n',
+    '            if found is not None and found[0] != data[pos:sp]:\n                return False\n')]),
+ ('RV74',
+  'Review 71 U2 (RD3): the ancestor walk reads a malformed tree as "entry absent"',
+  [('            if entry is False:\n                return False\n            if entry is None:\n',
+    '            if entry is False or entry is None:\n')])]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 70}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 74}
 
 # A kill must include at least one named direct witness for the weakened property.
 # These method names are unique across the full discovered suite. They are evidence
@@ -954,7 +968,8 @@ for _method, _ids in {
     "test_review68_strict_fsck_and_forced_git_environment": "RV56 RV57",
     "test_review69_ancestor_entries_are_read_by_mode": "RV61 RV62 RV63",
     "test_review70_review_dir_file_evil_merge_and_odd_mode_refuse": "RV64 RV66 RV68",
-    "test_review70_sha256_repository_and_walk_parsing": "RV67 RV69 RV70",
+    "test_review70_sha256_repository_and_walk_parsing": "RV67 RV69 RV70 RV73",
+    "test_review71_root_commits_duplicates_and_sibling_names": "RV71 RV72 RV74",
     "test_review64_dangling_top_entry_shadows_lower_mask": "RV19",
     "test_review64_non_utf8_historical_review_path_refuses": "RV20",
     "test_review64_side_branch_acceptance_synced_and_merged_refuses": "RV22",
@@ -1266,7 +1281,7 @@ def main(out: str | None) -> int:
     rows = []
     for mid, what, edits in MUTANTS:
         row = {"id": mid, "origin": ("combined integration" if mid.startswith("R5SYNC") or mid == "CDEX16" else
-                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-70" if mid.startswith("RV") else
+                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-71" if mid.startswith("RV") else
                            "Claude revision 5"),
                "property": what, "intended_property_test_methods": PROPERTY_WITNESSES[mid],
                "edits": [{"old": old, "new": new} for old, new in edits]}

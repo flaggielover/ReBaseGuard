@@ -1,0 +1,23 @@
+"""Review 71 Q4: scan every file added or modified in 9f223c91..cc02b9b7 (gz decompressed; the ledger's new lines
+only) for signed-URL and credential patterns. usage: python3 -B -I scan71.py.txt <pinned tree>"""
+import gzip, re, subprocess, sys, json
+T = sys.argv[1]
+names = subprocess.run(["git", "-C", T, "diff", "--name-only", "--diff-filter=AM", "9f223c91", "cc02b9b7"],
+                       capture_output=True, check=True).stdout.decode().splitlines()
+pat = re.compile(rb"(ghp_|gho_|ghs_|ghu_|github_pat_|X-Amz-|[?&]sig=|[?&]se=20|[?&]sv=20|AKIA[0-9A-Z]{12}|BEGIN [A-Z ]*PRIVATE|"
+                 rb"Authorization:|Bearer [A-Za-z0-9]|x-access-token|blob\.core\.windows|productionresultssa|"
+                 rb"pipelines\.actions|actions\.githubusercontent)")
+url = re.compile(rb"https?://[^\s\"'<>)`\\]+")
+hits, urls = {}, {}
+for n in names:
+    b = subprocess.run(["git", "-C", T, "show", f"cc02b9b7:{n}"], capture_output=True, check=True).stdout
+    if n.endswith(".gz"):
+        b = gzip.decompress(b)
+    if n.endswith("TARGET_INTEGRITY_LEDGER.jsonl"):
+        b = b"\n".join(b.split(b"\n")[524:])
+    h = sorted({m.decode() for m in pat.findall(b)})
+    if h:
+        hits[n.split("/")[-1]] = h
+    for u in url.findall(b):
+        urls[u.decode()] = urls.get(u.decode(), 0) + 1
+print(json.dumps({"files": len(names), "pattern_hits": hits, "urls": urls}, indent=1))

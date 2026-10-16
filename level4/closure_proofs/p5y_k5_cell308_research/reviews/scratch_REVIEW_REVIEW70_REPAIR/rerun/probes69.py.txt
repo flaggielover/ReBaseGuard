@@ -1,0 +1,401 @@
+"""Review 69 probes (helpers copied verbatim from review 68 probes68.py.txt lines 4-138).
+Synthetic git repositories only; every attestation_valid / _history_complete / _review_dir_is_a_directory call passes
+repo_root=<synthetic repo>.
+usage: python3 -B -I probes69.py.txt <dir_with_lx_platform.py> <tmp_root> <out.json>"""
+import hashlib, json, os, shutil, subprocess, sys, tempfile, traceback, zlib
+from pathlib import Path
+
+BASE, TMP, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+CONTROL = sys.argv[4] if len(sys.argv) > 4 else ""
+sys.path.insert(0, BASE)
+import lx_platform as L  # noqa: E402
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR
+ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+LINE = f"{L.ACCEPTANCE_LINE}{SHA}"
+OK = f"review\n{LINE}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+VETO = f"{SHA} REJECTED\n".encode()
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main", "-c", "core.fsmonitor=false",
+       "-c", "protocol.file.allow=always"]
+results = {"lx_platform_sha256": hashlib.sha256(Path(BASE, "lx_platform.py").read_bytes()).hexdigest(),
+           "isolation": list(L._GIT_ISOLATION), "control": CONTROL,
+           "git_version": subprocess.run(["git", "--version"], capture_output=True, text=True).stdout.strip()}
+
+
+def git(d, *a, inp=None, check=True):
+    r = subprocess.run(["git", "-C", str(d), *CFG, *a], capture_output=True, input=inp)
+    if check and r.returncode:
+        raise RuntimeError(f"git {a}: {r.stderr.decode()[-400:]}")
+    return r.stdout.decode().strip()
+
+
+def init(d):
+    Path(d).mkdir(parents=True, exist_ok=True)
+    git(d, "init", "-q")
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+        git(d, "config", "--local", k, v)
+
+
+def commit(d, files=None, rm=()):
+    for rel, data in (files or {}).items():
+        p = Path(d, rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+    for rel in rm:
+        git(d, "rm", "-q", rel)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", "c")
+    return git(d, "rev-parse", "HEAD")
+
+
+def valid(d, path="att/HOST.json", sha=SHA):
+    try:
+        rec, why = L.attestation_valid({"path": path, "sha256": sha}, repo_root=str(d))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}"}
+
+
+def hist(d):
+    try:
+        return L._history_complete(str(d))
+    except Exception as e:
+        return f"EXC {type(e).__name__}: {e}"
+
+
+def raw(d, *a):
+    r = subprocess.run(["git", "-C", str(d), *L._GIT_ISOLATION, *a], capture_output=True, env=L._git_env())
+    return {"rc": r.returncode, "out": r.stdout.decode(errors="replace")[-600:], "err": r.stderr.decode(errors="replace")[-300:]}
+
+
+def mkcommit(d, tree, parents, msg="c", extra_headers=""):
+    body = f"tree {tree}\n" + "".join(f"parent {p}\n" for p in parents)
+    body += "author t <t@t> 1700000000 +0000\ncommitter t <t@t> 1700000000 +0000\n" + extra_headers + f"\n{msg}\n"
+    return git(d, "hash-object", "-t", "commit", "-w", "--stdin", inp=body.encode())
+
+
+def mktree_literal(d, entries):
+    """entries: list of (mode, name, oid) already sorted by the caller; written with --literally (no checks)."""
+    data = b"".join(m.encode() + b" " + n.encode() + b"\0" + bytes.fromhex(o) for m, n, o in entries)
+    return git(d, "hash-object", "-t", "tree", "-w", "--literally", "--stdin", inp=data)
+
+
+def probe(name):
+    def deco(fn):
+        try:
+            with tempfile.TemporaryDirectory(dir=TMP) as w:
+                results[name] = fn(Path(w))
+        except Exception:
+            results[name] = {"probe_error": traceback.format_exc()[-1500:]}
+        return fn
+    return deco
+
+
+# ---------------------------------------------------------------- 1. repository-configured gpg.program runs in `git log`
+GPG_SIG = ("gpgsig -----BEGIN PGP SIGNATURE-----\n \n iQEzBAABCAAdFiEEabcdefabcdefabcdefabcdefabcdefabcd\n"
+           " -----END PGP SIGNATURE-----\n")
+
+
+# copied from probes67.py.txt lines 105-119
+
+
+def signed_child(d, parent, files):
+    """A commit with `files` on top of `parent` (via the index), carrying a (fake) gpgsig header."""
+    for rel, data in files.items():
+        p = Path(d, rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+    git(d, "add", "-A")
+    tree = git(d, "write-tree")
+    c = mkcommit(d, tree, [parent], extra_headers=GPG_SIG)
+    git(d, "update-ref", "HEAD", c)
+    return c
+
+
+
+
+def wt_read(d, commit_id, rel):
+    """What a checkout of commit_id shows at rel (follows symlinks like a reader would)."""
+    wt = Path(str(d) + "_wt_" + commit_id[:8])
+    git(d, "worktree", "add", "-q", "--detach", str(wt), commit_id)
+    try:
+        p = wt / rel
+        return {"exists": p.exists(), "is_symlink": p.is_symlink(),
+                "text": p.read_text()[:200] if p.exists() and p.is_file() else None}
+    finally:
+        git(d, "worktree", "remove", "--force", str(wt))
+
+
+def fsck(d):
+    a = raw(d, "fsck", "--full", "--strict", "--no-dangling", "--no-progress")
+    return {"rc": a["rc"], "err_tail": a["err"][-200:]}
+
+
+
+
+# ======================================================================== review 69 probes (dad3c948)
+TOP = RD.split("/")
+ANCESTORS = ["/".join(TOP[:i]) for i in range(1, len(TOP))]          # level4, level4/closure_proofs, .../research
+
+
+def batch(d, names):
+    r = subprocess.run(["git", "-C", str(d), *L._GIT_ISOLATION, "cat-file", "--batch-check"],
+                       input=("\n".join(names) + "\n").encode(), capture_output=True, env=L._git_env())
+    return r.stdout.decode(errors="replace").splitlines()
+
+
+def dircheck(d):
+    try:
+        return L._review_dir_is_a_directory(str(d))
+    except Exception as e:
+        return f"EXC {type(e).__name__}: {e}"
+
+
+def index_gitlink(d, path, oid):
+    git(d, "update-index", "--add", "--cacheinfo", f"160000,{oid},{path}")
+
+
+def put_entry(d, parent_commit, path, mode, oid, msg="odd"):
+    """A commit on parent_commit whose tree has `path` replaced by a (mode, oid) entry, built via the index."""
+    git(d, "read-tree", parent_commit)
+    git(d, "update-index", "--force-remove", path, check=False)
+    git(d, "update-index", "--add", "--cacheinfo", f"{mode},{oid},{path}")
+    tree = git(d, "write-tree")
+    c = git(d, "commit-tree", tree, "-p", parent_commit, "-m", msg)
+    git(d, "update-ref", "HEAD", c)
+    git(d, "read-tree", c)
+    return c
+
+
+# ---------------------------------------------------------------- G. gitlinks at an ancestor (commit object absent)
+for anc in ANCESTORS + [RD]:
+    @probe(f"gitlink_absent_commit_at::{anc}")
+    def _(w, anc=anc):
+        d = w / "r"; init(d)
+        c1 = commit(d, {"att/HOST.json": ATT})
+        fake = "1234567890abcdef1234567890abcdef12345678"
+        c2 = put_entry(d, c1, anc, "160000", fake, "gitlink")
+        git(d, "update-index", "--force-remove", anc)
+        tree = git(d, "write-tree"); c3 = git(d, "commit-tree", tree, "-p", c2, "-m", "rm"); git(d, "update-ref", "HEAD", c3)
+        git(d, "reset", "-q", "--hard")
+        commit(d, {f"{ACC}1.md": OK})
+        return {"batch_check_c2": batch(d, [f"{c2}:{'/'.join(TOP[:i])}" for i in range(1, len(TOP) + 1)]),
+                "ls_tree_r_c2_review_dir": git(d, "ls-tree", "-r", c2, "--", RD),
+                "rev_list_full_history_review_dir": git(d, "rev-list", "--full-history", "HEAD", "--", RD).split(),
+                "fsck_strict": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+@probe("gitlink_ancestor_real_submodule_checkout_shows_rejection")
+def _(w):
+    """level4 is a real submodule in C2 (its commit lives only in the submodule repository); a recursive clone of C2
+    shows the submodule's veto at <review dir>/veto.md. Later removed; HEAD carries a valid acceptance."""
+    sub = w / "sub"; init(sub)
+    rest = "/".join(TOP[1:])
+    subc = commit(sub, {f"{rest}/veto.md": VETO})
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    Path(d, ".gitmodules").write_text(f'[submodule "l4"]\n\tpath = {TOP[0]}\n\turl = {sub}\n')
+    git(d, "add", ".gitmodules")
+    index_gitlink(d, TOP[0], subc)
+    git(d, "commit", "-q", "-m", "submodule")
+    c2 = git(d, "rev-parse", "HEAD")
+    git(d, "rm", "-q", "--cached", TOP[0]); git(d, "rm", "-q", ".gitmodules")
+    git(d, "commit", "-q", "-m", "rm submodule")
+    commit(d, {f"{ACC}1.md": OK})
+    clone = w / "clone"
+    git(w, "-c", "protocol.file.allow=always", "clone", "-q", "--no-checkout", str(d), str(clone))
+    git(clone, "checkout", "-q", "--detach", c2)
+    git(clone, "-c", "protocol.file.allow=always", "submodule", "update", "-q", "--init")
+    shown = Path(clone, RD, "veto.md")
+    return {"submodule_commit_in_main_store": raw(d, "cat-file", "-t", subc)["rc"] == 0,
+            "checkout_c2_shows": shown.read_text() if shown.exists() else None,
+            "batch_check_c2": batch(d, [f"{c2}:{'/'.join(TOP[:i])}" for i in range(1, len(TOP) + 1)]),
+            "fsck_strict": fsck(d), "history_complete": hist(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+@probe("gitlink_present_commit_at_ancestor")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    c2 = put_entry(d, c1, TOP[0], "160000", c1, "gitlink to own commit")
+    git(d, "update-index", "--force-remove", TOP[0])
+    tree = git(d, "write-tree"); c3 = git(d, "commit-tree", tree, "-p", c2, "-m", "rm"); git(d, "update-ref", "HEAD", c3)
+    git(d, "reset", "-q", "--hard")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"batch_check_c2": batch(d, [f"{c2}:{TOP[0]}"]), "dir_check": dircheck(d), "result": valid(d)}
+
+
+@probe("gitlink_mode_entry_pointing_at_tree_at_ancestor")
+def _(w):
+    """A 160000 entry at level4 whose object id is a TREE holding the rejection: batch-check reports `tree`."""
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    tmp = w / "t"; init(tmp)
+    commit(tmp, {f"{'/'.join(TOP[1:])}/veto.md": VETO})
+    # copy the tree objects into d
+    tree_oid = git(tmp, "rev-parse", "HEAD^{tree}")
+    pack = subprocess.run(["git", "-C", str(tmp), "pack-objects", "--stdout", "--revs"], input=b"HEAD\n",
+                          capture_output=True, check=True).stdout
+    subprocess.run(["git", "-C", str(d), "unpack-objects", "-q"], input=pack, check=True)
+    c2 = put_entry(d, c1, TOP[0], "160000", tree_oid, "gitlink->tree")
+    git(d, "update-index", "--force-remove", TOP[0])
+    tree = git(d, "write-tree"); c3 = git(d, "commit-tree", tree, "-p", c2, "-m", "rm"); git(d, "update-ref", "HEAD", c3)
+    git(d, "reset", "-q", "--hard")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"batch_check_c2": batch(d, [f"{c2}:{'/'.join(TOP[:i])}" for i in range(1, len(TOP) + 1)]),
+            "fsck_strict": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---------------------------------------------------------------- H. symlink / file at each ancestor; side branch
+for anc in ANCESTORS:
+    for kind in ("symlink", "file"):
+        @probe(f"{kind}_at::{anc}")
+        def _(w, anc=anc, kind=kind):
+            d = w / "r"; init(d)
+            commit(d, {"att/HOST.json": ATT})
+            rest = RD[len(anc) + 1:]
+            commit(d, {f"alt/{rest}/veto.md": VETO})
+            p = Path(d, anc); p.parent.mkdir(parents=True, exist_ok=True)
+            if kind == "symlink":
+                os.symlink(os.path.relpath(Path(d, "alt"), p.parent), p)
+            else:
+                p.write_bytes(VETO)
+            c2 = commit(d)
+            commit(d, rm=[anc, f"alt/{rest}/veto.md"])
+            commit(d, {f"{ACC}1.md": OK})
+            return {"batch_check_c2": batch(d, [f"{c2}:{'/'.join(TOP[:i])}" for i in range(1, len(TOP) + 1)]),
+                    "dir_check": dircheck(d), "result": valid(d)}
+
+
+@probe("ancestor_symlink_on_merged_side_branch_ours")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    git(d, "checkout", "-q", "-b", "side")
+    commit(d, {f"alt/{'/'.join(TOP[1:])}/veto.md": VETO})
+    os.symlink("alt", Path(d, TOP[0]))
+    commit(d)
+    git(d, "checkout", "-q", "main")
+    git(d, "merge", "-q", "-s", "ours", "--no-edit", "side")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"dir_check": dircheck(d), "result": valid(d)}
+
+
+@probe("ancestor_symlink_mode_pointing_at_tree")
+def _(w):
+    """A 120000 entry at level4 whose oid is a tree: fsck should refuse (type mismatch)."""
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    attt = git(d, "rev-parse", "HEAD:att")
+    c2 = put_entry(d, c1, TOP[0], "120000", attt, "symlink->tree")
+    git(d, "update-index", "--force-remove", TOP[0])
+    tree = git(d, "write-tree"); c3 = git(d, "commit-tree", tree, "-p", c2, "-m", "rm"); git(d, "update-ref", "HEAD", c3)
+    git(d, "reset", "-q", "--hard")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"batch_check_c2": batch(d, [f"{c2}:{TOP[0]}"]), "fsck_strict": fsck(d), "dir_check": dircheck(d),
+            "result": valid(d)}
+
+
+@probe("socket_mode_entry_at_ancestor_and_under_review_dir")
+def _(w):
+    """Odd mode 140000 (canonicalised to a gitlink by git) pointing at a tree at level4, and at a file under the
+    review directory."""
+    out = {}
+    for where in (TOP[0], f"{RD}/odd.md"):
+        d = w / ("r" + str(len(out))); init(d)
+        c1 = commit(d, {"att/HOST.json": ATT})
+        attt = git(d, "rev-parse", "HEAD:att")
+        blob = git(d, "hash-object", "-w", "--stdin", inp=VETO)
+        oid = attt if where == TOP[0] else blob
+        # build the tree literally: root = {att, level4 (odd)} or root = {att, level4/.../reviews/odd.md (odd)}
+        if where == TOP[0]:
+            root = mktree_literal(d, [("40000", "att", attt), ("140000", TOP[0], oid)])
+        else:
+            sub = mktree_literal(d, [("140000", "odd.md", oid)])
+            for name in reversed(TOP):
+                sub = mktree_literal(d, [("40000", name, sub)])
+            sub_top = git(d, "rev-parse", f"{sub}:{TOP[0]}")
+            root = mktree_literal(d, [("40000", "att", attt), ("40000", TOP[0], sub_top)])
+        c2 = mkcommit(d, root, [c1], "odd")
+        c3 = mkcommit(d, git(d, "rev-parse", f"{c1}^{{tree}}"), [c2], "rm")
+        git(d, "update-ref", "HEAD", c3); git(d, "reset", "-q", "--hard")
+        commit(d, {f"{ACC}1.md": OK})
+        out[where] = {"ls_tree_c2": git(d, "ls-tree", "-r", c2), "fsck_strict": fsck(d), "dir_check": dircheck(d),
+                      "result": valid(d)}
+    return out
+
+
+# ---------------------------------------------------------------- I. case / Unicode variants (Linux checkout)
+for variant in ("Level4/" + RD.split("/", 1)[1], RD.rsplit("/", 1)[0] + "/Reviews",
+                RD.rsplit("/", 1)[0] + "/rev‌iews", RD.rsplit("/", 1)[0] + "/reviewś"):
+    @probe(f"variant_dir_rejection::{variant.encode('unicode_escape').decode()}")
+    def _(w, variant=variant):
+        d = w / "r"; init(d)
+        commit(d, {"att/HOST.json": ATT})
+        commit(d, {f"{variant}/veto.md": VETO})
+        commit(d, rm=[f"{variant}/veto.md"])
+        commit(d, {f"{ACC}1.md": OK})
+        return {"fsck_strict": fsck(d), "result": valid(d),
+                "note": "a distinct directory on a case-sensitive, non-normalising file system"}
+
+
+# ---------------------------------------------------------------- J. long history; batch parsing
+@probe("long_history_timing")
+def _(w):
+    import time
+    d = w / "r"; init(d)
+    n = 30000
+    stream = [b"blob\nmark :1\ndata %d\n" % len(ATT) + ATT + b"\n"]
+    stream.append(b"blob\nmark :2\ndata %d\n" % len(OK) + OK + b"\n")
+    for i in range(n):
+        s = f"commit refs/heads/main\ncommitter t <t@t> {1700000000 + i} +0000\ndata 1\nx\n"
+        if i == 0:
+            s += "M 100644 :1 att/HOST.json\n"
+        else:
+            s += f"M 100644 inline f{i % 7}.txt\ndata {len(str(i)) + 1}\n{i}\n"
+        if i == n - 1:
+            s += f"M 100644 :2 {ACC}1.md\n"
+        stream.append(s.encode())
+    subprocess.run(["git", "-C", str(d), "fast-import", "--quiet"], input=b"".join(stream), check=True)
+    git(d, "reset", "-q", "--hard", "main")
+    t0 = time.time(); dc = dircheck(d); t1 = time.time(); v = valid(d); t2 = time.time()
+    return {"commits": n, "dir_check": dc, "dir_check_s": round(t1 - t0, 2), "attestation_valid_s": round(t2 - t1, 2),
+            "result": v}
+
+
+@probe("dir_check_on_unborn_and_odd_roots")
+def _(w):
+    out = {}
+    d = w / "unborn"; init(d)
+    out["unborn"] = dircheck(d)
+    f = w / "file"; f.write_text("x")
+    out["file"] = dircheck(f)
+    out["missing"] = dircheck(w / "nope")
+    return out
+
+
+@probe("sha256_ancestor_symlink")
+def _(w):
+    d = w / "r"; Path(d).mkdir()
+    git(d, "init", "-q", "--object-format=sha256")
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull)):
+        git(d, "config", "--local", k, v)
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {f"alt/{'/'.join(TOP[1:])}/veto.md": VETO})
+    os.symlink("alt", Path(d, TOP[0]))
+    commit(d)
+    commit(d, rm=[TOP[0], f"alt/{'/'.join(TOP[1:])}/veto.md"])
+    commit(d, {f"{ACC}1.md": OK})
+    return {"dir_check": dircheck(d), "result": valid(d)}
+
+
+Path(OUT).write_text(json.dumps(results, indent=1, sort_keys=True) + "\n")
+print(json.dumps({k: (v.get("result", {}).get("valid") if isinstance(v, dict) and isinstance(v.get("result"), dict)
+                      else ("probe_error" if isinstance(v, dict) and "probe_error" in v else "..."))
+                  for k, v in results.items()}, indent=1))

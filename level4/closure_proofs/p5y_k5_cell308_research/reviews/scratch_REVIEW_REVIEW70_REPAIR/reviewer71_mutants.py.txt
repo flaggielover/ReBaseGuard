@@ -1,0 +1,128 @@
+"""Review 71 (structure from review 70's reviewer70_mutants.py.txt): (1) registered RV64-RV70 (and RV40, RV60-RV63,
+CDEX15) re-run singly against a fresh baseline, recording the failing SUBTESTS, not only methods; (2) the reviewer's new
+mutants RD1-RD7, classified with the pinned harness's run_suite / classify_mutant (strict criteria), each with an
+outcome check (base vs mutant, each in a child interpreter running a probe script). The pinned tree is never written:
+each mutant is a copy under scratch tmp.
+usage: python3 -B -I reviewer71_mutants.py.txt <pinned DEV dir> <scratch tmp dir> <cons70.py.txt> <probes71.py.txt> <out.json>"""
+import hashlib, importlib.util, json, os, subprocess, sys, tempfile
+from pathlib import Path
+
+DEV, TMP, CONS70, P71, OUT = sys.argv[1:6]
+spec = importlib.util.spec_from_file_location("run_mutants_pinned", Path(DEV, "tests/run_mutants.py"))
+H = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(H)                 # module level only builds the registry; main() is not called
+
+W69 = ["test_review69_ancestor_entries_are_read_by_mode"]
+W68 = ["test_review68_non_directory_review_paths_refuse"]
+W70A = ["test_review70_review_dir_file_evil_merge_and_odd_mode_refuse"]
+W70B = ["test_review70_sha256_repository_and_walk_parsing"]
+
+REGISTERED = [("RV64", CONS70, "leaf_regular_file"), ("RV65", CONS70, "caller_forged_object_directory"),
+              ("RV66", CONS70, "evil_merge_ancestor_symlink"), ("RV67", CONS70, "sha256_control"),
+              ("RV68", CONS70, "odd_dir_mode_at_ancestor::40755"), ("RV69", P71, "duplicate_same_mode_bad_first"),
+              ("RV70", None, None), ("RV40", None, None), ("RV60", None, None), ("RV61", None, None),
+              ("RV62", None, None), ("RV63", None, None), ("CDEX15", None, None)]
+
+WALK_ALL = W70A + W70B + W69 + W68
+MINE = [
+    ("RD1", "root commits' own trees are skipped by the ancestor walk (rev-list --min-parents=1)",
+     [('    commits = _git(repo_root, "rev-list", "HEAD")',
+       '    commits = _git(repo_root, "rev-list", "--min-parents=1", "HEAD")')],
+     WALK_ALL, P71, "root_commit_ancestor_symlink"),
+    ("RD2", "_tree_entry refuses a duplicate name only when the two modes differ (same-mode duplicates: last wins)",
+     [("            if found is not None:\n                return False\n",
+       "            if found is not None and found[0] != data[pos:sp]:\n                return False\n")],
+     W70B, P71, "duplicate_same_mode_bad_first"),
+    ("RD3", "the walk reads a malformed tree (_tree_entry False) as 'entry absent'",
+     [("            if entry is False:\n                return False\n            if entry is None:\n",
+       "            if entry is False or entry is None:\n")],
+     WALK_ALL, P71, "duplicate_same_mode_bad_first"),
+    ("RD4", "_tree_entry keeps the FIRST of duplicate entries instead of refusing",
+     [("            if found is not None:\n                return False\n",
+       "            if found is not None:\n                pos = nul + 1 + width\n                continue\n")],
+     W70B, P71, "duplicate_same_mode_bad_first"),
+    ("RD5", "_tree_entry matches any entry whose name STARTS WITH the component (sibling over-refusal)",
+     [("        if data[sp + 1:nul] == name:", "        if data[sp + 1:nul].startswith(name):")],
+     WALK_ALL, P71, "prefix_sibling_controls"),
+    ("RD6", "the walk covers only the commits the path-limited history scan lists",
+     [('    commits = _git(repo_root, "rev-list", "HEAD")',
+       '    commits = _git(repo_root, "rev-list", "--full-history", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)')],
+     WALK_ALL, P71, "root_commit_ancestor_symlink"),
+    ("RD7", "_cat_file_batch ignores trailing output (answers not matched one-to-one with names)",
+     [("    return answers if pos == len(out) else None", "    return answers")],
+     W70B, P71, "tree_entry_edges"),
+]
+
+
+def outcome(moddir, script, kind):
+    if kind is None:
+        return None
+    with tempfile.TemporaryDirectory(dir=TMP) as w:
+        p = subprocess.run([sys.executable, "-B", "-I", script, moddir, w, str(Path(w, "o.json")), kind],
+                           capture_output=True, text=True, timeout=900)
+    try:
+        r = json.loads(p.stdout.strip().splitlines()[-1])[kind]
+        if kind == "tree_entry_edges":
+            return {"batch_newline_in_name": r.get("batch_newline_in_name")}
+        return {"dir_check": r.get("dir_check"), "result": r.get("result"),
+                **({"tree_entry_direct": r["tree_entry_direct"]} if "tree_entry_direct" in r else {})}
+    except Exception:
+        return {"child_error": p.stderr[-800:]}
+
+
+src = H.SRC.read_text()
+env = dict(os.environ)
+env.pop("LX_PLATFORM_DIR", None)
+env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONWARNINGS="error", PYTHONHASHSEED="0")
+base = H.run_suite(env)
+out = {"source_sha256": hashlib.sha256(src.encode()).hexdigest(), "baseline_ran": base["ran"],
+       "baseline_pass": H.suite_passed(base), "expected_test_count": H.expected_test_count(),
+       "registry_size": len(H.validate_registry()), "registered": [], "mutants": []}
+print("baseline", base["ran"], H.suite_passed(base), flush=True)
+
+
+def run(mid, edits, witnesses, script=None, kind=None, based=None):
+    mutated, counts, err = H.apply_mutation(src, edits)
+    row = {"id": mid, "witnesses": witnesses, "anchor_counts": counts, "edits": [{"old": o, "new": n} for o, n in edits]}
+    if err:
+        row.update(status="NOT_APPLIED", reasons=[err])
+        return row
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        Path(d, "lx_platform.py").write_text(mutated)
+        suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+        if based and kind:
+            row["outcome_base"] = outcome(based, script, kind)
+            row["outcome_mutant"] = outcome(d, script, kind)
+    status, reasons = H.classify_mutant(suite, base, witnesses)
+    failed = sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]})
+    row.update(status=status, reasons=reasons, ran=suite["ran"], returncode=suite["returncode"], failed_methods=failed,
+               failure_names=sorted(suite["assertion_failure_names"]), error_names=suite["error_names"],
+               only_own_witnesses=set(failed) <= set(witnesses),
+               mutated_sha256=hashlib.sha256(mutated.encode()).hexdigest())
+    return row
+
+
+def short(names):
+    return [n.split(" ", 1)[0] + (" " + n.rsplit(") ", 1)[-1] if n.endswith(")") and ") (" in n else "") for n in names]
+
+
+reg = {mid: (what, edits) for mid, what, edits in H.MUTANTS}
+with tempfile.TemporaryDirectory(dir=TMP) as based:
+    Path(based, "lx_platform.py").write_text(src)
+    for mid, script, kind in REGISTERED:
+        row = run(mid, reg[mid][1], H.PROPERTY_WITNESSES[mid], script, kind, based)
+        row["property"] = reg[mid][0]
+        out["registered"].append(row)
+        print(mid, row["status"], row.get("reasons"), short(row.get("failure_names", [])),
+              "| base:", json.dumps(row.get("outcome_base"))[:200], "| mutant:", json.dumps(row.get("outcome_mutant"))[:200],
+              flush=True)
+        Path(OUT).write_text(json.dumps(out, indent=1) + "\n")
+    for mid, what, edits, witnesses, script, kind in MINE:
+        row = run(mid, edits, witnesses, script, kind, based)
+        row["property"] = what
+        out["mutants"].append(row)
+        print(mid, row["status"], row.get("reasons"), short(row.get("failure_names", [])),
+              "| base:", json.dumps(row.get("outcome_base"))[:220], "| mutant:", json.dumps(row.get("outcome_mutant"))[:220],
+              flush=True)
+        Path(OUT).write_text(json.dumps(out, indent=1) + "\n")
+Path(OUT).write_text(json.dumps(out, indent=1) + "\n")

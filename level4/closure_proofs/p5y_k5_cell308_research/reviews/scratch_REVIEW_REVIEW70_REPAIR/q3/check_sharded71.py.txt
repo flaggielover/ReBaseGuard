@@ -1,0 +1,50 @@
+"""Review 71 Q3/Q4: check the sharded record against the harness registry at 74badebc (git objects of the pinned
+tree's object store), recompute every mutated-source hash, and compare inputs with the 74badebc blobs.
+usage: python3 -B -I check_sharded71.py.txt <pinned tree> <record.json.gz> <scratch tmp>"""
+import gzip, hashlib, importlib.util, json, os, subprocess, sys, tempfile
+from pathlib import Path
+TREE, REC, TMP = sys.argv[1:4]
+DEVREL = "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV"
+def show(c, p):
+    return subprocess.run(["git", "-C", TREE, "show", f"{c}:{p}"], capture_output=True, check=True).stdout
+d = json.loads(gzip.decompress(Path(REC).read_bytes()))
+out = {"problems": []}
+with tempfile.TemporaryDirectory(dir=TMP) as w:
+    for rel in ("lx_platform.py", "tests/run_mutants.py"):
+        Path(w, rel).parent.mkdir(parents=True, exist_ok=True)
+        Path(w, rel).write_bytes(show("74badebc", f"{DEVREL}/{rel}"))
+    spec = importlib.util.spec_from_file_location("rm74", Path(w, "tests/run_mutants.py"))
+    H = importlib.util.module_from_spec(spec); spec.loader.exec_module(H)
+    src = Path(w, "lx_platform.py").read_text()
+    # registry at 74badebc (validate_registry needs the test files; count group sizes instead)
+    ids = [m for m, _, _ in H.MUTANTS]
+    out["registry_74badebc"] = len(ids)
+    out["group_sum"] = sum(H.MUTANT_GROUP_SIZES.values())
+    if [r["id"] for r in d["rows"]] != ids:
+        out["problems"].append("row order / ids differ from registry")
+    for (mid, what, edits), r in zip(H.MUTANTS, d["rows"]):
+        mutated, counts, err = H.apply_mutation(src, edits)
+        if err or r.get("mutated_lx_platform_sha256") != hashlib.sha256(mutated.encode()).hexdigest():
+            out["problems"].append(f"{mid}: mutated hash mismatch or anchor error {err}")
+        if r["property"] != what:
+            out["problems"].append(f"{mid}: property text differs")
+        if r["intended_property_test_methods"] != H.PROPERTY_WITNESSES[mid]:
+            out["problems"].append(f"{mid}: witness list differs")
+        if r["status"] != "KILLED" or r["reasons"] != [] or r["ran"] != 229 or r["returncode"] != 1:
+            out["problems"].append(f"{mid}: status {r['status']} {r['reasons']} ran {r['ran']} rc {r['returncode']}")
+        if not set(r["failed_methods"]) & set(H.PROPERTY_WITNESSES[mid]):
+            out["problems"].append(f"{mid}: no witness among failed methods")
+        if r["anchor_counts"] != [1] * len(edits):
+            out["problems"].append(f"{mid}: anchor counts {r['anchor_counts']}")
+    # inputs vs 74badebc and cc02b9b7 blobs
+    for key in ("inputs_before", "inputs_after"):
+        for path, h in d[key].items():
+            for c in ("74badebc", "cc02b9b7"):
+                if hashlib.sha256(show(c, path)).hexdigest() != h:
+                    out["problems"].append(f"{key} {path} != {c} blob")
+    out["inputs_n"] = len(d["inputs_before"])
+    out["inputs_equal"] = d["inputs_before"] == d["inputs_after"]
+    out["rv64_70_rows"] = {r["id"]: r["failed_methods"] for r in d["rows"] if r["id"] in
+                           ("RV40", "RV64", "RV65", "RV66", "RV67", "RV68", "RV69", "RV70")}
+    out["rows_keys"] = sorted(d["rows"][0].keys())
+print(json.dumps(out, indent=1))

@@ -1788,7 +1788,64 @@ class TestAttestationPreflight(unittest.TestCase):
             self.assertEqual(L._cat_file_batch(d, ["HEAD^{tree}"], contents=False)[0][1], "tree")
         dup = b"120000 level4\0" + b"\x11" * 20 + b"40000 level4\0" + b"\x22" * 20
         self.assertIs(L._tree_entry(dup, b"level4", 20), False)                          # RV69
+        same = b"40000 level4\0" + b"\x11" * 20 + b"40000 level4\0" + b"\x22" * 20
+        self.assertIs(L._tree_entry(same, b"level4", 20), False)                         # RV73 (review 71 U2)
         self.assertEqual(L._tree_entry(dup[:34], b"level4", 20), (b"120000", "11" * 20))
+
+    def test_review71_root_commits_duplicates_and_sibling_names(self):
+        """Review 71 U1-U3: (a) the walk covers root commits' own trees: an ancestor symlink only in the root commit, or
+        only in an unrelated root merged with `-s ours`, is unavailable evidence; (b) the walk itself (without the fsck
+        precondition) refuses a root tree with two `level4` entries; (c) positive control: siblings that only share a
+        prefix with a component (`level4x` symlink, `reviews-archive` file, `reviews old` file) are accepted."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        rd = L.ACCEPTANCE_REVIEW_DIR
+        top = rd.split("/")[0]
+        veto = f"{sha} REJECTED\n".encode()
+        for case in ("root_commit", "orphan_root"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as d:
+                git_init(d)
+
+                def link_commit():                                  # ONE commit holds the symlink and its target
+                    os.symlink("alt", Path(d, top))
+                    git_commit(d, {f"alt/{rd[len(top) + 1:]}/veto.md": veto})
+                    fixture_git(d, "rm", "-q", top)
+                    fixture_git(d, "rm", "-q", "-r", "alt")
+                if case == "root_commit":
+                    link_commit()
+                    git_commit(d, {"att/HOST.json": att})
+                else:
+                    git_commit(d, {"att/HOST.json": att})
+                    main = self._out(d, "rev-parse", "--abbrev-ref", "HEAD")
+                    fixture_git(d, "checkout", "-q", "--orphan", "other")
+                    fixture_git(d, "rm", "-q", "-r", "--cached", ".")
+                    fixture_git(d, "clean", "-q", "-f", "-d")
+                    link_commit()
+                    git_commit(d, {"o.txt": b"o\n"})
+                    fixture_git(d, "checkout", "-q", "-f", main)
+                    self._out(d, "merge", "-q", "-s", "ours", "--allow-unrelated-histories", "--no-edit", "other")
+                git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+                rec, why = self._valid_in(d, att)
+                self.assertIsNone(rec)                                                    # RV71
+                self.assertTrue(any("UNAVAILABLE" in w for w in why), why)
+        with tempfile.TemporaryDirectory() as d:                                          # (b) duplicate entries
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att, f"{rd}/x.md": b"x\n"})
+            lvl = bytes.fromhex(self._out(d, "rev-parse", f"HEAD:{top}"))
+            tree = self._out(d, "hash-object", "-t", "tree", "--literally", "-w", "--stdin",
+                             data=b"40000 att\0" + bytes.fromhex(self._out(d, "rev-parse", "HEAD:att"))
+                             + f"120000 {top}\0".encode()
+                             + bytes.fromhex(self._out(d, "rev-parse", "HEAD:att/HOST.json"))
+                             + f"40000 {top}\0".encode() + lvl)
+            fixture_git(d, "update-ref", "HEAD", self._out(d, "commit-tree", tree, "-p", "HEAD", "-m", "duplicate"))
+            self.assertIs(L._review_dir_is_a_directory(d), False)                         # RV74
+        with tempfile.TemporaryDirectory() as d:                                          # (c) sibling names
+            git_init(d)
+            git_commit(d, {"att/HOST.json": att, f"{rd}-archive": b"archive\n", f"{rd} old": b"old\n"})
+            os.symlink(top, Path(d, f"{top}x"))
+            git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+            rec, why = self._valid_in(d, att)
+            self.assertIsNotNone(rec, why)                                                # RV72
 
     def test_review68_strict_fsck_and_forced_git_environment(self):
         """Review 68 P4: (a) `--strict` itself is required: a WARN-class message other than fullPathname (a
