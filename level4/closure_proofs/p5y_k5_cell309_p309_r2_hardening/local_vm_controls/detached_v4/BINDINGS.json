@@ -1,0 +1,53 @@
+{
+  "schema": "P309_DETACHED_BINDINGS/4",
+  "source_files": [
+    {
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992",
+      "path": ".gitattributes"
+    },
+    {
+      "sha256": "dd4ffb53b7b1f7397814dcc9c8a3ac5bba80c897516fa4c2894a905fd7aed27f",
+      "path": "OwnedVmDetached.cs"
+    },
+    {
+      "sha256": "f64b50c47ee26877d705710ea83d476e18904ec2138ff10898118e549c9cb017",
+      "path": "ProbeVerdict.ps1"
+    },
+    {
+      "sha256": "58c1abeffb53d2d523adf281eb5625c306053d98d8b914d5a62fe8954c2bb401",
+      "path": "REVIEW_AND_APPROVAL.md"
+    },
+    {
+      "sha256": "80f138d6edf51d145fdd766551ff40f091d51b6a2592599b58f3813ce13822b6",
+      "path": "Run-ApprovedDetached.ps1"
+    },
+    {
+      "sha256": "4b8b19da7f0df778dee6656c8217d5fcee363654903561a8116cda7982799ad7",
+      "path": "RuntimePreflight.ps1"
+    },
+    {
+      "sha256": "6230ddc27352dd549bcf833d1f386f8817a35155a088be3953e2c04944990b51",
+      "path": "Test-ApprovalGate.ps1"
+    },
+    {
+      "sha256": "ebb6f88edde8665daca2c312e509eaa0dcb33751cde1e85ae88729f766e7963c",
+      "path": "Test-ProbeVerdict.ps1"
+    }
+  ],
+  "guard_sha256": "888e8995d2c66152ad92af8c61a32d741bf50ebda23223939ae102d0be733209",
+  "harness_sha256": "80f138d6edf51d145fdd766551ff40f091d51b6a2592599b58f3813ce13822b6",
+  "preflight_sha256": "4b8b19da7f0df778dee6656c8217d5fcee363654903561a8116cda7982799ad7",
+  "verdict_sha256": "f64b50c47ee26877d705710ea83d476e18904ec2138ff10898118e549c9cb017",
+  "runtime_hashlist_sha256": "48abd49ab20d074a4dea88306418a6c6c3e4374b81e7e1eb21a10929d2159238",
+  "compiler_sha256": "46809206887326d2d24db1eff1f3064de972c3451abe766b49111450a5e08e00",
+  "build_command": "csc.exe /nologo /target:exe /platform:x64 /optimize+ /out:<records>\\OwnedVmDetached-v4.exe <detached_v4>\\OwnedVmDetached.cs",
+  "checks": {
+    "approval_rejections": 4,
+    "verdict_regressions": 14,
+    "actual_runtime_files_reverified": 222,
+    "csharp_pure": 31
+  },
+  "real_v4_execution": false,
+  "independent_review": false,
+  "admission": "BLOCKED"
+}
