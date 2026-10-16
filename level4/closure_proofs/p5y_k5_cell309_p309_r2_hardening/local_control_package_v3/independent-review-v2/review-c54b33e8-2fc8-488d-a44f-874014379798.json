@@ -1,0 +1,92 @@
+{
+  "scan_id": "c54b33e8-2fc8-488d-a44f-874014379798",
+  "sealed_at": "2026-10-16T02:32:02.162828Z",
+  "target": {
+    "baseRevision": "4ed10eb3c57c9278858edb4fd99640f61b0afcf6",
+    "displayName": "p309-local-vm-diagnostic-dev-20261016",
+    "headRevision": "5cc9b519f157de7855dcb06f63344af24f2923cf",
+    "kind": "git_diff",
+    "snapshotDigest": "codex-security-snapshot/v1:sha256:b8e8ea52e20ed7add2f19dd5c9323eae33384fc127bda028f8b9eb63f76cb2a9",
+    "targetId": "target_sha256_aa743fba3b98454cc8ea65893dba04d7cd5f02ec0a77fd0165042868f408709b"
+  },
+  "summary": "Complete independent static security review of26 additive actual-result/offline-analysis files in4ed10eb3..5cc9b519. No reportable security vulnerability; one concrete publication-minimization observation retained. Actual I2 capture remains FAILED and I1-I7 OPEN/BLOCKED.",
+  "limitations": [
+    "Publication correction required before describing this as a minimized export: replace READONLY_COUNTER_METADATA.json:30 rawXML with field-allowlisted scheduler summary; retain original locally. No source changes made by this review and no publication permission granted.",
+    "No fullETL/CSV redecoding or genericCPU-accounting validation performed. Matched intervals exclude no proven ISR/DPC/guest deduplication or full boundary accounting; trace loss is real despite zero observed continuity mismatch.",
+    "Saved loss fields are48 earlier samples only; the failure-triggering query was not persisted. The final header reports12027lost, coverage50sec/49.7801394sec observed span rather than60sec.",
+    "Session absence and helpers exited do not establish a successful creator-owned stop. Three separate fixture Job facts do not overwrite the original false aggregate field or FAILED_OR_UNKNOWN.",
+    "Current native exit1 is supported by streamed saved output; it does not repair the previous invocation's missing exact exit code or retroactively modify any historical scan.",
+    "Trusted owner/admin/OS/toolchain assumptions retained; no unrelated-host workload mutation or malicious-owner scenario added. Raw payload and reference URLs remain local/unfetched.",
+    "Original native/ETW private hashes remain equal; the26-file Git delta only adds files, leaving existing source/history untouched. Additional source preparation by parent is outside this immutable scope.",
+    "A new real trace/fixture/VM action requires separate authorization. Consumed single-attempt authority is not renewed; formal admission remains BLOCKED."
+  ],
+  "coverage": {
+    "completeness": "complete",
+    "deferred": [],
+    "documentType": "codex-security.coverage",
+    "excludePaths": [],
+    "explicitExclusions": [],
+    "includePaths": [
+      "."
+    ],
+    "inventoryStrategy": "diff",
+    "mode": "branch_diff",
+    "openQuestions": [],
+    "resolvedDeferred": [
+      {
+        "id": "v6-review-all",
+        "reason": "All 26 changed files and 18 inventory items reviewed; offline source/import bounds, all 25 package and 17 capture manifest rows, 20 archival copies, four source copies and outcome limits reconciled. Export candidate terminally suppressed with actionable minimization observation; no unresolved vulnerability candidate."
+      }
+    ],
+    "scanId": "c54b33e8-2fc8-488d-a44f-874014379798",
+    "schemaVersion": "1.0",
+    "surfaces": [
+      {
+        "candidateId": "candidate-08a694b30259ceda",
+        "disposition": "rejected",
+        "id": "v6-export",
+        "label": "Added-file fidelity and private payload boundary",
+        "notes": "All26 additions and18 inventory items accounted;25 package manifest entries,20 archived evidence copies and4 source copies exact. Original native/ETW and offline decoder hashes match. No raw ETL/CSV/private samples/unrelated process payload added. Actionable non-reportable export observation remains: READONLY_COUNTER_METADATA.json:30 includes unnecessary hostname/system envelope. Keep rawXML local; export only scheduler evidence fields. Optional source paths/OS build identify local environment. This snapshot is NOT a fully minimized publication package; no unauthorized audience/secret exposure established.",
+        "receiptRefs": [
+          "artifacts/01_context/actual-capture-static-checks.json"
+        ]
+      },
+      {
+        "disposition": "no_issue_found",
+        "id": "v6-offline",
+        "label": "Offline-only native and Python analysis",
+        "notes": "Reviewed native47lines and all three Python sources. File-only EVENT_RECORD mode; no realtime/session-start/control API. Named PE imports only OpenTraceW/ProcessTrace/CloseTrace for ETW. CSwitch v2/24 orv5/28 bounds precede two4-byte reads; pinned local reference matches offsets. Parser exit0 is decode/I/O status only, with BLOCKED/loss retained. Correlator is fixed-data analysis, not complete CPU accounting or generic admission.",
+        "receiptRefs": [
+          "artifacts/01_context/actual-capture-static-checks.json"
+        ]
+      },
+      {
+        "disposition": "no_issue_found",
+        "id": "v6-outcome",
+        "label": "Capture failure, counter availability and cleanup evidence",
+        "notes": "All17 local capture-manifest hashes/sizes match including256MiB ETL. 48 saved rows all empty counters and earlier loss0 do not override final header12027 lost. Tracerpt50sec and497801394ticks span are incomplete. Native PID46672 exit1 persisted; failed completion output_count1. Three owned fixture exits0/jobs active0 total1 do not prove creator stop:4201/absent session and missing successful-stop receipt remain FAILED_OR_UNKNOWN.",
+        "receiptRefs": [
+          "artifacts/01_context/actual-capture-static-checks.json"
+        ]
+      }
+    ]
+  },
+  "canonical_artifact_digests": [
+    {
+      "mediaType": "application/json",
+      "path": "findings.json",
+      "sha256": "0a73385d7026115d433ea194fcee6d9adbbd643ca2370d66bd3b87a92abdbfdd"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "coverage.json",
+      "sha256": "d0a5411cf5b7dfd9418062f3a3994c2f4b233e0758cdd557f920ccb7961e3732"
+    },
+    {
+      "mediaType": "application/octet-stream",
+      "path": "artifacts/01_context/actual-capture-static-checks.json",
+      "sha256": "fb83e49142f49dafd1fb248ebb3740e03d298ebd16447ea116ff379a0da8cd2a"
+    }
+  ],
+  "admission": "BLOCKED"
+}

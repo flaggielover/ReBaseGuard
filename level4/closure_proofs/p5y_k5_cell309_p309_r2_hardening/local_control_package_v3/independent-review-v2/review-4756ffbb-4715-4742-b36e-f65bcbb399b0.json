@@ -1,0 +1,98 @@
+{
+  "scan_id": "4756ffbb-4715-4742-b36e-f65bcbb399b0",
+  "sealed_at": "2026-10-16T02:46:13.359746Z",
+  "target": {
+    "baseRevision": "4ed10eb3c57c9278858edb4fd99640f61b0afcf6",
+    "displayName": "p309-local-vm-diagnostic-dev-20261016",
+    "headRevision": "5a2b14935431bf25289d194527161edac81fe3f5",
+    "kind": "git_diff",
+    "snapshotDigest": "codex-security-snapshot/v1:sha256:a164ce95aecf8911331cc412f69a944324a5c5af8ed851e4e44c8073a9bc23bb",
+    "targetId": "target_sha256_aa743fba3b98454cc8ea65893dba04d7cd5f02ec0a77fd0165042868f408709b"
+  },
+  "summary": "Complete independent static review of all83 additions in immutable4ed10eb3c57c9278858edb4fd99640f61b0afcf6..5a2b14935431bf25289d194527161edac81fe3f5. No reportable security vulnerabilities; two mandatory engineering fixes prevent pre-execution readiness.",
+  "limitations": [
+    "NOT READY: WHP failed-create output must not imply ownership; add success flag and reject null successful output.",
+    "NOT READY: stable manifest requires absence of kernel ETW writer plus helper/fixture quiescence.",
+    "75s stop request is not guaranteed native API completion; canceled-before-run and native-call stalls remain UNKNOWN paths.",
+    "No live APIs/tests/UAC/trace/VM/fixtures/host queries/network used. Existing unit/ABI evidence is not production success.",
+    "Trusted owner/admin/SYSTEM and OS/toolchain; no whole-repository audit. I1-I7OPEN and formal admissionBLOCKED.",
+    "Returned usage measures aggregate rollout counters, not isolated review cost."
+  ],
+  "coverage": {
+    "completeness": "complete",
+    "deferred": [],
+    "documentType": "codex-security.coverage",
+    "excludePaths": [],
+    "explicitExclusions": [],
+    "includePaths": [
+      "."
+    ],
+    "inventoryStrategy": "diff",
+    "mode": "branch_diff",
+    "openQuestions": [],
+    "resolvedDeferred": [
+      {
+        "id": "all-files",
+        "reason": "All83 additions,46 canonical inventory entries,3 candidate validations and zero eligible attack paths completed. Engineering defects retained explicitly; completing review does not complete their fixes."
+      }
+    ],
+    "scanId": "4756ffbb-4715-4742-b36e-f65bcbb399b0",
+    "schemaVersion": "1.0",
+    "surfaces": [
+      {
+        "disposition": "no_issue_found",
+        "id": "entry",
+        "label": "Build and privileged entry bindings",
+        "notes": "7 fixed inputs and source transformations verified, 6 private execution hashes match FINAL_BINDINGS, private source/object locks and ACL evidence reviewed, native pre-CLR same-byte template/approval/harness and clean explicit environment traced. Ordinary once-only invoker has fixed bindings, pre-UAC reserves and streaming failure output; no retry. Trusted owner/admin/OS assumptions retained.",
+        "receiptRefs": [
+          "artifacts/01_context/static-byte-accounting.json"
+        ]
+      },
+      {
+        "disposition": "rejected",
+        "id": "runtime",
+        "label": "ETW, WHP and fixture lifecycle",
+        "notes": "Security candidates suppressed, engineering disposition NOT READY: WhpCounterProbe.cpp84/132 must record successful partition ownership, not consume undefined failed output. Cancel-before-Run is bounded UNKNOWN; no state destroyed under live run thread. Jobs atomic/single-member/kill-on-close; native3s and WHP8s+3s wait retained. ETW fresh owner handle/GUID,1GiB,loss checks reviewed. EtwCapture.cs178-193 timer cannot complete a foreground native stop that stalls;75s is request opportunity, not hard completion. Missing category ERROR vs empty UNAVAILABLE is wording detail, neither zero load/full coverage.",
+        "receiptRefs": [
+          "artifacts/01_context/static-byte-accounting.json"
+        ]
+      },
+      {
+        "disposition": "no_issue_found",
+        "id": "analysis",
+        "label": "Offline analysis and actual-result privacy",
+        "notes": "All26 actual-result files accounted:24 byte-identical to prior sealed c54b33e8 review; only metadata XML minimization and digest manifest changed. Raw System envelope removed; remaining saved failure is12027 lost/~50s/48 empty samples, no successful creator-stop. File decoder has OpenTrace/ProcessTrace/CloseTrace only, no live trace APIs. New offline projection remains BLOCKED, validates decoder counts/lifetimes/bindings, labels interval incompleteness and processor-group gaps; no acceptance threshold or dedup claim.",
+        "receiptRefs": [
+          "artifacts/01_context/static-byte-accounting.json"
+        ]
+      },
+      {
+        "disposition": "rejected",
+        "id": "evidence",
+        "label": "All changed file and saved evidence accounting",
+        "notes": "All83 changed additions/46 canonical inventory items accounted;56 V3 plus25 actual-result manifest entries match. Saved build/test/ABI/read-only-pin evidence reviewed as past evidence only. Mandatory engineering fix Run-I2Feasibility.ps1:159-165: helper exit alone cannot establish ETL stability; require session absence and fixture/helper quiescence or emit incomplete manifest. No unrelated raw event payload discovered in published subset. New execution not authorized; I1-I7OPEN/admissionBLOCKED.",
+        "receiptRefs": [
+          "artifacts/01_context/static-byte-accounting.json"
+        ]
+      }
+    ]
+  },
+  "canonical_artifact_digests": [
+    {
+      "mediaType": "application/json",
+      "path": "findings.json",
+      "sha256": "9f9228f0bb32e57519c8cafb1a1b1cb91405a579a4b86310bfd3dbda7c8eccdb"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "coverage.json",
+      "sha256": "05ff77c852f69ce1e6d4005ac314d046874da89274c7da0ceea17a379031e255"
+    },
+    {
+      "mediaType": "application/octet-stream",
+      "path": "artifacts/01_context/static-byte-accounting.json",
+      "sha256": "459907f9cd0b165ed3816a306edf7b8096bd95e70a1cecb13ff793240517dd44"
+    }
+  ],
+  "admission": "BLOCKED"
+}

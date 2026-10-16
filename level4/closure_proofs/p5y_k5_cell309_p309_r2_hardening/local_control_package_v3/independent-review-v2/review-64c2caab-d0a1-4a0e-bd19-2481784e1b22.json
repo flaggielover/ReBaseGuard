@@ -1,0 +1,94 @@
+{
+  "scan_id": "64c2caab-d0a1-4a0e-bd19-2481784e1b22",
+  "sealed_at": "2026-10-16T02:54:19.475511Z",
+  "target": {
+    "baseRevision": "5a2b14935431bf25289d194527161edac81fe3f5",
+    "displayName": "p309-local-vm-diagnostic-dev-20261016",
+    "headRevision": "62496ba9b3e14d4afbce1664b613dcf1b34d45cf",
+    "kind": "git_diff",
+    "snapshotDigest": "codex-security-snapshot/v1:sha256:8eb3070856ecbf66fc5f8adadb86c16df08b6c6c6c3ef4ab5169701caa3a7873",
+    "targetId": "target_sha256_aa743fba3b98454cc8ea65893dba04d7cd5f02ec0a77fd0165042868f408709b"
+  },
+  "summary": "Independent complete static review of all42 changed files in5a2b14935431bf25289d194527161edac81fe3f5..62496ba9b3e14d4afbce1664b613dcf1b34d45cf. Both previous engineering blockers repaired; no new pre-execution code blocker or reportable security vulnerability identified.",
+  "limitations": [
+    "75-second timer requests stop but cannot preempt a synchronous Query/ControlTrace already in progress; not I6 proof.",
+    "Native cancellation, loss-free60s capture, cleanup and WHP/NT CPU attribution remain runtime evidence requirements; missing runtime evidence is not silently treated as pass.",
+    "No UAC/trace/VM/fixture/test/host query/network in this review. Source custody assumes trusted owner/admin/SYSTEM and Windows/toolchain.",
+    "Review completion does not authorize execution or formal admission; I1-I7OPEN/BLOCKED. Prior scans unchanged.",
+    "Reported tool token totals are aggregate rollout counters, not isolated review cost."
+  ],
+  "coverage": {
+    "completeness": "complete",
+    "deferred": [],
+    "documentType": "codex-security.coverage",
+    "excludePaths": [],
+    "explicitExclusions": [],
+    "includePaths": [
+      "."
+    ],
+    "inventoryStrategy": "diff",
+    "mode": "branch_diff",
+    "openQuestions": [],
+    "resolvedDeferred": [
+      {
+        "id": "all-review",
+        "reason": "42 changed files and20 canonical inventory items reviewed; both prior defect hypotheses resolved by production controls; all named byte bindings verified; two validations and zero eligible attack paths complete."
+      }
+    ],
+    "scanId": "64c2caab-d0a1-4a0e-bd19-2481784e1b22",
+    "schemaVersion": "1.0",
+    "surfaces": [
+      {
+        "disposition": "no_issue_found",
+        "id": "repairs",
+        "label": "Ownership and evidence quiescence repairs",
+        "notes": "Both prior engineering blockers repaired in this immutable scope. WHP acquisition uses temporary output and exact S_OK/non-null ownership, no cleanup authority on failure/S_FALSE/null; production call and cleanup guard verified. Stable manifest requires session absence AND helper exit AND native fixture cleanup AND WHP fixture cleanup; otherwise explicit incomplete/no-stable-hash artifact. Saved6+6 pure memory checks inspected only. Prior75s native stop-completion limitation remains explicit; no new mandatory code fix identified.",
+        "receiptRefs": [
+          "artifacts/01_context/repair-byte-accounting.json"
+        ]
+      },
+      {
+        "disposition": "no_issue_found",
+        "id": "bindings",
+        "label": "Protected v2 build and execution bindings",
+        "notes": "All8 fixed inputs match source commit f02cddf88aaedaa3733f93daa5458612bca29990 and private transformed bytes.6 execution hashes match FINAL_BINDINGS_V2; build/invoker hashes match. Owner/SYSTEM/admin creation-time protected ACL and source/object locks traced.ETW binary reused with exact prior digest. All34 private build-manifest entries and29 archived-evidence manifest entries match; archived build manifest equals private original. Native static imports onlyKERNEL32 per saved PE inspection. No build executed by review.",
+        "receiptRefs": [
+          "artifacts/01_context/repair-byte-accounting.json"
+        ]
+      },
+      {
+        "disposition": "no_issue_found",
+        "id": "records",
+        "label": "All changed records and preserved limitations",
+        "notes": "All42 changed files and20 canonical inventory items reviewed; historical V1 manifests preserved, current V2 binding files unambiguous in amended docs. Fixture function and invoker helper region exact equality supports17+10 reused tests, not new runs. Saved offline replay matches named local result/digest and preserves4005205events,12027lost,3owned fixtures,48empty counters,failed original verdict/BLOCKED. No raw unrelated event payload added. No tests/live APIs/host queries/UAC/trace/fixtures/VM/network used; formal acceptance remains external.",
+        "receiptRefs": [
+          "artifacts/01_context/repair-byte-accounting.json"
+        ]
+      }
+    ]
+  },
+  "canonical_artifact_digests": [
+    {
+      "mediaType": "application/json",
+      "path": "findings.json",
+      "sha256": "d8d22f2227a159d3280477e1ca745f979782a7d6d14c548192d74396ec574788"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "coverage.json",
+      "sha256": "475f61239c6462db3932a3687d62d68bd1a003d2932a2a2534a475504efe5c4a"
+    },
+    {
+      "mediaType": "application/octet-stream",
+      "path": "artifacts/01_context/repair-byte-accounting.json",
+      "sha256": "bed86cb3cdd8f829cd6120bd001bfb5db31eb58f6951f65c9e2658be24305310"
+    }
+  ],
+  "tool_usage": {
+    "aggregate_rollout_tokens": 1165120,
+    "not_isolated_review_cost": true
+  },
+  "scope": "STATIC_REVIEW_ONLY_NO_EXECUTION_AUTHORIZATION",
+  "I1_I7": "OPEN",
+  "admission": "BLOCKED"
+}
