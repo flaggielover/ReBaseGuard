@@ -1,5 +1,4 @@
 """Aggregate saved-root scheduling gaps; deliberately never attests completeness."""
-import bisect
 import csv
 import json
 import sys
@@ -10,8 +9,13 @@ from account_saved_qpc import read, union, overlap, clipped
 
 def rows(path):
     with path.open(encoding="ascii", newline="") as f:
-        for r in csv.DictReader(f):
-            yield tuple(int(r[k]) for k in ("kind", "qpc", "cpu", "opcode", "a", "b", "c", "cpu_index_flag"))
+        reader = csv.reader(f)
+        if next(reader) != ["kind", "qpc", "cpu", "opcode", "a", "b", "c", "cpu_index_flag"]:
+            raise ValueError("unexpected numeric schema")
+        for r in reader:
+            if len(r) != 8:
+                raise ValueError("malformed numeric row")
+            yield tuple(map(int, r))
 
 
 def lifetimes(records, low, high):
@@ -21,6 +25,11 @@ def lifetimes(records, low, high):
     for op, when, identity in sorted(records, key=lambda x: (x[1], x[0])):
         if op in (1, 3):
             if active is not None:
+                # DCStart enumerates an already running thread/process. A
+                # matching snapshot after its real Start is not a new birth.
+                # Keep the exact Start bound; never widen it to trace start.
+                if op == 3 and not active[2] and active[1] == identity and active[0] <= when:
+                    continue
                 raise ValueError("overlapping start/rundown identity")
             active = (low if op == 3 else when, identity, op == 3)
         elif op in (2, 4):
@@ -36,7 +45,7 @@ def lifetimes(records, low, high):
     return result
 
 
-def audit(root):
+def audit(root, private_unknown=None):
     off = root / "offline"
     h = read(off / "qpc.stdout.json")
     if any(h[k] for k in ("unknown_required_prefix", "header_events_lost", "header_buffers_lost", "process_rc", "close_rc", "output_error")):
@@ -86,6 +95,7 @@ def audit(root):
 
     last, scheduled, irq = {}, defaultdict(list), defaultdict(list)
     totals = defaultdict(int)
+    unknown_by_tid = defaultdict(int)
     unknown_intervals = discontinuities = backwards = 0
     cpu_span = defaultdict(int)
     for kind, stamp, cpu, op, incoming, outgoing, unused, index in rows(path):
@@ -117,6 +127,7 @@ def audit(root):
                         totals[label] += b-a
                         if identity is None:
                             unknown_intervals += 1
+                            unknown_by_tid[outgoing] += b-a
                         # Save non-idle intervals only, to subtract IRQ union once.
                         scheduled[cpu].append((a, b))
         last[cpu] = stamp, incoming
@@ -124,6 +135,10 @@ def audit(root):
     irq_total = sum(b-a for spans in irq.values() for a, b in union(spans))
     irq_on_busy = sum(overlap(spans, irq[cpu]) for cpu, spans in scheduled.items())
     freq = h["qpc_frequency"]
+    if private_unknown is not None:
+        with private_unknown.open("x", encoding="utf-8") as f:
+            json.dump([dict(tid=tid, qpc_ticks=ticks, thread_events=threads.get(tid, []))
+                       for tid, ticks in sorted(unknown_by_tid.items())], f, indent=2)
     return dict(scope="OFFLINE_ROOT_SCHEDULED_INTERVAL_AUDIT_NOT_HOST_ADMISSION",
                 window_seconds=60, window_qpc=[begin, end], processor_count=h["processors"],
                 every_cpu_has_closed_60s_span=complete_cpu_spans,
@@ -137,7 +152,7 @@ def audit(root):
 
 
 if __name__ == "__main__":
-    result = audit(Path(sys.argv[1]))
+    result = audit(Path(sys.argv[1]), Path(sys.argv[3]) if len(sys.argv) == 4 else None)
     with Path(sys.argv[2]).open("x", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
     print(json.dumps(result))

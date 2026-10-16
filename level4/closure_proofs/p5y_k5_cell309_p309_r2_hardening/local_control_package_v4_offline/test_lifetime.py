@@ -18,6 +18,13 @@ class LifetimeTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 lifetimes(rows, 10, 100)
 
+    def test_start_then_matching_rundown_keeps_actual_birth(self):
+        self.assertEqual(lifetimes([(1, 11, 8), (3, 12, 8), (4, 90, 8)], 10, 100), [(11, 100, 8, False)])
+
+    def test_snapshot_different_identity_is_not_adopted(self):
+        with self.assertRaises(ValueError):
+            lifetimes([(1, 11, 8), (3, 12, 9), (4, 90, 9)], 10, 100)
+
 
 if __name__ == '__main__':
     unittest.main()
