@@ -1,0 +1,183 @@
+{
+  "harness_sha256": "9ff4db26b765469269c78567200d39d65b5a984163d3d3db91bf47445e0b211d",
+  "template_sha256": "6f4a289f27ff4a244753d4154e72cc99b0af1be7666fac2f017eb885302bb12b",
+  "private_root": "C:\\Users\\Lenovo\\P309-FactsRepair-build-20261016-v1",
+  "launcher_sha256": "f27be1cdd52204207b5493e1755e919c69c587b3d00b39f47bc0c263c9e0088f",
+  "vm_starts": 0,
+  "native_entry_executions": 0,
+  "core_sha256": "1ea61f4b3f905c5644ddec1c2fa852eb281aed9a3c5e9130ccc73587e0c47484",
+  "utc": "2026-10-16T04:59:49.8633715Z",
+  "commands": [
+    {
+      "exit_code": 0,
+      "arguments": [
+        "/nologo",
+        "/c",
+        "/GS-",
+        "/O1",
+        "/Oi-",
+        "/Zl",
+        "/D_WIN32_WINNT=0x0602",
+        "/IC:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include",
+        "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt",
+        "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um",
+        "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared",
+        "/FoNativeEntry.obj",
+        "NativeEntry.c"
+      ],
+      "environment": "FIVE_FIXED_VARIABLES",
+      "pid": 44688,
+      "sha256": "6aa39ae173cb8563d796359930b332a08b2fdc1745b70e5a4caa48a9779fdd07",
+      "executable": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe"
+    },
+    {
+      "exit_code": 0,
+      "arguments": [
+        "/NOLOGO",
+        "/NODEFAULTLIB",
+        "/SUBSYSTEM:WINDOWS",
+        "/DYNAMICBASE",
+        "/NXCOMPAT",
+        "/MANIFEST:EMBED",
+        "/MANIFESTUAC:level='requireAdministrator' uiAccess='false'",
+        "/ENTRY:Entry",
+        "/OUT:NativeEntry.exe",
+        "NativeEntry.obj",
+        "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64\\kernel32.lib"
+      ],
+      "environment": "FIVE_FIXED_VARIABLES",
+      "pid": 37744,
+      "sha256": "7a9b2527a183361329b0a6d85da13680467152c3b7bbe14470e7c74383e3b0a1",
+      "executable": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe"
+    },
+    {
+      "exit_code": 0,
+      "arguments": [
+        "/headers",
+        "/imports",
+        "NativeEntry.exe"
+      ],
+      "environment": "FIVE_FIXED_VARIABLES",
+      "pid": 21584,
+      "sha256": "db64bcb6f17a61f0d64ecc016b90faf9b83134d41fcb1b4fc6db9e347fdbd674",
+      "executable": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\dumpbin.exe"
+    },
+    {
+      "exit_code": 0,
+      "arguments": [
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "C:\\Users\\Lenovo\\P309-FactsRepair-build-20261016-v1\\Test-FactsReadCore.ps1"
+      ],
+      "environment": "FIVE_FIXED_VARIABLES",
+      "pid": 20064,
+      "sha256": "8bb6fa8c283b4d92120b1ef249a9b311b0f804d4cabbe9981159976c8be76a5e",
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    },
+    {
+      "exit_code": 0,
+      "arguments": [
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "C:\\Users\\Lenovo\\P309-FactsRepair-build-20261016-v1\\Test-FactsSummary.ps1"
+      ],
+      "environment": "FIVE_FIXED_VARIABLES",
+      "pid": 47764,
+      "sha256": "8bb6fa8c283b4d92120b1ef249a9b311b0f804d4cabbe9981159976c8be76a5e",
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    }
+  ],
+  "input_files": [
+    {
+      "file": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "file": "Build-Private.ps1",
+      "bytes": 9342,
+      "sha256": "b442e6a892d4e95b665ca9291c9826689e4df07b6f13c5cbee933a8534f560ef"
+    },
+    {
+      "file": "FactsReadCore.cs",
+      "bytes": 36111,
+      "sha256": "1ea61f4b3f905c5644ddec1c2fa852eb281aed9a3c5e9130ccc73587e0c47484"
+    },
+    {
+      "file": "Invoke-Once.template.ps1",
+      "bytes": 3951,
+      "sha256": "fdedc202a82e2b40c0aad265819dcc1b2acf7b4c6a541d9687f2f2c798af46f6"
+    },
+    {
+      "file": "Launch-Approved.ps1",
+      "bytes": 4933,
+      "sha256": "e1e91e7fa262f8211c4eb7ba514ade33e3872475598c98d61c76c7b7ab8d28e9"
+    },
+    {
+      "file": "NativeEntry.c",
+      "bytes": 7321,
+      "sha256": "1893f0d545837142fa213436fde279c8b1c1e796b4a8e4681d3afd64bf6be274"
+    },
+    {
+      "file": "Read-FactsRepair.ps1",
+      "bytes": 12790,
+      "sha256": "643c23b35c7e6bf8383b83e475eccc7e70caaf538cbceb9fae564a80dc554793"
+    },
+    {
+      "file": "SCOPE_AND_CRITERIA.md",
+      "bytes": 5563,
+      "sha256": "8ddd65a260690fbcd5fb725b0b9ecd56fb836cb368369e8eef0a19d17518528b"
+    },
+    {
+      "file": "TEMPLATE_DERIVATION.json",
+      "bytes": 709,
+      "sha256": "bf5b8af95765e0b43b7de4c571c45cf4472e9b2400bbca187bb6256380eb30b3"
+    },
+    {
+      "file": "Test-FactsReadCore.ps1",
+      "bytes": 24199,
+      "sha256": "1d0f2b66725f5208b4a6184ef546a34fb665d342e4426baaed5c25ae7e10886d"
+    },
+    {
+      "file": "Test-FactsSummary.ps1",
+      "bytes": 3522,
+      "sha256": "721afd83de70f68924e4f1e96a3a45b715ba5b5086b994339abfcf6d88ca2b17"
+    },
+    {
+      "file": "Trusted-Entry.template.ps1",
+      "bytes": 1901,
+      "sha256": "c6e6e2f8a4b0f1af8a3b648455595c8a5c8115755a04dfd238822971d00771f0"
+    }
+  ],
+  "whole_task_complete": false,
+  "native_sha256": "44565e9f0d6fcfd8eeff0c3ccaa881ef9726b7eccf26384aee60138c1093078c",
+  "admission": "BLOCKED",
+  "host_queries": 0,
+  "parse": [
+    {
+      "errors": 0,
+      "file": "Read-FactsRepair.ps1"
+    },
+    {
+      "errors": 0,
+      "file": "Trusted-Entry.template.ps1"
+    },
+    {
+      "errors": 0,
+      "file": "Launch-Approved.ps1"
+    }
+  ],
+  "I1_I7": "OPEN",
+  "input_manifest_sha256": "cd31f0d36066ba6cde7adf17ecf4d689f75362f50dd35d02b22b42573c5ae928",
+  "source_commit": "e211d4946515d506696d56f03ff2651eece10400",
+  "uac_requests": 0,
+  "scope": "ORDINARY_OWNER_BUILD_AND_SYNTHETIC_TESTS_ONLY"
+}
