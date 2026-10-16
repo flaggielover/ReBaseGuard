@@ -93,33 +93,51 @@ try {
     if($sampler.P.ExitCode -ne 0) {throw 'sampler failed'}
 } catch {$failure=$_.Exception.Message}
 finally {
-    if($null -ne $guard -and (-not $guard.P.WaitForExit(85000) -or $guard.P.ExitCode -ne 0)) {$failure='creator/deadline failed; no name-based stop or adoption'}
+    $cleanupErrors=[Collections.Generic.List[string]]::new()
+    try {if($null -ne $guard -and (-not $guard.P.WaitForExit(85000) -or $guard.P.ExitCode -ne 0)) {$failure='creator/deadline failed; no name-based stop or adoption'}}
+    catch {$failure='creator wait UNKNOWN';$cleanupErrors.Add($_.Exception.Message)}
     # Sampler owns no children or session. Kill only its retained exact handle
     # after the creator deadline, then require confirmed exit. Never kill guard
     # while StartTrace/StopTrace may still be in flight.
-    if($null -ne $sampler -and -not $sampler.P.HasExited) {
+    try {if($null -ne $sampler -and -not $sampler.P.HasExited) {
         try {$sampler.P.Kill();if(-not $sampler.P.WaitForExit(5000)) {$failure='sampler cleanup UNKNOWN'}} catch {$failure='sampler cleanup UNKNOWN'}
-    }
-    $final=Start-Owned '--query-name-readonly' 'final-session-query'
-    $absent=$final.P.WaitForExit(5000) -and $final.P.ExitCode -eq 0
+    }} catch {$cleanupErrors.Add('sampler state: '+$_.Exception.Message)}
+    $absent=$false
+    try {
+        $final=Start-Owned '--query-name-readonly' 'final-session-query'
+        $absent=$final.P.WaitForExit(5000) -and $final.P.ExitCode -eq 0
+    } catch {$cleanupErrors.Add('final query: '+$_.Exception.Message)}
     $exited=$true
     foreach($owned in @($guard,$sampler,$prequery,$final)) {
-        if($null -ne $owned -and -not $owned.P.HasExited) {$exited=$false}
-        Save-Owned $owned
+        try {if($null -ne $owned -and -not $owned.P.HasExited) {$exited=$false}} catch {$exited=$false;$cleanupErrors.Add('helper state: '+$_.Exception.Message)}
+        try {Save-Owned $owned} catch {$cleanupErrors.Add('save helper: '+$_.Exception.Message)}
     }
     $fixtures=$false
-    if([IO.File]::Exists((Join-Path $root 'guard-clean.json'))) {
+    try {if([IO.File]::Exists((Join-Path $root 'guard-clean.json'))) {
         $rows=@([IO.File]::ReadAllLines((Join-Path $root 'guard.jsonl')) | ForEach-Object {$_ | ConvertFrom-Json} |
             Where-Object {$_.PSObject.Properties.Name -contains 'job_total'})
         $fixtures=$rows.Count -eq 3
         foreach($row in $rows) {if($row.job_total -ne 1 -or $row.job_active -ne 0 -or $row.exit_code -ne 0) {$fixtures=$false}}
-    }
+    }} catch {$cleanupErrors.Add('fixture evidence: '+$_.Exception.Message)}
     if(-not $absent -or -not $exited -or -not $fixtures) {$failure='session/helper/fixture cleanup not established; UNKNOWN'}
-    Write-Json 'RESULT.json' ([ordered]@{utc=[DateTime]::UtcNow.ToString('o');capture_dispatched=$dispatched;capture_count=([int]$dispatched);
+    if($cleanupErrors.Count -gt 0) {$failure='cleanup/evidence incomplete'}
+    try {Write-Json 'RESULT.json' ([ordered]@{utc=[DateTime]::UtcNow.ToString('o');capture_dispatched=$dispatched;capture_count=([int]$dispatched);
         result=$(if($null -eq $failure){'CAPTURE_COMPLETED_REQUIRES_OFFLINE_ANALYSIS'}else{'FAILED_OR_UNKNOWN'});failure=$failure;
-        session_absent=$absent;helpers_exited=$exited;all_three_fixture_jobs_empty=$fixtures;coverage_complete=$false;admission='BLOCKED';I1_I7='OPEN_RETAINED'})
-    $manifest=foreach($f in $directory.GetFiles()) {[ordered]@{file=$f.Name;size=$f.Length;sha256=(Hash-Bytes ([IO.File]::ReadAllBytes($f.FullName)))}}
-    Write-Json 'SHA256SUMS.json' @($manifest)
+        session_absent=$absent;helpers_exited=$exited;all_three_fixture_jobs_empty=$fixtures;cleanup_errors=@($cleanupErrors.ToArray());coverage_complete=$false;admission='BLOCKED';I1_I7='OPEN_RETAINED'})
+    } catch {$failure='RESULT persistence failed';$cleanupErrors.Add($_.Exception.Message)}
+    try {
+        if($exited) {
+            $manifest=foreach($f in $directory.GetFiles()) {
+                try {[ordered]@{file=$f.Name;size=$f.Length;sha256=(Hash-Bytes ([IO.File]::ReadAllBytes($f.FullName)));state='HASHED'}}
+                catch {$cleanupErrors.Add('hash '+$f.Name+': '+$_.Exception.Message);[ordered]@{file=$f.Name;state='UNREADABLE_NO_DIGEST'}}
+            }
+            Write-Json 'SHA256SUMS.json' @($manifest)
+        } else {Write-Json 'MANIFEST_INCOMPLETE.json' @{reason='HELPERS_NOT_QUIESCENT_NO_STABLE_HASH_CLAIM';admission='BLOCKED'}}
+    } catch {$cleanupErrors.Add('manifest: '+$_.Exception.Message)}
+    if($cleanupErrors.Count -gt 0) {
+        $failure='one or more evidence stages failed; no pass'
+        try {Write-Json 'EVIDENCE_FAILURE.json' @{errors=@($cleanupErrors.ToArray());admission='BLOCKED'}} catch {[Console]::Error.WriteLine('EVIDENCE_PERSISTENCE_FAILED')}
+    }
     # No elevated writes under the AU-writable D: hierarchy. After completion,
     # the ordinary owner copies records there and verifies every digest.
 }

@@ -1,0 +1,63 @@
+{
+  "completeness": "partial",
+  "deferred": [
+    {
+      "candidateId": "candidate-7de8182289a698a3",
+      "id": "v2-bootstrap-gap",
+      "reason": "Original csf_4a441982603758ecfe183ec2 repair cannot be closed end-to-end: concrete trusted external launcher with pre-interpreter environment cleaning and fixed command custody absent at bc2562fd.",
+      "surfaceIds": [
+        "v2-bootstrap"
+      ]
+    }
+  ],
+  "documentType": "codex-security.coverage",
+  "excludePaths": [],
+  "explicitExclusions": [],
+  "includePaths": [
+    "."
+  ],
+  "inventoryStrategy": "diff",
+  "mode": "branch_diff",
+  "openQuestions": [],
+  "resolvedDeferred": [
+    {
+      "id": "v2-review-all",
+      "reason": "All21 changed files/14 canonical inventory items reviewed;20 manifest entries and10 prior sealed exports verified; independent architecture reconciled; both candidates have validation and eligible attack-path decisions. Only explicit original-finding bootstrap proof gap remains; source coverage is complete."
+    }
+  ],
+  "scanId": "cf137369-9cd1-4958-a9ff-0cbde3d44003",
+  "schemaVersion": "1.0",
+  "surfaces": [
+    {
+      "disposition": "needs_follow_up",
+      "id": "v2-bootstrap",
+      "label": "Trusted bootstrap and elevated harness",
+      "notes": "Same-byte script/approval repair and pinned binary validated statically; actual trusted pre-engine launcher absent, so original finding remains unclosed.",
+      "receiptRefs": []
+    },
+    {
+      "candidateId": "candidate-56cc91e77065de55",
+      "disposition": "rejected",
+      "id": "v2-finalization",
+      "label": "Failure result and manifest robustness",
+      "notes": "Suppressed as security vulnerability because no hostile protected-output writer or false admission is established. Concrete execution-readiness defect retained: fallible finally can omit RESULT or stable complete SHA256SUMS.",
+      "receiptRefs": []
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "v2-native",
+      "label": "Creator-owned ETW and atomic fixture Jobs",
+      "notes": "All428 C# lines reviewed: x64 native structures, existing-token privilege restoration, successful creator handle/GUID ownership, timer, read-only queries, atomic fixture Job assignment/limits/identity/cleanup and conservative failure claims. Native execution untested.",
+      "receiptRefs": []
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "v2-evidence",
+      "label": "All retained evidence and manifest bindings",
+      "notes": "All21 files reviewed.20/20 manifest entries match;10 copied prior canonical/report files identical to sealed originals. Correct5.1 parse evidence. No source-to-binary rebuild or native success inferred.",
+      "receiptRefs": [
+        "artifacts/01_context/static-artifact-checks.json"
+      ]
+    }
+  ]
+}

@@ -8,13 +8,13 @@
 
 1. 唯一 ETW 创建者改为独立 guard。只有 StartTrace 成功返回的非零 handle 可进入 Stop，使用每次新 GUID；不提供按名称停止或跨进程采用会话的入口。创建失败无 receipt、无 Stop。controller 改为只读 sampler，无法创建/停止会话。guard 内另有 75 秒计时线程，避免 sampler 消失或 guard 主线程日志阻塞取消停止。Stop 先于最终日志。若 guard 自身突然死亡、native API 卡住或创建/receipt 窗口中断，不能保证清理，只报 UNKNOWN，不接管同名会话。Windows 不是硬实时系统。
 2. 三个固定 200 ms fixture 各以 `PROC_THREAD_ATTRIBUTE_JOB_LIST` 原子创建为 suspended + detached，无句柄继承。独占无名 Job 限一个成员、进程和 Job 各 256 MiB、KILL_ON_JOB_CLOSE；拒绝限制回读差异，入 Job 后再 resume。保留进程句柄与创建时间；退出必须为 0 且 Job active=0、total=1。超时只停止该 Job。guard 消失时 Job 句柄关闭；是否真的完成仍需外部/本次证据，不能仅从标志推断成功。harness 成功条件要求三个真实记录均满足，不再只数直接 helper。
-3. 提升入口是可信工具调用中固定的 `-EncodedCommand` 字节，不是可写目录中的脚本路径。先读不可信脚本/批准文件字节并比对可信常量中的摘要，再执行内存中同一份 ScriptBlock。二进制摘要直接包含在已绑定脚本内，无可替换 adjacent pins。保存批准记录也用同一份已校验字节。
+3. 外层 `Launch-Approved.ps1` 必须由普通用户可信工具调用先核验固定摘要，再执行同一份内存字节；不能提升脚本路径。它锁住 native entry 文件及每个祖先目录（不共享写/删除）、核验固定二进制摘要、排除 reparse/多硬链接，保持句柄跨过 UAC 和原生进程退出。提升的是已绑定 `NativeEntry.exe`，不是 PowerShell。此原生 PE 只静态导入 kernel32，无 CLR/CRT；动态 bcrypt/advapi 仅从 System32 加载。它核验模板字节，再通过 CreateProcessW 的显式 Unicode 白名单环境启动绝对 inbox WinPS。因此不依赖 ShellExecute 环境传播行为。WinPS 先核验脚本/批准文件摘要，再执行同一内存 ScriptBlock；pins 内嵌于已绑定源码，批准记录保存同一份字节。
 4. 提升进程不在 AU 可写的 D: 层级创建/写入任何目录。仅在 Windows 管理的固定 `C:\ProgramData` 下创建一个新目录；使用 .NET Framework 创建时安全描述符，随后严格核对 owner=Administrators、受保护 DACL 和无 reparse，再写文件。父路径依赖系统管理的不可替换边界；已有本机 ProgramData ACL 为 SYSTEM/Administrators full，Users read/create-directory，不允许普通用户改写既有其他所有者目录。若该前提发生变化必须拒绝，不扩展 ACL。执行完成后普通用户只读复制 C: 证据到 D:，校验全部摘要；D: 副本不是后续管理员执行的可信来源。
 5. 新语法记录使用绝对 `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`，真实版本 5.1.26100.9444。旧 v1 的 `windows-powershell-51-parse.json` 实际写着 7.6.5；文件名错误，历史原文件不改。旧 V4 EXPORT_MANIFEST 的部分 canonical 文件不在 v1 Git 包内；完整来源仍为已封存 scan，修复包附完整副本。
 
 ## 待批准的具体动作
 
-- 一次 UAC/admin Windows PowerShell 5.1 入口，`-NoProfile -NonInteractive -EncodedCommand`。启动前清空该新进程的环境，仅保留固定 Windows/system32、当前用户身份所需值，不继承 CLR profiler、PS module/user startup 变量；不改系统/用户全局环境。工具调用中的固定命令为信任起点，不从可写文件读取后直接提升执行。
+- 一次 UAC/admin 原生入口，再启动 Windows PowerShell 5.1 `-NoProfile -NonInteractive -EncodedCommand`。新进程环境仅 PATH、PSModulePath、SystemRoot、TEMP、TMP、WINDIR 六个固定系统路径变量，不继承 CLR profiler、用户模块变量；不改系统/用户全局环境。原生入口由本机现有 MSVC 14.44.35207 构建，未安装编译器。工具调用中的固定摘要和命令为信任起点，不能读取可写文件后直接提升执行。
 - 创建且仅创建 `C:\ProgramData\ReBaseGuardP309-I2-Feasibility-v2`，存在即拒绝。SYSTEM、Administrators 可写，当前 owner SID 只读/执行；不改父目录 ACL。不创建服务/任务/账户/密钥，不安装软件、不改 Windows 策略或 Ubuntu。
 - 二进制已由现有 Framework csc 构建。将已验证字节写入该受保护目录。正常 owner 在结束后将证据复制至新 `D:\ReBaseGuard-309\records\p309-i2-native-capture-v2`；保留原始 ETL 本地，不公开推送主机进程/路径。
 - 固定名称 `ReBaseGuard-P309-I2-Feasibility-v2` 先只读查询，存在/未知则不启动。一次 StartTrace，无重试，GUID 每次新建。仅 PROCESS/THREAD/IMAGE_LOAD/CSWITCH/DPC/INTERRUPT，最多 256 MiB 顺序 ETL、64 KiB × 64–256 buffers；不采堆栈、网络/文件内容或 sampled profile。
@@ -26,6 +26,8 @@
 ## 回滚和仍未证明的事实
 
 正常结束由创建者 Stop 已持有会话，Job 自有句柄终止/清空 fixture，token 随进程退出恢复。保留 C: 受保护证据与 D: 副本，不删证据；无全局配置需要恢复。若创建者突然丢失且没有成功停止证明，标 UNKNOWN 并集中报告必要人工恢复事项，不自行扩大范围、重启或停止其他 logger。
+
+失败收尾按阶段捕获 query、helper 输出、fixture 解析、RESULT 与 manifest 错误。helper 未全部退出时，只写 `MANIFEST_INCOMPLETE`，不读取活跃 guard 日志冒充静态清单；可写时保存 `EVIDENCE_FAILURE`。介质耗尽或损坏仍可能无法落盘，必须结合外层持有进程句柄的真实退出码判失败，不能声称绝对持久化保证。此次内存编码/摘要已做 10 个已知答案检查；只读文件/祖先句柄 pin 实测成功，未启动原生入口、UAC、ETW、fixture 或 Job。
 
 这一步不证明 PPL/所有瞬时线程覆盖、QEMU/guest/host CPU 去重或归属、独立安全服务身份、完整生产 broker/unit/密钥隔离、长期无丢失、恢复安全或正式路线接受。必须依据真实结果决定后续完整包；生产方案仍未完成，不能将本次原生能力实验称为全任务完成。
 
