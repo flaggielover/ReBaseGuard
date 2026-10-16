@@ -1,0 +1,49 @@
+{
+  "completeness": "complete",
+  "deferred": [],
+  "documentType": "codex-security.coverage",
+  "excludePaths": [],
+  "explicitExclusions": [],
+  "includePaths": [
+    "."
+  ],
+  "inventoryStrategy": "diff",
+  "mode": "branch_diff",
+  "openQuestions": [],
+  "resolvedDeferred": [
+    {
+      "id": "v5-review-all",
+      "reason": "All ten changed files/9 inventory items reviewed; one reliability repair candidate suppressed; all 8 manifest entries, exact saved event/template correlation and seven unchanged privileged source/binding files verified. No pending candidate."
+    }
+  ],
+  "scanId": "9455bc2e-6db7-4f8b-af66-857a443b9d9b",
+  "schemaVersion": "1.0",
+  "surfaces": [
+    {
+      "candidateId": "candidate-cbb2fd71ebd21d21",
+      "disposition": "rejected",
+      "id": "surface-d8a8616d50feac3d",
+      "label": "Prior output-before-throw assignment loss",
+      "notes": "Streaming callback fixes the demonstrated loss mechanism. Failure with no emitted output and persistence failure remain explicit failed outcomes; no guaranteed media persistence or reconstructed historical exit claimed.",
+      "receiptRefs": []
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "v5-invoker",
+      "label": "Renewed consent, early space gate and one-shot streaming wrapper",
+      "notes": "Reviewed all 69 wrapper lines and 30 test lines. External trusted caller validates genuine renewed reply and fixed wrapper bytes; internal digest/scope checks are not a formal grant. Same 1GiB gate precedes UAC. Exclusive new private consent/ATTEMPT files precede one fixed launcher call. No retry; streaming sink flushes each item before later error. No new production execution.",
+      "receiptRefs": [
+        "artifacts/01_context/refusal-and-invoker-static-checks.json"
+      ]
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "v5-evidence",
+      "label": "Actual refusal association and saved evidence boundaries",
+      "notes": "All ten changed files/9 inventory items accounted. All 8 failure manifest rows match sizes/hashes. Named event658135/4100/PID49056/2026-10-16T01:56:11.2809801Z decodes exactly to approved template plus original digest; payload matches insufficient evidence space. Later snapshot526114816<1073741824 and root absent are time-specific evidence. Seven privileged source/binding files identical to02c8; original exact native exit remains NOT_RETAINED. Saved 8 tests are pure memory only.",
+      "receiptRefs": [
+        "artifacts/01_context/refusal-and-invoker-static-checks.json"
+      ]
+    }
+  ]
+}

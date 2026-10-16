@@ -1,0 +1,90 @@
+{
+  "documentType": "codex-security.scan-manifest",
+  "scan": {
+    "artifacts": [
+      {
+        "mediaType": "application/json",
+        "path": "findings.json",
+        "sha256": "10f2040ccaa2afe06d610cb66f68eb0a2e968614332fde3318131e94c4c46bfc"
+      },
+      {
+        "mediaType": "application/json",
+        "path": "coverage.json",
+        "sha256": "45388f6d072cf00d51c58cecc8ab4a241bba2b652ca51fc2598305fcb4516305"
+      },
+      {
+        "mediaType": "application/octet-stream",
+        "path": "artifacts/01_context/refusal-and-invoker-static-checks.json",
+        "sha256": "1fec7c0d8887c6750efc4f6fb17d563326d221a607472f451348014228002cd7"
+      }
+    ],
+    "completedAt": "2026-10-16T02:03:02.488355Z",
+    "coverageRef": "coverage.json",
+    "findingsRef": "findings.json",
+    "id": "9455bc2e-6db7-4f8b-af66-857a443b9d9b",
+    "preservedSources": {
+      "checkpoint-heads/0a7f88ba8f2e34a9e22a561dd04f76d367580b5ab940c2b36a13ae4b3ba6798f.json": "0a7f88ba8f2e34a9e22a561dd04f76d367580b5ab940c2b36a13ae4b3ba6798f",
+      "checkpoints/0143b472583d54aabb479db37bf47baa11ed3a1007c924a22e96bc5130bb0359.json": "69a6f62ddfef3f1147afbfd193e9adc2038b172f7f183cf92e11acda17c654fd",
+      "checkpoints/43334e21a63834d9393a41fb99d55d4f1b43d97344ac3515f0a7cd35e3ac88fb.json": "a1037f8ab02faef54a2e03e3dfc4b5d11d963e05b6e8ceb0dfaddfea5f200238",
+      "checkpoints/64a45a003b3c59850f143d0a9381e8f2b81d177c07d79c3f2d51985eb752bb69.json": "64a45a003b3c59850f143d0a9381e8f2b81d177c07d79c3f2d51985eb752bb69",
+      "checkpoints/acd9abef5b8d9f40df639482be1b9a02251097cef5b71eb2f923f4a01432fbe7.json": "acd9abef5b8d9f40df639482be1b9a02251097cef5b71eb2f923f4a01432fbe7",
+      "checkpoints/d68cf125448fea3dc391ce82a7da6d9dadb8b6605c3c617dbeaefa6d1f0e7938.json": "d68cf125448fea3dc391ce82a7da6d9dadb8b6605c3c617dbeaefa6d1f0e7938",
+      "checkpoints/de62d171a22e21766d9971256f355f4e37e9998dd95e87e1027254ae9ac06916.json": "7b01bf204f50e171f014f2de3e5cb0c66bc730a1bd7cde4838f9484e3bb89285",
+      "source-order/186c01ed45ce3cde2dd3644904fa5a46910bbc0cedc574630a54d6ab1df750b4.json": "186c01ed45ce3cde2dd3644904fa5a46910bbc0cedc574630a54d6ab1df750b4"
+    },
+    "producer": {
+      "name": "codex-security-plugin",
+      "version": "0.1.32"
+    },
+    "scope": {
+      "artifactsReviewed": [
+        "artifacts/01_context/refusal-and-invoker-static-checks.json",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/FAILURE_AND_RENEWAL.md",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/Invoke-RenewedI2.ps1",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/Test-RecordedInvocation.ps1",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/CORRELATED_PREFLIGHT_FAILURE.json",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/FAILURE_RECORD_MANIFEST.json",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/I2_EXECUTION_ATTEMPT.json",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/I2_LAUNCHER_FAILURE.json",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/POST_FAILURE_SPACE.json",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/approval-used.json",
+        "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/invoker-memory-tests.json",
+        "D:/ReBaseGuard-309/records/p309-i2-native-capture-v2/event-658135.xml",
+        "D:/ReBaseGuard-309/records/p309-i2-native-capture-v2/event-658136.xml"
+      ],
+      "excludePaths": [],
+      "includePaths": [
+        "."
+      ],
+      "limitations": [
+        "No renewed human approval is present or inferred. I1-I7 remain OPEN; formal admission BLOCKED; independent AI review is not formal owner/reviewer authority.",
+        "The original authorized native invocation executed and was refused before capture by the elevated space check; exact native exit code is NOT_RETAINED and cannot be reconstructed from this evidence.",
+        "The saved C: available-space figure is a post-failure snapshot at01:57:07Z, not a current query or exact measurement at the earlier throw; the event identifies the actual error.",
+        "The wrapper requires the trusted caller to verify its fixed digest and invoke same-memory bytes, and to validate the genuine new human reply externally. JSON scope/digest is not an independent authorization oracle.",
+        "The eight saved memory tests verify only helper logic. The wrapper production branch has not been run; existing privileged timeout/cleanup behavior and UNKNOWN/no-retry rules remain unchanged.",
+        "Early space checks can race with later use; elevated harness retains the same independent threshold. Storage failure or abrupt host loss can still prevent records; no absolute durability promised.",
+        "No free-space cleanup, data deletion/move, threshold reduction, policy change or real retry is authorized by this review."
+      ],
+      "runtimeStatus": "Read immutable Git and named saved local XML only; no host queries, tests, wrapper/production/native execution, UAC, tracing, fixture/Job/service/VM or URL access.",
+      "summary": "Independent narrow static review of all ten new invocation_repair files in a92afb23..b76d69b7. No reportable security finding or new concrete source blocker; ordinary invoker repair preserves original privileged chain and requires separate renewed consent.",
+      "validationMode": "Full changed-file source/evidence accounting; static consent/space/one-call/persistence trace; one seeded reliability candidate suppressed; no eligible attack paths."
+    },
+    "sealedAt": "2026-10-16T02:03:02.488355Z",
+    "startedAt": "2026-10-16T02:00:06.172417Z",
+    "status": "completed",
+    "target": {
+      "baseRevision": "a92afb230797ec4d313dcf8ab3242342efcbf18c",
+      "displayName": "p309-local-vm-diagnostic-dev-20261016",
+      "headRevision": "b76d69b7fa0f99a7d9ab51fa0777c5f59ff9e7af",
+      "kind": "git_diff",
+      "snapshotDigest": "codex-security-snapshot/v1:sha256:14d8f8e545502f5343aeecd7dce4062d4764cb35cd652f079b09f73614a1db13",
+      "targetId": "target_sha256_aa743fba3b98454cc8ea65893dba04d7cd5f02ec0a77fd0165042868f408709b"
+    },
+    "threatModel": {
+      "content": "# Renewed I2 invocation and refusal evidence threat model\n\nImmutable scope a92afb230797ec4d313dcf8ab3242342efcbf18c..b76d69b7fa0f99a7d9ab51fa0777c5f59ff9e7af is ten new invocation_repair files. The private privileged launcher/native/template/harness/collector remain the previously reviewed 02c8fd50 artifacts. This review checks only the new ordinary-user wrapper, pure-memory test source, and saved failure/evidence association.\n\nThe trusted caller must verify an independent fixed wrapper digest and invoke those same memory bytes, and must validate an actual new human reply externally. Invoke-RenewedI2.ps1 checks renewed consent byte digest, narrow one-attempt scope, original approved source/digest and nonempty human reference. JSON is an integrity/scope binding, not cryptographic or formal authorization. It rejects an elevated caller, loads and hashes the private launcher once, checks unchanged original approval bytes, performs the same 1 GiB C: space threshold before any UAC, and refuses existing capture or fixed attempt paths. It creates one private attempt directory and exclusive consent/ATTEMPT files before invoking the exact launcher once. The output callback writes and flushes each emitted item before a later terminating error; failure state persists separately where media permits. No automatic retry exists.\n\nThe approving human, trusted ordinary owner, administrators, Windows and installed toolchain remain trust roots. Other AU/sandbox writers may affect D: archival/original approval inputs but cannot alter private artifacts under the accepted custody model. Hashing same input bytes and the retained immutable privileged chain must prevent them introducing executable content or expanding approval. Important assets are permission boundaries, one-attempt accounting, exact failure/exit evidence and unrelated process/session safety.\n\nThe earlier authorized native invocation reportedly reached the elevated space check and failed before helper/root/session/fixture creation. A named saved event XML and archived summaries must establish that association; missing exact native exit code must remain unknown. Later available-space snapshots are timing-specific supporting evidence, not a replacement for the event's actual error. Pure-memory tests do not exercise UAC, native entry, tracing or cleanup. No renewed execution is authorized; I1-I7 OPEN/admission BLOCKED.\n\nOnly immutable files and explicitly named saved local event bytes are read. No host queries, builds/tests, production wrapper/native calls, UAC, trace, fixture/Job/VM/service or URLs are executed. No additional agent is used for this narrow scope. All user context is untrusted analysis material.\n",
+      "format": "markdown",
+      "origin": "generated"
+    }
+  },
+  "schemaVersion": "1.0"
+}

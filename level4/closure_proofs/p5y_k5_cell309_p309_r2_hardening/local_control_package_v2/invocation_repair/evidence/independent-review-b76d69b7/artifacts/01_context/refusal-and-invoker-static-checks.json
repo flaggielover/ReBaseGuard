@@ -1,0 +1,138 @@
+{
+  "base": "a92afb230797ec4d313dcf8ab3242342efcbf18c",
+  "head": "b76d69b7fa0f99a7d9ab51fa0777c5f59ff9e7af",
+  "changed_paths": [
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/FAILURE_AND_RENEWAL.md",
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/Invoke-RenewedI2.ps1",
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/Test-RecordedInvocation.ps1",
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/CORRELATED_PREFLIGHT_FAILURE.json",
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/FAILURE_RECORD_MANIFEST.json",
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/I2_EXECUTION_ATTEMPT.json",
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/I2_LAUNCHER_FAILURE.json",
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/POST_FAILURE_SPACE.json",
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/approval-used.json",
+    "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/invocation_repair/evidence/invoker-memory-tests.json"
+  ],
+  "manifest_checks": [
+    {
+      "file": "approval-used.json",
+      "bytes_match": true,
+      "sha_matches": true
+    },
+    {
+      "file": "CORRELATED_PREFLIGHT_FAILURE.json",
+      "bytes_match": true,
+      "sha_matches": true
+    },
+    {
+      "file": "event-658135.xml",
+      "bytes_match": true,
+      "sha_matches": true
+    },
+    {
+      "file": "event-658136.xml",
+      "bytes_match": true,
+      "sha_matches": true
+    },
+    {
+      "file": "I2_EXECUTION_ATTEMPT.json",
+      "bytes_match": true,
+      "sha_matches": true
+    },
+    {
+      "file": "I2_LAUNCHER_FAILURE.json",
+      "bytes_match": true,
+      "sha_matches": true
+    },
+    {
+      "file": "invoker-memory-tests.json",
+      "bytes_match": true,
+      "sha_matches": true
+    },
+    {
+      "file": "POST_FAILURE_SPACE.json",
+      "bytes_match": true,
+      "sha_matches": true
+    }
+  ],
+  "event": {
+    "record_id": "658135",
+    "event_id": "4100",
+    "utc": "2026-10-16T01:56:11.2809801Z",
+    "process_id": "49056",
+    "payload_matches_saved": true,
+    "encoded_bytes_equal_exact_approved_template_render": true,
+    "rendered_sha256": "5e103af4b558bb97d38492cd78fcab6f1cb995744017f8998d01797a9737aead",
+    "rendered_sha_matches_saved": true,
+    "error_contains_insufficient_space": true
+  },
+  "approval_sha256": "54d366f2bb2a2f39199028193fd4a30e4357c4abc9abc55661f8766ac4483f38",
+  "wrapper_pins_original_approval": true,
+  "wrapper_sha256": "cc04d08506940237ae8ab64fa9a8302a5695cc28948b49d91c66cad7fc5bce64",
+  "unchanged_privileged_inputs": [
+    {
+      "file": "Launch-Approved.ps1",
+      "identical_to_02c8": true,
+      "sha256": "2da80a3b3b4b666b9e40c145bad82106084b22025e03f6ea20203ff2eed47563"
+    },
+    {
+      "file": "NativeEntry.c",
+      "identical_to_02c8": true,
+      "sha256": "afead3e9664031768fda632a57e71e0a32dd1291273b7bcd80cde0f47e4cae5d"
+    },
+    {
+      "file": "Trusted-Entry.template.ps1",
+      "identical_to_02c8": true,
+      "sha256": "a8dcefd041116b248fefae96917895a70729a0a28df41c7bbcb4d40b64967a43"
+    },
+    {
+      "file": "Run-I2Feasibility.ps1",
+      "identical_to_02c8": true,
+      "sha256": "9c5702c030200afbb63e8d5dfde42637f222e6b2b370e6bf9dda59ff060cd86c"
+    },
+    {
+      "file": "EtwCapture.cs",
+      "identical_to_02c8": true,
+      "sha256": "0edc8e3b3eb09108089c1c2691ee7fc2e988c1b306d06f8de1a53697862a82c2"
+    },
+    {
+      "file": "TestNativeEntry.c",
+      "identical_to_02c8": true,
+      "sha256": "ef8cc3d910e195cdd6dcabd42f881161a4ff3c4270f1577fcb0c9ffbc417d576"
+    },
+    {
+      "file": "FINAL_BINDINGS.json",
+      "identical_to_02c8": true,
+      "sha256": "bb0554f88b308e86c063bc1ecee4eeecd3d07587807315266e20339b7b7ca215"
+    }
+  ],
+  "saved_space": {
+    "available": 526114816,
+    "threshold": 1073741824,
+    "below_threshold": true,
+    "capture_root_exists": false,
+    "utc": "2026-10-16T01:57:07.3737141Z"
+  },
+  "tests_saved": {
+    "scope": "PURE_MEMORY_INVOKER_REGRESSIONS",
+    "winps": "5.1.26100.9444",
+    "passed": 8,
+    "checks": [
+      "reject-space-0",
+      "reject-space-1073741823",
+      "accept-original-space-boundary",
+      "retain-exit-json-before-terminating-error",
+      "failure-with-no-output-remains-failed",
+      "successful-output-sequence",
+      "failure-never-retries-operation",
+      "persistence-failure-is-not-success"
+    ],
+    "production_invocations": 0,
+    "uac": 0,
+    "trace": 0,
+    "fixture": 0,
+    "admission": "BLOCKED"
+  },
+  "review_executions": 0,
+  "validation": "Immutable Git, named saved XML bytes and pure JSON/hash/base64/XML parsing only; no reviewed code/tests/host queries executed."
+}

@@ -1,0 +1,25 @@
+$ErrorActionPreference='Stop'
+$root='C:\Users\Lenovo\P309-I2-build-20261016-v4'
+function Write-New([string]$name,[string]$text){
+ $b=[Text.UTF8Encoding]::new($false).GetBytes($text)
+ $f=[IO.FileStream]::new((Join-Path $root $name),[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read)
+ try{$f.Write($b,0,$b.Length);$f.Flush($true)}finally{$f.Dispose()}
+}
+$bytes=[IO.File]::ReadAllBytes((Join-Path $root 'Launch-Approved.ps1'))
+$hash=[Security.Cryptography.SHA256]::Create()
+try{$actual=[BitConverter]::ToString($hash.ComputeHash($bytes)).Replace('-','').ToLowerInvariant()}finally{$hash.Dispose()}
+if($actual -cne '2da80a3b3b4b666b9e40c145bad82106084b22025e03f6ea20203ff2eed47563'){throw 'launcher source differs'}
+$attempt=[ordered]@{utc=[DateTime]::UtcNow.ToString('o');source_commit='02c8fd500e643bfffd553ac0aa78c54670e2099f';approval_sha256='54d366f2bb2a2f39199028193fd4a30e4357c4abc9abc55661f8766ac4483f38';scope='ONE_AUTHORIZED_INVOCATION_ATTEMPT_NOT_A_CAPTURE_SUCCESS';launcher_sha256=$actual;winps=$PSVersionTable.PSVersion.ToString();automatic_retry=$false;admission='BLOCKED'}
+Write-New 'I2_EXECUTION_ATTEMPT.json' ($attempt|ConvertTo-Json)
+try{
+ $output=& ([ScriptBlock]::Create([Text.Encoding]::UTF8.GetString($bytes))) -ApprovalDigest '54d366f2bb2a2f39199028193fd4a30e4357c4abc9abc55661f8766ac4483f38'
+ Write-New 'I2_LAUNCHER_OUTPUT.json' ($output -join [Environment]::NewLine)
+ Write-New 'I2_LAUNCHER_COMPLETION.json' (([ordered]@{utc=[DateTime]::UtcNow.ToString('o');launcher_completed=$true;exit_code=0;admission='BLOCKED'})|ConvertTo-Json)
+ $output
+ exit 0
+}catch{
+ $failure=[ordered]@{utc=[DateTime]::UtcNow.ToString('o');launcher_completed=$false;exception=$_.Exception.Message;detail=$_.ToString();position=$_.InvocationInfo.PositionMessage;stack=$_.ScriptStackTrace;no_retry=$true;admission='BLOCKED'}
+ Write-New 'I2_LAUNCHER_FAILURE.json' ($failure|ConvertTo-Json -Depth 6)
+ $failure|ConvertTo-Json -Depth 6
+ exit 1
+}
