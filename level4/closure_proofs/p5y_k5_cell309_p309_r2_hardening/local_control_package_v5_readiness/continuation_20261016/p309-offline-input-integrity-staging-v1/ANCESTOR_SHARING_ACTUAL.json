@@ -1,0 +1,57 @@
+{
+  "scope": "SYNTHETIC_FILE_SHARE_DIAGNOSTIC_ONLY",
+  "cases": [
+    {
+      "ancestor_desired_access": 0,
+      "leaf_desired_access": 2147483648,
+      "share_mode": 1,
+      "scope": "OWNED_SYNTHETIC_DIRECTORY_ONLY",
+      "generic_write_open": {
+        "succeeded": true,
+        "win32_error": 0
+      },
+      "write_attributes_open": {
+        "succeeded": true,
+        "win32_error": 0
+      },
+      "set_hidden_attribute": {
+        "succeeded": true,
+        "win32_error": 0
+      },
+      "ancestor_rename": {
+        "succeeded": false,
+        "win32_error": 5
+      },
+      "same_original_path_can_name_replacement": false
+    },
+    {
+      "ancestor_desired_access": 2147483648,
+      "leaf_desired_access": 2147483648,
+      "share_mode": 1,
+      "scope": "OWNED_SYNTHETIC_DIRECTORY_ONLY",
+      "generic_write_open": {
+        "succeeded": false,
+        "win32_error": 32
+      },
+      "write_attributes_open": {
+        "succeeded": true,
+        "win32_error": 0
+      },
+      "set_hidden_attribute": {
+        "succeeded": true,
+        "win32_error": 0
+      },
+      "ancestor_rename": {
+        "succeeded": false,
+        "win32_error": 32
+      },
+      "same_original_path_can_name_replacement": false
+    }
+  ],
+  "real_reparse_point_created": false,
+  "host_configuration_queries": 0,
+  "uac": 0,
+  "past_capture_tampering_proven": false,
+  "formal_vulnerability_conclusion": false,
+  "admission": "BLOCKED"
+}

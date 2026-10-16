@@ -1,0 +1,66 @@
+{
+    "scope":  "ORDINARY_SAVED_FILE_DECODER_BUILD_ONLY",
+    "reference_sha256":  "2245ccc62b0d933190068a18344bc64749a2893bd9740a79706ba7fe5e86c778",
+    "exe_sha256":  "103a39477a2609cb09561548dfef63636135c5bcceb184ac48a1106c7b4e0cfd",
+    "admission":  "BLOCKED",
+    "source_sha256":  "04abb402115febb109201b1e257b3615a14bd5956235b7a52783e48ac37a57bc",
+    "commands":  [
+                     {
+                         "exe":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+                         "sha256":  "6aa39ae173cb8563d796359930b332a08b2fdc1745b70e5a4caa48a9779fdd07",
+                         "arguments":  [
+                                           "/nologo",
+                                           "/c",
+                                           "/std:c++17",
+                                           "/O2",
+                                           "/MT",
+                                           "/EHsc",
+                                           "/GS",
+                                           "/W4",
+                                           "/IC:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared",
+                                           "/FoSavedThreadTerminal.obj",
+                                           "SavedThreadTerminal.cpp"
+                                       ],
+                         "exit_code":  0,
+                         "temp_tmp":  "C:\\Users\\Lenovo\\Documents\\Codex\\2026-10-15\\rebaseguard-309-windows-cpu-wsl2-ubuntu\\outputs\\p309-cswitch-terminal-state-offline-v1",
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES"
+                     },
+                     {
+                         "exe":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe",
+                         "sha256":  "7a9b2527a183361329b0a6d85da13680467152c3b7bbe14470e7c74383e3b0a1",
+                         "arguments":  [
+                                           "/NOLOGO",
+                                           "/SUBSYSTEM:CONSOLE",
+                                           "/DYNAMICBASE",
+                                           "/NXCOMPAT",
+                                           "/MANIFEST:EMBED",
+                                           "/MANIFESTUAC:level=\u0027asInvoker\u0027 uiAccess=\u0027false\u0027",
+                                           "/OUT:SavedThreadTerminal.exe",
+                                           "SavedThreadTerminal.obj",
+                                           "kernel32.lib",
+                                           "advapi32.lib",
+                                           "/LIBPATH:C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\lib\\x64",
+                                           "/LIBPATH:C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\ucrt\\x64",
+                                           "/LIBPATH:C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64"
+                                       ],
+                         "exit_code":  0,
+                         "temp_tmp":  "C:\\Users\\Lenovo\\Documents\\Codex\\2026-10-15\\rebaseguard-309-windows-cpu-wsl2-ubuntu\\outputs\\p309-cswitch-terminal-state-offline-v1",
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES"
+                     },
+                     {
+                         "exe":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\dumpbin.exe",
+                         "sha256":  "db64bcb6f17a61f0d64ecc016b90faf9b83134d41fcb1b4fc6db9e347fdbd674",
+                         "arguments":  [
+                                           "/headers",
+                                           "/imports",
+                                           "SavedThreadTerminal.exe"
+                                       ],
+                         "exit_code":  0,
+                         "temp_tmp":  "C:\\Users\\Lenovo\\Documents\\Codex\\2026-10-15\\rebaseguard-309-windows-cpu-wsl2-ubuntu\\outputs\\p309-cswitch-terminal-state-offline-v1",
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES"
+                     }
+                 ]
+}

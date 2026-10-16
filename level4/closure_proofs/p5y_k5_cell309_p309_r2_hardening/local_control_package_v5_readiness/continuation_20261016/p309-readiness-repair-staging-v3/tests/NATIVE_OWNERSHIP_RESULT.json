@@ -1,0 +1,94 @@
+{
+    "patched_source_sha256":  "427198611682bc9aee89eace595dbb93cb1913ab8da24d9c547432879bfe28ae",
+    "test_source_sha256":  "9ca9ee5182221d7940363b086d22cde30bdd23525c95544c1b18ff07430d1af8",
+    "runner_sha256":  "c367aaaca860bc6d1fa4bb8344a74d736c8b98cc4f52be38f0cc660c6d3cd001",
+    "executable_sha256":  "7f6ae025a77d2578d91a0bc89ce2896d41de98bc27dfeee9f36b8aeeab51cc83",
+    "commands":  [
+                     {
+                         "exe":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+                         "sha256":  "6aa39ae173cb8563d796359930b332a08b2fdc1745b70e5a4caa48a9779fdd07",
+                         "arguments":  [
+                                           "/nologo",
+                                           "/c",
+                                           "/TC",
+                                           "/std:c17",
+                                           "/O2",
+                                           "/MT",
+                                           "/GS",
+                                           "/Gy",
+                                           "/W3",
+                                           "/IC:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared",
+                                           "/Fotest_native_ownership.obj",
+                                           "test_native_ownership.c"
+                                       ],
+                         "exit_code":  0,
+                         "temp_tmp":  "C:\\Users\\Lenovo\\Documents\\Codex\\2026-10-15\\rebaseguard-309-windows-cpu-wsl2-ubuntu\\outputs\\p309-readiness-repair-staging-v3\\tests",
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES"
+                     },
+                     {
+                         "exe":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe",
+                         "sha256":  "7a9b2527a183361329b0a6d85da13680467152c3b7bbe14470e7c74383e3b0a1",
+                         "arguments":  [
+                                           "/NOLOGO",
+                                           "/SUBSYSTEM:CONSOLE",
+                                           "/DYNAMICBASE",
+                                           "/NXCOMPAT",
+                                           "/OPT:REF",
+                                           "/MANIFEST:EMBED",
+                                           "/MANIFESTUAC:level=\u0027asInvoker\u0027 uiAccess=\u0027false\u0027",
+                                           "/OUT:test_native_ownership.exe",
+                                           "test_native_ownership.obj",
+                                           "kernel32.lib",
+                                           "/LIBPATH:C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\lib\\x64",
+                                           "/LIBPATH:C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\ucrt\\x64",
+                                           "/LIBPATH:C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64"
+                                       ],
+                         "exit_code":  0,
+                         "temp_tmp":  "C:\\Users\\Lenovo\\Documents\\Codex\\2026-10-15\\rebaseguard-309-windows-cpu-wsl2-ubuntu\\outputs\\p309-readiness-repair-staging-v3\\tests",
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES"
+                     },
+                     {
+                         "exe":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\dumpbin.exe",
+                         "sha256":  "db64bcb6f17a61f0d64ecc016b90faf9b83134d41fcb1b4fc6db9e347fdbd674",
+                         "arguments":  [
+                                           "/headers",
+                                           "/imports",
+                                           "test_native_ownership.exe"
+                                       ],
+                         "exit_code":  0,
+                         "temp_tmp":  "C:\\Users\\Lenovo\\Documents\\Codex\\2026-10-15\\rebaseguard-309-windows-cpu-wsl2-ubuntu\\outputs\\p309-readiness-repair-staging-v3\\tests",
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES"
+                     },
+                     {
+                         "exe":  "C:\\Users\\Lenovo\\Documents\\Codex\\2026-10-15\\rebaseguard-309-windows-cpu-wsl2-ubuntu\\outputs\\p309-readiness-repair-staging-v3\\tests\\test_native_ownership.exe",
+                         "sha256":  "7f6ae025a77d2578d91a0bc89ce2896d41de98bc27dfeee9f36b8aeeab51cc83",
+                         "arguments":  [
+
+                                       ],
+                         "exit_code":  0,
+                         "temp_tmp":  "C:\\Users\\Lenovo\\Documents\\Codex\\2026-10-15\\rebaseguard-309-windows-cpu-wsl2-ubuntu\\outputs\\p309-readiness-repair-staging-v3\\tests",
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES"
+                     }
+                 ],
+    "result":  {
+                   "cases":  19,
+                   "assertions":  1186,
+                   "passed":  true,
+                   "scope":  "PURE_MEMORY_SYNTHETIC_OWNERSHIP_ONLY",
+                   "entry_invocations":  0,
+                   "real_token_cng_queries":  0,
+                   "uac":  0,
+                   "admission":  "BLOCKED"
+               },
+    "scope":  "PURE_MEMORY_SYNTHETIC_API_FAILURE_OWNERSHIP",
+    "limitation":  "Does not establish actual Win32 failure output behavior, production isolation, real token/CNG access, or formal admission",
+    "uac":  0,
+    "trace":  0,
+    "vm":  0,
+    "services":  0,
+    "production_keys":  0,
+    "admission":  "BLOCKED"
+}

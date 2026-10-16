@@ -1,0 +1,102 @@
+{
+  "canonicalInventoryCount": 57,
+  "completeness": "complete",
+  "deferred": [],
+  "documentType": "codex-security.coverage",
+  "engineeringFollowUps": [
+    {
+      "id": "E1",
+      "line": 72,
+      "mustFixBeforeV5ApprovalRequest": true,
+      "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v5_readiness/Read-InstallationFacts.ps1",
+      "requiredCorrection": "Use exact ordinal case-insensitive comparison; retain query failures as UNKNOWN.",
+      "title": "Service collision comparison is case-sensitive"
+    },
+    {
+      "id": "E2",
+      "line": 74,
+      "mustFixBeforeV5ApprovalRequest": true,
+      "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v5_readiness/Read-InstallationFacts.ps1",
+      "requiredCorrection": "Report ABSENT only for explicit file/path-not-found status; retain access/error results as UNKNOWN with error codes.",
+      "title": "Exists collapses errors into apparent absence"
+    },
+    {
+      "id": "E3",
+      "line": 25,
+      "mustFixBeforeV5ApprovalRequest": true,
+      "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v5_readiness/NativeEntry.c",
+      "requiredCorrection": "Set separate ownership flags only after each successful acquisition and clean up only owned handles; include failure-output cases in bounded source-only checks.",
+      "title": "Failed native acquisition output is used as cleanup ownership"
+    },
+    {
+      "id": "E4",
+      "line": 34,
+      "mustFixBeforeV5ApprovalRequest": true,
+      "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v5_readiness/Launch-Approved.ps1",
+      "requiredCorrection": "Use the intended read access for ancestor sharing checks and remove claims of preventing all metadata writes. Keep ACL, non-reparse and exact-byte checks explicit.",
+      "title": "Ancestor pin claim exceeds actual sharing guarantees"
+    },
+    {
+      "id": "E5",
+      "line": 26,
+      "mustFixBeforeV5ApprovalRequest": false,
+      "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v4_offline/OfflineQpc.cpp",
+      "requiredCorrection": "Preserve both header and payload identities and document opcode-specific semantics before future attribution claims; do not extend a thread beyond its verified end.",
+      "title": "Thread endpoint identities need explicit preservation"
+    },
+    {
+      "id": "E6",
+      "line": 50,
+      "mustFixBeforeV5ApprovalRequest": false,
+      "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v4_offline/audit_root_coverage.py",
+      "requiredCorrection": "For future evidence, bind source, summary and CSV bytes/digests and row counts; use the same verified handle/snapshot for both passes. Later matching reruns cannot prove historical two-pass stability.",
+      "title": "Historical two-pass CSV accounting lacks stable input binding"
+    }
+  ],
+  "excludePaths": [],
+  "explicitExclusions": [],
+  "includePaths": [
+    "."
+  ],
+  "inventoryStrategy": "diff",
+  "mode": "branch_diff",
+  "openQuestions": [],
+  "resolvedDeferred": [
+    {
+      "id": "all-review",
+      "reason": "All 88 changed files and six candidates reviewed and dispositioned. Review work is complete; four engineering corrections and two evidence limitations remain explicitly recorded in needs_follow_up surfaces and candidate validations."
+    }
+  ],
+  "reviewReceiptCount": 88,
+  "scanId": "b82c7961-6cd4-4ae7-8b40-02199af2c67a",
+  "schemaVersion": "1.0",
+  "surfaces": [
+    {
+      "disposition": "rejected",
+      "id": "v4",
+      "label": "Offline source and actual-result evidence",
+      "notes": "Security-finding disposition rejected/suppressed; ENGINEERING FOLLOW-UP REMAINS OPEN (this label does not close repairs). All 55 changed files reviewed. E5 Thread endpoint identities need explicit preservation: Preserve both header and payload identities and document opcode-specific semantics before future attribution claims; do not extend a thread beyond its verified end. E6 Historical two-pass CSV accounting lacks stable input binding: For future evidence, bind source, summary and CSV bytes/digests and row counts; use the same verified handle/snapshot for both passes. Later matching reruns cannot prove historical two-pass stability. Keep 0.4392592 s / 1328 unknown intervals; current corrected record has 40 unresolved thread histories. Saved evidence confirms this capture's reported zero loss only, not full protected-process/other-partition or host/guest coverage. No independent native/CSV replay in review.",
+      "receiptRefs": [
+        "artifacts/01_context/immutable-file-review-receipts.json"
+      ]
+    },
+    {
+      "disposition": "rejected",
+      "id": "v5",
+      "label": "Read-only administrator facts and privilege boundary",
+      "notes": "Security-finding disposition rejected/suppressed; ENGINEERING FOLLOW-UP REMAINS OPEN (this label does not close repairs). All 33 changed files reviewed. Original 9ae3 is NOT READY to request the proposed one-time read-only UAC until these engineering corrections are reviewed: E1 Read-InstallationFacts.ps1:72 Service collision comparison is case-sensitive. Use exact ordinal case-insensitive comparison; retain query failures as UNKNOWN. E2 Read-InstallationFacts.ps1:74 Exists collapses errors into apparent absence. Report ABSENT only for explicit file/path-not-found status; retain access/error results as UNKNOWN with error codes. E3 NativeEntry.c:25 Failed native acquisition output is used as cleanup ownership. Set separate ownership flags only after each successful acquisition and clean up only owned handles; include failure-output cases in bounded source-only checks. E4 Launch-Approved.ps1:34 Ancestor pin claim exceeds actual sharing guarantees. Use the intended read access for ancestor sharing checks and remove claims of preventing all metadata writes. Keep ACL, non-reparse and exact-byte checks explicit. No proven original-path replacement attack. Leaf GENERIC_READ and protected C profile/private ACL assumptions remain relevant. No query/harness/native invocation executed in review.",
+      "receiptRefs": [
+        "artifacts/01_context/immutable-file-review-receipts.json"
+      ]
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "bindings",
+      "label": "All-file accounting, build pins and consent",
+      "notes": "88 exact additions (55 v4 + 33 v5), all 57 tool inventory rows plus 31 text/log/config files accounted. All snapshot bytes/lengths independently match parent-exported Git blob manifest SHA256 7130a82c13b4a2e4c1e6c0af81ec7bebccff4c0880be02d2f38f4d9c792bef55, with independent Git diff path check. 86 package-manifest entries match; both manifest files accounted. Four private v2 artifacts match FINAL_BINDINGS; fixed input transformations/source/binary/consent chain reviewed. Failed v1 build remains historical; successful v2 source-only checks do not demonstrate administrator query success. New v5 approval absent; prior 62496 authorization consumed. Later C repairs and offline runs are excluded.",
+      "receiptRefs": [
+        "artifacts/01_context/immutable-file-review-receipts.json"
+      ]
+    }
+  ]
+}

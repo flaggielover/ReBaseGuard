@@ -1,0 +1,18 @@
+{
+  "record_type": "MANUAL_TRANSCRIPTION_OF_ACTUAL_TOOL_OUTPUT_NOT_TEST_RUNNER_OUTPUT",
+  "date": "2026-10-16",
+  "scope": "SMALL_SYNTHETIC_SAVED_FILES_ONLY",
+  "initial_createfile_desired_access": 0,
+  "initial_createfile_share_mode": 1,
+  "tests_run": 11,
+  "failures": [
+    {"test": "test_existing_writer_refuses_pin", "assertion": "a pre-existing write handle must prevent the pin"},
+    {"test": "test_leaf_write_and_ancestor_rename_denied_during_both_passes", "assertion": "write should be rejected while pinned"}
+  ],
+  "elapsed_seconds": 0.555,
+  "additional_invocation_error": "Resolve-Path used a staging-relative path while already inside staging. The Python tests still ran; all fixtures explicitly used the staging directory. TEMP assignment was corrected in the next invocation.",
+  "implication": "Access-zero metadata handles did not establish deny-write sharing in this synthetic-file run. Do not claim dual-pass input stability from such handles.",
+  "host_fact_queries": 0,
+  "uac": 0,
+  "admission": "BLOCKED"
+}

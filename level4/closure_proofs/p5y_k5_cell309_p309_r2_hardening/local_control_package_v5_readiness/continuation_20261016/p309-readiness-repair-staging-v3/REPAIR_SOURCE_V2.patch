@@ -1,0 +1,160 @@
+--- a/Build-Private.ps1
++++ b/Build-Private.ps1
+@@ -1,6 +1,6 @@
+ $ErrorActionPreference='Stop';Set-StrictMode -Version Latest
+ if($PSVersionTable.PSVersion.Major -ne 5){throw 'Windows PowerShell 5.1 required'}
+-$build='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v2'
++$build='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v3'
+ $repo='D:\ReBaseGuard-309\workspace\p309-local-vm-diagnostic-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_control_package_v5_readiness'
+ $sourceCommit='a3a478089a9f756853efd6bc68a88d48d83909d1'
+ $pins=[ordered]@{
+--- a/Invoke-Once.ps1
++++ b/Invoke-Once.ps1
+@@ -17,7 +17,7 @@
+ function Hash-FactsBytes([byte[]]$b){$h=[Security.Cryptography.SHA256]::Create();try{[BitConverter]::ToString($h.ComputeHash($b)).Replace('-','').ToLowerInvariant()}finally{$h.Dispose()}}
+ $id=[Security.Principal.WindowsIdentity]::GetCurrent()
+ if(([Security.Principal.WindowsPrincipal]::new($id)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){throw 'ordinary owner only'}
+-$private='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v2'
++$private='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v3'
+ $source=[IO.File]::ReadAllBytes((Join-Path $private 'Launch-Approved.ps1'))
+ if((Hash-FactsBytes $source) -cne '5fb8f21108ba8b54ac0c9929342ac7817f19da1a5423aab8da084f282cf4d1d4'){throw 'launcher binding differs'}
+ $available=[IO.DriveInfo]::new('C').AvailableFreeSpace;Assert-FactsEvidenceSpace $available
+--- a/Launch-Approved.ps1
++++ b/Launch-Approved.ps1
+@@ -4,7 +4,7 @@
+ # hashes these bytes against the reviewed constant and executes the same memory
+ # ScriptBlock. This script then pins NativeEntry bytes BEFORE ShellExecute/UAC.
+ $ErrorActionPreference='Stop'
+-$candidate='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v2\NativeEntry.exe'
++$candidate='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v3\NativeEntry.exe'
+ $expected='__NATIVE_SHA256__'
+ $identity=[Security.Principal.WindowsIdentity]::GetCurrent()
+ if(([Security.Principal.WindowsPrincipal]::new($identity)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {throw 'start this launcher as the ordinary owner, not already elevated'}
+@@ -31,9 +31,11 @@
+             var paths=new List<string>();var parent=new DirectoryInfo(Path.GetDirectoryName(path));
+             while(parent!=null){paths.Insert(0,parent.FullName);parent=parent.Parent;}
+             foreach(string p in paths) {
+-                // Share READ only: neither metadata/reparse writes nor rename
+-                // can replace a held ancestor before the elevated load.
+-                var h=CreateFileW(p,0,1,IntPtr.Zero,3,0x02000000|0x00200000,IntPtr.Zero);
++                // GENERIC_READ participates in sharing checks; access=0 does not.
++                // Hold the namespace without SHARE_DELETE and deny data-write opens.
++                // Attribute-only changes can still be allowed; do not claim that
++                // this handle prohibits every metadata write. Reject reparse nodes.
++                var h=CreateFileW(p,0x80000000,1,IntPtr.Zero,3,0x02000000|0x00200000,IntPtr.Zero);
+                 if(h.IsInvalid){h.Dispose();throw new Win32Exception();}
+                 parents.Add(h);INFO info;
+                 if(!GetFileInformationByHandle(h,out info)||(info.attributes&0x400)!=0)throw new IOException("reparse/unknown ancestor");
+--- a/NativeEntry.c
++++ b/NativeEntry.c
+@@ -5,7 +5,7 @@
+ #include <windows.h>
+ #include <bcrypt.h>
+ 
+-static const wchar_t templatePath[]=L"C:\\Users\\Lenovo\\P309-InstallationFacts-build-20261016-v2\\Trusted-Entry.template.ps1";
++static const wchar_t templatePath[]=L"C:\\Users\\Lenovo\\P309-InstallationFacts-build-20261016-v3\\Trusted-Entry.template.ps1";
+ static const char templateHash[]="__TEMPLATE_SHA256__";
+ static const char marker[]="__APPROVAL_RECORD_SHA256_AFTER_ACTUAL_HUMAN_APPROVAL__";
+ static const wchar_t winps[]=L"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
+@@ -17,17 +17,17 @@
+ static void* alloc(SIZE_T n) {void* p=HeapAlloc(GetProcessHeap(),HEAP_ZERO_MEMORY,n);if(!p)ExitProcess(80);return p;}
+ static int admin(void) {
+     HMODULE lib=LoadLibraryExW(L"advapi32.dll",NULL,LOAD_LIBRARY_SEARCH_SYSTEM32);
+-    HANDLE token=NULL;TOKEN_ELEVATION e;DWORD returned=0;BOOL ok=FALSE;
++    HANDLE token=NULL;TOKEN_ELEVATION e;DWORD returned=0;BOOL ok=FALSE;int tokenOwned=0;
+     typedef BOOL (WINAPI *OpenT)(HANDLE,DWORD,PHANDLE);
+     typedef BOOL (WINAPI *GetT)(HANDLE,TOKEN_INFORMATION_CLASS,LPVOID,DWORD,PDWORD);
+     OpenT open;GetT get;if(!lib)return 0;
+     open=(OpenT)GetProcAddress(lib,"OpenProcessToken");get=(GetT)GetProcAddress(lib,"GetTokenInformation");
+-    if(open&&get&&open(GetCurrentProcess(),TOKEN_QUERY,&token))ok=get(token,TokenElevation,&e,sizeof(e),&returned)&&e.TokenIsElevated;
+-    if(token)CloseHandle(token);FreeLibrary(lib);return ok;
++    if(open&&get&&open(GetCurrentProcess(),TOKEN_QUERY,&token)){tokenOwned=1;if(token)ok=get(token,TokenElevation,&e,sizeof(e),&returned)&&e.TokenIsElevated;}
++    if(tokenOwned&&token)CloseHandle(token);FreeLibrary(lib);return ok;
+ }
+ static int hash(const BYTE* bytes,DWORD size,char result[65]) {
+     HMODULE lib=LoadLibraryExW(L"bcrypt.dll",NULL,LOAD_LIBRARY_SEARCH_SYSTEM32);
+-    BCRYPT_ALG_HANDLE algorithm=NULL;BCRYPT_HASH_HANDLE state=NULL;BYTE digest[32];int ok=0,i;
++    BCRYPT_ALG_HANDLE algorithm=NULL;BCRYPT_HASH_HANDLE state=NULL;BYTE digest[32];int ok=0,i,algorithmOwned=0,stateOwned=0;
+     typedef NTSTATUS (WINAPI *OpenA)(BCRYPT_ALG_HANDLE*,LPCWSTR,LPCWSTR,ULONG);
+     typedef NTSTATUS (WINAPI *CreateH)(BCRYPT_ALG_HANDLE,BCRYPT_HASH_HANDLE*,PUCHAR,ULONG,PUCHAR,ULONG,ULONG);
+     typedef NTSTATUS (WINAPI *HashD)(BCRYPT_HASH_HANDLE,PUCHAR,ULONG,ULONG);
+@@ -40,12 +40,15 @@
+     update=(HashD)GetProcAddress(lib,"BCryptHashData");finish=(FinishH)GetProcAddress(lib,"BCryptFinishHash");
+     destroy=(DestroyH)GetProcAddress(lib,"BCryptDestroyHash");close=(CloseA)GetProcAddress(lib,"BCryptCloseAlgorithmProvider");
+     if(!open||!create||!update||!finish||!destroy||!close)goto done;
+-    if(open(&algorithm,L"SHA256",NULL,0)<0 || create(algorithm,&state,NULL,0,NULL,0,0)<0
+-       || update(state,(PUCHAR)bytes,size,0)<0 || finish(state,digest,32,0)<0)goto done;
++    if(open(&algorithm,L"SHA256",NULL,0)<0)goto done;
++    algorithmOwned=1;if(!algorithm)goto done;
++    if(create(algorithm,&state,NULL,0,NULL,0,0)<0)goto done;
++    stateOwned=1;if(!state)goto done;
++    if(update(state,(PUCHAR)bytes,size,0)<0 || finish(state,digest,32,0)<0)goto done;
+     for(i=0;i<32;i++){result[i*2]="0123456789abcdef"[digest[i]>>4];result[i*2+1]="0123456789abcdef"[digest[i]&15];}
+     result[64]=0;ok=1;
+ done:
+-    if(state)destroy(state);if(algorithm)close(algorithm,0);FreeLibrary(lib);return ok;
++    if(stateOwned&&state)destroy(state);if(algorithmOwned&&algorithm)close(algorithm,0);FreeLibrary(lib);return ok;
+ }
+ static wchar_t* base64(const BYTE* bytes,DWORD n) {
+     const wchar_t alphabet[]=L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+--- a/Read-InstallationFacts.ps1
++++ b/Read-InstallationFacts.ps1
+@@ -40,6 +40,14 @@
+  [DllImport("C:\\Windows\\System32\\advapi32.dll",ExactSpelling=true)] static extern uint LsaNtStatusToWinError(uint status);
+  [DllImport("C:\\Windows\\System32\\advapi32.dll",ExactSpelling=true)] static extern uint LsaClose(IntPtr policy);
+  [DllImport("C:\\Windows\\System32\\advapi32.dll",ExactSpelling=true)] static extern uint LsaFreeMemory(IntPtr memory);
++ // These two helpers are pure and have synthetic boundary tests. Actual reads
++ // preserve HRESULT; only explicit Win32 file/path-not-found is ABSENT.
++ public static bool SameServiceName(string a,string b){return String.Equals(a,b,StringComparison.OrdinalIgnoreCase);}
++ public static string PathErrorState(int hr){return hr==unchecked((int)0x80070002)||hr==unchecked((int)0x80070003)?"ABSENT":"UNKNOWN";}
++ public sealed class PathResult {public string path,state,attributes,error_type,error;public int error_hresult;}
++ public static PathResult PathFacts(string text){var r=new PathResult();r.path=text;
++  try{r.attributes=System.IO.File.GetAttributes(text).ToString();r.state="PRESENT";}
++  catch(Exception e){r.error_hresult=e.HResult;r.error_type=e.GetType().FullName;r.error=e.Message;r.state=PathErrorState(e.HResult);}return r;}
+  public sealed class SecurityResult {public string guid,sddl,error;public uint first_rc,final_rc,size;public string descriptor_base64;}
+  public static SecurityResult Etw(string text){Guid g=Guid.Parse(text);uint n=0;var r=new SecurityResult();r.guid=text;r.first_rc=EventAccessQuery(ref g,IntPtr.Zero,ref n);r.final_rc=r.first_rc;r.size=n;
+   if(r.first_rc!=122||n==0||n>65536){r.error="Unavailable; not empty/default authority";return r;}IntPtr p=Marshal.AllocHGlobal((int)n);
+@@ -69,9 +77,9 @@
+   }
+  } finally {if($null -ne $key){$key.Dispose()}}
+ }
+-Observe 'service-collisions' {$all=@(Get-Service -ErrorAction Stop);@('ReBaseGuardP309Observer','ReBaseGuardP309Controller','ReBaseGuardP309Relay')|ForEach-Object{$name=$_;$found=@($all|Where-Object {$_.Name -ceq $name});@{name=$name;exists=$found.Count -ne 0;status=@($found|ForEach-Object {[string]$_.Status})}}}
++Observe 'service-collisions' {$all=@(Get-Service -ErrorAction Stop);@('ReBaseGuardP309Observer','ReBaseGuardP309Controller','ReBaseGuardP309Relay')|ForEach-Object{$name=$_;$found=@($all|Where-Object {[P309InstallationRead]::SameServiceName($_.Name,$name)});@{name=$name;exists=$found.Count -ne 0;status=@($found|ForEach-Object {[string]$_.Status})}}}
+ Observe 'directory-custody' {@('C:\Program Files','C:\ProgramData','D:\','D:\ReBaseGuard-309')|ForEach-Object{@{path=$_;attributes=[string][IO.File]::GetAttributes($_);sddl=([IO.DirectoryInfo]::new($_)).GetAccessControl().GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]'Owner,Group,Access')}}}
+-Observe 'space-and-collisions' {@{C_available=[IO.DriveInfo]::new('C').AvailableFreeSpace;D_available=[IO.DriveInfo]::new('D').AvailableFreeSpace;D_format=[IO.DriveInfo]::new('D').DriveFormat;proposed_code_exists=([IO.Directory]::Exists('C:\Program Files\ReBaseGuardP309') -or [IO.File]::Exists('C:\Program Files\ReBaseGuardP309'));proposed_state_exists=([IO.Directory]::Exists('C:\ProgramData\ReBaseGuardP309') -or [IO.File]::Exists('C:\ProgramData\ReBaseGuardP309'));proposed_disk_exists=([IO.Directory]::Exists('D:\ReBaseGuardP309Private') -or [IO.File]::Exists('D:\ReBaseGuardP309Private'))}}
++Observe 'space-and-collisions' {@{C_available=[IO.DriveInfo]::new('C').AvailableFreeSpace;D_available=[IO.DriveInfo]::new('D').AvailableFreeSpace;D_format=[IO.DriveInfo]::new('D').DriveFormat;proposed_code_path=[P309InstallationRead]::PathFacts('C:\Program Files\ReBaseGuardP309');proposed_state_path=[P309InstallationRead]::PathFacts('C:\ProgramData\ReBaseGuardP309');proposed_disk_path=[P309InstallationRead]::PathFacts('D:\ReBaseGuardP309Private')}}
+ Observe 'power-sleep-policy' {& 'C:\Windows\System32\powercfg.exe' /query SCHEME_CURRENT SUB_SLEEP;if($LASTEXITCODE-ne 0){throw 'powercfg query failed'}}
+ Observe 'update-policy' {
+  @('SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate','SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU','SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired','SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending')|ForEach-Object {
+@@ -80,6 +88,6 @@
+ }
+ Observe 'device-guard-metadata' {Import-Module 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\CimCmdlets\CimCmdlets.psd1' -ErrorAction Stop;Get-CimInstance -Namespace root\Microsoft\Windows\DeviceGuard -ClassName Win32_DeviceGuard -OperationTimeoutSec 20|Select-Object VirtualizationBasedSecurityStatus,SecurityServicesConfigured,SecurityServicesRunning,AvailableSecurityProperties,RequiredSecurityProperties}
+ Observe 'maintenance-task-metadata' {Import-Module 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\ScheduledTasks\ScheduledTasks.psd1' -ErrorAction Stop;@(Get-ScheduledTask -TaskPath '\Microsoft\Windows\UpdateOrchestrator\','\Microsoft\Windows\WindowsUpdate\' -ErrorAction Stop|Select-Object TaskPath,TaskName,State,@{Name='Enabled';Expression={$_.Settings.Enabled}},@{Name='WakeToRun';Expression={$_.Settings.WakeToRun}})}
+-SaveJson 'RESULT.json' @{utc=[DateTime]::UtcNow.ToString('o');scope='ADMINISTRATOR_READONLY_INSTALLATION_FACTS';queries=$results.Count;unknown=@($results|Where-Object {$_.query_status-eq'UNKNOWN'}|ForEach-Object {$_.name});policy_changes=0;trace_starts=0;vm_starts=0;services_created=0;keys_created=0;formal_coverage_proven=$false;admission='BLOCKED';I1_I7='OPEN'}
++SaveJson 'RESULT.json' @{utc=[DateTime]::UtcNow.ToString('o');scope='ADMINISTRATOR_READONLY_INSTALLATION_FACTS';queries=$results.Count;query_exceptions=@($results|Where-Object {$_.query_status-eq'UNKNOWN'}|ForEach-Object {$_.name});native_return_codes_and_path_states_require_interpretation=$true;policy_changes=0;trace_starts=0;vm_starts=0;services_created=0;keys_created=0;formal_coverage_proven=$false;admission='BLOCKED';I1_I7='OPEN'}
+ $manifest=@(Get-ChildItem -LiteralPath $root -File|Where-Object {$_.Extension -eq '.json'}|ForEach-Object{@{file=$_.Name;bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}})
+ SaveJson 'SHA256SUMS.json' $manifest
+--- a/Test-SourceOnly.ps1
++++ b/Test-SourceOnly.ps1
+@@ -17,4 +17,9 @@
+ $imports=@([P309InstallationRead].GetMethods([Reflection.BindingFlags]'NonPublic,Static')|Where-Object {$_.GetCustomAttributes([Runtime.InteropServices.DllImportAttribute],$false).Count -ne 0}|ForEach-Object {$_.Name}|Sort-Object)
+ $expected=@('EventAccessQuery','LsaClose','LsaEnumerateAccountRights','LsaFreeMemory','LsaNtStatusToWinError','LsaOpenPolicy')
+ if(($imports -join ',') -cne ($expected -join ',')){throw 'native import allowlist differs'}
+-[ordered]@{scope='SOURCE_ONLY_COMPILE_ABI_IMPORTS';winps=$PSVersionTable.PSVersion.ToString();source_sha256=(Get-FileHash -LiteralPath $Source).Hash.ToLowerInvariant();parse_errors=0;oa_size=48;us_size=16;imports=$imports;native_query_calls=0;harness_executions=0;uac=0;admission='BLOCKED'}|ConvertTo-Json -Depth 5
++$pureChecks=0
++foreach($pair in @(@('ReBaseGuardP309Observer','rebaseguardp309observer'),@('ReBaseGuardP309Controller','REBASEGUARDP309CONTROLLER'),@('ReBaseGuardP309Relay','ReBaseGuardP309Relay'))){if(-not [P309InstallationRead]::SameServiceName($pair[0],$pair[1])){throw 'case-insensitive service identity mismatch'};$pureChecks++}
++foreach($pair in @(@('ReBaseGuardP309Relay','ReBaseGuardP309RelayExtra'),@('ReBaseGuardP309Observer','ReBaseGuardP309Controller'),@('ReBaseGuardP309Relay',' ReBaseGuardP309Relay'))){if([P309InstallationRead]::SameServiceName($pair[0],$pair[1])){throw 'nonidentical service name adopted'};$pureChecks++}
++foreach($hr in @(-2147024894,-2147024893)){if([P309InstallationRead]::PathErrorState($hr) -cne 'ABSENT'){throw 'explicit not-found not classified'};$pureChecks++}
++foreach($hr in @(-2147024891,-2147024864,-2147024887,0,-1)){if([P309InstallationRead]::PathErrorState($hr) -cne 'UNKNOWN'){throw 'unavailable path falsely absent'};$pureChecks++}
++[ordered]@{scope='SOURCE_ONLY_COMPILE_ABI_IMPORTS';winps=$PSVersionTable.PSVersion.ToString();source_sha256=(Get-FileHash -LiteralPath $Source).Hash.ToLowerInvariant();parse_errors=0;oa_size=48;us_size=16;imports=$imports;new_pure_classification_checks=$pureChecks;native_query_calls=0;harness_executions=0;uac=0;admission='BLOCKED'}|ConvertTo-Json -Depth 5
+--- a/Trusted-Entry.template.ps1
++++ b/Trusted-Entry.template.ps1
+@@ -4,7 +4,7 @@
+ # absolute inbox Windows PowerShell binary, with a clean process environment.
+ $approvalDigest='__APPROVAL_RECORD_SHA256_AFTER_ACTUAL_HUMAN_APPROVAL__'
+ $approvalPath='D:\ReBaseGuard-309\records\p309-installation-facts-v1-human-approval.json'
+-$scriptPath='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v2\Read-InstallationFacts.ps1'
++$scriptPath='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v3\Read-InstallationFacts.ps1'
+ $scriptDigest='__HARNESS_SHA256__'
+ $ErrorActionPreference='Stop'
+ $PSModuleAutoLoadingPreference='None'

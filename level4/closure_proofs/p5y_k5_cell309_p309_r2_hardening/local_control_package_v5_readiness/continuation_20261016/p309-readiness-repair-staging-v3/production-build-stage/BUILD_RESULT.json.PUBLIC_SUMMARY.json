@@ -1,0 +1,102 @@
+{
+  "scope": "PUBLIC_DERIVED_SUMMARY_NOT_RAW_RECORD",
+  "local_archive_file": "p309-readiness-repair-staging-v3/production-build-stage/BUILD_RESULT.json",
+  "local_original_sha256": "36356b1e7c0da11d0ad5cc55fc17ecc2e6ae27c6ecbe6e573a688dab3469a9e9",
+  "omitted_fields": [
+    "root_sddl",
+    "profile_sddl"
+  ],
+  "summary": {
+    "source_commit": "9ae3c02b25de390bbd68ee504c9a22de516061d4",
+    "test_source": "Uncommitted repaired snapshot at pinned input hashes; original baseline commit only",
+    "input_pins": {
+      "Launch-Approved.ps1": "8b96c29e4dd8ea9f689e666a57ff7096c001f43119fd18ff8526172c7bad0c7f",
+      "NativeEntry.c": "427198611682bc9aee89eace595dbb93cb1913ab8da24d9c547432879bfe28ae",
+      "Read-InstallationFacts.ps1": "4ea4e224a876f6a1c0d42144f8f5edf819172992329a7231bf2d6fca8e561054",
+      "Trusted-Entry.template.ps1": "082f01ced8be07ad694ff36d1721150f571687c876a24c2fb9edff9b96ca3efb",
+      "Test-SourceOnly.ps1": "403669dff6fb4274ae9c6384d39a08834c1aa7d8bcc82252a8c1e3c7678dd0f3"
+    },
+    "commands": [
+      {
+        "exe": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+        "sha256": "6aa39ae173cb8563d796359930b332a08b2fdc1745b70e5a4caa48a9779fdd07",
+        "arguments": [
+          "/nologo",
+          "/c",
+          "/GS-",
+          "/O1",
+          "/Oi-",
+          "/Zl",
+          "/D_WIN32_WINNT=0x0602",
+          "/IC:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include",
+          "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt",
+          "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um",
+          "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared",
+          "/FoNativeEntry.obj",
+          "NativeEntry.c"
+        ],
+        "exit_code": 0,
+        "environment": "FIVE_FIXED_PROCESS_VARIABLES"
+      },
+      {
+        "exe": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe",
+        "sha256": "7a9b2527a183361329b0a6d85da13680467152c3b7bbe14470e7c74383e3b0a1",
+        "arguments": [
+          "/NOLOGO",
+          "/NODEFAULTLIB",
+          "/SUBSYSTEM:WINDOWS",
+          "/DYNAMICBASE",
+          "/NXCOMPAT",
+          "/MANIFEST:EMBED",
+          "/MANIFESTUAC:level='requireAdministrator' uiAccess='false'",
+          "/ENTRY:Entry",
+          "/OUT:NativeEntry.exe",
+          "NativeEntry.obj",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64\\kernel32.lib"
+        ],
+        "exit_code": 0,
+        "environment": "FIVE_FIXED_PROCESS_VARIABLES"
+      },
+      {
+        "exe": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\dumpbin.exe",
+        "sha256": "db64bcb6f17a61f0d64ecc016b90faf9b83134d41fcb1b4fc6db9e347fdbd674",
+        "arguments": [
+          "/headers",
+          "/imports",
+          "NativeEntry.exe"
+        ],
+        "exit_code": 0,
+        "environment": "FIVE_FIXED_PROCESS_VARIABLES"
+      }
+    ],
+    "parse": [
+      {
+        "errors": 0,
+        "file": "Read-InstallationFacts.ps1"
+      },
+      {
+        "errors": 0,
+        "file": "Trusted-Entry.template.ps1"
+      },
+      {
+        "errors": 0,
+        "file": "Launch-Approved.ps1"
+      }
+    ],
+    "root": "C:\\Users\\Lenovo\\Documents\\Codex\\2026-10-15\\rebaseguard-309-windows-cpu-wsl2-ubuntu\\outputs\\p309-readiness-repair-staging-v3\\production-build-stage",
+    "source_and_objects_read_locked": true,
+    "native_sha256": "469efadffe76e5a66bd6997cb215042f74f0030c3ced819e1c1e4c2eccc65816",
+    "harness_sha256": "4ea4e224a876f6a1c0d42144f8f5edf819172992329a7231bf2d6fca8e561054",
+    "template_sha256": "124f526c266910a40b4614aa66994e18287db33e8e5c48cf37b62939d1df135c",
+    "launcher_sha256": "5f966b8d8960eb65d81f8f71e2f0c5caf87b365ffae16537f174c390ce00b8e0",
+    "scope": "UNCOMMITTED_REPAIR_STAGING_BUILD_ONLY_NOT_INSTALLED_OR_UAC_APPROVED",
+    "private_target_populated": false,
+    "private_preflight_done": false,
+    "uac": 0,
+    "trace": 0,
+    "fixture": 0,
+    "vm": 0,
+    "admission": "BLOCKED",
+    "winps": "5.1.26100.9444"
+  }
+}
