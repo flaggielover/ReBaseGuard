@@ -56,7 +56,8 @@ facts about the machine as it is.
 ## 3. The recommendation
 
 **OD-1 = V-B: one persistent, owner-controlled, single-tenant bare-metal Linux server, named by the owner, used for
-this route only.**
+this route only, adopted together with the S12 mitigation package (§4) and named only after the pre-OD-1 owner
+decisions.**
 
 Concretely, the owner should name **one** machine with all of these:
 * x86_64, bare metal: owner-owned or a rented **dedicated** server, not a VM and not a shared host;
@@ -65,7 +66,8 @@ Concretely, the owner should name **one** machine with all of these:
   are far below this. The margin is for MemAvailable after the OS;
 * a local NVMe or SATA SSD with ext4, persistent;
 * Ubuntu 24.04 LTS installed by the owner: systemd as PID 1, no container runtime, journald `Storage=persistent`;
-* readable DMI (`product_uuid`, chassis type), readable thermal zones with trip points, and PSI enabled;
+* readable DMI (`product_uuid` required, no substitute; chassis type), readable thermal zones with trip points, and
+  PSI enabled;
 * remote access for the owner (and, by the owner's choice, a Remote Control session used only **outside** the window
   of amendment erratum E1.7).
 
@@ -88,7 +90,31 @@ The choice is fixed by OD-1 and never changed after an L-DET outcome.
 
 ## 4. The S12 rating and this recommendation
 
-[Completed after the S12 review: see §6.]
+The fresh S12 review (`reviews/REVIEW_S12_RISK_CLOUD_R1.md`, `9d549eb2…b55c`) rates the route **HIGH, conditional**:
+VERY-HIGH, and continuation not acceptable, unless its blocking findings S1 and S2 are corrected and its §5
+mitigations adopted before OD-3. On Q7 it finds that **V-C carries the lower result-chasing risk**. Continuation is
+acceptable at HIGH only if all six of its conditions hold before OD-3:
+1. cross-platform and cross-outcome finality;
+2. MBS-6 (i), MBS-7 (i) and MBS-8 recorded with no new-host runtime in view;
+3. OD-1 hygiene, with the architecture fixed;
+4. the cross-host marker and the post-marker non-action rule;
+5. the SUBST list completed, the new constants traced by a non-holder, and every D-* decided before any named-host
+   reading;
+6. no V-A runner.
+
+The recommendation of §3 is therefore **V-B adopted together with the S12 package**, not V-B alone. The texts for all
+six conditions now exist as proposals: amendment erratum E2, procedure r3, package erratum E1, plan erratum E2. Each
+needs the owner's adoption or decision. The order is:
+* the owner adopts them (and decides MBS-6 (i), MBS-7 (i), MBS-8 (ii) and the 21 D-* items);
+* only then does the owner name the machine (OD-1).
+
+If the owner does not adopt them, S12's advice applies (V-C), and this recommendation does not stand.
+
+**OD-1 record content required (S12 S3, plan E2).** The record:
+* names one machine and its architecture (x86_64 recommended);
+* cites only M1–M8 and the decided preferences;
+* states that no MB r1 target-run observation informed the choice;
+* discloses the decider's E1″ status by name only.
 
 ## 5. Administrative actions: a proposal for the owner (none performed)
 
@@ -109,5 +135,6 @@ None of A1–A8 is within this session's authority. Each needs the owner (A5 als
 
 ## 6. Blocker
 
-The next step, the Phase-1 inventory of the official host, is blocked on **one host fact**: no machine meeting M1–M8 is
-reachable. The resolution, and the authority it needs, are in the consolidated owner package.
+The next step, the Phase-1 inventory of the official host, is blocked on **one host fact** (no machine meeting M1–M8 is
+reachable) and on the owner decisions that must precede OD-1 (S12 S2 / S11). The resolution, and the authority it
+needs, are in `OWNER_DECISION_PACKAGE_OD2_20261016.md`.
