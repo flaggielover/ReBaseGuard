@@ -1,0 +1,54 @@
+{
+  "schema": "P309_LOCAL_VM_DETACHED_V4_RESULT/1",
+  "utc": "2026-10-16T00:46:13.073440+00:00",
+  "source_commit": "57fac3a72783861b5cd72e84665ba68fafc1cc96",
+  "cases": {
+    "deadline": {
+      "case": "deadline",
+      "scoped_probe_pass": true,
+      "failures": [],
+      "stop_requested_ms": 14500,
+      "cleanup_observed_ms": 14547,
+      "guard_exit": 0,
+      "child_wait": 0,
+      "formal_admission": "BLOCKED",
+      "proves_guest_boot": false,
+      "proves_I1_I6_closure": false
+    },
+    "guard-exit": {
+      "case": "guard-exit",
+      "scoped_probe_pass": true,
+      "failures": [],
+      "stop_requested_ms": null,
+      "cleanup_observed_ms": null,
+      "guard_exit": 86,
+      "child_wait": 0,
+      "formal_admission": "BLOCKED",
+      "proves_guest_boot": false,
+      "proves_I1_I6_closure": false
+    }
+  },
+  "real_launches": 2,
+  "automatic_retries": 0,
+  "runtime_files_unchanged": 222,
+  "runtime_extra_files": [],
+  "formal_admission": "BLOCKED",
+  "overall_task_complete": false,
+  "independent_review": false,
+  "blockers": {
+    "I1": "OPEN_RETAINED",
+    "I2": "OPEN_RETAINED",
+    "I3": "OPEN_RETAINED",
+    "I4": "OPEN_RETAINED",
+    "I5": "OPEN_RETAINED",
+    "I6": "OPEN_RETAINED",
+    "I7": "OPEN_RETAINED"
+  },
+  "limits": [
+    "Paused diskless networkless 128 MiB VMs only.",
+    "No guest boot or guest cgroup evidence.",
+    "No complete WHPX partition resource reclamation proof.",
+    "No production identity, collector, keys, services, persistence, enrollment or formal admission proof.",
+    "These are platform probes, not worker-tier drills, qualification or target evaluation."
+  ]
+}
