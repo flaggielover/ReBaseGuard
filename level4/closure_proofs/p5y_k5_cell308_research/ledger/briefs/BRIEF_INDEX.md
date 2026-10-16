@@ -107,3 +107,12 @@ example, rows 30 and 31 are about 2026-09-29 18:20Z and 18:31Z. The rows are not
 | B1 | B1_EXTERNAL_CONFORMANCE_CHECK_CLOUD_R1.txt | external reviewer, to be appointed and launched by the OWNER outside the coordinator's session and account: bounded conformance check of the round-2 corrections at f814fe84 (prepared, not launched) | external | not launched | no (tail-figure scan: see the ledger line) |
 | B2 | B2_EXTERNAL_INCIDENT_REVIEW_READING_CLOUD_R1.txt | external reader, to be appointed and launched by the OWNER: narrowly scoped, sanitised reading of the incident-independence review (prepared, not launched) | external | not launched | no (tail-figure scan: see the ledger line) |
 | B3 | B3_EXTERNAL_PROVENANCE_CHECK_CLOUD_R1.txt | external non-holder checker, to be appointed and launched by the OWNER after B2: provenance trace of new constants and rules, T6 transfer finding (prepared, not launched) | external | not launched | no (tail-figure scan: see the ledger line) |
+| B3r2 | B3_EXTERNAL_PROVENANCE_CHECK_CLOUD_R1_R2.txt | revision r2 of B3 (supersedes the B3 row's brief; r1 preserved): pin f9b28704; adds L-DET erratum E3, L-DET erratum E2 and procedure r3 erratum E1 (B1 X6); matrix R4 replaces R3; to be appointed and launched by the OWNER after B2's release (prepared, not launched) | external | not launched | no (tail-figure scan: see the ledger line) |
+| S12X | S12X_EXTERNAL_RISK_RATING_CLOUD_R1.txt | external fresh S12 risk rating on the corrected texts at f9b28704; CONDITIONAL on the owner's statement 1A (S12 Q8-7 / Q8-8); to be appointed and launched by the OWNER outside the coordinator's reach (prepared, not launched) | external | not launched | no (tail-figure scan: see the ledger line) |
+
+**Note (2026-10-16, B1 correction round).** Row B1: the owner appointed and launched the external reviewer
+B1-External (Codex). Its report is recorded verbatim at `reviews/external/REVIEW_EXTERNAL_B1_CONFORMANCE.md`
+(`cf1a4b18…8e41`), released by the owner (`governance/new_host_route_cloud_r1/OWNER_RELEASE_B1_20261016.md`). Before
+that, the owner had appointed Claude session `session_01VGbYdSMrEaoYpdb386rCWk` as B1 and closed that appointment
+after its Phase 1, which found eligibility not established; that session produced no review. Rows B1–B3 above are not
+edited.
