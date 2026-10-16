@@ -1,0 +1,38 @@
+{
+  "schema": "P309_VM_DIAGNOSTIC_BINDINGS/2",
+  "source_files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    {
+      "path": "OwnedVmDiagnostic.cs",
+      "sha256": "bdb70cd90e60422d5ee32084fe520ee8d4a0f6f3898d61eb370a566e6c0bff07"
+    },
+    {
+      "path": "REVIEW_AND_APPROVAL.md",
+      "sha256": "d1cb091f6a69065fb8e275784c1f3c03bbc6a13672d2e6db81561a086e53d237"
+    },
+    {
+      "path": "Run-ApprovedDiagnostic.ps1",
+      "sha256": "01d6b378a94c7d33be1c39bb890de0b470196d969062064f97da7175a94f4c24"
+    },
+    {
+      "path": "Test-ApprovalGate.ps1",
+      "sha256": "74901fbd5ea11e4c07895ad2e12fa2b3c2d77a2eaa62cc19733d887c0a6af82e"
+    }
+  ],
+  "binary": "OwnedVmDiagnostic-v2c.exe",
+  "guard_sha256": "0f56dcac9e6e9f457f22fdb90dfb3c8ecc03e6ccd000dda7da13b57d9c9aa7b5",
+  "compiler": "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe",
+  "compiler_sha256": "46809206887326d2d24db1eff1f3064de972c3451abe766b49111450a5e08e00",
+  "build_command": "csc.exe /nologo /target:exe /platform:x64 /optimize+ /out:<records>\\OwnedVmDiagnostic-v2c.exe <diagnostic_v2>\\OwnedVmDiagnostic.cs",
+  "runtime_hashlist_sha256": "48abd49ab20d074a4dea88306418a6c6c3e4374b81e7e1eb21a10929d2159238",
+  "actual_new_checks": {
+    "csharp_pure": 20,
+    "powershell_approval_rejection": 4
+  },
+  "real_diagnostic_executed": false,
+  "formal_admission": "BLOCKED",
+  "independent_review": false
+}
