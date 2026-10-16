@@ -1,0 +1,20 @@
+SOURCE-ONLY BUILD RECIPE; NOT EXECUTED IN THIS PREPARATION
+
+Dependencies: Linux x86_64 compiler with C11, glibc headers including pidfd syscall
+number/close_range, Linux cgroup2/proc support, libsystemd development headers and
+runtime sd-bus, pthread, OpenSSL 3 development headers and libcrypto. No dependencies were installed here. Use the separately
+approved pinned guest build environment; preserve compiler/linker/library hashes.
+The native sources are NOT validated by the Python tests.
+
+Example compile commands (no install, no executable invocation):
+cc -std=c11 -O2 -Wall -Wextra -Wformat=2 -Werror=implicit-function-declaration -Werror=return-type guardian_v9.c manager_authority.c anchor_crypto.c anchor_transport.c -lsystemd -lcrypto -pthread -o guardian-v9
+cc -std=c11 -O2 -Wall -Wextra -Wformat=2 -Werror=implicit-function-declaration -Werror=return-type fixed_gate_v9.c manager_authority.c anchor_crypto.c anchor_transport.c -lsystemd -lcrypto -pthread -o fixed-gate-v9
+cc -std=c11 -O2 -Wall -Wextra -Wformat=2 -Werror=implicit-function-declaration -Werror=return-type idle_owned_v9.c -o idle-owned-v9
+cc -std=c11 -O2 -Wall -Wextra -Wformat=2 -Werror=implicit-function-declaration -Werror=return-type -pthread -c broker_link.c manager_authority.c anchor_crypto.c anchor_transport.c
+
+Link the last four objects into the separately reviewed fixed control-broker-v9
+service binary. They provide no standalone start CLI. DO NOT link the historical
+intermediate_unconnected/authority_unavailable.c; no wildcard source glob.
+Actual dependencies/property support must be checked in the selected guest;
+unsupported operations fail, with consumed permits retained. Do not install or
+run these commands as a side effect of reading this file.

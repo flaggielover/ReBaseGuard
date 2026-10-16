@@ -1,0 +1,285 @@
+In file included from broker_link.h:3,
+                 from broker_link.c:3:
+authority_binding.h:11:50: warning: ‘struct p309_start_authority’ declared inside parameter list will not be visible outside of this definition or declaration
+   11 | int p309_authority_host_ack_consume(const struct p309_start_authority *);
+      |                                                  ^~~~~~~~~~~~~~~~~~~~
+authority_binding.h:12:53: warning: ‘struct p309_start_authority’ declared inside parameter list will not be visible outside of this definition or declaration
+   12 | int p309_authority_note_guardian_ready(const struct p309_start_authority *,int guardian_pidfd);
+      |                                                     ^~~~~~~~~~~~~~~~~~~~
+broker_link.c: In function ‘p309_guardian_bind’:
+broker_link.c:49:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   49 |     if(pipe2(pipes,O_CLOEXEC|O_NONBLOCK))return -errno;fds[4]=pipes[0];
+      |     ^~
+broker_link.c:49:56: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   49 |     if(pipe2(pipes,O_CLOEXEC|O_NONBLOCK))return -errno;fds[4]=pipes[0];
+      |                                                        ^~~
+broker_link.c:66:44: warning: passing argument 1 of ‘p309_authority_note_guardian_ready’ from incompatible pointer type [-Wincompatible-pointer-types]
+   66 |     if(!p309_authority_note_guardian_ready(a,l->guardian_pidfd)){close(l->guardian_pidfd);p309_guardian_release_reference();free(l);goto fail;}
+      |                                            ^
+      |                                            |
+      |                                            const struct p309_start_authority *
+authority_binding.h:12:40: note: expected ‘const struct p309_start_authority *’ but argument is of type ‘const struct p309_start_authority *’
+   12 | int p309_authority_note_guardian_ready(const struct p309_start_authority *,int guardian_pidfd);
+      |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+broker_link.c:71:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   71 |     if(pipes[0]>=0)close(pipes[0]);if(pipes[1]>=0)close(pipes[1]);close(s);
+      |     ^~
+broker_link.c:71:36: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   71 |     if(pipes[0]>=0)close(pipes[0]);if(pipes[1]>=0)close(pipes[1]);close(s);
+      |                                    ^~
+broker_link.c: In function ‘p309_release_fixed_gate’:
+broker_link.c:91:42: warning: passing argument 1 of ‘p309_authority_host_ack_consume’ from incompatible pointer type [-Wincompatible-pointer-types]
+   91 |     if(!p309_authority_host_ack_consume(l->authority)||!p309_authority_release_pending(l->authority))goto fail;
+      |                                         ~^~~~~~~~~~~
+      |                                          |
+      |                                          const struct p309_start_authority *
+authority_binding.h:11:37: note: expected ‘const struct p309_start_authority *’ but argument is of type ‘const struct p309_start_authority *’
+   11 | int p309_authority_host_ack_consume(const struct p309_start_authority *);
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+broker_link.c:97:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   97 |     if(!send_frame(gate,"RELEASE",g))goto fail;close(gate);atomic_store(&l->release_active,0);
+      |     ^~
+broker_link.c:97:48: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   97 |     if(!send_frame(gate,"RELEASE",g))goto fail;close(gate);atomic_store(&l->release_active,0);
+      |                                                ^~~~~
+broker_link.c:100:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  100 |     if(gate>=0)close(gate);(void)p309_guardian_request_stop(l);atomic_store(&l->release_active,0);return -EIO;
+      |     ^~
+broker_link.c:100:28: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  100 |     if(gate>=0)close(gate);(void)p309_guardian_request_stop(l);atomic_store(&l->release_active,0);return -EIO;
+      |                            ^
+broker_link.c: In function ‘p309_guardian_retire’:
+broker_link.c:128:9: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  128 |         if(n<0&&errno!=EINTR)return -EIO;if(n==1){if(p.revents!=POLLIN)return -EIO;break;}
+      |         ^~
+broker_link.c:128:42: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  128 |         if(n<0&&errno!=EINTR)return -EIO;if(n==1){if(p.revents!=POLLIN)return -EIO;break;}
+      |                                          ^~
+broker_link.c: In function ‘p309_guardian_bind’:
+broker_link.c:74:34: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   74 |     p309_authority_stop(a);(void)write(fds[3],"1\n",2);return -EIO;
+      |                                  ^~~~~~~~~~~~~~~~~~~~~
+In file included from manager_authority.c:6:
+authority_binding.h:11:50: warning: ‘struct p309_start_authority’ declared inside parameter list will not be visible outside of this definition or declaration
+   11 | int p309_authority_host_ack_consume(const struct p309_start_authority *);
+      |                                                  ^~~~~~~~~~~~~~~~~~~~
+authority_binding.h:12:53: warning: ‘struct p309_start_authority’ declared inside parameter list will not be visible outside of this definition or declaration
+   12 | int p309_authority_note_guardian_ready(const struct p309_start_authority *,int guardian_pidfd);
+      |                                                     ^~~~~~~~~~~~~~~~~~~~
+manager_authority.c: In function ‘write_all’:
+manager_authority.c:82:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   82 |     if(n<0&&errno==EINTR)continue;if(n<=0)return -1;at+=(size_t)n;}return 0;}
+      |     ^~
+manager_authority.c:82:35: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   82 |     if(n<0&&errno==EINTR)continue;if(n<=0)return -1;at+=(size_t)n;}return 0;}
+      |                                   ^~
+manager_authority.c: In function ‘package_hash’:
+manager_authority.c:85:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   85 |     if(rc||raw[64]!='\n')return -1;memcpy(out,raw,64);out[64]=0;return hex64(out)?0:-1;}
+      |     ^~
+manager_authority.c:85:36: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   85 |     if(rc||raw[64]!='\n')return -1;memcpy(out,raw,64);out[64]=0;return hex64(out)?0:-1;}
+      |                                    ^~~~~~
+manager_authority.c: In function ‘boot’:
+manager_authority.c:87:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   87 |     if(n!=37||raw[36]!='\n')return -1;memcpy(out,raw,36);out[36]=0;return 0;}
+      |     ^~
+manager_authority.c:87:39: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   87 |     if(n!=37||raw[36]!='\n')return -1;memcpy(out,raw,36);out[36]=0;return 0;}
+      |                                       ^~~~~~
+manager_authority.c: In function ‘start_ticks’:
+manager_authority.c:91:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   91 |     if(!field)return 0;char *end;errno=0;unsigned long long v=strtoull(field,&end,10);return errno||*end?0:(uint64_t)v;}
+      |     ^~
+manager_authority.c:91:24: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   91 |     if(!field)return 0;char *end;errno=0;unsigned long long v=strtoull(field,&end,10);return errno||*end?0:(uint64_t)v;}
+      |                        ^~~~
+manager_authority.c: In function ‘exe_is’:
+manager_authority.c:93:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   93 |     if(n<0||(size_t)n>=sizeof v-1)return 0;v[n]=0;if(strcmp(v,expected))return 0;struct stat st;if(stat(p,&st)||!S_ISREG(st.st_mode)||st.st_uid!=0||(st.st_mode&0022))return 0;return 1;}
+      |     ^~
+manager_authority.c:93:44: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   93 |     if(n<0||(size_t)n>=sizeof v-1)return 0;v[n]=0;if(strcmp(v,expected))return 0;struct stat st;if(stat(p,&st)||!S_ISREG(st.st_mode)||st.st_uid!=0||(st.st_mode&0022))return 0;return 1;}
+      |                                            ^
+manager_authority.c: In function ‘unit’:
+manager_authority.c:98:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   98 |     if(rc>=0)rc=sd_bus_message_read(m,"o",&p);if(rc>=0&&p){*path=strdup(p);if(!*path)rc=-ENOMEM;}
+      |     ^~
+manager_authority.c:98:47: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   98 |     if(rc>=0)rc=sd_bus_message_read(m,"o",&p);if(rc>=0&&p){*path=strdup(p);if(!*path)rc=-ENOMEM;}
+      |                                               ^~
+manager_authority.c: In function ‘prop’:
+manager_authority.c:212:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  212 |     if(rc<0||(rc=sd_bus_message_close_container(m))<0)return rc;return sd_bus_message_close_container(m);}
+      |     ^~
+manager_authority.c:212:65: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  212 |     if(rc<0||(rc=sd_bus_message_close_container(m))<0)return rc;return sd_bus_message_close_container(m);}
+      |                                                                 ^~~~~~
+manager_authority.c: In function ‘correlate’:
+manager_authority.c:218:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  218 |     if(!c->expected)return;char canonical[96];snprintf(canonical,sizeof canonical,"/org/freedesktop/systemd1/job/%u",c->expected);
+      |     ^~
+manager_authority.c:218:28: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  218 |     if(!c->expected)return;char canonical[96];snprintf(canonical,sizeof canonical,"/org/freedesktop/systemd1/job/%u",c->expected);
+      |                            ^~~~
+In file included from manager_authority.c:248:
+anchor_authority.inc: In function ‘digest_named’:
+anchor_authority.inc:3:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+    3 |     if(!ok||raw[64]!='\n')return 0;memcpy(out,raw,64);out[64]=0;return hex64(out);
+      |     ^~
+anchor_authority.inc:3:36: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+    3 |     if(!ok||raw[64]!='\n')return 0;memcpy(out,raw,64);out[64]=0;return hex64(out);
+      |                                    ^~~~~~
+anchor_authority.inc: In function ‘positive_decimal’:
+anchor_authority.inc:7:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+    7 |     if(!s||s[0]<'1'||s[0]>'9')return 0;uint64_t x=0;
+      |     ^~
+anchor_authority.inc:7:40: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+    7 |     if(!s||s[0]<'1'||s[0]>'9')return 0;uint64_t x=0;
+      |                                        ^~~~~~~~
+anchor_authority.inc: In function ‘signed_fields’:
+anchor_authority.inc:11:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   11 |     if(bytes<=384||bytes>4480)return 0;size_t len=bytes-384;
+      |     ^~
+anchor_authority.inc:11:40: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   11 |     if(bytes<=384||bytes>4480)return 0;size_t len=bytes-384;
+      |                                        ^~~~~~
+anchor_authority.inc:12:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   12 |     if(!p309_anchor_verify(wire,len,wire+len))return 0;size_t at=0;
+      |     ^~
+anchor_authority.inc:12:56: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   12 |     if(!p309_anchor_verify(wire,len,wire+len))return 0;size_t at=0;
+      |                                                        ^~~~~~
+anchor_authority.inc:15:9: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   15 |         if(at>=len||!n)return 0;values[i][n]=0;at++;
+      |         ^~
+anchor_authority.inc:15:33: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   15 |         if(at>=len||!n)return 0;values[i][n]=0;at++;
+      |                                 ^~~~~~
+anchor_authority.inc: In function ‘sha_hex’:
+anchor_authority.inc:23:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   23 |     if(!EVP_Digest(raw,n,digest,&len,EVP_sha256(),NULL)||len!=32)return 0;for(size_t i=0;i<32;i++)snprintf(out+2*i,3,"%02x",digest[i]);return 1;
+      |     ^~
+anchor_authority.inc:23:75: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   23 |     if(!EVP_Digest(raw,n,digest,&len,EVP_sha256(),NULL)||len!=32)return 0;for(size_t i=0;i<32;i++)snprintf(out+2*i,3,"%02x",digest[i]);return 1;
+      |                                                                           ^~~
+anchor_authority.inc: In function ‘sign_internal_proof’:
+anchor_authority.inc:30:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   30 |     if(geteuid()!=0||!body||!n||n>4096)return 0;int d=directory(PACKAGE_DIR);if(d<0)return 0;
+      |     ^~
+anchor_authority.inc:30:49: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   30 |     if(geteuid()!=0||!body||!n||n>4096)return 0;int d=directory(PACKAGE_DIR);if(d<0)return 0;
+      |                                                 ^~~
+anchor_authority.inc: At top level:
+anchor_authority.inc:88:5: error: conflicting types for ‘p309_authority_note_guardian_ready’; have ‘int(const struct p309_start_authority *, int)’
+   88 | int p309_authority_note_guardian_ready(const struct p309_start_authority *constant,int guardian_fd){
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+authority_binding.h:12:5: note: previous declaration of ‘p309_authority_note_guardian_ready’ with type ‘int(const struct p309_start_authority *, int)’
+   12 | int p309_authority_note_guardian_ready(const struct p309_start_authority *,int guardian_pidfd);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+anchor_authority.inc:101:5: error: conflicting types for ‘p309_authority_host_ack_consume’; have ‘int(const struct p309_start_authority *)’
+  101 | int p309_authority_host_ack_consume(const struct p309_start_authority *constant){
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+authority_binding.h:11:5: note: previous declaration of ‘p309_authority_host_ack_consume’ with type ‘int(const struct p309_start_authority *)’
+   11 | int p309_authority_host_ack_consume(const struct p309_start_authority *);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+manager_authority.c: In function ‘p309_start_fixed_gate’:
+manager_authority.c:250:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  250 |     if(!out)return -EINVAL;*out=NULL;if(geteuid()!=0||!control||atomic_load(&control->state))return -EPERM;
+      |     ^~
+manager_authority.c:250:28: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  250 |     if(!out)return -EINVAL;*out=NULL;if(geteuid()!=0||!control||atomic_load(&control->state))return -EPERM;
+      |                            ^
+manager_authority.c:254:5: warning: this ‘for’ clause does not guard... [-Wmisleading-indentation]
+  254 |     for(int i=0;i<4;i++)a->f[i]=-1;memcpy(a->r.magic,"P309_GUARD_V9\0\0\0",16);
+      |     ^~~
+manager_authority.c:254:36: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘for’
+  254 |     for(int i=0;i<4;i++)a->f[i]=-1;memcpy(a->r.magic,"P309_GUARD_V9\0\0\0",16);
+      |                                    ^~~~~~
+manager_authority.c:262:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  262 |     if(p309_authority_stopped(a)||consume_permit(&a->r))goto fail;consumed=1; /* Never unconsume, even on failure. */
+      |     ^~
+manager_authority.c:262:67: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  262 |     if(p309_authority_stopped(a)||consume_permit(&a->r))goto fail;consumed=1; /* Never unconsume, even on failure. */
+      |                                                                   ^~~~~~~~
+manager_authority.c:287:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  287 |     if(strcmp(job,canonical_job))goto fail;correlate(&complete);
+      |     ^~
+manager_authority.c:287:44: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  287 |     if(strcmp(job,canonical_job))goto fail;correlate(&complete);
+      |                                            ^~~~~~~~~
+manager_authority.c: In function ‘p309_guardian_pidfd’:
+manager_authority.c:325:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  325 |     if(sd_bus_open_system(&b)<0)return -1;sd_bus_set_method_call_timeout(b,2000000);
+      |     ^~
+manager_authority.c:325:43: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  325 |     if(sd_bus_open_system(&b)<0)return -1;sd_bus_set_method_call_timeout(b,2000000);
+      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+manager_authority.c:333:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  333 |     if(fd>=0)close(fd);sd_bus_unref(b);return -1;
+      |     ^~
+manager_authority.c:333:24: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  333 |     if(fd>=0)close(fd);sd_bus_unref(b);return -1;
+      |                        ^~~~~~~~~~~~
+manager_authority.c: In function ‘p309_authority_dispose_after_cleanup’:
+manager_authority.c:360:5: warning: this ‘for’ clause does not guard... [-Wmisleading-indentation]
+  360 |     for(int i=0;i<4;i++)if(a->f[i]>=0){close(a->f[i]);a->f[i]=-1;}free(a);return 1;
+      |     ^~~
+manager_authority.c:360:67: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘for’
+  360 |     for(int i=0;i<4;i++)if(a->f[i]>=0){close(a->f[i]);a->f[i]=-1;}free(a);return 1;
+      |                                                                   ^~~~
+manager_authority.c: In function ‘p309_guardian_cleanup_observed’:
+manager_authority.c:364:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  364 |     if(fd!=guardian_record.fd||!guardian_record.bus)return 0;struct pollfd pollfd={fd,POLLIN,0};
+      |     ^~
+manager_authority.c:364:62: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  364 |     if(fd!=guardian_record.fd||!guardian_record.bus)return 0;struct pollfd pollfd={fd,POLLIN,0};
+      |                                                              ^~~~~~
+manager_authority.c: In function ‘p309_start_fixed_gate’:
+manager_authority.c:305:41: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  305 |     if(p309_authority_stopped(a)){(void)write(a->f[3],"1\n",2);return -ECANCELED;}return 0;
+      |                                         ^~~~~~~~~~~~~~~~~~~~~~
+In file included from manager_authority.c:7:
+protocol.h: At top level:
+protocol.h:21:15: warning: ‘p309_packet’ defined but not used [-Wunused-function]
+   21 | static size_t p309_packet(char out[P309_PACKET_MAX],const char *verb,const char *g) {
+      |               ^~~~~~~~~~~
+protocol.h:16:12: warning: ‘p309_parse’ defined but not used [-Wunused-function]
+   16 | static int p309_parse(const char *raw,size_t n,const char *verb,char g[33]) {
+      |            ^~~~~~~~~~
+anchor_crypto.c: In function ‘root_dir’:
+anchor_crypto.c:16:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   16 |     if(f<0)return -1;if(fstat(f,&s)||s.st_uid||!S_ISDIR(s.st_mode)||(s.st_mode&0022)){close(f);return -1;}return f;
+      |     ^~
+anchor_crypto.c:16:22: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   16 |     if(f<0)return -1;if(fstat(f,&s)||s.st_uid||!S_ISDIR(s.st_mode)||(s.st_mode&0022)){close(f);return -1;}return f;
+      |                      ^~
+anchor_crypto.c: In function ‘p309_anchor_verify’:
+anchor_crypto.c:29:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   29 |     if(!loaded||pn!=65||pin[64]!='\n')return 0;unsigned int n=0;if(!EVP_Digest(der,dn,digest,&n,EVP_sha256(),NULL)||n!=32)return 0;
+      |     ^~
+anchor_crypto.c:29:48: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   29 |     if(!loaded||pn!=65||pin[64]!='\n')return 0;unsigned int n=0;if(!EVP_Digest(der,dn,digest,&n,EVP_sha256(),NULL)||n!=32)return 0;
+      |                                                ^~~~~~~~
+In file included from anchor_transport.h:3,
+                 from anchor_transport.c:2:
+authority_binding.h:11:50: warning: ‘struct p309_start_authority’ declared inside parameter list will not be visible outside of this definition or declaration
+   11 | int p309_authority_host_ack_consume(const struct p309_start_authority *);
+      |                                                  ^~~~~~~~~~~~~~~~~~~~
+authority_binding.h:12:53: warning: ‘struct p309_start_authority’ declared inside parameter list will not be visible outside of this definition or declaration
+   12 | int p309_authority_note_guardian_ready(const struct p309_start_authority *,int guardian_pidfd);
+      |                                                     ^~~~~~~~~~~~~~~~~~~~
+anchor_transport.c: In function ‘exchange’:
+anchor_transport.c:30:9: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   30 |         if((p.revents&POLLHUP)&&!(p.revents&POLLIN))goto done;if(!(p.revents&POLLIN))continue;
+      |         ^~
+anchor_transport.c:30:63: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   30 |         if((p.revents&POLLHUP)&&!(p.revents&POLLIN))goto done;if(!(p.revents&POLLIN))continue;
+      |                                                               ^~
+anchor_transport.c: In function ‘p309_host_reserve_exchange’:
+anchor_transport.c:45:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   45 |     if(!ack||!alen)return 0;return exchange(c,r,n,context,clen,ack,alen);
+      |     ^~
+anchor_transport.c:45:29: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   45 |     if(!ack||!alen)return 0;return exchange(c,r,n,context,clen,ack,alen);
+      |                             ^~~~~~

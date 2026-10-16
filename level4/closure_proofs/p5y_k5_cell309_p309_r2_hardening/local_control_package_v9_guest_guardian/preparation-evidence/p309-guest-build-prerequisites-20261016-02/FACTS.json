@@ -1,0 +1,102 @@
+{
+  "scope": "ORDINARY_UBUNTU_READ_ONLY_BUILD_PREREQUISITES",
+  "utc": "2026-10-16T06:11:10.210558+00:00",
+  "uid": 1000,
+  "private_python": "3.11.15 (main, Oct 15 2026, 18:48:30) [GCC 13.3.0]",
+  "interpreter": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+  "glibc": [
+    "glibc",
+    "2.39"
+  ],
+  "openssl": "OpenSSL 3.0.13 30 Jan 2024",
+  "files": [
+    {
+      "path": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+      "resolved": "/home/suzhe/p309/runtime/cpython-3.11.15/bin/python3.11",
+      "bytes": 24432880,
+      "sha256": "b21d680e5061c20ee39c75f0c6edf8db4220f327de45e52ab2040e15ca0cf194"
+    },
+    {
+      "path": "/usr/bin/gcc",
+      "resolved": "/usr/bin/x86_64-linux-gnu-gcc-13",
+      "bytes": 1023032,
+      "sha256": "1b99826121ae6682a634e5efe09bd3e3df58ce58e0b28f849114ab5b89139c26"
+    },
+    {
+      "path": "/usr/bin/pkg-config",
+      "resolved": "/usr/bin/pkgconf",
+      "bytes": 45168,
+      "sha256": "7e8152db1b0c7e49d47b4b82a70dc9997b557951c5d4d938b0e7f208ce9eb10b"
+    },
+    {
+      "path": "/usr/include/systemd/sd-bus.h",
+      "error": "FileNotFoundError(2, 'No such file or directory')"
+    },
+    {
+      "path": "/usr/include/openssl/evp.h",
+      "resolved": "/usr/include/openssl/evp.h",
+      "bytes": 103745,
+      "sha256": "21f9783955cd806e69b09ad6fbc956e7f2dc18f8804a4132e2ea0f37492d0c59"
+    },
+    {
+      "path": "/usr/include/openssl/rsa.h",
+      "resolved": "/usr/include/openssl/rsa.h",
+      "bytes": 28282,
+      "sha256": "de2748235824303e43941fbbea717c17d9c4653d9b821c6e9960b3d3f9347d03"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/gcc",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/bin/pkg-config",
+        "--modversion",
+        "libsystemd",
+        "openssl"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "Package libsystemd was not found in the pkg-config search path.\nPerhaps you should add the directory containing `libsystemd.pc'\nto the PKG_CONFIG_PATH environment variable\nPackage 'libsystemd', required by 'virtual:world', not found\n"
+    },
+    {
+      "argv": [
+        "/usr/bin/pkg-config",
+        "--cflags",
+        "--libs",
+        "libsystemd",
+        "openssl"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "Package libsystemd was not found in the pkg-config search path.\nPerhaps you should add the directory containing `libsystemd.pc'\nto the PKG_CONFIG_PATH environment variable\nPackage 'libsystemd', required by 'virtual:world', not found\n"
+    },
+    {
+      "argv": [
+        "/usr/bin/dpkg-query",
+        "-W",
+        "-f=${binary:Package}\t${Version}\t${Status}\n",
+        "libsystemd-dev",
+        "libssl-dev",
+        "libssl3t64",
+        "systemd"
+      ],
+      "exit": 1,
+      "stdout": "libssl-dev:amd64\t3.0.13-0ubuntu3.16\tinstall ok installed\nlibssl3t64:amd64\t3.0.13-0ubuntu3.16\tinstall ok installed\nsystemd\t255.4-1ubuntu8.18\tinstall ok installed\n",
+      "stderr": "dpkg-query: no packages found matching libsystemd-dev\n"
+    }
+  ],
+  "software_installed": false,
+  "services_started": false,
+  "native_trial": false,
+  "tests_repeated": false,
+  "I1_I7": "OPEN",
+  "admission": "BLOCKED"
+}
