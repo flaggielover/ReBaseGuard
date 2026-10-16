@@ -1,0 +1,16 @@
+import json, re, sys
+EXCL = re.compile(r"(audit/EXECUTION_INTERRUPTION_ASSESSMENT|audit/INCIDENT_AUDIT|reviews/REVIEW_EXECUTION_INTERRUPTION|INCIDENT_INDEPENDENCE_REVIEW_MBS308|cell308_mb_r1/postexec|COORDINATOR_EXPOSURE_DISCLOSURE|309)")
+for fn in sys.argv[1:]:
+    print("==", fn.split("/")[-1])
+    for line in open(fn, encoding="utf-8", errors="replace"):
+        try: d = json.loads(line)
+        except Exception: continue
+        c = d.get("message", {}).get("content")
+        if not isinstance(c, list): continue
+        for b in c:
+            if isinstance(b, dict) and b.get("type") == "tool_use":
+                inp = b.get("input") or {}
+                s = inp.get("command") or inp.get("pattern") or inp.get("file_path") or ""
+                s = str(s)
+                if EXCL.search(json.dumps(inp)) or (b.get("name") == "Bash" and re.search(r"\bgrep\b[^|]*-[a-zA-Z]*r", s)) or b.get("name") == "Grep":
+                    print(b.get("name"), "|", re.sub(r"\s+", " ", s)[:420], "|", ("path=" + str(inp.get("path"))) if inp.get("path") else "")
