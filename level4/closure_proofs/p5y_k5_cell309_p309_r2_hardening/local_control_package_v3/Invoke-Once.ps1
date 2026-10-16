@@ -17,9 +17,9 @@ if($PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSVersion.Minor -ne
 function Hash-RootBytes([byte[]]$b){$h=[Security.Cryptography.SHA256]::Create();try{[BitConverter]::ToString($h.ComputeHash($b)).Replace('-','').ToLowerInvariant()}finally{$h.Dispose()}}
 $id=[Security.Principal.WindowsIdentity]::GetCurrent()
 if(([Security.Principal.WindowsPrincipal]::new($id)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){throw 'ordinary owner only'}
-$private='C:\Users\Lenovo\P309-I2-root-build-20261016-v1'
+$private='C:\Users\Lenovo\P309-I2-root-build-20261016-v2'
 $source=[IO.File]::ReadAllBytes((Join-Path $private 'Launch-Approved.ps1'))
-if((Hash-RootBytes $source) -cne 'a72ac3d1b6ef7db876895e1cd4818c83060586a2ed7bcd7ee01deaaf694f5b31'){throw 'launcher binding differs'}
+if((Hash-RootBytes $source) -cne '0eeabd344ede7bd1247e1cecb9222c66198285e969b419eb9ef68dbb9eb99e20'){throw 'launcher binding differs'}
 $available=[IO.DriveInfo]::new('C').AvailableFreeSpace;Assert-RootEvidenceSpace $available
 $archiveAvailable=[IO.DriveInfo]::new('D').AvailableFreeSpace;Assert-ArchiveSpace $archiveAvailable
 $capture='C:\ProgramData\ReBaseGuardP309-I2-RootDiagnostic-v3'
@@ -30,10 +30,10 @@ if($ReadOnlyPreflight){& $block -ReadOnlyPreflight;[pscustomobject]@{available_b
 if($null -eq $ApprovalBytes -or $ApprovalDigest -notmatch '^[0-9a-f]{64}$' -or (Hash-RootBytes $ApprovalBytes) -cne $ApprovalDigest){throw 'fresh human approval required'}
 $approval=[Text.Encoding]::UTF8.GetString($ApprovalBytes)|ConvertFrom-Json
 if($approval.scope -cne 'P309_I2_SINGLE_ROOT_DIAGNOSTIC_V3' -or $approval.capture_count -ne 1 -or $approval.whp_count -ne 1 -or
- $approval.code_source_commit -cne '5eb6cbb6532d852dcf6c7f0e2686023ced64ef0a' -or
+ $approval.code_source_commit -cne 'f02cddf88aaedaa3733f93daa5458612bca29990' -or
  $approval.binary_sha256 -cne '52a0c03ff26661407893e850f1e09220c46edfd58ab101fc6c2e69f96d19e96e' -or
- $approval.whp_sha256 -cne 'a90b35d21cd654bc0bfaff861150fcbacf17b5da2d1e63ba36008be202e16471' -or
- $approval.harness_sha256 -cne '5b1ec4bb87f082ee458fe711b2f6b26704c3237dd425a1b2b55ab30545b47fa6' -or
+ $approval.whp_sha256 -cne 'ea119dd56371ea265a575cdcca8ee096482c896472aabd0890a9ea4ed853657c' -or
+ $approval.harness_sha256 -cne '776f9b9e890ab797382df825a5f0c921de710463dae05f0f9146093f64a61166' -or
  [string]::IsNullOrWhiteSpace($approval.human_message_reference)){throw 'approval scope/bindings differ'}
 $stored=[IO.File]::ReadAllBytes('D:\ReBaseGuard-309\records\p309-i2-root-v3-human-approval.json')
 if((Hash-RootBytes $stored) -cne $ApprovalDigest){throw 'stored approval differs'}

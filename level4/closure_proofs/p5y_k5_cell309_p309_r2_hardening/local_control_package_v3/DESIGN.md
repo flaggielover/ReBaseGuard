@@ -17,3 +17,5 @@ WHP fixture 的 partition handle 由自己创建和持有，采集 VP RuntimeCou
 验收分开记录：完整无丢失窗口、三个普通 fixture、WHP fixture、会话 absence、creator stop receipt、helper exit。任何缺失都不得改写为 STOPPED/完整采集。采集技术完成也只进入离线分析，不授予正式准入。
 
 回滚只停止本批新建且句柄/GUID 绑定的会话/Job/partition，保留新旧证据；不按名字收养会话，不碰其他进程、WSL、服务、策略、密钥或原 Ubuntu。UNKNOWN 保留现场、不自动重试。下一次实际动作必须在全部源码、构建、独立复审、精确批准文件准备后集中请求。
+
+复审修正：partition 仅在创建精确返回 S_OK 且句柄非空后取得清理权；稳定摘要以 session/helper/native/WHP 四项静止为门槛。75 秒线程仅请求停止，不能抢占已占有停止状态并阻塞的 Query/ControlTrace；不作为实际清理硬期限或 I6 证明。当前构建与调用绑定见 FINAL_BINDINGS_V2.json。

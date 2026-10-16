@@ -10,9 +10,9 @@
 
 ## 精确绑定及构建
 
-代码输入提交 `5eb6cbb6532d852dcf6c7f0e2686023ced64ef0a`，最终执行字节及普通调用器摘要见 FINAL_BINDINGS.json。准备、调用器及本材料由本文件所在提交一并固定；批准问题将给出该不可变提交。
+代码输入提交 `f02cddf88aaedaa3733f93daa5458612bca29990`，最终执行字节及普通调用器摘要见 FINAL_BINDINGS_V2.json。准备、调用器及本材料由本文件所在提交一并固定；批准问题将给出该不可变提交。
 
-唯一执行来源是 `C:\Users\Lenovo\P309-I2-root-build-20261016-v1` 内的新私有构建，不从 D: 存档运行可执行文件。现有 v4 build、candidate-v1/v3、原 Ubuntu、私有 3.11.15、系统 Python、备份及旧采集均保持不变。
+唯一执行来源是 `C:\Users\Lenovo\P309-I2-root-build-20261016-v2` 内的新私有构建，不从 D: 存档运行可执行文件。现有 v4 build、candidate-v1/v3、原 Ubuntu、私有 3.11.15、系统 Python、备份及旧采集均保持不变。
 
 普通用户使用已安装 .NET Framework C# compiler、MSVC 14.44.35207、SDK 10.0.26100.0 构建。源文件和中间对象在后续构建期间持有禁止写入的句柄；目录在创建时仅允许 owner/SYSTEM/admin 写入。完整参数、工具摘要、ACL、两项纯 ABI 检查、17 项 fixture 判定测试、调用器测试和 WinPS 5.1 解析记录见 preparation-evidence。没有以这些测试替代本机采集证明。
 
@@ -49,3 +49,11 @@
 - [Run VP](https://learn.microsoft.com/en-us/virtualization/api/hypervisor-platform/funcs/whvrunvirtualprocessor) 与 [Cancel VP](https://learn.microsoft.com/en-us/virtualization/api/hypervisor-platform/funcs/whvcancelrunvirtualprocessor)：取消由另一线程发起；不假定取消先于 Run 时能被保留，退出不明依靠外层自有 Job 限时并记 UNKNOWN。
 
 厂商接口文档、编译和 ABI 检查不能代替本机实际行为。
+
+## 复审修正及准确停止边界
+
+前次完整独立复审发现两项必须修正的问题，现已修正：WHP 创建只有 S_OK 且有效返回句柄才取得所有权；稳定摘要要求 session absent、helpers exited、native fixtures clean、WHP fixture clean 四项同时为真。新增 6 项失败返回值所有权检查和 6 项摘要门槛检查通过。原 17 项 fixture 判定检查通过 AST 相等核验复用；原 10 项调用器检查不作新增测试重复计数。构建 v1 原样保留，当前字节和构建结果在 preparation-evidence-v2。
+
+75 秒线程仅请求停止，**不是实际完成的硬期限**：若正常 Finish 已占有停止状态并卡在同步 Query/ControlTrace，计时线程不能抢占该调用。此缺口明确保留；本诊断不宣称解决独立停止或 I6。若无法确认停止，记 UNKNOWN、保留现场，不扩大停止权或自动重试。正式工作负载在补齐独立停止前仍禁止。
+
+空计数器实例为 UNAVAILABLE；枚举异常为 ERROR，二者均不得当作零 CPU。实验只为取得进一步实现所需事实，不接受这些状态为正式运行成功。
