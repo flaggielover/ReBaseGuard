@@ -1,0 +1,156 @@
+"""Review 70 records check. Reads git objects of the pinned worktree (HEAD-reachable commits only) and the scratchpad
+review69 originals. usage: python3 -B -I check_records70.py.txt <pinned tree> <scratchpad/review69> <out.json>"""
+import gzip, hashlib, io, json, re, subprocess, sys
+from pathlib import Path
+
+T, R69, OUT = sys.argv[1:4]
+NS = "level4/closure_proofs/p5y_k5_cell308_research"
+LEDGER = f"{NS}/ledger/TARGET_INTEGRITY_LEDGER.jsonl"
+DEV = f"{NS}/streams/CLOUD_R1_LINUX_DEV"
+COMMITS = ["dad3c948", "f52e123f", "73760d9e", "9f223c91"]
+out = {"problems": [], "checks": []}
+
+
+def git(*a, binary=False):
+    r = subprocess.run(["git", "-C", T, *a], capture_output=True, check=True)
+    return r.stdout if binary else r.stdout.decode()
+
+
+def blob(c, path):
+    try:
+        return git("show", f"{c}:{path}", binary=True)
+    except subprocess.CalledProcessError:
+        return None
+
+
+sha = lambda b: hashlib.sha256(b).hexdigest() if b is not None else None
+full = {c: git("rev-parse", c).strip() for c in COMMITS}
+out["commits"] = full
+# 1. ledger prefix chain
+led = {c: blob(c, LEDGER) for c in COMMITS}
+out["ledger_lines"] = {c: led[c].count(b"\n") for c in COMMITS}
+out["prefix_chain"] = all(led[COMMITS[i + 1]].startswith(led[COMMITS[i]]) for i in range(len(COMMITS) - 1))
+new_lines = led["9f223c91"][len(led["dad3c948"]):].decode().splitlines()
+intro = {}
+for c_prev, c in zip(COMMITS, COMMITS[1:]):
+    for ln in led[c][len(led[c_prev]):].decode().splitlines():
+        intro[ln] = c
+recs = [json.loads(ln) for ln in new_lines]
+out["new_line_phases"] = [r["phase"] for r in recs]
+
+
+def check(where, path, want, commits):
+    for c in commits:
+        got = sha(blob(c, path))
+        ok = got == want
+        out["checks"].append({"line": where, "path": path, "at": c, "ok": ok})
+        if not ok:
+            out["problems"].append(f"{where}: {path} at {c}: {got} != {want}")
+
+
+for i, (ln, r) in enumerate(zip(new_lines, recs)):
+    where = f"ledger {len(led['dad3c948'].splitlines()) + i + 1} ({r['phase']})"
+    c = intro[ln]
+    later = ["9f223c91"] if c != "9f223c91" else []
+    if "brief_sha256" in r:
+        check(where, f"{NS}/{r['brief']}", r["brief_sha256"], [c] + later)
+    if "review_sha256" in r:
+        check(where, f"{NS}/{r['review']}", r["review_sha256"], [c] + later)
+    for p, h in (r.get("scratch_sha256") or {}).items():
+        check(where, f"{NS}/{p}", h, [c] + later)
+    for p, h in (r.get("input_sha256") or {}).items():
+        check(where, p, h, [c] + later)
+    for p, h in (r.get("documents") or {}).items():
+        check(where, f"{NS}/{p}", h, [c] + later)
+    if "record_sha256" in r:
+        gz = blob(c, f"{NS}/{r['record']}")
+        check(where, f"{NS}/{r['record']}", r["record_sha256"], [c] + later)
+        raw = gzip.decompress(gz)
+        out["gz_header"] = {"magic": gz[:2].hex(), "method": gz[2], "flags": gz[3],
+                            "mtime": int.from_bytes(gz[4:8], "little"), "xfl": gz[8], "os": gz[9]}
+        out["gz_uncompressed_sha256_ok"] = sha(raw) == r["uncompressed_sha256"]
+        if not out["gz_uncompressed_sha256_ok"]:
+            out["problems"].append("gz uncompressed digest mismatch")
+        rec = json.loads(raw)
+        out["gz_top_keys"] = sorted(rec)[:40]
+        out["gz_record"] = {k: rec.get(k) for k in ("utc", "source_commit", "python", "expected_test_count",
+                                                    "expected_mutants", "total", "killed", "pass", "inputs_unchanged",
+                                                    "full_registry_completed", "unmutated_suite",
+                                                    "new_target_evaluations") if k in rec}
+        rows = rec.get("mutants") or rec.get("rows") or []
+        out["gz_rows"] = len(rows)
+        out["gz_status_counts"] = {}
+        for row in rows:
+            out["gz_status_counts"][row.get("status")] = out["gz_status_counts"].get(row.get("status"), 0) + 1
+        suites = [row.get("suite") or {} for row in rows]
+        out["gz_ran_values"] = sorted({s.get("ran") for s in suites if isinstance(s, dict)}, key=str)
+        ih = rec.get("input_hashes_before") or rec.get("input_sha256_before") or rec.get("input_hashes", {}).get("before")
+        ia = rec.get("input_hashes_after") or rec.get("input_sha256_after") or rec.get("input_hashes", {}).get("after")
+        out["gz_input_keys"] = [k for k in rec if "input" in k or "hash" in k]
+        cmp = {}
+        for name, hv in (ih or {}).items():
+            path = name if name.startswith(".github") else f"{DEV}/{name}"
+            cmp[name] = {"before": hv, "after": (ia or {}).get(name), "blob_73760d9e": sha(blob("73760d9e", path)),
+                         "blob_9f223c91": sha(blob("9f223c91", path))}
+        out["gz_inputs_vs_blobs"] = cmp
+        out["gz_inputs_equal_73760d9e"] = bool(cmp) and all(v["before"] == v["after"] == v["blob_73760d9e"]
+                                                            for v in cmp.values())
+        out["gz_rows_ids"] = [row.get("id") for row in rows]
+        out["gz_raw_len"] = len(raw)
+        out["_raw_text_for_scan"] = None
+        RAW = raw
+# 2. review 69 and scratch vs scratchpad/review69 originals
+rev_path = f"{NS}/reviews/REVIEW_REVIEW68_REPAIR_DELTA.md"
+orig = Path(R69, "REVIEW_REVIEW68_REPAIR_DELTA.md")
+out["review69_identical"] = orig.exists() and orig.read_bytes() == blob("9f223c91", rev_path)
+committed = git("ls-tree", "-r", "--name-only", "9f223c91", "--", f"{NS}/reviews/scratch_REVIEW_REVIEW68_REPAIR").split("\n")
+committed = [p for p in committed if p]
+cmpd = {}
+for p in committed:
+    rel = p[len(f"{NS}/reviews/scratch_REVIEW_REVIEW68_REPAIR/"):]
+    cand = [Path(R69, rel)]
+    if rel.endswith(".py.txt"):
+        cand.append(Path(R69, rel[:-4]))
+    src = next((c for c in cand if c.exists()), None)
+    cmpd[rel] = {"original": str(src.relative_to(R69)) if src else None,
+                 "identical": src is not None and src.read_bytes() == blob("9f223c91", p)}
+out["scratch_compare"] = cmpd
+out["scratch_all_identical"] = all(v["identical"] for v in cmpd.values())
+origs = sorted(str(p.relative_to(R69)) for p in Path(R69).rglob("*") if p.is_file())
+mapped = {v["original"] for v in cmpd.values()}
+out["originals_not_committed"] = sorted({o.split("/")[0] + ("/" if "/" in o else "") for o in origs
+                                         if o not in mapped and o != "REVIEW_REVIEW68_REPAIR_DELTA.md"})
+out["originals_not_committed_files_outside_tmp_tree_home"] = [o for o in origs if o not in mapped
+    and o != "REVIEW_REVIEW68_REPAIR_DELTA.md" and not o.startswith(("tmp/", "tree_dad3c948/", "home/"))]
+# 3. changed files in the delta
+st = git("diff", "--name-status", "dad3c948", "9f223c91").splitlines()
+out["delta_name_status"] = st
+out["modified"] = [l for l in st if not l.startswith("A")]
+# brief index append-only
+bi = f"{NS}/ledger/briefs/BRIEF_INDEX.md"
+out["brief_index_append_only"] = blob("9f223c91", bi).startswith(blob("dad3c948", bi))
+# 4. signed URL / credential scan over every added/modified file (gz decompressed)
+PAT = re.compile(rb"(X-Amz-|Signature=|sig=|se=20|sv=20|sp=r|token=|ghp_|gho_|ghs_|github_pat_|AKIA[0-9A-Z]{12}|"
+                 rb"Bearer |Authorization:|password|passwd|BEGIN (RSA|OPENSSH|PRIVATE)|blob\.core\.windows|"
+                 rb"pipelines\.actions|actions\.githubusercontent|productionresultssa|https?://[^\s\"']+)", re.I)
+hits = {}
+for l in st:
+    p = l.split("\t")[-1]
+    data = blob("9f223c91", p)
+    if p.endswith(".gz"):
+        data = gzip.decompress(data)
+    if p == LEDGER:
+        data = led["9f223c91"][len(led["dad3c948"]):]
+    for m in PAT.finditer(data):
+        s = data[max(0, m.start() - 60):m.end() + 60].decode(errors="replace").replace("\n", " ")
+        hits.setdefault(p, []).append(s)
+out["scan_hits"] = {p: v[:12] for p, v in hits.items()}
+out["scan_hit_counts"] = {p: len(v) for p, v in hits.items()}
+out["urls"] = sorted({u for v in hits.values() for s in v for u in re.findall(r"https?://[^\s\"'\\)]+", s)})
+Path(OUT).write_text(json.dumps(out, indent=1) + "\n")
+print(json.dumps({k: out[k] for k in ("prefix_chain", "ledger_lines", "new_line_phases", "problems",
+                                      "gz_uncompressed_sha256_ok", "gz_header", "gz_rows", "gz_status_counts",
+                                      "gz_inputs_equal_73760d9e", "review69_identical", "scratch_all_identical",
+                                      "originals_not_committed", "originals_not_committed_files_outside_tmp_tree_home",
+                                      "modified", "brief_index_append_only", "scan_hit_counts", "urls")}, indent=1))
+print("checks", len(out["checks"]), "ok", sum(c["ok"] for c in out["checks"]))

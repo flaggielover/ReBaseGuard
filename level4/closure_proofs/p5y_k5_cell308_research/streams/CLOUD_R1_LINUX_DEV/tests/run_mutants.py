@@ -14,7 +14,8 @@ carry review 65's mutants RX1-RX6 and weaken its L1, L3, L6 and L7 repairs; RV43
 repairs (RV39 is narrowed to the key refusal; the lazy-fetch block is RV45); RV49-RV51 weaken review 67's N1, N2 and
 N4 repairs, and RV52-RV54 carry its surviving mutants RZ1, RZ4 and RZ5 (N5); RV55-RV58 carry review 68's mutants
 RA1-RA4 and RV59-RV60 weaken its P1 repair (RV26 then also tolerates symlinks in the history scan); RV61-RV63 carry
-review 69's RB1, RB2 and RB4 against the mode-reading ancestor check (S1, S2).
+review 69's RB1, RB2 and RB4 against the mode-reading ancestor check (S1, S2); RV64-RV70 carry review 70's RC1-RC5
+and RC7 and weaken its duplicate-entry repair (T1-T5).
 Every complete raw report, mutation anchor, and before/after input hash is retained.
 No scientific evaluator is imported or executed. Explicit output paths receive the evidence.
 
@@ -813,9 +814,36 @@ MUTANTS = [('M01',
   'Review 69 S1 (RB4): a gitlink at the review directory or an ancestor is read as a directory (not descended)',
   [('            if mode != b"40000":\n                return False\n            level.add(oid)\n',
     '            if mode == b"160000":\n                continue\n'
-    '            if mode != b"40000":\n                return False\n            level.add(oid)\n')])]
+    '            if mode != b"40000":\n                return False\n            level.add(oid)\n')]),
+ ('RV64',
+  'Review 70 T1 (RC1): the review directory\'s own entry is not read by mode (a regular file there passes)',
+  [('    for depth, name in enumerate(parts):', '    for depth, name in enumerate(parts[:-1]):')]),
+ ('RV65',
+  'Review 70 T1 (RC2): the batch reads run with the caller\'s environment (killed indirectly, through the review-65 '
+  'caller-environment test)',
+  [('                           capture_output=True, timeout=60, env=_git_env())\n    except',
+    '                           capture_output=True, timeout=60)\n    except')]),
+ ('RV66',
+  'Review 70 T2 (RC3): merge commits\' own trees are skipped by the ancestor walk',
+  [('    commits = _git(repo_root, "rev-list", "HEAD")', '    commits = _git(repo_root, "rev-list", "--no-merges", "HEAD")')]),
+ ('RV67',
+  'Review 70 T3 (RC5): raw trees parsed with a fixed 20-byte id (sha256 repositories refused)',
+  [('    level, width = {oid for oid, _, _ in roots}, len(ids[0]) // 2', '    level, width = {oid for oid, _, _ in roots}, 20')]),
+ ('RV68',
+  'Review 70 T3 (RC4): directory-like odd modes (e.g. 40755) are read as directories',
+  [('            if mode != b"40000":\n                return False\n            level.add(oid)\n',
+    '            if not mode.startswith(b"4"):\n                return False\n            level.add(oid)\n')]),
+ ('RV69',
+  'Review 70 T5: a duplicate tree entry yields its last occurrence instead of malformed',
+  [('            if found is not None:\n                return False\n            found = (', '            found = (')]),
+ ('RV70',
+  'Review 70 T4 (RC7): a missing batch answer is read as an empty tree',
+  [('        if len(head) != 3 or not re.fullmatch',
+    '        if len(head) == 2 and head[1] == b"missing":\n            pos = nl + 1\n'
+    '            answers.append(("0" * 40, "tree", b"" if contents else None))\n            continue\n'
+    '        if len(head) != 3 or not re.fullmatch')])]
 
-MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 63}
+MUTANT_GROUP_SIZES = {"M": 32, "R": 10, "X": 9, "N": 14, "Y": 9, "P": 15, "Z": 11, "Q": 13, "CDEX": 16, "R5SYNC": 4, "RV": 70}
 
 # A kill must include at least one named direct witness for the weakened property.
 # These method names are unique across the full discovered suite. They are evidence
@@ -911,7 +939,7 @@ for _method, _ids in {
     "test_review65_replace_refs_and_grafts_are_ignored": "RV33 RV34 RV35",
     "test_review65_short_exact_listing_refuses": "RV38",
     "test_review65_partial_clone_runs_no_configured_command": "RV39",
-    "test_review65_caller_git_environment_is_ignored": "RV40",
+    "test_review65_caller_git_environment_is_ignored": "RV40 RV65",
     "test_review65_range_like_attestation_path_and_deep_json": "RV41 RV42",
     "test_review66_forged_bloom_filter_is_never_read": "RV43",
     "test_review66_fsmonitor_command_never_runs": "RV44",
@@ -925,6 +953,8 @@ for _method, _ids in {
     "test_review68_non_directory_review_paths_refuse": "RV59 RV60",
     "test_review68_strict_fsck_and_forced_git_environment": "RV56 RV57",
     "test_review69_ancestor_entries_are_read_by_mode": "RV61 RV62 RV63",
+    "test_review70_review_dir_file_evil_merge_and_odd_mode_refuse": "RV64 RV66 RV68",
+    "test_review70_sha256_repository_and_walk_parsing": "RV67 RV69 RV70",
     "test_review64_dangling_top_entry_shadows_lower_mask": "RV19",
     "test_review64_non_utf8_historical_review_path_refuses": "RV20",
     "test_review64_side_branch_acceptance_synced_and_merged_refuses": "RV22",
@@ -1236,7 +1266,7 @@ def main(out: str | None) -> int:
     rows = []
     for mid, what, edits in MUTANTS:
         row = {"id": mid, "origin": ("combined integration" if mid.startswith("R5SYNC") or mid == "CDEX16" else
-                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-69" if mid.startswith("RV") else
+                           "Codex" if mid.startswith("CDEX") else "Claude reviews 63-70" if mid.startswith("RV") else
                            "Claude revision 5"),
                "property": what, "intended_property_test_methods": PROPERTY_WITNESSES[mid],
                "edits": [{"old": old, "new": new} for old, new in edits]}

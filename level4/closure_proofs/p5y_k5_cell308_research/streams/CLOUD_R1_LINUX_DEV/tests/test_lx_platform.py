@@ -1679,7 +1679,8 @@ class TestAttestationPreflight(unittest.TestCase):
         """Review 69 S1 / S2: every ancestor of the review directory, in every commit of HEAD's history, must be a
         directory entry: a symlink at a middle ancestor, an ancestor symlink reachable only through an `-s ours` merge,
         a gitlink whose commit is absent (a submodule) or present, and a gitlink-mode entry naming a tree are each
-        unavailable evidence; so is an ancestor symlink checked under a caller GIT_DIR (RB6, equivalent since S4)."""
+        unavailable evidence; so is an ancestor symlink checked under a caller GIT_DIR (review 70 T1: RB6 is not
+        equivalent in general; its registered form RV65 is killed through the review-65 environment test)."""
         att = self.attestation()
         sha = hashlib.sha256(att).hexdigest()
         rd = L.ACCEPTANCE_REVIEW_DIR
@@ -1722,6 +1723,72 @@ class TestAttestationPreflight(unittest.TestCase):
                     rec, why = self._valid_in(repo, att)
                 self.assertIsNone(rec)                                                    # RV61 RV62 RV63
                 self.assertTrue(any("UNAVAILABLE" in w for w in why), why)
+
+    def test_review70_review_dir_file_evil_merge_and_odd_mode_refuse(self):
+        """Review 70 T1-T3: the review directory itself as a regular file in some commit (the history scan lists it
+        as a regular file; only the walk refuses it), an evil merge whose own tree alone has an ancestor symlink, and a
+        directory-like odd mode (40755) at an ancestor are each unavailable evidence."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        rd = L.ACCEPTANCE_REVIEW_DIR
+        top = rd.split("/")[0]
+        for case in ("review_dir_regular_file", "evil_merge", "odd_dir_mode"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as d:
+                git_init(d)
+                git_commit(d, {"att/HOST.json": att})
+                c1 = self._out(d, "rev-parse", "HEAD")
+                if case == "review_dir_regular_file":
+                    git_commit(d, {rd: b"x\n"})
+                    fixture_git(d, "rm", "-q", rd)
+                    git_commit(d, {})
+                elif case == "evil_merge":
+                    main = self._out(d, "rev-parse", "--abbrev-ref", "HEAD")
+                    fixture_git(d, "checkout", "-q", "-b", "side")
+                    git_commit(d, {"s.txt": b"s\n"})
+                    fixture_git(d, "checkout", "-q", main)
+                    git_commit(d, {"m.txt": b"m\n"})
+                    self._out(d, "merge", "-q", "--no-ff", "--no-commit", "side")
+                    Path(d, f"alt/{rd[len(top) + 1:]}").mkdir(parents=True)
+                    Path(d, f"alt/{rd[len(top) + 1:]}/veto.md").write_bytes(f"{sha} REJECTED\n".encode())
+                    os.symlink("alt", Path(d, top))
+                    fixture_git(d, "add", "-A")
+                    self._out(d, "commit", "-q", "-m", "evil merge")
+                    fixture_git(d, "rm", "-q", top)
+                    fixture_git(d, "rm", "-q", "-r", "alt")
+                    git_commit(d, {})
+                else:
+                    blob = self._out(d, "hash-object", "-w", "--stdin", data=b"x\n")
+                    sub_tree = self._out(d, "mktree", data=f"100644 blob {blob}\tx\n".encode())
+                    tree = self._out(d, "hash-object", "-t", "tree", "--literally", "-w", "--stdin",
+                                     data=b"40000 att\0" + bytes.fromhex(self._out(d, "rev-parse", "HEAD:att"))
+                                     + f"40755 {top}\0".encode() + bytes.fromhex(sub_tree))
+                    c2 = self._out(d, "commit-tree", tree, "-p", c1, "-m", "odd mode")
+                    c3 = self._out(d, "commit-tree", f"{c1}^{{tree}}", "-p", c2, "-m", "rm")
+                    fixture_git(d, "update-ref", "HEAD", c3)
+                git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+                rec, why = self._valid_in(d, att)
+                self.assertIsNone(rec)                                                    # RV64 RV66 RV68
+                self.assertTrue(any("UNAVAILABLE" in w for w in why), why)
+
+    def test_review70_sha256_repository_and_walk_parsing(self):
+        """Review 70 T3-T5: a legitimate sha256 repository is accepted (the walk parses 32-byte ids); a duplicate tree
+        entry is malformed (False), not its last occurrence; a missing batch answer is None, never an empty tree."""
+        att = self.attestation()
+        sha = hashlib.sha256(att).hexdigest()
+        with tempfile.TemporaryDirectory() as d:
+            fixture_git(d, "init", "-q", "--object-format=sha256")
+            for key, value in GIT_FIXTURE_CONFIG.items():
+                fixture_git(d, "config", "--local", key, value)
+            git_commit(d, {"att/HOST.json": att})
+            git_commit(d, {f"{ACC}1.md": self.accept(sha)})
+            rec, why = self._valid_in(d, att)
+            self.assertIsNotNone(rec, why)                                                # RV67
+            self.assertIsNone(L._cat_file_batch(d, ["0" * 64], contents=False))           # RV70
+            self.assertIsNone(L._cat_file_batch(d, ["0" * 64], contents=True))
+            self.assertEqual(L._cat_file_batch(d, ["HEAD^{tree}"], contents=False)[0][1], "tree")
+        dup = b"120000 level4\0" + b"\x11" * 20 + b"40000 level4\0" + b"\x22" * 20
+        self.assertIs(L._tree_entry(dup, b"level4", 20), False)                          # RV69
+        self.assertEqual(L._tree_entry(dup[:34], b"level4", 20), (b"120000", "11" * 20))
 
     def test_review68_strict_fsck_and_forced_git_environment(self):
         """Review 68 P4: (a) `--strict` itself is required: a WARN-class message other than fullPathname (a

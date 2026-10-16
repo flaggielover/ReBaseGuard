@@ -1,0 +1,14 @@
+import sys, os, subprocess, tempfile
+from pathlib import Path
+sys.argv = ["x", sys.argv[1], sys.argv[2], "/dev/null", "none"]
+exec(open(sys.argv[0] if False else "/tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review70/cons70.py.txt").read().split("for name, fn in KINDS.items():")[0])
+w = Path(tempfile.mkdtemp(dir=TMP))
+d, env, bad = forged_odb(w)
+r = subprocess.run(["git", "-C", str(d), "cat-file", "-p", bad], capture_output=True, env={**os.environ, **env})
+print(r.returncode, r.stdout[:300], r.stderr[:500])
+r = subprocess.run(["git", "-C", str(d), "cat-file", "-p", bad], capture_output=True)
+print(r.returncode, r.stdout[:300], r.stderr[:500])
+print(list(Path(w/"forged_objects").rglob("*")))
+for args in (["--batch-check"], ["--batch"]):
+    r = subprocess.run(["git", "-C", str(d), "cat-file", *args], input=(bad + "\n").encode(), capture_output=True, env={**os.environ, **env})
+    print(args, r.returncode, r.stdout[:200], r.stderr[:300])

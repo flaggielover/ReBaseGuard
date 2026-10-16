@@ -1,0 +1,344 @@
+{
+ "batch_parser_edges": {
+  "batch_ambiguous_prefix": "[('aff794d134fdd9bffc87f3124a747c119d96ec0d', 'commit', None)]",
+  "batch_empty": "[]",
+  "batch_missing": "None",
+  "batch_name_with_space": "None",
+  "batch_ok": "[('4b4b2743d85b910448c5c1b435e700ab2b1961bc', 'tree', None)]",
+  "tree_entry_empty": "None",
+  "tree_entry_no_nul": "False",
+  "tree_entry_sha256": "(b'120000', '0202020202020202020202020202020202020202020202020202020202020202')",
+  "tree_entry_sha256_read_with_width_20": "False",
+  "tree_entry_space_in_name": "(b'120000', '0202020202020202020202020202020202020202')",
+  "tree_entry_truncated_oid": "False"
+ },
+ "caller_forged_object_directory": {
+  "caller_env_view_of_bad_root": [],
+  "dir_check": false,
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  },
+  "without_caller_env": {
+   "dir_check": false,
+   "result": {
+    "reasons": [
+     "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ],
+    "valid": false
+   }
+  }
+ },
+ "configured_command_sweep_cat_file": {
+  "commands_run": [],
+  "dir_check": true,
+  "result": {
+   "reasons": [],
+   "valid": true
+  }
+ },
+ "duplicate_entry_symlink_then_dir": {
+  "dir_check": true,
+  "fsck": {
+   "err": [
+    "error in tree 0578c6c2899008f553a0b7befc5b181640ef0d0b: duplicateEntries: contains duplicate file entries"
+   ],
+   "rc": 1
+  },
+  "history_complete": false,
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: history completeness not established (shallow clone or unreadable)",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  },
+  "tree_entry_direct": "(b'40000', '275757ea7bbf0994d33774b3b1b65a4f3d73390b')"
+ },
+ "empty_tree_at_ancestor": {
+  "dir_check": true,
+  "fsck": {
+   "err": [],
+   "rc": 0
+  },
+  "result": {
+   "reasons": [],
+   "valid": true
+  }
+ },
+ "empty_tree_at_review_dir": {
+  "dir_check": true,
+  "fsck": {
+   "err": [],
+   "rc": 0
+  },
+  "result": {
+   "reasons": [],
+   "valid": true
+  }
+ },
+ "evil_merge_ancestor_symlink": {
+  "dir_check": false,
+  "fsck": {
+   "err": [],
+   "rc": 0
+  },
+  "merge_parents": [
+   "e36688a6edd35d8fa95ee24ba151d1528b81047c",
+   "214ec035d2907cfe8166c57c5b4d6a5e451d62e4"
+  ],
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  },
+  "rev_list_no_merges_contains_merge": false
+ },
+ "git_version": "git version 2.43.0",
+ "leaf_executable_file": {
+  "dir_check": false,
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  }
+ },
+ "leaf_regular_file": {
+  "dir_check": false,
+  "ls_tree_c2": "100644 blob 59768066c4326620bc803c8b9f5e25c5e2c1dfb9\tlevel4/closure_proofs/p5y_k5_cell308_research/reviews",
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  }
+ },
+ "long_history_150000_deep_changes": {
+  "commits": 150000,
+  "dir_check": true,
+  "dir_check_s": 12.87,
+  "distinct_trees_every_depth": true
+ },
+ "long_history_30000_deep_changes": {
+  "commits": 30000,
+  "dir_check": true,
+  "dir_check_s": 2.43,
+  "distinct_trees_every_depth": true
+ },
+ "lx_platform_sha256": "cddfd4a2fb37b91e3f567f0a8bf955c29fc7035275a9962f2a8f20fd8b29ce66",
+ "names_with_spaces_bad": {
+  "dir_check": false,
+  "ls_tree_c3": [
+   "040000 tree 5a6245fda7dc0036e8bf9e166994416e59d90720\ta level4",
+   "040000 tree 8366b07eaceff3fad51ec856923b24766d721e86\tatt",
+   "120000 blob a19357465e75740fd2482c534a000ec84c4452d6\tlevel4",
+   "040000 tree dda67916d3267e15599bbcc85994248daa6cea45\tlevel4 x"
+  ],
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  }
+ },
+ "names_with_spaces_control": {
+  "dir_check": true,
+  "result": {
+   "reasons": [],
+   "valid": true
+  }
+ },
+ "odd_dir_mode_at_ancestor::040000": {
+  "checkout_shows_file_under_review_dir": true,
+  "dir_check": false,
+  "fsck": {
+   "err": [
+    "error in tree e4d1a891b516706a48245bc56da8896028a6a64c: zeroPaddedFilemode: contains zero-padded file modes"
+   ],
+   "rc": 1
+  },
+  "ls_tree_bad": [
+   "040000 tree 8366b07eaceff3fad51ec856923b24766d721e86\tatt",
+   "040000 tree 4cd2e635e45826b43adb6db57a6ae2188944121a\tlevel4"
+  ],
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: history completeness not established (shallow clone or unreadable)",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  }
+ },
+ "odd_dir_mode_at_ancestor::40755": {
+  "checkout_shows_file_under_review_dir": true,
+  "dir_check": false,
+  "fsck": {
+   "err": [
+    "warning in tree 27d732382a815738655f38fee558a62bf6714885: badFilemode: contains bad file modes"
+   ],
+   "rc": 0
+  },
+  "ls_tree_bad": [
+   "040000 tree 8366b07eaceff3fad51ec856923b24766d721e86\tatt",
+   "040000 tree 4cd2e635e45826b43adb6db57a6ae2188944121a\tlevel4"
+  ],
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  }
+ },
+ "odd_dir_mode_at_ancestor::41000": {
+  "checkout_shows_file_under_review_dir": true,
+  "dir_check": false,
+  "fsck": {
+   "err": [
+    "warning in tree 05b20189f8acc1c8eff312f1144e036c2aafea73: badFilemode: contains bad file modes"
+   ],
+   "rc": 0
+  },
+  "ls_tree_bad": [
+   "040000 tree 8366b07eaceff3fad51ec856923b24766d721e86\tatt",
+   "040000 tree 4cd2e635e45826b43adb6db57a6ae2188944121a\tlevel4"
+  ],
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  }
+ },
+ "odd_roots": {
+  "bare_clone": {
+   "dir_check": true,
+   "result": {
+    "reasons": [],
+    "valid": true
+   }
+  },
+  "head_is_a_tree": {
+   "dir_check": false,
+   "result": {
+    "reasons": [
+     "rejected by UNAVAILABLE: history completeness not established (shallow clone or unreadable)",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ],
+    "valid": false
+   }
+  },
+  "nul_in_root": {
+   "dir_check": false,
+   "result": [
+    "attestation not committed at HEAD"
+   ]
+  }
+ },
+ "sha256_caller_forged_object_directory": {
+  "caller_env_view_of_bad_root": [],
+  "dir_check": false,
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  },
+  "without_caller_env": {
+   "dir_check": false,
+   "result": {
+    "reasons": [
+     "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ],
+    "valid": false
+   }
+  }
+ },
+ "sha256_control": {
+  "dir_check": true,
+  "result": {
+   "reasons": [],
+   "valid": true
+  }
+ },
+ "sha256_gitlink_absent_at_ancestor": {
+  "dir_check": false,
+  "fsck": {
+   "err": [],
+   "rc": 0
+  },
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  }
+ },
+ "sibling_gitlinks_control": {
+  "dir_check": true,
+  "fsck": {
+   "err": [],
+   "rc": 0
+  },
+  "result": {
+   "reasons": [],
+   "valid": true
+  }
+ },
+ "unmerged_branch_with_symlink_control": {
+  "dir_check": true,
+  "note": "only HEAD's history is read (stated scope)",
+  "result": {
+   "reasons": [],
+   "valid": true
+  }
+ },
+ "unrelated_root_with_ancestor_symlink": {
+  "dir_check": false,
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  },
+  "roots": 2
+ },
+ "unrelated_roots_control": {
+  "dir_check": true,
+  "result": {
+   "reasons": [],
+   "valid": true
+  }
+ },
+ "unsorted_tree_at_root": {
+  "dir_check": false,
+  "fsck": {
+   "err": [
+    "error in tree 29256fbc783136414bc04c4f8dc38e16c03b7194: treeNotSorted: not properly sorted"
+   ],
+   "rc": 1
+  },
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: history completeness not established (shallow clone or unreadable)",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  }
+ }
+}

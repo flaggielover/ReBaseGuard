@@ -1258,7 +1258,8 @@ def _cat_file_batch(repo_root, names: list, contents: bool) -> list | None:
 
 
 def _tree_entry(data: bytes, name: bytes, width: int):
-    """(mode, object id) of the entry ``name`` in raw tree ``data``; None if absent; False if malformed."""
+    """(mode, object id) of the entry ``name`` in raw tree ``data``; None if absent; False if malformed or if
+    ``name`` occurs twice (review 70 T5; strict fsck refuses duplicates first, this is defence in depth)."""
     pos, found = 0, None
     while pos < len(data):
         sp = data.find(b" ", pos)
@@ -1266,6 +1267,8 @@ def _tree_entry(data: bytes, name: bytes, width: int):
         if nul < 0 or nul + 1 + width > len(data):
             return False
         if data[sp + 1:nul] == name:
+            if found is not None:
+                return False
             found = (data[pos:sp], data[nul + 1:nul + 1 + width].hex())
         pos = nul + 1 + width
     return found
@@ -1275,8 +1278,10 @@ def _review_dir_is_a_directory(repo_root) -> bool:
     """Review 68 P1 / review 69 S1: in EVERY commit of HEAD's history, ACCEPTANCE_REVIEW_DIR and each of its ancestors
     is a directory entry (mode 40000) or absent. A symlink, gitlink (submodule) or file there would let a checkout show
     files at review paths that git's scan never lists; such a history is unavailable evidence. The entries are read
-    by MODE from the raw trees, walking down from every commit's root tree (one `cat-file` call per depth, each tree
-    read once), so an absent submodule commit or a gitlink-mode entry naming a tree cannot pass as a directory."""
+    by MODE from the raw trees, walking down from every commit's root tree, merges included (one `cat-file` call per
+    depth, each tree read once), so an absent submodule commit or a gitlink-mode entry naming a tree cannot pass as a
+    directory. `cat-file --batch` does not verify object hashes: the walk relies on the strict fsck precondition over
+    the same object store and on the isolated environment (review 70 T4)."""
     commits = _git(repo_root, "rev-list", "HEAD")
     if not commits:
         return False
