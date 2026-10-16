@@ -1,0 +1,8 @@
+System.IO.IOException: owned trace stop failed ---> System.IO.IOException: owned query failed: 4201
+   在 EtwCapture.Query(UInt64 handle)
+   在 EtwCapture.Stop(UInt64 handle)
+   在 EtwCapture.TraceLease.StopOnce(Boolean emergency)
+   --- 内部异常堆栈跟踪的结尾 ---
+   在 EtwCapture.TraceLease.Finish()
+   在 EtwCapture.Guard()
+   在 EtwCapture.Main(String[] args)
