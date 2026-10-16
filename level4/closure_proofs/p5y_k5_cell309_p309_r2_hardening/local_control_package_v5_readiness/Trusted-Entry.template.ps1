@@ -4,7 +4,7 @@
 # absolute inbox Windows PowerShell binary, with a clean process environment.
 $approvalDigest='__APPROVAL_RECORD_SHA256_AFTER_ACTUAL_HUMAN_APPROVAL__'
 $approvalPath='D:\ReBaseGuard-309\records\p309-installation-facts-v1-human-approval.json'
-$scriptPath='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v2\Read-InstallationFacts.ps1'
+$scriptPath='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v3\Read-InstallationFacts.ps1'
 $scriptDigest='__HARNESS_SHA256__'
 $ErrorActionPreference='Stop'
 $PSModuleAutoLoadingPreference='None'

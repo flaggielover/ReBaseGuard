@@ -40,6 +40,14 @@ public static class P309InstallationRead {
  [DllImport("C:\\Windows\\System32\\advapi32.dll",ExactSpelling=true)] static extern uint LsaNtStatusToWinError(uint status);
  [DllImport("C:\\Windows\\System32\\advapi32.dll",ExactSpelling=true)] static extern uint LsaClose(IntPtr policy);
  [DllImport("C:\\Windows\\System32\\advapi32.dll",ExactSpelling=true)] static extern uint LsaFreeMemory(IntPtr memory);
+ // These two helpers are pure and have synthetic boundary tests. Actual reads
+ // preserve HRESULT; only explicit Win32 file/path-not-found is ABSENT.
+ public static bool SameServiceName(string a,string b){return String.Equals(a,b,StringComparison.OrdinalIgnoreCase);}
+ public static string PathErrorState(int hr){return hr==unchecked((int)0x80070002)||hr==unchecked((int)0x80070003)?"ABSENT":"UNKNOWN";}
+ public sealed class PathResult {public string path,state,attributes,error_type,error;public int error_hresult;}
+ public static PathResult PathFacts(string text){var r=new PathResult();r.path=text;
+  try{r.attributes=System.IO.File.GetAttributes(text).ToString();r.state="PRESENT";}
+  catch(Exception e){r.error_hresult=e.HResult;r.error_type=e.GetType().FullName;r.error=e.Message;r.state=PathErrorState(e.HResult);}return r;}
  public sealed class SecurityResult {public string guid,sddl,error;public uint first_rc,final_rc,size;public string descriptor_base64;}
  public static SecurityResult Etw(string text){Guid g=Guid.Parse(text);uint n=0;var r=new SecurityResult();r.guid=text;r.first_rc=EventAccessQuery(ref g,IntPtr.Zero,ref n);r.final_rc=r.first_rc;r.size=n;
   if(r.first_rc!=122||n==0||n>65536){r.error="Unavailable; not empty/default authority";return r;}IntPtr p=Marshal.AllocHGlobal((int)n);
@@ -69,9 +77,9 @@ Observe 'etw-registry-presence' {
   }
  } finally {if($null -ne $key){$key.Dispose()}}
 }
-Observe 'service-collisions' {$all=@(Get-Service -ErrorAction Stop);@('ReBaseGuardP309Observer','ReBaseGuardP309Controller','ReBaseGuardP309Relay')|ForEach-Object{$name=$_;$found=@($all|Where-Object {$_.Name -ceq $name});@{name=$name;exists=$found.Count -ne 0;status=@($found|ForEach-Object {[string]$_.Status})}}}
+Observe 'service-collisions' {$all=@(Get-Service -ErrorAction Stop);@('ReBaseGuardP309Observer','ReBaseGuardP309Controller','ReBaseGuardP309Relay')|ForEach-Object{$name=$_;$found=@($all|Where-Object {[P309InstallationRead]::SameServiceName($_.Name,$name)});@{name=$name;exists=$found.Count -ne 0;status=@($found|ForEach-Object {[string]$_.Status})}}}
 Observe 'directory-custody' {@('C:\Program Files','C:\ProgramData','D:\','D:\ReBaseGuard-309')|ForEach-Object{@{path=$_;attributes=[string][IO.File]::GetAttributes($_);sddl=([IO.DirectoryInfo]::new($_)).GetAccessControl().GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]'Owner,Group,Access')}}}
-Observe 'space-and-collisions' {@{C_available=[IO.DriveInfo]::new('C').AvailableFreeSpace;D_available=[IO.DriveInfo]::new('D').AvailableFreeSpace;D_format=[IO.DriveInfo]::new('D').DriveFormat;proposed_code_exists=([IO.Directory]::Exists('C:\Program Files\ReBaseGuardP309') -or [IO.File]::Exists('C:\Program Files\ReBaseGuardP309'));proposed_state_exists=([IO.Directory]::Exists('C:\ProgramData\ReBaseGuardP309') -or [IO.File]::Exists('C:\ProgramData\ReBaseGuardP309'));proposed_disk_exists=([IO.Directory]::Exists('D:\ReBaseGuardP309Private') -or [IO.File]::Exists('D:\ReBaseGuardP309Private'))}}
+Observe 'space-and-collisions' {@{C_available=[IO.DriveInfo]::new('C').AvailableFreeSpace;D_available=[IO.DriveInfo]::new('D').AvailableFreeSpace;D_format=[IO.DriveInfo]::new('D').DriveFormat;proposed_code_path=[P309InstallationRead]::PathFacts('C:\Program Files\ReBaseGuardP309');proposed_state_path=[P309InstallationRead]::PathFacts('C:\ProgramData\ReBaseGuardP309');proposed_disk_path=[P309InstallationRead]::PathFacts('D:\ReBaseGuardP309Private')}}
 Observe 'power-sleep-policy' {& 'C:\Windows\System32\powercfg.exe' /query SCHEME_CURRENT SUB_SLEEP;if($LASTEXITCODE-ne 0){throw 'powercfg query failed'}}
 Observe 'update-policy' {
  @('SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate','SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU','SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired','SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending')|ForEach-Object {
@@ -80,6 +88,6 @@ Observe 'update-policy' {
 }
 Observe 'device-guard-metadata' {Import-Module 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\CimCmdlets\CimCmdlets.psd1' -ErrorAction Stop;Get-CimInstance -Namespace root\Microsoft\Windows\DeviceGuard -ClassName Win32_DeviceGuard -OperationTimeoutSec 20|Select-Object VirtualizationBasedSecurityStatus,SecurityServicesConfigured,SecurityServicesRunning,AvailableSecurityProperties,RequiredSecurityProperties}
 Observe 'maintenance-task-metadata' {Import-Module 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\ScheduledTasks\ScheduledTasks.psd1' -ErrorAction Stop;@(Get-ScheduledTask -TaskPath '\Microsoft\Windows\UpdateOrchestrator\','\Microsoft\Windows\WindowsUpdate\' -ErrorAction Stop|Select-Object TaskPath,TaskName,State,@{Name='Enabled';Expression={$_.Settings.Enabled}},@{Name='WakeToRun';Expression={$_.Settings.WakeToRun}})}
-SaveJson 'RESULT.json' @{utc=[DateTime]::UtcNow.ToString('o');scope='ADMINISTRATOR_READONLY_INSTALLATION_FACTS';queries=$results.Count;unknown=@($results|Where-Object {$_.query_status-eq'UNKNOWN'}|ForEach-Object {$_.name});policy_changes=0;trace_starts=0;vm_starts=0;services_created=0;keys_created=0;formal_coverage_proven=$false;admission='BLOCKED';I1_I7='OPEN'}
+SaveJson 'RESULT.json' @{utc=[DateTime]::UtcNow.ToString('o');scope='ADMINISTRATOR_READONLY_INSTALLATION_FACTS';queries=$results.Count;query_exceptions=@($results|Where-Object {$_.query_status-eq'UNKNOWN'}|ForEach-Object {$_.name});native_return_codes_and_path_states_require_interpretation=$true;policy_changes=0;trace_starts=0;vm_starts=0;services_created=0;keys_created=0;formal_coverage_proven=$false;admission='BLOCKED';I1_I7='OPEN'}
 $manifest=@(Get-ChildItem -LiteralPath $root -File|Where-Object {$_.Extension -eq '.json'}|ForEach-Object{@{file=$_.Name;bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}})
 SaveJson 'SHA256SUMS.json' $manifest

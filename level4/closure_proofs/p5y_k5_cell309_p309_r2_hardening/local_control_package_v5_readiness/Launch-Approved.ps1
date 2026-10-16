@@ -4,7 +4,7 @@ param([Parameter(Mandatory=$true,ParameterSetName='Execute')][ValidatePattern('^
 # hashes these bytes against the reviewed constant and executes the same memory
 # ScriptBlock. This script then pins NativeEntry bytes BEFORE ShellExecute/UAC.
 $ErrorActionPreference='Stop'
-$candidate='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v2\NativeEntry.exe'
+$candidate='C:\Users\Lenovo\P309-InstallationFacts-build-20261016-v3\NativeEntry.exe'
 $expected='__NATIVE_SHA256__'
 $identity=[Security.Principal.WindowsIdentity]::GetCurrent()
 if(([Security.Principal.WindowsPrincipal]::new($identity)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {throw 'start this launcher as the ordinary owner, not already elevated'}
@@ -31,9 +31,11 @@ public sealed class P309PinnedEntry : IDisposable {
             var paths=new List<string>();var parent=new DirectoryInfo(Path.GetDirectoryName(path));
             while(parent!=null){paths.Insert(0,parent.FullName);parent=parent.Parent;}
             foreach(string p in paths) {
-                // Share READ only: neither metadata/reparse writes nor rename
-                // can replace a held ancestor before the elevated load.
-                var h=CreateFileW(p,0,1,IntPtr.Zero,3,0x02000000|0x00200000,IntPtr.Zero);
+                // GENERIC_READ participates in sharing checks; access=0 does not.
+                // Hold the namespace without SHARE_DELETE and deny data-write opens.
+                // Attribute-only changes can still be allowed; do not claim that
+                // this handle prohibits every metadata write. Reject reparse nodes.
+                var h=CreateFileW(p,0x80000000,1,IntPtr.Zero,3,0x02000000|0x00200000,IntPtr.Zero);
                 if(h.IsInvalid){h.Dispose();throw new Win32Exception();}
                 parents.Add(h);INFO info;
                 if(!GetFileInformationByHandle(h,out info)||(info.attributes&0x400)!=0)throw new IOException("reparse/unknown ancestor");

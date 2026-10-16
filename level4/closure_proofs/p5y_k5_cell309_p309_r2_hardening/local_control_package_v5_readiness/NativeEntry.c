@@ -5,7 +5,7 @@
 #include <windows.h>
 #include <bcrypt.h>
 
-static const wchar_t templatePath[]=L"C:\\Users\\Lenovo\\P309-InstallationFacts-build-20261016-v2\\Trusted-Entry.template.ps1";
+static const wchar_t templatePath[]=L"C:\\Users\\Lenovo\\P309-InstallationFacts-build-20261016-v3\\Trusted-Entry.template.ps1";
 static const char templateHash[]="__TEMPLATE_SHA256__";
 static const char marker[]="__APPROVAL_RECORD_SHA256_AFTER_ACTUAL_HUMAN_APPROVAL__";
 static const wchar_t winps[]=L"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
@@ -17,17 +17,17 @@ static int equal(const char* a,const char* b,SIZE_T n) {while(n--)if(*a++!=*b++)
 static void* alloc(SIZE_T n) {void* p=HeapAlloc(GetProcessHeap(),HEAP_ZERO_MEMORY,n);if(!p)ExitProcess(80);return p;}
 static int admin(void) {
     HMODULE lib=LoadLibraryExW(L"advapi32.dll",NULL,LOAD_LIBRARY_SEARCH_SYSTEM32);
-    HANDLE token=NULL;TOKEN_ELEVATION e;DWORD returned=0;BOOL ok=FALSE;
+    HANDLE token=NULL;TOKEN_ELEVATION e;DWORD returned=0;BOOL ok=FALSE;int tokenOwned=0;
     typedef BOOL (WINAPI *OpenT)(HANDLE,DWORD,PHANDLE);
     typedef BOOL (WINAPI *GetT)(HANDLE,TOKEN_INFORMATION_CLASS,LPVOID,DWORD,PDWORD);
     OpenT open;GetT get;if(!lib)return 0;
     open=(OpenT)GetProcAddress(lib,"OpenProcessToken");get=(GetT)GetProcAddress(lib,"GetTokenInformation");
-    if(open&&get&&open(GetCurrentProcess(),TOKEN_QUERY,&token))ok=get(token,TokenElevation,&e,sizeof(e),&returned)&&e.TokenIsElevated;
-    if(token)CloseHandle(token);FreeLibrary(lib);return ok;
+    if(open&&get&&open(GetCurrentProcess(),TOKEN_QUERY,&token)){tokenOwned=1;if(token)ok=get(token,TokenElevation,&e,sizeof(e),&returned)&&e.TokenIsElevated;}
+    if(tokenOwned&&token)CloseHandle(token);FreeLibrary(lib);return ok;
 }
 static int hash(const BYTE* bytes,DWORD size,char result[65]) {
     HMODULE lib=LoadLibraryExW(L"bcrypt.dll",NULL,LOAD_LIBRARY_SEARCH_SYSTEM32);
-    BCRYPT_ALG_HANDLE algorithm=NULL;BCRYPT_HASH_HANDLE state=NULL;BYTE digest[32];int ok=0,i;
+    BCRYPT_ALG_HANDLE algorithm=NULL;BCRYPT_HASH_HANDLE state=NULL;BYTE digest[32];int ok=0,i,algorithmOwned=0,stateOwned=0;
     typedef NTSTATUS (WINAPI *OpenA)(BCRYPT_ALG_HANDLE*,LPCWSTR,LPCWSTR,ULONG);
     typedef NTSTATUS (WINAPI *CreateH)(BCRYPT_ALG_HANDLE,BCRYPT_HASH_HANDLE*,PUCHAR,ULONG,PUCHAR,ULONG,ULONG);
     typedef NTSTATUS (WINAPI *HashD)(BCRYPT_HASH_HANDLE,PUCHAR,ULONG,ULONG);
@@ -40,12 +40,15 @@ static int hash(const BYTE* bytes,DWORD size,char result[65]) {
     update=(HashD)GetProcAddress(lib,"BCryptHashData");finish=(FinishH)GetProcAddress(lib,"BCryptFinishHash");
     destroy=(DestroyH)GetProcAddress(lib,"BCryptDestroyHash");close=(CloseA)GetProcAddress(lib,"BCryptCloseAlgorithmProvider");
     if(!open||!create||!update||!finish||!destroy||!close)goto done;
-    if(open(&algorithm,L"SHA256",NULL,0)<0 || create(algorithm,&state,NULL,0,NULL,0,0)<0
-       || update(state,(PUCHAR)bytes,size,0)<0 || finish(state,digest,32,0)<0)goto done;
+    if(open(&algorithm,L"SHA256",NULL,0)<0)goto done;
+    algorithmOwned=1;if(!algorithm)goto done;
+    if(create(algorithm,&state,NULL,0,NULL,0,0)<0)goto done;
+    stateOwned=1;if(!state)goto done;
+    if(update(state,(PUCHAR)bytes,size,0)<0 || finish(state,digest,32,0)<0)goto done;
     for(i=0;i<32;i++){result[i*2]="0123456789abcdef"[digest[i]>>4];result[i*2+1]="0123456789abcdef"[digest[i]&15];}
     result[64]=0;ok=1;
 done:
-    if(state)destroy(state);if(algorithm)close(algorithm,0);FreeLibrary(lib);return ok;
+    if(stateOwned&&state)destroy(state);if(algorithmOwned&&algorithm)close(algorithm,0);FreeLibrary(lib);return ok;
 }
 static wchar_t* base64(const BYTE* bytes,DWORD n) {
     const wchar_t alphabet[]=L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
