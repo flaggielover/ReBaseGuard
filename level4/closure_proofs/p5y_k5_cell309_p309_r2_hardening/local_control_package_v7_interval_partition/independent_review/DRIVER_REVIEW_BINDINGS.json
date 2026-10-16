@@ -1,0 +1,33 @@
+{
+  "scope": "ADDITIVE_INDEPENDENT_STATIC_DRIVER_REVIEW_ONLY",
+  "date": "2026-10-16",
+  "reviewed_source": "outputs/p309-interval-driver-v7-staging/run_verified_partition.py",
+  "reviewed_source_sha256": "669fb5ca7d3e369170f46a6d2b181f8e0b9032f0c58f0bc3a30aac3f35be0495",
+  "review_applies_only_to_exact_hash": true,
+  "baseline_source_namespace": "H/local_control_package_v5_readiness/continuation_20261016/p309-offline-input-integrity-staging-v1/run_verified_audit.py",
+  "baseline_source_sha256": "9eb9e1fe69e8b6d148c71714c907d0bccc5198c715ee850681064cdc2fd221b6",
+  "must_fix": [
+    {
+      "id": "DRIVER_MODULE_NONE_RESTORATION",
+      "lines": [184, 195, 199],
+      "status": "OPEN_FOR_THIS_HASH",
+      "description": "Distinguish an absent sys.modules key from an existing key whose value is None; restore exactly on success and exception.",
+      "baseline_also_has_account_only_boundary": true,
+      "new_security_regression_claimed": false
+    }
+  ],
+  "saved_test_record": "outputs/p309-interval-driver-v7-staging/TEST_BINDING.stdout-stderr.txt",
+  "saved_new_synthetic_methods_reported_pass": 5,
+  "historical_eleven_tests_rerun": false,
+  "reviewer_reran_tests": false,
+  "same_memory_driver_caller_review": "PENDING_SEPARATE_INPUT",
+  "adapter_review": "PENDING_SEPARATE_INPUT",
+  "private_decisions_hash_scope": "POST_WRITE_PATH_SNAPSHOT_NOT_FULL_OUTPUT_CUSTODY",
+  "actual_numeric_rows_processed_by_review": 0,
+  "host_queries": 0,
+  "uac": 0,
+  "historical_unknown_root_cpu_seconds": "0.4392592",
+  "thread_end_extension_approved": false,
+  "I1_I7": "OPEN",
+  "admission": "BLOCKED"
+}

@@ -1,0 +1,13 @@
+# v7 driver模块恢复问题修正复审
+
+修正版本run_verified_partition.py SHA256 `85e9300a2864f83503035f223d7d264190e44f40eca7e9a25920338629dc80b0`。对旧版本 `669fb5ca7d3e369170f46a6d2b181f8e0b9032f0c58f0bc3a30aac3f35be0495` 的静态diff仅改变模块旧状态保存及恢复分支：新增唯一sentinel，分别保留键缺失、键值None和实际module对象。finally对成功及core执行异常都精确恢复。
+
+DRIVER_MODULE_NONE_RESTORATION对这个新hash已解决；未发现新的must-fix。旧审阅及其OPEN_FOR_THIS_HASH状态保留为被拒绝旧字节的历史，不改写成旧版本曾正确。
+
+新增test方法在已有None import阻断状态下，分别验证正常load和core执行RuntimeError后两个名称仍存在且值为None。保存记录为6方法PASS、0.329秒、exit0；测试源码与日志哈希均与TEST_RESULT_V2.json相符。这里只读取源码diff、哈希和保存记录，没有运行测试。旧十一项没有在本轮重跑。
+
+DESIGN现在也明确private_decisions摘要只是关闭writer后的path snapshot，不是全过程输出custody。其余输入hash、源码snapshot、两遍同CSV handle和OPEN/BLOCKED约束没有因该修复变化。
+
+本结论允许将这个固定driver版本提交后续adapter和caller集成复审。actual caller仍须验证并执行同一份driver内存bytes；adapter须保留顶层已绑定函数并避免恢复模块后延迟按路径import；private诊断输出不能直接作为公开发布物。实际numeric尚未运行，原0.4392592秒未知量保持不变。
+
+I1至I7 OPEN；正式准入BLOCKED；不批准ThreadEnd延伸、host query、UAC或任何生产变更。

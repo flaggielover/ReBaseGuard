@@ -1,0 +1,41 @@
+# v7固定离线caller与V2入口最终静态复审
+
+结论：YES。指定V2入口、caller、manifest与既定adapter/core/driver组合未发现新增must-fix，可执行这个普通离线saved CSV固定包。本结论不是新的生产授权、完整覆盖或ThreadEnd延伸批准；I1至I7 OPEN，正式准入BLOCKED。
+
+本复核只读取源码、JSON、保存日志并计算文件hash，没有执行actual、测试、numeric分类、ETL decoder或新host query。固定CSV只做字节长度/hash核对，没有在本轮重新计算其内容分类。
+
+## 实际入口与同内存绑定
+
+- 执行入口只采用ENTRY_BINDING_V2.json，其literal Python代码UTF8 SHA256实际为 `ae14b618c8dad9135ff2c88bbd226cbb0058fb1121cb480a7d037e3cc4b1127d`。代码以显式if/raise核对caller bytes，然后compile执行同一份bytes；不用会被优化跳过的assert。旧ENTRY_BINDING.json仅保留为初稿，不执行。
+- 固定参数为 `-I -B -c <exact entry_python_code>`。-I隔离Python环境导入设置，-B不写bytecode缓存；仍使用既定普通离线解释器，不将其升级为P309私有运行时资格或完整生产软件custody证明。
+- caller SHA256 `9f5e549991010ff139784c46aff806013d5f3a552ae29d5d60490b1c62d52cb0`，4112字节。其源码读取driver、核对固定SHA，再compile执行相同内存bytes并设置固定__file__和非main名称。
+- driver SHA256 `85e9300a2864f83503035f223d7d264190e44f40eca7e9a25920338629dc80b0`继续验证manifest及七份输入/源码：CSV、两份summary、adapter、account、core、driver。account/core/adapter按已核验snapshot执行，CSV两遍使用相同已验证handle与逐遍hash/count，结束前再核对。临时模块精确恢复的修复保持。
+- 入口文本按上述已核验literal使用；不能把后来可变的同名入口文件直接当成受信执行指令。源码磁盘副本hash不能替代已执行code的内存绑定，这条链已在当前入口与caller中落实。
+
+## 固定文件与输入核验
+
+D repo与records的INPUT_BINDINGS.json均为798字节，SHA256 `6f1fcdc9945798ef771973dc25785bb81ac8fba24c9c688f81634e7c08b7abce`。两份ENTRY_BINDING_V2.json均为1365字节，SHA256 `3a1d0a25f3a57eb12d1c67c10c7feab6bf827c11149bdb68cd895a64a9c0503b`。
+
+IMPORT_BINDINGS列出的40个导入件长度和hash全部匹配；不把其中历史失败或被拒绝版本混成当前源码。当前adapter为 `ded8cb991f322ebde272a5da9aca1ea424020f9281d8b6d245cb2797442f2eb9`，core为 `39edb2bde848ab711f68775c7b2c3af18e9dbbc52ffe08fadb1fa9f269a781fa`，account为 `d49f9ed2e49bd7aa0674f59a10a03380e46c5fb1b52839d0e5a60c157b6cd1fd`。
+
+CSV实际148,387,234字节，SHA256 `8d8a412465231f1bd8aca6caa28408c1c0730cc92ab3ee60e861030565bd3d8c`。qpc summary SHA256 `c4d56553369d2a184c37e887f4772b78a6a52e204ce0c56d0451973426921079`，CSwitch summary SHA256 `3bf771b211545331048c3143b291b140f4f82369c0346db3f3a6265b40d22a88`；保存摘要计数4,191,774行、3,829,610 CSwitch，与manifest相同。实际运行仍由driver重复执行字节、行数及两遍完整消费核验。
+
+这些是posthoc saved-input绑定，不能追溯证明原decoder当时输出的CSV字节，也不能解决CPU namespace、受保护活动、其他partition或全部I2覆盖。
+
+## 一次尝试与输出语义
+
+caller只操作固定已存在records目录。ATTEMPT_STARTED.json以CreateNew和fsync写入；检查时该marker尚不存在。存在marker或第二次CreateNew失败时不会启动审核，没有自动retry或覆盖。创建marker后失败则保留失败记录和partial，不能通过删marker或恢复旧pin获得隐含retry权限。
+
+实际调用传private_decisions=None，并明确private_decisions_saved=false、no_per_slice_copy_saved=true；driver得到的private_decisions_sha256为null。private_decision_count只解释为诊断候选数，不是实际写入条数，不宣称保存完整逐slice副本。完整bound CSV与源码可以复算决定。
+
+结果、COMPLETION和失败记录都使用CreateNew。完成receipt只在两遍审核及driver最终复核成功后生成；关闭后按路径取得的结果hash是输出时点快照，不额外宣称整个records树为生产防回滚anchor。私有result含路径和对象identities，公开发布需另作派生摘要。
+
+该路径只使用普通文件读取、hash、文件pin、UTC/monotonic记时及固定记录写入，不启动新trace、性能采样、ETL解码、VM、服务、授予权限或UAC。
+
+## 保存的集成证据
+
+新增一个bound集成case的保存最终日志为PASS，0.067秒。fixture调用真实adapter/core/driver，但只使用小型synthetic文件；它验证两遍同CSV handle/hash/count、原始span与outside geometry、四象限、OPEN/BLOCKED及None sink。
+
+最初失败仅是expected dict未接受多出的零值象限键；对比保存的初稿与最终test，只有该assert改为按四键读取默认0，adapter/core/driver未因此变化。原test和失败日志保留在integration_initial_failure。本轮没有重跑该case或其他suite。
+
+本复核时点actual尚未开始；后续是否执行和成功必须以专门attempt records为准，本静态记录不代替执行结果。原0.4392592秒未知量不改写，未来gross recovery与old-known变unknown须分开报告。

@@ -1,0 +1,37 @@
+{
+  "scope": "ADDITIVE_INDEPENDENT_STATIC_ADAPTER_CORE_DRIVER_REVIEW",
+  "date": "2026-10-16",
+  "adapter_sha256": "5c579476029753a01f50299e09fd0f0bc3b9be2fe92c91640930fc2a3b4a7e1c",
+  "adapter_bytes": 18282,
+  "core_sha256": "39edb2bde848ab711f68775c7b2c3af18e9dbbc52ffe08fadb1fa9f269a781fa",
+  "driver_sha256": "85e9300a2864f83503035f223d7d264190e44f40eca7e9a25920338629dc80b0",
+  "adapter_tests_sha256": "112af4bfe46ad2c40501610bb2535aff5a49e7ae3ea75af9605a429198f157f8",
+  "adapter_design_sha256": "18f8af89d09d9886ba87ec00c5f6be948c58f0d36b6c7501c90a84f73a922ea1",
+  "adapter_preparation_sha256": "a112651a5380da8e589088d487c3dcce6e772445d8b614c40cfda2afd8f5869b",
+  "adapter_saved_test_log_sha256": "46b7865269419ffa6c79865a0eddf1cb467a900acb3dd083c4344d3fdb99ee1a",
+  "saved_synthetic_methods_pass": 13,
+  "reviewer_tests_run": 0,
+  "must_fix": [
+    {
+      "id": "ADAPTER_KIND_OPCODE_VALIDATION",
+      "status": "OPEN_FOR_THIS_HASH",
+      "lines": [188, 195],
+      "description": "Validate kind/opcode combinations against the bound decoder schema before interpreting rows."
+    },
+    {
+      "id": "ADAPTER_BACKWARDS_CLOSED_SPAN",
+      "status": "OPEN_FOR_THIS_HASH",
+      "lines": [251, 296, 319, 320],
+      "description": "Backwards CSwitch timestamps can produce overlapping positive spans whose sum equals the window despite holes; reject or invalidate and prevent a closed-span success interpretation."
+    }
+  ],
+  "private_decisions_recommendation": "NONE_FOR_ACTUAL_RUN_EXPLICITLY_RECORD_NO_PER_SLICE_COPY",
+  "private_decision_count_when_none": "WOULD_BE_DIAGNOSTIC_CANDIDATES_NOT_WRITTEN_RECORDS",
+  "same_memory_caller_review": "PENDING",
+  "actual_numeric_rows_processed": 0,
+  "host_queries": 0,
+  "uac": 0,
+  "historical_unknown_root_cpu_seconds": "0.4392592",
+  "I1_I7": "OPEN",
+  "admission": "BLOCKED"
+}

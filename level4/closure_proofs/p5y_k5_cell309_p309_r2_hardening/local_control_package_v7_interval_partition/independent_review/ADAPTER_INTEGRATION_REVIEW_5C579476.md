@@ -1,0 +1,36 @@
+# v7 adapter core driver集成静态复审
+
+审阅组合：saved_interval_adapter.py SHA256 `5c579476029753a01f50299e09fd0f0bc3b9be2fe92c91640930fc2a3b4a7e1c`，core `39edb2bde848ab711f68775c7b2c3af18e9dbbc52ffe08fadb1fa9f269a781fa`，driver `85e9300a2864f83503035f223d7d264190e44f40eca7e9a25920338629dc80b0`。本记录只对这些字节生效。
+
+主集成路径正确，但实际numeric前有两项必须修正的输入与结果边界。它们是离线数据正确性问题，不是新安全scan或生产漏洞结论。保存13方法PASS记录不能覆盖这两项未测试反例；本轮没有运行测试或actual numeric。
+
+## 必须修正的输入类型边界
+
+第188至195行_row验证了kind范围、整数、CPU namespace和时间范围，但未验证kind/opcode对应关系。因此kind1的任意opcode均可进入CSwitch处理。已绑定OfflineQpc.cpp的有限schema中，kind1只对应36；kind3/4只对应1至4；kind2对应50、67、68、69；kind5对应66。适配层应拒绝不符合该声明的组合，不能仅按kind将不一致行当作另一事件。补充synthetic无效kind/opcode反例即可检验。
+
+## 必须修正的时间倒退与闭合字段边界
+
+第251行遇CSwitch QPC倒退只增加计数，随后第296行仍把last更新到较早时刻；后续正片段可能与之前片段重叠。第319至320行仅按每CPU正片段时长和等于窗口长度判断every_cpu_has_closed_60s_span。
+
+静态反例：窗口10至70，一个CPU的CSwitch时刻20、50、40、70。累加20至50和40至70得到60ticks，与窗口等长，但10至20缺失、40至50重复，backwards非零，字段仍可能为true。仅报告该布尔值不能证明闭合覆盖。
+
+建议时间倒退时拒绝产生成功audit，或明确令受影响CPU的归属失效；闭合字段至少要求无backwards、相应完整边界及无discontinuity，或者改名为明确的纯长度算术指标并独立输出有效性。当前coverage_complete=false必须继续保留，不能由闭合字段、守恒或零identity unknown升级为完整覆盖。
+
+## 已正确保留的集成约束
+
+- partition_switch_span收到ORIGINAL未裁剪CSwitch端点；core在原始起点绑定代次，adapter只筛numeric ID，不筛掉或重编号同ID的generation历史。
+- build_generations从原opcode/QPC构建START、rundown存在锚点、END及DCEnd的真实边界；只允许一个matching DCStart佐证真实Start，不扩大birth。冲突、同QPC、倒退、缺End等使整个numeric ID失效，不保留前面看似良好的代次。
+- 每条生命周期保留one-based CSV数据行ordinal和原始六字段tuple；bound_source_events回指这些行。该tuple不是原八列CSV的完整序列化，原始CSV仍是权威可复算输入。
+- PID0、TID0、DCEnd-only和ThreadEnd尾不获豁免；TID0单列historical_idle_unproven，而非已证明idle。core两层绑定阻止旧尾被TID/PID新代重认领。
+- process flags按PID加generation ordinal保留各次观测，不跨相同ProcessKey OR；观测不同则单列identity-known/flags-unknown，不把不一致合成保护标志。
+- 历史lifetimes和owner仅作whole clipped span比较器，不向新归属提供身份。四象限保存old-known/new-known、old-known/new-unknown、old-unknown/new-known及both-unknown。可恢复old-unknown前段是gross recovery，不是净减量；新增old-known/new-unknown必须同时报告。
+- outside geometry明确只覆盖与窗口有正交集、连续、非TID0的正CSwitch spans；原完整时长等于窗口内外和。discontinuity和TID0为其他unknown类别，不能把此局部geometry说成整个trace守恒或IRQ去重结果。
+- adapter在顶层导入read、clipped和partition_interval，audit期间没有延迟按路径import这两个已绑定模块。driver随后替换rows/read hook，使两次遍历使用同一已验证CSV handle与同一summary snapshot；本轮未发现新的mutable import路径。
+
+## 可选逐段JSONL的建议
+
+实际审核可传private_decisions=None。约数百万CSwitch的TID0逐span写入可能膨胀为很大的诊断副本；完整已绑定CSV与源码足够重建决定，不必为减少可选sink开销增加新的源码分支。
+
+必须在执行记录和公开摘要明确未保存逐slice副本、private_decisions_sha256=null。None时private_decision_count仍累加，因此只可解释为可输出的诊断候选数量，不能描述成实际写入条数或完整逐段副本。若启用sink，CreateNew可保留失败残留，关闭后path hash也不是全过程custody证明。
+
+source、tests、DESIGN、PREPARATION和13方法保存日志的实际哈希已核对。实际caller尚待另审；本组合不得据此直接开始numeric。原0.4392592秒未知量不变，I1至I7 OPEN，正式准入BLOCKED。

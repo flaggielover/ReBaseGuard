@@ -1,0 +1,31 @@
+{
+  "scope": "ADDITIVE_INDEPENDENT_STATIC_DRIVER_CLOSURE_ONLY",
+  "date": "2026-10-16",
+  "reviewed_source": "outputs/p309-interval-driver-v7-staging/run_verified_partition.py",
+  "reviewed_source_sha256": "85e9300a2864f83503035f223d7d264190e44f40eca7e9a25920338629dc80b0",
+  "reviewed_source_bytes": 18541,
+  "rejected_source_sha256": "669fb5ca7d3e369170f46a6d2b181f8e0b9032f0c58f0bc3a30aac3f35be0495",
+  "closure": {
+    "finding": "DRIVER_MODULE_NONE_RESTORATION",
+    "status": "RESOLVED_FOR_NEW_EXACT_HASH",
+    "change": "Unique sentinel distinguishes absent keys from existing None values in sys.modules; finally restores exact prior state.",
+    "new_must_fix_count": 0
+  },
+  "reviewed_test_source_sha256": "89f0b8ff0cbd68d09d0ae5991643569e572a1f65747a1a1ecbcb36cca7ac553f",
+  "reviewed_test_source_bytes": 7052,
+  "saved_test_result_sha256": "62e91cbe404cfdc947a70b96536df0650c7fc70209aa0e6c196ecfcd236cdfdd",
+  "saved_test_log_sha256": "0a75c1d6dc43dfcc49575abbb90de6b1a95d7a254b1647c6872c3866132931a9",
+  "reviewed_design_sha256": "79b5eaa3d72aa6e4f1d36dd8d558913663caa369e0f74ef5628f03ac1d77c046",
+  "saved_synthetic_methods_pass": 6,
+  "saved_reported_seconds": "0.329",
+  "reviewer_tests_run": 0,
+  "actual_numeric_rows_processed": 0,
+  "adapter_and_same_memory_caller_review": "PENDING_SEPARATE_INPUT",
+  "private_decisions_digest_scope": "POST_WRITE_PATH_SNAPSHOT_NOT_FULL_OUTPUT_CUSTODY",
+  "historical_unknown_root_cpu_seconds": "0.4392592",
+  "thread_end_extension_approved": false,
+  "host_queries": 0,
+  "uac": 0,
+  "I1_I7": "OPEN",
+  "admission": "BLOCKED"
+}

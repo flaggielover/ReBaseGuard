@@ -1,0 +1,32 @@
+# v7离线driver独立静态复审
+
+审阅版本run_verified_partition.py SHA256 `669fb5ca7d3e369170f46a6d2b181f8e0b9032f0c58f0bc3a30aac3f35be0495`。它从旧wrapper `9eb9e1fe69e8b6d148c71714c907d0bccc5198c715ee850681064cdc2fd221b6` 作最小扩展。此记录只对应上述字节，不随同名文件后来变化自动生效。
+
+结论：输入与源码绑定主体保留正确；发现一项窄的模块恢复契约问题，须修正并绑定新字节。实际适配层、driver caller及其集成仍待独立复审；这里没有运行测试、实际numeric或生产adapter。
+
+## 必须修正的模块恢复边界
+
+load_bound_audit第184行以sys.modules.get保存旧值，第195至199行遇None就pop。这样把键原来不存在和键原来存在且值为None合并，后者退出后被删除。原有None可阻止相应import；删掉它改变了调用者原先的模块状态，不满足精确恢复契约。
+
+应使用唯一sentinel，或同时保存键是否存在与原值，并在成功及异常路径都精确恢复。补充纯synthetic的None成功恢复和异常恢复案例即可检验这个实际边界。旧account-only loader也有相同边界，因此不描述成新安全回归，更不创建安全scan或漏洞结论。
+
+## 输入与源码绑定核验
+
+- schema2增加core_source的明确SHA。CSV、两份decoder摘要、adapter、account、core、driver七份输入/源码hash，以及外部明确给定的manifest hash被核对；小文件有4MiB界限，路径必须区分并拒绝reparse。
+- 小文件先形成snapshot，再对同一bytes hash和compile。account与core暂时装入sys.modules供adapter的顶层import使用；已有同名模块不能直接替代这两份已绑定源码。finally覆盖正常和异常路径，但必须修正上面的None边界。
+- CSV在普通读pin和祖先pin保持期间读入。同一已核验文件句柄完成两遍，逐遍独立hash和rows/CSwitch count，必须恰好两遍完全消费；结束前再次检查七份输入hash。没有把每遍按路径重开当作同handle证明。
+- pin仅支持普通数据写入/删除共享限制。代码明确不声称阻止全部metadata更改，也不声称抵抗可信admin或失陷kernel。
+- 结果强制保留OPEN、BLOCKED和coverage_complete=false；明确posthoc检查，不能retroactively绑定原decoder当时的CSV输出，不能解决CPU namespace或完整覆盖问题。
+- 保存记录报告五个新synthetic方法PASS，历史十一项未重复；本轮只阅读其源码和日志。五项记录不是实际trace语义、完整安装或生产运行时资格。
+
+## 集成时必须继续核对的边界
+
+实际caller要读取driver bytes、验证固定SHA，再compile执行同一份bytes并固定__file__。driver自己hash磁盘文件不能证明解释器早已执行的code来自该文件。DESIGN已明确该要求，但caller尚未在本轮提供或验证。普通解释器和标准库仍只是离线工具，不作完整生产custody证明。
+
+loader返回audit后会恢复两个临时模块。adapter应在顶层从它们取得并保留已绑定函数/对象，不能在audit执行期间再按可变路径延迟import这两个名称。这个要求须在即将提供的adapter集成复审中核对；driver不是任意Python代码的sandbox。
+
+private_decisions被要求新建且与输入区分，实际CreateNew写入行为仍需核对adapter。失败残留是未完成证据，不能当成功。当前driver的private_decisions_sha256是写入关闭后按路径读到的快照hash，不能额外宣称全过程输出custody；若未来需要更强声明，应绑定实际写入bytes与文件身份。此限制不改变它作为私有诊断输出的用途。
+
+输出和input_object_identities可能含本地路径与volume/file identities；公开发布应另作派生摘要，不直接发布完整私有result。
+
+原0.4392592秒未知量不变；本driver审阅不批准ThreadEnd延伸、不关闭I2。I1至I7 OPEN；正式准入BLOCKED。

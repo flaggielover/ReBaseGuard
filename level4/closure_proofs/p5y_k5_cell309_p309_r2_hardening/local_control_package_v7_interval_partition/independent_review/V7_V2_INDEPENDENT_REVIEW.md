@@ -1,0 +1,34 @@
+# v7 v2区间与代次绑定独立复审
+
+审阅结论：指定v2源码修复了此前两项必须修正的问题，未发现新的阻止保守集成的问题。可进入受限saved CSV适配层开发与审阅；适配层、driver和实际numeric结果未由本记录验证。ThreadEnd后的尾段继续UNKNOWN。
+
+审阅对象：interval_partition.py SHA256 `39edb2bde848ab711f68775c7b2c3af18e9dbbc52ffe08fadb1fa9f269a781fa`；test_interval_partition_v2.py SHA256 `935c482872b164c0fbd77e401fb88d4ab12ef8709f4a0686d61a74337ac5d2d8`。本审阅者未参与该core实现。保存的PREPARATION_V2_FINAL.json和14方法PASS日志相互吻合；这里只读取记录，没有重新运行测试。
+
+## v1被拒绝的两项问题
+
+v1每片重新找thread row，会让同一个原始CSwitch区间跨旧ThreadEnd后被同TID新代认领。其旧测试曾将原区间0至20跨两代线程的两部分都期待为KNOWN。
+
+v1每片仅按PID匹配process row，没有将线程代次绑定到唯一ProcessGeneration。旧线程跨PID复用边界后，尾段可能被归给后来创建的新ProcessKey。旧测试甚至期待Key90、UNKNOWN、Key91的结果。真实thread出生早于唯一process出生的反例也曾被错误恢复为局部KNOWN。
+
+rejected_v1保留原source、tests、DESIGN，实际哈希分别为 `bb805a8abdf7704af9815a85439ffbd9000a6767eda910cf6eddca2a251a0edd`、`8e44bbc379ad7f8de637af8b9e49e0eb5e521fa3823edda7f12a45b77b6cacc1`、`9983d04090fb70ca17be62a901bab8591762f5c62aadd301ad0569c601b06825`。旧11方法PASS不能验证错误预期，也不能作为v2或实际数据通过证据。
+
+## v2修复核验
+
+1. 绑定发生在原始CSwitch区间起点，先于window clipping。原点处使用包含端点的候选检查，同QPC相邻代次不能通过排序选中一代。裁剪窗口隐藏旧代或错误birth不会重新取得KNOWN。
+2. 在线程真实Start或rundown存在锚点选择唯一process row，再检查整个已证明线程范围位于该process的已证明存在范围内。后续切片必须保持相同bound_thread和bound_process；TID和PID新代都不能认领旧区间尾段。
+3. evidence明确区分START、RUNDOWN、END与SYNTHETIC_HIGH。START必须吻合真实row start；rundown需要实际观测锚点；END必须吻合row end。只有traceHigh而无真实端点观察不能成为ownership证明。真实DCEnd早于traceHigh时，仅保守使用该实际锚点。
+4. 缺少evidence、锚点不兼容、零PID/TID/ProcessKey或非唯一候选不能得到KNOWN。重叠和重复候选仍保留歧义；没有idle豁免或ThreadEnd延伸。
+5. 正长度half-open切片、整数QPC、窗口内外ticks和known/unknown总量仍守恒。FULL_THREAD_NOT_WITHIN_BOUND_PROCESS可能拒绝部分前段，这是明确的保守取舍，不是把线程重挂到新进程。
+
+14个保存方法覆盖旧线程尾迁移、PID重挂、birth晚于thread、clip隐藏anchor、同QPC两层边界、真实后续CSwitch绑定新代、rundown与synthetic high、重叠、零ID、零长度几何和大整数QPC等。测试只使用注入数据和Windows Python 3.12离线工具，不是P309私有Python运行时或主机覆盖资格。
+
+## saved CSV适配层的集成条件
+
+- 从绑定的raw生命周期行重建evidence，并保留原opcode、QPC、身份和稳定row ordinal；不能从v4四元组直接制造START或END。筛选numeric ID时必须保留该ID所需的完整历史，不能删除冲突代次以制造唯一结果。
+- 交入完整原始CSwitch span；先核验每CPU连续性、CPU命名空间和原始switch-in身份，再让core裁剪。不能先裁剪再伪造新区间起点。
+- 同QPC交付序号不能当因果序。零长度row的测试只验证几何行为，不证明一份真实TID/PID复用历史合法；不一致原始生命周期不能靠忽略冲突行获得KNOWN。
+- 绑定实际输入字节、schema、clock、QPC frequency、CPU拓扑、loss和decoder返回。core仅是 supplied-evidence 分类器，不能替代这些证明。
+- 单独保存可恢复前段、剩余UNKNOWN、窗口外ticks和守恒；不能把缺失、受保护活动或其他partition当零。正式阈值、IRQ去重和计量口径不变。
+- 将适配层与driver作为新的具体源码提交另行独立审阅；本结论不验证尚未提供的集成代码，也不授权新trace或主机查询。
+
+此包尚未处理实际saved numeric输入。原0.4392592秒未知量不变；不得预扣0.1247455秒thread-only小计。允许保守切出已证明前段不等于允许延伸未证明尾段。I1至I7 OPEN；正式准入BLOCKED。
