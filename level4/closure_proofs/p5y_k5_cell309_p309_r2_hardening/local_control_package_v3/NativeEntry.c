@@ -5,7 +5,7 @@
 #include <windows.h>
 #include <bcrypt.h>
 
-static const wchar_t templatePath[]=L"C:\\Users\\Lenovo\\P309-I2-root-build-20261016-v1\\Trusted-Entry.template.ps1";
+static const wchar_t templatePath[]=L"C:\\Users\\Lenovo\\P309-I2-root-build-20261016-v2\\Trusted-Entry.template.ps1";
 static const char templateHash[]="__TEMPLATE_SHA256__";
 static const char marker[]="__APPROVAL_RECORD_SHA256_AFTER_ACTUAL_HUMAN_APPROVAL__";
 static const wchar_t winps[]=L"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";

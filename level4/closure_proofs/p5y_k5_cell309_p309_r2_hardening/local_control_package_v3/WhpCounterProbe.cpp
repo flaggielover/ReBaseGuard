@@ -24,6 +24,33 @@ struct Api {
 };
 static Api api;
 static WHV_PARTITION_HANDLE partition;
+static bool partitionOwned;
+static HRESULT AcquirePartition() {
+    if(partitionOwned || partition) return E_UNEXPECTED;
+    WHV_PARTITION_HANDLE candidate=NULL;
+    HRESULT hr=api.create(&candidate);
+    if(hr!=S_OK) return hr; // failure output is never adopted or destroyed
+    if(!candidate) return E_UNEXPECTED;
+    partition=candidate;partitionOwned=true;return S_OK;
+}
+static HRESULT fakeResult;
+static WHV_PARTITION_HANDLE fakeOutput;
+static HRESULT WINAPI FakeCreate(WHV_PARTITION_HANDLE* out) {*out=fakeOutput;return fakeResult;}
+static int OwnershipMemoryChecks() {
+    api.create=FakeCreate;
+    const HRESULT codes[]={E_FAIL,E_FAIL,S_FALSE,S_OK};
+    const WHV_PARTITION_HANDLE outputs[]={(WHV_PARTITION_HANDLE)(ULONG_PTR)123,NULL,(WHV_PARTITION_HANDLE)(ULONG_PTR)123,NULL};
+    for(int i=0;i<4;i++) {
+        fakeResult=codes[i];fakeOutput=outputs[i];
+        if(AcquirePartition()==S_OK || partitionOwned || partition) return 71;
+    }
+    fakeResult=S_OK;fakeOutput=(WHV_PARTITION_HANDLE)(ULONG_PTR)456;
+    if(AcquirePartition()!=S_OK || !partitionOwned || partition!=fakeOutput) return 72;
+    fakeOutput=(WHV_PARTITION_HANDLE)(ULONG_PTR)789;
+    if(AcquirePartition()!=E_UNEXPECTED || partition!=(WHV_PARTITION_HANDLE)(ULONG_PTR)456) return 73;
+    partition=NULL;partitionOwned=false;api.create=NULL;
+    puts("SIX_OWNERSHIP_MEMORY_CHECKS_NO_DLL_LOAD_OR_WHP_API");return 0;
+}
 static HANDLE ready, go;
 static DWORD runTid;
 static HRESULT runRc=E_PENDING;
@@ -53,6 +80,7 @@ static WHV_PROCESSOR_RUNTIME_COUNTERS Counters() {
 static unsigned long long Tick(FILETIME t) {return ((unsigned long long)t.dwHighDateTime<<32)|t.dwLowDateTime;}
 int wmain(int argc,wchar_t** argv) {
     if(argc!=2) return 64;
+    if(wcscmp(argv[1],L"--ownership-memory-check")==0) return OwnershipMemoryChecks();
     if(wcscmp(argv[1],L"--layout-check")==0) {
         if(sizeof(WHV_REGISTER_VALUE)!=16 || sizeof(WHV_PROCESSOR_RUNTIME_COUNTERS)!=16 ||
            WHvPartitionPropertyCodeProcessorCount!=0x1fff || WHvRunVpExitReasonCanceled!=0x2001) return 65;
@@ -81,7 +109,7 @@ int wmain(int argc,wchar_t** argv) {
     QueryPerformanceFrequency(&frequency);QueryPerformanceCounter(&begin);
     try {
         if(!GetProcessTimes(GetCurrentProcess(),&creation,&exit,&kernelBefore,&userBefore)) throw 1;
-        Require(api.create(&partition),"create");
+        Require(AcquirePartition(),"create");
         UINT32 count=1;Require(api.property(partition,WHvPartitionPropertyCodeProcessorCount,&count,sizeof(count)),"one VP");
         Require(api.setup(partition),"setup");
         memory=VirtualAlloc(NULL,2*1024*1024,MEM_COMMIT|MEM_RESERVE,PAGE_READWRITE);
@@ -127,9 +155,9 @@ int wmain(int argc,wchar_t** argv) {
         api.cancel(partition,0,0);SetEvent(go);
         if(WaitForSingleObject(thread,2000)!=WAIT_OBJECT_0) ExitProcess(93);
     }
-    if(vp && FAILED(api.deleteVp(partition,0))) result=1;
-    if(mapped && FAILED(api.unmap(partition,0,2*1024*1024))) result=1;
-    if(partition && FAILED(api.destroy(partition))) result=1;
+    if(vp && api.deleteVp(partition,0)!=S_OK) result=1;
+    if(mapped && api.unmap(partition,0,2*1024*1024)!=S_OK) result=1;
+    if(partitionOwned && api.destroy(partition)!=S_OK) result=1;
     if(memory && !VirtualFree(memory,0,MEM_RELEASE)) result=1;
     if(thread)CloseHandle(thread);if(go)CloseHandle(go);if(ready)CloseHandle(ready);
     FreeLibrary(library);

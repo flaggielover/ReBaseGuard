@@ -4,7 +4,7 @@ param([Parameter(Mandatory=$true,ParameterSetName='Execute')][ValidatePattern('^
 # hashes these bytes against the reviewed constant and executes the same memory
 # ScriptBlock. This script then pins NativeEntry bytes BEFORE ShellExecute/UAC.
 $ErrorActionPreference='Stop'
-$candidate='C:\Users\Lenovo\P309-I2-root-build-20261016-v1\NativeEntry.exe'
+$candidate='C:\Users\Lenovo\P309-I2-root-build-20261016-v2\NativeEntry.exe'
 $expected='__NATIVE_SHA256__'
 $identity=[Security.Principal.WindowsIdentity]::GetCurrent()
 if(([Security.Principal.WindowsPrincipal]::new($identity)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {throw 'start this launcher as the ordinary owner, not already elevated'}

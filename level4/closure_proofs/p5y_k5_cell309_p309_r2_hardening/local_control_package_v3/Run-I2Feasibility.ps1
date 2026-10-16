@@ -6,9 +6,9 @@ Set-StrictMode -Version Latest
 # EncodedCommand. Never elevate this mutable file path or adjacent pin files.
 if($PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSVersion.Minor -ne 1) {throw 'Windows PowerShell 5.1 required'}
 $root='C:\ProgramData\ReBaseGuardP309-I2-RootDiagnostic-v3'
-$candidate='C:\Users\Lenovo\P309-I2-root-build-20261016-v1\EtwCapture-v3.exe'
+$candidate='C:\Users\Lenovo\P309-I2-root-build-20261016-v2\EtwCapture-v3.exe'
 $binarySha256='__ETW_SHA256__'
-$whpCandidate='C:\Users\Lenovo\P309-I2-root-build-20261016-v1\WhpCounterProbe.exe'
+$whpCandidate='C:\Users\Lenovo\P309-I2-root-build-20261016-v2\WhpCounterProbe.exe'
 $whpSha256='__WHP_SHA256__'
 function Hash-Bytes([byte[]]$bytes) {
     $hash=[Security.Cryptography.SHA256]::Create()
@@ -34,6 +34,9 @@ function Get-FixtureSummary([object[]]$rows) {
         else {throw 'unrecognized fixture scope'}
     }
     [pscustomobject]@{native_fixture_clean=$native -eq 3;whp_fixture_clean=$whp -eq 1;admission='BLOCKED'}
+}
+function Can-HashStableCapture([bool]$SessionAbsent,[bool]$HelpersExited,[bool]$NativeFixturesClean,[bool]$WhpFixtureClean) {
+    $SessionAbsent -and $HelpersExited -and $NativeFixturesClean -and $WhpFixtureClean
 }
 $approval=[Text.Encoding]::UTF8.GetString($ApprovalBytes) | ConvertFrom-Json
 if($approval.scope -cne 'P309_I2_SINGLE_ROOT_DIAGNOSTIC_V3' -or $approval.capture_count -ne 1 -or $approval.whp_count -ne 1 -or
@@ -156,13 +159,14 @@ finally {
         cleanup_errors=@($cleanupErrors.ToArray());coverage_complete=$false;admission='BLOCKED';I1_I7='OPEN_RETAINED'})
     } catch {$failure='RESULT persistence failed';$cleanupErrors.Add($_.Exception.Message)}
     try {
-        if($exited) {
+        if(Can-HashStableCapture $absent $exited $fixtures $whpFixture) {
             $manifest=foreach($f in $directory.GetFiles()) {
                 try {[ordered]@{file=$f.Name;size=$f.Length;sha256=(Hash-Bytes ([IO.File]::ReadAllBytes($f.FullName)));state='HASHED'}}
                 catch {$cleanupErrors.Add('hash '+$f.Name+': '+$_.Exception.Message);[ordered]@{file=$f.Name;state='UNREADABLE_NO_DIGEST'}}
             }
             Write-Json 'SHA256SUMS.json' @($manifest)
-        } else {Write-Json 'MANIFEST_INCOMPLETE.json' @{reason='HELPERS_NOT_QUIESCENT_NO_STABLE_HASH_CLAIM';admission='BLOCKED'}}
+        } else {Write-Json 'MANIFEST_INCOMPLETE.json' @{reason='SESSION_OR_HELPERS_OR_FIXTURES_NOT_CONFIRMED_QUIESCENT_NO_STABLE_HASH_CLAIM';
+            session_absent=$absent;helpers_exited=$exited;native_fixtures_clean=$fixtures;whp_fixture_clean=$whpFixture;admission='BLOCKED'}}
     } catch {$cleanupErrors.Add('manifest: '+$_.Exception.Message)}
     if($cleanupErrors.Count -gt 0) {
         $failure='one or more evidence stages failed; no pass'
