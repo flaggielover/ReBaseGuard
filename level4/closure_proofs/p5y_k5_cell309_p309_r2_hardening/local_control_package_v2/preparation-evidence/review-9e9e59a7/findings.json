@@ -1,0 +1,203 @@
+{
+  "documentType": "codex-security.findings",
+  "findings": [
+    {
+      "attackPath": {
+        "dataflow": {
+          "evidenceRefs": [
+            "mutable-input",
+            "compile-input",
+            "link-object",
+            "after-hash",
+            "privileged-consumer"
+          ],
+          "outcome": "Administrator execution of the substituted native output after approval",
+          "sink": "Process.Start with Verb runas",
+          "source": "Separate local writer's substituted source or object bytes",
+          "summary": "AU-writable source/object -> compiler/linker -> post-build output digest -> launcher fixed pin -> RunAs"
+        },
+        "evidenceRefs": [
+          "mutable-input",
+          "link-object",
+          "after-hash",
+          "privileged-consumer"
+        ],
+        "impact": {
+          "level": "high",
+          "why": "The resulting native entry is intentionally run as administrator."
+        },
+        "likelihood": {
+          "level": "medium",
+          "why": "The attacker must hit the preparation window and wait for a later approved invocation."
+        },
+        "reachability": {
+          "attacker": "Separate lower-trust authenticated local writer",
+          "entrypoint": "NativeEntry.c or NativeEntry.obj during build",
+          "outcome": "A malicious build can satisfy the adopted runtime output pin",
+          "summary": "Requires local write access to the supplied D: build paths during preparation and later human approval. No remote ingress, malicious trusted owner or existing compromise is assumed."
+        },
+        "summary": "Change a build input or object before its consumer reads it, restore clean source before the post-build hash, and wait for the trusted operator to approve the resulting pinned executable."
+      },
+      "codeEvidence": [
+        {
+          "code": "$source='D:\\ReBaseGuard-309\\workspace\\p309-local-vm-diagnostic-dev-20261016\\level4\\closure_proofs\\p5y_k5_cell309_p309_r2_hardening\\local_control_package_v2\\NativeEntry.c'\n$out='D:\\ReBaseGuard-309\\records\\p309-local-control-package-preparation-20261016-01\\i2-native-entry-v3-b4'\nif(Test-Path -LiteralPath $out) {throw 'output collision'}\nNew-Item -ItemType Directory -Path $out | Out-Null",
+          "endLine": 5,
+          "explanation": "The source and build directory are in the supplied AU-writable hierarchy. Ordinary directory creation supplies no protected build custody before compiler consumption.",
+          "id": "mutable-input",
+          "label": "Source and output are ordinary D: paths",
+          "language": "powershell",
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/Build-NativeEntry.ps1",
+          "role": "user_input",
+          "startLine": 2
+        },
+        {
+          "code": "$argsCompile=@('/nologo','/c','/GS-','/O1','/Oi-','/Zl','/D_WIN32_WINNT=0x0602',('/I'+'C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include'),('/I'+$sdk+'\\Include\\10.0.26100.0\\ucrt'),('/I'+$sdk+'\\Include\\10.0.26100.0\\um'),('/I'+$sdk+'\\Include\\10.0.26100.0\\shared'),('/Fo'+$out+'\\NativeEntry.obj'),$source)\n& $cl @argsCompile 2>&1 | Tee-Object -FilePath (Join-Path $out 'compile.txt')",
+          "endLine": 10,
+          "explanation": "cl.exe consumes the current source path and writes NativeEntry.obj. No reviewed input hash or held immutable input handle binds what the compiler reads.",
+          "id": "compile-input",
+          "label": "Compiler reads the source by mutable path",
+          "language": "powershell",
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/Build-NativeEntry.ps1",
+          "role": "propagation",
+          "startLine": 9
+        },
+        {
+          "code": "$argsLink=@('/NOLOGO','/NODEFAULTLIB','/ENTRY:Entry','/SUBSYSTEM:WINDOWS','/DYNAMICBASE','/NXCOMPAT','/MANIFEST:EMBED',\"/MANIFESTUAC:level='requireAdministrator' uiAccess='false'\",('/OUT:'+$out+'\\NativeEntry.exe'),($out+'\\NativeEntry.obj'),($sdk+'\\Lib\\10.0.26100.0\\um\\x64\\kernel32.lib'))\n& $link @argsLink 2>&1 | Tee-Object -FilePath (Join-Path $out 'link.txt')",
+          "endLine": 13,
+          "explanation": "link.exe reopens NativeEntry.obj and creates the privileged executable. A separate writer can substitute the intermediate before this read.",
+          "id": "link-object",
+          "label": "Linker consumes the mutable intermediate",
+          "language": "powershell",
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/Build-NativeEntry.ps1",
+          "role": "root_control",
+          "startLine": 12
+        },
+        {
+          "code": "[ordered]@{source_sha256=(Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash.ToLowerInvariant();binary_sha256=(Get-FileHash -LiteralPath (Join-Path $out 'NativeEntry.exe') -Algorithm SHA256).Hash.ToLowerInvariant();compiler=$cl;compiler_sha256=(Get-FileHash -LiteralPath $cl -Algorithm SHA256).Hash.ToLowerInvariant();compiler_args=$argsCompile;linker=$link;linker_sha256=(Get-FileHash -LiteralPath $link -Algorithm SHA256).Hash.ToLowerInvariant();linker_args=$argsLink;build_exit=0;native_executions=0;uac_requests=0;admission='BLOCKED'} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'BINDINGS.json') -Encoding UTF8",
+          "endLine": 17,
+          "explanation": "BINDINGS hashes the current source and executable only after use. Restoring reviewed source before this point allows a clean source hash to accompany a substituted binary hash.",
+          "id": "after-hash",
+          "label": "Hashes are computed after compiler and linker use",
+          "language": "powershell",
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/Build-NativeEntry.ps1",
+          "role": "root_control",
+          "startLine": 17
+        },
+        {
+          "code": "    try {$actual=[BitConverter]::ToString($sha.ComputeHash($pin.File)).Replace('-','').ToLowerInvariant()} finally {$sha.Dispose()}\n    if($actual -cne $expected) {throw 'native entry fixed-byte mismatch'}\n    if($ReadOnlyPreflight) {\n        [ordered]@{scope='READ_ONLY_ENTRY_AND_ANCESTOR_PIN_CHECK';sha256=$actual;uac_requests=0;native_entry_executions=0;admission='BLOCKED'} | ConvertTo-Json\n        return\n    }\n    $psi=[Diagnostics.ProcessStartInfo]::new()\n    $psi.FileName=$candidate;$psi.Arguments=$ApprovalDigest;$psi.WorkingDirectory='C:\\Windows\\System32'\n    $psi.UseShellExecute=$true;$psi.Verb='runas';$psi.WindowStyle=[Diagnostics.ProcessWindowStyle]::Hidden\n    $process=[Diagnostics.Process]::Start($psi)",
+          "endLine": 64,
+          "explanation": "The launcher checks the held file against the adopted output hash, then invokes RunAs. This prevents later swaps but cannot detect that the adopted output was produced from substituted build inputs.",
+          "id": "privileged-consumer",
+          "label": "The generated binary pin becomes the elevation gate",
+          "language": "powershell",
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/Launch-Approved.ps1",
+          "role": "sink",
+          "startLine": 55
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "rationale": "Source shows path-based compilation and linking before post-build hashes. The supplied ACL premise establishes a distinct lower-trust writer and parent confirms no additional custody evidence."
+      },
+      "extensions": {
+        "candidateId": "candidate-5ea98150a1d3e620"
+      },
+      "findingId": "csf_25f671586cf62df1813f5007",
+      "fingerprints": {
+        "algorithm": "codex-security/v1",
+        "primary": "codex-security/v1:sha256:da56ff9553b3b7635428e6e309b6da2adbeb4a67eb5346cce3b94f79a90c1282"
+      },
+      "identity": {
+        "anchor": "candidate-5ea98150a1d3e620"
+      },
+      "locations": [
+        {
+          "endLine": 5,
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/Build-NativeEntry.ps1",
+          "role": "source",
+          "startLine": 2
+        },
+        {
+          "endLine": 17,
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/Build-NativeEntry.ps1",
+          "role": "root_control",
+          "startLine": 9
+        },
+        {
+          "endLine": 64,
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/Launch-Approved.ps1",
+          "role": "sink",
+          "startLine": 55
+        },
+        {
+          "endLine": 30,
+          "path": "level4/closure_proofs/p5y_k5_cell309_p309_r2_hardening/local_control_package_v2/FINAL_BINDINGS.json",
+          "role": "evidence",
+          "startLine": 29
+        }
+      ],
+      "occurrenceId": "occ_51061768490ebd9652fd2850",
+      "preventiveControls": [
+        "Make build custody and immutable input bindings prerequisites for adopting privileged output hashes.",
+        "Preserve the trusted owner/OS boundary without granting other authenticated or sandbox SIDs equivalent write trust."
+      ],
+      "provenance": {
+        "reviewer": "Independent static coordinator /root/security_preflight; fresh-context native reviewer /root/security_preflight/v3_native_review",
+        "source": "local_plugin"
+      },
+      "remediation": "Build both privileged binaries in a newly created protected workspace under trusted parent custody. Bind every reviewed input before use and preserve its bytes through compiler consumption; protect objects and outputs from other AU/sandbox writers. Retain provenance, hash protected outputs and repin the launcher/harness only to those rebuilt outputs. D: copies must remain verification copies, not the privileged execution source.",
+      "remediationTests": [
+        "For a future authorized isolated check, prove a distinct lower-trust identity cannot modify source, objects or output during the build.",
+        "Verify protected inputs match immutable reviewed hashes and that final pins refer to protected outputs. Do not count post-build source hashes alone as provenance."
+      ],
+      "rootCause": {
+        "evidenceRefs": [
+          "mutable-input",
+          "compile-input",
+          "link-object",
+          "after-hash",
+          "privileged-consumer"
+        ],
+        "summary": "The required invariant is that an executable approved for administrator execution derives from the exact reviewed inputs. The builder places source, intermediate and output paths across a lower-trust write boundary, invokes cl.exe and link.exe without protecting their consumed bytes, and computes source/output hashes afterwards. A restored source file can match review while the produced output contains different code. The launcher faithfully pins that output, so its strong runtime byte checks do not repair the earlier loss of provenance."
+      },
+      "ruleId": "untrusted-build-input",
+      "severity": {
+        "changeConditions": "Protected build custody, reviewed digest-bound inputs and protected intermediates/output would remove this path; evidence of an attacker-controlled produced executable or routine unattended elevation would increase likelihood.",
+        "level": "medium",
+        "rationale": "Administrator code execution is possible, but requires a local writer to interfere during preparation and the trusted operator subsequently to approve the prepared binary. Absolute trusted toolchain paths and runtime pins protect different stages and do not close this build window."
+      },
+      "summary": "A separate local writer with the supplied AU write access can change NativeEntry.c before compilation or NativeEntry.obj before linking, restore the reviewed source before the builder hashes it, and cause the substituted executable's digest to become the launcher pin. A later approved RunAs would execute those bytes as administrator. The current binary is not alleged to be malicious; the defect is the missing binding between reviewed source and compiler-consumed bytes.",
+      "taxonomy": {
+        "category": "untrusted-code-inclusion",
+        "cwe": [
+          "CWE-829"
+        ]
+      },
+      "title": "Build-time substitution can become the approved elevated binary",
+      "validation": {
+        "assertions": [
+          "The trusted Windows owner/compiler are not adversaries; other AU/sandbox writers are the lower-trust actors.",
+          "The builder does not create a protected build workspace or hold reviewed input bytes through compilation/linking.",
+          "Source hashing occurs after compilation/linking, and the generated binary hash is adopted by the RunAs gate.",
+          "Parent confirms no additional custody evidence for this immutable revision."
+        ],
+        "evidenceRefs": [
+          "mutable-input",
+          "compile-input",
+          "link-object",
+          "after-hash",
+          "privileged-consumer"
+        ],
+        "limitations": [
+          "No build, tampering, native execution or live ACL query was performed by the review.",
+          "Supplied saved ACL context is the deployment premise; no actual malicious output is asserted.",
+          "Future protected rebuilding is outside the reviewed revision."
+        ],
+        "method": "Static immutable build-to-elevation trace, saved ACL/evidence comparison and independent native review",
+        "summary": "The source and saved bindings show the mutable build stages and the subsequent privileged consumer. All retained hashes are internally consistent; consistency cannot establish the input bytes that the compiler consumed."
+      }
+    }
+  ],
+  "scanId": "062501ff-46d7-4197-b864-809cebfb9771",
+  "schemaVersion": "1.0"
+}

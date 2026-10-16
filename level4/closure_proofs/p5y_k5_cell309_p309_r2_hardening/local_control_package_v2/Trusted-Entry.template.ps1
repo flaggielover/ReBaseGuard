@@ -4,8 +4,8 @@
 # absolute inbox Windows PowerShell binary, with a clean process environment.
 $approvalDigest='__APPROVAL_RECORD_SHA256_AFTER_ACTUAL_HUMAN_APPROVAL__'
 $approvalPath='D:\ReBaseGuard-309\records\p309-i2-v2-human-approval.json'
-$scriptPath='D:\ReBaseGuard-309\workspace\p309-local-vm-diagnostic-dev-20261016\level4\closure_proofs\p5y_k5_cell309_p309_r2_hardening\local_control_package_v2\Run-I2Feasibility.ps1'
-$scriptDigest='1afe5fb8f38bffe4549bc3f85ee8dd31047a0815f0c06fc36d811d2cd4c1516c'
+$scriptPath='C:\Users\Lenovo\P309-I2-build-20261016-v4\Run-I2Feasibility.ps1'
+$scriptDigest='9c5702c030200afbb63e8d5dfde42637f222e6b2b370e6bf9dda59ff060cd86c'
 $ErrorActionPreference='Stop'
 $PSModuleAutoLoadingPreference='None'
 if($approvalDigest -notmatch '^[0-9a-f]{64}$') {throw 'No recorded human execution approval'}

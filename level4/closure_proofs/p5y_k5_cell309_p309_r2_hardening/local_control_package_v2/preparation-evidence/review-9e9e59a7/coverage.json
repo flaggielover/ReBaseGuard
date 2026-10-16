@@ -1,0 +1,68 @@
+{
+  "completeness": "complete",
+  "deferred": [],
+  "documentType": "codex-security.coverage",
+  "excludePaths": [],
+  "explicitExclusions": [],
+  "includePaths": [
+    "."
+  ],
+  "inventoryStrategy": "diff",
+  "mode": "branch_diff",
+  "openQuestions": [],
+  "resolvedDeferred": [
+    {
+      "id": "v3-review-all",
+      "reason": "All 27 changed files and 22 inventory items reviewed; independent native findings reconciled; three candidates terminally validated with the one reportable attack path retained. All manifest and historical export comparisons completed."
+    }
+  ],
+  "scanId": "062501ff-46d7-4197-b864-809cebfb9771",
+  "schemaVersion": "1.0",
+  "surfaces": [
+    {
+      "candidateId": "candidate-5ea98150a1d3e620",
+      "disposition": "reported",
+      "id": "v3-evidence",
+      "label": "Failure finalization and build/provenance records",
+      "notes": "Build-time source/object/output write boundary becomes privileged binary pin. All 43 manifest hashes/sizes, six source bindings, pin relationships, five sealed copied reports and prior manifest are internally consistent; this does not prove source-to-binary custody.",
+      "receiptRefs": [
+        "artifacts/01_context/static-artifact-checks.json",
+        "artifacts/02_review/independent-reconciliation.json"
+      ]
+    },
+    {
+      "candidateId": "candidate-70d0f2e951875c61",
+      "disposition": "rejected",
+      "id": "surface-4c3f05a8188b715e",
+      "label": "Seeded original script and missing pre-CLR startup control",
+      "notes": "Source-level repair implemented by trusted ordinary launcher, held binary hash, native System32 bootstrap and same-memory template/harness/approval chain. Original sealed finding state not changed; build provenance is separately reported.",
+      "receiptRefs": []
+    },
+    {
+      "candidateId": "candidate-2c39279b71f44ed0",
+      "disposition": "rejected",
+      "id": "surface-f743e4b3a784f8bf",
+      "label": "Prior cleanup evidence failure omission",
+      "notes": "Independent error stages and incomplete-manifest branch now implemented. Nonzero outer exit/EVIDENCE_FAILURE remain mandatory evidence interpretation; media persistence never guaranteed.",
+      "receiptRefs": []
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "v3-entry",
+      "label": "Ordinary-user pinning and native trusted startup",
+      "notes": "All native/launcher source and interfaces reviewed, including independent fresh-context bounds/codec/import/environment analysis. Concrete same-byte pre-CLR chain now exists; genuine compiled bytes are a precondition separately violated by reported build custody. No further concrete bypass established.",
+      "receiptRefs": [
+        "artifacts/02_review/independent-reconciliation.json"
+      ]
+    },
+    {
+      "disposition": "no_issue_found",
+      "id": "v3-inputs",
+      "label": "Offline guest package preparation",
+      "notes": "Reviewed signature/index/exact-version/package-hash chain and 19 offline package records (4,312,926 bytes). No install/guest execution claim. Trusted OS keyring and signed metadata assumptions retained; inputs need verification at later use.",
+      "receiptRefs": [
+        "artifacts/01_context/static-artifact-checks.json"
+      ]
+    }
+  ]
+}

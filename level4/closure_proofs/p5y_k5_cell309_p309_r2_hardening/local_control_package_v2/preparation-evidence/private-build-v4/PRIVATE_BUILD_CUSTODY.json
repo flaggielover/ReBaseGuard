@@ -1,0 +1,183 @@
+{
+    "utc":  "2026-10-16T01:46:47.3448420Z",
+    "scope":  "ORDINARY_OWNER_PRIVATE_BUILD_NO_DEPLOYMENT",
+    "owner":  "S-1-5-21-1923243488-1610499346-3556306727-1001",
+    "build_root":  "C:\\Users\\Lenovo\\P309-I2-build-20261016-v4",
+    "root_sddl":  "O:S-1-5-21-1923243488-1610499346-3556306727-1001G:S-1-5-21-1923243488-1610499346-3556306727-513D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;FA;;;S-1-5-21-1923243488-1610499346-3556306727-1001)",
+    "profile_sddl":  "O:SYG:SYD:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;FA;;;S-1-5-21-1923243488-1610499346-3556306727-1001)(A;;0x100020;;;S-1-15-3-65536-599108337-2355189375-1353122160-3480128286-3345335107-485756383-4087318168-230526575)",
+    "reviewed_input_revision":  "9e9e59a7dd0be518231c6c92c4ae14dcd329c6d6",
+    "reviewed_input_pins":  {
+                                "EtwCapture.cs":  "0edc8e3b3eb09108089c1c2691ee7fc2e988c1b306d06f8de1a53697862a82c2",
+                                "Run-I2Feasibility.ps1":  "1afe5fb8f38bffe4549bc3f85ee8dd31047a0815f0c06fc36d811d2cd4c1516c",
+                                "Trusted-Entry.template.ps1":  "56658bf7349f80138e62af8f4c2bee372cc97eaf69467df22eca5db255193fb7",
+                                "NativeEntry.c":  "467a9323a88771140540e78b273b04765a1c347d89b082922ee8226fa1a76b61",
+                                "Launch-Approved.ps1":  "674739d438217d5e2bc3ea2ac482a9afd18bfdb12640038a8035843b75691349",
+                                "TestNativeEntry.c":  "ef8cc3d910e195cdd6dcabd42f881161a4ff3c4270f1577fcb0c9ffbc417d576"
+                            },
+    "inputs_locked_until_all_build_commands_exit":  true,
+    "objects_locked_before_link":  true,
+    "outputs_stay_private":  true,
+    "commands":  [
+                     {
+                         "tool":  "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe",
+                         "tool_sha256":  "46809206887326d2d24db1eff1f3064de972c3451abe766b49111450a5e08e00",
+                         "arguments":  [
+                                           "/nologo",
+                                           "/platform:x64",
+                                           "/target:exe",
+                                           "/r:C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\System.Web.Extensions.dll",
+                                           "/out:C:\\Users\\Lenovo\\P309-I2-build-20261016-v4\\EtwCapture-v2.exe",
+                                           "C:\\Users\\Lenovo\\P309-I2-build-20261016-v4\\EtwCapture.cs"
+                                       ],
+                         "exit_code":  0,
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES;NO_GLOBAL_CHANGE"
+                     },
+                     {
+                         "tool":  "C:\\Users\\Lenovo\\P309-I2-build-20261016-v4\\EtwCapture-v2.exe",
+                         "tool_sha256":  "f3641470ee82d201063910480c9ecad67d78c45f2b4c65907c6331e65c0e8ca4",
+                         "arguments":  [
+                                           "--layout-check"
+                                       ],
+                         "exit_code":  0,
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES;NO_GLOBAL_CHANGE"
+                     },
+                     {
+                         "tool":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+                         "tool_sha256":  "6aa39ae173cb8563d796359930b332a08b2fdc1745b70e5a4caa48a9779fdd07",
+                         "arguments":  [
+                                           "/nologo",
+                                           "/c",
+                                           "/GS-",
+                                           "/O1",
+                                           "/Oi-",
+                                           "/Zl",
+                                           "/D_WIN32_WINNT=0x0602",
+                                           "/IC:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared",
+                                           "/FoNativeEntry.obj",
+                                           "NativeEntry.c"
+                                       ],
+                         "exit_code":  0,
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES;NO_GLOBAL_CHANGE"
+                     },
+                     {
+                         "tool":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe",
+                         "tool_sha256":  "7a9b2527a183361329b0a6d85da13680467152c3b7bbe14470e7c74383e3b0a1",
+                         "arguments":  [
+                                           "/NOLOGO",
+                                           "/NODEFAULTLIB",
+                                           "/SUBSYSTEM:WINDOWS",
+                                           "/DYNAMICBASE",
+                                           "/NXCOMPAT",
+                                           "/MANIFEST:EMBED",
+                                           "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64\\kernel32.lib",
+                                           "/ENTRY:Entry",
+                                           "/MANIFESTUAC:level=\u0027requireAdministrator\u0027 uiAccess=\u0027false\u0027",
+                                           "/OUT:NativeEntry.exe",
+                                           "NativeEntry.obj"
+                                       ],
+                         "exit_code":  0,
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES;NO_GLOBAL_CHANGE"
+                     },
+                     {
+                         "tool":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\dumpbin.exe",
+                         "tool_sha256":  "db64bcb6f17a61f0d64ecc016b90faf9b83134d41fcb1b4fc6db9e347fdbd674",
+                         "arguments":  [
+                                           "/headers",
+                                           "/imports",
+                                           "NativeEntry.exe"
+                                       ],
+                         "exit_code":  0,
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES;NO_GLOBAL_CHANGE"
+                     },
+                     {
+                         "tool":  "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\mt.exe",
+                         "tool_sha256":  "83f6329a4a6cb89bae12e67c8c36d464ae9efa1f1b5590625f0ee3de0c569ead",
+                         "arguments":  [
+                                           "-nologo",
+                                           "-inputresource:NativeEntry.exe;#1",
+                                           "-out:embedded-manifest.xml"
+                                       ],
+                         "exit_code":  0,
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES;NO_GLOBAL_CHANGE"
+                     },
+                     {
+                         "tool":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe",
+                         "tool_sha256":  "6aa39ae173cb8563d796359930b332a08b2fdc1745b70e5a4caa48a9779fdd07",
+                         "arguments":  [
+                                           "/nologo",
+                                           "/c",
+                                           "/GS-",
+                                           "/O1",
+                                           "/Oi-",
+                                           "/Zl",
+                                           "/D_WIN32_WINNT=0x0602",
+                                           "/IC:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um",
+                                           "/IC:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared",
+                                           "/FoTestNativeEntry.obj",
+                                           "TestNativeEntry.c"
+                                       ],
+                         "exit_code":  0,
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES;NO_GLOBAL_CHANGE"
+                     },
+                     {
+                         "tool":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\link.exe",
+                         "tool_sha256":  "7a9b2527a183361329b0a6d85da13680467152c3b7bbe14470e7c74383e3b0a1",
+                         "arguments":  [
+                                           "/NOLOGO",
+                                           "/NODEFAULTLIB",
+                                           "/SUBSYSTEM:WINDOWS",
+                                           "/DYNAMICBASE",
+                                           "/NXCOMPAT",
+                                           "/MANIFEST:EMBED",
+                                           "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64\\kernel32.lib",
+                                           "/ENTRY:TestEntry",
+                                           "/MANIFESTUAC:level=\u0027asInvoker\u0027 uiAccess=\u0027false\u0027",
+                                           "/OUT:TestNativeEntry.exe",
+                                           "TestNativeEntry.obj"
+                                       ],
+                         "exit_code":  0,
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES;NO_GLOBAL_CHANGE"
+                     },
+                     {
+                         "tool":  "C:\\Users\\Lenovo\\P309-I2-build-20261016-v4\\TestNativeEntry.exe",
+                         "tool_sha256":  "781435dff96e88110a455c4470dff2bd216bd24b90b0a844ae9e50457db38675",
+                         "arguments":  [
+
+                                       ],
+                         "exit_code":  0,
+                         "environment":  "FIVE_FIXED_PROCESS_VARIABLES;NO_GLOBAL_CHANGE"
+                     }
+                 ],
+    "winps":  "5.1.26100.9444",
+    "parse":  [
+                  {
+                      "file":  "Launch-Approved.ps1",
+                      "sha256":  "2da80a3b3b4b666b9e40c145bad82106084b22025e03f6ea20203ff2eed47563",
+                      "parse_errors":  0
+                  },
+                  {
+                      "file":  "Run-I2Feasibility.ps1",
+                      "sha256":  "9c5702c030200afbb63e8d5dfde42637f222e6b2b370e6bf9dda59ff060cd86c",
+                      "parse_errors":  0
+                  },
+                  {
+                      "file":  "Trusted-Entry.template.ps1",
+                      "sha256":  "a8dcefd041116b248fefae96917895a70729a0a28df41c7bbcb4d40b64967a43",
+                      "parse_errors":  0
+                  }
+              ],
+    "etw_sha256":  "f3641470ee82d201063910480c9ecad67d78c45f2b4c65907c6331e65c0e8ca4",
+    "native_entry_sha256":  "23cfc53c4b501f91f647b4c73b75ff99e53c305c1cb37bd2fc7ec32a2187881e",
+    "codec_digest_checks":  10,
+    "native_production_entry_executions":  0,
+    "trace_count":  0,
+    "uac_count":  0,
+    "fixture_count":  0,
+    "job_count":  0,
+    "admission":  "BLOCKED"
+}

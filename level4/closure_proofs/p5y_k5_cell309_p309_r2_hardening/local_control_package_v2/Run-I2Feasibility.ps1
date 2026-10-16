@@ -6,8 +6,8 @@ Set-StrictMode -Version Latest
 # EncodedCommand. Never elevate this mutable file path or adjacent pin files.
 if($PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSVersion.Minor -ne 1) {throw 'Windows PowerShell 5.1 required'}
 $root='C:\ProgramData\ReBaseGuardP309-I2-Feasibility-v2'
-$candidate='D:\ReBaseGuard-309\records\p309-local-control-package-preparation-20261016-01\i2-repair-v2\EtwCapture-v2.exe'
-$binarySha256='416700022cb57e76e54735c8486a8bd2b90663966727c28af27fc9830d8114ad'
+$candidate='C:\Users\Lenovo\P309-I2-build-20261016-v4\EtwCapture-v2.exe'
+$binarySha256='f3641470ee82d201063910480c9ecad67d78c45f2b4c65907c6331e65c0e8ca4'
 function Hash-Bytes([byte[]]$bytes) {
     $hash=[Security.Cryptography.SHA256]::Create()
     try { [BitConverter]::ToString($hash.ComputeHash($bytes)).Replace('-','').ToLowerInvariant() } finally {$hash.Dispose()}

@@ -5,8 +5,8 @@
 #include <windows.h>
 #include <bcrypt.h>
 
-static const wchar_t templatePath[]=L"D:\\ReBaseGuard-309\\workspace\\p309-local-vm-diagnostic-dev-20261016\\level4\\closure_proofs\\p5y_k5_cell309_p309_r2_hardening\\local_control_package_v2\\Trusted-Entry.template.ps1";
-static const char templateHash[]="56658bf7349f80138e62af8f4c2bee372cc97eaf69467df22eca5db255193fb7";
+static const wchar_t templatePath[]=L"C:\\Users\\Lenovo\\P309-I2-build-20261016-v4\\Trusted-Entry.template.ps1";
+static const char templateHash[]="a8dcefd041116b248fefae96917895a70729a0a28df41c7bbcb4d40b64967a43";
 static const char marker[]="__APPROVAL_RECORD_SHA256_AFTER_ACTUAL_HUMAN_APPROVAL__";
 static const wchar_t winps[]=L"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
 static const wchar_t environment[]=L"PATH=C:\\Windows\\System32\0PSModulePath=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\Modules\0SystemRoot=C:\\Windows\0TEMP=C:\\Windows\\Temp\0TMP=C:\\Windows\\Temp\0WINDIR=C:\\Windows\0\0";
