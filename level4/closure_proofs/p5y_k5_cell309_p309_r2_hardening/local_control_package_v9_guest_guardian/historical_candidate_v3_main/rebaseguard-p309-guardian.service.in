@@ -1,0 +1,24 @@
+[Unit]
+Description=P309 v9 independent fixed-idle guardian (candidate)
+Requires=rebaseguard-p309-guardian.socket
+After=rebaseguard-p309-guardian.socket
+# Deliberately no PartOf/BindsTo broker: broker death must not kill guardian first.
+[Service]
+Type=exec
+User=root
+Group=root
+ExecStart=/usr/local/libexec/rebaseguard-p309/guardian-v9
+Restart=no
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+StandardInput=null
+StandardOutput=null
+StandardError=journal
+# Held cgroup.kill FD arrives from broker through SCM_RIGHTS. This namespace
+# setting is NOT asserted to revoke an already-open writable FD. Must be tested.
+# No automatic RuntimeMaxSec/Watchdog kill: terminal unknown retains ownership.

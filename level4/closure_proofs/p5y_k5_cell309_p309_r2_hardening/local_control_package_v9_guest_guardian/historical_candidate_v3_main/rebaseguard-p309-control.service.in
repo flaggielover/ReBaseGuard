@@ -1,0 +1,28 @@
+[Unit]
+Description=P309 root fixed-idle control broker candidate
+Requires=rebaseguard-p309-control.socket rebaseguard-p309-admin.socket rebaseguard-p309-gate.socket
+After=rebaseguard-p309-control.socket rebaseguard-p309-admin.socket rebaseguard-p309-gate.socket
+[Service]
+Type=exec
+User=root
+Group=root
+ExecStart=/usr/local/libexec/rebaseguard-p309/control-broker-v9
+Sockets=rebaseguard-p309-control.socket rebaseguard-p309-admin.socket rebaseguard-p309-gate.socket
+Restart=no
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/rebaseguard-p309-control /run/rebaseguard-p309/bindings-v9 /sys/fs/cgroup/system.slice
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictAddressFamilies=AF_UNIX
+KillMode=control-group
+TimeoutStopSec=10
+TasksMax=16
+MemoryMax=128M
+StandardInput=null
+StandardOutput=null
+StandardError=journal
+# Guardian and worker are separate manager units. No PartOf/BindsTo chain.
+# Whole install-tree / UID / endpoint / drop-in audit remains a prerequisite.

@@ -1,0 +1,31 @@
+{
+  "name": "broker",
+  "argv": [
+    "/usr/bin/x86_64-linux-gnu-gcc-13",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Wformat=2",
+    "-Werror",
+    "-pthread",
+    "-I/home/suzhe/p309/builds/guest-v9-build-inputs-20261016-01/include",
+    "control_broker_v9.c",
+    "broker_link.c",
+    "h4_wire.c",
+    "manager_authority.c",
+    "anchor_crypto.c",
+    "anchor_transport.c",
+    "/usr/lib/x86_64-linux-gnu/libsystemd.so.0.38.0",
+    "-lcrypto",
+    "-pthread",
+    "-Wl,-z,relro,-z,now",
+    "-o",
+    "control-broker-v9"
+  ],
+  "exit": 1,
+  "timeout": false,
+  "cleanup_errors": [],
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "4fca62221e3d7d5d6b3d09513478efb60f4c9c515cddc1830317f8408905353f"
+}

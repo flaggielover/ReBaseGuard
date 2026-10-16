@@ -1,0 +1,11 @@
+# Frozen v3 actual build and open review findings
+
+This is a historical failed candidate, not a deployable or approved package. The private Ubuntu CPython 3.11.15 invoked a build-only driver. All translation units used -Wall -Wextra -Wformat=2 -Werror. Guardian, gate, idle, admin helper and the separate pure H4 parser compiled. Broker failed at broker_link.c:201 because the result of write was discarded despite warn_unused_result. Flags were not weakened. The eight pure H4 parser assertions passed. No production binary, systemd operation, key, cgroup, service or VM was invoked.
+
+The immutable source manifest SHA-256 is 9743b3eda934af27d5ff7efbbf811c4fb9b5fe0e02589ed678c714325a6e7e2c. Actual commands, exact outputs, artifacts and readelf metadata are preserved. This links against the existing build-host systemd 255.4-1ubuntu8.18. Compatibility with the signed target image's 8.17 is unverified. The build is not full runtime provenance or I4 closure.
+
+Author self-check identified two correctness issues requiring a new source candidate: a late safety response could renew an already expired lease before the stop thread observed the gap; H4 duplicate requests could return a cached pre-Stop state. The author is not described as an independent reviewer.
+
+Independent parent source review identified two additional paths requiring repair: after valid owned pidfd/cgroup/kill handles were acquired, an active-record storage failure could close those handles before publishing owned control; and unconditional phase stores could overwrite STOP_LATCHED with a later positive phase. Neither finding is closed by compilation or parser tests. The ignored write result is a fifth required correction. Corrections must preserve this snapshot and failed evidence, then undergo review and fresh scoped validation.
+
+Real Observer facts/monitor relay, actual VM/H2 factory, approved enrollment/installation, effective native policy/identity/ABI checks, true independent Stop and restart recovery remain open. Host schemas do not explicitly sign M InvocationID; local attester checks cannot be described as a signed M field. I1-I7 remain OPEN, formal admission BLOCKED. No historical suite was repeated.

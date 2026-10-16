@@ -1,0 +1,36 @@
+V3 BUILD RECIPE; SOURCE PREPARATION ONLY, NOT EXECUTED BY THIS WORKER
+
+Linux x86_64 C11, glibc headers, genuine libsystemd headers/runtime sd-bus,
+pthread, OpenSSL 3 headers/libcrypto required. No install/run in this recipe.
+Build only explicit files below in a fresh private output directory; no source
+wildcard and never link intermediate_unconnected/authority_unavailable.c.
+Include .inc files via manager_authority.c only.
+
+Parent verified build inputs (not target-guest compatibility):
+headers /home/suzhe/p309/builds/guest-v9-build-inputs-20261016-01/include
+libsystemd /usr/lib/x86_64-linux-gnu/libsystemd.so.0.38.0
+SHA256 b10be60fc80ea6910df1b253658e638bd29f3d1aeeb3798006fc66972366cb94
+systemd255.4-1ubuntu8.18, glibc2.39, OpenSSL3.0.13.
+Target signed image has systemd family255.4-1ubuntu8.17: ABI not established.
+
+Compiler flags for ALL translation units (do not downgrade Werror on failure):
+-std=c11 -O2 -Wall -Wextra -Wformat=2 -Werror -pthread
+-I/home/suzhe/p309/builds/guest-v9-build-inputs-20261016-01/include
+Link full explicit pinned systemd .so path above, -lcrypto -pthread.
+
+Outputs and exact source lists:
+guardian-v9: guardian_v9.c manager_authority.c anchor_crypto.c anchor_transport.c
+fixed-gate-v9: fixed_gate_v9.c manager_authority.c anchor_crypto.c anchor_transport.c
+control-broker-v9: control_broker_v9.c broker_link.c h4_wire.c manager_authority.c anchor_crypto.c anchor_transport.c
+idle-owned-v9: idle_owned_v9.c (no systemd/crypto needed)
+admin-helper-v9: admin_helper_v9.c (no systemd/crypto needed)
+
+Separate pure-parser test binary: test_h4_wire.c h4_wire.c with same warning flags.
+Test source has 8 assertions; no native test result is claimed in this snapshot.
+Existing 8 Python guardian protocol tests are historical and do not test C/API.
+
+After build, record compiler/linker/source/output hashes, exact command/exit/log,
+readelf -d and readelf --version-info (metadata only). Preserve failed outputs.
+No invocation of the five production binaries, systemctl, cgroup creation/kill,
+key generation, host queries or VM actions is authorized by this recipe.
+Real guest ABI/property/FD/cancellation acceptance is separately approved work.

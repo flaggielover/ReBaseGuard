@@ -1,0 +1,14 @@
+[Unit]
+Description=P309 additional B-to-M signed-facts read channel proposal
+[Socket]
+ListenSequentialPacket=/run/rebaseguard-p309/monitor-facts-v9.sock
+SocketUser=root
+SocketGroup=root
+SocketMode=0600
+DirectoryMode=0755
+Accept=no
+FileDescriptorName=monitor-facts-v9
+Service=rebaseguard-p309-monitor.service
+# Monitor implementation must validate activation and root broker instance.
+# This is NOT H4 and does not broaden H4 beyond status/stop. No source provider
+# is supplied or authorized by this template; missing service remains refusal.
