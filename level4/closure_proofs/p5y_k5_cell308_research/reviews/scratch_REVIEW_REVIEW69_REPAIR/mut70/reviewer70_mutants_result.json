@@ -1,0 +1,619 @@
+{
+ "source_sha256": "cddfd4a2fb37b91e3f567f0a8bf955c29fc7035275a9962f2a8f20fd8b29ce66",
+ "baseline_ran": 227,
+ "baseline_pass": true,
+ "expected_test_count": 227,
+ "registry_size": 196,
+ "registered": [
+  {
+   "id": "RV26",
+   "witnesses": [
+    "test_review64_symlink_is_not_an_accepting_review"
+   ],
+   "anchor_counts": [
+    1,
+    1
+   ],
+   "edits": [
+    {
+     "old": "        if entries[path][:2] not in ((\"100644\", \"blob\"), (\"100755\", \"blob\")):\n            continue",
+     "new": "        if entries[path][:2] not in ((\"100644\", \"blob\"), (\"100755\", \"blob\"), (\"120000\", \"blob\")):\n            continue"
+    },
+    {
+     "old": "            if parts[0] not in (b\"100644\", b\"100755\"):          # review 68 P1",
+     "new": "            if parts[0] not in (b\"100644\", b\"100755\", b\"120000\"):  # review 68 P1"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review64_symlink_is_not_an_accepting_review",
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "failure_names": [
+    "test_review64_symlink_is_not_an_accepting_review (test_lx_platform.TestAttestationPreflight.test_review64_symlink_is_not_an_accepting_review)",
+    "test_review68_non_directory_review_paths_refuse (test_lx_platform.TestAttestationPreflight.test_review68_non_directory_review_paths_refuse) (case='head_symlink')",
+    "test_review68_non_directory_review_paths_refuse (test_lx_platform.TestAttestationPreflight.test_review68_non_directory_review_paths_refuse) (case='history_symlink')"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "3c4a1271ce74f70ba38fd11872b80284a179175af63cf7ea33512a38769ef7bf"
+  },
+  {
+   "id": "RV60",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    if not _review_dir_is_a_directory(repo_root):",
+     "new": "    if False:"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review68_non_directory_review_paths_refuse",
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "failure_names": [
+    "test_review68_non_directory_review_paths_refuse (test_lx_platform.TestAttestationPreflight.test_review68_non_directory_review_paths_refuse) (case='ancestor_symlink')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='caller_git_dir')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='gitlink_absent')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='gitlink_mode_tree')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='gitlink_present')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='middle_symlink')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='side_branch_symlink')"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "0376ff68e0e8d901fd03ed0ef7d202b58d8613276317773773f1c832b0b664f4"
+  },
+  {
+   "id": "RV61",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "            if mode != b\"40000\":\n                return False\n            level.add(oid)\n",
+     "new": "            if mode != b\"40000\":\n                if depth in (0, len(parts) - 1):\n                    return False\n                continue\n            level.add(oid)\n"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "failure_names": [
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='middle_symlink')"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "3671107850a36779ffcf888d3fd495655f7f8706d15c70748570a6c794785176"
+  },
+  {
+   "id": "RV62",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    commits = _git(repo_root, \"rev-list\", \"HEAD\")",
+     "new": "    commits = _git(repo_root, \"rev-list\", \"--first-parent\", \"HEAD\")"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "failure_names": [
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='side_branch_symlink')"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "b979c63c26a43aaf965f3058e75e2647756b336b1dc026797e13f3bc259bad82"
+  },
+  {
+   "id": "RV63",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "            if mode != b\"40000\":\n                return False\n            level.add(oid)\n",
+     "new": "            if mode == b\"160000\":\n                continue\n            if mode != b\"40000\":\n                return False\n            level.add(oid)\n"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "failure_names": [
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='gitlink_absent')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='gitlink_mode_tree')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='gitlink_present')"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "08edca936e58c0027283cf49cbd038ebe16634c3eef1adc4313d1f0836aacd86"
+  },
+  {
+   "id": "CDEX15",
+   "witnesses": [
+    "test_git_malformed_args_and_subprocess_failures_return_none"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "                           stdin=subprocess.DEVNULL, env=_git_env())\n    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):\n        return None\n",
+     "new": "                           stdin=subprocess.DEVNULL, env=_git_env())\n    except (OSError, subprocess.SubprocessError):\n        return None\n"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_git_malformed_args_and_subprocess_failures_return_none",
+    "test_invalid_reference_paths_are_refused_without_exceptions"
+   ],
+   "failure_names": [
+    "test_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none)",
+    "test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\ud800'\")",
+    "test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\x00'\")"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "8e91625bd2b4800c5f39120adf0c5740d3ab5760c350c5dba92f0721878e930f"
+  }
+ ],
+ "review69": [
+  {
+   "id": "RB1",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    0
+   ],
+   "edits": [
+    {
+     "old": "             for i in range(1, len(parts) + 1)]",
+     "new": "             for i in (1, len(parts))]"
+    }
+   ],
+   "status": "NOT_APPLIED",
+   "reasons": [
+    "ANCHOR_NOT_UNIQUE"
+   ]
+  },
+  {
+   "id": "RB2",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    commits = _git(repo_root, \"rev-list\", \"HEAD\")",
+     "new": "    commits = _git(repo_root, \"rev-list\", \"--first-parent\", \"HEAD\")"
+    }
+   ],
+   "status": "ERROR",
+   "reasons": [
+    "NO_INTENDED_PROPERTY_ASSERTION"
+   ],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "failure_names": [
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='side_branch_symlink')"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "b979c63c26a43aaf965f3058e75e2647756b336b1dc026797e13f3bc259bad82"
+  },
+  {
+   "id": "RB3",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "            if parts[0] not in (b\"100644\", b\"100755\"):          # review 68 P1",
+     "new": "            if parts[1] == b\"commit\":\n                continue\n            if parts[0] not in (b\"100644\", b\"100755\"):          # review 68 P1"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "failure_names": [
+    "test_review68_non_directory_review_paths_refuse (test_lx_platform.TestAttestationPreflight.test_review68_non_directory_review_paths_refuse) (case='history_gitlink')"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "02481cfe8a522ca06de1415c5630bfd63ee6478dbcd7c78c74675944bd4a0e06"
+  },
+  {
+   "id": "RB4",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    0
+   ],
+   "edits": [
+    {
+     "old": "re.fullmatch(r\"[0-9a-f]{40,64} tree [0-9]+\", a)",
+     "new": "re.fullmatch(r\"[0-9a-f]{40,64} (tree|commit) [0-9]+\", a)"
+    }
+   ],
+   "status": "NOT_APPLIED",
+   "reasons": [
+    "ANCHOR_NOT_UNIQUE"
+   ]
+  },
+  {
+   "id": "RB5",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    0
+   ],
+   "edits": [
+    {
+     "old": "             for i in range(1, len(parts) + 1)]",
+     "new": "             for i in range(1, len(parts))]"
+    }
+   ],
+   "status": "NOT_APPLIED",
+   "reasons": [
+    "ANCHOR_NOT_UNIQUE"
+   ]
+  },
+  {
+   "id": "RB6",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse",
+    "test_review65_caller_git_environment_is_ignored"
+   ],
+   "anchor_counts": [
+    0
+   ],
+   "edits": [
+    {
+     "old": "                           input=(\"\\n\".join(names) + \"\\n\").encode(), capture_output=True, timeout=60, env=_git_env())",
+     "new": "                           input=(\"\\n\".join(names) + \"\\n\").encode(), capture_output=True, timeout=60)"
+    }
+   ],
+   "status": "NOT_APPLIED",
+   "reasons": [
+    "ANCHOR_NOT_UNIQUE"
+   ]
+  }
+ ],
+ "mutants": [
+  {
+   "id": "RC1",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode",
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    for depth, name in enumerate(parts):",
+     "new": "    for depth, name in enumerate(parts[:-1]):"
+    }
+   ],
+   "outcome_base": {
+    "dir_check": false,
+    "result": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    }
+   },
+   "outcome_mutant": {
+    "dir_check": true,
+    "result": {
+     "valid": true,
+     "reasons": []
+    }
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 0,
+   "failed_methods": [],
+   "failure_names": [],
+   "only_own_witnesses": true,
+   "mutated_sha256": "9044628fc3a24bbf9f4a976c27f8ae19c66b9c3324db7f2b34880297d0baf9b1",
+   "property": "the review directory's own entry is not read by mode (ancestors only; RB5 on the new walk)"
+  },
+  {
+   "id": "RC2",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode",
+    "test_review65_caller_git_environment_is_ignored"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "                           capture_output=True, timeout=60, env=_git_env())",
+     "new": "                           capture_output=True, timeout=60)"
+    }
+   ],
+   "outcome_base": {
+    "dir_check": false,
+    "result": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    }
+   },
+   "outcome_mutant": {
+    "dir_check": false,
+    "result": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    }
+   },
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review65_caller_git_environment_is_ignored"
+   ],
+   "failure_names": [
+    "test_review65_caller_git_environment_is_ignored (test_lx_platform.TestAttestationPreflight.test_review65_caller_git_environment_is_ignored)"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "0b7b368c3c9dd52e6d2adb7da39bd5837fd65106b76680b2b2731491c43723d4",
+   "property": "_cat_file_batch runs with the caller's environment (RB6 on the new helper)"
+  },
+  {
+   "id": "RC3",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    commits = _git(repo_root, \"rev-list\", \"HEAD\")",
+     "new": "    commits = _git(repo_root, \"rev-list\", \"--no-merges\", \"HEAD\")"
+    }
+   ],
+   "outcome_base": {
+    "dir_check": false,
+    "result": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    }
+   },
+   "outcome_mutant": {
+    "dir_check": true,
+    "result": {
+     "valid": true,
+     "reasons": []
+    }
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 0,
+   "failed_methods": [],
+   "failure_names": [],
+   "only_own_witnesses": true,
+   "mutated_sha256": "cb62e78c040b729ff017faddfbe105ee2ce00e551457c9f027deb5885db909e1",
+   "property": "the ancestor walk skips merge commits' own trees (rev-list --no-merges)"
+  },
+  {
+   "id": "RC4",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "            if mode != b\"40000\":\n                return False\n",
+     "new": "            if not mode.startswith(b\"4\"):\n                return False\n"
+    }
+   ],
+   "outcome_base": {
+    "dir_check": false,
+    "result": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    }
+   },
+   "outcome_mutant": {
+    "dir_check": true,
+    "result": {
+     "valid": true,
+     "reasons": []
+    }
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 0,
+   "failed_methods": [],
+   "failure_names": [],
+   "only_own_witnesses": true,
+   "mutated_sha256": "5e9d636f2dc5170f7fce7bb9865bed027db38678562e06622aada3a33af54257",
+   "property": "directory-like odd modes (40755, 41000) are read as directories"
+  },
+  {
+   "id": "RC5",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "len(ids[0]) // 2",
+     "new": "20"
+    }
+   ],
+   "outcome_base": {
+    "dir_check": true,
+    "result": {
+     "valid": true,
+     "reasons": []
+    }
+   },
+   "outcome_mutant": {
+    "dir_check": false,
+    "result": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    }
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 0,
+   "failed_methods": [],
+   "failure_names": [],
+   "only_own_witnesses": true,
+   "mutated_sha256": "8183e7f38b7c4ca90b5dd2b3e44e3dcace4c9cb29fbb44b4ea6212a7659f32b3",
+   "property": "raw tree entries are parsed with a fixed 20-byte object id (sha256 width lost)"
+  },
+  {
+   "id": "RC6",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    level, width = {oid for oid, _, _ in roots}",
+     "new": "    level, width = {roots[0][0]}"
+    }
+   ],
+   "outcome_base": {
+    "dir_check": false,
+    "result": {
+     "valid": false,
+     "reasons": [
+      "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+      "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+     ]
+    }
+   },
+   "outcome_mutant": {
+    "dir_check": true,
+    "result": {
+     "valid": true,
+     "reasons": []
+    }
+   },
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review68_non_directory_review_paths_refuse",
+    "test_review69_ancestor_entries_are_read_by_mode"
+   ],
+   "failure_names": [
+    "test_review68_non_directory_review_paths_refuse (test_lx_platform.TestAttestationPreflight.test_review68_non_directory_review_paths_refuse) (case='ancestor_symlink')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='caller_git_dir')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='gitlink_absent')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='gitlink_mode_tree')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='gitlink_present')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='middle_symlink')",
+    "test_review69_ancestor_entries_are_read_by_mode (test_lx_platform.TestAttestationPreflight.test_review69_ancestor_entries_are_read_by_mode) (case='side_branch_symlink')"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "6333f4a9d2ed7394da037fb76452d6c4e79671e6a12597927bb3373c3f3d78b1",
+   "property": "only HEAD's root tree is walked (history ignored)"
+  },
+  {
+   "id": "RC7",
+   "witnesses": [
+    "test_review69_ancestor_entries_are_read_by_mode",
+    "test_review65_caller_git_environment_is_ignored"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "        if len(head) != 3 or not re.fullmatch",
+     "new": "        if len(head) == 2 and head[1] == b\"missing\":\n            pos = nl + 1\n            answers.append((\"0\" * 40, \"tree\", b\"\" if contents else None))\n            continue\n        if len(head) != 3 or not re.fullmatch"
+    }
+   ],
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 227,
+   "returncode": 0,
+   "failed_methods": [],
+   "failure_names": [],
+   "only_own_witnesses": true,
+   "mutated_sha256": "b7a8561076f4f9c0794317f1a76470002b7d20bb76187c41c63ea1f6c0c45d4c",
+   "property": "a `missing` batch answer is read as an empty tree (review 69 S4 reverted inside the helper)"
+  }
+ ]
+}

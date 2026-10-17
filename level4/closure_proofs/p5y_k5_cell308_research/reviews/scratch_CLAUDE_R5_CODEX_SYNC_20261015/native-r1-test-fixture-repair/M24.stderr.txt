@@ -1,0 +1,43 @@
+test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... FAIL
+test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls) ... FAIL
+test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)
+N04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok
+test_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok
+test_proc_view (test_lx_platform.TestBusy.test_proc_view)
+N4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok
+test_accepting_line_must_post_date_the_attested_blob (test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob)
+G2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository- ... ok
+test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)
+N7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok
+test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)
+P1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... ok
+test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) ... ok
+test_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)
+Z03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query ... ok
+test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) ... ok
+test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled) ... ok
+
+======================================================================
+FAIL: test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py", line 554, in test_window_not_lifetime_and_reuse_and_birth
+    self.assertEqual(set(busy), {"spiker", "newborn", "reused_pid"})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the second set but not the first:
+'reused_pid'
+'newborn'
+
+======================================================================
+FAIL: test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py", line 189, in test_birth_exit_and_observed_owned_parent_positive_controls
+    self.assertEqual(len(born), 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 12 tests in 4.613s
+
+FAILED (failures=2)

@@ -1,0 +1,71 @@
+"""Resumable local strict-mutation run using the harness's own registry and functions (apply_mutation, run_suite,
+classify_mutant). One result file per mutant is written atomically as soon as it is classified, so a container
+restart loses only the mutants in flight. Not the harness's single-process evidence run; the native workflow runs that.
+
+usage: python3 -B sharded_run.py <DEV> <results dir> [workers]"""
+import hashlib, json, os, sys, tempfile, time
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+DEV, OUT = Path(sys.argv[1]), Path(sys.argv[2])
+WORKERS = int(sys.argv[3]) if len(sys.argv) > 3 else 3
+sys.path.insert(0, str(DEV / "tests"))
+import run_mutants as R
+OUT.mkdir(parents=True, exist_ok=True)
+src = (DEV / "lx_platform.py").read_text()
+env = dict(os.environ); env.pop("LX_PLATFORM_DIR", None)
+env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONWARNINGS="error", PYTHONHASHSEED="0")
+
+def atomic(path, obj):
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(obj, sort_keys=True))
+    os.replace(tmp, path)
+
+bpath = OUT / "_baseline.json"
+if bpath.exists():
+    base = json.loads(bpath.read_text())
+else:
+    inputs_before = R.input_hashes()
+    base = R.run_suite(env)
+    atomic(bpath, {"suite": base, "inputs_before": inputs_before, "registry": len(R.validate_registry()),
+                   "expected_test_count": R.expected_test_count(), "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
+    base = json.loads(bpath.read_text())
+suite_base = base["suite"]
+print("baseline", suite_base["ran"], R.suite_passed(suite_base), flush=True)
+
+def one(item):
+    mid, what, edits = item
+    path = OUT / f"{mid}.json"
+    if path.exists():
+        return mid, json.loads(path.read_text())["status"]
+    mutated, counts, err = R.apply_mutation(src, edits)
+    row = {"id": mid, "property": what, "anchor_counts": counts,
+           "intended_property_test_methods": R.PROPERTY_WITNESSES[mid]}
+    if err:
+        row.update(status="NOT_APPLIED", reasons=[err])
+    else:
+        row["mutated_lx_platform_sha256"] = hashlib.sha256(mutated.encode()).hexdigest()
+        with tempfile.TemporaryDirectory() as d:
+            Path(d, "lx_platform.py").write_text(mutated)
+            st = R.run_suite(dict(env, LX_PLATFORM_DIR=d))
+        status, why = R.classify_mutant(st, suite_base, R.PROPERTY_WITNESSES[mid])
+        row.update(status=status, reasons=why, ran=st["ran"], returncode=st["returncode"],
+                   failed_methods=sorted({n.split(" ", 1)[0] for n in st["assertion_failure_names"]}))
+    atomic(path, row)
+    return mid, row["status"]
+
+with ThreadPoolExecutor(WORKERS) as ex:
+    for mid, status in ex.map(one, R.MUTANTS):
+        print(mid, status, flush=True)
+rows = [json.loads((OUT / f"{m}.json").read_text()) for m, _, _ in R.MUTANTS]
+counts = {}
+for r in rows:
+    counts[r["status"]] = counts.get(r["status"], 0) + 1
+summary = {"baseline_pass": R.suite_passed(suite_base), "baseline_ran": suite_base["ran"],
+           "expected_test_count": base["expected_test_count"], "registry": base["registry"], "status_counts": counts,
+           "inputs_before": base["inputs_before"], "inputs_after": R.input_hashes(),
+           "finished_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "workers": WORKERS,
+           "rows": rows}
+summary["inputs_unchanged"] = summary["inputs_before"] == summary["inputs_after"]
+atomic(OUT / "_summary.json", summary)
+print("SUMMARY", json.dumps({k: summary[k] for k in ("baseline_pass", "baseline_ran", "registry", "status_counts",
+                                                      "inputs_unchanged")}), flush=True)

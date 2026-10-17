@@ -1,0 +1,44 @@
+"""Actual controlled-runner probes against a tiny synthetic-only unittest fixture.
+No product module, scientific evaluator, or real development test is imported.
+"""
+import ast
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+BASE=Path('/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-01')
+p=BASE/'inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py'
+ast.parse(p.read_text())
+spec=importlib.util.spec_from_file_location('independent_nativefixture_harness',p);H=importlib.util.module_from_spec(spec);spec.loader.exec_module(H)
+tests=BASE/'synthetic-fixture/tests';tests.mkdir(parents=True,exist_ok=True)
+fixture='''import os, unittest
+MODE = os.environ.get("INDEPENDENT_SYNTHETIC_MODE", "baseline")
+class CustomAssertionError(AssertionError): pass
+class TestSynthetic(unittest.TestCase):
+    failureException = RuntimeError if MODE == "runtime_as_failure" else AssertionError
+    def test_intended_property(self):
+        if MODE == "runtime_as_failure":
+            raise RuntimeError("actual runtime failure\\nAssertionError: quoted suffix")
+        if MODE == "assertion_with_runtime_text":
+            raise AssertionError("actual assertion\\nRuntimeError: quoted suffix")
+        if MODE == "assertion_subclass":
+            raise CustomAssertionError("subclass has no exact-AssertionError credit")
+        if MODE in ("distinct_subtests", "duplicate_subtests"):
+            for value in (1, 2) if MODE == "distinct_subtests" else (1, 1):
+                with self.subTest(value=value):
+                    self.assertEqual(value, 0)
+    def test_unrelated_property(self):
+        self.assertTrue(True)
+'''
+ast.parse(fixture);(tests/'test_fixture.py').write_text(fixture)
+H.HERE=tests
+baseline=H.run_suite({'INDEPENDENT_SYNTHETIC_MODE':'baseline'})
+rows=[]
+for mode,expected in [('runtime_as_failure','ERROR'),('assertion_with_runtime_text','KILLED'),('assertion_subclass','ERROR'),('distinct_subtests','KILLED'),('duplicate_subtests','ERROR')]:
+    suite=H.run_suite({'INDEPENDENT_SYNTHETIC_MODE':mode})
+    status,reasons=H.classify_mutant(suite,baseline,['test_intended_property'])
+    rows.append({'case':mode,'expected':expected,'actual':status,'matches_expectation':status==expected,'reasons':reasons,'suite':suite})
+rec={'harness_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'fixture_source':fixture,'fixture_sha256':hashlib.sha256(fixture.encode()).hexdigest(),'baseline':baseline,'product_imported':False,'full_development_suite_or_mutants_executed':False,'only_two_test_synthetic_fixture_executed':True,'mismatches':[r['case'] for r in rows if not r['matches_expectation']],'probes':rows}
+(BASE/'actual-synthetic-runner-probes.json').write_text(json.dumps(rec,indent=2)+'\n')
+print(json.dumps({'harness_sha256':rec['harness_sha256'],'baseline_invalid_reasons':baseline['invalid_reasons'],'probe_count':len(rows),'mismatches':rec['mismatches']},indent=2))
+for row in rows:print(json.dumps({k:v for k,v in row.items() if k!='suite'}))

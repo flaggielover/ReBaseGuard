@@ -1,0 +1,193 @@
+"""Review 69 (derived from review 68's reviewer68_mutants.py.txt, whose header, child helpers, outcome() and
+classification loop are copied): (1) the registered mutants RV26, RV55-RV60 and Q01 re-run singly against a fresh
+baseline, plus diagnostic splits of RV26 (each edit alone) and Q01 (its first two edits, the 336bb0cb shape); (2) the
+reviewer's new mutants RB1-RB5, classified with the pinned harness's run_suite / classify_mutant (strict criteria),
+each with an outcome check on a synthetic repository (base vs mutant, child interpreters). The pinned tree is never
+written: each mutant is a copy under the scratch temporary directory.
+Second batch (reviewer69b): RB6 only; registered and split lists emptied.
+usage: python3 -B -I reviewer69b_mutants.py.txt <pinned DEV dir> <scratch tmp dir> <out.json>"""
+import hashlib, importlib.util, json, os, subprocess, sys, tempfile
+from pathlib import Path
+
+DEV, TMP, OUT = sys.argv[1:4]
+spec = importlib.util.spec_from_file_location("run_mutants_pinned", Path(DEV, "tests/run_mutants.py"))
+H = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(H)                 # module level only builds the registry; main() is not called
+
+REGISTERED = []
+
+reg0 = {mid: (what, edits) for mid, what, edits in H.MUTANTS}
+SPLITS = []
+
+W68 = ["test_review68_non_directory_review_paths_refuse"]
+MINE = [
+    ("RB6", "the batch-check call of the ancestor check runs with the caller's environment (env=_git_env() dropped)",
+     [('input=("\\n".join(names) + "\\n").encode(), capture_output=True, timeout=60, env=_git_env())',
+       'input=("\\n".join(names) + "\\n").encode(), capture_output=True, timeout=60)')],
+     ["test_review65_caller_git_environment_is_ignored", "test_review68_non_directory_review_paths_refuse"],
+     "ancestor_symlink_with_caller_git_dir"),
+]
+
+CHILD = r'''
+import hashlib, json, os, subprocess, sys, zlib
+from pathlib import Path
+sys.path.insert(0, sys.argv[1]); import lx_platform as L
+kind, work = sys.argv[2], Path(sys.argv[3])
+HW = {"machine_id_sha256": "a"*64, "product_uuid_sha256": "b"*64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR; ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+OK = f"review\n{L.ACCEPTANCE_LINE}{SHA}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+CFG = ["-c","user.name=t","-c","user.email=t@t","-c","commit.gpgsign=false","-c","core.hooksPath=/dev/null","-c","gc.auto=0",
+       "-c","core.fsmonitor=false","-c","protocol.file.allow=always","-c","init.defaultBranch=main"]
+def git(d, *a, inp=None):
+    return subprocess.run(["git","-C",str(d),*CFG,*a],check=True,capture_output=True,input=inp).stdout.decode().strip()
+def commit(d, files=None, rm=()):
+    for k, v in (files or {}).items():
+        p = Path(d, k); p.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(v, tuple): os.symlink(v[1], p)
+        else: p.write_bytes(v)
+    for k in rm: git(d, "rm","-q",k)
+    git(d, "add","-A"); git(d, "commit","-q","--allow-empty","-m","c"); return git(d, "rev-parse","HEAD")
+def init(d):
+    Path(d).mkdir(parents=True, exist_ok=True); git(d, "init","-q")
+    for k, v in (("gc.auto","0"),("core.hooksPath","/dev/null"),("maintenance.auto","false")): git(d,"config","--local",k,v)
+def bad(d):
+    init(d); ids = [commit(d, {"att/HOST.json": ATT}), commit(d, {f"{RD}/veto.md": f"{SHA} REJECTED\n".encode()})]
+    ids += [commit(d, rm=[f"{RD}/veto.md"]), commit(d, {f"{ACC}1.md": OK})]; return ids
+def valid(d):
+    try:
+        rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": SHA}, repo_root=str(d))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}"}
+out = {}
+TOP = RD.split("/")
+def put_entry(d, parent, path, mode, oid):
+    git(d, "read-tree", parent)
+    git(d, "update-index", "--add", "--cacheinfo", f"{mode},{oid},{path}")
+    c = git(d, "commit-tree", git(d, "write-tree"), "-p", parent, "-m", "odd"); git(d, "update-ref", "HEAD", c)
+    git(d, "update-index", "--force-remove", path)
+    c = git(d, "commit-tree", git(d, "write-tree"), "-p", c, "-m", "rm"); git(d, "update-ref", "HEAD", c)
+    git(d, "reset", "-q", "--hard")
+if kind == "mid_ancestor_symlink":
+    init(work); commit(work, {"att/HOST.json": ATT})
+    anc = "/".join(TOP[:2]); rest = "/".join(TOP[2:])
+    commit(work, {f"alt/{rest}/veto.md": f"{SHA} REJECTED\n".encode()})
+    commit(work, {anc: ("link", "../alt")})
+    commit(work, rm=[anc, f"alt/{rest}/veto.md"]); commit(work, {f"{ACC}1.md": OK})
+    out = valid(work)
+elif kind == "side_branch_ancestor_symlink":
+    init(work); commit(work, {"att/HOST.json": ATT})
+    git(work, "checkout", "-q", "-b", "side")
+    commit(work, {f"alt/{'/'.join(TOP[1:])}/veto.md": f"{SHA} REJECTED\n".encode()})
+    commit(work, {TOP[0]: ("link", "alt")})
+    git(work, "checkout", "-q", "main"); git(work, "merge", "-q", "-s", "ours", "--no-edit", "side")
+    commit(work, {f"{ACC}1.md": OK})
+    out = valid(work)
+elif kind == "history_gitlink_under_rd":
+    init(work); c1 = commit(work, {"att/HOST.json": ATT})
+    put_entry(work, c1, f"{RD}/sub", "160000", c1)
+    commit(work, {f"{ACC}1.md": OK})
+    out = valid(work)
+elif kind == "present_gitlink_ancestor":
+    init(work); c1 = commit(work, {"att/HOST.json": ATT})
+    put_entry(work, c1, TOP[0], "160000", c1)
+    commit(work, {f"{ACC}1.md": OK})
+    out = valid(work)
+elif kind == "ancestor_symlink_with_caller_git_dir":
+    init(work); commit(work, {"att/HOST.json": ATT})
+    commit(work, {f"alt/{'/'.join(TOP[1:])}/veto.md": f"{SHA} REJECTED\\n".encode()})
+    commit(work, {TOP[0]: ("link", "alt")})
+    commit(work, rm=[TOP[0], f"alt/{'/'.join(TOP[1:])}/veto.md"]); commit(work, {f"{ACC}1.md": OK})
+    empty = Path(str(work) + "_empty"); init(empty)
+    no_env = valid(work)
+    os.environ["GIT_DIR"] = str(empty / ".git")
+    out = dict(valid(work), without_caller_git_dir=no_env)
+elif kind == "review_dir_symlink_history":
+    init(work); commit(work, {"att/HOST.json": ATT})
+    commit(work, {f"{RD.rsplit('/', 1)[0]}/elsewhere/veto.md": f"{SHA} REJECTED\n".encode()})
+    commit(work, {RD: ("link", "elsewhere")})
+    commit(work, rm=[RD, f"{RD.rsplit('/', 1)[0]}/elsewhere/veto.md"]); commit(work, {f"{ACC}1.md": OK})
+    out = valid(work)
+print(json.dumps(out))
+'''
+
+
+def outcome(moddir, kind):
+    with tempfile.TemporaryDirectory(dir=TMP) as w:
+        p = subprocess.run([sys.executable, "-B", "-I", "-c", CHILD, moddir, kind, str(Path(w, "repo"))],
+                           capture_output=True, text=True, timeout=300)
+    try:
+        return json.loads(p.stdout.strip().splitlines()[-1])
+    except Exception:
+        return {"child_error": p.stderr[-800:]}
+
+
+src = H.SRC.read_text()
+env = dict(os.environ)
+env.pop("LX_PLATFORM_DIR", None)
+env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONWARNINGS="error", PYTHONHASHSEED="0")
+base = H.run_suite(env)
+out = {"source_sha256": hashlib.sha256(src.encode()).hexdigest(), "baseline_ran": base["ran"],
+       "baseline_pass": H.suite_passed(base), "expected_test_count": H.expected_test_count(),
+       "registered": [], "mutants": []}
+reg = {mid: (what, edits) for mid, what, edits in H.MUTANTS}
+for mid in REGISTERED:
+    what, edits = reg[mid]
+    mutated, counts, err = H.apply_mutation(src, edits)
+    row = {"id": mid, "witnesses": H.PROPERTY_WITNESSES[mid], "anchor_counts": counts}
+    if err:
+        row.update(status="NOT_APPLIED", reasons=[err])
+    else:
+        with tempfile.TemporaryDirectory(dir=TMP) as d:
+            Path(d, "lx_platform.py").write_text(mutated)
+            suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+        status, reasons = H.classify_mutant(suite, base, H.PROPERTY_WITNESSES[mid])
+        failed = sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]})
+        row.update(status=status, reasons=reasons, ran=suite["ran"], failed_methods=failed,
+                   only_own_witnesses=set(failed) <= set(H.PROPERTY_WITNESSES[mid]),
+                   mutated_sha256=hashlib.sha256(mutated.encode()).hexdigest())
+    out["registered"].append(row)
+    print(mid, row["status"], row.get("failed_methods"), flush=True)
+out["splits"] = []
+for mid, edits, witnesses in SPLITS:
+    mutated, counts, err = H.apply_mutation(src, edits)
+    row = {"id": mid, "witnesses": witnesses, "anchor_counts": counts, "edits": [{"old": o, "new": n} for o, n in edits]}
+    if err:
+        row.update(status="NOT_APPLIED", reasons=[err])
+    else:
+        with tempfile.TemporaryDirectory(dir=TMP) as d:
+            Path(d, "lx_platform.py").write_text(mutated)
+            suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+        status, reasons = H.classify_mutant(suite, base, witnesses)
+        row.update(status=status, reasons=reasons, ran=suite["ran"], returncode=suite["returncode"],
+                   failed_methods=sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]}),
+                   mutated_sha256=hashlib.sha256(mutated.encode()).hexdigest())
+    out["splits"].append(row)
+    print(mid, row["status"], row.get("reasons"), row.get("failed_methods"), flush=True)
+with tempfile.TemporaryDirectory(dir=TMP) as based:
+    Path(based, "lx_platform.py").write_text(src)
+    for mid, what, edits, witnesses, kind in MINE:
+        mutated, counts, err = H.apply_mutation(src, edits)
+        row = {"id": mid, "property": what, "witnesses": witnesses, "anchor_counts": counts,
+               "edits": [{"old": o, "new": n} for o, n in edits]}
+        if err:
+            row.update(status="NOT_APPLIED", reasons=[err])
+        else:
+            with tempfile.TemporaryDirectory(dir=TMP) as d:
+                Path(d, "lx_platform.py").write_text(mutated)
+                suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+                row["outcome_base"] = outcome(based, kind)
+                row["outcome_mutant"] = outcome(d, kind)
+            status, reasons = H.classify_mutant(suite, base, witnesses)
+            row.update(status=status, reasons=reasons, ran=suite["ran"], returncode=suite["returncode"],
+                       failed_methods=sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]}),
+                       mutated_sha256=hashlib.sha256(mutated.encode()).hexdigest())
+        out["mutants"].append(row)
+        print(mid, row["status"], row.get("reasons"), row.get("failed_methods"), "| base:",
+              json.dumps(row.get("outcome_base"))[:200], "| mutant:", json.dumps(row.get("outcome_mutant"))[:200],
+              flush=True)
+Path(OUT).write_text(json.dumps(out, indent=1) + "\n")

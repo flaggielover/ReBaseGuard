@@ -1,0 +1,206 @@
+{
+ "source_sha256": "96eb3a5ef94f465b997886482e2ef333b7a996e95c647b1e9dddf2f1c5e7bcf9",
+ "baseline_ran": 208,
+ "baseline_pass": true,
+ "expected_test_count": 208,
+ "mutants": [
+  {
+   "id": "RX1",
+   "property": "replace objects honoured (--no-replace-objects dropped from the isolation)",
+   "witnesses": [
+    "test_review64_order_ignores_reading_configuration",
+    "test_review63_rejection_is_permanent"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "_GIT_ISOLATION = (\"--no-replace-objects\", \"-c\", \"log.showRoot=true\")",
+     "new": "_GIT_ISOLATION = (\"-c\", \"log.showRoot=true\")"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by HISTORICAL: level4/closure_proofs/p5y_k5_cell308_research/reviews/veto.md (blob 824fe50582b4)"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 208,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "cc7eb62d2d24a00869f7134909923a267f69a40f5a8a511499c4e02392de4b87"
+  },
+  {
+   "id": "RX2",
+   "property": "info/grafts honoured (GIT_GRAFT_FILE no longer redirected)",
+   "witnesses": [
+    "test_review64_order_ignores_reading_configuration",
+    "test_review63_rejection_is_permanent"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "GIT_ATTR_NOSYSTEM=\"1\",\n                GIT_GRAFT_FILE=os.devnull)",
+     "new": "GIT_ATTR_NOSYSTEM=\"1\")"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by HISTORICAL: level4/closure_proofs/p5y_k5_cell308_research/reviews/veto.md (blob 824fe50582b4)"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 208,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "8500fd933ccaf63a2f1372bc3bbadb9443aab88a9b4b8d208a7921e3003b4818"
+  },
+  {
+   "id": "RX3",
+   "property": "a full sha inside a longer hex run names the attestation only in lower case",
+   "witnesses": [
+    "test_review64_sha_inside_longer_hex_run_still_names_it",
+    "test_review63_veto_words_and_references"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    return sha in line.lower() or any(",
+     "new": "    return sha in line or any("
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by level4/closure_proofs/p5y_k5_cell308_research/reviews/n.md"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 208,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "4eceba54ffb770bb8f120a48d6dece91a206495d74fd550f4b9d53c3596198e4"
+  },
+  {
+   "id": "RX4",
+   "property": "only PermissionError (not every OSError) from a unit root becomes unknown",
+   "witnesses": [
+    "test_review64_unreadable_unit_root_is_unknown_not_a_crash"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "        except OSError:                                         # review 64 K9: e.g. a root listable, not searchable\n",
+     "new": "        except PermissionError:\n"
+    }
+   ],
+   "outcome_base": {
+    "units": {
+     "apt-daily-upgrade.timer": null,
+     "unattended-upgrades.service": null
+    },
+    "shown_disabled": false
+   },
+   "outcome_mutant": {
+    "exception": "OSError: [Errno 5] synthetic I/O error"
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 208,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "4efa124fdb4812389f168a9f62d37b461c4637606e92b93f7cc705c4074dfb24"
+  },
+  {
+   "id": "RX5",
+   "property": "the ancestry check (_strictly_after) runs without the git isolation (replace refs / grafts honoured)",
+   "witnesses": [
+    "test_accepting_line_must_post_date_the_attested_blob",
+    "test_review64_order_ignores_reading_configuration"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "        r = subprocess.run([\"git\", \"-C\", str(repo_root), *_GIT_ISOLATION, \"merge-base\", \"--is-ancestor\", earlier,\n                            later], capture_output=True, timeout=60, stdin=subprocess.DEVNULL, env=_git_env())",
+     "new": "        r = subprocess.run([\"git\", \"-C\", str(repo_root), \"merge-base\", \"--is-ancestor\", earlier,\n                            later], capture_output=True, timeout=60, stdin=subprocess.DEVNULL)"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 208,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "08ad1ab5c68ace8f3ff9adc1a4a0ffe005f7ea6178d53742ed9e9d6a7c946816"
+  },
+  {
+   "id": "RX6",
+   "property": "the exact-path listing need not cover every reviewed path (set equality dropped)",
+   "witnesses": [
+    "test_review64_range_like_review_names_do_not_block",
+    "test_malformed_listing_and_nonutf8_review_blob_refuse_verification"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    if entries is None or set(entries) != set(every):",
+     "new": "    if entries is None:"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: current review blob ids unreadable",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 208,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "a032c8eec9103d4d76781c3f5676d33568756179a27c5be1fde276c7ccfa05e5"
+  }
+ ]
+}

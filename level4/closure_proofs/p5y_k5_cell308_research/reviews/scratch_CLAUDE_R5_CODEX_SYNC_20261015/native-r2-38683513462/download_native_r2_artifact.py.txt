@@ -1,0 +1,69 @@
+import datetime
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import zipfile
+
+RUN = 38683513462
+COMMIT = 'ff717f816324b7f00f4e1f51ebb3def1e227ace6'
+ROOT = Path('/tmp/cell308-claude-sync-20261015')
+META = ROOT / f'run-{RUN}-metadata'
+META.mkdir(exist_ok=True)
+
+
+def api(endpoint, name):
+    raw = subprocess.run(['gh', 'api', 'repos/flaggielover/ReBaseGuard/' + endpoint],
+                         capture_output=True, check=True).stdout
+    value = json.loads(raw)
+    (META / name).write_bytes(raw)
+    return value
+
+
+run = api(f'actions/runs/{RUN}', 'run.json')
+assert run['head_sha'] == COMMIT and run['run_attempt'] == 1
+jobs = api(f'actions/runs/{RUN}/jobs', 'jobs.json')
+if run['status'] != 'completed':
+    print(json.dumps({'ready': False, 'status': run['status'], 'run_id': RUN}))
+    raise SystemExit(0)
+artifacts = api(f'actions/runs/{RUN}/artifacts', 'artifacts.json')
+name = f'cell308-r5-synthetic-{COMMIT}-{RUN}-1'
+matches = [a for a in artifacts['artifacts'] if a['name'] == name and not a['expired']]
+assert len(matches) == 1, 'expected exactly one immutable named artifact'
+artifact = matches[0]
+archive = ROOT / f'native-{RUN}.zip'
+with archive.open('wb') as stream:
+    subprocess.run(['gh', 'api', f'repos/flaggielover/ReBaseGuard/actions/artifacts/{artifact["id"]}/zip'],
+                   stdout=stream, stderr=subprocess.PIPE, check=True)
+archive_sha = hashlib.sha256(archive.read_bytes()).hexdigest()
+digest = artifact.get('digest')
+if digest:
+    assert digest == 'sha256:' + archive_sha, 'archive digest differs from GitHub artifact metadata'
+folder = ROOT / f'native-{RUN}'
+folder.mkdir(exist_ok=True)
+with zipfile.ZipFile(archive) as bundle:
+    assert bundle.testzip() is None
+    assert len({m.filename for m in bundle.infolist()}) == len(bundle.infolist()), 'duplicate archive member refused'
+    assert sum(i.file_size for i in bundle.infolist()) <= 200 * 1024 * 1024
+    for member in bundle.infolist():
+        path = Path(member.filename)
+        assert not path.is_absolute() and '..' not in path.parts
+        assert len(path.parts) == 1 and not member.is_dir(), 'expected flat file-only artifact'
+        assert (member.external_attr >> 16) & 0o170000 != 0o120000, 'symlink entry refused'
+        (folder / path).write_bytes(bundle.read(member))
+manifest = json.loads((folder / 'artifact-sha256.json').read_text())
+assert set(manifest) == {p.name for p in folder.iterdir()} - {'artifact-sha256.json'}
+for filename, sha in manifest.items():
+    assert hashlib.sha256((folder / filename).read_bytes()).hexdigest() == sha, filename
+summary = json.loads((folder / 'mutations.json').read_text())
+assert summary['source_commit'] == COMMIT
+record = {'retrieved_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+          'run_id': RUN, 'source_commit': COMMIT, 'run_conclusion': run['conclusion'],
+          'artifact_id': artifact['id'], 'artifact_name': name, 'github_digest': digest,
+          'archive_sha256': archive_sha, 'archive_digest_verified': bool(digest),
+          'manifest_files_verified': len(manifest), 'artifact_files': len(list(folder.iterdir())),
+          'folder': str(folder), 'expected_test_count': summary['expected_test_count'],
+          'baseline_status': summary['unmutated_suite'], 'mutants': summary['total'],
+          'killed': summary['killed'], 'pass': summary['pass']}
+(META / 'download-verification.json').write_text(json.dumps(record, indent=2) + '\n')
+print(json.dumps({'ready': True, **record}))

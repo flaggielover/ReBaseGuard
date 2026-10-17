@@ -1,0 +1,284 @@
+"""Review 64 probes: synthetic git repositories only, scratch copy of lx_platform.py (5e8e3d9c bytes).
+Never touches the real repository: every attestation_valid call passes repo_root=<synthetic repo>.
+usage: python3 -I probes64.py.txt <base_dir_with_lx_platform.py> <tmp_root> <out.json> [module_dir_override]"""
+import hashlib, json, os, subprocess, sys, tempfile, traceback
+from pathlib import Path
+
+BASE, TMP, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+sys.path.insert(0, sys.argv[4] if len(sys.argv) > 4 else BASE)
+import lx_platform as L  # noqa: E402
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR
+ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+LINE = f"{L.ACCEPTANCE_LINE}{SHA}"
+OK = f"review\n{LINE}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+QUOTE = f"quoted: {LINE}\n".encode()
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main"]
+results = {}
+
+
+class Repo:
+    def __init__(self, d):
+        self.d, self.t = d, 1700000000
+        self.git("init", "-q")
+        for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+            self.git("config", "--local", k, v)
+
+    def git(self, *a, check=True, date=None, inp=None):
+        self.t += 60
+        ts = str(date or self.t)
+        env = dict(os.environ, GIT_AUTHOR_DATE=f"{ts} +0000", GIT_COMMITTER_DATE=f"{ts} +0000")
+        return subprocess.run(["git", "-C", self.d, *CFG, *a], check=check, capture_output=True, env=env, input=inp)
+
+    def commit(self, files=None, date=None, msg="c"):
+        for rel, data in (files or {}).items():
+            p = Path(self.d, rel)
+            p.parent.mkdir(parents=True, exist_ok=True)
+            if isinstance(data, tuple) and data[0] == "symlink":
+                os.symlink(data[1], p)
+            else:
+                p.write_bytes(data)
+        self.git("add", "-A")
+        self.git("commit", "-q", "--allow-empty", "-m", msg, date=date)
+
+    def valid(self, sha=SHA, path="att/HOST.json"):
+        try:
+            rec, why = L.attestation_valid({"path": path, "sha256": sha}, repo_root=self.d)
+            return {"valid": rec is not None, "reasons": why}
+        except Exception as e:  # a crash path is a finding
+            return {"valid": None, "exception": f"{type(e).__name__}: {e}", "tb": traceback.format_exc()[-600:]}
+
+
+def probe(name, steps, **kw):
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        r = Repo(d)
+        try:
+            extra = steps(r) or {}
+        except subprocess.CalledProcessError as e:
+            results[name] = {"setup_error": (e.stderr or b"").decode(errors="replace")[-400:]}
+            return
+        res = r.valid(**kw)
+        res.update(extra)
+        results[name] = res
+
+
+# ---------------------------------------------------------------- review 63 probes re-run (part H)
+def h1(r):
+    r.commit({"README": b"x\n"})
+    r.commit({"att/HOST.json": ATT, f"{ACC}1.md/{LINE}": b"", f"{ACC}1.md/{L.ACCEPTANCE_VERDICT_LINE}": b""})
+    r.commit({"notes/q.md": QUOTE})
+probe("H1b_tree_entry_with_blob_then_quote", h1)
+
+
+def h2(r):
+    r.commit({"README": b"x\n"}); r.git("branch", "side"); r.git("checkout", "-q", "side"); r.commit({"s": b"s"})
+    r.git("checkout", "-q", "main"); r.commit({"m": b"m"})
+    r.git("merge", "-q", "--no-ff", "--no-commit", "side")
+    for rel, data in {"att/HOST.json": ATT, f"{ACC}1.md": OK}.items():
+        Path(r.d, rel).parent.mkdir(parents=True, exist_ok=True); Path(r.d, rel).write_bytes(data)
+    r.git("add", "-A"); r.git("commit", "-q", "-m", "evil")
+    r.commit({"att/COPY.json": ATT}); r.commit({"notes/q.md": QUOTE})
+probe("H2c_evil_merge_copy_quote", h2)
+
+
+def h3(r, before=False):
+    r.commit({"README": b"x\n"}); r.git("branch", "side")
+    if before:
+        r.git("checkout", "-q", "side"); r.commit({f"{ACC}1.md": OK}, date=1800000000); r.git("checkout", "-q", "main")
+        r.commit({"att/HOST.json": ATT})
+    else:
+        r.commit({"att/HOST.json": ATT}); r.git("checkout", "-q", "side"); r.commit({f"{ACC}1.md": OK})
+        r.git("checkout", "-q", "main")
+    r.commit({"notes/q.md": QUOTE}); r.git("merge", "-q", "--no-ff", "-m", "merge", "side")
+probe("H3_side_branch_forked_before_blob", h3)
+probe("H3b_acceptance_first_dated_later", lambda r: h3(r, before=True))
+
+
+def h4(r, how):
+    r.commit({"att/HOST.json": ATT}); r.commit({f"{RD}/veto.md": f"{SHA} REJECTED\n".encode()})
+    if how == "rm":
+        r.git("rm", "-q", f"{RD}/veto.md"); r.commit()
+    else:
+        Path(r.d, "elsewhere").mkdir(); r.git("mv", f"{RD}/veto.md", "elsewhere/veto.md"); r.commit()
+    r.commit({f"{ACC}1.md": OK})
+probe("H4b_rejection_git_rm", lambda r: h4(r, "rm"))
+probe("H4c_rejection_git_mv_out", lambda r: h4(r, "mv"))
+
+H5 = {
+    "nonascii_path": (f"{RD}/拒否.md", f"{SHA} REJECTED\n".encode()),
+    "quote_in_path": (f'{RD}/a"b.md', f"{SHA} REJECTED\n".encode()),
+    "utf16": (f"{RD}/u16.md", f"{SHA} REJECTED\n".encode("utf-16")),
+    "abbreviated_10": (f"{RD}/n.md", f"{SHA[:10]} REJECTED\n".encode()),
+    "upper_case_full": (f"{RD}/n.md", f"{SHA.upper()} REJECTED\n".encode()),
+    "path_only_reference": (f"{RD}/n.md", b"att/HOST.json REJECTED\n"),
+    "REFUSED": (f"{RD}/n.md", f"{SHA} REFUSED\n".encode()),
+    "UNACCEPTED": (f"{RD}/n.md", f"{SHA} UNACCEPTED\n".encode()),
+    "verdict_declined": (f"{RD}/n.md", f"{SHA}\nVERDICT: HOST_ATTESTATION_DECLINED\n".encode()),
+    "NEEDS_REVISION": (f"{RD}/n.md", f"{SHA} NEEDS_REVISION\n".encode()),
+    "ledger_rejection": ("level4/closure_proofs/p5y_k5_cell308_research/ledger/L.jsonl",
+                         f'{{"attestation": "{SHA}", "verdict": "REJECTED"}}\n'.encode()),
+}
+for k, (p, data) in H5.items():
+    probe(f"H5_{k}", lambda r, p=p, data=data: (r.commit({"att/HOST.json": ATT}), r.commit({f"{ACC}1.md": OK, p: data})) and None)
+
+for i, extra in enumerate(("**Verdict:** NEEDS_REVISION", "## Verdict - DECLINED", "* VERDICT: HOST_ATTESTATION_DECLINED",
+                           "DEV_CODE: NOT_FAIL_CLOSED")):
+    probe(f"H6_{i}_{extra[:12]}", lambda r, e=extra: (r.commit({"att/HOST.json": ATT}),
+                                                      r.commit({f"{ACC}1.md": OK + (e + "\n").encode()})) and None)
+probe("H13_quote_before_blob", lambda r: (r.commit({"notes/q.md": QUOTE}), r.commit({"att/HOST.json": ATT}),
+                                          r.commit({f"{ACC}1.md": OK})) and None)
+probe("CONTROL_legitimate", lambda r: (r.commit({"att/HOST.json": ATT}), r.commit({f"{ACC}1.md": OK})) and None)
+
+# ---------------------------------------------------------------- new probes (review 64)
+# N1: a SYMLINK (git mode 120000, a blob) whose target text is the two accepting lines
+probe("N1_symlink_accepting_entry", lambda r: (r.commit({"att/HOST.json": ATT}),
+                                               r.commit({f"{ACC}1.md": ("symlink", f"review\n{LINE}\n{L.ACCEPTANCE_VERDICT_LINE}")}),
+                                               {"ls_tree": r.git("ls-tree", "HEAD", f"{RD}/").stdout.decode()[:200]})[2])
+
+
+# N2: a gitlink entry named as an accepting review (denial of service, fail-closed expected)
+def n2(r):
+    r.commit({"att/HOST.json": ATT}); r.commit({f"{ACC}1.md": OK})
+    r.git("update-index", "--add", "--cacheinfo", f"160000,{'1' * 40},{ACC}2.md"); r.git("commit", "-q", "-m", "gitlink")
+probe("N2_gitlink_named_as_review", n2)
+
+# N3: verdict-like text the H7 rule does not recognise, inside the accepting file
+for i, extra in enumerate(("Verdicts: NOT_FIT", "DEV_CODE: NOT_FIT (see H1)", "Status: HOLD", "- DEV_CODE: NOT_FIT",
+                           "**DEV_CODE**: NOT_FIT", "Vеrdict: NOT_FIT", "Outcome: DENIED",
+                           "VERDICT: HOST_ATTESTATION_ACCEPTED ", "VERDICT: HOST_ATTESTATION_ACCEPTED")):
+    probe(f"N3_{i}_{extra!r}", lambda r, e=extra: (r.commit({"att/HOST.json": ATT}),
+                                                   r.commit({f"{ACC}1.md": OK + (e + "\n").encode()})) and None)
+
+# N4: separate rejecting reviews the veto rule does not recognise
+N4 = {"invalid_free_text": f"Attestation {SHA} is invalid; do not use it.\n",
+      "decision_denied": f"Decision: denied for {SHA}\n",
+      "not_two_spaces_accepted": f"{SHA} not  accepted\n",
+      "not_yet_accepted": f"{SHA} not yet accepted\n",
+      "zero_width_space_in_prefix": f"{SHA[:7]}​{SHA[7:]} REJECTED\n",
+      "sha_glued_to_hex_letter": f"blob:a{SHA} REJECTED\n",
+      "blob_id_only": None}
+for k, text in N4.items():
+    def n4(r, k=k, text=text):
+        r.commit({"att/HOST.json": ATT})
+        if text is None:
+            oid = r.git("rev-parse", "HEAD:att/HOST.json").stdout.decode().strip()
+            text = f"git blob {oid} REJECTED\n"
+        r.commit({f"{ACC}1.md": OK, f"{RD}/n.md": text.encode()})
+    probe(f"N4_{k}", n4)
+
+
+# N5: repository-local config log.showRoot=false hides the ROOT commit from -S / --find-object
+def n5(r, show_root):
+    if not show_root:
+        r.git("config", "--local", "log.showRoot", "false")
+    r.commit({f"{ACC}1.md": OK})            # acceptance in the ROOT commit, BEFORE the blob
+    r.commit({"att/HOST.json": ATT})
+    r.commit({"notes/q.md": QUOTE})         # a later quote (e.g. the ledger REVIEW binding of carried item (i))
+probe("N5_acceptance_in_root_before_blob_default_config", lambda r: n5(r, True))
+probe("N5_acceptance_in_root_before_blob_log.showRoot=false", lambda r: n5(r, False))
+
+
+# N6: an accepting file that git classes as binary (a NUL byte, still valid UTF-8), written before the blob
+def n6(r):
+    r.commit({"README": b"x\n"})
+    r.commit({f"{ACC}1.md": b"\x00\n" + OK})
+    r.commit({"att/HOST.json": ATT})
+    r.commit({"notes/q.md": QUOTE})
+probe("N6_binary_accepting_file_before_blob", n6)
+
+
+# N7: a later ordinary merge of a branch forked BEFORE the blob (fail-closed side effect)
+def n7(r, fork_before):
+    r.commit({"README": b"x\n"})
+    if fork_before:
+        r.git("branch", "old")
+    r.commit({"att/HOST.json": ATT})
+    if not fork_before:
+        r.git("branch", "old")
+    r.commit({f"{ACC}1.md": OK})
+    r.git("checkout", "-q", "old"); r.commit({"unrelated.txt": b"u\n"}); r.git("checkout", "-q", "main")
+    r.git("merge", "-q", "--no-ff", "-m", "merge old", "old")
+probe("N7_later_merge_of_branch_forked_before_blob", lambda r: n7(r, True))
+probe("N7_later_merge_of_branch_forked_after_blob_before_acceptance", lambda r: n7(r, False))
+
+
+# N8: a non-UTF-8 PATH that existed only in history under the review directory (whole check unavailable)
+def n8(r):
+    r.commit({"att/HOST.json": ATT})
+    os.makedirs(Path(r.d, RD), exist_ok=True)
+    p = r.d.encode() + b"/" + RD.encode() + b"/\xffveto.md"
+    with open(p, "wb") as fh:
+        fh.write(f"{SHA} REJECTED\n".encode())
+    r.git("add", "-A"); r.git("commit", "-q", "-m", "x")
+    r.git("rm", "-q", "--cached", "-r", RD); os.remove(p); r.commit()
+    r.commit({f"{ACC}1.md": OK})
+probe("N8_nonutf8_historical_path_rejection", n8)
+
+
+# N9: crash attempts on attestation_valid (caller-chosen path strings, odd review file names)
+def n9(r):
+    r.commit({"att/HOST.json": ATT}); r.commit({f"{ACC}1.md": OK, f"{RD}/x": b"x\n", f"{RD}/x..HEAD": b"y\n",
+                                                f"{RD}/y^@": b"z\n", f"{RD}/-n.md": b"w\n"})
+probe("N9_odd_review_names", n9)
+for i, bad in enumerate(("att/HOST.json\x00", "att/\udcffx", "a" * 5000, "", ":", "HEAD", "../x")):
+    probe(f"N9_path_{i}", lambda r: (r.commit({"att/HOST.json": ATT}), r.commit({f"{ACC}1.md": OK})) and None, path=bad)
+
+
+# N10: duplicate accepting verdict line (Q04 single-site distinguishing input)
+probe("N10_duplicate_accepting_verdict_line", lambda r: (r.commit({"att/HOST.json": ATT}),
+      r.commit({f"{ACC}1.md": OK + (L.ACCEPTANCE_VERDICT_LINE + "\n").encode()})) and None)
+
+# ---------------------------------------------------------------- identity (W03 equivalence on this source)
+BOOT = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+ident = {"pid": 4242, "boot_id": BOOT.upper(), "starttime_ticks": 777, "cmdline_sha256": "c" * 64,
+         "pidns": 1, "timens": 2}
+results["W03_uppercase_boot_identity"] = L.identity_state(ident, current_boot="11111111-2222-3333-4444-555555555555",
+                                                          exists=lambda p: False, current_ns={"pidns": 1, "timens": 2})
+
+# ---------------------------------------------------------------- unit_enabled (file mode and systemd mode)
+def ue(name, files, unit, roots=("hi", "lo"), pid1=False, act=None, st=None):
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        for rel, v in files.items():
+            p = Path(d, rel)
+            p.parent.mkdir(parents=True, exist_ok=True)
+            if isinstance(v, tuple):
+                os.symlink(v[1], p)
+            elif v is None:
+                p.mkdir(exist_ok=True)
+            else:
+                p.write_text(v)
+        for rt in roots:
+            Path(d, rt).mkdir(exist_ok=True)
+        saved = (L.systemd_is_pid1, L._systemctl_is_active, L._systemctl_is_enabled)
+        L.systemd_is_pid1 = lambda *a, **k: pid1
+        L._systemctl_is_active = lambda u: act
+        L._systemctl_is_enabled = lambda u: st
+        try:
+            results[name] = L.unit_enabled(unit, tuple(str(Path(d, rt)) for rt in roots))
+        except Exception as e:
+            results[name] = f"EXCEPTION {type(e).__name__}: {e}"
+        finally:
+            L.systemd_is_pid1, L._systemctl_is_active, L._systemctl_is_enabled = saved
+
+ue("H11a_upholds", {"lo/multi-user.target.upholds/u.service": ""}, "u.service")
+ue("H11b_lower_mask_shadowed", {"hi/x.timer": "[Timer]\n", "lo/x.timer": ("l", "/dev/null"),
+                                "lo/timers.target.wants/x.timer": ""}, "x.timer")
+ue("U1_dangling_highest_entry_lower_mask_wanted", {"hi/x.timer": ("l", "/nonexistent"), "lo/x.timer": ("l", "/dev/null"),
+                                                   "lo/timers.target.wants/x.timer": ""}, "x.timer")
+ue("U2_mask_via_chain", {"hi/x.timer": ("l", "../lo/y"), "lo/y": ("l", "/dev/null"),
+                         "lo/timers.target.wants/x.timer": ""}, "x.timer")
+ue("U3_empty_unit_file_highest_wanted", {"hi/x.timer": "", "lo/timers.target.wants/x.timer": ""}, "x.timer")
+ue("U4_requires_dropin_dir_only", {"lo/x.timer.d/override.conf": "[Unit]\n"}, "x.timer")
+for a in (None, "refreshing", "deactivating", "maintenance", "inactive"):
+    ue(f"H12_disabled_active={a}", {}, "x.timer", pid1=True, act=a, st="disabled")
+ue("H12_pid1_unknown", {}, "x.timer", pid1=None, act="inactive", st="disabled")
+
+Path(OUT).write_text(json.dumps(results, indent=1, ensure_ascii=True, default=str) + "\n")
+print(json.dumps({k: (v.get("valid") if isinstance(v, dict) and "valid" in v else v) for k, v in results.items()},
+                 indent=0, ensure_ascii=True, default=str))

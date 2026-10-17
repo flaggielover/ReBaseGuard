@@ -1,0 +1,17 @@
+"""Compare a probe output at 9f223c91 (review 70's committed copy) with this review's re-run at cc02b9b7, after
+normalising object ids, temp paths, timings and the lx_platform hash. usage: python3 -I cmp_probes71.py.txt old new"""
+import json, re, sys
+def norm(x):
+    s = json.dumps(x, sort_keys=True)
+    s = re.sub(r"[0-9a-f]{40,64}", "<oid>", s)
+    s = re.sub(r"/tmp/[^\"' ]*", "<tmp>", s)
+    s = re.sub(r"tmp[a-z0-9_]{8}", "<tmpname>", s)
+    s = re.sub(r"\"(dir_check_s|attestation_valid_s|[a-z_]*_s)\": [0-9.]+", r'"\1": "<t>"', s)
+    return json.loads(s)
+a, b = json.load(open(sys.argv[1])), json.load(open(sys.argv[2]))
+for k in sorted(set(a) | set(b)):
+    if k in ("lx_platform_sha256",):
+        continue
+    if norm(a.get(k)) != norm(b.get(k)):
+        print("DIFF", k, "\n  old:", json.dumps(norm(a.get(k)))[:700], "\n  new:", json.dumps(norm(b.get(k)))[:700])
+print("keys", len(a), len(b))

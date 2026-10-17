@@ -1,0 +1,14 @@
+--- /tmp/cell308-claude-sync-20261015/code-review-delta-input/tests/test_sync_boundaries.py
++++ /tmp/cell308-claude-sync-20261015/final-test-addendum-input/test_sync_boundaries.py
+@@ -152,6 +152,11 @@
+     def test_interval_boot_schema_and_nonrecord_samples(self):
+         for value in ("bad", "", True, [], {}, None):
+             self.assertFalse(self.assess(samples=[snap(10, boot=value), snap(20)])["clean"])
++        # A shared malformed value must fail its schema without a different-boot signal masking the guard.
++        result = self.assess(start=snap(0, boot="malformed-boot"), end=snap(30, boot="malformed-boot"),
++                             samples=[snap(10, boot="malformed-boot"), snap(20, boot="malformed-boot")])
++        self.assertEqual(result["status"], "AMBIGUOUS")
++        self.assertFalse(result["clean"])
+         self.assertEqual(self.assess(samples=[snap(10, boot=OTHER_BOOT), snap(20)])["status"], "CONTAMINATED")
+         for value in (None, [], "bad", 1):
+             self.assertFalse(self.assess(samples=[value, snap(20)])["clean"])

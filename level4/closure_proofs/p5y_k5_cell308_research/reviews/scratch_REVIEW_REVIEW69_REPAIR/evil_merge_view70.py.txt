@@ -1,0 +1,17 @@
+"""Review 70: what a checkout of the evil merge (kind evil_merge_ancestor_symlink) shows at <review dir>/veto.md, and
+the RC3 view (rev-list --no-merges). usage: python3 -B -I evil_merge_view70.py.txt <moddir> <tmp>"""
+import sys, os, json, subprocess, tempfile
+from pathlib import Path
+MOD, TMPD = sys.argv[1], sys.argv[2]
+sys.argv = ["x", MOD, TMPD, os.devnull, "none"]
+exec(open(Path(__file__).with_name("cons70.py.txt")).read().split("for name, fn in KINDS.items():")[0])
+w = Path(tempfile.mkdtemp(dir=TMPD))
+r = KINDS["evil_merge_ancestor_symlink"](w)
+d = w / "r"
+merges = git(d, "rev-list", "--merges", "HEAD").split()
+wt = w / "wt"
+git(d, "worktree", "add", "-q", "--detach", str(wt), merges[0])
+p = Path(wt, RD, "veto.md")
+print(json.dumps({"merge": merges[0][:12], "checkout_shows": p.read_text() if p.exists() else None,
+                  "history_scan_lists_merge": merges[0] in git(d, "rev-list", "--full-history", "HEAD", "--", RD).split(),
+                  "base_result": r["result"]["valid"]}))

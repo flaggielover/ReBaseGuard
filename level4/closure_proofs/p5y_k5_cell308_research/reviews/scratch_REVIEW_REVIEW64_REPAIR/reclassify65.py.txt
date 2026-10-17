@@ -1,0 +1,55 @@
+"""Re-classify the committed local full-run records with the harness of the commit they claim, and recompute every
+mutated source from that commit's lx_platform.py. Git objects of the pinned worktree only.
+usage: python3 -I reclassify65.py.txt <pinned tree> <scratch dir> <out.json>"""
+import gzip, hashlib, importlib.util, json, subprocess, sys
+from pathlib import Path
+
+TREE, SCR, OUT = sys.argv[1:4]
+NS = "level4/closure_proofs/p5y_k5_cell308_research"
+DEV = f"{NS}/streams/CLOUD_R1_LINUX_DEV"
+
+
+def blob(c, p):
+    return subprocess.run(["git", "-C", TREE, "cat-file", "blob", f"{c}:{p}"], capture_output=True, check=True).stdout
+
+
+out = {}
+for name, commit in (("5E8E3D9C", "5e8e3d9c"), ("68A38C64", "68a38c64"), ("C50E73F8", "c50e73f8")):
+    d = json.loads(gzip.decompress(blob("2275b3a0", f"{NS}/reviews/scratch_REVIEW63_REPAIR_20261015/"
+                                                  f"LOCAL_FULL_HARNESS_PY312_{name}.json.gz")))
+    hdir = Path(SCR, f"harness_{commit}", "tests")
+    hdir.mkdir(parents=True, exist_ok=True)
+    (hdir / "run_mutants.py").write_bytes(blob(commit, f"{DEV}/tests/run_mutants.py"))
+    spec = importlib.util.spec_from_file_location(f"rm_{commit}", hdir / "run_mutants.py")
+    H = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(H)
+    src = blob(commit, f"{DEV}/lx_platform.py").decode()
+    reg = {mid: edits for mid, _, edits in H.MUTANTS}
+    bad = []
+    for m in d["mutants"]:
+        st, _ = H.classify_mutant(m["suite"], d["baseline"], m["intended_property_test_methods"])
+        if st != m["status"]:
+            bad.append((m["id"], "status", st, m["status"]))
+        if sorted(m["intended_property_test_methods"]) != sorted(H.PROPERTY_WITNESSES[m["id"]]):
+            bad.append((m["id"], "witnesses"))
+        if [list(e) for e in reg[m["id"]]] != [[e["old"], e["new"]] if isinstance(e, dict) else list(e)
+                                               for e in m["edits"]]:
+            bad.append((m["id"], "edits"))
+        mutated, counts, err = H.apply_mutation(src, reg[m["id"]])
+        if err or hashlib.sha256(mutated.encode()).hexdigest() != m["mutated_lx_platform_sha256"]:
+            bad.append((m["id"], "mutated_sha", err))
+        if m["suite"]["ran"] != d["expected_test_count"]:
+            bad.append((m["id"], "ran"))
+    ids = [m["id"] for m in d["mutants"]]
+    out[commit] = {"rows": len(ids), "unique": len(set(ids)) == len(ids), "registry": len(reg),
+                   "ids_equal_registry": set(ids) == set(reg), "baseline_pass": H.suite_passed(d["baseline"]),
+                   "baseline_ran": d["baseline"]["ran"], "problems": bad, "utc": d["utc"],
+                   "rv_witness_of": {mid: H.PROPERTY_WITNESSES[mid] for mid in sorted(reg) if mid.startswith("RV")
+                                     and int(mid[2:]) >= 18},
+                   "failed_methods": {m["id"]: sorted({n.split(" ", 1)[0] for n in m["suite"]["assertion_failure_names"]})
+                                      for m in d["mutants"] if m["id"] in ("Q01", "Q04", "R5SYNC02") or
+                                      (m["id"].startswith("RV") and int(m["id"][2:]) >= 18)}}
+Path(OUT).write_text(json.dumps(out, indent=1))
+for c, v in out.items():
+    print(c, {k: v[k] for k in ("rows", "unique", "registry", "ids_equal_registry", "baseline_pass", "baseline_ran",
+                                "problems", "utc")})

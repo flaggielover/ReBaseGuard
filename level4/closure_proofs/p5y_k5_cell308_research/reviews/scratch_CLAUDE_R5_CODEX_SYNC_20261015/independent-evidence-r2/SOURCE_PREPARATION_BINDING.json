@@ -1,0 +1,1484 @@
+{
+  "scope": "Single bounded R2 preparation; static source binding only; no new classifier controls, product imports, test execution or GitHub polling",
+  "source_commit": "ff717f816324b7f00f4e1f51ebb3def1e227ace6",
+  "prior_failed_commit": "7eb9bbd999a1ec07d31a15f0b391fcc32ffa4d6b",
+  "run_id": 38683513462,
+  "all_10_exact_commit_hashes_match": true,
+  "changed_inputs": [
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py"
+  ],
+  "only_three_test_files_changed": true,
+  "static_test_methods": 191,
+  "unique_method_names": 191,
+  "method_inventory_unchanged": true,
+  "AST_changed_test_methods": [
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+      "line": 1032,
+      "end_line": 1058
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+      "line": 1060,
+      "end_line": 1074
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+      "line": 1076,
+      "end_line": 1088
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_uncommitted_edit_is_not_the_record",
+      "line": 1110,
+      "end_line": 1119
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+      "line": 262,
+      "end_line": 278
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+      "line": 184,
+      "end_line": 198
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+      "line": 473,
+      "end_line": 488
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/cell-308-r5-integration.yml",
+      "git_blob": "f4bae12b160cb4df309ba7ff1a3f5a15f964716e",
+      "expected_sha256": "49a2c918b694ed1095a04565917d88a476e9071c1165301a07899c185b4524c9",
+      "sha256": "49a2c918b694ed1095a04565917d88a476e9071c1165301a07899c185b4524c9",
+      "matches": true,
+      "changed_from_R1": false
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_inventory.py",
+      "git_blob": "77f06462104b0f47730142470399c71539f4ae10",
+      "expected_sha256": "8ea74ed3621e805066727a4ca3f20253f9a85c90857aca8d8e41e02607cfa597",
+      "sha256": "8ea74ed3621e805066727a4ca3f20253f9a85c90857aca8d8e41e02607cfa597",
+      "matches": true,
+      "changed_from_R1": false
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py",
+      "git_blob": "a9bf5d88498bcbc137e1f442114f16b50e66add0",
+      "expected_sha256": "2f0489d376a7129ce4416004c37d1cf66f2bcfbede5a653ed068e382919fae15",
+      "sha256": "2f0489d376a7129ce4416004c37d1cf66f2bcfbede5a653ed068e382919fae15",
+      "matches": true,
+      "changed_from_R1": false
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_portmap.py",
+      "git_blob": "8d69004d7bbf4b2870a4c750351394e6c9f52bc0",
+      "expected_sha256": "81dc94e9d8bbc4471dc04f3211613f6778e5d0ddc98b60e970c9e59c3445b89d",
+      "sha256": "81dc94e9d8bbc4471dc04f3211613f6778e5d0ddc98b60e970c9e59c3445b89d",
+      "matches": true,
+      "changed_from_R1": false
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py",
+      "git_blob": "a803134f98c6c6cd339ab412e2ab522b920be199",
+      "expected_sha256": "b78756eb377e91c4877b5bf0f96557257da64d4ac464ae339080e9f9e0ca29a9",
+      "sha256": "b78756eb377e91c4877b5bf0f96557257da64d4ac464ae339080e9f9e0ca29a9",
+      "matches": true,
+      "changed_from_R1": false
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py",
+      "git_blob": "6fa97da3aa8f9c099ee074d6d6e5a77666da1a0b",
+      "expected_sha256": "5d0e3b2b93441d438d574ce68fcc652337c16cb3209a98a3d0765d76f6e481cc",
+      "sha256": "5d0e3b2b93441d438d574ce68fcc652337c16cb3209a98a3d0765d76f6e481cc",
+      "matches": true,
+      "changed_from_R1": false
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "git_blob": "2dfc8028198c85a02cb5a0e3676c87d21b31b4c5",
+      "expected_sha256": "d961b25be1d6a64d0d7b4f40ba3bc137641ad1ed2402eace91720f082eb2fd54",
+      "sha256": "d961b25be1d6a64d0d7b4f40ba3bc137641ad1ed2402eace91720f082eb2fd54",
+      "matches": true,
+      "changed_from_R1": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "git_blob": "eb54b2609b951db045a68da4f609695fec94f7fe",
+      "expected_sha256": "4d096c43c07d9523fd464a1191dadb207f41d271bdcfe915235c880f5990e887",
+      "sha256": "4d096c43c07d9523fd464a1191dadb207f41d271bdcfe915235c880f5990e887",
+      "matches": true,
+      "changed_from_R1": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "git_blob": "e6997962308bbd2566566db107253b4e0fdc70ea",
+      "expected_sha256": "c712c0b9a898d8bb98cf4100d8fd7d638481512f7279dc6dd29f9d613eed00cf",
+      "sha256": "c712c0b9a898d8bb98cf4100d8fd7d638481512f7279dc6dd29f9d613eed00cf",
+      "matches": true,
+      "changed_from_R1": false
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "git_blob": "14d52d01dd91e4046500f94a273e9bed10cf1c04",
+      "expected_sha256": "4487ce763b2a93d76c72c700cc7d005c42f4eb98272d9c6d8adc933af21bd00e",
+      "sha256": "4487ce763b2a93d76c72c700cc7d005c42f4eb98272d9c6d8adc933af21bd00e",
+      "matches": true,
+      "changed_from_R1": true
+    }
+  ],
+  "test_methods": [
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_parse_comm_with_spaces_and_parens",
+      "method": "test_parse_comm_with_spaces_and_parens",
+      "line": 97,
+      "end_line": 100
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_malformed_stat_is_none",
+      "method": "test_malformed_stat_is_none",
+      "line": 102,
+      "end_line": 104
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_empty_cmdline_is_a_failed_read",
+      "method": "test_empty_cmdline_is_a_failed_read",
+      "line": 106,
+      "end_line": 108
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_alive_only_when_all_fields_match",
+      "method": "test_alive_only_when_all_fields_match",
+      "line": 110,
+      "end_line": 111
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_live_task_states_are_alive",
+      "method": "test_live_task_states_are_alive",
+      "line": 113,
+      "end_line": 116
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_positive_death_evidence",
+      "method": "test_positive_death_evidence",
+      "line": 118,
+      "end_line": 122
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_zombie_is_never_proof_of_death",
+      "method": "test_zombie_is_never_proof_of_death",
+      "line": 124,
+      "end_line": 127
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_failed_readings_are_unknown_never_dead",
+      "method": "test_failed_readings_are_unknown_never_dead",
+      "line": 129,
+      "end_line": 134
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_namespace_mismatch_is_unknown",
+      "method": "test_namespace_mismatch_is_unknown",
+      "line": 136,
+      "end_line": 140
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_unrecorded_fields",
+      "method": "test_unrecorded_fields",
+      "line": 142,
+      "end_line": 150
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_unrecorded_namespace_never_proves_death",
+      "method": "test_unrecorded_namespace_never_proves_death",
+      "line": 153,
+      "end_line": 160
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_malformed_records_prove_nothing",
+      "method": "test_malformed_records_prove_nothing",
+      "line": 161,
+      "end_line": 169
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_real_process_lifecycle",
+      "method": "test_real_process_lifecycle",
+      "line": 171,
+      "end_line": 180
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_zombie_leader_with_live_thread_is_not_dead",
+      "method": "test_zombie_leader_with_live_thread_is_not_dead",
+      "line": 182,
+      "end_line": 205
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestIdentity.test_detached_child_survives_parent_death",
+      "method": "test_detached_child_survives_parent_death",
+      "line": 207,
+      "end_line": 227
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBootMachine.test_boot_id",
+      "method": "test_boot_id",
+      "line": 231,
+      "end_line": 235
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBootMachine.test_machine_identity_hashes_and_hardware_binding",
+      "method": "test_machine_identity_hashes_and_hardware_binding",
+      "line": 237,
+      "end_line": 245
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_no_reviewed_journal_reader_never_clean",
+      "method": "test_no_reviewed_journal_reader_never_clean",
+      "line": 271,
+      "end_line": 277
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_constants_equal_the_candidates",
+      "method": "test_constants_equal_the_candidates",
+      "line": 282,
+      "end_line": 287
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_clean_needs_every_channel",
+      "method": "test_clean_needs_every_channel",
+      "line": 289,
+      "end_line": 291
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_suspend_detected_just_above_tolerance",
+      "method": "test_suspend_detected_just_above_tolerance",
+      "line": 293,
+      "end_line": 296
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_pause_channel_is_ambiguous",
+      "method": "test_pause_channel_is_ambiguous",
+      "line": 298,
+      "end_line": 303
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_missing_channels_never_clean",
+      "method": "test_missing_channels_never_clean",
+      "line": 305,
+      "end_line": 311
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_power_checked_at_every_sample",
+      "method": "test_power_checked_at_every_sample",
+      "line": 313,
+      "end_line": 318
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_reboot_battery_suspendcount_journal",
+      "method": "test_reboot_battery_suspendcount_journal",
+      "line": 320,
+      "end_line": 325
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_sample_spacing_boundary",
+      "method": "test_sample_spacing_boundary",
+      "line": 327,
+      "end_line": 331
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_monotonic_ahead_of_boottime_and_absent_samples",
+      "method": "test_monotonic_ahead_of_boottime_and_absent_samples",
+      "line": 333,
+      "end_line": 340
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAssess.test_absent_host_channels_are_never_clean",
+      "method": "test_absent_host_channels_are_never_clean",
+      "line": 342,
+      "end_line": 346
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPowerThermal.test_power_classes",
+      "method": "test_power_classes",
+      "line": 351,
+      "end_line": 362
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPowerThermal.test_failed_or_unknown_supplies_are_unknown",
+      "method": "test_failed_or_unknown_supplies_are_unknown",
+      "line": 364,
+      "end_line": 379
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPowerThermal.test_unrecognised_battery_status_is_unknown",
+      "method": "test_unrecognised_battery_status_is_unknown",
+      "line": 381,
+      "end_line": 391
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPowerThermal.test_thermal_raw_only",
+      "method": "test_thermal_raw_only",
+      "line": 393,
+      "end_line": 402
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestMemory.test_meminfo_units",
+      "method": "test_meminfo_units",
+      "line": 420,
+      "end_line": 423
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestMemory.test_v1_needs_root_attestation_for_a_number",
+      "method": "test_v1_needs_root_attestation_for_a_number",
+      "line": 425,
+      "end_line": 435
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestMemory.test_partial_chain_never_numeric",
+      "method": "test_partial_chain_never_numeric",
+      "line": 437,
+      "end_line": 449
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestMemory.test_ancestor_tighter_than_leaf",
+      "method": "test_ancestor_tighter_than_leaf",
+      "line": 451,
+      "end_line": 456
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestMemory.test_v2_root_and_memory_high",
+      "method": "test_v2_root_and_memory_high",
+      "line": 458,
+      "end_line": 474
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestMemory.test_no_rfree_quantity_is_produced",
+      "method": "test_no_rfree_quantity_is_produced",
+      "line": 476,
+      "end_line": 479
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestMemory.test_root_attestation_is_derived_never_asserted",
+      "method": "test_root_attestation_is_derived_never_asserted",
+      "line": 481,
+      "end_line": 506
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestMemory.test_large_v1_limit_is_a_limit",
+      "method": "test_large_v1_limit_is_a_limit",
+      "line": 508,
+      "end_line": 514
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestMemory.test_cgroup_resources_whole_chain",
+      "method": "test_cgroup_resources_whole_chain",
+      "line": 516,
+      "end_line": 526
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_view_is_read_not_assumed",
+      "method": "test_view_is_read_not_assumed",
+      "line": 537,
+      "end_line": 544
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+      "method": "test_window_not_lifetime_and_reuse_and_birth",
+      "line": 546,
+      "end_line": 556
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_exited_in_window_is_reported",
+      "method": "test_exited_in_window_is_reported",
+      "line": 558,
+      "end_line": 562
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_reused_campaign_pid_does_not_exempt_children",
+      "method": "test_reused_campaign_pid_does_not_exempt_children",
+      "line": 564,
+      "end_line": 568
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_exited_child_of_reused_campaign_pid_is_reported",
+      "method": "test_exited_child_of_reused_campaign_pid_is_reported",
+      "line": 570,
+      "end_line": 580
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_no_reading_or_unsafe_inputs_fail_closed",
+      "method": "test_no_reading_or_unsafe_inputs_fail_closed",
+      "line": 582,
+      "end_line": 586
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_no_name_or_path_allowlist",
+      "method": "test_no_name_or_path_allowlist",
+      "line": 588,
+      "end_line": 594
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_proc_view",
+      "method": "test_proc_view",
+      "line": 596,
+      "end_line": 609
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_unreadable_existing_process_fails_the_snapshot",
+      "method": "test_unreadable_existing_process_fails_the_snapshot",
+      "line": 611,
+      "end_line": 617
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestBusy.test_live_snapshot",
+      "method": "test_live_snapshot",
+      "line": 619,
+      "end_line": 630
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestUpdatesLaunch.test_positive_evidence_only",
+      "method": "test_positive_evidence_only",
+      "line": 664,
+      "end_line": 673
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestUpdatesLaunch.test_unit_enabled_from_every_root",
+      "method": "test_unit_enabled_from_every_root",
+      "line": 675,
+      "end_line": 698
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+      "method": "test_systemctl_path_when_systemd_is_pid1",
+      "line": 700,
+      "end_line": 719
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestUpdatesLaunch.test_failed_systemctl_query_is_no_reading",
+      "method": "test_failed_systemctl_query_is_no_reading",
+      "line": 721,
+      "end_line": 739
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestUpdatesLaunch.test_file_mode_edge_cases",
+      "method": "test_file_mode_edge_cases",
+      "line": 741,
+      "end_line": 755
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestUpdatesLaunch.test_parser_reads_only_whole_dump_lines",
+      "method": "test_parser_reads_only_whole_dump_lines",
+      "line": 757,
+      "end_line": 760
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestUpdatesLaunch.test_reboot_vector_recorded_and_provider_unknown",
+      "method": "test_reboot_vector_recorded_and_provider_unknown",
+      "line": 762,
+      "end_line": 765
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestUpdatesLaunch.test_launched_by_systemd_requires_everything",
+      "method": "test_launched_by_systemd_requires_everything",
+      "line": 767,
+      "end_line": 779
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestUpdatesLaunch.test_known_nonsystemd_context_not_launched",
+      "method": "test_known_nonsystemd_context_not_launched",
+      "line": 781,
+      "end_line": 782
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestDurableWrite.test_roundtrip",
+      "method": "test_roundtrip",
+      "line": 799,
+      "end_line": 803
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestDurableWrite.test_fsyncs_file_then_directory",
+      "method": "test_fsyncs_file_then_directory",
+      "line": 805,
+      "end_line": 818
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestDurableWrite.test_read_back_mismatch_is_detected",
+      "method": "test_read_back_mismatch_is_detected",
+      "line": 820,
+      "end_line": 829
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestDurableWrite.test_stale_tmp_is_a_named_state",
+      "method": "test_stale_tmp_is_a_named_state",
+      "line": 831,
+      "end_line": 837
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestDurableWrite.test_tmp_symlink_refused",
+      "method": "test_tmp_symlink_refused",
+      "line": 839,
+      "end_line": 844
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestDurableWrite.test_crash_injection_old_or_new_never_partial",
+      "method": "test_crash_injection_old_or_new_never_partial",
+      "line": 846,
+      "end_line": 856
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPins.test_pin_set_covers_libm_libc_loader",
+      "method": "test_pin_set_covers_libm_libc_loader",
+      "line": 861,
+      "end_line": 871
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPins.test_every_pin_key_is_compared",
+      "method": "test_every_pin_key_is_compared",
+      "line": 873,
+      "end_line": 881
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPins.test_libm_change_with_same_glibc_string",
+      "method": "test_libm_change_with_same_glibc_string",
+      "line": 883,
+      "end_line": 890
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPins.test_unreadable_pins_never_match",
+      "method": "test_unreadable_pins_never_match",
+      "line": 892,
+      "end_line": 898
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPins.test_changed_kernel_never_matches_the_recorded_pin",
+      "method": "test_changed_kernel_never_matches_the_recorded_pin",
+      "line": 900,
+      "end_line": 904
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPins.test_required_members_and_pin_point",
+      "method": "test_required_members_and_pin_point",
+      "line": 906,
+      "end_line": 925
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestPins.test_unknown_interpreter_package_never_matches",
+      "method": "test_unknown_interpreter_package_never_matches",
+      "line": 927,
+      "end_line": 933
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_attestation_read_from_committed_files",
+      "method": "test_attestation_read_from_committed_files",
+      "line": 991,
+      "end_line": 994
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_acceptance_is_found_not_named",
+      "method": "test_acceptance_is_found_not_named",
+      "line": 996,
+      "end_line": 1030
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+      "method": "test_accepting_line_must_post_date_the_attested_blob",
+      "line": 1032,
+      "end_line": 1058
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+      "method": "test_forged_or_unaccepted_attestations_refused",
+      "line": 1060,
+      "end_line": 1074
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+      "method": "test_reference_digest_must_match_the_committed_file",
+      "line": 1076,
+      "end_line": 1088
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+      "method": "test_reference_rejects_extra_fields_even_if_otherwise_valid",
+      "line": 1090,
+      "end_line": 1096
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_absent_blob_is_refused_before_hash_or_json",
+      "method": "test_absent_blob_is_refused_before_hash_or_json",
+      "line": 1098,
+      "end_line": 1108
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_uncommitted_edit_is_not_the_record",
+      "method": "test_uncommitted_edit_is_not_the_record",
+      "line": 1110,
+      "end_line": 1119
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_no_trust_parameters_in_production",
+      "method": "test_no_trust_parameters_in_production",
+      "line": 1156,
+      "end_line": 1161
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_decided_is_validated",
+      "method": "test_decided_is_validated",
+      "line": 1163,
+      "end_line": 1170
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_lifetime_gates_open_while_undecided",
+      "method": "test_lifetime_gates_open_while_undecided",
+      "line": 1172,
+      "end_line": 1188
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_all_favourable_still_blocked",
+      "method": "test_all_favourable_still_blocked",
+      "line": 1190,
+      "end_line": 1196
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_boot_id_must_be_valid",
+      "method": "test_boot_id_must_be_valid",
+      "line": 1198,
+      "end_line": 1201
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_unknowns_never_pass_and_are_reported",
+      "method": "test_unknowns_never_pass_and_are_reported",
+      "line": 1203,
+      "end_line": 1216
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+      "method": "test_launch_gate_uses_a_fresh_reading",
+      "line": 1218,
+      "end_line": 1240
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "identity": "TestAttestationPreflight.test_live_preflight_fails_closed_here",
+      "method": "test_live_preflight_fails_closed_here",
+      "line": 1242,
+      "end_line": 1247
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_verified_committed_record_does_not_grant_root_contract",
+      "method": "test_verified_committed_record_does_not_grant_root_contract",
+      "line": 146,
+      "end_line": 155
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_canonical_verifier_binds_repository_and_current_machine_internally",
+      "method": "test_canonical_verifier_binds_repository_and_current_machine_internally",
+      "line": 157,
+      "end_line": 163
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_non_initial_namespace_cannot_grant_root_contract",
+      "method": "test_non_initial_namespace_cannot_grant_root_contract",
+      "line": 165,
+      "end_line": 172
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_missing_reference_is_unverified",
+      "method": "test_missing_reference_is_unverified",
+      "line": 174,
+      "end_line": 175
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_malformed_or_extra_reference_fields_are_unverified",
+      "method": "test_malformed_or_extra_reference_fields_are_unverified",
+      "line": 177,
+      "end_line": 182
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_uncommitted_record_is_unverified",
+      "method": "test_uncommitted_record_is_unverified",
+      "line": 184,
+      "end_line": 185
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_uncommitted_review_is_unverified",
+      "method": "test_uncommitted_review_is_unverified",
+      "line": 187,
+      "end_line": 188
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_missing_committed_blob_is_refused_before_hash_or_json",
+      "method": "test_missing_committed_blob_is_refused_before_hash_or_json",
+      "line": 190,
+      "end_line": 194
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions",
+      "method": "test_invalid_reference_paths_are_refused_without_exceptions",
+      "line": 196,
+      "end_line": 203
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_utf8_committed_path_is_supported",
+      "method": "test_utf8_committed_path_is_supported",
+      "line": 205,
+      "end_line": 208
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_non_json_committed_record_is_unverified",
+      "method": "test_non_json_committed_record_is_unverified",
+      "line": 210,
+      "end_line": 211
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_unreviewed_record_is_unverified",
+      "method": "test_unreviewed_record_is_unverified",
+      "line": 213,
+      "end_line": 214
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_unaccepted_record_is_unverified",
+      "method": "test_unaccepted_record_is_unverified",
+      "line": 216,
+      "end_line": 217
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_wrong_digest_is_unverified",
+      "method": "test_wrong_digest_is_unverified",
+      "line": 219,
+      "end_line": 220
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_other_valid_committed_blob_cannot_satisfy_requested_digest",
+      "method": "test_other_valid_committed_blob_cannot_satisfy_requested_digest",
+      "line": 222,
+      "end_line": 225
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_wrong_current_host_is_unverified",
+      "method": "test_wrong_current_host_is_unverified",
+      "line": 227,
+      "end_line": 228
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_machine_id_without_hardware_binding_is_unverified",
+      "method": "test_machine_id_without_hardware_binding_is_unverified",
+      "line": 230,
+      "end_line": 233
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_verified_non_boolean_root_claims_never_grant_contract",
+      "method": "test_verified_non_boolean_root_claims_never_grant_contract",
+      "line": 235,
+      "end_line": 240
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_missing_record_root_claim_never_grants_contract",
+      "method": "test_missing_record_root_claim_never_grants_contract",
+      "line": 242,
+      "end_line": 246
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_named_json_acceptance_record_is_ignored",
+      "method": "test_named_json_acceptance_record_is_ignored",
+      "line": 248,
+      "end_line": 252
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_malformed_legacy_json_acceptance_path_has_no_authority",
+      "method": "test_malformed_legacy_json_acceptance_path_has_no_authority",
+      "line": 254,
+      "end_line": 260
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+      "method": "test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+      "line": 262,
+      "end_line": 278
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_acceptance_in_same_commit_as_blob_is_unverified",
+      "method": "test_acceptance_in_same_commit_as_blob_is_unverified",
+      "line": 280,
+      "end_line": 281
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_acceptance_moved_from_same_commit_cannot_become_later_evidence",
+      "method": "test_acceptance_moved_from_same_commit_cannot_become_later_evidence",
+      "line": 283,
+      "end_line": 289
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_separate_negative_review_vetoes_acceptance_case_insensitively",
+      "method": "test_separate_negative_review_vetoes_acceptance_case_insensitively",
+      "line": 291,
+      "end_line": 295
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_public_api_refuses_caller_selected_trust_or_reader_seams",
+      "method": "test_public_api_refuses_caller_selected_trust_or_reader_seams",
+      "line": 297,
+      "end_line": 305
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_default_launch_observation_is_independently_corroborated",
+      "method": "test_default_launch_observation_is_independently_corroborated",
+      "line": 307,
+      "end_line": 310
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_changed_live_launch_observation_refuses_corroboration",
+      "method": "test_changed_live_launch_observation_refuses_corroboration",
+      "line": 312,
+      "end_line": 316
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_launch_record_comparison_covers_extra_fields",
+      "method": "test_launch_record_comparison_covers_extra_fields",
+      "line": 318,
+      "end_line": 323
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_missing_or_invalid_fresh_launch_observation_fails",
+      "method": "test_missing_or_invalid_fresh_launch_observation_fails",
+      "line": 325,
+      "end_line": 331
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_open_decisions_and_unknown_job_detector_block_every_mode",
+      "method": "test_open_decisions_and_unknown_job_detector_block_every_mode",
+      "line": 333,
+      "end_line": 349
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_preflight_uses_current_api_with_fixed_unknown_job_detector",
+      "method": "test_preflight_uses_current_api_with_fixed_unknown_job_detector",
+      "line": 351,
+      "end_line": 356
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_invalid_mode_is_refused_before_any_observation",
+      "method": "test_invalid_mode_is_refused_before_any_observation",
+      "line": 358,
+      "end_line": 365
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_development_defaults_and_no_science_composition",
+      "method": "test_development_defaults_and_no_science_composition",
+      "line": 367,
+      "end_line": 378
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "identity": "TestVerifiedObservation.test_wrapper_uses_platform_module_selected_by_harness",
+      "method": "test_wrapper_uses_platform_module_selected_by_harness",
+      "line": 380,
+      "end_line": 382
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_only_a_full_count_named_assertion_is_killed",
+      "method": "test_only_a_full_count_named_assertion_is_killed",
+      "line": 71,
+      "end_line": 76
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_four_historical_error_only_shapes_are_errors",
+      "method": "test_four_historical_error_only_shapes_are_errors",
+      "line": 78,
+      "end_line": 83
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_failure_header_may_include_a_unittest_docstring",
+      "method": "test_failure_header_may_include_a_unittest_docstring",
+      "line": 85,
+      "end_line": 87
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_runtime_exception_in_a_failure_block_is_invalid",
+      "method": "test_runtime_exception_in_a_failure_block_is_invalid",
+      "line": 89,
+      "end_line": 93
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_unrelated_assertion_has_no_intended_property_credit",
+      "method": "test_unrelated_assertion_has_no_intended_property_credit",
+      "line": 95,
+      "end_line": 97
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_missing_or_changed_count_is_invalid",
+      "method": "test_missing_or_changed_count_is_invalid",
+      "line": 99,
+      "end_line": 101
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_errors_skips_and_expected_outcomes_are_invalid",
+      "method": "test_errors_skips_and_expected_outcomes_are_invalid",
+      "line": 103,
+      "end_line": 107
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_warnings_in_either_stream_are_invalid",
+      "method": "test_warnings_in_either_stream_are_invalid",
+      "line": 109,
+      "end_line": 114
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_exit_summary_and_named_outcomes_must_agree",
+      "method": "test_exit_summary_and_named_outcomes_must_agree",
+      "line": 116,
+      "end_line": 123
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_failed_baseline_never_credits_a_mutant",
+      "method": "test_failed_baseline_never_credits_a_mutant",
+      "line": 125,
+      "end_line": 127
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_multiple_assertion_traces_are_retained",
+      "method": "test_multiple_assertion_traces_are_retained",
+      "line": 129,
+      "end_line": 135
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_runtime_error_with_quoted_assertion_suffix_has_no_credit",
+      "method": "test_runtime_error_with_quoted_assertion_suffix_has_no_credit",
+      "line": 137,
+      "end_line": 141
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_fake_traceback_marker_without_real_frame_has_no_credit",
+      "method": "test_fake_traceback_marker_without_real_frame_has_no_credit",
+      "line": 143,
+      "end_line": 147
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_duplicate_identical_failure_records_have_no_credit",
+      "method": "test_duplicate_identical_failure_records_have_no_credit",
+      "line": 149,
+      "end_line": 160
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_missing_or_corrupt_runner_metadata_has_no_credit",
+      "method": "test_missing_or_corrupt_runner_metadata_has_no_credit",
+      "line": 162,
+      "end_line": 169
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_assertion_metadata_requires_an_anchored_terminal_exception_line",
+      "method": "test_assertion_metadata_requires_an_anchored_terminal_exception_line",
+      "line": 171,
+      "end_line": 175
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestStrictReportClassification.test_event_identity_must_match_its_description",
+      "method": "test_event_identity_must_match_its_description",
+      "line": 177,
+      "end_line": 185
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestHarnessExecutionControls.test_controlled_runner_records_actual_exception_identity_and_frames",
+      "method": "test_controlled_runner_records_actual_exception_identity_and_frames",
+      "line": 189,
+      "end_line": 204
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestHarnessExecutionControls.test_timeout_and_launch_failure_are_recorded_without_credit",
+      "method": "test_timeout_and_launch_failure_are_recorded_without_credit",
+      "line": 206,
+      "end_line": 212
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestHarnessExecutionControls.test_all_warnings_are_errors_and_raw_streams_are_preserved",
+      "method": "test_all_warnings_are_errors_and_raw_streams_are_preserved",
+      "line": 214,
+      "end_line": 223
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestHarnessExecutionControls.test_mutation_anchor_and_syntax_refusals",
+      "method": "test_mutation_anchor_and_syntax_refusals",
+      "line": 225,
+      "end_line": 229
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestHarnessExecutionControls.test_baseline_runs_first_without_inherited_mutant_directory",
+      "method": "test_baseline_runs_first_without_inherited_mutant_directory",
+      "line": 250,
+      "end_line": 256
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestHarnessExecutionControls.test_baseline_failure_prevents_any_mutant_subprocess",
+      "method": "test_baseline_failure_prevents_any_mutant_subprocess",
+      "line": 258,
+      "end_line": 263
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestHarnessExecutionControls.test_changed_input_hashes_fail_the_final_summary",
+      "method": "test_changed_input_hashes_fail_the_final_summary",
+      "line": 265,
+      "end_line": 269
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "identity": "TestHarnessExecutionControls.test_registry_witnesses_and_complete_input_hashes",
+      "method": "test_registry_witnesses_and_complete_input_hashes",
+      "line": 271,
+      "end_line": 278
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIdentityEvidence.test_valid_matching_evidence_and_positive_death_controls",
+      "method": "test_valid_matching_evidence_and_positive_death_controls",
+      "line": 50,
+      "end_line": 55
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIdentityEvidence.test_malformed_record_cannot_bypass_validation_with_reboot_or_esrch",
+      "method": "test_malformed_record_cannot_bypass_validation_with_reboot_or_esrch",
+      "line": 57,
+      "end_line": 64
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIdentityEvidence.test_current_boot_requires_a_recognized_string",
+      "method": "test_current_boot_requires_a_recognized_string",
+      "line": 66,
+      "end_line": 69
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIdentityEvidence.test_current_namespace_shape_and_exists_boolean",
+      "method": "test_current_namespace_shape_and_exists_boolean",
+      "line": 71,
+      "end_line": 77
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIdentityEvidence.test_current_stat_schema_before_identity_comparison",
+      "method": "test_current_stat_schema_before_identity_comparison",
+      "line": 79,
+      "end_line": 87
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIdentityEvidence.test_current_command_digest_shape",
+      "method": "test_current_command_digest_shape",
+      "line": 89,
+      "end_line": 91
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIdentityEvidence.test_proc_parser_requested_pid_state_and_nonnegative_counters",
+      "method": "test_proc_parser_requested_pid_state_and_nonnegative_counters",
+      "line": 93,
+      "end_line": 101
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIntervalEvidence.test_valid_sequence_clean_only_with_synthetic_reviewed_reader",
+      "method": "test_valid_sequence_clean_only_with_synthetic_reviewed_reader",
+      "line": 110,
+      "end_line": 115
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIntervalEvidence.test_middle_clock_excursion_not_hidden_by_matching_endpoints",
+      "method": "test_middle_clock_excursion_not_hidden_by_matching_endpoints",
+      "line": 117,
+      "end_line": 123
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIntervalEvidence.test_cumulative_endpoint_divergence_checked_in_addition_to_adjacent_pairs",
+      "method": "test_cumulative_endpoint_divergence_checked_in_addition_to_adjacent_pairs",
+      "line": 125,
+      "end_line": 128
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIntervalEvidence.test_every_suspend_counter_and_reset_is_checked",
+      "method": "test_every_suspend_counter_and_reset_is_checked",
+      "line": 130,
+      "end_line": 138
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIntervalEvidence.test_clock_schema_refuses_noninteger_nonfinite_bool_and_negative",
+      "method": "test_clock_schema_refuses_noninteger_nonfinite_bool_and_negative",
+      "line": 140,
+      "end_line": 150
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIntervalEvidence.test_interval_boot_schema_and_nonrecord_samples",
+      "method": "test_interval_boot_schema_and_nonrecord_samples",
+      "line": 152,
+      "end_line": 165
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIntervalEvidence.test_reversed_sample_order_is_refused",
+      "method": "test_reversed_sample_order_is_refused",
+      "line": 167,
+      "end_line": 170
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestIntervalEvidence.test_equal_and_reversed_clock_steps_refused",
+      "method": "test_equal_and_reversed_clock_steps_refused",
+      "line": 172,
+      "end_line": 175
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+      "method": "test_birth_exit_and_observed_owned_parent_positive_controls",
+      "line": 184,
+      "end_line": 198
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_missing_and_reused_parent_identity_cannot_exempt_child",
+      "method": "test_missing_and_reused_parent_identity_cannot_exempt_child",
+      "line": 200,
+      "end_line": 206
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_child_older_than_observed_own_parent_is_reported",
+      "method": "test_child_older_than_observed_own_parent_is_reported",
+      "line": 208,
+      "end_line": 211
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_duplicate_pid_in_either_snapshot_or_own_set_is_refused",
+      "method": "test_duplicate_pid_in_either_snapshot_or_own_set_is_refused",
+      "line": 213,
+      "end_line": 217
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_duration_threshold_frequency_schemas",
+      "method": "test_duration_threshold_frequency_schemas",
+      "line": 219,
+      "end_line": 226
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_key_record_and_counter_schemas",
+      "method": "test_key_record_and_counter_schemas",
+      "line": 228,
+      "end_line": 237
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_counter_regression_refused_before_ownership_exemption",
+      "method": "test_counter_regression_refused_before_ownership_exemption",
+      "line": 239,
+      "end_line": 245
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_overflow_and_nonfinite_cpu_arithmetic_are_refused",
+      "method": "test_overflow_and_nonfinite_cpu_arithmetic_are_refused",
+      "line": 247,
+      "end_line": 250
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestCpuWindowEvidence.test_fresh_completeness_refusal_is_preserved",
+      "method": "test_fresh_completeness_refusal_is_preserved",
+      "line": 252,
+      "end_line": 254
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestProcViewEvidence.test_single_positive_ascii_payload_and_normal_mount",
+      "method": "test_single_positive_ascii_payload_and_normal_mount",
+      "line": 261,
+      "end_line": 264
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestProcViewEvidence.test_whole_colon_payload_and_ascii_schema",
+      "method": "test_whole_colon_payload_and_ascii_schema",
+      "line": 266,
+      "end_line": 270
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestProcViewEvidence.test_duplicate_fields_both_orders_and_identical_duplicates_refused",
+      "method": "test_duplicate_fields_both_orders_and_identical_duplicates_refused",
+      "line": 272,
+      "end_line": 274
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestProcViewEvidence.test_mount_metadata_and_duplicate_mounts_refused",
+      "method": "test_mount_metadata_and_duplicate_mounts_refused",
+      "line": 276,
+      "end_line": 284
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestMemoryMinima.test_host_memtotal_caps_every_larger_cgroup_limit",
+      "method": "test_host_memtotal_caps_every_larger_cgroup_limit",
+      "line": 288,
+      "end_line": 295
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestMemoryMinima.test_headroom_uses_minimum_over_readable_limited_levels",
+      "method": "test_headroom_uses_minimum_over_readable_limited_levels",
+      "line": 297,
+      "end_line": 302
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+      "method": "test_git_malformed_args_and_subprocess_failures_return_none",
+      "line": 306,
+      "end_line": 316
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestGitRefusal.test_normal_utf8_path_control",
+      "method": "test_normal_utf8_path_control",
+      "line": 318,
+      "end_line": 323
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestGitRefusal.test_absent_blob_refused_before_hash_or_json",
+      "method": "test_absent_blob_refused_before_hash_or_json",
+      "line": 325,
+      "end_line": 332
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestGitRefusal.test_wrong_valid_blob_digest_refused_before_json",
+      "method": "test_wrong_valid_blob_digest_refused_before_json",
+      "line": 334,
+      "end_line": 339
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestAcceptanceReviewEvidence.test_ascii_acceptance_control_and_nonascii_tab_newline_veto_paths",
+      "method": "test_ascii_acceptance_control_and_nonascii_tab_newline_veto_paths",
+      "line": 371,
+      "end_line": 383
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestAcceptanceReviewEvidence.test_unavailable_recursive_listing_or_veto_blob_refuses_verification",
+      "method": "test_unavailable_recursive_listing_or_veto_blob_refuses_verification",
+      "line": 385,
+      "end_line": 407
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestAcceptanceReviewEvidence.test_malformed_listing_and_nonutf8_review_blob_refuse_verification",
+      "method": "test_malformed_listing_and_nonutf8_review_blob_refuse_verification",
+      "line": 409,
+      "end_line": 426
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestNumericReaders.test_suspend_and_cgroup_readers_require_bounded_ascii_text",
+      "method": "test_suspend_and_cgroup_readers_require_bounded_ascii_text",
+      "line": 430,
+      "end_line": 443
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestNumericReaders.test_thermal_signed_ascii_and_unrecognized_values",
+      "method": "test_thermal_signed_ascii_and_unrecognized_values",
+      "line": 445,
+      "end_line": 457
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+      "method": "test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+      "line": 468,
+      "end_line": 471
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+      "method": "test_supervisor_true_false_unknown_and_update_composition",
+      "line": 473,
+      "end_line": 488
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "identity": "TestUnitQueryEvidence.test_known_inactive_disabled_and_positive_activity_controls",
+      "method": "test_known_inactive_disabled_and_positive_activity_controls",
+      "line": 490,
+      "end_line": 496
+    }
+  ],
+  "independent_code_addendum_sha256": "aaee89675ffdcdb478fa38264fb610fe2eef80c5f0130632a05959fddb91832e",
+  "reused_validated_auditor_sha256": "e7db3549a42d2f0048a1d9442b07e763a64af84452341cfa043cb31dfc76d615",
+  "runtime_verdict": "PENDING_COMPLETE_R2_NATIVE_ARTIFACTS"
+}

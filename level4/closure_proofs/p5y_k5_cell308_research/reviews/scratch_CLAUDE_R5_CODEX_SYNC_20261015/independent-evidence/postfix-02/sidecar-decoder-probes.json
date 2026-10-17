@@ -1,0 +1,749 @@
+{
+  "harness_sha256": "ac3800d5742ff6e5dcb5da8b3d909d8dece0c1863b87ef95d8140ee95fb01179",
+  "subprocess_mocked": true,
+  "product_or_tests_executed": false,
+  "probe_count": 13,
+  "mismatches": [],
+  "probes": [
+    {
+      "case": "valid",
+      "expected": "KILLED",
+      "actual": "KILLED",
+      "matches_expectation": true,
+      "reasons": [],
+      "sidecar_bytes_hex": "7b22736368656d61223a202243454c4c3330385f434f4e54524f4c4c45445f554e4954544553545f524553554c545f5631222c202272616e223a20322c20227375636365737366756c223a2066616c73652c202265786563757465645f746573745f696473223a205b22746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022746573745f666978747572652e5465737453796e7468657469632e746573745f756e72656c617465645f70726f7065727479225d2c20226576656e7473223a205b7b226b696e64223a20226661696c757265222c2022746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022706172656e745f746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c20226465736372697074696f6e223a2022746573745f696e74656e6465645f70726f70657274792028746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f706572747929222c2022657863657074696f6e5f74797065223a20226275696c74696e732e417373657274696f6e4572726f72222c202269735f65786163745f617373657274696f6e5f6572726f72223a20747275652c202274726163656261636b5f6672616d6573223a205b7b2266696c65223a2022666978747572652e7079222c20226c696e65223a20312c202266756e6374696f6e223a2022746573745f696e74656e6465645f70726f7065727479227d5d7d5d2c2022736b6970706564223a20302c202265787065637465645f6661696c75726573223a20302c2022756e65787065637465645f737563636573736573223a20307d",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp3ot9gsuz/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 0.0002677080046851188,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 2,
+          "successful": false,
+          "executed_test_ids": [
+            "test_fixture.TestSynthetic.test_intended_property",
+            "test_fixture.TestSynthetic.test_unrelated_property"
+          ],
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "parent_test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "description": "test_intended_property (test_fixture.TestSynthetic.test_intended_property)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "fixture.py",
+                  "line": 1,
+                  "function": "test_intended_property"
+                }
+              ]
+            }
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": false, \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"fixture.py\", \"line\": 1, \"function\": \"test_intended_property\"}]}], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "missing",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": null,
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp8r6pnm2m/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 9.99998883344233e-06,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": null,
+        "controlled_runner_metadata_raw": null,
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "empty",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp2_hvk_g6/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 7.487500261049718e-05,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": null,
+        "controlled_runner_metadata_raw": "",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "invalid_json",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "7b",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmplovqv6wm/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 9.349999891128391e-05,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": null,
+        "controlled_runner_metadata_raw": "{",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "null",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "6e756c6c",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmponxjeij8/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 0.00021379199461080134,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": null,
+        "controlled_runner_metadata_raw": "null",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "boolean",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "74727565",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpu51bczhc/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 0.00021229201229289174,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": true,
+        "controlled_runner_metadata_raw": "true",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "number",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "313233",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp2gybpawa/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 0.0001993750047404319,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": 123,
+        "controlled_runner_metadata_raw": "123",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "empty_array",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "5b5d",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp8jhk33r9/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 8.129100024234504e-05,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": [],
+        "controlled_runner_metadata_raw": "[]",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "nonempty_array",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "5b226e6f74222c20226f626a656374225d",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmptyxe889f/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 7.437499880325049e-05,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": [
+          "not",
+          "object"
+        ],
+        "controlled_runner_metadata_raw": "[\"not\", \"object\"]",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "duplicate_top_level_key",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "7b22736368656d61223a202243454c4c3330385f434f4e54524f4c4c45445f554e4954544553545f524553554c545f5631222c202272616e223a20322c202272616e223a20322c20227375636365737366756c223a2066616c73652c202265786563757465645f746573745f696473223a205b22746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022746573745f666978747572652e5465737453796e7468657469632e746573745f756e72656c617465645f70726f7065727479225d2c20226576656e7473223a205b7b226b696e64223a20226661696c757265222c2022746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022706172656e745f746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c20226465736372697074696f6e223a2022746573745f696e74656e6465645f70726f70657274792028746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f706572747929222c2022657863657074696f6e5f74797065223a20226275696c74696e732e417373657274696f6e4572726f72222c202269735f65786163745f617373657274696f6e5f6572726f72223a20747275652c202274726163656261636b5f6672616d6573223a205b7b2266696c65223a2022666978747572652e7079222c20226c696e65223a20312c202266756e6374696f6e223a2022746573745f696e74656e6465645f70726f7065727479227d5d7d5d2c2022736b6970706564223a20302c202265787065637465645f6661696c75726573223a20302c2022756e65787065637465645f737563636573736573223a20307d",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmphagk_om5/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 8.45829927129671e-05,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": null,
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"ran\": 2, \"successful\": false, \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"fixture.py\", \"line\": 1, \"function\": \"test_intended_property\"}]}], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "duplicate_nested_key",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "7b22736368656d61223a202243454c4c3330385f434f4e54524f4c4c45445f554e4954544553545f524553554c545f5631222c202272616e223a20322c20227375636365737366756c223a2066616c73652c202265786563757465645f746573745f696473223a205b22746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022746573745f666978747572652e5465737453796e7468657469632e746573745f756e72656c617465645f70726f7065727479225d2c20226576656e7473223a205b7b226b696e64223a20226661696c757265222c20226b696e64223a20226661696c757265222c2022746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022706172656e745f746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c20226465736372697074696f6e223a2022746573745f696e74656e6465645f70726f70657274792028746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f706572747929222c2022657863657074696f6e5f74797065223a20226275696c74696e732e417373657274696f6e4572726f72222c202269735f65786163745f617373657274696f6e5f6572726f72223a20747275652c202274726163656261636b5f6672616d6573223a205b7b2266696c65223a2022666978747572652e7079222c20226c696e65223a20312c202266756e6374696f6e223a2022746573745f696e74656e6465645f70726f7065727479227d5d7d5d2c2022736b6970706564223a20302c202265787065637465645f6661696c75726573223a20302c2022756e65787065637465645f737563636573736573223a20307d",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpf07vuetj/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 8.924999565351754e-05,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": null,
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": false, \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"events\": [{\"kind\": \"failure\", \"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"fixture.py\", \"line\": 1, \"function\": \"test_intended_property\"}]}], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "multiple_records",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "7b22736368656d61223a202243454c4c3330385f434f4e54524f4c4c45445f554e4954544553545f524553554c545f5631222c202272616e223a20322c20227375636365737366756c223a2066616c73652c202265786563757465645f746573745f696473223a205b22746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022746573745f666978747572652e5465737453796e7468657469632e746573745f756e72656c617465645f70726f7065727479225d2c20226576656e7473223a205b7b226b696e64223a20226661696c757265222c2022746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022706172656e745f746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c20226465736372697074696f6e223a2022746573745f696e74656e6465645f70726f70657274792028746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f706572747929222c2022657863657074696f6e5f74797065223a20226275696c74696e732e417373657274696f6e4572726f72222c202269735f65786163745f617373657274696f6e5f6572726f72223a20747275652c202274726163656261636b5f6672616d6573223a205b7b2266696c65223a2022666978747572652e7079222c20226c696e65223a20312c202266756e6374696f6e223a2022746573745f696e74656e6465645f70726f7065727479227d5d7d5d2c2022736b6970706564223a20302c202265787065637465645f6661696c75726573223a20302c2022756e65787065637465645f737563636573736573223a20307d0a7b22736368656d61223a202243454c4c3330385f434f4e54524f4c4c45445f554e4954544553545f524553554c545f5631222c202272616e223a20322c20227375636365737366756c223a2066616c73652c202265786563757465645f746573745f696473223a205b22746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022746573745f666978747572652e5465737453796e7468657469632e746573745f756e72656c617465645f70726f7065727479225d2c20226576656e7473223a205b7b226b696e64223a20226661696c757265222c2022746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c2022706172656e745f746573745f6964223a2022746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f7065727479222c20226465736372697074696f6e223a2022746573745f696e74656e6465645f70726f70657274792028746573745f666978747572652e5465737453796e7468657469632e746573745f696e74656e6465645f70726f706572747929222c2022657863657074696f6e5f74797065223a20226275696c74696e732e417373657274696f6e4572726f72222c202269735f65786163745f617373657274696f6e5f6572726f72223a20747275652c202274726163656261636b5f6672616d6573223a205b7b2266696c65223a2022666978747572652e7079222c20226c696e65223a20312c202266756e6374696f6e223a2022746573745f696e74656e6465645f70726f7065727479227d5d7d5d2c2022736b6970706564223a20302c202265787065637465645f6661696c75726573223a20302c2022756e65787065637465645f737563636573736573223a20307d",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpbik0qii3/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 8.883400005288422e-05,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": null,
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": false, \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"fixture.py\", \"line\": 1, \"function\": \"test_intended_property\"}]}], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": false, \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"fixture.py\", \"line\": 1, \"function\": \"test_intended_property\"}]}], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}",
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "invalid_utf8",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "EXECUTED_TEST_IDS_DIFFER_FROM_BASELINE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "sidecar_bytes_hex": "ff",
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmph53e63hb/result.json"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 7.812499825377017e-05,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": null,
+        "controlled_runner_metadata_raw": null,
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_CONTROLLED_RUNNER_METADATA",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    }
+  ]
+}

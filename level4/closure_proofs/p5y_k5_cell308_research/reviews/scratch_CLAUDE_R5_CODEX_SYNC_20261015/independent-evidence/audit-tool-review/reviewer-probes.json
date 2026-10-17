@@ -1,0 +1,180 @@
+{
+  "scope": "Synthetic literal parser probes only. AST-extracted auditor functions executed; no product/harness/test module import, test suite run, mutant run, or native artifacts read.",
+  "auditor_sha256": "620f6f6d4e57543b3d326cb94b1bd469b6310dce18a909037d9a87353222613a",
+  "results": [
+    {
+      "probe": "valid simple assertion / inventory dict",
+      "expected": "accept; checks Counter(dict) repair",
+      "issues": [],
+      "direct_assertion_frame_counts": [
+        1
+      ]
+    },
+    {
+      "probe": "valid docstring and subtest suffix",
+      "expected": "accept",
+      "issues": [],
+      "direct_assertion_frame_counts": [
+        1
+      ]
+    },
+    {
+      "probe": "corrupt extra traceback frame: null",
+      "expected": "reject corrupt sidecar shape, matching harness _suite_record validation",
+      "issues": [],
+      "direct_assertion_frame_counts": [
+        1
+      ]
+    },
+    {
+      "probe": "corrupt extra traceback frame: invalid field types",
+      "expected": "reject corrupt sidecar shape, matching harness _suite_record validation",
+      "issues": [],
+      "direct_assertion_frame_counts": [
+        1
+      ]
+    },
+    {
+      "probe": "reported summary disagrees with raw FAILED summary",
+      "expected": "reject report/raw mismatch if all redundant report fields are claimed audited",
+      "issues": [],
+      "direct_assertion_frame_counts": [
+        1
+      ]
+    },
+    {
+      "probe": "raw chained terminal RuntimeError / trusted sidecar AssertionError",
+      "expected": "policy-dependent: indistinguishable from arbitrary multiline AssertionError message; avoid naive terminal-line rejection",
+      "issues": [],
+      "direct_assertion_frame_counts": [
+        2
+      ]
+    }
+  ],
+  "static_registry_review": {
+    "mutant_count": 133,
+    "group_total": 133,
+    "witness_id_count": 133,
+    "expected_id_count": 133,
+    "registry_ids_match": true,
+    "registry_ids_unique": true,
+    "witness_ids_match": true,
+    "all_witness_lists_nonempty": true,
+    "duplicate_edits_within_one_mutant": [],
+    "harness_sha256": "5d0e3b2b93441d438d574ce68fcc652337c16cb3209a98a3d0765d76f6e481cc"
+  },
+  "latest_rerun": {
+    "auditor_sha256": "e7ba9e5023f9676052d72621865a030bad8ef35636ef01032ce873af457af29f",
+    "scope": "AST-extracted auditor parser functions and invented literal fixtures only; no product/harness/test module imports, suite/mutant runs, or native artifacts.",
+    "results": [
+      {
+        "probe": "valid simple assertion / inventory dict",
+        "expected_reject": false,
+        "issues": [],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          1
+        ]
+      },
+      {
+        "probe": "valid docstring and subtest suffix",
+        "expected_reject": false,
+        "issues": [],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          1
+        ]
+      },
+      {
+        "probe": "corrupt extra traceback frame: null",
+        "expected_reject": true,
+        "issues": [
+          "runner failure event or traceback frame has invalid shape"
+        ],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          1
+        ]
+      },
+      {
+        "probe": "corrupt extra traceback frame: invalid field types",
+        "expected_reject": true,
+        "issues": [
+          "runner failure event or traceback frame has invalid shape"
+        ],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          1
+        ]
+      },
+      {
+        "probe": "reported summary disagrees with raw FAILED summary",
+        "expected_reject": true,
+        "issues": [
+          "reported suite summary differs from raw summary"
+        ],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          1
+        ]
+      },
+      {
+        "probe": "reported suite tail disagrees with raw tail",
+        "expected_reject": true,
+        "issues": [
+          "reported suite tail differs from raw output"
+        ],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          1
+        ]
+      },
+      {
+        "probe": "unhashable corrupt event ID",
+        "expected_reject": true,
+        "issues": [
+          "runner failure event or traceback frame has invalid shape",
+          "duplicate or malformed runner failure IDs",
+          "runner event identity/parent/description mismatch: test_a (test_synthetic.C.test_a)"
+        ],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          1
+        ]
+      },
+      {
+        "probe": "unhashable corrupt executed ID",
+        "expected_reject": true,
+        "issues": [
+          "controlled executed IDs have invalid shape",
+          "controlled executed IDs differ from exact source inventory"
+        ],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          1
+        ]
+      },
+      {
+        "probe": "unhashable corrupt parent ID",
+        "expected_reject": true,
+        "issues": [
+          "runner failure event or traceback frame has invalid shape",
+          "runner event identity/parent/description mismatch: test_a (test_synthetic.C.test_a)"
+        ],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          0
+        ]
+      },
+      {
+        "probe": "arbitrary multiline AssertionError message / sidecar authoritative",
+        "expected_reject": false,
+        "issues": [],
+        "matches_expectation": true,
+        "direct_assertion_frame_counts": [
+          2
+        ]
+      }
+    ]
+  }
+}

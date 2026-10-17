@@ -1,0 +1,14 @@
+--- /tmp/cell308-claude-sync-20261015/code-review-delta-input/tests/test_lx_verified.py
++++ /tmp/cell308-claude-sync-20261015/observer-test-addendum-input/test_lx_verified.py
+@@ -197,7 +197,10 @@
+         valid = self.fixture()
+         for path in ("\x00", "\ud800"):
+             with self.subTest(path=repr(path)):
+-                self.assert_unverified(dict(valid, path=path))
++                try:
++                    self.assert_unverified(dict(valid, path=path))
++                except (ValueError, UnicodeError) as escaped:
++                    self.fail(f"Malformed reference must be refused without leaking {type(escaped).__name__}")
+ 
+     def test_utf8_committed_path_is_supported(self):
+         result = V.observe(self.fixture(path="fixtures/hôte.json"))

@@ -1,0 +1,41 @@
+def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
+    """True / False / None (P8, G7, G9).
+
+    With systemd as PID 1: True if ``systemctl is-active`` reports active / activating / reloading (a disabled unit
+    can still be running, pulled in by another unit), or ``is-enabled`` reports enabled, enabled-runtime, static,
+    indirect, alias, linked or linked-runtime; False only with recognized inactive / failed activity plus disabled /
+    masked / masked-runtime, or not-found with no unit file in any root; None otherwise (a failed query is never
+    'disabled').
+    Without systemd: from every root of the unit search path: masked (a link to /dev/null) False; an entry for the unit
+    in any ``*.wants`` / ``*.requires`` directory, even a dangling link (systemd adds the dependency by link name),
+    True; otherwise False; an unreadable root None."""
+    if systemd_is_pid1() is True:
+        act = _systemctl_is_active(unit)
+        if act in ("active", "activating", "reloading"):
+            return True
+        st = _systemctl_is_enabled(unit)
+        if st in ("enabled", "enabled-runtime", "static", "indirect", "alias", "linked", "linked-runtime"):
+            return True
+        if st in ("disabled", "masked", "masked-runtime"):
+            return False if act in ("inactive", "failed") else None
+        if st == "not-found":
+            if act not in ("inactive", "failed"):
+                return None
+            return False if _unit_files(unit, unit_roots) is False else None
+        return None
+    for root in unit_roots:
+        r = Path(root)
+        if not r.exists():
+            continue
+        try:
+            subs = list(r.iterdir())
+        except OSError:
+            return None
+        f = r / unit
+        if f.is_symlink() and os.path.realpath(f) == "/dev/null":
+            return False
+        for d in subs:
+            e = d / unit
+            if d.name.endswith((".wants", ".requires")) and (e.is_symlink() or e.exists()):
+                return True
+    return False

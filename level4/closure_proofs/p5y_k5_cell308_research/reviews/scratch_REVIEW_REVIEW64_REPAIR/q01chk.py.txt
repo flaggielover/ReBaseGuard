@@ -1,0 +1,36 @@
+"""Q01 over-weakening check: build Q01 (registry edits) and a tree-only variant; outcome on a direct-child gitlink.
+usage: python3 -I q01chk.py.txt <DEV> <outdir> <tmp>"""
+import importlib.util, json, subprocess, sys, os, hashlib
+from pathlib import Path
+DEV, OUTD, TMP = sys.argv[1:4]
+spec = importlib.util.spec_from_file_location("rm", Path(DEV, "tests/run_mutants.py")); H = importlib.util.module_from_spec(spec); spec.loader.exec_module(H)
+src = H.SRC.read_text()
+edits = dict((m, e) for m, _, e in H.MUTANTS)["Q01"]
+q01, _, err = H.apply_mutation(src, edits); assert not err
+faith = [(edits[0][0], edits[0][1].replace('== b"blob\\n"', '!= b"tree\\n"')), edits[1]]
+q01f, _, err = H.apply_mutation(src, faith); assert not err
+for n, s in (("base", src), ("q01", q01), ("q01faithful", q01f)):
+    Path(OUTD, n, "lx_platform.py").write_text(s)
+code = r'''
+import json, hashlib, subprocess, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[1]); import lx_platform as L
+HW = {"machine_id_sha256": "a"*64, "product_uuid_sha256": "b"*64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR; ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest(); w = Path(sys.argv[2]); w.mkdir()
+C = ["-c","user.name=t","-c","user.email=t@t","-c","commit.gpgsign=false","-c","core.hooksPath=/dev/null"]
+g = lambda *a: subprocess.run(["git","-C",str(w),*C,*a],check=True,capture_output=True)
+g("init","-q"); Path(w,"att").mkdir(); Path(w,"att/HOST.json").write_bytes(ATT); g("add","-A"); g("commit","-qm","a")
+Path(w,RD).mkdir(parents=True); Path(w,f"{ACC}1.md").write_text(f"r\n{L.ACCEPTANCE_LINE}{SHA}\n{L.ACCEPTANCE_VERDICT_LINE}\n")
+g("add","-A"); g("update-index","--add","--cacheinfo",f"160000,{'1'*40},{RD}/sub"); g("commit","-qm","b")
+rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": SHA}, repo_root=str(w))
+print(json.dumps({"valid": rec is not None, "reasons": why}))
+'''
+res = {}
+for n in ("base", "q01", "q01faithful"):
+    p = subprocess.run([sys.executable, "-I", "-c", code, str(Path(OUTD, n)), str(Path(TMP, n))], capture_output=True, text=True)
+    res[n] = p.stdout.strip() or p.stderr[-400:]
+print(json.dumps(res, indent=1))

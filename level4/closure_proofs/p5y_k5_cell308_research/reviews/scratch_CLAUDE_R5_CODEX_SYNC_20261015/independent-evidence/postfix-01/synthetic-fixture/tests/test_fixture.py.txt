@@ -1,0 +1,18 @@
+import os, unittest
+MODE = os.environ.get("INDEPENDENT_SYNTHETIC_MODE", "baseline")
+class CustomAssertionError(AssertionError): pass
+class TestSynthetic(unittest.TestCase):
+    failureException = RuntimeError if MODE == "runtime_as_failure" else AssertionError
+    def test_intended_property(self):
+        if MODE == "runtime_as_failure":
+            raise RuntimeError("actual runtime failure\nAssertionError: quoted suffix")
+        if MODE == "assertion_with_runtime_text":
+            raise AssertionError("actual assertion\nRuntimeError: quoted suffix")
+        if MODE == "assertion_subclass":
+            raise CustomAssertionError("subclass has no exact-AssertionError credit")
+        if MODE in ("distinct_subtests", "duplicate_subtests"):
+            for value in (1, 2) if MODE == "distinct_subtests" else (1, 1):
+                with self.subTest(value=value):
+                    self.assertEqual(value, 0)
+    def test_unrelated_property(self):
+        self.assertTrue(True)

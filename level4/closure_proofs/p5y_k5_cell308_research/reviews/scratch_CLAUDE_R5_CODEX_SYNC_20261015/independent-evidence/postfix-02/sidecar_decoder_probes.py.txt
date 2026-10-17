@@ -1,0 +1,25 @@
+"""Independent malformed sidecar probes. Subprocess is mocked; no tests execute."""
+import ast, hashlib, importlib.util, json
+from pathlib import Path
+from types import SimpleNamespace
+BASE=Path('/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02')
+p=BASE/'inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py'
+ast.parse(p.read_text());spec=importlib.util.spec_from_file_location('independent_sidecar_harness',p);H=importlib.util.module_from_spec(spec);spec.loader.exec_module(H)
+prior=json.loads((BASE/'fresh-classifier-probes.json').read_text());validsuite=prior['probes'][0]['suite'];validmeta=validsuite['controlled_runner_metadata'];raw=json.dumps(validmeta)
+base_meta=dict(validmeta,successful=True,events=[])
+baseline=H._suite_record([],{},returncode=0,stdout='',stderr='-'*70+'\nRan 2 tests in 0.001s\n\nOK\n',elapsed_s=.001,result_metadata=base_meta)
+variants=[('valid',raw.encode(),'KILLED'),('missing',None,'ERROR'),('empty',b'','ERROR'),('invalid_json',b'{','ERROR'),('null',b'null','ERROR'),('boolean',b'true','ERROR'),('number',b'123','ERROR'),('empty_array',b'[]','ERROR'),('nonempty_array',b'["not", "object"]','ERROR'),('duplicate_top_level_key',raw.replace('"ran": 2','"ran": 2, "ran": 2',1).encode(),'ERROR'),('duplicate_nested_key',raw.replace('"kind": "failure"','"kind": "failure", "kind": "failure"',1).encode(),'ERROR'),('multiple_records',(raw+'\n'+raw).encode(),'ERROR'),('invalid_utf8',b'\xff','ERROR')]
+rows=[];original_run=H.subprocess.run
+for label,payload,expected in variants:
+    def mock_run(command,**kwargs):
+        if payload is not None:Path(command[-1]).write_bytes(payload)
+        return SimpleNamespace(returncode=1,stdout='',stderr=validsuite['stderr'])
+    H.subprocess.run=mock_run
+    try:
+        suite=H.run_suite({});status,reasons=H.classify_mutant(suite,baseline,['test_intended_property'])
+    except Exception as exc: suite=None;status='EXCEPTION';reasons=[type(exc).__name__+': '+str(exc)]
+    finally:H.subprocess.run=original_run
+    rows.append({'case':label,'expected':expected,'actual':status,'matches_expectation':status==expected,'reasons':reasons,'sidecar_bytes_hex':payload.hex() if payload is not None else None,'suite':suite})
+rec={'harness_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'subprocess_mocked':True,'product_or_tests_executed':False,'probe_count':len(rows),'mismatches':[r['case'] for r in rows if not r['matches_expectation']],'probes':rows}
+(BASE/'sidecar-decoder-probes.json').write_text(json.dumps(rec,indent=2)+'\n')
+print(json.dumps({k:v for k,v in rec.items() if k!='probes'},indent=2))

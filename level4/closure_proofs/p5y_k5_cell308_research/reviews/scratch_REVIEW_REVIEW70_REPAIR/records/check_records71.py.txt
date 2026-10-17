@@ -1,0 +1,70 @@
+"""Review 71 Q4: recompute every sha256 bound by ledger lines 525-531 (appended after 9f223c91), at the introducing
+commit and at cc02b9b7, and compare review 70 + its committed scratch with the scratchpad/review70 originals.
+usage: python3 -B -I check_records71.py.txt <pinned tree> <review70 originals dir>"""
+import gzip, hashlib, json, subprocess, sys
+from pathlib import Path
+TREE, ORIG = sys.argv[1:3]
+NS = "level4/closure_proofs/p5y_k5_cell308_research"
+def show(c, p):
+    r = subprocess.run(["git", "-C", TREE, "show", f"{c}:{p}"], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+def h(b):
+    return None if b is None else hashlib.sha256(b).hexdigest()
+led = show("cc02b9b7", f"{NS}/ledger/TARGET_INTEGRITY_LEDGER.jsonl").decode().splitlines()
+intro = {525: "218e478a", 526: "74badebc", 527: "74badebc", 528: "74badebc", 529: "cc02b9b7", 530: "cc02b9b7", 531: "cc02b9b7"}
+checks, problems = [], []
+def check(line, path, want, commit):
+    got = h(show(commit, path))
+    checks.append({"line": line, "path": path, "commit": commit, "ok": got == want})
+    if got != want:
+        problems.append(f"line {line}: {path} at {commit}: {got} != {want}")
+for n in range(525, 532):
+    rec = json.loads(led[n - 1])
+    for c in (intro[n], "cc02b9b7"):
+        if "brief_sha256" in rec:
+            check(n, f"{NS}/{rec['brief']}", rec["brief_sha256"], c)
+        if "review_sha256" in rec:
+            check(n, f"{NS}/{rec['review']}", rec["review_sha256"], c)
+        for p, v in rec.get("scratch_sha256", {}).items():
+            check(n, f"{NS}/{p}", v, c)
+        for p, v in rec.get("input_sha256", {}).items():
+            check(n, p, v, c)
+        for p, v in rec.get("documents", {}).items():
+            check(n, f"{NS}/{p}", v, c)
+        if "record_sha256" in rec:
+            check(n, f"{NS}/{rec['record']}", rec["record_sha256"], c)
+            raw = show(c, f"{NS}/{rec['record']}")
+            got = h(gzip.decompress(raw))
+            checks.append({"line": n, "path": "uncompressed", "commit": c, "ok": got == rec["uncompressed_sha256"]})
+            if got != rec["uncompressed_sha256"]:
+                problems.append(f"line {n}: uncompressed {got}")
+        if "runner_sha256" in rec:
+            check(n, f"{NS}/{rec['runner']}", rec["runner_sha256"], c)
+# review 70 + scratch vs originals
+orig = Path(ORIG)
+rec526 = json.loads(led[525])
+cmp = []
+pairs = [(f"{NS}/reviews/REVIEW_REVIEW69_REPAIR_DELTA.md", orig / "REVIEW_REVIEW69_REPAIR_DELTA.md")]
+for p in rec526["scratch_sha256"]:
+    rel = p.split("scratch_REVIEW_REVIEW69_REPAIR/", 1)[1]
+    cand = orig / rel
+    if not cand.exists() and rel.endswith(".py.txt"):
+        cand = orig / rel[:-4]
+    pairs.append((f"{NS}/{p}", cand))
+for committed, o in pairs:
+    a = show("cc02b9b7", committed)
+    b = o.read_bytes() if o.exists() else None
+    cmp.append({"committed": committed.split("/reviews/", 1)[1], "original": str(o.relative_to(orig)), "identical": a == b})
+committed_rel = {p.split("scratch_REVIEW_REVIEW69_REPAIR/", 1)[1] for p in rec526["scratch_sha256"]}
+uncommitted = []
+for f in sorted(orig.rglob("*")):
+    if f.is_file():
+        rel = str(f.relative_to(orig))
+        if rel == "REVIEW_REVIEW69_REPAIR_DELTA.md" or rel in committed_rel or rel + ".txt" in committed_rel:
+            continue
+        uncommitted.append(rel)
+top_uncommitted = sorted({u.split("/", 1)[0] for u in uncommitted})
+print(json.dumps({"n_checks": len(checks), "problems": problems, "n_scratch_bound": len(rec526["scratch_sha256"]),
+                  "compare": cmp, "all_identical": all(c["identical"] for c in cmp),
+                  "uncommitted_original_top_dirs": top_uncommitted,
+                  "uncommitted_outside_tree": [u for u in uncommitted if not u.startswith("tree_9f223c91/")]}, indent=1))

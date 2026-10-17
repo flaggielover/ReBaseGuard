@@ -1,0 +1,31 @@
+"""Review 67: re-classify every row of the committed 2288bec1 local record with the pinned harness.
+usage: python3 -B -I reclassify67.py.txt <pinned tree> <out.json>"""
+import gzip, hashlib, importlib.util, json, subprocess, sys
+from pathlib import Path
+TREE = Path(sys.argv[1]); NS = "level4/closure_proofs/p5y_k5_cell308_research"
+DEV = TREE / NS / "streams/CLOUD_R1_LINUX_DEV"
+spec = importlib.util.spec_from_file_location("rm", DEV / "tests/run_mutants.py"); H = importlib.util.module_from_spec(spec); spec.loader.exec_module(H)
+rec = json.loads(gzip.decompress(subprocess.run(["git", "-C", str(TREE), "show",
+      f"2f39e9f4:{NS}/reviews/scratch_REVIEW63_REPAIR_20261015/LOCAL_FULL_HARNESS_PY312_2288BEC1.json.gz"], capture_output=True).stdout))
+src = subprocess.run(["git", "-C", str(TREE), "show", f"2288bec1:{NS}/streams/CLOUD_R1_LINUX_DEV/lx_platform.py"], capture_output=True).stdout.decode()
+reg = {m: (w, e) for m, w, e in H.MUTANTS}
+base = rec["baseline"]
+problems, sel = [], {}
+print("row keys", sorted(rec["mutants"][0]))
+for r in rec["mutants"]:
+    mid = r["id"]
+    w, e = reg[mid]
+    if [{"old": o, "new": n} for o, n in e] != r.get("edits"): problems.append((mid, "edits differ"))
+    if r.get("intended_property_test_methods") != H.PROPERTY_WITNESSES[mid]: problems.append((mid, "witnesses differ"))
+    suite = r.get("suite") or r.get("mutated_suite")
+    st, why = H.classify_mutant(suite, base, H.PROPERTY_WITNESSES[mid])
+    if st != r["status"]: problems.append((mid, "status", st, r["status"], why))
+    mutated, counts, err = H.apply_mutation(src, e)
+    msha = hashlib.sha256(mutated.encode()).hexdigest() if mutated else None
+    if r.get("mutated_lx_platform_sha256") not in (None, msha): problems.append((mid, "mutated sha differs"))
+    if mid in ("RV23", "RV31", "RV33", "RV39") or mid >= "RV43" and mid.startswith("RV"):
+        sel[mid] = {"status": r["status"], "failed": sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]}),
+                    "ran": suite["ran"], "mutated_sha_present": r.get("mutated_lx_platform_sha256") is not None}
+out = {"rows": len(rec["mutants"]), "baseline_ran": base["ran"], "problems": problems, "selected": sel,
+       "origins": sorted({r.get("origin") for r in rec["mutants"] if r["id"].startswith("RV")})}
+Path(sys.argv[2]).write_text(json.dumps(out, indent=1) + "\n"); print(json.dumps(out, indent=1))

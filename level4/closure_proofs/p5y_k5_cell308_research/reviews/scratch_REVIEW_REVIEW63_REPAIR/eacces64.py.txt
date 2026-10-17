@@ -1,0 +1,16 @@
+"""Review 64: unit_enabled file mode with a root that can be listed but not searched (r--, no x).
+usage (inside an unmapped user namespace): python3 -I eacces64.py.txt <base> <dir>"""
+import sys
+sys.path.insert(0, sys.argv[1])
+import lx_platform as L
+L.systemd_is_pid1 = lambda *a, **k: False
+d = sys.argv[2]
+for v in ("3",):
+    try:
+        print("unit_enabled:", L.unit_enabled("x.timer", (d + "/hi", d + "/lo")))
+    except Exception as e:
+        print("EXCEPTION:", type(e).__name__, e)
+    try:
+        print("auto_update_settings.update_units:", L.auto_update_settings(apt_dump='APT::Periodic::Enable "0";\n', unit_roots=(d + "/hi", d + "/lo"), use_live_apt=False)["update_units"])
+    except Exception as e:
+        print("EXCEPTION in auto_update_settings:", type(e).__name__, e)

@@ -1,0 +1,615 @@
+{
+  "harness_sha256": "ac3800d5742ff6e5dcb5da8b3d909d8dece0c1863b87ef95d8140ee95fb01179",
+  "fixture_source": "import os, unittest\nMODE = os.environ.get(\"INDEPENDENT_SYNTHETIC_MODE\", \"baseline\")\nclass CustomAssertionError(AssertionError): pass\nclass TestSynthetic(unittest.TestCase):\n    failureException = RuntimeError if MODE == \"runtime_as_failure\" else AssertionError\n    def test_intended_property(self):\n        if MODE == \"runtime_as_failure\":\n            raise RuntimeError(\"actual runtime failure\\nAssertionError: quoted suffix\")\n        if MODE == \"assertion_with_runtime_text\":\n            raise AssertionError(\"actual assertion\\nRuntimeError: quoted suffix\")\n        if MODE == \"assertion_subclass\":\n            raise CustomAssertionError(\"subclass has no exact-AssertionError credit\")\n        if MODE in (\"distinct_subtests\", \"duplicate_subtests\"):\n            for value in (1, 2) if MODE == \"distinct_subtests\" else (1, 1):\n                with self.subTest(value=value):\n                    self.assertEqual(value, 0)\n    def test_unrelated_property(self):\n        self.assertTrue(True)\n",
+  "fixture_sha256": "e272e3536eb863e196fc9fda2c3c0bc20ee420216872a90cbb486da718d862fa",
+  "baseline": {
+    "command": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-B",
+      "-W",
+      "error",
+      "-c",
+      "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+      "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests",
+      "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpxyxqms49/result.json"
+    ],
+    "cwd": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture",
+    "environment_controls": {
+      "LX_PLATFORM_DIR": null,
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONWARNINGS": "error",
+      "PYTHONHASHSEED": "0"
+    },
+    "returncode": 0,
+    "elapsed_s": 0.03914004199032206,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 2,
+    "summary": "OK",
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [],
+    "assertion_failure_names": [],
+    "error_names": [],
+    "controlled_runner_metadata": {
+      "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+      "ran": 2,
+      "successful": true,
+      "events": [],
+      "executed_test_ids": [
+        "test_fixture.TestSynthetic.test_intended_property",
+        "test_fixture.TestSynthetic.test_unrelated_property"
+      ],
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0
+    },
+    "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": true, \"events\": [], \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+    "invalid_reasons": [],
+    "stdout": "",
+    "stderr": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) ... ok\ntest_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n",
+    "suite_tail": "OK"
+  },
+  "product_imported": false,
+  "full_development_suite_or_mutants_executed": false,
+  "only_two_test_synthetic_fixture_executed": true,
+  "mismatches": [],
+  "probes": [
+    {
+      "case": "runtime_as_failure",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "FAILURE_IS_NOT_ASSERTIONERROR",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpfq528uof/result.json"
+        ],
+        "cwd": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 0.03653749999648426,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 2,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "parent_test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "description": "test_intended_property (test_fixture.TestSynthetic.test_intended_property)",
+              "exception_type": "builtins.RuntimeError",
+              "is_exact_assertion_error": false,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py",
+                  "line": 8,
+                  "function": "test_intended_property"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_fixture.TestSynthetic.test_intended_property",
+            "test_fixture.TestSynthetic.test_unrelated_property"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property)\", \"exception_type\": \"builtins.RuntimeError\", \"is_exact_assertion_error\": false, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", \"line\": 8, \"function\": \"test_intended_property\"}]}], \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [
+          "FAILURE_IS_NOT_ASSERTIONERROR",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) ... FAIL\ntest_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property) ... ok\n\n======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", line 8, in test_intended_property\n    raise RuntimeError(\"actual runtime failure\\nAssertionError: quoted suffix\")\nRuntimeError: actual runtime failure\nAssertionError: quoted suffix\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "assertion_with_runtime_text",
+      "expected": "KILLED",
+      "actual": "KILLED",
+      "matches_expectation": true,
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp5uxpfv7s/result.json"
+        ],
+        "cwd": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 0.0366754580027191,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 2,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "parent_test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "description": "test_intended_property (test_fixture.TestSynthetic.test_intended_property)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py",
+                  "line": 10,
+                  "function": "test_intended_property"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_fixture.TestSynthetic.test_intended_property",
+            "test_fixture.TestSynthetic.test_unrelated_property"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", \"line\": 10, \"function\": \"test_intended_property\"}]}], \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) ... FAIL\ntest_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property) ... ok\n\n======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", line 10, in test_intended_property\n    raise AssertionError(\"actual assertion\\nRuntimeError: quoted suffix\")\nAssertionError: actual assertion\nRuntimeError: quoted suffix\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "assertion_subclass",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "FAILURE_IS_NOT_ASSERTIONERROR",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmph90ea68n/result.json"
+        ],
+        "cwd": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 0.032681040989700705,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 2,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "parent_test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "description": "test_intended_property (test_fixture.TestSynthetic.test_intended_property)",
+              "exception_type": "test_fixture.CustomAssertionError",
+              "is_exact_assertion_error": false,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py",
+                  "line": 12,
+                  "function": "test_intended_property"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_fixture.TestSynthetic.test_intended_property",
+            "test_fixture.TestSynthetic.test_unrelated_property"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property)\", \"exception_type\": \"test_fixture.CustomAssertionError\", \"is_exact_assertion_error\": false, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", \"line\": 12, \"function\": \"test_intended_property\"}]}], \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [
+          "FAILURE_IS_NOT_ASSERTIONERROR",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) ... FAIL\ntest_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property) ... ok\n\n======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", line 12, in test_intended_property\n    raise CustomAssertionError(\"subclass has no exact-AssertionError credit\")\ntest_fixture.CustomAssertionError: subclass has no exact-AssertionError credit\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "distinct_subtests",
+      "expected": "KILLED",
+      "actual": "KILLED",
+      "matches_expectation": true,
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp4_rk9iqt/result.json"
+        ],
+        "cwd": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 0.0330233330023475,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=2)",
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)",
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=2)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)",
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=2)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 2,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_fixture.TestSynthetic.test_intended_property (value=1)",
+              "parent_test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "description": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py",
+                  "line": 16,
+                  "function": "test_intended_property"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 925,
+                  "function": "assertEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 918,
+                  "function": "_baseAssertEqual"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_fixture.TestSynthetic.test_intended_property (value=2)",
+              "parent_test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "description": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=2)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py",
+                  "line": 16,
+                  "function": "test_intended_property"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 925,
+                  "function": "assertEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 918,
+                  "function": "_baseAssertEqual"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_fixture.TestSynthetic.test_intended_property",
+            "test_fixture.TestSynthetic.test_unrelated_property"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property (value=1)\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", \"line\": 16, \"function\": \"test_intended_property\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 925, \"function\": \"assertEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 918, \"function\": \"_baseAssertEqual\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property (value=2)\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=2)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", \"line\": 16, \"function\": \"test_intended_property\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 925, \"function\": \"assertEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 918, \"function\": \"_baseAssertEqual\"}]}], \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) ... \n  test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1) ... FAIL\n  test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=2) ... FAIL\ntest_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property) ... ok\n\n======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", line 16, in test_intended_property\n    self.assertEqual(value, 0)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^\nAssertionError: 1 != 0\n\n======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", line 16, in test_intended_property\n    self.assertEqual(value, 0)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^\nAssertionError: 2 != 0\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=2)\n",
+        "suite_tail": "FAILED (failures=2)"
+      }
+    },
+    {
+      "case": "duplicate_subtests",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "DUPLICATE_FAILURE_TEST_ID",
+        "DUPLICATE_FAILURE_DESCRIPTION"
+      ],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpax301spq/result.json"
+        ],
+        "cwd": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": "0"
+        },
+        "returncode": 1,
+        "elapsed_s": 0.034168458005297,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=2)",
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)",
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)",
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 2,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_fixture.TestSynthetic.test_intended_property (value=1)",
+              "parent_test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "description": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py",
+                  "line": 16,
+                  "function": "test_intended_property"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 925,
+                  "function": "assertEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 918,
+                  "function": "_baseAssertEqual"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_fixture.TestSynthetic.test_intended_property (value=1)",
+              "parent_test_id": "test_fixture.TestSynthetic.test_intended_property",
+              "description": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py",
+                  "line": 16,
+                  "function": "test_intended_property"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 925,
+                  "function": "assertEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 918,
+                  "function": "_baseAssertEqual"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_fixture.TestSynthetic.test_intended_property",
+            "test_fixture.TestSynthetic.test_unrelated_property"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 2, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property (value=1)\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", \"line\": 16, \"function\": \"test_intended_property\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 925, \"function\": \"assertEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 918, \"function\": \"_baseAssertEqual\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_fixture.TestSynthetic.test_intended_property (value=1)\", \"parent_test_id\": \"test_fixture.TestSynthetic.test_intended_property\", \"description\": \"test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", \"line\": 16, \"function\": \"test_intended_property\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 925, \"function\": \"assertEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 918, \"function\": \"_baseAssertEqual\"}]}], \"executed_test_ids\": [\"test_fixture.TestSynthetic.test_intended_property\", \"test_fixture.TestSynthetic.test_unrelated_property\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [
+          "DUPLICATE_FAILURE_TEST_ID",
+          "DUPLICATE_FAILURE_DESCRIPTION"
+        ],
+        "stdout": "",
+        "stderr": "test_intended_property (test_fixture.TestSynthetic.test_intended_property) ... \n  test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1) ... FAIL\n  test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1) ... FAIL\ntest_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property) ... ok\n\n======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", line 16, in test_intended_property\n    self.assertEqual(value, 0)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^\nAssertionError: 1 != 0\n\n======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property) (value=1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/cell308-claude-sync-20261015/independent-evidence/postfix-02/synthetic-fixture/tests/test_fixture.py\", line 16, in test_intended_property\n    self.assertEqual(value, 0)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^\nAssertionError: 1 != 0\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=2)\n",
+        "suite_tail": "FAILED (failures=2)"
+      }
+    }
+  ]
+}

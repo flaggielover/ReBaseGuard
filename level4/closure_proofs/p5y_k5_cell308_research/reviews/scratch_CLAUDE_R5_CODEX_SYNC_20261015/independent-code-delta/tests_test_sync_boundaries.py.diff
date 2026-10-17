@@ -1,0 +1,163 @@
+--- /tmp/cell308-claude-sync-20261015/code-review-input/tests/test_sync_boundaries.py
++++ /tmp/cell308-claude-sync-20261015/code-review-delta-input/tests/test_sync_boundaries.py
+@@ -5,9 +5,13 @@
+ """
+ from __future__ import annotations
+ 
++import hashlib
++import json
+ import os
+ import subprocess
+ import sys
++import tempfile
++from contextlib import contextmanager
+ import unittest
+ from pathlib import Path
+ from unittest import mock
+@@ -326,6 +330,124 @@
+         self.assertTrue(any("sha256 mismatch" in reason for reason in reasons))
+ 
+ 
++class TestAcceptanceReviewEvidence(unittest.TestCase):
++    @contextmanager
++    def fixture(self):
++        environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
++        environment.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull)
++        with tempfile.TemporaryDirectory() as directory, mock.patch.dict(os.environ, environment, clear=True):
++            root = Path(directory)
++            def git(*args):
++                return subprocess.run(["git", "-C", str(root), "-c", "commit.gpgsign=false",
++                                       "-c", "core.hooksPath=" + os.devnull,
++                                       "-c", "user.name=Synthetic Test", "-c", "user.email=test@example.invalid",
++                                       *args], capture_output=True, check=True, env=environment).stdout
++            git("init", "-q")
++            machine = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
++            payload = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True,
++                                  "machine": machine, "root_cgroup_is_real": True}, sort_keys=True).encode()
++            (root / "attestation.json").write_bytes(payload)
++            git("add", "--", "attestation.json")
++            git("commit", "-q", "-m", "Synthetic attested blob")
++            digest = hashlib.sha256(payload).hexdigest()
++            review = Path(L.ACCEPTANCE_REVIEW_DIR) / "REVIEW_HOST_ATTESTATION_SYNC.md"
++            (root / review).parent.mkdir(parents=True)
++            (root / review).write_text(f"{L.ACCEPTANCE_LINE}{digest}\n{L.ACCEPTANCE_VERDICT_LINE}\n")
++            git("add", "--", str(review))
++            git("commit", "-q", "-m", "Later synthetic accepting line")
++            reference = {"path": "attestation.json", "sha256": digest}
++            with mock.patch.object(L, "machine_identity", return_value=machine):
++                yield root, git, reference
++
++    def test_ascii_acceptance_control_and_nonascii_tab_newline_veto_paths(self):
++        for filename in ("拒否.txt", "negative\tfile.txt", "negative\nfile.txt"):
++            with self.subTest(filename=filename), self.fixture() as (root, git, reference):
++                accepted, reasons = L.attestation_valid(reference, repo_root=root)
++                self.assertIsNotNone(accepted, reasons)
++                veto = Path(L.ACCEPTANCE_REVIEW_DIR) / "scratch" / filename
++                (root / veto).parent.mkdir(parents=True)
++                (root / veto).write_text(f"sha256={reference['sha256']}\nVERDICT: ReJeCtEd\n")
++                git("add", "--", str(veto))
++                git("commit", "-q", "-m", "Synthetic negative review")
++                accepted, reasons = L.attestation_valid(reference, repo_root=root)
++                self.assertIsNone(accepted)
++                self.assertTrue(any("rejected by" in reason and filename in reason for reason in reasons))
++
++    def test_unavailable_recursive_listing_or_veto_blob_refuses_verification(self):
++        with self.fixture() as (root, git, reference):
++            veto = Path(L.ACCEPTANCE_REVIEW_DIR) / "scratch" / "negative.txt"
++            (root / veto).parent.mkdir(parents=True)
++            (root / veto).write_text(f"{reference['sha256']}\nwithdrawn\n")
++            git("add", "--", str(veto))
++            git("commit", "-q", "-m", "Synthetic veto evidence")
++            original = L._git
++            for fault in ("recursive-list", "direct-list", "veto-blob", "accepting-blob"):
++                def reading(repo_root, *args):
++                    if fault == "recursive-list" and args[0] == "ls-tree" and "-r" in args:
++                        return None
++                    if fault == "direct-list" and args[0] == "ls-tree" and "-r" not in args:
++                        return None
++                    if fault == "veto-blob" and args == ("show", f"HEAD:{veto}"):
++                        return None
++                    if fault == "accepting-blob" and args[0] == "show" and args[1].endswith("REVIEW_HOST_ATTESTATION_SYNC.md"):
++                        return None
++                    return original(repo_root, *args)
++                with self.subTest(fault=fault), mock.patch.object(L, "_git", side_effect=reading):
++                    accepted, reasons = L.attestation_valid(reference, repo_root=root)
++                self.assertIsNone(accepted)
++                self.assertTrue(any("UNAVAILABLE" in reason for reason in reasons), reasons)
++
++    def test_malformed_listing_and_nonutf8_review_blob_refuse_verification(self):
++        with self.fixture() as (root, _git, reference):
++            original = L._git
++            for listing in (b"unterminated", b"\xff\0", b"\0"):
++                def reading(repo_root, *args):
++                    return listing if args[0] == "ls-tree" and "-r" in args else original(repo_root, *args)
++                with self.subTest(listing=listing), mock.patch.object(L, "_git", side_effect=reading):
++                    accepted, reasons = L.attestation_valid(reference, repo_root=root)
++                self.assertIsNone(accepted)
++                self.assertTrue(any("UNAVAILABLE" in reason for reason in reasons), reasons)
++            def bad_blob(repo_root, *args):
++                if args[0] == "show" and args[1].endswith("REVIEW_HOST_ATTESTATION_SYNC.md"):
++                    return b"\xff"
++                return original(repo_root, *args)
++            with mock.patch.object(L, "_git", side_effect=bad_blob):
++                accepted, reasons = L.attestation_valid(reference, repo_root=root)
++            self.assertIsNone(accepted)
++            self.assertTrue(any("not UTF-8" in reason for reason in reasons), reasons)
++
++
++class TestNumericReaders(unittest.TestCase):
++    def test_suspend_and_cgroup_readers_require_bounded_ascii_text(self):
++        for text, expected in (("0", 0), ("003\n", 3), (" 7 ", 7)):
++            self.assertEqual(L.suspend_success_count(text), expected)
++            with mock.patch.object(L, "_read", return_value=text):
++                self.assertEqual(L.suspend_success_count(), expected)
++                self.assertEqual(L._cg_val("/synthetic/limit"), expected)
++        for text in ("²", "１２", "١٢", b"7", 7, True, [], {}, "9" * 5000, "-1", "1.0", ""):
++            with self.subTest(type=type(text).__name__, length=len(text) if isinstance(text, (str, bytes)) else None):
++                self.assertIsNone(L.suspend_success_count(text))
++                with mock.patch.object(L, "_read", return_value=text):
++                    self.assertIsNone(L.suspend_success_count())
++                    self.assertIsNone(L._cg_val("/synthetic/limit"))
++        with mock.patch.object(L, "_read", return_value="max\n"):
++            self.assertEqual(L._cg_val("/synthetic/limit"), "max")
++
++    def test_thermal_signed_ascii_and_unrecognized_values(self):
++        with tempfile.TemporaryDirectory() as directory:
++            zone = Path(directory) / "thermal_zone0"
++            zone.mkdir()
++            (zone / "trip_point_0_type").write_text("critical\n")
++            for value, expected in (("-12000\n", -12000), ("42000", 42000), ("²", None), ("１２", None),
++                                    ("١٢", None), (b"7", None), (True, None), ("9" * 5000, None), ("--3", None)):
++                def reading(path):
++                    return "synthetic\n" if str(path).endswith("type") else value
++                with self.subTest(type=type(value).__name__), mock.patch.object(L, "_read", side_effect=reading):
++                    result = L.thermal_zones(directory)
++                self.assertEqual(result[0]["temp_mC"], expected)
++                self.assertEqual(result[0]["trips"][0]["temp_mC"], expected)
++
++
+ class TestUnitQueryEvidence(unittest.TestCase):
+     def unit(self, active, enabled="disabled"):
+         with mock.patch.object(L, "systemd_is_pid1", return_value=True), \
+@@ -339,6 +461,21 @@
+             for enabled in ("disabled", "masked", "masked-runtime", "not-found"):
+                 self.assertIsNone(self.unit(active, enabled), (active, enabled))
+ 
++    def test_supervisor_true_false_unknown_and_update_composition(self):
++        with tempfile.TemporaryDirectory() as directory:
++            absent = str(Path(directory) / "absent")
++            for supervisor, expected in ((True, None), (False, False), (None, None), (1, None)):
++                with self.subTest(supervisor=supervisor), \
++                        mock.patch.object(L, "systemd_is_pid1", return_value=supervisor), \
++                        mock.patch.object(L, "_systemctl_is_active", return_value=None), \
++                        mock.patch.object(L, "_systemctl_is_enabled", return_value="disabled"):
++                    self.assertIs(L.unit_enabled("synthetic-update.service", unit_roots=()), expected)
++                    result = L.auto_update_settings('APT::Periodic::Enable "0";\n', unit_roots=(),
++                                                    uu_binary=absent, snapd_paths=(), cloud_dir=absent,
++                                                    livepatch_dir=absent, use_live_apt=False)
++                self.assertIs(result["guest_updates_shown_disabled"], supervisor is False)
++                self.assertIs(result["update_unit_enabled_or_unknown"], supervisor is not False)
++
+     def test_known_inactive_disabled_and_positive_activity_controls(self):
+         for active in ("inactive", "failed"):
+             self.assertIs(self.unit(active), False)

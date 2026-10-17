@@ -1,0 +1,31 @@
+import json, subprocess, hashlib, sys
+NS = "level4/closure_proofs/p5y_k5_cell308_research/"
+def blob(commit, path):
+    r = subprocess.run(["git", "show", f"{commit}:{path}"], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+def h(b): return None if b is None else hashlib.sha256(b).hexdigest()
+led = blob("5e8e3d9c", NS + "ledger/TARGET_INTEGRITY_LEDGER.jsonl").decode().splitlines()
+base = blob("9b6347cb", NS + "ledger/TARGET_INTEGRITY_LEDGER.jsonl").decode().splitlines()
+print("base lines", len(base), "new lines", len(led), "prefix", led[:len(base)] == base)
+# which commit introduced each new line
+commits = {"03107fe3": None, "670ec7a4": None, "a16d2d99": None, "5e8e3d9c": None}
+for c in commits:
+    commits[c] = len(blob(c, NS + "ledger/TARGET_INTEGRITY_LEDGER.jsonl").decode().splitlines())
+print("line counts per commit", commits)
+def at(line_no):
+    for c, n in commits.items():
+        if n >= line_no: return c
+for i, l in enumerate(led[len(base):], start=len(base) + 1):
+    d = json.loads(l)
+    c = at(i)
+    print(f"--- line {i} phase {d['phase']} introduced at {c}")
+    for key in ("bindings", "scratch_sha256", "input_sha256", "documents"):
+        for p, v in (d.get(key) or {}).items():
+            full = p if p.startswith((".github", "level4")) else NS + p
+            for cc in (c, "5e8e3d9c"):
+                got = h(blob(cc, full))
+                print(f"  {key} {p} @{cc}: {'OK' if got == v else 'MISMATCH ' + str(got)}")
+    if "review_sha256" in d:
+        for cc in (c, "5e8e3d9c"):
+            got = h(blob(cc, NS + d["review"]))
+            print(f"  review @{cc}: {'OK' if got == d['review_sha256'] else 'MISMATCH ' + str(got)}")

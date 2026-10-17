@@ -1,0 +1,92 @@
+name: Cell-308 R5 combined synthetic evidence
+
+on:
+  push:
+    branches: [codex/cell308-claude-r5-integration]
+    paths:
+      - level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/*.py
+      - level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/*.py
+      - .github/workflows/cell-308-r5-integration.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      DEV: level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV
+      PYTHON_EXE: /usr/bin/python3.12
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONWARNINGS: error
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind exact source and synthetic-only command
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/cell308-r5-evidence"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git diff --exit-code
+          git status --porcelain=v1 > "$RUNNER_TEMP/cell308-r5-evidence/status-before.txt"
+          test ! -s "$RUNNER_TEMP/cell308-r5-evidence/status-before.txt"
+          git rev-parse HEAD > "$RUNNER_TEMP/cell308-r5-evidence/source-commit.txt"
+          test -x "$PYTHON_EXE"
+          "$PYTHON_EXE" -VV > "$RUNNER_TEMP/cell308-r5-evidence/python.txt"
+          uname -a > "$RUNNER_TEMP/cell308-r5-evidence/kernel.txt"
+      - name: Full baseline and strict property mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          unset LX_PLATFORM_DIR
+          cd "$DEV"
+          "$PYTHON_EXE" -B -W error tests/run_mutants.py "$RUNNER_TEMP/cell308-r5-evidence/mutations.json" > "$RUNNER_TEMP/cell308-r5-evidence/harness.stdout.log" 2> "$RUNNER_TEMP/cell308-r5-evidence/harness.stderr.log"
+      - name: Preserve raw suite traces and verify evidence completeness
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code
+          git status --porcelain=v1 > "$RUNNER_TEMP/cell308-r5-evidence/status-after.txt"
+          test ! -s "$RUNNER_TEMP/cell308-r5-evidence/status-after.txt"
+          "$PYTHON_EXE" - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          folder = Path(os.environ['RUNNER_TEMP']) / 'cell308-r5-evidence'
+          evidence = folder / 'mutations.json'
+          if not evidence.is_file():
+              raise SystemExit('mutation evidence missing; inspect harness logs')
+          rec = json.loads(evidence.read_text())
+          suites = [('baseline', rec['baseline'])] + [(r['id'], r['suite']) for r in rec['mutants'] if 'suite' in r]
+          for label, suite in suites:
+              (folder / f'{label}.stdout.txt').write_text(suite['stdout'])
+              (folder / f'{label}.stderr.txt').write_text(suite['stderr'])
+              (folder / f'{label}.metadata.json').write_text(suite['controlled_runner_metadata_raw'] or '')
+          manifest = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(folder.iterdir()) if p.is_file()}
+          (folder / 'artifact-sha256.json').write_text(json.dumps(manifest, indent=2) + '\n')
+          assert rec['source_commit'] == os.environ['GITHUB_SHA']
+          assert rec['system'] == 'Linux' and rec['class'] == 'SYNTHETIC_VALIDATION' and rec['dev_only'] is True
+          assert rec['new_target_evaluations'] == 0
+          assert rec['inputs_unchanged'] and rec['full_registry_completed'] and rec['pass']
+          assert rec['unmutated_suite'] == 'PASS'
+          assert rec['expected_mutants'] == rec['total'] == rec['killed'] == 133
+          assert len(suites) == 134
+          for _, suite in suites:
+              assert suite['ran'] == rec['expected_test_count']
+              assert suite['errors'] == suite['skipped'] == 0
+              assert not suite['timed_out'] and not suite['invalid_reasons']
+          PY
+      - name: Upload complete immutable-input evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cell308-r5-synthetic-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cell308-r5-evidence/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,22 @@
+{
+  "scope": "Stage1 addendum for workflow interpreter selection and complete precommit input binding",
+  "status": "STAGE_1_CONTROLS_PASS; STAGE_2_EXACT_COMMIT_NATIVE_ARTIFACT_AUDIT_PENDING",
+  "classifier_sha256": "ac3800d5742ff6e5dcb5da8b3d909d8dece0c1863b87ef95d8140ee95fb01179",
+  "controls_sha256": "5b4d62828dbe2bd3094b2f7325acc2a68d00543895a8018111130de3c7caea2a",
+  "workflow_sha256": "875eb73a1409e8e0068f990dbfdc10d5e3f6bd687814426dc9b4aac16240dfa8",
+  "independent_postfix_cases": 64,
+  "independent_mismatches": 0,
+  "workflow_change": "Native job uses /usr/bin/python3.12 consistently for interpreter metadata, harness and artifact gate; source SHA checkout, clean-tree checks, full-discovery command, artifact hashes/raw streams/raw metadata, 133 mutants and 134 suite gates remain intact.",
+  "complete_explicit_inputs": 10,
+  "all_expected_input_hashes_match": true,
+  "independent_static_test_methods": 191,
+  "duplicate_test_method_names": [],
+  "bindings": {
+    "postfix-02/independent-stage1-resolution-report.json": "c6716e68cad6521f4fa90f1f60f63c0e61b904f35f94681e835c9143ca92363e",
+    "postfix-03-workflow/binding.json": "81202ec1e245b2748675c957155b7d6129e1a0c283408a001d6efbd1070d4e3b",
+    "source-freeze-precommit/input-sha256.json": "a105667c10752371dd5e39f1a6ffa5ea080c225c9f8f9ae8619abc220c0b6747",
+    "source-freeze-precommit/binding-manifest.json": "2075b354d24afee4bc62349a17645ee4bf4585a20c13b4ec153425ce57ff3475"
+  },
+  "no_native_full_CI_verdict": true,
+  "no_product_import_or_full_suite_execution": true
+}

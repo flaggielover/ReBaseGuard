@@ -1,0 +1,405 @@
+{
+ "source_sha256": "bdca4aa07c40ffd22b62dc820c9ce79b505e63a3f65bd542e3c74a8d612cca23",
+ "baseline_ran": 226,
+ "baseline_pass": true,
+ "expected_test_count": 226,
+ "registered": [
+  {
+   "id": "RV26",
+   "witnesses": [
+    "test_review64_symlink_is_not_an_accepting_review"
+   ],
+   "anchor_counts": [
+    1,
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "failed_methods": [
+    "test_review64_symlink_is_not_an_accepting_review",
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "f8a981c66abae57a065bbfc2065827e3d4f340eb7ae8be72710f8537b5755498"
+  },
+  {
+   "id": "RV55",
+   "witnesses": [
+    "test_review67_signature_program_never_runs"
+   ],
+   "anchor_counts": [
+    1,
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "failed_methods": [
+    "test_review67_signature_program_never_runs"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "8ab7c93bc03ed953d5b203f8f707c77c40752515b5b80077d35c983061966235"
+  },
+  {
+   "id": "RV56",
+   "witnesses": [
+    "test_review68_strict_fsck_and_forced_git_environment"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "failed_methods": [
+    "test_review68_strict_fsck_and_forced_git_environment"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "716b050d84b625f44ba52a52b1ec3787d98901bc7a40e23fc7f23a912bbbf02e"
+  },
+  {
+   "id": "RV57",
+   "witnesses": [
+    "test_review68_strict_fsck_and_forced_git_environment"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "failed_methods": [
+    "test_review68_strict_fsck_and_forced_git_environment"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "edb2664257e3d751b4d7582cc7da7345883e9b4cedc1fcf1d8ec32aefe3379d1"
+  },
+  {
+   "id": "RV58",
+   "witnesses": [
+    "test_review65_local_fsck_or_promisor_configuration_refuses"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "failed_methods": [
+    "test_review65_local_fsck_or_promisor_configuration_refuses",
+    "test_review66_configuration_in_includes_and_worktree_scope_refuses"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "3a07d19afcbaf4ac90760ad26240d5c288931934d0c74cdd74f90b61d872766a"
+  },
+  {
+   "id": "RV59",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "failed_methods": [
+    "test_review64_symlink_is_not_an_accepting_review",
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "9b182ce2c114dfc1a0a8a445fead86f9a07b49eff8984ca1a1aa8c81132619ed"
+  },
+  {
+   "id": "RV60",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "failed_methods": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "only_own_witnesses": true,
+   "mutated_sha256": "4f85e0aa24e4ce647d9fd607f49163a30ba784e895d418f3f7937bcdb0ed694d"
+  },
+  {
+   "id": "Q01",
+   "witnesses": [
+    "test_acceptance_is_found_not_named"
+   ],
+   "anchor_counts": [
+    1,
+    1,
+    1
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "failed_methods": [
+    "test_acceptance_is_found_not_named",
+    "test_ascii_acceptance_control_and_nonascii_tab_newline_veto_paths",
+    "test_malformed_listing_and_nonutf8_review_blob_refuse_verification",
+    "test_separate_negative_review_vetoes_acceptance_case_insensitively",
+    "test_unavailable_recursive_listing_or_veto_blob_refuses_verification"
+   ],
+   "only_own_witnesses": false,
+   "mutated_sha256": "2d4a4fc46d5b05b5f565585a03589515855b7aadfc3aa549334cf781b814b09c"
+  }
+ ],
+ "mutants": [
+  {
+   "id": "RB1",
+   "property": "ancestor check reads only the top component and the review directory (intermediate ancestors skipped)",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "             for i in range(1, len(parts) + 1)]",
+     "new": "             for i in (1, len(parts))]"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 226,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "b9b8336b6f58fc4e032d88604edcbe3776ddb2894f65592bef6cc3d1a3719f1e"
+  },
+  {
+   "id": "RB2",
+   "property": "ancestor check walks only the first-parent chain (side branches merged with -s ours skipped)",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    commits = _git(repo_root, \"rev-list\", \"HEAD\")",
+     "new": "    commits = _git(repo_root, \"rev-list\", \"--first-parent\", \"HEAD\")"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 226,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "46fa0c48db5935b8f04eed185c1e36e01feaec71e4a4edf14e9085045b5e3d6f"
+  },
+  {
+   "id": "RB3",
+   "property": "history scan skips gitlinks (only symlinks refuse)",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "            if parts[0] not in (b\"100644\", b\"100755\"):          # review 68 P1",
+     "new": "            if parts[1] == b\"commit\":\n                continue\n            if parts[0] not in (b\"100644\", b\"100755\"):          # review 68 P1"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: review history unreadable, not UTF-8 or not regular files",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "mutated_sha256": "d98c6394ce883dcdbb0125a10c2642a0e82f5a9eedabd78076afdae1e1e960c2"
+  },
+  {
+   "id": "RB4",
+   "property": "ancestor check accepts a gitlink whose commit is present (answer type commit read as a directory)",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "re.fullmatch(r\"[0-9a-f]{40,64} tree [0-9]+\", a)",
+     "new": "re.fullmatch(r\"[0-9a-f]{40,64} (tree|commit) [0-9]+\", a)"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: the review directory or an ancestor is not a directory in some commit",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": true,
+    "reasons": []
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 226,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "79b668c9d0c5e5ca5cd11456e8286e8486ac2b8c196e55670a41f93e1d2715b6"
+  },
+  {
+   "id": "RB5",
+   "property": "ancestor check omits the review directory itself (only its ancestors)",
+   "witnesses": [
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "             for i in range(1, len(parts) + 1)]",
+     "new": "             for i in range(1, len(parts))]"
+    }
+   ],
+   "outcome_base": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: review history unreadable, not UTF-8 or not regular files",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ]
+   },
+   "outcome_mutant": {
+    "valid": false,
+    "reasons": [
+     "rejected by UNAVAILABLE: review history unreadable, not UTF-8 or not regular files",
+     "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+    ]
+   },
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 226,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "f58d452005ee1a07145596399a69b0042476b130b9526aff6518b0b677088312"
+  }
+ ],
+ "splits": [
+  {
+   "id": "RV26_edit1_only_K7",
+   "witnesses": [
+    "test_review64_symlink_is_not_an_accepting_review"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "        if entries[path][:2] not in ((\"100644\", \"blob\"), (\"100755\", \"blob\")):\n            continue",
+     "new": "        if entries[path][:2] not in ((\"100644\", \"blob\"), (\"100755\", \"blob\"), (\"120000\", \"blob\")):\n            continue"
+    }
+   ],
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 226,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "50db54cd827102a3b3c0b1cb88ef8797f16c3c57ee3002a17ca8325f59acb139"
+  },
+  {
+   "id": "RV26_edit2_only_history_symlinks",
+   "witnesses": [
+    "test_review64_symlink_is_not_an_accepting_review"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "            if parts[0] not in (b\"100644\", b\"100755\"):          # review 68 P1",
+     "new": "            if parts[0] not in (b\"100644\", b\"100755\", b\"120000\"):  # review 68 P1"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 226,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review64_symlink_is_not_an_accepting_review",
+    "test_review68_non_directory_review_paths_refuse"
+   ],
+   "mutated_sha256": "1ed7c58d70424f4f090a7cc214b4952be107360d2579302b03b8ad8cfc6bb7ce"
+  },
+  {
+   "id": "Q01_first_two_edits_336bb0cb_shape",
+   "witnesses": [
+    "test_acceptance_is_found_not_named"
+   ],
+   "anchor_counts": [
+    1,
+    1
+   ],
+   "edits": [
+    {
+     "old": "every = _review_paths(_git(repo_root, \"ls-tree\", \"-r\", \"-z\", \"--name-only\", \"HEAD\", \"--\", ACCEPTANCE_REVIEW_DIR))",
+     "new": "every = _review_paths(_git(repo_root, \"ls-tree\", \"-z\", \"--name-only\", \"HEAD\", f\"{ACCEPTANCE_REVIEW_DIR}/\"))\n    every = every if every is None else [p for p in every\n                                         if _git(repo_root, \"cat-file\", \"-t\", f\"HEAD:{p}\") != b\"tree\\n\"]"
+    },
+    {
+     "old": "        listing = _git(repo_root, \"ls-tree\", \"-r\", \"-z\", c, \"--\", ACCEPTANCE_REVIEW_DIR)",
+     "new": "        listing = _git(repo_root, \"ls-tree\", \"-z\", c, f\"{ACCEPTANCE_REVIEW_DIR}/\")"
+    }
+   ],
+   "status": "ERROR",
+   "reasons": [
+    "NO_INTENDED_PROPERTY_ASSERTION"
+   ],
+   "ran": 226,
+   "returncode": 1,
+   "failed_methods": [
+    "test_ascii_acceptance_control_and_nonascii_tab_newline_veto_paths",
+    "test_malformed_listing_and_nonutf8_review_blob_refuse_verification"
+   ],
+   "mutated_sha256": "52a30867542dee46ba4fc7a1558554c6ce696d6b0a9d14d77f7b885b7caf1435"
+  }
+ ]
+}

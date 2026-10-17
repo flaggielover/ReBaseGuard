@@ -1,0 +1,93 @@
+# Review 68 Q4: recompute ledger bindings (lines 505-510), compare review 67 + scratch with originals,
+# check the compressed record, scan for credentials, list modified files. Read-only.
+import hashlib, json, gzip, subprocess, sys, os, re
+from pathlib import Path
+R = Path(sys.argv[1]); T = R / "tree_05caa00e"; NS = "level4/closure_proofs/p5y_k5_cell308_research"
+ORIG = R.parent / "review67"
+def sha(b): return hashlib.sha256(b).hexdigest()
+def git(*a): return subprocess.run(["git", "-C", str(T), *a], capture_output=True, check=True).stdout
+def blob(commit, path):
+    r = subprocess.run(["git", "-C", str(T), "show", f"{commit}:{path}"], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+out = {"bindings": [], "problems": []}
+ledger = (T / NS / "ledger/TARGET_INTEGRITY_LEDGER.jsonl").read_bytes()
+old = blob("2f39e9f4", f"{NS}/ledger/TARGET_INTEGRITY_LEDGER.jsonl")
+out["append_only_vs_2f39e9f4"] = ledger.startswith(old)
+for c in ("074bb4a0", "73018725", "ad341014", "05caa00e"):
+    b = blob(c, f"{NS}/ledger/TARGET_INTEGRITY_LEDGER.jsonl")
+    out.setdefault("ledger_lines_at", {})[c] = b.count(b"\n")
+chain = [blob(c, f"{NS}/ledger/TARGET_INTEGRITY_LEDGER.jsonl") for c in ("2f39e9f4", "074bb4a0", "73018725", "ad341014", "05caa00e")]
+out["prefix_chain"] = all(chain[i + 1].startswith(chain[i]) for i in range(len(chain) - 1))
+lines = ledger.decode().splitlines()
+def check(lineno, path, want, commits=("05caa00e",)):
+    for c in commits:
+        b = blob(c, path)
+        got = sha(b) if b is not None else None
+        out["bindings"].append({"line": lineno, "path": path, "at": c, "want": want, "got": got, "ok": got == want})
+        if got != want: out["problems"].append((lineno, path, c, want, got))
+for i, l in enumerate(lines[504:], start=505):
+    rec = json.loads(l)
+    if "brief_sha256" in rec: check(i, f"{NS}/{rec['brief']}", rec["brief_sha256"], ("074bb4a0", "05caa00e"))
+    if "review_sha256" in rec: check(i, f"{NS}/{rec['review']}", rec["review_sha256"], ("ad341014", "05caa00e"))
+    for p, h in rec.get("scratch_sha256", {}).items(): check(i, f"{NS}/{p}", h, ("ad341014", "05caa00e"))
+    for p, h in rec.get("input_sha256", {}).items(): check(i, p, h, ("ad341014", "05caa00e"))
+    for p, h in rec.get("documents", {}).items(): check(i, f"{NS}/{p}", h, ("ad341014", "05caa00e"))
+    if "record_sha256" in rec:
+        check(i, f"{NS}/{rec['record']}", rec["record_sha256"], ("05caa00e",))
+        raw = blob("05caa00e", f"{NS}/{rec['record']}")
+        hdr = raw[:10]
+        un = gzip.decompress(raw)
+        out["gz"] = {"uncompressed_sha256": sha(un), "want": rec["uncompressed_sha256"], "ok": sha(un) == rec["uncompressed_sha256"],
+                     "mtime": int.from_bytes(hdr[4:8], "little"), "flags": hdr[3], "xfl": hdr[8], "os": hdr[9]}
+        d = json.loads(un)
+        out["gz"]["top_keys"] = sorted(d)[:60]
+        ins = d.get("input_sha256") or {}
+        insa = d.get("input_sha256_after") or {}
+        prev = json.loads(lines[508])["input_sha256"]
+        cmp = {}
+        for p, h in ins.items():
+            full = p if p.startswith(".github") else f"{NS}/streams/CLOUD_R1_LINUX_DEV/{p}"
+            cands = [k for k in prev if k.endswith(p) or k == p]
+            bb = blob("ad341014", cands[0]) if cands else None
+            bb5 = blob("05caa00e", cands[0]) if cands else None
+            cmp[p] = {"rec": h, "after": insa.get(p), "ledger509": prev.get(cands[0]) if cands else None,
+                      "blob_ad341014": sha(bb) if bb else None, "blob_05caa00e": sha(bb5) if bb5 else None}
+        out["gz"]["inputs"] = cmp
+        out["gz"]["inputs_all_equal"] = all(len({v["rec"], v["after"], v["ledger509"], v["blob_ad341014"], v["blob_05caa00e"]}) == 1 for v in cmp.values())
+# byte comparison review 67 + scratch
+cmpres = {}
+rev = blob("05caa00e", f"{NS}/reviews/REVIEW_REVIEW66_REPAIR_DELTA.md")
+cmpres["REVIEW_REVIEW66_REPAIR_DELTA.md"] = rev == (ORIG / "REVIEW_REVIEW66_REPAIR_DELTA.md").read_bytes()
+committed = [p for p in git("ls-tree", "-r", "--name-only", "05caa00e", "--", f"{NS}/reviews/scratch_REVIEW_REVIEW66_REPAIR").decode().split("\n") if p]
+pref = f"{NS}/reviews/scratch_REVIEW_REVIEW66_REPAIR/"
+for p in committed:
+    rel = p[len(pref):]
+    o = ORIG / rel
+    if not o.exists() and rel.endswith(".py.txt"):
+        o = ORIG / rel[:-4]
+    cmpres[rel] = (o.exists() and o.read_bytes() == blob("05caa00e", p), str(o.relative_to(ORIG)) if o.exists() else None)
+out["byte_compare"] = cmpres
+origs = sorted(str(p.relative_to(ORIG)) for p in ORIG.rglob("*") if p.is_file()
+               and not str(p.relative_to(ORIG)).startswith(("tmp/", "tree_2f39e9f4/")))
+mapped = {v[1] for k, v in cmpres.items() if isinstance(v, tuple)}
+out["originals_not_committed"] = [o for o in origs if o not in mapped and o != "REVIEW_REVIEW66_REPAIR_DELTA.md"]
+out["scratch_bound_but_count"] = len(json.loads(lines[506])["scratch_sha256"]), len(committed)
+out["committed_not_bound"] = sorted(set(f"reviews/scratch_REVIEW_REVIEW66_REPAIR/{p[len(pref):]}" for p in committed) - set(json.loads(lines[506])["scratch_sha256"]))
+# modified files
+ns = git("diff", "--name-status", "2f39e9f4", "05caa00e").decode().splitlines()
+out["name_status"] = [l for l in ns if not l.startswith("A")]
+out["added_count"] = sum(1 for l in ns if l.startswith("A"))
+# credential scan over every added/modified file
+pat = re.compile(rb"(sig=|[?&]se=|[?&]sv=|X-Amz-|ghp_|gho_|ghs_|ghu_|github_pat_|Authorization:|Bearer |api[_-]?key|password|token=|blob\.core\.windows\.net|amazonaws\.com|https?://)", re.I)
+hits = []
+for l in ns:
+    st, p = l.split("\t", 1)
+    if st.startswith("D"): continue
+    b = blob("05caa00e", p)
+    if p.endswith(".gz"): b = gzip.decompress(b)
+    if p.endswith("TARGET_INTEGRITY_LEDGER.jsonl"): b = b[len(old):]
+    for m in pat.finditer(b):
+        ctx = b[max(0, m.start() - 40): m.end() + 60]
+        hits.append((p, m.group(0).decode(errors="replace"), ctx.decode(errors="replace").replace("\n", " ")))
+out["credential_scan_hits"] = hits
+json.dump(out, sys.stdout, indent=1, default=str)

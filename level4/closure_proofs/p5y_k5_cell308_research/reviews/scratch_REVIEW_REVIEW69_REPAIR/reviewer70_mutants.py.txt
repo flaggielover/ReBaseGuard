@@ -1,0 +1,126 @@
+"""Review 70 (structure derived from review 69's reviewer69_mutants.py.txt): (1) registered RV26, RV60-RV63 and CDEX15
+re-run singly against a fresh baseline; (2) review 69's RB1-RB6 edits re-applied to the 9f223c91 source where their
+anchors still exist; (3) the reviewer's new mutants RC1-RC7, classified with the pinned harness's run_suite /
+classify_mutant (strict criteria), each with an outcome check on a synthetic repository (base vs mutant, each in a
+child interpreter running cons70.py.txt). The pinned tree is never written: each mutant is a copy under scratch tmp.
+usage: python3 -B -I reviewer70_mutants.py.txt <pinned DEV dir> <scratch tmp dir> <cons70.py.txt> <out.json>"""
+import hashlib, importlib.util, json, os, subprocess, sys, tempfile
+from pathlib import Path
+
+DEV, TMP, CONS, OUT = sys.argv[1:5]
+spec = importlib.util.spec_from_file_location("run_mutants_pinned", Path(DEV, "tests/run_mutants.py"))
+H = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(H)                 # module level only builds the registry; main() is not called
+
+REGISTERED = ["RV26", "RV60", "RV61", "RV62", "RV63", "CDEX15"]
+W69 = ["test_review69_ancestor_entries_are_read_by_mode"]
+W68 = ["test_review68_non_directory_review_paths_refuse"]
+W65 = ["test_review65_caller_git_environment_is_ignored"]
+
+REVIEW69 = [   # review 69's edits, verbatim from reviewer69_mutants.py.txt / reviewer69b_mutants.py.txt
+    ("RB1", [("             for i in range(1, len(parts) + 1)]", "             for i in (1, len(parts))]")], W68),
+    ("RB2", [('    commits = _git(repo_root, "rev-list", "HEAD")',
+              '    commits = _git(repo_root, "rev-list", "--first-parent", "HEAD")')], W68),
+    ("RB3", [('            if parts[0] not in (b"100644", b"100755"):          # review 68 P1',
+              '            if parts[1] == b"commit":\n                continue\n'
+              '            if parts[0] not in (b"100644", b"100755"):          # review 68 P1')], W68),
+    ("RB4", [('re.fullmatch(r"[0-9a-f]{40,64} tree [0-9]+", a)', 're.fullmatch(r"[0-9a-f]{40,64} (tree|commit) [0-9]+", a)')],
+     W68),
+    ("RB5", [("             for i in range(1, len(parts) + 1)]", "             for i in range(1, len(parts))]")], W68),
+    ("RB6", [('                           input=("\\n".join(names) + "\\n").encode(), capture_output=True, timeout=60, env=_git_env())',
+              '                           input=("\\n".join(names) + "\\n").encode(), capture_output=True, timeout=60)')],
+     W68 + W65),
+]
+
+MINE = [
+    ("RC1", "the review directory's own entry is not read by mode (ancestors only; RB5 on the new walk)",
+     [("    for depth, name in enumerate(parts):", "    for depth, name in enumerate(parts[:-1]):")],
+     W69 + W68, "leaf_regular_file"),
+    ("RC2", "_cat_file_batch runs with the caller's environment (RB6 on the new helper)",
+     [("                           capture_output=True, timeout=60, env=_git_env())",
+       "                           capture_output=True, timeout=60)")],
+     W69 + W65, "caller_forged_object_directory"),
+    ("RC3", "the ancestor walk skips merge commits' own trees (rev-list --no-merges)",
+     [('    commits = _git(repo_root, "rev-list", "HEAD")', '    commits = _git(repo_root, "rev-list", "--no-merges", "HEAD")')],
+     W69, "evil_merge_ancestor_symlink"),
+    ("RC4", "directory-like odd modes (40755, 41000) are read as directories",
+     [('            if mode != b"40000":\n                return False\n',
+       '            if not mode.startswith(b"4"):\n                return False\n')],
+     W69, "odd_dir_mode_at_ancestor::40755"),
+    ("RC5", "raw tree entries are parsed with a fixed 20-byte object id (sha256 width lost)",
+     [("len(ids[0]) // 2", "20")], W69, "sha256_control"),
+    ("RC6", "only HEAD's root tree is walked (history ignored)",
+     [("    level, width = {oid for oid, _, _ in roots}", "    level, width = {roots[0][0]}")], W69, "leaf_regular_file"),
+    ("RC7", "a `missing` batch answer is read as an empty tree (review 69 S4 reverted inside the helper)",
+     [("        if len(head) != 3 or not re.fullmatch",
+       "        if len(head) == 2 and head[1] == b\"missing\":\n"
+       "            pos = nl + 1\n            answers.append((\"0\" * 40, \"tree\", b\"\" if contents else None))\n"
+       "            continue\n"
+       "        if len(head) != 3 or not re.fullmatch")],
+     W69 + W65, None),
+]
+
+
+def outcome(moddir, kind):
+    if kind is None:
+        return None
+    with tempfile.TemporaryDirectory(dir=TMP) as w:
+        p = subprocess.run([sys.executable, "-B", "-I", CONS, moddir, w, str(Path(w, "o.json")), kind],
+                           capture_output=True, text=True, timeout=600)
+    try:
+        r = json.loads(p.stdout.strip().splitlines()[-1])[kind]
+        return {"dir_check": r.get("dir_check"), "result": r.get("result")}
+    except Exception:
+        return {"child_error": p.stderr[-800:]}
+
+
+src = H.SRC.read_text()
+env = dict(os.environ)
+env.pop("LX_PLATFORM_DIR", None)
+env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONWARNINGS="error", PYTHONHASHSEED="0")
+base = H.run_suite(env)
+out = {"source_sha256": hashlib.sha256(src.encode()).hexdigest(), "baseline_ran": base["ran"],
+       "baseline_pass": H.suite_passed(base), "expected_test_count": H.expected_test_count(),
+       "registry_size": len(H.validate_registry()), "registered": [], "review69": [], "mutants": []}
+print("baseline", base["ran"], H.suite_passed(base), flush=True)
+
+
+def run(mid, edits, witnesses, kind=None, based=None):
+    mutated, counts, err = H.apply_mutation(src, edits)
+    row = {"id": mid, "witnesses": witnesses, "anchor_counts": counts, "edits": [{"old": o, "new": n} for o, n in edits]}
+    if err:
+        row.update(status="NOT_APPLIED", reasons=[err])
+        return row
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        Path(d, "lx_platform.py").write_text(mutated)
+        suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+        if based and kind:
+            row["outcome_base"] = outcome(based, kind)
+            row["outcome_mutant"] = outcome(d, kind)
+    status, reasons = H.classify_mutant(suite, base, witnesses)
+    failed = sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]})
+    row.update(status=status, reasons=reasons, ran=suite["ran"], returncode=suite["returncode"], failed_methods=failed,
+               failure_names=sorted(suite["assertion_failure_names"])[:20],
+               only_own_witnesses=set(failed) <= set(witnesses), mutated_sha256=hashlib.sha256(mutated.encode()).hexdigest())
+    return row
+
+
+reg = {mid: (what, edits) for mid, what, edits in H.MUTANTS}
+for mid in REGISTERED:
+    row = run(mid, reg[mid][1], H.PROPERTY_WITNESSES[mid])
+    out["registered"].append(row)
+    print(mid, row["status"], row.get("failed_methods"), row.get("failure_names"), flush=True)
+with tempfile.TemporaryDirectory(dir=TMP) as based:
+    Path(based, "lx_platform.py").write_text(src)
+    for mid, edits, witnesses in REVIEW69:
+        row = run(mid, edits, witnesses)
+        out["review69"].append(row)
+        print(mid, row["status"], row.get("reasons"), row.get("anchor_counts"), row.get("failed_methods"), flush=True)
+    for mid, what, edits, witnesses, kind in MINE:
+        row = run(mid, edits, witnesses, kind, based)
+        row["property"] = what
+        out["mutants"].append(row)
+        print(mid, row["status"], row.get("reasons"), row.get("failed_methods"), "| base:",
+              json.dumps(row.get("outcome_base"))[:220], "| mutant:", json.dumps(row.get("outcome_mutant"))[:220],
+              flush=True)
+Path(OUT).write_text(json.dumps(out, indent=1) + "\n")

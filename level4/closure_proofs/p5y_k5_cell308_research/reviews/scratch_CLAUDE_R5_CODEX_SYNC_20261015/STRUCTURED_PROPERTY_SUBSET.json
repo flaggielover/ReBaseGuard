@@ -1,0 +1,831 @@
+{
+  "scope": "LOCAL_SIX_PROPERTY_SUBSET_CONTROLLED_RUNNER_NOT_FULL_COMBINED_VALIDATION",
+  "baseline": {
+    "command": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-B",
+      "-W",
+      "error",
+      "-c",
+      "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+      "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+      "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp_zdlbju9/result.json",
+      "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+      "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+      "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+      "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+      "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+      "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+    ],
+    "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+    "environment_controls": {
+      "LX_PLATFORM_DIR": null,
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONWARNINGS": "error",
+      "PYTHONHASHSEED": null
+    },
+    "returncode": 0,
+    "elapsed_s": 0.3486052920052316,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 6,
+    "summary": "OK",
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [],
+    "assertion_failure_names": [],
+    "error_names": [],
+    "controlled_runner_metadata": {
+      "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+      "ran": 6,
+      "successful": true,
+      "events": [],
+      "executed_test_ids": [
+        "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+        "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+        "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+        "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+        "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+        "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+      ],
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0
+    },
+    "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 6, \"successful\": true, \"events\": [], \"executed_test_ids\": [\"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestMemory.test_cgroup_resources_whole_chain\", \"test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file\", \"test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none\", \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+    "invalid_reasons": [],
+    "stdout": "",
+    "stderr": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\nP6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it. ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)\nN3: cpu.max / cpuset / pids.max are read at every level, so an ancestor's limit is visible. ... ok\ntest_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\nM25: an accepted digest does not make a DIFFERENT committed file pass. ... ok\ntest_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none) ... ok\ntest_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.280s\n\nOK\n",
+    "suite_tail": "OK"
+  },
+  "rows": [
+    {
+      "id": "M29",
+      "property": "execute / resume pass the launch gate without a launch record",
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpmbt9fdaa/result.json",
+          "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+          "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+          "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+          "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpocei5wvb",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.3291390840022359,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 6,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)"
+        ],
+        "assertion_failure_names": [
+          "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 6,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+              "parent_test_id": "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+              "description": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 1204,
+                  "function": "test_launch_gate_uses_a_fresh_reading"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1192,
+                  "function": "assertIn"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+            "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+            "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+            "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 6, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"parent_test_id\": \"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"description\": \"test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 1204, \"function\": \"test_launch_gate_uses_a_fresh_reading\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1192, \"function\": \"assertIn\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestMemory.test_cgroup_resources_whole_chain\", \"test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file\", \"test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none\", \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\nP6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it. ... FAIL\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)\nN3: cpu.max / cpuset / pids.max are read at every level, so an ancestor's limit is visible. ... ok\ntest_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\nM25: an accepted digest does not make a DIFFERENT committed file pass. ... ok\ntest_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none) ... ok\ntest_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) ... ok\n\n======================================================================\nFAIL: test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\nP6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 1204, in test_launch_gate_uses_a_fresh_reading\n    self.assertIn(\"launched_by_systemd\", gates)                             # M29: required execute gate\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'launched_by_systemd' not found in {'ac_power': 'PASS', 'lowpowermode_0': 'OPEN_DECISION', 'thermal_pressure_0': 'OPEN_DECISION', 'free_disk_ge_2GiB': 'PASS', 'memory_pressure_normal': 'OPEN_DECISION', 'free_memory_ge_min': 'OPEN_DECISION', 'boot_id_recorded': 'PASS', 'no_other_campaign_job': 'PASS', 'no_automatic_os_install': 'OPEN_DECISION', 'host_exclusive': 'OPEN_DECISION', 'host_lifetime_attested': 'OPEN_DECISION'}\n\n----------------------------------------------------------------------\nRan 6 tests in 0.255s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      },
+      "anchor_counts": [
+        1
+      ]
+    },
+    {
+      "id": "N04",
+      "property": "caller-asserted fields accepted in the attestation reference",
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpzlgs2_a5/result.json",
+          "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+          "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+          "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+          "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpzky84344",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.4007147079973947,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 6,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)"
+        ],
+        "assertion_failure_names": [
+          "test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 6,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+              "parent_test_id": "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+              "description": "test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 1078,
+                  "function": "test_reference_rejects_extra_fields_even_if_otherwise_valid"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1321,
+                  "function": "assertIsNone"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+            "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+            "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+            "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 6, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"parent_test_id\": \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"description\": \"test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 1078, \"function\": \"test_reference_rejects_extra_fields_even_if_otherwise_valid\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1321, \"function\": \"assertIsNone\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestMemory.test_cgroup_resources_whole_chain\", \"test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file\", \"test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none\", \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\nP6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it. ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... FAIL\ntest_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)\nN3: cpu.max / cpuset / pids.max are read at every level, so an ancestor's limit is visible. ... ok\ntest_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\nM25: an accepted digest does not make a DIFFERENT committed file pass. ... ok\ntest_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none) ... ok\ntest_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) ... ok\n\n======================================================================\nFAIL: test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 1078, in test_reference_rejects_extra_fields_even_if_otherwise_valid\n    self.assertIsNone(rec)\n    ~~~~~~~~~~~~~~~~~^^^^^\nAssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None\n\n----------------------------------------------------------------------\nRan 6 tests in 0.326s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      },
+      "anchor_counts": [
+        1
+      ]
+    },
+    {
+      "id": "Y09",
+      "property": "cgroup_resources reads the leaf only",
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp94ra4h7s/result.json",
+          "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+          "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+          "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+          "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp429hwzr4",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.3281853329972364,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 6,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)"
+        ],
+        "assertion_failure_names": [
+          "test_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 6,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+              "parent_test_id": "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+              "description": "test_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 523,
+                  "function": "test_cgroup_resources_whole_chain"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 925,
+                  "function": "assertEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1185,
+                  "function": "assertSetEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+            "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+            "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+            "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 6, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestMemory.test_cgroup_resources_whole_chain\", \"parent_test_id\": \"test_lx_platform.TestMemory.test_cgroup_resources_whole_chain\", \"description\": \"test_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 523, \"function\": \"test_cgroup_resources_whole_chain\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 925, \"function\": \"assertEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1185, \"function\": \"assertSetEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestMemory.test_cgroup_resources_whole_chain\", \"test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file\", \"test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none\", \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\nP6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it. ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)\nN3: cpu.max / cpuset / pids.max are read at every level, so an ancestor's limit is visible. ... FAIL\ntest_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\nM25: an accepted digest does not make a DIFFERENT committed file pass. ... ok\ntest_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none) ... ok\ntest_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) ... ok\n\n======================================================================\nFAIL: test_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)\nN3: cpu.max / cpuset / pids.max are read at every level, so an ancestor's limit is visible.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 523, in test_cgroup_resources_whole_chain\n    self.assertEqual(set(rows), {\"/x/y\", \"/x\", \"/\"})                    # Y09: ancestry is the property\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Items in the second set but not the first:\n'/'\n'/x'\n\n----------------------------------------------------------------------\nRan 6 tests in 0.249s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      },
+      "anchor_counts": [
+        1
+      ]
+    },
+    {
+      "id": "Z09",
+      "property": "launch gate evaluated only for execute / resume (a record passed in launcher mode is ignored)",
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpdhb9zqmi/result.json",
+          "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+          "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+          "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+          "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp91cgpyb6",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.33566774999781046,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 6,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)"
+        ],
+        "assertion_failure_names": [
+          "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 6,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+              "parent_test_id": "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+              "description": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 1220,
+                  "function": "test_launch_gate_uses_a_fresh_reading"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1192,
+                  "function": "assertIn"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+            "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+            "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+            "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 6, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"parent_test_id\": \"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"description\": \"test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 1220, \"function\": \"test_launch_gate_uses_a_fresh_reading\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1192, \"function\": \"assertIn\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestMemory.test_cgroup_resources_whole_chain\", \"test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file\", \"test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none\", \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\nP6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it. ... FAIL\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)\nN3: cpu.max / cpuset / pids.max are read at every level, so an ancestor's limit is visible. ... ok\ntest_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\nM25: an accepted digest does not make a DIFFERENT committed file pass. ... ok\ntest_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none) ... ok\ntest_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) ... ok\n\n======================================================================\nFAIL: test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\nP6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 1220, in test_launch_gate_uses_a_fresh_reading\n    self.assertIn(\"launched_by_systemd\", gates)                             # Z09: supplied record is checked\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'launched_by_systemd' not found in {'ac_power': 'PASS', 'lowpowermode_0': 'OPEN_DECISION', 'thermal_pressure_0': 'OPEN_DECISION', 'free_disk_ge_2GiB': 'PASS', 'memory_pressure_normal': 'OPEN_DECISION', 'free_memory_ge_min': 'OPEN_DECISION', 'boot_id_recorded': 'PASS', 'no_other_campaign_job': 'PASS', 'no_automatic_os_install': 'OPEN_DECISION', 'host_exclusive': 'OPEN_DECISION', 'host_lifetime_attested': 'OPEN_DECISION'}\n\n----------------------------------------------------------------------\nRan 6 tests in 0.260s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      },
+      "anchor_counts": [
+        1
+      ]
+    },
+    {
+      "id": "M25",
+      "property": "attestation file sha256 not verified",
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpgye_620c/result.json",
+          "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+          "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+          "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+          "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp2izbk9l3",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.33152141599566676,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 6,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)"
+        ],
+        "assertion_failure_names": [
+          "test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 6,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+              "parent_test_id": "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+              "description": "test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 1069,
+                  "function": "test_reference_digest_must_match_the_committed_file"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1321,
+                  "function": "assertIsNone"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+            "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+            "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+            "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 6, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file\", \"parent_test_id\": \"test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file\", \"description\": \"test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 1069, \"function\": \"test_reference_digest_must_match_the_committed_file\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1321, \"function\": \"assertIsNone\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestMemory.test_cgroup_resources_whole_chain\", \"test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file\", \"test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none\", \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\nP6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it. ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)\nN3: cpu.max / cpuset / pids.max are read at every level, so an ancestor's limit is visible. ... ok\ntest_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\nM25: an accepted digest does not make a DIFFERENT committed file pass. ... FAIL\ntest_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none) ... ok\ntest_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) ... ok\n\n======================================================================\nFAIL: test_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\nM25: an accepted digest does not make a DIFFERENT committed file pass.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 1069, in test_reference_digest_must_match_the_committed_file\n    self.assertIsNone(rec)\n    ~~~~~~~~~~~~~~~~~^^^^^\nAssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'anything', 'root_cgroup_is_real': True} is not None\n\n----------------------------------------------------------------------\nRan 6 tests in 0.253s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      },
+      "anchor_counts": [
+        1
+      ]
+    },
+    {
+      "id": "CDEX15",
+      "property": "Codex F07: malformed attestation/reference paths escape as subprocess argument exceptions",
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpbyz14mef/result.json",
+          "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+          "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+          "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+          "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpl8f0xfvz",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.3482494580093771,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 6,
+        "summary": "FAILED (failures=3)",
+        "failures": 3,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none)",
+          "test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\x00'\")",
+          "test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\ud800'\")"
+        ],
+        "assertion_failure_names": [
+          "test_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none)",
+          "test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\x00'\")",
+          "test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\ud800'\")"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 6,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+              "parent_test_id": "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+              "description": "test_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+                  "line": 310,
+                  "function": "test_git_malformed_args_and_subprocess_failures_return_none"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions (path=\"'\\\\x00'\")",
+              "parent_test_id": "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions",
+              "description": "test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\x00'\")",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+                  "line": 203,
+                  "function": "test_invalid_reference_paths_are_refused_without_exceptions"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions (path=\"'\\\\ud800'\")",
+              "parent_test_id": "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions",
+              "description": "test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\ud800'\")",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+                  "line": 203,
+                  "function": "test_invalid_reference_paths_are_refused_without_exceptions"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestMemory.test_cgroup_resources_whole_chain",
+            "test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file",
+            "test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none",
+            "test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 6, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none\", \"parent_test_id\": \"test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none\", \"description\": \"test_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", \"line\": 310, \"function\": \"test_git_malformed_args_and_subprocess_failures_return_none\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions (path=\\\"'\\\\\\\\x00'\\\")\", \"parent_test_id\": \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions\", \"description\": \"test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\\\"'\\\\\\\\x00'\\\")\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", \"line\": 203, \"function\": \"test_invalid_reference_paths_are_refused_without_exceptions\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions (path=\\\"'\\\\\\\\ud800'\\\")\", \"parent_test_id\": \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions\", \"description\": \"test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\\\"'\\\\\\\\ud800'\\\")\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", \"line\": 203, \"function\": \"test_invalid_reference_paths_are_refused_without_exceptions\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestMemory.test_cgroup_resources_whole_chain\", \"test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file\", \"test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none\", \"test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_launch_gate_uses_a_fresh_reading (test_lx_platform.TestAttestationPreflight.test_launch_gate_uses_a_fresh_reading)\nP6 / N12 / F15: PASS only if a FRESH launched_by_systemd() verifies and any passed record equals it. ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_cgroup_resources_whole_chain (test_lx_platform.TestMemory.test_cgroup_resources_whole_chain)\nN3: cpu.max / cpuset / pids.max are read at every level, so an ancestor's limit is visible. ... ok\ntest_reference_digest_must_match_the_committed_file (test_lx_platform.TestAttestationPreflight.test_reference_digest_must_match_the_committed_file)\nM25: an accepted digest does not make a DIFFERENT committed file pass. ... ok\ntest_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none) ... FAIL\ntest_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) ... \n  test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\x00'\") ... FAIL\n  test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\ud800'\") ... FAIL\n\n======================================================================\nFAIL: test_git_malformed_args_and_subprocess_failures_return_none (test_sync_boundaries.TestGitRefusal.test_git_malformed_args_and_subprocess_failures_return_none)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 307, in test_git_malformed_args_and_subprocess_failures_return_none\n    data = L._git(\"/synthetic/repo\", \"show\", \"HEAD:bad\\0path\")\n  File \"/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpl8f0xfvz/lx_platform.py\", line 1147, in _git\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), *args], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py\", line 1176, in __call__\n    return self._mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py\", line 1180, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py\", line 1241, in _execute_mock_call\n    raise effect\nValueError: embedded null byte\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 310, in test_git_malformed_args_and_subprocess_failures_return_none\n    self.fail(f\"Git evidence boundary leaked {type(escaped).__name__}\")\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Git evidence boundary leaked ValueError\n\n======================================================================\nFAIL: test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\x00'\")\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 201, in test_invalid_reference_paths_are_refused_without_exceptions\n    self.assert_unverified(dict(valid, path=path))\n    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 140, in assert_unverified\n    result = self.assert_no_root(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 133, in assert_no_root\n    result = V.observe(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 27, in observe\n    attestation, reasons = L.attestation_valid(attestation_ref, repo_root=repo_root)\n                           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpl8f0xfvz/lx_platform.py\", line 1260, in attestation_valid\n    data = _git(base, \"show\", f\"HEAD:{path}\")\n  File \"/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpl8f0xfvz/lx_platform.py\", line 1147, in _git\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), *args], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py\", line 1176, in __call__\n    return self._mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py\", line 1180, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py\", line 1247, in _execute_mock_call\n    result = effect(*args, **kwargs)\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 71, in git_only\n    return run(args, *a, **kw)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nValueError: embedded null byte\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 203, in test_invalid_reference_paths_are_refused_without_exceptions\n    self.fail(f\"Malformed reference must be refused without leaking {type(escaped).__name__}\")\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Malformed reference must be refused without leaking ValueError\n\n======================================================================\nFAIL: test_invalid_reference_paths_are_refused_without_exceptions (test_lx_verified.TestVerifiedObservation.test_invalid_reference_paths_are_refused_without_exceptions) (path=\"'\\\\ud800'\")\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 201, in test_invalid_reference_paths_are_refused_without_exceptions\n    self.assert_unverified(dict(valid, path=path))\n    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 140, in assert_unverified\n    result = self.assert_no_root(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 133, in assert_no_root\n    result = V.observe(ref)\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py\", line 27, in observe\n    attestation, reasons = L.attestation_valid(attestation_ref, repo_root=repo_root)\n                           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpl8f0xfvz/lx_platform.py\", line 1260, in attestation_valid\n    data = _git(base, \"show\", f\"HEAD:{path}\")\n  File \"/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpl8f0xfvz/lx_platform.py\", line 1147, in _git\n    r = subprocess.run([\"git\", \"-C\", str(repo_root), *args], capture_output=True, timeout=60,\n                       stdin=subprocess.DEVNULL)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py\", line 1176, in __call__\n    return self._mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py\", line 1180, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py\", line 1247, in _execute_mock_call\n    result = effect(*args, **kwargs)\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 71, in git_only\n    return run(args, *a, **kw)\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 555, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1039, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                        pass_fds, cwd, env,\n                        ^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n                        gid, gids, uid, umask,\n                        ^^^^^^^^^^^^^^^^^^^^^^\n                        start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1920, in _execute_child\n    self.pid = _fork_exec(\n               ~~~~~~~~~~^\n            args, executable_list,\n            ^^^^^^^^^^^^^^^^^^^^^^\n    ...<6 lines>...\n            process_group, gid, gids, uid, umask,\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n            preexec_fn)\n            ^^^^^^^^^^^\nUnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 5: surrogates not allowed\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 203, in test_invalid_reference_paths_are_refused_without_exceptions\n    self.fail(f\"Malformed reference must be refused without leaking {type(escaped).__name__}\")\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Malformed reference must be refused without leaking UnicodeEncodeError\n\n----------------------------------------------------------------------\nRan 6 tests in 0.260s\n\nFAILED (failures=3)\n",
+        "suite_tail": "FAILED (failures=3)"
+      },
+      "anchor_counts": [
+        1
+      ]
+    }
+  ],
+  "input_sha256": {
+    ".github/workflows/cell308-r5-integration.yml": "837de2a31a2e3fbc9b56001a2b901c2f196d94405ae10d4fe77942454167c701",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_inventory.py": "8ea74ed3621e805066727a4ca3f20253f9a85c90857aca8d8e41e02607cfa597",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py": "2f0489d376a7129ce4416004c37d1cf66f2bcfbede5a653ed068e382919fae15",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_portmap.py": "81dc94e9d8bbc4471dc04f3211613f6778e5d0ddc98b60e970c9e59c3445b89d",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py": "b78756eb377e91c4877b5bf0f96557257da64d4ac464ae339080e9f9e0ca29a9",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py": "ac3800d5742ff6e5dcb5da8b3d909d8dece0c1863b87ef95d8140ee95fb01179",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py": "b6ec81b5f4d65537e8dd9bc319c84e68e410eeafe7e0fe2f855aa3c5cdfb1dd4",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py": "e1214c519c0cfb2fa8fedb890da54208f2c206c0cfe3ae696974170a731811c2",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py": "5b4d62828dbe2bd3094b2f7325acc2a68d00543895a8018111130de3c7caea2a",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py": "e305c7f847c2dd1a807c4e14eb1bfd965259753ab9655b486d96a168818e4451"
+  },
+  "input_sha256_after": {
+    ".github/workflows/cell308-r5-integration.yml": "837de2a31a2e3fbc9b56001a2b901c2f196d94405ae10d4fe77942454167c701",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_inventory.py": "8ea74ed3621e805066727a4ca3f20253f9a85c90857aca8d8e41e02607cfa597",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py": "2f0489d376a7129ce4416004c37d1cf66f2bcfbede5a653ed068e382919fae15",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_portmap.py": "81dc94e9d8bbc4471dc04f3211613f6778e5d0ddc98b60e970c9e59c3445b89d",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py": "b78756eb377e91c4877b5bf0f96557257da64d4ac464ae339080e9f9e0ca29a9",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py": "ac3800d5742ff6e5dcb5da8b3d909d8dece0c1863b87ef95d8140ee95fb01179",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py": "b6ec81b5f4d65537e8dd9bc319c84e68e410eeafe7e0fe2f855aa3c5cdfb1dd4",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py": "e1214c519c0cfb2fa8fedb890da54208f2c206c0cfe3ae696974170a731811c2",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py": "5b4d62828dbe2bd3094b2f7325acc2a68d00543895a8018111130de3c7caea2a",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py": "e305c7f847c2dd1a807c4e14eb1bfd965259753ab9655b486d96a168818e4451"
+  },
+  "new_target_evaluations": 0
+}

@@ -1,0 +1,1346 @@
+{
+  "scope": "LOCAL_12_TEST_SEVEN_MUTATION_FIXTURE_REPAIR_SUBSET_NOT_NATIVE_FULL_VALIDATION",
+  "baseline": {
+    "command": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-B",
+      "-W",
+      "error",
+      "-c",
+      "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+      "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+      "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpvqfm37sh/result.json",
+      "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+      "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+      "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+      "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+      "test_lx_platform.TestBusy.test_proc_view",
+      "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+      "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+      "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+      "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+      "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+      "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+      "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+    ],
+    "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+    "environment_controls": {
+      "LX_PLATFORM_DIR": null,
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONWARNINGS": "error",
+      "PYTHONHASHSEED": null
+    },
+    "returncode": 0,
+    "elapsed_s": 5.131992540991632,
+    "timed_out": false,
+    "launch_error": null,
+    "ran": 12,
+    "summary": "OK",
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failure_names": [],
+    "assertion_failure_names": [],
+    "error_names": [],
+    "controlled_runner_metadata": {
+      "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+      "ran": 12,
+      "successful": true,
+      "events": [],
+      "executed_test_ids": [
+        "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+        "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+        "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+        "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+        "test_lx_platform.TestBusy.test_proc_view",
+        "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+        "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+        "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+        "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+        "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+        "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+        "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+      ],
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0
+    },
+    "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 12, \"successful\": true, \"events\": [], \"executed_test_ids\": [\"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused\", \"test_lx_platform.TestBusy.test_proc_view\", \"test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob\", \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+    "invalid_reasons": [],
+    "stdout": "",
+    "stderr": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok\ntest_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls) ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok\ntest_proc_view (test_lx_platform.TestBusy.test_proc_view)\nN4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok\ntest_accepting_line_must_post_date_the_attested_blob (test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob)\nG2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository- ... ok\ntest_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\nN7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok\ntest_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\nP1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... ok\ntest_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) ... ok\ntest_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\nZ03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query ... ok\ntest_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) ... ok\ntest_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 5.051s\n\nOK\n",
+    "suite_tail": "OK"
+  },
+  "rows": [
+    {
+      "id": "M24",
+      "property": "process born in the window not counted",
+      "anchor_counts": [
+        1
+      ],
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpsy7x8f2_/result.json",
+          "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+          "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+          "test_lx_platform.TestBusy.test_proc_view",
+          "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+          "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+          "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+          "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+          "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp1gu7lm6g",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 4.718528208002681,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 12,
+        "summary": "FAILED (failures=2)",
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)",
+          "test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)"
+        ],
+        "assertion_failure_names": [
+          "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)",
+          "test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 12,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+              "parent_test_id": "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+              "description": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 554,
+                  "function": "test_window_not_lifetime_and_reuse_and_birth"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 925,
+                  "function": "assertEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1185,
+                  "function": "assertSetEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+              "parent_test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+              "description": "test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+                  "line": 189,
+                  "function": "test_birth_exit_and_observed_owned_parent_positive_controls"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 925,
+                  "function": "assertEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 918,
+                  "function": "_baseAssertEqual"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+            "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+            "test_lx_platform.TestBusy.test_proc_view",
+            "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+            "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+            "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+            "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+            "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 12, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"parent_test_id\": \"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"description\": \"test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 554, \"function\": \"test_window_not_lifetime_and_reuse_and_birth\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 925, \"function\": \"assertEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1185, \"function\": \"assertSetEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"parent_test_id\": \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"description\": \"test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", \"line\": 189, \"function\": \"test_birth_exit_and_observed_owned_parent_positive_controls\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 925, \"function\": \"assertEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 918, \"function\": \"_baseAssertEqual\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused\", \"test_lx_platform.TestBusy.test_proc_view\", \"test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob\", \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... FAIL\ntest_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls) ... FAIL\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok\ntest_proc_view (test_lx_platform.TestBusy.test_proc_view)\nN4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok\ntest_accepting_line_must_post_date_the_attested_blob (test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob)\nG2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository- ... ok\ntest_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\nN7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok\ntest_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\nP1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... ok\ntest_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) ... ok\ntest_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\nZ03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query ... ok\ntest_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) ... ok\ntest_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled) ... ok\n\n======================================================================\nFAIL: test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 554, in test_window_not_lifetime_and_reuse_and_birth\n    self.assertEqual(set(busy), {\"spiker\", \"newborn\", \"reused_pid\"})\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Items in the second set but not the first:\n'reused_pid'\n'newborn'\n\n======================================================================\nFAIL: test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 189, in test_birth_exit_and_observed_owned_parent_positive_controls\n    self.assertEqual(len(born), 1)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^\nAssertionError: 0 != 1\n\n----------------------------------------------------------------------\nRan 12 tests in 4.613s\n\nFAILED (failures=2)\n",
+        "suite_tail": "FAILED (failures=2)"
+      }
+    },
+    {
+      "id": "N04",
+      "property": "caller-asserted fields accepted in the attestation reference",
+      "anchor_counts": [
+        1
+      ],
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp9a3t1fg5/result.json",
+          "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+          "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+          "test_lx_platform.TestBusy.test_proc_view",
+          "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+          "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+          "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+          "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+          "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp0m_9ocwb",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 4.762705166998785,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 12,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)"
+        ],
+        "assertion_failure_names": [
+          "test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 12,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+              "parent_test_id": "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+              "description": "test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 1095,
+                  "function": "test_reference_rejects_extra_fields_even_if_otherwise_valid"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1321,
+                  "function": "assertIsNone"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+            "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+            "test_lx_platform.TestBusy.test_proc_view",
+            "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+            "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+            "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+            "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+            "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 12, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"parent_test_id\": \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"description\": \"test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 1095, \"function\": \"test_reference_rejects_extra_fields_even_if_otherwise_valid\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1321, \"function\": \"assertIsNone\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused\", \"test_lx_platform.TestBusy.test_proc_view\", \"test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob\", \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok\ntest_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls) ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... FAIL\ntest_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok\ntest_proc_view (test_lx_platform.TestBusy.test_proc_view)\nN4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok\ntest_accepting_line_must_post_date_the_attested_blob (test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob)\nG2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository- ... ok\ntest_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\nN7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok\ntest_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\nP1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... ok\ntest_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) ... ok\ntest_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\nZ03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query ... ok\ntest_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) ... ok\ntest_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled) ... ok\n\n======================================================================\nFAIL: test_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 1095, in test_reference_rejects_extra_fields_even_if_otherwise_valid\n    self.assertIsNone(rec)\n    ~~~~~~~~~~~~~~~~~^^^^^\nAssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None\n\n----------------------------------------------------------------------\nRan 12 tests in 4.672s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "id": "N06",
+      "property": "nested PID namespace view accepted",
+      "anchor_counts": [
+        1
+      ],
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpvytbr7ie/result.json",
+          "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+          "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+          "test_lx_platform.TestBusy.test_proc_view",
+          "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+          "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+          "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+          "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+          "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpkkohrybw",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 4.678154833003646,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 12,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_proc_view (test_lx_platform.TestBusy.test_proc_view)"
+        ],
+        "assertion_failure_names": [
+          "test_proc_view (test_lx_platform.TestBusy.test_proc_view)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 12,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestBusy.test_proc_view",
+              "parent_test_id": "test_lx_platform.TestBusy.test_proc_view",
+              "description": "test_proc_view (test_lx_platform.TestBusy.test_proc_view)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 602,
+                  "function": "test_proc_view"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 756,
+                  "function": "assertFalse"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+            "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+            "test_lx_platform.TestBusy.test_proc_view",
+            "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+            "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+            "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+            "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+            "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 12, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestBusy.test_proc_view\", \"parent_test_id\": \"test_lx_platform.TestBusy.test_proc_view\", \"description\": \"test_proc_view (test_lx_platform.TestBusy.test_proc_view)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 602, \"function\": \"test_proc_view\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 756, \"function\": \"assertFalse\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused\", \"test_lx_platform.TestBusy.test_proc_view\", \"test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob\", \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok\ntest_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls) ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok\ntest_proc_view (test_lx_platform.TestBusy.test_proc_view)\nN4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... FAIL\ntest_accepting_line_must_post_date_the_attested_blob (test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob)\nG2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository- ... ok\ntest_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\nN7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok\ntest_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\nP1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... ok\ntest_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) ... ok\ntest_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\nZ03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query ... ok\ntest_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) ... ok\ntest_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled) ... ok\n\n======================================================================\nFAIL: test_proc_view (test_lx_platform.TestBusy.test_proc_view)\nN4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 602, in test_proc_view\n    self.assertFalse(REAL_PROC_VIEW(st, mi, pidns=4026532265))           # nested ns with its own /proc\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not false\n\n----------------------------------------------------------------------\nRan 12 tests in 4.595s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "id": "N08",
+      "property": "exited processes not reported",
+      "anchor_counts": [
+        1
+      ],
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpjofjzoec/result.json",
+          "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+          "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+          "test_lx_platform.TestBusy.test_proc_view",
+          "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+          "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+          "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+          "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+          "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp_f51j2tv",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 4.840826291998383,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 12,
+        "summary": "FAILED (failures=2)",
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)",
+          "test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)"
+        ],
+        "assertion_failure_names": [
+          "test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)",
+          "test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 12,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+              "parent_test_id": "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+              "description": "test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+                  "line": 194,
+                  "function": "test_birth_exit_and_observed_owned_parent_positive_controls"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 925,
+                  "function": "assertEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 918,
+                  "function": "_baseAssertEqual"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+              "parent_test_id": "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+              "description": "test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 562,
+                  "function": "test_exited_in_window_is_reported"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 925,
+                  "function": "assertEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1131,
+                  "function": "assertListEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1113,
+                  "function": "assertSequenceEqual"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+            "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+            "test_lx_platform.TestBusy.test_proc_view",
+            "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+            "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+            "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+            "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+            "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 12, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"parent_test_id\": \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"description\": \"test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", \"line\": 194, \"function\": \"test_birth_exit_and_observed_owned_parent_positive_controls\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 925, \"function\": \"assertEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 918, \"function\": \"_baseAssertEqual\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"parent_test_id\": \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"description\": \"test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 562, \"function\": \"test_exited_in_window_is_reported\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 925, \"function\": \"assertEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1131, \"function\": \"assertListEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1113, \"function\": \"assertSequenceEqual\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused\", \"test_lx_platform.TestBusy.test_proc_view\", \"test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob\", \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok\ntest_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls) ... FAIL\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok\ntest_proc_view (test_lx_platform.TestBusy.test_proc_view)\nN4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok\ntest_accepting_line_must_post_date_the_attested_blob (test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob)\nG2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository- ... ok\ntest_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\nN7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... FAIL\ntest_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\nP1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... ok\ntest_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) ... ok\ntest_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\nZ03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query ... ok\ntest_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) ... ok\ntest_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled) ... ok\n\n======================================================================\nFAIL: test_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 194, in test_birth_exit_and_observed_owned_parent_positive_controls\n    self.assertEqual(len(exited), 1)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\nAssertionError: 0 != 1\n\n======================================================================\nFAIL: test_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\nN7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 562, in test_exited_in_window_is_reported\n    self.assertEqual(out, [{\"pid\": 30, \"comm\": \"short_hog\", \"exe\": None, \"pct\": None, \"exited_in_window\": True}])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Lists differ: [] != [{'pid': 30, 'comm': 'short_hog', 'exe': N[39 chars]rue}]\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n{'pid': 30, 'comm': 'short_hog', 'exe': None, 'pct': None, 'exited_in_window': True}\n\n- []\n+ [{'comm': 'short_hog',\n+   'exe': None,\n+   'exited_in_window': True,\n+   'pct': None,\n+   'pid': 30}]\n\n----------------------------------------------------------------------\nRan 12 tests in 4.754s\n\nFAILED (failures=2)\n",
+        "suite_tail": "FAILED (failures=2)"
+      }
+    },
+    {
+      "id": "P04",
+      "property": "verdict line not required",
+      "anchor_counts": [
+        1
+      ],
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmplzkbvl3w/result.json",
+          "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+          "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+          "test_lx_platform.TestBusy.test_proc_view",
+          "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+          "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+          "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+          "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+          "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpzu1n9ilj",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 3.3751289159990847,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 12,
+        "summary": "FAILED (failures=3)",
+        "failures": 3,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)",
+          "test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=4, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])",
+          "test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=5, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])"
+        ],
+        "assertion_failure_names": [
+          "test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)",
+          "test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=4, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])",
+          "test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=5, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 12,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+              "parent_test_id": "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+              "description": "test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 1015,
+                  "function": "test_acceptance_is_found_not_named"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1321,
+                  "function": "assertIsNone"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict (case_index=4, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])",
+              "parent_test_id": "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+              "description": "test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=4, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+                  "line": 278,
+                  "function": "test_fixed_review_set_requires_direct_named_md_and_exact_verdict"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+                  "line": 141,
+                  "function": "assert_unverified"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1206,
+                  "function": "assertIs"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict (case_index=5, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])",
+              "parent_test_id": "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+              "description": "test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=5, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+                  "line": 278,
+                  "function": "test_fixed_review_set_requires_direct_named_md_and_exact_verdict"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+                  "line": 141,
+                  "function": "assert_unverified"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1206,
+                  "function": "assertIs"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+            "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+            "test_lx_platform.TestBusy.test_proc_view",
+            "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+            "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+            "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+            "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+            "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 12, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"parent_test_id\": \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"description\": \"test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 1015, \"function\": \"test_acceptance_is_found_not_named\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1321, \"function\": \"assertIsNone\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict (case_index=4, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])\", \"parent_test_id\": \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"description\": \"test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=4, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", \"line\": 278, \"function\": \"test_fixed_review_set_requires_direct_named_md_and_exact_verdict\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", \"line\": 141, \"function\": \"assert_unverified\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1206, \"function\": \"assertIs\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict (case_index=5, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])\", \"parent_test_id\": \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"description\": \"test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=5, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", \"line\": 278, \"function\": \"test_fixed_review_set_requires_direct_named_md_and_exact_verdict\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", \"line\": 141, \"function\": \"assert_unverified\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1206, \"function\": \"assertIs\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused\", \"test_lx_platform.TestBusy.test_proc_view\", \"test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob\", \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok\ntest_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls) ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok\ntest_proc_view (test_lx_platform.TestBusy.test_proc_view)\nN4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok\ntest_accepting_line_must_post_date_the_attested_blob (test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob)\nG2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository- ... ok\ntest_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\nN7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok\ntest_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\nP1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... FAIL\ntest_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) ... \n  test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=4, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md']) ... FAIL\n  test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=5, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md']) ... FAIL\ntest_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\nZ03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query ... ok\ntest_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) ... ok\ntest_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled) ... ok\n\n======================================================================\nFAIL: test_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\nP1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 1015, in test_acceptance_is_found_not_named\n    self.assertIsNone(rec, name)\n    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^\nAssertionError: {'schema': 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1', 'reviewed': True, 'accepted': True, 'machine': {'machine_id_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'product_uuid_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'hardware_bound': True}, 'provider_image_updates': 'ATTESTED_NO_IMAGE_OR_OS_CHANGE', 'root_cgroup_is_real': True} is not None : no verdict line\n\n======================================================================\nFAIL: test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=4, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 278, in test_fixed_review_set_requires_direct_named_md_and_exact_verdict\n    self.assert_unverified(self.fixture(reviews=reviews))\n    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 141, in assert_unverified\n    self.assertIs(result[\"attestation\"][\"verified\"], False)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not False\n\n======================================================================\nFAIL: test_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) (case_index=5, reviews=['level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_SYNTHETIC.md'])\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 278, in test_fixed_review_set_requires_direct_named_md_and_exact_verdict\n    self.assert_unverified(self.fixture(reviews=reviews))\n    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py\", line 141, in assert_unverified\n    self.assertIs(result[\"attestation\"][\"verified\"], False)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not False\n\n----------------------------------------------------------------------\nRan 12 tests in 3.286s\n\nFAILED (failures=3)\n",
+        "suite_tail": "FAILED (failures=3)"
+      }
+    },
+    {
+      "id": "Q07",
+      "property": "systemctl is-active not consulted (a running but disabled update unit reads as off)",
+      "anchor_counts": [
+        1
+      ],
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpce87yr83/result.json",
+          "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+          "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+          "test_lx_platform.TestBusy.test_proc_view",
+          "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+          "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+          "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+          "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+          "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpdjnevx1y",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 4.6541433749953285,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 12,
+        "summary": "FAILED (failures=4)",
+        "failures": 4,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)",
+          "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')",
+          "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')",
+          "test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)"
+        ],
+        "assertion_failure_names": [
+          "test_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)",
+          "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')",
+          "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')",
+          "test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 12,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+              "parent_test_id": "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+              "description": "test_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+                  "line": 713,
+                  "function": "test_systemctl_path_when_systemd_is_pid1"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1206,
+                  "function": "assertIs"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='unit')",
+              "parent_test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+              "description": "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+                  "line": 485,
+                  "function": "test_supervisor_true_false_unknown_and_update_composition"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1206,
+                  "function": "assertIs"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='updates')",
+              "parent_test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+              "description": "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+                  "line": 487,
+                  "function": "test_supervisor_true_false_unknown_and_update_composition"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1206,
+                  "function": "assertIs"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+              "parent_test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+              "description": "test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+                  "line": 471,
+                  "function": "test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1321,
+                  "function": "assertIsNone"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+            "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+            "test_lx_platform.TestBusy.test_proc_view",
+            "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+            "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+            "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+            "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+            "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 12, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"parent_test_id\": \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"description\": \"test_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", \"line\": 713, \"function\": \"test_systemctl_path_when_systemd_is_pid1\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1206, \"function\": \"assertIs\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='unit')\", \"parent_test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"description\": \"test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", \"line\": 485, \"function\": \"test_supervisor_true_false_unknown_and_update_composition\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1206, \"function\": \"assertIs\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='updates')\", \"parent_test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"description\": \"test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", \"line\": 487, \"function\": \"test_supervisor_true_false_unknown_and_update_composition\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1206, \"function\": \"assertIs\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\", \"parent_test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\", \"description\": \"test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", \"line\": 471, \"function\": \"test_unavailable_or_unrecognized_activity_cannot_be_disabled\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1321, \"function\": \"assertIsNone\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused\", \"test_lx_platform.TestBusy.test_proc_view\", \"test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob\", \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok\ntest_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls) ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok\ntest_proc_view (test_lx_platform.TestBusy.test_proc_view)\nN4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok\ntest_accepting_line_must_post_date_the_attested_blob (test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob)\nG2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository- ... ok\ntest_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\nN7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok\ntest_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\nP1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... ok\ntest_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) ... ok\ntest_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\nZ03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query ... FAIL\ntest_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) ... \n  test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit') ... FAIL\n  test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates') ... FAIL\ntest_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled) ... FAIL\n\n======================================================================\nFAIL: test_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\nZ03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py\", line 713, in test_systemctl_path_when_systemd_is_pid1\n    self.assertIs(L.unit_enabled(\"x.timer\"), True, act)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not True : active\n\n======================================================================\nFAIL: test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 485, in test_supervisor_true_false_unknown_and_update_composition\n    self.assertIs(unit, expected)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\nAssertionError: False is not None\n\n======================================================================\nFAIL: test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 487, in test_supervisor_true_false_unknown_and_update_composition\n    self.assertIs(result[\"guest_updates_shown_disabled\"], supervisor is False)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not False\n\n======================================================================\nFAIL: test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 471, in test_unavailable_or_unrecognized_activity_cannot_be_disabled\n    self.assertIsNone(self.unit(active, enabled), (active, enabled))\n    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not None : (None, 'disabled')\n\n----------------------------------------------------------------------\nRan 12 tests in 4.568s\n\nFAILED (failures=4)\n",
+        "suite_tail": "FAILED (failures=4)"
+      }
+    },
+    {
+      "id": "CDEX16",
+      "property": "Combined: unknown activity plus disabled state is not positive inactive evidence",
+      "anchor_counts": [
+        1
+      ],
+      "status": "KILLED",
+      "reasons": [],
+      "suite": {
+        "command": [
+          "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+          "-B",
+          "-W",
+          "error",
+          "-c",
+          "\nimport json, sys, traceback, unittest\nfrom pathlib import Path\n\nclass RecordedResult(unittest.TextTestResult):\n    def __init__(self, *args, **kwargs):\n        super().__init__(*args, **kwargs)\n        self.events = []\n        self.executed = []\n    def startTest(self, test):\n        self.executed.append(test.id())\n        super().startTest(test)\n    def record(self, kind, test, error, parent=None):\n        self.events.append({\"kind\": kind, \"test_id\": test.id(),\n                            \"parent_test_id\": (parent if parent is not None else test).id(),\n                            \"description\": self.getDescription(test).splitlines()[0],\n                            \"exception_type\": error[0].__module__ + \".\" + error[0].__qualname__,\n                            \"is_exact_assertion_error\": error[0] is AssertionError,\n                            \"traceback_frames\": [{\"file\": f.filename, \"line\": f.lineno, \"function\": f.name}\n                                                 for f in traceback.extract_tb(error[2])]})\n    def addFailure(self, test, error):\n        self.record(\"failure\", test, error)\n        super().addFailure(test, error)\n    def addError(self, test, error):\n        self.record(\"error\", test, error)\n        super().addError(test, error)\n    def addSubTest(self, test, subtest, error):\n        if error is not None:\n            self.record(\"failure\" if issubclass(error[0], test.failureException) else \"error\", subtest, error, test)\n        super().addSubTest(test, subtest, error)\n\nsys.path.insert(0, sys.argv[1])\nsuite = (unittest.defaultTestLoader.loadTestsFromNames(sys.argv[3:]) if len(sys.argv) > 3\n         else unittest.defaultTestLoader.discover(sys.argv[1]))\nresult = unittest.TextTestRunner(verbosity=2, resultclass=RecordedResult).run(suite)\nmetadata = {\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": result.testsRun,\n            \"successful\": result.wasSuccessful(), \"events\": result.events,\n            \"executed_test_ids\": result.executed,\n            \"skipped\": len(result.skipped), \"expected_failures\": len(result.expectedFailures),\n            \"unexpected_successes\": len(result.unexpectedSuccesses)}\nPath(sys.argv[2]).write_text(json.dumps(metadata) + \"\\n\")\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+          "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests",
+          "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmpoa898gm4/result.json",
+          "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+          "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+          "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+          "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+          "test_lx_platform.TestBusy.test_proc_view",
+          "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+          "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+          "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+          "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+          "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+          "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+        ],
+        "cwd": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/tmp5ambbbk4",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONWARNINGS": "error",
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 4.857836750001297,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 12,
+        "summary": "FAILED (failures=3)",
+        "failures": 3,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')",
+          "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')",
+          "test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)"
+        ],
+        "assertion_failure_names": [
+          "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')",
+          "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')",
+          "test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)"
+        ],
+        "error_names": [],
+        "controlled_runner_metadata": {
+          "schema": "CELL308_CONTROLLED_UNITTEST_RESULT_V1",
+          "ran": 12,
+          "successful": false,
+          "events": [
+            {
+              "kind": "failure",
+              "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='unit')",
+              "parent_test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+              "description": "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+                  "line": 485,
+                  "function": "test_supervisor_true_false_unknown_and_update_composition"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1206,
+                  "function": "assertIs"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='updates')",
+              "parent_test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+              "description": "test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 565,
+                  "function": "subTest"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+                  "line": 487,
+                  "function": "test_supervisor_true_false_unknown_and_update_composition"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1206,
+                  "function": "assertIs"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            },
+            {
+              "kind": "failure",
+              "test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+              "parent_test_id": "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled",
+              "description": "test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)",
+              "exception_type": "builtins.AssertionError",
+              "is_exact_assertion_error": true,
+              "traceback_frames": [
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 58,
+                  "function": "testPartExecutor"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 669,
+                  "function": "run"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 615,
+                  "function": "_callTestMethod"
+                },
+                {
+                  "file": "/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+                  "line": 471,
+                  "function": "test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 1321,
+                  "function": "assertIsNone"
+                },
+                {
+                  "file": "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py",
+                  "line": 750,
+                  "function": "fail"
+                }
+              ]
+            }
+          ],
+          "executed_test_ids": [
+            "test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth",
+            "test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls",
+            "test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid",
+            "test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused",
+            "test_lx_platform.TestBusy.test_proc_view",
+            "test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob",
+            "test_lx_platform.TestBusy.test_exited_in_window_is_reported",
+            "test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named",
+            "test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict",
+            "test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition",
+            "test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled"
+          ],
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0
+        },
+        "controlled_runner_metadata_raw": "{\"schema\": \"CELL308_CONTROLLED_UNITTEST_RESULT_V1\", \"ran\": 12, \"successful\": false, \"events\": [{\"kind\": \"failure\", \"test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='unit')\", \"parent_test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"description\": \"test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", \"line\": 485, \"function\": \"test_supervisor_true_false_unknown_and_update_composition\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1206, \"function\": \"assertIs\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition (supervisor=True, evidence='updates')\", \"parent_test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"description\": \"test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 565, \"function\": \"subTest\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", \"line\": 487, \"function\": \"test_supervisor_true_false_unknown_and_update_composition\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1206, \"function\": \"assertIs\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}, {\"kind\": \"failure\", \"test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\", \"parent_test_id\": \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\", \"description\": \"test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)\", \"exception_type\": \"builtins.AssertionError\", \"is_exact_assertion_error\": true, \"traceback_frames\": [{\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 58, \"function\": \"testPartExecutor\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 669, \"function\": \"run\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 615, \"function\": \"_callTestMethod\"}, {\"file\": \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", \"line\": 471, \"function\": \"test_unavailable_or_unrecognized_activity_cannot_be_disabled\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 1321, \"function\": \"assertIsNone\"}, {\"file\": \"/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/case.py\", \"line\": 750, \"function\": \"fail\"}]}], \"executed_test_ids\": [\"test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth\", \"test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls\", \"test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid\", \"test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused\", \"test_lx_platform.TestBusy.test_proc_view\", \"test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob\", \"test_lx_platform.TestBusy.test_exited_in_window_is_reported\", \"test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named\", \"test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict\", \"test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1\", \"test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition\", \"test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled\"], \"skipped\": 0, \"expected_failures\": 0, \"unexpected_successes\": 0}\n",
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "test_window_not_lifetime_and_reuse_and_birth (test_lx_platform.TestBusy.test_window_not_lifetime_and_reuse_and_birth) ... ok\ntest_birth_exit_and_observed_owned_parent_positive_controls (test_sync_boundaries.TestCpuWindowEvidence.test_birth_exit_and_observed_owned_parent_positive_controls) ... ok\ntest_reference_rejects_extra_fields_even_if_otherwise_valid (test_lx_platform.TestAttestationPreflight.test_reference_rejects_extra_fields_even_if_otherwise_valid)\nN04: exact reference schema refuses extra assertions on a genuinely accepted committed blob. ... ok\ntest_forged_or_unaccepted_attestations_refused (test_lx_platform.TestAttestationPreflight.test_forged_or_unaccepted_attestations_refused) ... ok\ntest_proc_view (test_lx_platform.TestBusy.test_proc_view)\nN4 / X01 / X02: complete only in the initial PID namespace, with one NSpid id and a /proc without ... ok\ntest_accepting_line_must_post_date_the_attested_blob (test_lx_platform.TestAttestationPreflight.test_accepting_line_must_post_date_the_attested_blob)\nG2 (review 62 probes G2-G4, Z05): commit order binds the attested BLOB and the accepting LINE, repository- ... ok\ntest_exited_in_window_is_reported (test_lx_platform.TestBusy.test_exited_in_window_is_reported)\nN7: a process present at t0 and gone at t1 has unknown usage in the window: reported, never dropped. ... ok\ntest_acceptance_is_found_not_named (test_lx_platform.TestAttestationPreflight.test_acceptance_is_found_not_named)\nP1 (review 61 probe B1): the attestation cannot designate its acceptance. A file outside the fixed review ... ok\ntest_fixed_review_set_requires_direct_named_md_and_exact_verdict (test_lx_verified.TestVerifiedObservation.test_fixed_review_set_requires_direct_named_md_and_exact_verdict) ... ok\ntest_systemctl_path_when_systemd_is_pid1 (test_lx_platform.TestUpdatesLaunch.test_systemctl_path_when_systemd_is_pid1)\nZ03 / Z07 / G7 / G9: every enabling state is True; an ACTIVE unit is True even if disabled; a failed query ... ok\ntest_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) ... \n  test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit') ... FAIL\n  test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates') ... FAIL\ntest_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled) ... FAIL\n\n======================================================================\nFAIL: test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='unit')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 485, in test_supervisor_true_false_unknown_and_update_composition\n    self.assertIs(unit, expected)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^\nAssertionError: False is not None\n\n======================================================================\nFAIL: test_supervisor_true_false_unknown_and_update_composition (test_sync_boundaries.TestUnitQueryEvidence.test_supervisor_true_false_unknown_and_update_composition) (supervisor=True, evidence='updates')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 487, in test_supervisor_true_false_unknown_and_update_composition\n    self.assertIs(result[\"guest_updates_shown_disabled\"], supervisor is False)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not False\n\n======================================================================\nFAIL: test_unavailable_or_unrecognized_activity_cannot_be_disabled (test_sync_boundaries.TestUnitQueryEvidence.test_unavailable_or_unrecognized_activity_cannot_be_disabled)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py\", line 471, in test_unavailable_or_unrecognized_activity_cannot_be_disabled\n    self.assertIsNone(self.unit(active, enabled), (active, enabled))\n    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not None : (None, 'disabled')\n\n----------------------------------------------------------------------\nRan 12 tests in 4.769s\n\nFAILED (failures=3)\n",
+        "suite_tail": "FAILED (failures=3)"
+      }
+    }
+  ],
+  "input_sha256": {
+    ".github/workflows/cell-308-r5-integration.yml": "49a2c918b694ed1095a04565917d88a476e9071c1165301a07899c185b4524c9",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_inventory.py": "8ea74ed3621e805066727a4ca3f20253f9a85c90857aca8d8e41e02607cfa597",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py": "2f0489d376a7129ce4416004c37d1cf66f2bcfbede5a653ed068e382919fae15",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_portmap.py": "81dc94e9d8bbc4471dc04f3211613f6778e5d0ddc98b60e970c9e59c3445b89d",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py": "b78756eb377e91c4877b5bf0f96557257da64d4ac464ae339080e9f9e0ca29a9",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py": "5d0e3b2b93441d438d574ce68fcc652337c16cb3209a98a3d0765d76f6e481cc",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py": "d961b25be1d6a64d0d7b4f40ba3bc137641ad1ed2402eace91720f082eb2fd54",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py": "4d096c43c07d9523fd464a1191dadb207f41d271bdcfe915235c880f5990e887",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py": "c712c0b9a898d8bb98cf4100d8fd7d638481512f7279dc6dd29f9d613eed00cf",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py": "4487ce763b2a93d76c72c700cc7d005c42f4eb98272d9c6d8adc933af21bd00e"
+  },
+  "input_sha256_after": {
+    ".github/workflows/cell-308-r5-integration.yml": "49a2c918b694ed1095a04565917d88a476e9071c1165301a07899c185b4524c9",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_inventory.py": "8ea74ed3621e805066727a4ca3f20253f9a85c90857aca8d8e41e02607cfa597",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py": "2f0489d376a7129ce4416004c37d1cf66f2bcfbede5a653ed068e382919fae15",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_portmap.py": "81dc94e9d8bbc4471dc04f3211613f6778e5d0ddc98b60e970c9e59c3445b89d",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py": "b78756eb377e91c4877b5bf0f96557257da64d4ac464ae339080e9f9e0ca29a9",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py": "5d0e3b2b93441d438d574ce68fcc652337c16cb3209a98a3d0765d76f6e481cc",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py": "d961b25be1d6a64d0d7b4f40ba3bc137641ad1ed2402eace91720f082eb2fd54",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py": "4d096c43c07d9523fd464a1191dadb207f41d271bdcfe915235c880f5990e887",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py": "c712c0b9a898d8bb98cf4100d8fd7d638481512f7279dc6dd29f9d613eed00cf",
+    "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py": "4487ce763b2a93d76c72c700cc7d005c42f4eb98272d9c6d8adc933af21bd00e"
+  },
+  "new_target_evaluations": 0,
+  "prior_native_run": "38680983939",
+  "prior_cleanup_error_cause": "UNPROVEN; Git fixtures now isolate background features without cleanup suppression"
+}
