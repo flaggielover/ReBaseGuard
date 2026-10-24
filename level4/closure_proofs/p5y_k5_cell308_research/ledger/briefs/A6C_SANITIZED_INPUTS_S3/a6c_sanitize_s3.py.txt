@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""A6c sanitized input set S3: line-for-line redaction of excluded-source content in manifest R3 inputs. No network use.
+
+Usage: python3 -I a6c_sanitize_s3.py <repo root> <output dir>
+Reads each source from its git object at the commit that the verified manifest R3 pins for it, and verifies the
+manifest's length and SHA-256 for it. Replaces each listed line by a marker of the same Markdown kind (line numbers are
+preserved), appends one trailer line, and writes the artifact. Redacted lines are never printed.
+"""
+import hashlib
+import json
+import subprocess
+import sys
+
+BASE = "level4/closure_proofs/p5y_k5_cell308_research/"
+MANIFEST_COMMIT = "558a3dbd32623ee152feef7f74218813eafb8030"
+MANIFEST_PATH = BASE + "ledger/briefs/A6C_PHASE2_MANIFEST_R3.json"
+MANIFEST_BYTES = 21101
+MANIFEST_SHA256 = "eb93d4f17e745bbba818a17f9f86f0e29880ba7b535d61db8fb0412553a04fa1"
+CLASSES = {
+    "A": "content attributed to an excluded source by an introduced quotation",
+    "C": "content attributed to an excluded source by file path and line citation",
+    "Q": "quoted block carrying an excluded-source file path",
+    "V": "verbatim repetition of excluded-source content",
+    "O": "possible MB r1 target-run observation, redacted conservatively",
+    "K": "quoted text naming an excluded source, source not established, redacted conservatively",
+}
+SOURCES = [
+    ("governance/SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1.md",
+     {41: "A", 43: "A", 49: "A", 51: "A", 52: "A", 53: "A", 54: "A", 75: "A", 77: "A", 78: "A", 106: "V", 150: "C"}),
+    ("governance/SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1_ERRATUM_E1.md", {44: "C", 45: "C"}),
+    ("registry/SUCCESSOR_ROUTE_AUDIT_308_ADDENDUM_A1.md", {75: "K", 76: "K", 77: "K", 86: "O"}),
+    ("registry/SUCCESSOR_ROUTE_AUDIT_308_ADDENDUM_A1_ERRATUM_E1.md",
+     {24: "O", 25: "O", 26: "O", 27: "O", 28: "O", 30: "O", 31: "O", 32: "O"}),
+    ("governance/new_host_route_cloud_r1/PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R5.md",
+     {239: "Q", 240: "Q", 241: "Q", 243: "Q", 244: "Q", 266: "C", 275: "C", 282: "K", 283: "K", 284: "K"}),
+    ("governance/new_host_route_cloud_r1/PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R5_ERRATUM_E2.md",
+     {62: "K", 63: "K", 64: "K"}),
+]
+
+
+def marker(orig, n, cls):
+    text = "[A6C-SANITIZED S3: original line %d redacted, class %s: %s]" % (n, cls, CLASSES[cls])
+    if orig.startswith(">"):
+        return "> " + text
+    if orig.startswith("#"):
+        return orig[:len(orig) - len(orig.lstrip("#"))] + " " + text
+    if orig.startswith("|"):
+        cols = len(orig.strip().strip("|").split("|"))
+        return "| " + text + " |" + " |" * (cols - 1)
+    return text
+
+
+def git_blob(root, spec):
+    return subprocess.run(["git", "-C", root, "cat-file", "-p", spec], capture_output=True, check=True).stdout
+
+
+def main(root, out):
+    raw = git_blob(root, MANIFEST_COMMIT + ":" + MANIFEST_PATH)
+    if len(raw) != MANIFEST_BYTES or hashlib.sha256(raw).hexdigest() != MANIFEST_SHA256:
+        sys.exit("STOP: manifest R3 mismatch")
+    pinned = {e["path"]: e for e in json.loads(raw)["entries"]}
+    for rel, redact in SOURCES:
+        e = pinned[BASE + rel]
+        commit, size, sha = e["commit"], e["bytes"], e["sha256"]
+        data = git_blob(root, commit + ":" + BASE + rel)
+        if len(data) != size or hashlib.sha256(data).hexdigest() != sha:
+            sys.exit("STOP: source mismatch " + rel)
+        lines = data.decode("utf-8").split("\n")
+        assert lines[-1] == "", rel
+        for n, cls in sorted(redact.items()):
+            assert lines[n - 1].strip() and lines[n - 1].strip() != ">", (rel, n)
+            lines[n - 1] = marker(lines[n - 1], n, cls)
+        counts = {c: sum(1 for v in redact.values() if v == c) for c in sorted(set(redact.values()))}
+        trailer = ("[A6C-SANITIZED S3 artifact of %s at %s (%d bytes, sha256 %s). %d lines redacted line-for-line "
+                   "(%s); every other line is byte-identical to the original; line numbers are preserved.]"
+                   % (BASE + rel, commit, size, sha, len(redact), ", ".join("%s=%d" % kv for kv in counts.items())))
+        lines.insert(len(lines) - 1, trailer)
+        name = rel.rsplit("/", 1)[1].replace(".md", ".A6C_SANITIZED_S3.md")
+        text = "\n".join(lines).encode("utf-8")
+        open(out + "/" + name, "wb").write(text)
+        print(e["n"], name, len(text), hashlib.sha256(text).hexdigest())
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2])
