@@ -1,0 +1,21 @@
+"""Compare probe outputs (validity flags / exceptions / markers) between 2275b3a0 and 774f2183 runs.
+usage: python3 -B -I compare66.py.txt <old.json> <new.json>"""
+import json, sys
+def flat(x, p=""):
+    out = {}
+    if isinstance(x, dict):
+        if "valid" in x or "exception" in x:
+            out[p] = (x.get("valid"), x.get("exception", "")[:60] if isinstance(x.get("exception"), str) else None,
+                      (x.get("reasons") or [""])[0][:70] if isinstance(x.get("reasons"), list) and x.get("reasons") else "")
+        for k, v in x.items():
+            if k not in ("reasons", "tb"):
+                out.update(flat(v, f"{p}/{k}"))
+    elif isinstance(x, (bool,)) :
+        out[p] = x
+    return out
+a, b = flat(json.load(open(sys.argv[1]))), flat(json.load(open(sys.argv[2])))
+for k in sorted(set(a) | set(b)):
+    va, vb = a.get(k), b.get(k)
+    mark = "  " if va == vb else "!!"
+    if va != vb or (isinstance(vb, tuple) and vb[0] is True):
+        print(mark, k, "|", va, "->", vb)

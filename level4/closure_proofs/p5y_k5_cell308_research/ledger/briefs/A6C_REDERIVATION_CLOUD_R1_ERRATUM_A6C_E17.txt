@@ -1,0 +1,129 @@
+A6C BRIEF, PROTOCOL ERRATUM A6C-E17: CONSOLIDATED PHASE 2 PROTOCOL, MANIFEST R4, SANITIZED INPUT SETS S1-S3, EXCLUDED-SOURCE RULE (Cell-308 MB-S new-host route, Cloud r1)
+
+STATUS: PROPOSED. NOT IN FORCE until the owner adopts it by a recorded owner decision.
+Prepared by the recorder (claude_cloud_recorder_20261022) at the owner's direction (option A, 2026-10-24).
+
+NAMING. Brief errata carry the prefix "A6C-" (A6C-E14 to A6C-E16, this erratum A6C-E17). Readiness-matrix errata
+carry the prefix "RM-" (RM-E1 to RM-E17; the next is RM-E18).
+
+WHAT THIS AMENDS. The canonical A6c brief stays byte-unchanged:
+  level4/closure_proofs/p5y_k5_cell308_research/ledger/briefs/A6C_REDERIVATION_CLOUD_R1.txt
+  at commit 797248fcdc45038eb10254b223a3a40838174c63, 17499 bytes,
+  sha256 489dec78a91aa0945f866ad6bbb72590988bcee0872961e45f279f76bf472f0c.
+For every candidate appointed after its adoption, this erratum replaces A6C-E14, A6C-E15 and A6C-E16 in full. It
+restates their operative provisions below. Those errata are not inputs and are not to be fetched. Where this erratum
+and the brief differ, this erratum governs. In every other respect the brief governs.
+
+A6C-E17.1  WHEN TO FETCH WHAT
+  * Phase 1: fetch nothing except the canonical brief (brief line 16).
+  * Fetch this erratum and manifest R4 only after both of these:
+      * the owner has recorded an individual eligibility determination for you; and
+      * the owner has told you, in this same conversation, to proceed.
+  * Fetch this erratum from its raw URL, at the commit, length and SHA-256 that the owner's proceed instruction gives
+    for it. Verify its length and SHA-256 before reading it. On any mismatch, stop and report.
+  * In Phase 2, fetch ONLY the 40 URLs listed in manifest R4. In particular, never fetch:
+      * the original of any sanitized entry;
+      * any earlier manifest (R1, R2, R3);
+      * any earlier erratum (A6C-E14, A6C-E15, A6C-E16);
+      * any excluded source.
+
+A6C-E17.2  THE PINNED MANIFEST R4
+  path:    level4/closure_proofs/p5y_k5_cell308_research/ledger/briefs/A6C_PHASE2_MANIFEST_R4.json
+  commit:  3c037959c21dbdebd279f6200b2d1c7910a7975c
+  bytes:   21629
+  sha256:  a1018065c2d2a0add2c3074cd6ad0d3dba9c74b5bfe89061129a0457ae171e24
+  raw URL: https://raw.githubusercontent.com/flaggielover/ReBaseGuard/3c037959c21dbdebd279f6200b2d1c7910a7975c/level4/closure_proofs/p5y_k5_cell308_research/ledger/briefs/A6C_PHASE2_MANIFEST_R4.json
+
+  The manifest holds exactly 40 entries, numbered 1-40: 39 Part 1 and 1 Part 2. They are the brief's 40 allowlisted
+  files, ten of them as sanitized copies:
+    * entries 4, 6 and 7: sanitized input set S1, at commit 90d12cef2b97980991888a1cde819829c9a361ea;
+    * entry 24: sanitized input set S2, at commit 51388ecf04180123ac3cfbd60b106436121eab60;
+    * entries 9, 10, 11, 12, 23 and 25: sanitized input set S3, at commit fcd35d8c02fae94214dc9d4d66562dce8687aab6.
+
+A6C-E17.3  PHASE 2 INPUT PROCEDURE
+  1. Fetch the manifest only from the raw URL in A6C-E17.2, into your scratch directory directly under /tmp.
+  2. Verify its raw-byte length is 21629 and its SHA-256 is
+     a1018065c2d2a0add2c3074cd6ad0d3dba9c74b5bfe89061129a0457ae171e24 BEFORE parsing it.
+  3. Use the manifest EXACTLY AS SUPPLIED:
+     * parse it with a standard JSON parser;
+     * do not edit, re-serialize for use, retype or reconstruct any url, commit, path, bytes or sha256 value;
+     * do not add or drop entries.
+  4. For each entry, in order n = 1..40:
+     * fetch its "url", with certificate verification on and no redirects followed;
+     * record the HTTP status, the raw-byte length and the SHA-256;
+     * compare them with the entry's "bytes" and "sha256" BEFORE reading the file;
+     * stop on any mismatch or non-200 status.
+  5. Entry 40 (mbs308_host.py) is for Part A items a13 and a14 only. Read only the two named constants and their
+     comments.
+
+A6C-E17.4  SANITIZED ENTRIES
+  * Each sanitized entry reproduces its original line for line. Every redacted line is replaced, at the same line
+    number, by a marker beginning "[A6C-SANITIZED S1:", "[A6C-SANITIZED S2:" or "[A6C-SANITIZED S3:". A trailer line
+    near the end cites the original's pin.
+  * Markers are expected content. A marker is not a mismatch and not an exposure. Cite sanitized entries by their line
+    numbers, which equal the original line numbers.
+  * Do not fetch, seek, reconstruct or infer a redacted line.
+  * The sanitization is conservative, so a marker is not evidence that its line held excluded-source content.
+  * A redacted line that an item needs makes that item NOT_DETERMINABLE, with the marker's line number cited.
+
+A6C-E17.5  WHAT COUNTS AS EXCLUDED-SOURCE CONTENT
+  The excluded sources are:
+    * the E1'' register (level4/closure_proofs/p5y_k5_cell308_research/ledger/COORDINATOR_EXPOSURE_DISCLOSURE.md);
+    * audit/*;
+    * reviews/REVIEW_EXECUTION_INTERRUPTION*;
+    * reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308*.md (the incident review);
+    * anything under level4/closure_proofs/p5y_k5_cell308_mb_r1/ (the MB r1 namespace);
+    * any MB r1 target-run runtime or host observation, and any MB r1 value or committed tail figure;
+    * history/;
+    * Cell-309 material;
+    * the B2 report and the B2 T6-mitigation supplement (B2Q, B2S).
+
+  Excluded-source content is any content of an excluded source, or any content attributed to one, in any of these
+  forms:
+    * content placed next to a file path or line citation that points to the source;
+    * a quotation or blockquote introduced as coming from the source, or that itself carries the source's path;
+    * quoted text attributed to the source;
+    * possessive attribution (the source's findings, rules or statements);
+    * verbatim content from the source, quoted or not;
+    * an MB r1 target-run runtime or host observation, stated qualitatively or numerically.
+
+A6C-E17.6  WHAT DOES NOT COUNT
+  These are not excluded-source content by themselves, and do not trigger A6C-E17.7:
+    * a bare name of an excluded source, or its file path, with no content attributed to it. This includes exclusion
+      lists, non-access statements and "not read" statements;
+    * the gate labels B1-B9, including "B2" as a gate;
+    * role lists naming B1, B2, B3, reviewers, raters, sessions or candidates;
+    * the generic terms T6, ER-T6, T6_TRANSFER and its verdict labels, M1-M8, mitigation, ruling and
+      incident-independence as a governance heading;
+    * "MB r1" as the name of the earlier campaign, including references to its adopted governance rules;
+    * policy numbers in the allowlisted governance and ratification texts.
+
+A6C-E17.7  STOP CONDITIONS (added to the brief's STOP CONDITIONS)
+  * Any excluded-source content (A6C-E17.5) reaching you, from any entry, in any form: stop, quote nothing, and
+    disclose only the entry number and line number.
+  * A length or SHA-256 mismatch on this erratum or on manifest R4.
+  * Any need to alter or retype a manifest value.
+  * A manifest that does not parse, or does not hold exactly 40 entries numbered 1..40.
+
+A6C-E17.8  DECLINE LIST (added to the brief's decline list)
+  Decline if you are A6c candidate 1, 2, 3, 4, 5 or 6, or the A6b External Candidate.
+
+A6C-E17.9  ADDED TO THE OUTPUT
+  REDERIVATION_EXTERNAL_A6C.md must also give:
+  * the verified length and SHA-256 of this erratum and of manifest R4;
+  * the per-entry fetch log (n, url, HTTP status, bytes, SHA-256, MATCH);
+  * every command in full, with no abbreviations;
+  * every absolute path touched.
+
+A6C-E17.10  UNCHANGED
+  * The 40-file scope.
+  * Parts A, B and C.
+  * Part D / A16: NOT_IN_SCOPE.
+  * External origins for Part A: only the brief's proposed official documentation-site list (brief lines 66-74).
+  * The result vocabulary, OUT OF SCOPE (including "T6 applicability", brief line 114), OUTPUT, the STOP CONDITIONS,
+    the decline list and every prohibition in the brief.
+  * The governing decision E-5:
+    * A6b is input only;
+    * no affected output is adopted before independent re-derivation or confirmation;
+    * re-derivation cures no later-proven role, exposure, independence or control violation.
+  * The candidate-side manifest derivation of owner decision R1 is not used.

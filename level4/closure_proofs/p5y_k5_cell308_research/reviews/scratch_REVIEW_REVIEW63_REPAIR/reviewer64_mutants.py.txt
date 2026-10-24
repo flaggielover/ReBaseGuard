@@ -1,0 +1,72 @@
+"""Review 64 mutants, classified by the pinned harness's own run_suite / classify_mutant (strict criteria).
+The pinned tree is never written: each mutant is a copy under a scratch temporary directory (LX_PLATFORM_DIR).
+usage: python3 -I reviewer64_mutants.py.txt <pinned DEV dir> <scratch tmp dir> <out.json>"""
+import hashlib, importlib.util, json, os, sys, tempfile
+from pathlib import Path
+
+DEV, TMP, OUT = sys.argv[1:4]
+spec = importlib.util.spec_from_file_location("run_mutants_pinned", Path(DEV, "tests/run_mutants.py"))
+H = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(H)                 # module level only builds the registry; main() is not called
+
+MINE = [
+    ("RW1", "an EMPTY blob-commit set no longer refuses (all() over no blob commits is vacuously ordered)",
+     [("    if not blob_commits or not line_commits:\n", "    if not line_commits:\n")],
+     ["test_accepting_line_must_post_date_the_attested_blob", "test_review63_order_every_commit_merges_and_side_branches"]),
+    ("RW2", "file mode: a dangling link that is the highest-precedence entry no longer shadows a lower mask",
+     [("        if first is None and (f.is_symlink() or f.exists()):", "        if first is None and f.exists():")],
+     ["test_review63_upholds_and_mask_precedence", "test_unit_enabled_from_every_root"]),
+    ("RW3", "history scan: a historical review path that is not UTF-8 is skipped instead of refusing",
+     [("                seen.setdefault(parts[2].decode(\"ascii\"), name.decode(\"utf-8\", errors=\"strict\"))\n"
+       "            except UnicodeDecodeError:\n                return None\n",
+       "                seen.setdefault(parts[2].decode(\"ascii\"), name.decode(\"utf-8\", errors=\"strict\"))\n"
+       "            except UnicodeDecodeError:\n                continue\n")],
+     ["test_review63_rejection_is_permanent", "test_malformed_listing_and_nonutf8_review_blob_refuse_verification"]),
+    ("RW4", "accepting file: the accepting verdict line may appear more than once (exactly ONE verdict-like line)",
+     [("and verdicts == [ACCEPTANCE_VERDICT_LINE]:", "and set(verdicts) == {ACCEPTANCE_VERDICT_LINE}:")],
+     ["test_review63_verdict_like_lines_refuse_acceptance", "test_acceptance_is_found_not_named",
+      "test_fixed_review_set_requires_direct_named_md_and_exact_verdict"]),
+    ("RW5", "an 8-hex prefix no longer names the attestation (9 or more needed)",
+     [('_HEX_TOKEN = re.compile(r"[0-9A-Fa-f]{8,64}")', '_HEX_TOKEN = re.compile(r"[0-9A-Fa-f]{9,64}")')],
+     ["test_review63_veto_words_and_references"]),
+    ("RW6", "accepting-line commits searched on the first-parent chain only (side-branch acceptance commits unseen)",
+     [('    line_commits = _commits(repo_root, pick, "HEAD")\n',
+       '    line_commits = _commits(repo_root, pick, "--first-parent", "HEAD")\n')],
+     ["test_review63_order_every_commit_merges_and_side_branches"]),
+    ("W03r", "review 63 W03 re-run alone on this source (shape check only lower-cases the boot id)",
+     [("    if b is not None and (not isinstance(b, str) or not _BOOT_ID.fullmatch(b)):",
+       "    if b is not None and (not isinstance(b, str) or not _BOOT_ID.fullmatch(b.lower())):")],
+     ["test_review63_shape_rejects_uppercase_digest_and_boot_id"]),
+    ("W08r", "review 63 W08 re-run: a failed is-enabled query treated like not-found",
+     [('        if st == "not-found":', '        if st in ("not-found", None):')],
+     ["test_failed_systemctl_query_is_no_reading", "test_systemctl_path_when_systemd_is_pid1"]),
+    ("Q04s", "harness Q04 as it stood at 670ec7a4 (single site: second verdict tolerated at the acceptance check)",
+     [("and verdicts == [ACCEPTANCE_VERDICT_LINE]:", "and ACCEPTANCE_VERDICT_LINE in verdicts:")],
+     ["test_acceptance_is_found_not_named"]),
+]
+
+src = H.SRC.read_text()
+src_sha = hashlib.sha256(src.encode()).hexdigest()
+env = dict(os.environ)
+env.pop("LX_PLATFORM_DIR", None)
+env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONWARNINGS="error", PYTHONHASHSEED="0")
+base = H.run_suite(env)
+out = {"source_sha256": src_sha, "baseline_ran": base["ran"], "baseline_pass": H.suite_passed(base),
+       "expected_test_count": H.expected_test_count(), "mutants": []}
+for mid, what, edits, witnesses in MINE:
+    mutated, counts, err = H.apply_mutation(src, edits)
+    row = {"id": mid, "property": what, "witnesses": witnesses, "anchor_counts": counts,
+           "edits": [{"old": o, "new": n} for o, n in edits]}
+    if err:
+        row.update(status="NOT_APPLIED", reasons=[err])
+    else:
+        with tempfile.TemporaryDirectory(dir=TMP) as d:
+            Path(d, "lx_platform.py").write_text(mutated)
+            suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+        status, reasons = H.classify_mutant(suite, base, witnesses)
+        row.update(status=status, reasons=reasons, ran=suite["ran"], returncode=suite["returncode"],
+                   failed_methods=sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]}),
+                   mutated_sha256=hashlib.sha256(mutated.encode()).hexdigest())
+    out["mutants"].append(row)
+    print(mid, row["status"], row.get("reasons"), row.get("failed_methods"), flush=True)
+Path(OUT).write_text(json.dumps(out, indent=1) + "\n")

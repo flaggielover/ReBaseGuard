@@ -1,0 +1,130 @@
+"""Review 64: outcome checks for each surviving mutant (base vs mutant on one synthetic input each).
+usage: python3 -I equiv64.py.txt <pinned DEV dir> <scratch tmp dir> <out.json>"""
+import hashlib, importlib.util, json, os, subprocess, sys, tempfile
+from pathlib import Path
+
+DEV, TMP, OUT = sys.argv[1:4]
+mres = json.loads(Path(TMP).parent.joinpath("reviewer64_mutants_result.json").read_text())
+EDITS = {m["id"]: [(e["old"], e["new"]) for e in m["edits"]] for m in mres["mutants"]}
+SRC = Path(DEV, "lx_platform.py").read_text()
+mods = {}
+
+
+def load(mid):
+    with_dir = tempfile.mkdtemp(dir=TMP)
+    s = SRC
+    for o, n in EDITS.get(mid, []):
+        assert s.count(o) == 1
+        s = s.replace(o, n)
+    Path(with_dir, "lx_platform.py").write_text(s)
+    spec = importlib.util.spec_from_file_location(f"lx_{mid}", Path(with_dir, "lx_platform.py"))
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "init.defaultBranch=main"]
+
+
+def git(d, *a):
+    return subprocess.run(["git", "-C", d, *CFG, *a], check=True, capture_output=True)
+
+
+def commit(d, files=None, msg="c"):
+    for rel, data in (files or {}).items():
+        p = Path(d, rel) if isinstance(rel, str) else rel
+        if isinstance(rel, bytes):
+            os.makedirs(os.path.dirname(rel), exist_ok=True)
+            with open(rel, "wb") as fh:
+                fh.write(data)
+            continue
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", msg)
+
+
+def att_bits(L):
+    att = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                      "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+    sha = hashlib.sha256(att).hexdigest()
+    line = f"{L.ACCEPTANCE_LINE}{sha}"
+    ok = f"review\n{line}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+    return att, sha, line, ok
+
+
+def valid(L, d, sha):
+    L.machine_identity = lambda *a, **k: HW
+    rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": sha}, repo_root=d)
+    return {"valid": rec is not None, "reasons": why}
+
+
+def case_rw1(L):   # blob and acceptance in the SAME (root) commit, quote later; repository config log.showRoot=false
+    att, sha, line, ok = att_bits(L)
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        git(d, "init", "-q"); git(d, "config", "--local", "log.showRoot", "false")
+        acc = f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}1.md"
+        commit(d, {"att/HOST.json": att, acc: ok}); commit(d, {"notes/q.md": f"quoted: {line}\n".encode()})
+        return valid(L, d, sha)
+
+
+def case_unit(L):   # dangling highest-precedence entry, lower mask, a wants link
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        for r in ("hi", "lo/timers.target.wants"):
+            Path(d, r).mkdir(parents=True)
+        os.symlink("/nonexistent", Path(d, "hi/x.timer")); os.symlink("/dev/null", Path(d, "lo/x.timer"))
+        Path(d, "lo/timers.target.wants/x.timer").write_text("")
+        L.systemd_is_pid1 = lambda *a, **k: False
+        return L.unit_enabled("x.timer", (str(Path(d, "hi")), str(Path(d, "lo"))))
+
+
+def case_rw3(L):   # a rejecting review under a non-UTF-8 path, later removed
+    att, sha, line, ok = att_bits(L)
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        git(d, "init", "-q"); commit(d, {"att/HOST.json": att})
+        rd = (d + "/" + L.ACCEPTANCE_REVIEW_DIR).encode()
+        commit(d, {rd + b"/\xffveto.md": f"{sha} REJECTED\n".encode()})
+        git(d, "rm", "-q", "-r", L.ACCEPTANCE_REVIEW_DIR); commit(d)
+        commit(d, {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}1.md": ok})
+        return valid(L, d, sha)
+
+
+def case_dup(L):   # the accepting verdict line twice
+    att, sha, line, ok = att_bits(L)
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        git(d, "init", "-q"); commit(d, {"att/HOST.json": att})
+        commit(d, {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}1.md": ok + f"{L.ACCEPTANCE_VERDICT_LINE}\n".encode()})
+        return valid(L, d, sha)
+
+
+def case_rw6(L):   # acceptance written on a side branch BEFORE the blob existed there; side syncs main; --no-ff merge
+    att, sha, line, ok = att_bits(L)
+    acc = f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}1.md"
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        git(d, "init", "-q"); commit(d, {"README": b"x\n"}); git(d, "branch", "side")
+        commit(d, {"att/HOST.json": att})                                     # B on main
+        git(d, "checkout", "-q", "side"); commit(d, {acc: ok})                # L: acceptance, not a descendant of B
+        git(d, "merge", "-q", "--no-ff", "-m", "sync main", "main")           # S = merge(L, B)
+        git(d, "checkout", "-q", "main"); git(d, "merge", "-q", "--no-ff", "-m", "merge side", "side")
+        r = valid(L, d, sha)
+        r["L_descends_from_B"] = subprocess.run(["git", "-C", d, "merge-base", "--is-ancestor", "main~1", "side~1"],
+                                                capture_output=True).returncode == 0
+        return r
+
+
+def case_w03(L):
+    ident = {"pid": 4242, "boot_id": "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0".upper(), "starttime_ticks": 777,
+             "cmdline_sha256": "c" * 64, "pidns": 1, "timens": 2}
+    return L.identity_state(ident, current_boot="11111111-2222-3333-4444-555555555555", exists=lambda p: False,
+                            current_ns={"pidns": 1, "timens": 2})
+
+
+CASES = {"RW1": case_rw1, "RW2": case_unit, "RW3": case_rw3, "RW4": case_dup, "Q04s": case_dup, "RW6": case_rw6,
+         "W03r": case_w03}
+out = {}
+for mid, fn in CASES.items():
+    out[mid] = {"base": fn(load("BASE")), "mutant": fn(load(mid))}
+    print(mid, json.dumps(out[mid])[:400], flush=True)
+Path(OUT).write_text(json.dumps(out, indent=1) + "\n")

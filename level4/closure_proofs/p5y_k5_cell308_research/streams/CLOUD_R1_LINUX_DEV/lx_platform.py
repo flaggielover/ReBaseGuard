@@ -54,6 +54,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import platform as _platform
 import re
@@ -154,8 +155,10 @@ def machine_identity(machine_id_path="/etc/machine-id", dmi_path="/sys/class/dmi
 # ====================================================================== process identity (R2 / N-2 / O-4 semantics)
 def proc_stat(pid: int, text: str | None = None) -> dict | None:
     """Parse /proc/<pid>/stat (``comm`` may contain spaces and parentheses: split at the LAST ')')."""
-    text = _read(f"/proc/{int(pid)}/stat") if text is None else text
-    if not text:
+    if type(pid) is not int or pid <= 0:
+        return None
+    text = _read(f"/proc/{pid}/stat") if text is None else text
+    if not isinstance(text, str) or not text:
         return None
     lp, rp = text.find("("), text.rfind(")")
     if lp < 0 or rp < lp:
@@ -163,8 +166,12 @@ def proc_stat(pid: int, text: str | None = None) -> dict | None:
     try:
         head_pid = int(text[:lp].strip())
         rest = text[rp + 1:].split()
-        return {"pid": head_pid, "comm": text[lp + 1:rp], "state": rest[0], "ppid": int(rest[1]),
-                "utime": int(rest[11]), "stime": int(rest[12]), "starttime": int(rest[19])}
+        record = {"pid": head_pid, "comm": text[lp + 1:rp], "state": rest[0], "ppid": int(rest[1]),
+                  "utime": int(rest[11]), "stime": int(rest[12]), "starttime": int(rest[19])}
+        if head_pid != pid or record["state"] not in ("R", "S", "D", "T", "t", "I", "Z", "X") \
+                or any(record[k] < 0 for k in ("ppid", "utime", "stime", "starttime")):
+            return None
+        return record
     except (ValueError, IndexError):
         return None
 
@@ -204,7 +211,7 @@ def _ident_shape_ok(ident) -> bool:
     if not isinstance(pid, int) or isinstance(pid, bool) or pid <= 0:
         return False
     b = ident.get("boot_id")
-    if b is not None and (not isinstance(b, str) or not _BOOT_ID.match(b)):
+    if b is not None and (not isinstance(b, str) or not _BOOT_ID.fullmatch(b)):
         return False
     for k in ("starttime_ticks", "pidns", "timens"):
         v = ident.get(k)
@@ -227,33 +234,52 @@ def identity_state(ident, *, current_boot: str | None = None, exists=None, stat=
     failed), ``exists``, ``stat``, ``cmd``,
     ``current_ns`` ({"pidns": int|None, "timens": int|None})."""
     if not _ident_shape_ok(ident):
-        return UNKNOWN                                          # P9: a malformed record proves nothing
-    cur = boot_id() if current_boot is None else (current_boot or None)
+        return UNKNOWN
+    cur = boot_id() if current_boot is None else (boot_id(current_boot) if isinstance(current_boot, str) else None)
     if cur is None:
         return UNKNOWN
-    if ident.get("boot_id") and ident["boot_id"] != cur:
+    recorded_boot = ident.get("boot_id")
+    if recorded_boot is not None and (not isinstance(recorded_boot, str) or boot_id(recorded_boot) is None):
+        return UNKNOWN
+    if recorded_boot is not None and boot_id(recorded_boot) != cur:
         return DEAD
     ns = current_ns if current_ns is not None else {"pidns": ns_inode("pid"), "timens": ns_inode("time")}
     for k in ("pidns", "timens"):
         # N8: pid numbers, ESRCH and starttimes mean something only in the recorder's namespaces; an unrecorded or
         # different namespace makes every pid-based reading UNKNOWN (a boot-id change, above, stays positive evidence)
-        if ident.get(k) is None or ns.get(k) != ident[k]:
+        if type(ident.get(k)) is not int or ident[k] <= 0 or not isinstance(ns, dict) \
+                or type(ns.get(k)) is not int or ns.get(k) != ident[k]:
             return UNKNOWN
     pid = ident["pid"]
     ex = (exists or _pid_exists)(pid)
-    if ex is None:
+    if type(ex) is not bool:
         return UNKNOWN
     if ex is False:
         return DEAD
     st = (stat or proc_stat)(pid)
     if st is None:
         return UNKNOWN
+    if not isinstance(st, dict) or type(st.get("pid")) is not int or st["pid"] != pid:
+        return UNKNOWN
     if st.get("state") in ("Z", "X"):
+        return UNKNOWN
+    if st.get("state") not in ("R", "S", "D", "T", "t", "I"):
+        return UNKNOWN
+    if any(type(st.get(k)) is not int or st[k] < 0 for k in ("ppid", "utime", "stime")):
+        return UNKNOWN
+    if type(st.get("starttime")) is not int or st["starttime"] < 0:
+        return UNKNOWN
+    if ident.get("starttime_ticks") is not None and (
+            type(ident["starttime_ticks"]) is not int or ident["starttime_ticks"] < 0):
         return UNKNOWN
     if ident.get("starttime_ticks") is not None and st["starttime"] != ident["starttime_ticks"]:
         return DEAD
     cs = (cmd or cmdline_sha256)(pid)
-    if cs is None:
+    if not isinstance(cs, str) or not re.fullmatch(r"[0-9a-f]{64}", cs):
+        return UNKNOWN
+    recorded_cmd = ident.get("cmdline_sha256")
+    if recorded_cmd is not None and (not isinstance(recorded_cmd, str)
+                                     or not re.fullmatch(r"[0-9a-f]{64}", recorded_cmd)):
         return UNKNOWN
     if ident.get("cmdline_sha256") and cs != ident["cmdline_sha256"]:
         return DEAD
@@ -270,10 +296,22 @@ def clocks() -> dict:
             "realtime_ns": time.clock_gettime_ns(time.CLOCK_REALTIME), "epoch_s": int(time.time())}
 
 
+def _nint(text, *, signed: bool = False) -> int | None:
+    """A bounded ASCII decimal text reading; malformed / unavailable evidence stays unknown."""
+    if not isinstance(text, str):
+        return None
+    t = text.strip()
+    if len(t.lstrip("-")) > 4300 or re.fullmatch(r"-?[0-9]+" if signed else r"[0-9]+", t) is None:
+        return None
+    try:
+        return int(t)
+    except ValueError:                           # includes the interpreter's configured integer-digit limit
+        return None
+
+
 def suspend_success_count(text: str | None = None) -> int | None:
     text = _read("/sys/power/suspend_stats/success") if text is None else text
-    t = (text or "").strip()
-    return int(t) if t.isdigit() else None
+    return _nint(text)
 
 
 def snapshot(*, power_root="/sys/class/power_supply", suspend_text: str | None = None) -> dict:
@@ -288,28 +326,46 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     (AMBIGUOUS only; NOT a pause detector: a hypervisor pause invisible to both guest clocks is silent, D-PAUSE);
     boot-id change; power at EVERY reading; sample spacing. CLEAN only if every channel exists and none fires."""
     reasons = []
+    if not isinstance(start, dict) or not isinstance(end, dict):
+        return {"status": "AMBIGUOUS", "clean": False, "reasons": ["AMBIGUOUS: endpoint record malformed"]}
     seq = [start, *(samples if isinstance(samples, list) else []), end]
+    valid_clocks = all(isinstance(x, dict) and isinstance(x.get("clocks"), dict)
+                       and all(type(x["clocks"].get(k)) is int and x["clocks"][k] >= 0
+                               for k in ("monotonic_ns", "boottime_ns", "realtime_ns")) for x in seq)
+    if not valid_clocks:
+        reasons.append("AMBIGUOUS: clock records must contain nonnegative integer nanoseconds")
     try:
-        c0, c1 = start["clocks"], end["clocks"]
-        dm = c1["monotonic_ns"] - c0["monotonic_ns"]
-        db = c1["boottime_ns"] - c0["boottime_ns"]
-        dr = c1["realtime_ns"] - c0["realtime_ns"]
-        if dm <= 0 or db <= 0:
-            reasons.append("AMBIGUOUS: K' clocks not increasing")
-        else:
-            if db - dm > SLEEP_GAP_TOL_NS:
-                reasons.append(f"CONTAMINATED: K' suspended {(db - dm) // 10 ** 9} s")
-            elif db - dm < -SLEEP_GAP_TOL_NS:
-                reasons.append("AMBIGUOUS: K' monotonic advanced more than boottime")
-            if abs(dr - dm) > SLEEP_GAP_TOL_NS:
-                reasons.append(f"AMBIGUOUS: P wall time diverged from monotonic by {(dr - dm) // 10 ** 6} ms")
+        if not valid_clocks:
+            raise TypeError("invalid clock record")
+        pairs = list(zip(seq, seq[1:]))
+        if len(seq) > 2:
+            pairs.append((start, end))
+        for before, after in pairs:
+            c0, c1 = before["clocks"], after["clocks"]
+            dm = c1["monotonic_ns"] - c0["monotonic_ns"]
+            db = c1["boottime_ns"] - c0["boottime_ns"]
+            dr = c1["realtime_ns"] - c0["realtime_ns"]
+            if dm <= 0 or db <= 0:
+                reasons.append("AMBIGUOUS: K' clocks not increasing")
+            else:
+                if db - dm > SLEEP_GAP_TOL_NS:
+                    reasons.append(f"CONTAMINATED: K' suspended {(db - dm) // 10 ** 9} s")
+                elif db - dm < -SLEEP_GAP_TOL_NS:
+                    reasons.append("AMBIGUOUS: K' monotonic advanced more than boottime")
+                if abs(dr - dm) > SLEEP_GAP_TOL_NS:
+                    reasons.append(f"AMBIGUOUS: P wall time diverged from monotonic by {(dr - dm) // 10 ** 6} ms")
     except (KeyError, TypeError):
         reasons.append("AMBIGUOUS: K'/P clocks absent")
-    s0, s1 = (start or {}).get("suspend_success"), (end or {}).get("suspend_success")
-    if not isinstance(s0, int) or not isinstance(s1, int):
+    counts = [x.get("suspend_success") if isinstance(x, dict) else None for x in seq]
+    if any(type(count) is not int or count < 0 for count in counts):
         reasons.append("AMBIGUOUS: S' suspend_stats absent")
-    elif s0 != s1:
+    elif any(before > after for before, after in zip(counts, counts[1:])):
+        reasons.append("AMBIGUOUS: S' suspend count decreased or reset")
+    elif any(before != after for before, after in zip(counts, counts[1:])):
         reasons.append("CONTAMINATED: S' suspend count changed")
+    if any(not isinstance(x, dict) or type(x.get("suspend_success")) is not int
+           or x["suspend_success"] < 0 for x in seq):
+        reasons.append("AMBIGUOUS: a suspend counter reading is malformed")
     if not JOURNAL_READER_REVIEWED:
         reasons.append("AMBIGUOUS: L' no reviewed journal reader exists (whatever the caller passes, P7)")
     elif not isinstance(journal_suspend_events, list):
@@ -317,7 +373,7 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     elif journal_suspend_events:
         reasons.append(f"CONTAMINATED: L' {len(journal_suspend_events)} suspend entries")
     boots = [x.get("boot_id") if isinstance(x, dict) else None for x in seq]
-    if any(b is None for b in boots):
+    if any(not isinstance(b, str) or boot_id(b) is None for b in boots):
         reasons.append("AMBIGUOUS: a boot_id reading is absent")
     elif len(set(boots)) > 1:
         reasons.append("CONTAMINATED: boot_id changed (reboot)")
@@ -329,6 +385,8 @@ def assess(start: dict, end: dict, samples, journal_suspend_events) -> dict:
     if not isinstance(samples, list):
         reasons.append("AMBIGUOUS: samples absent")
     try:
+        if not valid_clocks:
+            raise TypeError("invalid sample clock record")
         ts = [x["clocks"]["monotonic_ns"] for x in seq]
         steps = [b - a for a, b in zip(ts, ts[1:])]
         if any(d < 0 for d in steps):
@@ -384,14 +442,14 @@ def thermal_zones(root="/sys/class/thermal") -> list | None:
         return None
     out = []
     for z in zs:
-        t = (_read(z / "temp") or "").strip()
+        t = _read(z / "temp")
         trips = []
         for tp in sorted(z.glob("trip_point_*_type")):
             k = tp.name[:-len("_type")]
-            tv = (_read(z / f"{k}_temp") or "").strip()
-            trips.append({"type": (_read(tp) or "").strip(), "temp_mC": int(tv) if tv.lstrip("-").isdigit() else None})
+            tv = _read(z / f"{k}_temp")
+            trips.append({"type": (_read(tp) or "").strip(), "temp_mC": _nint(tv, signed=True)})
         out.append({"zone": z.name, "type": (_read(z / "type") or "").strip() or None,
-                    "temp_mC": int(t) if t.lstrip("-").isdigit() else None, "trips": trips})
+                    "temp_mC": _nint(t, signed=True), "trips": trips})
     return out
 
 
@@ -409,10 +467,10 @@ def meminfo(text: str | None = None) -> dict | None:
 
 
 def _cg_val(path):
-    t = (_read(path) or "").strip()
-    if t == "max":
+    text = _read(path)
+    if isinstance(text, str) and text.strip() == "max":
         return "max"
-    return int(t) if t.isdigit() else None
+    return _nint(text)
 
 
 def _proc_cgroup_paths(text: str) -> tuple:
@@ -610,21 +668,36 @@ def proc_view_complete(status_text: str | None = None, mountinfo_text: str | Non
     st = _read("/proc/self/status") if status_text is None else status_text
     mi = _read("/proc/self/mountinfo") if mountinfo_text is None else mountinfo_text
     ino = ns_inode("pid") if pidns == -1 else pidns
-    if not st or not mi or ino is None:
+    if not isinstance(st, str) or not st or not isinstance(mi, str) or not mi or ino is None:
+        return None
+    if type(ino) is not int or ino <= 0:
         return None
     if ino != INIT_PID_NS:
         return False
-    nspid = next((ln.split()[1:] for ln in st.splitlines() if ln.startswith("NSpid:")), None)
-    if nspid is None:
+    nspid_fields = [ln.partition(":")[2].split() for ln in st.splitlines() if ln.startswith("NSpid:")]
+    if len(nspid_fields) != 1:
         return None
+    nspid = nspid_fields[0]
     if len(nspid) > 1:
         return False
-    for ln in mi.splitlines():
-        f = ln.split()
-        if len(f) > 4 and f[4] == "/proc":
-            opts = " ".join(f[5:])
-            return not ("hidepid=" in opts or "subset=" in opts)
-    return None
+    if len(nspid) != 1 or not re.fullmatch(r"0*[1-9][0-9]*", nspid[0]):
+        return None
+    candidates = [ln.split() for ln in mi.splitlines() if len(ln.split()) > 4 and ln.split()[4] == "/proc"]
+    if not candidates:
+        return None
+    if len(candidates) != 1:
+        return False
+    f = candidates[0]
+    if not re.fullmatch(r"0*[1-9][0-9]*", f[0]) or not re.fullmatch(r"0*[1-9][0-9]*", f[1]) \
+            or not re.fullmatch(r"[0-9]+:[0-9]+", f[2]):
+        return None
+    if "-" not in f:
+        return None
+    separator = f.index("-")
+    if separator < 6 or len(f) < separator + 4 or f[3] != "/" or f[separator + 1] != "proc":
+        return False
+    opts = " ".join(f[5:])
+    return not ("hidepid=" in opts or "subset=" in opts)
 
 
 def cpu_ticks(proc_root="/proc") -> dict | None:
@@ -657,26 +730,58 @@ def busy_processes(t0: dict | None, t1: dict | None, dt_s: float, threshold_pct:
     absent from t0 (born in the window, or a reused pid) is charged ALL its ticks to the window. ``own`` (the campaign
     tree) is a set of (pid, starttime) keys (N7); a child is exempt only if its parent key is in ``own`` and it started
     no earlier than that parent. Pid 0 / 1 may not be in ``own``. Nothing is allowed by name or path (D-ALLOW-PATHS).
-    None (no reading) if a snapshot is missing, dt <= 0, ``own`` is malformed or unsafe, or a FRESH proc_view_complete()
-    reading is not True (G6: the view is read here, never assumed by a default)."""
-    if t0 is None or t1 is None or dt_s <= 0 or proc_view_complete() is not True:
+    None (no reading) if a snapshot is missing, dt <= 0, ``own`` is malformed or unsafe, or a FRESH
+    proc_view_complete() reading is not True (G6: the view is read here, never assumed by a default)."""
+    if not isinstance(t0, dict) or not isinstance(t1, dict) or not isinstance(dt_s, (int, float)) \
+            or isinstance(dt_s, bool) or abs(dt_s) > sys.float_info.max or not math.isfinite(dt_s) \
+            or dt_s <= 0 or proc_view_complete() is not True:
+        return None
+    if not isinstance(threshold_pct, (int, float)) or isinstance(threshold_pct, bool) \
+            or abs(threshold_pct) > sys.float_info.max or not math.isfinite(threshold_pct) or threshold_pct < 0:
         return None
     if not isinstance(own, (set, frozenset)) or not all(isinstance(k, tuple) and len(k) == 2 for k in own) \
             or any(k[0] in (0, 1) for k in own):
         return None
-    hz = hz or os.sysconf("SC_CLK_TCK")
+    hz = os.sysconf("SC_CLK_TCK") if hz is None else hz
+    if type(hz) is not int or hz <= 0:
+        return None
+    def valid_key(key):
+        return isinstance(key, tuple) and len(key) == 2 and type(key[0]) is int and key[0] > 0 \
+            and type(key[1]) is int and key[1] >= 0
+    if not all(valid_key(key) for key in own) or len({key[0] for key in own}) != len(own):
+        return None
+    for snapshot in (t0, t1):
+        for key, record in snapshot.items():
+            if not valid_key(key) or not isinstance(record, (list, tuple)) or len(record) != 4:
+                return None
+            if type(record[0]) is not int or record[0] < 0 or type(record[1]) is not int or record[1] < 0:
+                return None
+        if len({key[0] for key in snapshot}) != len(snapshot):
+            return None
+    if any(t1[key][1] < t0[key][1] for key in t0.keys() & t1.keys()):
+        return None
     own_start = {pid: start for pid, start in own}
+    def owned(key, ppid, snapshot):
+        return key in own or (ppid in own_start and (ppid, own_start[ppid]) in snapshot
+                              and key[1] >= own_start[ppid])
     out = []
     for (pid, start), (ppid, ticks1, comm, exe) in t1.items():
-        if (pid, start) in own or (ppid in own_start and start >= own_start[ppid]):
+        if owned((pid, start), ppid, t1):
             continue
         prev = t0.get((pid, start))
         used = ticks1 - prev[1] if prev is not None else ticks1
-        pct = 100.0 * used / hz / dt_s
+        if used < 0:
+            return None
+        try:
+            pct = 100.0 * used / hz / dt_s
+        except OverflowError:
+            return None
+        if not math.isfinite(pct):
+            return None
         if pct > threshold_pct:
             out.append({"pid": pid, "comm": comm, "exe": exe, "pct": round(pct, 1), "born_in_window": prev is None})
     for (pid, start), (ppid, _t, comm, exe) in t0.items():
-        if (pid, start) not in t1 and (pid, start) not in own and not (ppid in own_start and start >= own_start[ppid]):
+        if (pid, start) not in t1 and not owned((pid, start), ppid, t0):
             out.append({"pid": pid, "comm": comm, "exe": exe, "pct": None, "exited_in_window": True})
     return out
 
@@ -736,12 +841,15 @@ def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
 
     With systemd as PID 1: True if ``systemctl is-active`` reports active / activating / reloading (a disabled unit
     can still be running, pulled in by another unit), or ``is-enabled`` reports enabled, enabled-runtime, static,
-    indirect, alias, linked or linked-runtime; False if is-enabled reports disabled / masked / masked-runtime, or
-    not-found with no unit file in any root; None otherwise (a failed query is never 'disabled').
-    Without systemd: from every root of the unit search path: masked (a link to /dev/null) False; an entry for the unit
-    in any ``*.wants`` / ``*.requires`` directory, even a dangling link (systemd adds the dependency by link name),
-    True; otherwise False; an unreadable root None."""
-    if systemd_is_pid1() is True:
+    indirect, alias, linked or linked-runtime; False only with recognized inactive / failed activity plus disabled /
+    masked / masked-runtime, or not-found with no unit file in any root; None otherwise (a failed query is never
+    'disabled').
+    Without systemd: from every root of the unit search path: masked (the HIGHEST-precedence entry for the unit is a
+    link to /dev/null; a lower-precedence mask is overridden, review 63 H6) False; otherwise an entry for the unit in
+    any ``*.wants`` / ``*.requires`` / ``*.upholds`` directory, even a dangling link (systemd adds the dependency by
+    link name), True; otherwise False; an unreadable root None."""
+    supervisor = systemd_is_pid1()
+    if supervisor is True:
         act = _systemctl_is_active(unit)
         if act in ("active", "activating", "reloading"):
             return True
@@ -749,10 +857,15 @@ def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
         if st in ("enabled", "enabled-runtime", "static", "indirect", "alias", "linked", "linked-runtime"):
             return True
         if st in ("disabled", "masked", "masked-runtime"):
-            return False
+            return False if act in ("inactive", "failed") else None
         if st == "not-found":
+            if act not in ("inactive", "failed"):
+                return None
             return False if _unit_files(unit, unit_roots) is False else None
         return None
+    if supervisor is not False:
+        return None
+    first, wanted = None, False
     for root in unit_roots:
         r = Path(root)
         if not r.exists():
@@ -762,13 +875,15 @@ def unit_enabled(unit: str, unit_roots=UNIT_ROOTS) -> bool | None:
         except OSError:
             return None
         f = r / unit
-        if f.is_symlink() and os.path.realpath(f) == "/dev/null":
-            return False
+        if first is None and (f.is_symlink() or f.exists()):
+            first = f                                           # review 63 H6: the highest-precedence entry decides
         for d in subs:
             e = d / unit
-            if d.name.endswith((".wants", ".requires")) and (e.is_symlink() or e.exists()):
-                return True
-    return False                                                # present without a link, or absent everywhere
+            if d.name.endswith((".wants", ".requires", ".upholds")) and (e.is_symlink() or e.exists()):
+                wanted = True
+    if first is not None and first.is_symlink() and os.path.realpath(first) == "/dev/null":
+        return False                                            # masked: no dependency can start it
+    return wanted                                               # present without a link, or absent everywhere
 
 
 def auto_update_settings(apt_dump: str | None = None, *, unit_roots=UNIT_ROOTS,
@@ -786,7 +901,12 @@ def auto_update_settings(apt_dump: str | None = None, *, unit_roots=UNIT_ROOTS,
         vals[m.group(1)] = m.group(2)
     uu_cfg = {m.group(1): m.group(2) for m in
               re.finditer(r'^Unattended-Upgrade::([\w-]+)\s+"([^"]*)";\s*$', dump or "", re.M)}
-    units = {u: unit_enabled(u, unit_roots) for u in UPDATE_UNITS}
+    units = {}
+    for u in UPDATE_UNITS:
+        try:
+            units[u] = unit_enabled(u, unit_roots)
+        except OSError:                                         # review 64 K9: e.g. a root listable, not searchable
+            units[u] = None
     timer = any(v is not False for v in units.values())         # enabled OR unknown: not shown disabled
     snapd = any(Path(p).exists() for p in snapd_paths)
     cloud = Path(cloud_dir).exists()
@@ -1031,73 +1151,358 @@ def free_disk_bytes(path) -> int | None:
 
 
 # ====================================================================== host attestation (F8, F20, N1, P1)
+# Review 64 K1: git reads are isolated from global / system configuration, replace refs and grafts, and the root
+# (or shallow-boundary) commit is always shown; pickaxe searches also pass --no-textconv / --no-ext-diff (_commits).
+# Repository-local configuration is still read; `git log` runs no signature program (review 67 N2). History
+# completeness is a precondition (_history_complete): a shallow clone hides commits before its boundary, e.g. a
+# rejecting review that was later deleted (review 64 follow-up).
+_GIT_ISOLATION = ("--no-replace-objects", "-c", "log.showRoot=true",
+                  "-c", "core.commitGraph=false",               # review 66 M1: no graph data (parents or Bloom filters)
+                  "-c", "core.fsmonitor=false",                 # review 66 M2: no repository-configured fsmonitor
+                  "-c", "log.showSignature=false",              # review 67 N2: no signature program from `git log`
+                  "-c", f"core.attributesFile={os.devnull}")    # review 67 N4: no global attributes file via HOME
+
+
+_GIT_ENV_KEEP = ("PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "TMPDIR", "TZ")
+
+
+def _git_env() -> dict:
+    """Review 65 L3: an allow-listed environment (no inherited GIT_DIR, GIT_OBJECT_DIRECTORY, alternates, namespace,
+    config parameters, ...) plus the forced isolation; L6: no lazy fetch from a promisor (honoured by the local Ubuntu
+    git 2.43.0, checked, and by git 2.44 and later)."""
+    env = {k: v for k, v in os.environ.items() if k in _GIT_ENV_KEEP}
+    env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM="1",
+               GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")
+    return env
+
+
 def _git(repo_root, *args) -> bytes | None:
     try:
-        r = subprocess.run(["git", "-C", str(repo_root), *args], capture_output=True, timeout=60,
-                           stdin=subprocess.DEVNULL)
-    except (OSError, subprocess.SubprocessError):
+        r = subprocess.run(["git", "-C", str(repo_root), *_GIT_ISOLATION, *args], capture_output=True, timeout=60,
+                           stdin=subprocess.DEVNULL, env=_git_env())
+    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
         return None
     return r.stdout if r.returncode == 0 else None
 
 
-def _first_commit(repo_root, *args) -> str | None:
-    out = _git(repo_root, "log", "--format=%H", "--reverse", *args)
-    lines = (out or b"").decode(errors="replace").split()
-    return lines[0] if lines else None
+_LOCAL_CONFIG_REFUSED = re.compile(r"fsck\.|extensions\.partialclone$|remote\..*\.(promisor|partialclonefilter)$")
+
+
+def _history_complete(repo_root) -> bool:
+    """True only on positive evidence about the history this check reads (the history-wide veto and the order rule
+    both read the whole history; a cut or forged history can hide a deleted rejection while HEAD, its id and its tree
+    are identical): (1) git reports the repository is not a shallow clone; (2) review 65 L6 / L1: the repository's own
+    configuration, read with includes in every scope (review 66 M3), names no partial clone / promisor (a missing
+    object would be lazily fetched, running configured commands) and no `fsck.*` key (which could downgrade fsck's
+    checks); (3) review 65 L1: `git fsck --full` of every object, alternates included, passes (a rewritten object
+    fails it). The commit-graph is never read (review 66 M1: its changed-path Bloom filters are not verified by fsck),
+    and no fsmonitor command runs (M2). `--strict` is required (review 67 N1): a warning-class tree entry, e.g. one
+    whose NAME is `<review dir>/veto.md`, is invisible to the pathspec-limited history scan; strict fsck refuses it (and
+    also refuses legitimate histories with any WARN-class message, e.g. zero-padded modes; INFO-class messages such as
+    `badFilemode` pass, review 68 P2). The rule is defined on git tree paths and blob contents; checkout-view
+    equivalence is not established (review 68 P1: symlinks, refused separately by _historical_review_blobs and
+    _review_dir_is_a_directory). Any other answer, a failure or a timeout is not evidence. This is defence in depth,
+    not a closure (review 67 N7): it trusts git's own verification at the moment of the check; it does not detect a
+    history rewritten consistently (new commit ids), nor a change made by another process between this check and the
+    reads, which the ledger binding is to catch."""
+    if _git(repo_root, "rev-parse", "--is-shallow-repository") != b"false\n":
+        return False
+    names = _git(repo_root, "config", "--includes", "--name-only", "--list", "-z")  # review 66 M3: every scope
+    if names is None or any(_LOCAL_CONFIG_REFUSED.match(n) for n in names.decode("utf-8", "replace").lower()
+                            .split("\0") if n):
+        return False
+    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None
 
 
 def _strictly_after(repo_root, earlier: str | None, later: str | None) -> bool:
     """``later`` is a strict descendant of ``earlier`` on HEAD's history."""
     if not earlier or not later or earlier == later:
         return False
-    r = subprocess.run(["git", "-C", str(repo_root), "merge-base", "--is-ancestor", earlier, later],
-                       capture_output=True, timeout=60, stdin=subprocess.DEVNULL)
+    try:
+        r = subprocess.run(["git", "-C", str(repo_root), *_GIT_ISOLATION, "merge-base", "--is-ancestor", earlier,
+                            later], capture_output=True, timeout=60, stdin=subprocess.DEVNULL, env=_git_env())
+    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
+        return False
     return r.returncode == 0
 
 
-_VERDICT = re.compile(r"^\s*verdict\s*:", re.I)
+def _cat_file_batch(repo_root, names: list, contents: bool) -> list | None:
+    """One isolated `cat-file --batch` (``contents``) or `--batch-check` call: [(object id, type, body or None)] in the
+    order of ``names``; None if git fails, any name is missing (review 69 S4: `missing` never stands for an absent path
+    here) or the output is malformed."""
+    if not names:
+        return []
+    try:
+        r = subprocess.run(["git", "-C", str(repo_root), *_GIT_ISOLATION, "cat-file",
+                            "--batch" if contents else "--batch-check"], input=("\n".join(names) + "\n").encode(),
+                           capture_output=True, timeout=60, env=_git_env())
+    except (OSError, subprocess.SubprocessError, ValueError, UnicodeError):
+        return None
+    out, pos, answers = r.stdout, 0, []
+    if r.returncode != 0:
+        return None
+    for _ in names:
+        nl = out.find(b"\n", pos)
+        head = out[pos:nl].split(b" ") if nl >= 0 else []
+        if len(head) != 3 or not re.fullmatch(rb"[0-9a-f]{40,64}", head[0]) or not head[2].isdigit():
+            return None
+        pos, body = nl + 1, None
+        if contents:
+            size = int(head[2])
+            body = out[pos:pos + size]
+            if len(body) != size or out[pos + size:pos + size + 1] != b"\n":
+                return None
+            pos += size + 1
+        answers.append((head[0].decode(), head[1].decode("ascii", "replace"), body))
+    return answers if pos == len(out) else None
+
+
+def _tree_entry(data: bytes, name: bytes, width: int):
+    """(mode, object id) of the entry ``name`` in raw tree ``data``; None if absent; False if malformed or if
+    ``name`` occurs twice (review 70 T5; strict fsck refuses duplicates first, this is defence in depth)."""
+    pos, found = 0, None
+    while pos < len(data):
+        sp = data.find(b" ", pos)
+        nul = data.find(b"\0", sp + 1) if sp >= 0 else -1
+        if nul < 0 or nul + 1 + width > len(data):
+            return False
+        if data[sp + 1:nul] == name:
+            if found is not None:
+                return False
+            found = (data[pos:sp], data[nul + 1:nul + 1 + width].hex())
+        pos = nul + 1 + width
+    return found
+
+
+def _review_dir_is_a_directory(repo_root) -> bool:
+    """Review 68 P1 / review 69 S1: in EVERY commit of HEAD's history, ACCEPTANCE_REVIEW_DIR and each of its ancestors
+    is a directory entry (mode 40000) or absent. A symlink, gitlink (submodule) or file there would let a checkout show
+    files at review paths that git's scan never lists; such a history is unavailable evidence. The entries are read
+    by MODE from the raw trees, walking down from every commit's root tree, merges included (one `cat-file` call per
+    depth, each tree read once), so an absent submodule commit or a gitlink-mode entry naming a tree cannot pass as a
+    directory. `cat-file --batch` does not verify object hashes: the walk relies on the strict fsck precondition over
+    the same object store and on the isolated environment (review 70 T4)."""
+    commits = _git(repo_root, "rev-list", "HEAD")
+    if not commits:
+        return False
+    ids = commits.decode("ascii", "replace").split()
+    roots = _cat_file_batch(repo_root, [f"{c}^{{tree}}" for c in ids], contents=False)
+    if roots is None or any(kind != "tree" for _, kind, _ in roots):
+        return False
+    level, width = {oid for oid, _, _ in roots}, len(ids[0]) // 2
+    parts = ACCEPTANCE_REVIEW_DIR.split("/")
+    for depth, name in enumerate(parts):
+        trees = _cat_file_batch(repo_root, sorted(level), contents=True)
+        if trees is None or any(kind != "tree" for _, kind, _ in trees):
+            return False
+        level = set()
+        for _, _, body in trees:
+            entry = _tree_entry(body, name.encode(), width)
+            if entry is False:
+                return False
+            if entry is None:
+                continue
+            mode, oid = entry
+            if mode != b"40000":
+                return False
+            level.add(oid)
+        if not level:
+            break
+    return True
+
+
+_VERDICT = re.compile(r"(?i:.*\bverdict\b)|\s*[A-Z][A-Z0-9_]*\s*:\s*[A-Z][A-Z0-9_]*\s*$")   # review 63 H7
 _NEGATIVE = re.compile(r"reject|withdraw|not[ _-]?accepted|revoke", re.I)
+_NEGATIVE_MORE = re.compile(r"refus|unaccept|declin|needs[ _-]?revision|veto", re.I)          # review 63 H3
+_HEX_TOKEN = re.compile(r"[0-9A-Fa-f]{8,64}")
+
+
+def _names_sha(line: str, sha: str) -> bool:
+    """Review 63 H3: a line refers to the attestation by its full sha256 anywhere (review 64 K4: also inside a longer
+    hex run) or by any hex run of at least 8 digits that is a prefix of it, in either case."""
+    return sha in line.lower() or any(sha.startswith(t.lower()) for t in _HEX_TOKEN.findall(line))
+
+
+def _vetoing(lines: list, sha: str) -> bool:
+    """A file that names the sha (H3: any case, >= 8-hex prefix) and anywhere carries a negative word (reject,
+    withdraw, not accepted, revoke, refus*, unaccept*, declin*, needs revision, veto; case-insensitive) or a
+    verdict-like line other than ACCEPTANCE_VERDICT_LINE vetoes the attestation."""
+    if not any(_names_sha(ln, sha) for ln in lines):
+        return False
+    return any(_NEGATIVE.search(ln) or _NEGATIVE_MORE.search(ln)
+               or (_VERDICT.match(ln) and ln != ACCEPTANCE_VERDICT_LINE) for ln in lines)
+
+
+def _historical_review_blobs(repo_root, current: set) -> list | None:
+    """Review 63 H3: every (blob, path) that existed under ACCEPTANCE_REVIEW_DIR in ANY commit of HEAD's full
+    history (side branches included) and is not one of the ``current`` HEAD paths' blobs, with its UTF-8 lines. A
+    rejection therefore survives `git rm`, `git mv` out of the directory and later edits. None if any listing or blob
+    is unavailable or not UTF-8, or if any entry under the directory in any commit is not a regular file (review 68
+    P1)."""
+    commits = _git(repo_root, "rev-list", "--full-history", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)
+    if commits is None:
+        return None
+    seen = {}
+    for c in commits.decode("ascii", errors="replace").split():
+        listing = _git(repo_root, "ls-tree", "-r", "-z", c, "--", ACCEPTANCE_REVIEW_DIR)
+        if listing is None or (listing and not listing.endswith(b"\0")):
+            return None
+        for entry in filter(None, listing.split(b"\0")):
+            meta, sep, name = entry.partition(b"\t")
+            parts = meta.split()
+            if not sep or len(parts) != 3:
+                return None
+            if parts[0] not in (b"100644", b"100755"):          # review 68 P1: a symlink or gitlink under the
+                return None                                     # directory is not a review file; unavailable
+            try:
+                seen.setdefault(parts[2].decode("ascii"), name.decode("utf-8", errors="strict"))
+            except UnicodeDecodeError:
+                return None
+    out = []
+    for oid, path in seen.items():
+        if oid in current:
+            continue
+        data = _git(repo_root, "cat-file", "blob", oid)
+        if data is None:
+            return None
+        try:
+            out.append((oid, path, [ln.rstrip("\r") for ln in data.decode("utf-8", errors="strict").split("\n")]))
+        except UnicodeDecodeError:
+            return None
+    return out
+
+
+def _tree_entries(repo_root, paths: list) -> dict | None:
+    """{path: (mode, type, object id)} for exactly ``paths`` at HEAD, from `ls-tree -z HEAD -- <paths>` (review 64
+    K9: names such as `x..HEAD` are path specs here, never revision ranges); None if unreadable or malformed."""
+    if not paths:
+        return {}
+    data = _git(repo_root, "ls-tree", "-z", "HEAD", "--", *paths)
+    if data is None or (data and not data.endswith(b"\0")):
+        return None
+    out = {}
+    for entry in filter(None, data.split(b"\0")):
+        meta, sep, name = entry.partition(b"\t")
+        parts = meta.split()
+        if not sep or len(parts) != 3:
+            return None
+        try:
+            out[name.decode("utf-8", errors="strict")] = tuple(x.decode("ascii") for x in parts)
+        except UnicodeDecodeError:
+            return None
+    return out
+
+
+def _review_paths(data: bytes | None) -> list | None:
+    """Git -z names are whole paths, never quoted or split on tab/newline; bad evidence refuses verification."""
+    if not isinstance(data, bytes) or (data and not data.endswith(b"\0")):
+        return None
+    if not data:
+        return []
+    try:
+        paths = [path.decode("utf-8", errors="strict") for path in data[:-1].split(b"\0")]
+    except UnicodeDecodeError:
+        return None
+    return paths if all(paths) else None
 
 
 def _acceptances(repo_root, sha: str) -> tuple:
     """G1-G3. The fixed set: DIRECT children of ACCEPTANCE_REVIEW_DIR, committed at HEAD, named
     ``REVIEW_HOST_ATTESTATION_*.md`` (no subdirectory, so no reviewer scratch). A file accepts only if it holds the
-    exact line ``HOST_ATTESTATION_ACCEPTED sha256=<sha>`` and exactly ONE verdict line (case-insensitive ``VERDICT:``),
-    which is ACCEPTANCE_VERDICT_LINE. Any committed file anywhere under the review directory (recursively) that names
-    the sha and carries a negative word (reject, withdraw, not accepted, revoke; case-insensitive) rejects it.
-    Returns (accepting paths, rejecting paths)."""
-    tree = _git(repo_root, "ls-tree", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/")
-    every = _git(repo_root, "ls-tree", "-r", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR)
-    acc, rej = [], []
-    for path in (every or b"").decode(errors="replace").splitlines():
-        lines = [ln.rstrip("\r") for ln in ((_git(repo_root, "show", f"HEAD:{path}") or b"")
-                                               .decode(errors="replace").split("\n"))]
-        if any(sha in ln for ln in lines) and any(_NEGATIVE.search(ln) for ln in lines):
+    exact line ``HOST_ATTESTATION_ACCEPTED sha256=<sha>`` and exactly ONE verdict-like line (any line containing the
+    word "verdict" in any case, or a bare ``KEY: VALUE`` line of capitals; review 63 H7), which is
+    ACCEPTANCE_VERDICT_LINE. Any file anywhere under the review directory (recursively) that names the sha and vetoes
+    it (_vetoing) rejects it, whether committed at HEAD or present in ANY commit of HEAD's full history (review 63 H3:
+    a rejection is permanent; removing or moving the file, or editing it, does not lift it).
+    A shallow clone, or a repository whose completeness cannot be read, refuses as unavailable evidence.
+    Returns (accepting paths, rejecting paths). Unavailable or unrecognized review evidence returns no acceptances
+    and an explicit unavailable-evidence sentinel in the rejecting list; it can never establish verification.
+    """
+    if not _history_complete(repo_root):
+        return [], ["UNAVAILABLE: history completeness not established (shallow clone or unreadable)"]
+    tree = _review_paths(_git(repo_root, "ls-tree", "-z", "--name-only", "HEAD", f"{ACCEPTANCE_REVIEW_DIR}/"))
+    every = _review_paths(_git(repo_root, "ls-tree", "-r", "-z", "--name-only", "HEAD", "--", ACCEPTANCE_REVIEW_DIR))
+    if tree is None or every is None:
+        return [], ["UNAVAILABLE: acceptance review listing unreadable or malformed"]
+    acc, rej, records = [], [], {}
+    for path in every:
+        data = _git(repo_root, "cat-file", "blob", f"HEAD:{path}")    # review 64 K9: never a revision range
+        if data is None:
+            return [], [f"UNAVAILABLE: review blob unreadable: {path}"]
+        try:
+            lines = [ln.rstrip("\r") for ln in data.decode("utf-8", errors="strict").split("\n")]
+        except UnicodeDecodeError:
+            return [], [f"UNAVAILABLE: review blob is not UTF-8: {path}"]
+        records[path] = lines
+        if _vetoing(lines, sha):
             rej.append(path)
-    for path in (tree or b"").decode(errors="replace").splitlines():
+    entries = _tree_entries(repo_root, every)
+    if entries is None or set(entries) != set(every):
+        return [], ["UNAVAILABLE: current review blob ids unreadable"]
+    current = {oid for mode, kind, oid in entries.values()}
+    history = _historical_review_blobs(repo_root, current)
+    if history is None:
+        return [], ["UNAVAILABLE: review history unreadable, not UTF-8 or not regular files"]
+    if not _review_dir_is_a_directory(repo_root):
+        return [], ["UNAVAILABLE: the review directory or an ancestor is not a directory in some commit"]
+    rej += [f"HISTORICAL: {path} (blob {oid[:12]})" for oid, path, lines in history if _vetoing(lines, sha)]
+    for path in tree:
         name = Path(path).name
         if not (name.startswith(ACCEPTANCE_REVIEW_PREFIX) and name.endswith(".md")) or path in rej:
             continue
-        lines = [ln.rstrip("\r") for ln in ((_git(repo_root, "show", f"HEAD:{path}") or b"")
-                                               .decode(errors="replace").split("\n"))]
+        if path not in records:
+            return [], [f"UNAVAILABLE: accepting review absent from recursive listing: {path}"]
+        lines = records[path]
+        if entries[path][:2] not in (("100644", "blob"), ("100755", "blob")):
+            continue                    # review 64 K7: a symlink is not a review file (unreachable since review 68 P1)
         verdicts = [ln for ln in lines if _VERDICT.match(ln)]
         if f"{ACCEPTANCE_LINE}{sha}" in lines and verdicts == [ACCEPTANCE_VERDICT_LINE]:
             acc.append(path)
     return acc, rej
 
 
+def _commits(repo_root, *args) -> list | None:
+    """Every commit of the selected history matched by ``args``, merge commits included (their diff against EACH
+    parent, `--diff-merges=separate`; git's default shows no merge diff, so a blob or line introduced by a merge would
+    be invisible: review 63 H1); de-duplicated; None if git fails or prints anything but commit ids."""
+    out = _git(repo_root, "log", "--format=%H", "--no-patch", "--no-textconv", "--no-ext-diff",
+               "--diff-merges=separate", *args)
+    if out is None:
+        return None
+    try:
+        ids = out.decode("ascii").split()
+    except UnicodeDecodeError:
+        return None
+    if not all(re.fullmatch(r"[0-9a-f]{40,64}", c) for c in ids):
+        return None
+    return list(dict.fromkeys(ids))
+
+
 def _ordered(repo_root, att_path: str, acc_path: str, sha: str) -> bool:
-    """G2: the commit that introduced the ACCEPTING LINE is a strict descendant of the commit that introduced the
-    attested BLOB (by object id, not by path name). Commit order is not independence: every commit may come from one
-    author (stated in the amendment; a reviewer / ledger binding is a carried condition of D-HOST-LIFETIME)."""
-    blob = (_git(repo_root, "rev-parse", f"HEAD:{att_path}") or b"").decode().strip()
+    """G2 / review 63 H1: EVERY commit of HEAD's history that adds or removes the attested BLOB (by object id, not by
+    path name) is a strict ancestor of EVERY commit that adds or removes the ACCEPTING LINE anywhere in the
+    repository; merge commits count on both sides, and no commit is chosen by date. The search is repository-wide on
+    purpose: a line written next to the attestation and later moved (git mv) into ``acc_path`` keeps its true commits,
+    and a line can enter ``acc_path`` only by an addition (a repository-wide change, so covered) or by a move of an
+    earlier one; a path-limited search would see the move instead. Side effects (fail-closed): a quote of the line
+    made before or beside the blob, or a later re-introduction of the blob, refuses permanently; any git failure
+    refuses. Commit order is not independence: every
+    commit may come from one author (a reviewer / ledger binding is a carried condition of D-HOST-LIFETIME)."""
+    entry = (_tree_entries(repo_root, [att_path]) or {}).get(att_path)  # review 65 L7: never a revision range
+    blob = entry[2] if entry and entry[:2] in (("100644", "blob"), ("100755", "blob")) else ""
     if not re.fullmatch(r"[0-9a-f]{40,64}", blob):
         return False
-    att_commit = _first_commit(repo_root, f"--find-object={blob}", "HEAD")
-    # repository-wide, not limited to acc_path: a line written next to the attestation and later moved (git mv) into
-    # the review set keeps its true first commit (review 62's rename case)
-    line_commit = _first_commit(repo_root, f"-S{ACCEPTANCE_LINE}{sha}", "HEAD")
-    return _strictly_after(repo_root, att_commit, line_commit)
+    pick = f"-S{ACCEPTANCE_LINE}{sha}"
+    blob_commits = _commits(repo_root, f"--find-object={blob}", "HEAD")
+    line_commits = _commits(repo_root, pick, "HEAD")
+    if not blob_commits or not line_commits:
+        return False
+    return all(_strictly_after(repo_root, b, c) for b in blob_commits for c in line_commits)
+
+
+def _repository_root() -> Path:
+    """Canonical repository containing this development platform; a private reader seam for synthetic tests."""
+    return Path(__file__).resolve().parents[5]
 
 
 def attestation_valid(ref, *, repo_root=None) -> tuple:
@@ -1107,20 +1512,26 @@ def attestation_valid(ref, *, repo_root=None) -> tuple:
     machine_identity() (BOTH hashes, F20); at least one acceptance review exists in the fixed review set (P1 / G1 / G3:
     _acceptances; never a path the attestation names) whose accepting line was introduced strictly after the attested
     blob (G2: _ordered), and no review under the review directory rejects it.
-    ``repo_root`` is a location (default: this repository), not an assertion."""
+    ``repo_root`` is a TEST SEAM (default: this repository). It selects which repository's committed files are read,
+    so a caller-chosen repository can supply its own attestation and reviews (review 63 H5): a reviewed caller never
+    passes it, and the restricted observer binds the canonical repository internally."""
     if not isinstance(ref, dict) or set(ref) != {"path", "sha256"}:
         return None, ["reference must be exactly {path, sha256}"]
     path, want = ref["path"], ref["sha256"]
     if not isinstance(path, str) or not isinstance(want, str) or not re.fullmatch(r"[0-9a-f]{64}", want):
         return None, ["malformed reference"]
-    base = Path(repo_root) if repo_root else Path(__file__).resolve().parents[5]
-    data = _git(base, "show", f"HEAD:{path}")
+    base = Path(repo_root) if repo_root else _repository_root()
+    data = _git(base, "cat-file", "blob", f"HEAD:{path}")            # review 64 K9: never a revision range
+    if data is None:
+        return None, ["attestation not committed at HEAD"]
     if _sha(data) != want:
         return None, ["attestation not committed at HEAD, or sha256 mismatch"]
     try:
         rec = json.loads(data)
     except (ValueError, UnicodeDecodeError):
         return None, ["attestation is not JSON"]
+    except RecursionError:                                      # review 65 L7: deeply nested JSON
+        return None, ["attestation JSON nested too deeply"]
     if not isinstance(rec, dict) or rec.get("schema") != ATTESTATION_SCHEMA:
         return None, ["wrong or missing schema"]
     reasons = []

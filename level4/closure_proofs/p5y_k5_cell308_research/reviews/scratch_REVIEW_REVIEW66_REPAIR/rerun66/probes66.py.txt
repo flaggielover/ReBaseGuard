@@ -1,0 +1,393 @@
+"""Review 66 probes: synthetic git repositories only, scratch copy of lx_platform.py (774f2183 bytes).
+Never touches the real repository: every attestation_valid call passes repo_root=<synthetic repo>.
+usage: python3 -B -I probes66.py.txt <dir_with_lx_platform.py> <tmp_root> <out.json>"""
+import hashlib, json, os, struct, subprocess, sys, tempfile, traceback, zlib
+from pathlib import Path
+
+BASE, TMP, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+sys.path.insert(0, BASE)
+import lx_platform as L  # noqa: E402
+CONTROL = sys.argv[4] if len(sys.argv) > 4 else ""   # control only: extends _GIT_ISOLATION in memory
+if CONTROL == "commitgraph_off":
+    L._GIT_ISOLATION = (*L._GIT_ISOLATION, "-c", "core.commitGraph=false")
+elif CONTROL == "fsmonitor_off":
+    L._GIT_ISOLATION = (*L._GIT_ISOLATION, "-c", "core.fsmonitor=false")
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR
+ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+LINE = f"{L.ACCEPTANCE_LINE}{SHA}"
+OK = f"review\n{LINE}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+VETO = f"{RD}/veto.md"
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main", "-c", "protocol.file.allow=always",
+       "-c", "core.fsmonitor=false"]
+results = {}
+
+
+def git(d, *a, check=True, env=None):
+    return subprocess.run(["git", "-C", str(d), *CFG, *a], check=check, capture_output=True,
+                          env=dict(os.environ, **(env or {})))
+
+
+def init(d):
+    Path(d).mkdir(parents=True, exist_ok=True)
+    git(d, "init", "-q")
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+        git(d, "config", "--local", k, v)
+
+
+def commit(d, files=None, rm=()):
+    for rel, data in (files or {}).items():
+        p = Path(d, rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+    for rel in rm:
+        git(d, "rm", "-q", rel)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", "c")
+    return git(d, "rev-parse", "HEAD").stdout.decode().strip()
+
+
+def valid(d, path="att/HOST.json", sha=SHA):
+    try:
+        rec, why = L.attestation_valid({"path": path, "sha256": sha}, repo_root=str(d))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}", "tb": traceback.format_exc()[-600:]}
+
+
+def rc(d, *a):
+    r = subprocess.run(["git", "-C", str(d), "--no-replace-objects", *a], capture_output=True, env=L._git_env())
+    return {"rc": r.returncode, "err": r.stderr.decode(errors="replace")[-300:]}
+
+
+def bad_repo(d):
+    """att -> rejecting review -> review deleted -> valid acceptance (full history refuses: HISTORICAL)."""
+    init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    c2 = commit(d, {VETO: f"{SHA} REJECTED\n".encode()})
+    c3 = commit(d, rm=[VETO])
+    c4 = commit(d, {f"{ACC}1.md": OK})
+    return [c1, c2, c3, c4]
+
+
+def good_repo(d):
+    init(d)
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {f"{ACC}1.md": OK})
+
+
+def chunks_of(b):
+    out = {}
+    for i in range(b[6] + 1):
+        cid, off = struct.unpack(">4sQ", b[8 + 12 * i: 20 + 12 * i])
+        out[cid] = off
+    return out
+
+
+def forge_bloom(graph_path, cut_commits):
+    """Zero the changed-path Bloom filter bytes (BDAT, indexed by BIDX) of each commit in ``cut_commits`` and
+    recompute the trailing checksum. Parents, OIDs, generations and dates are untouched."""
+    b = bytearray(Path(graph_path).read_bytes())
+    assert b[:4] == b"CGPH"
+    ch = chunks_of(b)
+    n = struct.unpack(">I", b[ch[b"OIDF"] + 255 * 4: ch[b"OIDF"] + 256 * 4])[0]
+    oids = [bytes(b[ch[b"OIDL"] + 20 * i: ch[b"OIDL"] + 20 * i + 20]).hex() for i in range(n)]
+    ends = [struct.unpack(">I", b[ch[b"BIDX"] + 4 * i: ch[b"BIDX"] + 4 * i + 4])[0] for i in range(n)]
+    data0 = ch[b"BDAT"] + 12
+    done = []
+    for c in cut_commits:
+        i = oids.index(c)
+        start = 0 if i == 0 else ends[i - 1]
+        for k in range(data0 + start, data0 + ends[i]):
+            b[k] = 0
+        done.append({"commit": c[:12], "filter_bytes": ends[i] - start})
+    b[-20:] = hashlib.sha1(bytes(b[:-20])).digest()
+    os.chmod(graph_path, 0o644)
+    Path(graph_path).write_bytes(bytes(b))
+    return done
+
+
+def p_bloom_local(d):
+    ids = bad_repo(d)
+    out = {"full_history_before": valid(d)}
+    git(d, "commit-graph", "write", "--reachable", "--changed-paths")
+    out["honest_bloom_graph"] = valid(d)
+    out["forged"] = forge_bloom(Path(d, ".git/objects/info/commit-graph"), [ids[1]])
+    out["is_shallow"] = git(d, "rev-parse", "--is-shallow-repository").stdout.decode().strip()
+    out["fsck_full_strict"] = rc(d, "fsck", "--full", "--strict", "--no-dangling", "--no-progress")
+    out["commit_graph_verify"] = rc(d, "commit-graph", "verify")
+    out["rev_list_reviews"] = git(d, "rev-list", "--full-history", "HEAD", "--", RD).stdout.decode().split()
+    out["rev_list_reviews_no_graph"] = git(d, "-c", "core.commitGraph=false", "rev-list", "--full-history", "HEAD",
+                                           "--", RD).stdout.decode().split()
+    out["ids"] = [c[:12] for c in ids]
+    out["history_complete"] = L._history_complete(d)
+    out["forged_bloom_graph"] = valid(d)
+    return out
+
+
+def p_bloom_alternate(d):
+    src = d / "src"
+    ids = bad_repo(src)
+    dst = d / "dst"
+    git(d, "clone", "-q", "--shared", str(src), str(dst))
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+        git(dst, "config", "--local", k, v)
+    out = {"clone_before": valid(dst)}
+    git(src, "commit-graph", "write", "--reachable", "--changed-paths")
+    out["forged"] = forge_bloom(Path(src, ".git/objects/info/commit-graph"), [ids[1]])
+    out["fsck_dst"] = rc(dst, "fsck", "--full", "--strict", "--no-dangling", "--no-progress")
+    out["clone_forged_alternate_bloom"] = valid(dst)
+    return out
+
+
+def p_bloom_split_chain(d):
+    """The same forgery in a split commit-graph chain (commit-graphs/graph-*.graph)."""
+    ids = bad_repo(d)
+    git(d, "commit-graph", "write", "--reachable", "--changed-paths", "--split=no-merge")
+    chain = Path(d, ".git/objects/info/commit-graphs")
+    files = sorted(chain.glob("graph-*.graph"))
+    out = {"layers": len(files)}
+    out["forged"] = forge_bloom(files[0], [ids[1]])
+    # the chain file names layers by hash; rename the forged layer to its new checksum
+    old = files[0].name[6:-6]
+    new = Path(files[0]).read_bytes()[-20:].hex()
+    files[0].rename(chain / f"graph-{new}.graph")
+    cf = chain / "commit-graph-chain"
+    os.chmod(cf, 0o644)
+    cf.write_text(cf.read_text().replace(old, new))
+    out["fsck"] = rc(d, "fsck", "--full", "--strict", "--no-dangling", "--no-progress")
+    out["verify"] = rc(d, "commit-graph", "verify")
+    out["result"] = valid(d)
+    return out
+
+
+def marker_script(d, name):
+    marker = d / f"{name}.marker"
+    script = d / f"{name}.sh"
+    script.write_text(f"#!/bin/sh\necho ran >> '{marker}'\nexit 1\n")
+    script.chmod(0o755)
+    return script, marker
+
+
+def p_fsmonitor(d):
+    """A repository-local core.fsmonitor hook (honest, valid repository)."""
+    repo = d / "r"
+    good_repo(repo)
+    script, marker = marker_script(d, "fsmon")
+    git(repo, "config", "--local", "core.fsmonitor", str(script))
+    out = {"before_check_marker": marker.exists()}
+    out["history_complete"] = L._history_complete(repo)
+    out["marker_after_history_complete"] = marker.read_text() if marker.exists() else None
+    marker.unlink(missing_ok=True)
+    out["result"] = valid(repo)
+    out["marker_after_attestation_valid"] = marker.read_text() if marker.exists() else None
+    return out
+
+
+def p_fsmonitor_rejected(d):
+    """Same hook in the rejected-then-deleted repository (refused either way)."""
+    repo = d / "r"
+    bad_repo(repo)
+    script, marker = marker_script(d, "fsmon")
+    git(repo, "config", "--local", "core.fsmonitor", str(script))
+    out = {"result": valid(repo)}
+    out["marker"] = marker.read_text() if marker.exists() else None
+    return out
+
+
+def partial_clone(d):
+    src, dst = d / "src", d / "dst"
+    bad_repo(src)
+    git(src, "config", "uploadpack.allowFilter", "true")
+    git(d, "clone", "-q", "--no-local", "--filter=blob:none", src.as_uri(), str(dst))
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+        git(dst, "config", "--local", k, v)
+    return src, dst
+
+
+def p_partial_clone_keys_in_include(d):
+    """blob:none clone; the partial-clone / promisor keys are moved out of .git/config into an included file."""
+    src, dst = partial_clone(d)
+    script, marker = d / "up.sh", d / "up.marker"
+    script.write_text(f"#!/bin/sh\necho ran >> '{marker}'\nexec git-upload-pack \"$@\"\n")
+    script.chmod(0o755)
+    git(dst, "config", "remote.origin.uploadpack", str(script))
+    out = {"direct_keys": valid(dst), "marker_direct": marker.exists()}
+    git(dst, "config", "--unset", "extensions.partialclone", check=False)
+    git(dst, "config", "--unset", "remote.origin.promisor")
+    git(dst, "config", "--unset", "remote.origin.partialclonefilter")
+    Path(dst, ".git/extra.cfg").write_text('[remote "origin"]\n\tpromisor = true\n\tpartialclonefilter = blob:none\n')
+    git(dst, "config", "--local", "include.path", "extra.cfg")
+    out["local_names"] = git(dst, "config", "--local", "--name-only", "--list").stdout.decode().split()
+    out["fsck"] = rc(dst, "fsck", "--full", "--strict", "--no-dangling", "--no-progress")
+    out["history_complete"] = L._history_complete(dst)
+    out["marker_after_history_complete"] = marker.exists()
+    out["keys_in_include"] = valid(dst)
+    out["marker_after_check"] = marker.read_text() if marker.exists() else None
+    return out
+
+
+def p_partial_clone_keys_in_worktree_config(d):
+    src, dst = partial_clone(d)
+    script, marker = d / "up.sh", d / "up.marker"
+    script.write_text(f"#!/bin/sh\necho ran >> '{marker}'\nexec git-upload-pack \"$@\"\n")
+    script.chmod(0o755)
+    git(dst, "config", "remote.origin.uploadpack", str(script))
+    git(dst, "config", "--unset", "extensions.partialclone", check=False)
+    git(dst, "config", "--unset", "remote.origin.promisor")
+    git(dst, "config", "--unset", "remote.origin.partialclonefilter")
+    git(dst, "config", "extensions.worktreeConfig", "true")
+    git(dst, "config", "--worktree", "remote.origin.promisor", "true")
+    out = {"local_names": git(dst, "config", "--local", "--name-only", "--list").stdout.decode().split()}
+    out["result"] = valid(dst)
+    out["marker_after_check"] = marker.read_text() if marker.exists() else None
+    return out
+
+
+def strict_warning_repo(d, tz=b"+0000"):
+    """A full repository whose first commit carries an fsck WARNING-class defect (a bad timezone), as old tools wrote;
+    then the attestation and a valid acceptance."""
+    init(d)
+    blob = git(d, "hash-object", "-w", "--stdin", env=None).stdout if False else None
+    tree = subprocess.run(["git", "-C", str(d), "mktree"], input=b"", capture_output=True, check=True).stdout.strip()
+    body = (b"tree " + tree + b"\nauthor t <t@t> 1 " + tz + b"\ncommitter t <t@t> 1 " + tz + b"\n\nold\n")
+    c0 = subprocess.run(["git", "-C", str(d), "hash-object", "-t", "commit", "-w", "--literally", "--stdin"],
+                        input=body, capture_output=True, check=True).stdout.decode().strip()
+    git(d, "update-ref", "HEAD", c0)
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {f"{ACC}1.md": OK})
+    return c0
+
+
+def p_strict_warning_legit(d):
+    """Legitimate full history with one old commit that git's fsck only WARNS about (badTimezone)."""
+    strict_warning_repo(d, tz=b"+12345")
+    out = {"fsck_default": rc(d, "fsck", "--full", "--no-dangling", "--no-progress"),
+           "fsck_strict": rc(d, "fsck", "--full", "--strict", "--no-dangling", "--no-progress"),
+           "result": valid(d)}
+    return out
+
+
+def p_fsck_key_in_include(d):
+    """Same repository; `fsck.badTimezone=ignore` directly in .git/config vs. through include.path."""
+    strict_warning_repo(d, tz=b"+12345")
+    git(d, "config", "--local", "fsck.badTimezone", "ignore")
+    out = {"direct_key": valid(d)}
+    git(d, "config", "--local", "--unset", "fsck.badTimezone")
+    Path(d, ".git/fsck.cfg").write_text("[fsck]\n\tbadTimezone = ignore\n")
+    git(d, "config", "--local", "include.path", "fsck.cfg")
+    out["fsck_strict_with_include"] = rc(d, "fsck", "--full", "--strict", "--no-dangling", "--no-progress")
+    out["key_via_include"] = valid(d)
+    return out
+
+
+def p_zero_padded_mode_legit(d):
+    """Legitimate history whose old tree carries a zero-padded file mode (fsck warning zeroPaddedFilemode)."""
+    init(d)
+    blob = subprocess.run(["git", "-C", str(d), "hash-object", "-w", "--stdin"], input=b"old\n",
+                          capture_output=True, check=True).stdout.decode().strip()
+    tree_body = b"0100644 old.txt\0" + bytes.fromhex(blob)
+    tree = subprocess.run(["git", "-C", str(d), "hash-object", "-t", "tree", "-w", "--literally", "--stdin"],
+                          input=tree_body, capture_output=True, check=True).stdout.decode().strip()
+    body = f"tree {tree}\nauthor t <t@t> 1 +0000\ncommitter t <t@t> 1 +0000\n\nold\n".encode()
+    c0 = subprocess.run(["git", "-C", str(d), "hash-object", "-t", "commit", "-w", "--stdin"],
+                        input=body, capture_output=True, check=True).stdout.decode().strip()
+    git(d, "update-ref", "HEAD", c0)
+    git(d, "reset", "-q", "--hard")
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {f"{ACC}1.md": OK})
+    return {"fsck_default": rc(d, "fsck", "--full", "--no-dangling", "--no-progress"),
+            "fsck_strict": rc(d, "fsck", "--full", "--strict", "--no-dangling", "--no-progress"),
+            "result": valid(d)}
+
+
+def p_index_only_breakage(d):
+    """Valid committed history; only the working state is odd: the index names a blob whose object is missing
+    (a staged file whose loose object was removed). The committed evidence is unchanged."""
+    good_repo(d)
+    Path(d, "scratch.txt").write_bytes(b"uncommitted work\n")
+    git(d, "add", "scratch.txt")
+    oid = git(d, "rev-parse", ":scratch.txt").stdout.decode().strip()
+    Path(d, ".git/objects", oid[:2], oid[2:]).unlink()
+    return {"fsck": rc(d, "fsck", "--full", "--strict", "--no-dangling", "--no-progress"), "result": valid(d)}
+
+
+def p_env_allowlist(d):
+    """Caller environment variables outside the allow-list that git would otherwise honour."""
+    bad = d / "bad"
+    bad_repo(bad)
+    out = {}
+    good = d / "good"
+    good_repo(good)
+    for k, v in (("GIT_DIR", str(good / ".git")), ("GIT_WORK_TREE", str(good)),
+                 ("GIT_CONFIG_COUNT", "1"), ("GIT_CEILING_DIRECTORIES", "/"), ("GIT_NO_REPLACE_OBJECTS", "0")):
+        env = {k: v}
+        if k == "GIT_CONFIG_COUNT":
+            env.update(GIT_CONFIG_KEY_0="core.commitGraph", GIT_CONFIG_VALUE_0="false")
+        old = {x: os.environ.get(x) for x in env}
+        os.environ.update(env)
+        try:
+            out[k] = valid(bad)
+        finally:
+            for x, y in old.items():
+                if y is None:
+                    os.environ.pop(x, None)
+                else:
+                    os.environ[x] = y
+    return out
+
+
+def p_use_replace_refs_local(d):
+    """Local core.useReplaceRefs=true plus a replace graft cutting the deletion commit."""
+    ids = bad_repo(d)
+    git(d, "replace", "--graft", ids[2])
+    git(d, "config", "--local", "core.useReplaceRefs", "true")
+    return {"result": valid(d)}
+
+
+def p_attestation_path_shapes(d):
+    """_ordered now resolves the blob from ls-tree's exact listing: path spellings git's HEAD:<path> accepts."""
+    good_repo(d)
+    out = {}
+    for p in ("att/HOST.json", "./att/HOST.json", "att//HOST.json", ":(top)att/HOST.json", "att/./HOST.json"):
+        out[p] = valid(d, path=p)
+    return out
+
+
+def p_symlink_and_exec_attestation(d):
+    init(d)
+    Path(d, "att").mkdir(parents=True)
+    Path(d, "real.json").write_bytes(ATT)
+    os.symlink("../real.json", Path(d, "att/HOST.json"))
+    commit(d, {})
+    commit(d, {f"{ACC}1.md": OK})
+    out = {"symlink_attestation": valid(d), "blob_read": valid(d, path="real.json")}
+    return out
+
+
+for name, fn in [("bloom_local", p_bloom_local), ("bloom_alternate", p_bloom_alternate),
+                 ("bloom_split_chain", p_bloom_split_chain),
+                 ("fsmonitor_valid_repo", p_fsmonitor), ("fsmonitor_rejected_repo", p_fsmonitor_rejected),
+                 ("partial_clone_keys_in_include", p_partial_clone_keys_in_include),
+                 ("partial_clone_keys_in_worktree_config", p_partial_clone_keys_in_worktree_config),
+                 ("strict_warning_legit", p_strict_warning_legit), ("fsck_key_in_include", p_fsck_key_in_include),
+                 ("zero_padded_mode_legit", p_zero_padded_mode_legit), ("index_only_breakage", p_index_only_breakage),
+                 ("env_allowlist", p_env_allowlist), ("use_replace_refs_local", p_use_replace_refs_local),
+                 ("attestation_path_shapes", p_attestation_path_shapes),
+                 ("symlink_attestation", p_symlink_and_exec_attestation)]:
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        try:
+            results[name] = fn(Path(d))
+        except Exception as e:
+            results[name] = {"probe_error": f"{type(e).__name__}: {e}", "tb": traceback.format_exc()[-1200:]}
+
+results["git_version"] = subprocess.run(["git", "--version"], capture_output=True, text=True).stdout.strip()
+results["lx_platform_sha256"] = hashlib.sha256(Path(BASE, "lx_platform.py").read_bytes()).hexdigest()
+Path(OUT).write_text(json.dumps(results, indent=1, sort_keys=True))
+print(json.dumps(results, indent=1, sort_keys=True))

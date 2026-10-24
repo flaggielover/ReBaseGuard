@@ -1,0 +1,42 @@
+"""Fresh observer malformed-reference controls with exact synthetic fixture boundaries."""
+from probe_safety import *
+import importlib.util
+
+spec=importlib.util.spec_from_file_location('reviewed_observer_addendum_tests',SOURCE/'tests/test_lx_verified.py')
+module=importlib.util.module_from_spec(spec);sys.modules[spec.name]=module;spec.loader.exec_module(module)
+ROWS=[]
+with guards():
+    t=module.TestVerifiedObservation('test_invalid_reference_paths_are_refused_without_exceptions')
+    t.setUp()
+    try:
+        valid=t.fixture()
+        path_cases=[None,True,7,b'bytes-path',[],{},'','missing.json','\0','prefix\0suffix','\ud800','prefix\ud800suffix','\udfff']
+        for value in path_cases:
+            result=t.assert_unverified(dict(valid,path=value))
+            assert result['operational_ready'] is False
+            ROWS.append({'case':'malformed_path '+repr(value),'verified':result['attestation']['verified'],'has_reasons':bool(result['attestation']['reasons']),'operational_ready':result['operational_ready']})
+        for ref in (None,{},[],dict(valid,extra=True),dict(valid,sha256='bad'),dict(valid,sha256=b'a'*64),dict(valid,sha256='A'*64)):
+            result=t.assert_unverified(ref)
+            ROWS.append({'case':'malformed_reference '+repr(ref),'verified':result['attestation']['verified'],'has_reasons':bool(result['attestation']['reasons']),'operational_ready':result['operational_ready']})
+        positive=V.observe(t.fixture(path='fixtures/hôte.json'))
+        t.assert_withheld(positive);assert positive['attestation']['verified'] is True
+        ROWS.append({'case':'valid_committed_UTF8_path_positive','verified':True,'operational_ready':positive['operational_ready']})
+        # Exercise the narrow handler itself; no product source or mutant is changed.
+        for exception in (ValueError('synthetic embedded NUL'),UnicodeError('synthetic malformed encoding'),UnicodeEncodeError('utf-8','\ud800',0,1,'synthetic surrogate'),TypeError('unrelated unexpected failure'),RuntimeError('unrelated unexpected failure'),AssertionError('existing assertion must remain a failure')):
+            try:
+                with mock.patch.object(t,'assert_unverified',side_effect=exception):
+                    t.test_invalid_reference_paths_are_refused_without_exceptions()
+            except Exception as caught:
+                if isinstance(exception,(ValueError,UnicodeError)):
+                    assert type(caught) is AssertionError
+                    assert str(caught).startswith('Malformed reference must be refused without leaking ')
+                    expectation='explicit unittest failure for advertised malformed-reference contract'
+                else:
+                    assert caught is exception
+                    expectation='unrelated exception unchanged; no blanket handler'
+                ROWS.append({'case':'handler '+type(exception).__name__,'raised':type(caught).__name__,'expectation':expectation,'matched_expected':True})
+            else:raise AssertionError('no exception expected to be swallowed')
+    finally:t.doCleanups()
+assert DENIED==[],DENIED
+(OUT/'malformed_reference_probes.json').write_text(json.dumps({'results':ROWS,'unexpected_host_access_attempts':DENIED},indent=2,ensure_ascii=True)+'\n')
+print('fresh result cases',len(ROWS),'unexpected_host_attempts',len(DENIED))

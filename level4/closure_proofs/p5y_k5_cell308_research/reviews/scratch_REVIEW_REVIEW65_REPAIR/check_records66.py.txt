@@ -1,0 +1,136 @@
+"""Review 66 Q4: recompute every sha256 bound in the ledger lines appended after 2275b3a0, at the introducing commit and
+at 774f2183; check the compressed local record; compare review 65 and its scratch with the scratchpad/review65
+originals. Reads git objects of the pinned worktree and the scratchpad/review65 originals only.
+usage: python3 -B -I check_records66.py.txt <pinned tree> <scratchpad/review65 dir> <out.json>"""
+import gzip, hashlib, json, subprocess, sys
+from pathlib import Path
+
+TREE, ORIG, OUT = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
+NS = "level4/closure_proofs/p5y_k5_cell308_research"
+LEDGER = f"{NS}/ledger/TARGET_INTEGRITY_LEDGER.jsonl"
+
+
+def show(commit, path):
+    r = subprocess.run(["git", "-C", str(TREE), "show", f"{commit}:{path}"], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+
+
+def sha(b):
+    return None if b is None else hashlib.sha256(b).hexdigest()
+
+
+def blob_id(commit, path):
+    r = subprocess.run(["git", "-C", str(TREE), "rev-parse", f"{commit}:{path}"], capture_output=True, text=True)
+    return r.stdout.strip() if r.returncode == 0 else None
+
+
+out = {"checks": [], "mismatches": []}
+
+
+def check(label, path, want, commits):
+    row = {"label": label, "path": path, "want": want}
+    for c in commits:
+        got = sha(show(c, path))
+        row[c] = "MISSING" if got is None else ("ok" if got == want else f"MISMATCH {got}")
+        if got != want:
+            out["mismatches"].append({"label": label, "path": path, "commit": c, "got": got})
+    out["checks"].append(row)
+
+
+lines = show("774f2183", LEDGER).decode().splitlines()
+prev = show("2275b3a0", LEDGER).decode().splitlines()
+out["ledger_lines_2275b3a0"] = len(prev)
+out["ledger_lines_774f2183"] = len(lines)
+out["ledger_prefix_preserved"] = lines[:len(prev)] == prev
+for c in ("a8a407bc", "b0b73adb"):
+    out[f"ledger_lines_{c}"] = len(show(c, LEDGER).decode().splitlines())
+new = [json.loads(x) for x in lines[len(prev):]]
+L494, L495, L496, L497, L498, L499 = new
+check("494 brief 65", f"{NS}/{L494['brief']}", L494["brief_sha256"], ["a8a407bc", "774f2183"])
+check("495 review 65", f"{NS}/{L495['review']}", L495["review_sha256"], ["b0b73adb", "774f2183"])
+for p, h in L495["scratch_sha256"].items():
+    check("495 scratch", f"{NS}/{p}", h, ["b0b73adb", "774f2183"])
+for p, h in L498["input_sha256"].items():
+    check("498 input", p, h, ["b0b73adb", "774f2183"])
+for p, h in L498["documents"].items():
+    check("498 document", f"{NS}/{p}", h, ["b0b73adb", "774f2183"])
+check("499 record (gz)", f"{NS}/{L499['record']}", L499["record_sha256"], ["774f2183"])
+
+# compressed record
+gz = show("774f2183", f"{NS}/{L499['record']}")
+raw = gzip.decompress(gz)
+rec = json.loads(raw)
+out["record"] = {
+    "uncompressed_sha256_ok": sha(raw) == L499["uncompressed_sha256"],
+    "gzip_header_mtime": int.from_bytes(gz[4:8], "little"), "gzip_flags": gz[3],
+    "schema": rec.get("schema"), "utc": rec.get("utc"), "source_commit": rec.get("source_commit"),
+    "python": rec.get("python", {}).get("version"), "expected_test_count": rec.get("expected_test_count"),
+    "baseline_ran": rec.get("baseline", {}).get("ran"), "unmutated_suite": rec.get("unmutated_suite"),
+    "status_counts": rec.get("status_counts"), "expected_mutants": rec.get("expected_mutants"),
+    "total": rec.get("total"), "killed": rec.get("killed"), "pass": rec.get("pass"),
+    "inputs_unchanged": rec.get("inputs_unchanged"), "full_registry_completed": rec.get("full_registry_completed"),
+    "input_equals_after": rec.get("input_sha256") == rec.get("input_sha256_after"),
+}
+inp = {}
+for p, h in rec["input_sha256"].items():
+    inp[p] = {c: sha(show(c, p)) == h for c in ("b0b73adb", "774f2183")}
+out["record"]["inputs_equal_commit_blobs"] = inp
+out["record"]["inputs_equal_ledger_498"] = rec["input_sha256"] == L498["input_sha256"]
+rows = {r["id"]: r for r in rec["mutants"]}
+out["record"]["rows"] = len(rows)
+# registry equality and mutated-source recomputation with the pinned harness source text
+src = show("b0b73adb", f"{NS}/streams/CLOUD_R1_LINUX_DEV/lx_platform.py").decode()
+import importlib.util
+spec = importlib.util.spec_from_file_location("H", TREE / f"{NS}/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py")
+H = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(H)
+bad = []
+for mid, what, edits in H.MUTANTS:
+    r = rows.get(mid)
+    if r is None:
+        bad.append((mid, "missing row"))
+        continue
+    if [(e["old"], e["new"]) for e in r["edits"]] != list(edits):
+        bad.append((mid, "edits differ from registry"))
+    if r["intended_property_test_methods"] != H.PROPERTY_WITNESSES[mid]:
+        bad.append((mid, "witnesses differ"))
+    mutated, counts, err = H.apply_mutation(src, edits)
+    if err or sha(mutated.encode()) != r.get("mutated_lx_platform_sha256"):
+        bad.append((mid, "mutated sha differs"))
+    st, why = H.classify_mutant(r["suite"], rec["baseline"], H.PROPERTY_WITNESSES[mid])
+    if st != r["status"]:
+        bad.append((mid, f"reclassified {st} != {r['status']}"))
+out["record"]["row_problems"] = bad
+sel = {}
+for mid in ["Q01", "RV30"] + [f"RV{i}" for i in range(31, 43)]:
+    r = rows[mid]
+    failed = sorted({n.split(" ", 1)[0] for n in r["suite"]["assertion_failure_names"]})
+    sel[mid] = {"status": r["status"], "failed_methods": failed,
+                "only_own_witnesses": set(failed) <= set(H.PROPERTY_WITNESSES[mid])}
+out["record"]["selected_rows"] = sel
+out["record"]["origin_labels_RV31_42"] = sorted({rows[f"RV{i}"]["origin"] for i in range(31, 43)})
+
+# review 65 and scratch vs the scratchpad/review65 originals
+cmp = {}
+for c_path in subprocess.run(["git", "-C", str(TREE), "ls-tree", "-r", "--name-only", "774f2183", "--",
+                              f"{NS}/reviews/scratch_REVIEW_REVIEW64_REPAIR"], capture_output=True,
+                             text=True).stdout.split():
+    rel = c_path.split("scratch_REVIEW_REVIEW64_REPAIR/", 1)[1]
+    o = ORIG / rel
+    if not o.exists() and rel.endswith(".py.txt"):
+        o = ORIG / rel[:-4]
+    cmp[rel] = "identical" if o.exists() and o.read_bytes() == show("774f2183", c_path) else f"DIFFERS/absent ({o})"
+cmp["REVIEW_REVIEW64_REPAIR_DELTA.md"] = ("identical" if (ORIG / "REVIEW_REVIEW64_REPAIR_DELTA.md").read_bytes()
+                                         == show("774f2183", f"{NS}/reviews/REVIEW_REVIEW64_REPAIR_DELTA.md")
+                                         else "DIFFERS")
+out["review65_vs_originals"] = cmp
+originals = sorted(str(p.relative_to(ORIG)) for p in ORIG.rglob("*") if p.is_file()
+                   and not str(p.relative_to(ORIG)).startswith(("tree_2275b3a0", "tmp/")) and "__pycache__" not in str(p))
+committed = {k[:-4] if k.endswith(".py.txt") and not (ORIG / k).exists() else k for k in cmp}
+out["originals_not_committed"] = [p for p in originals if p not in committed]
+for p in out["originals_not_committed"]:
+    out.setdefault("not_committed_sha256", {})[p] = sha((ORIG / p).read_bytes())
+out["job_log_bound_in_495"] = L495["scratch_sha256"].get("reviews/scratch_REVIEW_REVIEW64_REPAIR/job_116337943534.log")
+Path(OUT).write_text(json.dumps(out, indent=1, sort_keys=True))
+print(json.dumps({k: v for k, v in out.items() if k != "checks"}, indent=1, sort_keys=True))
+print("checks:", len(out["checks"]), "mismatches:", len(out["mismatches"]))

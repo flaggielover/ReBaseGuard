@@ -1,0 +1,40 @@
+--- 7eb9bbd999a1ec07d31a15f0b391fcc32ffa4d6b:level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py
++++ /Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py
+@@ -185,9 +185,13 @@
+         key, parent = (43, 120), (42, 100)
+         child = (42, 100, "child", None)
+         born = self.busy(t1={key: child})
++        self.assertIsInstance(born, list)
++        self.assertEqual(len(born), 1)
+         self.assertEqual(born[0]["pid"], 43)
+         self.assertTrue(born[0]["born_in_window"])
+         exited = self.busy(t0={key: child})
++        self.assertIsInstance(exited, list)
++        self.assertEqual(len(exited), 1)
+         self.assertTrue(exited[0]["exited_in_window"])
+         parent_record = (1, 0, "parent", None)
+         self.assertEqual(self.busy(t1={parent: parent_record, key: child}, own={parent}), [])
+@@ -470,16 +474,18 @@
+         with tempfile.TemporaryDirectory() as directory:
+             absent = str(Path(directory) / "absent")
+             for supervisor, expected in ((True, None), (False, False), (None, None), (1, None)):
+-                with self.subTest(supervisor=supervisor), \
+-                        mock.patch.object(L, "systemd_is_pid1", return_value=supervisor), \
++                with mock.patch.object(L, "systemd_is_pid1", return_value=supervisor), \
+                         mock.patch.object(L, "_systemctl_is_active", return_value=None), \
+                         mock.patch.object(L, "_systemctl_is_enabled", return_value="disabled"):
+-                    self.assertIs(L.unit_enabled("synthetic-update.service", unit_roots=()), expected)
++                    unit = L.unit_enabled("synthetic-update.service", unit_roots=())
+                     result = L.auto_update_settings('APT::Periodic::Enable "0";\n', unit_roots=(),
+                                                     uu_binary=absent, snapd_paths=(), cloud_dir=absent,
+                                                     livepatch_dir=absent, use_live_apt=False)
+-                self.assertIs(result["guest_updates_shown_disabled"], supervisor is False)
+-                self.assertIs(result["update_unit_enabled_or_unknown"], supervisor is not False)
++                with self.subTest(supervisor=supervisor, evidence="unit"):
++                    self.assertIs(unit, expected)
++                with self.subTest(supervisor=supervisor, evidence="updates"):
++                    self.assertIs(result["guest_updates_shown_disabled"], supervisor is False)
++                    self.assertIs(result["update_unit_enabled_or_unknown"], supervisor is not False)
+ 
+     def test_known_inactive_disabled_and_positive_activity_controls(self):
+         for active in ("inactive", "failed"):

@@ -1,0 +1,91 @@
+BRIEF 69 — reviewREVIEW68_REPAIR: fresh independent bounded review of the coordinator's repairs of review 68's findings
+on the combined Cell-308 development source (Cloud route r1, S4 changed branch). Issued 2026-10-15 by the coordinator of
+a Claude Cloud session. Pasted inline to the reviewer verbatim.
+
+=== ROLE
+You are a fresh, independent reviewer. You wrote none of the material and none of reviews 59-68 or the Codex
+integration reviews. You review; you do not repair, commit, push or edit any repository file. Write your review to the
+single output file named below.
+
+=== CHECKOUT (pinned)
+A detached worktree of exactly commit dad3c948 (branch codex/cell308-claude-r5-integration, draft PR
+flaggielover/ReBaseGuard#3) is at
+/tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review69/tree_dad3c948
+Use it as "the checkout" for every read and run. Do not read the shared checkout /home/user/ReBaseGuard. NS =
+level4/closure_proofs/p5y_k5_cell308_research/ inside the pinned tree; DEV = NS/streams/CLOUD_R1_LINUX_DEV.
+
+=== THE DELTA UNDER REVIEW
+05caa00e (reviewed by review 68) .. dad3c948. Tested inputs changed: DEV/lx_platform.py, DEV/tests/test_lx_platform.py,
+DEV/tests/run_mutants.py, DEV/tests/test_mutation_harness.py, .github/workflows/cell-308-r5-integration.yml.
+Documents: NS/reviews/REVIEW_REVIEW67_REPAIR_DELTA.md (review 68, recorded verbatim) and
+NS/reviews/scratch_REVIEW_REVIEW67_REPAIR/; NS/governance/new_host_route_cloud_r1/
+PROPOSED_REVIEW68_DISPOSITION_SUPPLEMENT_20261015.md (its section 2 replaces supplement r67 section 2); the ledger lines
+appended after 05caa00e in NS/ledger/TARGET_INTEGRITY_LEDGER.jsonl; NS/reviews/scratch_REVIEW63_REPAIR_20261015/
+LOCAL_FULL_HARNESS_PY312_336BB0CB.json.gz (a FAILED local run, 192/193, Q01 ERROR) and
+LOCAL_FULL_HARNESS_PY312_BF5987A5.json.gz (193/193).
+Claimed repairs (verify, do not assume): fail closed on any non-regular entry under the review directory in any commit,
+and on a review directory or ancestor that is not a directory in any commit (_historical_review_blobs,
+_review_dir_is_a_directory, one cat-file --batch-check) (P1); WARN/INFO wording (P2); the signature-program test signs
+the acceptance commit too, RA3 = RV55 (P3); a zero-padded mode refuses and the forced git environment is checked, RA2 =
+RV56, RA4 = RV57, RA1 = RV58 (P4); records, incl. native run 38783320859 (P5). Harness: RV59-RV60 weaken P1; RV26 widened
+to a combined weakening; Q01 gained a third edit after the failed local run (bf5987a5). The native run on dad3c948 may
+still be running.
+
+=== EXPOSURE RESTRICTIONS (binding; governance S13, S10)
+Do NOT open, grep into or otherwise read: NS/audit/EXECUTION_INTERRUPTION_ASSESSMENT*, NS/audit/INCIDENT_AUDIT*,
+NS/reviews/REVIEW_EXECUTION_INTERRUPTION*, anything under level4/closure_proofs/p5y_k5_cell308_mb_r1/postexec/ or any MB
+r1 target-run record, NS/ledger/COORDINATOR_EXPOSURE_DISCLOSURE.md. Do not read any Cell-309 branch, file or record.
+Do not open or print the MB r1 qualification records named by the L-DET addendum (git-object hashing only). Do not call
+attestation_valid / _acceptances / lx_verified.observe against the REAL repository with any reference; synthetic
+repositories only. Disclose any accidental contact.
+
+=== WHAT YOU MAY RUN
+Target-free and synthetic only, from DEV in the pinned tree: `python3 -B -m unittest discover -s tests -v` (3.11, 3.12,
+3.13); single-mutant checks against a COPY of lx_platform.py under your scratch dir via LX_PLATFORM_DIR, classified with
+the harness's classify_mutant; optionally the full `python3 -B tests/run_mutants.py <scratch>/out.json` (about 40-60
+minutes). Shallow and full synthetic clones (`git clone --depth N file://...`) under your scratch dir are permitted.
+Scratch: /tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review69/ (scripts you want
+recorded as *.py.txt). Set HOME (and GNUPGHOME) to a directory under your scratch for every git, gpg or ssh command you
+run yourself, so nothing is written outside your scratch (review 67 disclosed a /root/.gnupg side effect; review 68 did this); do not try to
+remove files outside your scratch. Never run candidate code, a science module, a decoy, a qualification case, or anything that
+evaluates a cell, drift or certificate. No installs, no setting changes. The GitHub Actions artifact host is blocked by
+the network policy; job logs and run metadata are readable through the GitHub API if your tools allow it.
+
+=== QUESTIONS
+Q1. For each of review 68's findings P1-P5: is the disposition (supplement r68) factually right about the code at
+    dad3c948? RESOLVED / PARTIALLY / NOT RESOLVED / STATED (acceptable to carry?). Is supplement r68 section 2 (what the
+    precondition and history scan do and do not establish; the refused-repository list) accurate and complete?
+Q2. Adversarial fail-closed audit of the changed code (_historical_review_blobs' regular-file check,
+    _review_dir_is_a_directory and its batch-check parsing, the order rule): any synthetic repository, tree shape
+    (symlink, gitlink, file or odd mode at the review directory, an ancestor or below it; case or Unicode variants of
+    path components; very long histories), object-store or configuration manipulation that gets an attestation
+    ACCEPTED that the stated rule refuses; any way a repository-configured command runs during the check; any
+    exception escaping attestation_valid / preflight; any legitimate full-clone case now wrongly refused that is not
+    stated; any regression of a property that held at 05caa00e. Re-run review 68's probes (probes68*, reviewer68_mutants)
+    where they apply. Write at least three NEW mutants of your own; report killed / survived under the harness's strict
+    criteria.
+Q3. Harness integrity: are RV55-RV60 genuine direct witnesses of their stated properties; are the widened RV26 and the
+    three-edit Q01 faithful single-property weakenings (or masked / over-weakened); are the workflow counts (193/194)
+    right?
+Q4. Records: recompute the sha256 values bound in the ledger lines appended after 05caa00e (including both compressed
+    local records against their uncompressed digests and the commit blobs they claim); check that review 68 and its
+    scratch are byte-identical to scratchpad/review68/ originals (excluding the stated omissions); check that no
+    committed file contains a signed URL or credential; check that reviewed and historical files were not modified;
+    check that every native run since 9b6347cb is recorded, and that the failed local run is recorded accurately.
+Q5. Is anything in the ledger, supplement, erratum or commit messages stated more strongly than the evidence supports?
+
+=== OUTPUT
+ONE Markdown file: /tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/review69/REVIEW_REVIEW68_REPAIR_DELTA.md
+  1. Header: reviewer = "reviewREVIEW68_REPAIR (fresh agent, brief 69)", date, pinned commit.
+  2. Exposure disclosure.
+  3. Verdict lines, exactly:
+     REPAIR: one of REPAIRED / REPAIRED_WITH_DEFECTS / NOT_REPAIRED
+     HARNESS: one of SOUND / SOUND_WITH_DEFECTS / UNSOUND
+     RECORDS: one of ACCURATE / ACCURATE_WITH_CORRECTIONS / INACCURATE
+     State plainly that no verdict here accepts any amendment, supplement, addendum, host or decision.
+  4. Table P1-P5 with status and evidence.
+  5. Answers Q2-Q5.
+  6. New findings S1..Sn with severity BLOCKING / MAJOR / MINOR / NOTE, location, required correction.
+  7. Your mutants: diff and status.
+Be specific and adversarial; no praise; say UNVERIFIED where you cannot verify.
+When finished, reply with only: the output path, the three verdict lines, and the count of new findings by severity.

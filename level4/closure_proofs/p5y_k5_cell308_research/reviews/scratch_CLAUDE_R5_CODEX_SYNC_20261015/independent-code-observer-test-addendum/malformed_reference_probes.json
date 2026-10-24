@@ -1,0 +1,166 @@
+{
+  "results": [
+    {
+      "case": "malformed_path None",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path True",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path 7",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path b'bytes-path'",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path []",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path {}",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path ''",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path 'missing.json'",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path '\\x00'",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path 'prefix\\x00suffix'",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path '\\ud800'",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path 'prefix\\ud800suffix'",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_path '\\udfff'",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_reference None",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_reference {}",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_reference []",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_reference {'path': 'fixtures/host.json', 'sha256': 'e7ffd90e4819346404f17a25ab6e3165fcf2216cfe3e95be2db8fcd425b03dd9', 'extra': True}",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_reference {'path': 'fixtures/host.json', 'sha256': 'bad'}",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_reference {'path': 'fixtures/host.json', 'sha256': b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "malformed_reference {'path': 'fixtures/host.json', 'sha256': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'}",
+      "verified": false,
+      "has_reasons": true,
+      "operational_ready": false
+    },
+    {
+      "case": "valid_committed_UTF8_path_positive",
+      "verified": true,
+      "operational_ready": false
+    },
+    {
+      "case": "handler ValueError",
+      "raised": "AssertionError",
+      "expectation": "explicit unittest failure for advertised malformed-reference contract",
+      "matched_expected": true
+    },
+    {
+      "case": "handler UnicodeError",
+      "raised": "AssertionError",
+      "expectation": "explicit unittest failure for advertised malformed-reference contract",
+      "matched_expected": true
+    },
+    {
+      "case": "handler UnicodeEncodeError",
+      "raised": "AssertionError",
+      "expectation": "explicit unittest failure for advertised malformed-reference contract",
+      "matched_expected": true
+    },
+    {
+      "case": "handler TypeError",
+      "raised": "TypeError",
+      "expectation": "unrelated exception unchanged; no blanket handler",
+      "matched_expected": true
+    },
+    {
+      "case": "handler RuntimeError",
+      "raised": "RuntimeError",
+      "expectation": "unrelated exception unchanged; no blanket handler",
+      "matched_expected": true
+    },
+    {
+      "case": "handler AssertionError",
+      "raised": "AssertionError",
+      "expectation": "unrelated exception unchanged; no blanket handler",
+      "matched_expected": true
+    }
+  ],
+  "unexpected_host_access_attempts": []
+}

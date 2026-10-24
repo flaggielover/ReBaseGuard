@@ -1,0 +1,748 @@
+{
+  "stage": "1, preliminary source snapshot; final source + CI not yet supplied",
+  "verdict": "PENDING; classifier findings require resolution and retest",
+  "binding_manifest": "/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-binding.json",
+  "raw_probes": "/tmp/cell308-claude-sync-20261015/independent-evidence/independent-classifier-probes.json",
+  "scope": {
+    "no_product_import": true,
+    "no_full_test_or_mutation_execution": true,
+    "synthetic_probes_only": true,
+    "no_product_edits": true
+  },
+  "registry": {
+    "count": 133,
+    "unique_ids": 133,
+    "group_sizes": {
+      "M": 32,
+      "R": 10,
+      "X": 9,
+      "N": 14,
+      "Y": 9,
+      "P": 15,
+      "Z": 11,
+      "Q": 13,
+      "CDEX": 16,
+      "R5SYNC": 4
+    },
+    "group_sum": 133,
+    "entries": [
+      {
+        "id": "M01",
+        "property": "failed boot-id read treated as a reboot (DEAD)",
+        "edit_count": 1
+      },
+      {
+        "id": "M02",
+        "property": "unreadable /proc/<pid>/stat treated as DEAD",
+        "edit_count": 1
+      },
+      {
+        "id": "M03",
+        "property": "incomplete identity record reported ALIVE",
+        "edit_count": 1
+      },
+      {
+        "id": "M04",
+        "property": "zombie read as DEAD again (the withdrawn L-ID-1)",
+        "edit_count": 1
+      },
+      {
+        "id": "M05",
+        "property": "pid reuse (other starttime) not detected",
+        "edit_count": 1
+      },
+      {
+        "id": "M06",
+        "property": "no power supply exposed read as AC",
+        "edit_count": 1
+      },
+      {
+        "id": "M07",
+        "property": "unreadable cgroup limit skipped",
+        "edit_count": 1
+      },
+      {
+        "id": "M08",
+        "property": "missing journal channel ignored in assess",
+        "edit_count": 1
+      },
+      {
+        "id": "M09",
+        "property": "pause channel P removed",
+        "edit_count": 1
+      },
+      {
+        "id": "M10",
+        "property": "suspend (boottime - monotonic) ignored",
+        "edit_count": 1
+      },
+      {
+        "id": "M11",
+        "property": "D-MEM-FREE gate silently passes",
+        "edit_count": 1
+      },
+      {
+        "id": "M12",
+        "property": "attestation 'reviewed' not required",
+        "edit_count": 1
+      },
+      {
+        "id": "M13",
+        "property": "provider image updates pass without an attested token",
+        "edit_count": 1
+      },
+      {
+        "id": "M14",
+        "property": "update vectors other than apt ignored",
+        "edit_count": 1
+      },
+      {
+        "id": "M15",
+        "property": "launched_by_systemd skips the MainPID check",
+        "edit_count": 1
+      },
+      {
+        "id": "M16",
+        "property": "durable_write writes the target in place",
+        "edit_count": 1
+      },
+      {
+        "id": "M17",
+        "property": "unreadable pin counts as a match",
+        "edit_count": 1
+      },
+      {
+        "id": "M18",
+        "property": "busy_processes uses lifetime ticks instead of the window",
+        "edit_count": 1
+      },
+      {
+        "id": "M19",
+        "property": "empty cmdline (failed read) hashed as a command",
+        "edit_count": 1
+      },
+      {
+        "id": "M20",
+        "property": "UNKNOWN gates not reported as blocking",
+        "edit_count": 1
+      },
+      {
+        "id": "M21",
+        "property": "headroom computed over levels with unreadable usage",
+        "edit_count": 1
+      },
+      {
+        "id": "M22",
+        "property": "namespace mismatch ignored",
+        "edit_count": 1
+      },
+      {
+        "id": "M23",
+        "property": "unknown power-supply type skipped",
+        "edit_count": 1
+      },
+      {
+        "id": "M24",
+        "property": "process born in the window not counted",
+        "edit_count": 1
+      },
+      {
+        "id": "M25",
+        "property": "attestation file sha256 not verified",
+        "edit_count": 1
+      },
+      {
+        "id": "M26",
+        "property": "attestation not bound to the hardware identity",
+        "edit_count": 1
+      },
+      {
+        "id": "M27",
+        "property": "v2 root accepted as unlimited without attestation",
+        "edit_count": 1
+      },
+      {
+        "id": "M28",
+        "property": "effective_limit numeric without root attestation",
+        "edit_count": 1
+      },
+      {
+        "id": "M29",
+        "property": "execute / resume pass the launch gate without a launch record",
+        "edit_count": 1
+      },
+      {
+        "id": "M30",
+        "property": "mapped shared objects (libm) not pinned",
+        "edit_count": 1
+      },
+      {
+        "id": "M31",
+        "property": "incomplete /proc view accepted",
+        "edit_count": 1
+      },
+      {
+        "id": "M32",
+        "property": "own may contain init",
+        "edit_count": 1
+      },
+      {
+        "id": "R01",
+        "property": "unreadable Battery status skipped (a failed read can yield AC)",
+        "edit_count": 1
+      },
+      {
+        "id": "R02",
+        "property": "host attestation accepted when the 'accepted' key is merely present (e.g. 'REJECTED')",
+        "edit_count": 1
+      },
+      {
+        "id": "R03",
+        "property": "durable_write never fsyncs the data",
+        "edit_count": 1
+      },
+      {
+        "id": "R04",
+        "property": "suspend / pause tolerance raised from 2 s to 25 s",
+        "edit_count": 1
+      },
+      {
+        "id": "R05",
+        "property": "hidden name allow-list for the Cloud session controller in busy_processes",
+        "edit_count": 1
+      },
+      {
+        "id": "R06",
+        "property": "package versions and glibc dropped from PIN_KEYS",
+        "edit_count": 2
+      },
+      {
+        "id": "R07",
+        "property": "stopped (T/t) and uninterruptible (D) tasks read as DEAD",
+        "edit_count": 1
+      },
+      {
+        "id": "R08",
+        "property": "durable_write never fsyncs the directory after the rename",
+        "edit_count": 1
+      },
+      {
+        "id": "R09",
+        "property": "maximum sample spacing raised from 180 s to 390 s",
+        "edit_count": 1
+      },
+      {
+        "id": "R10",
+        "property": "assess checks power only at start and end, not at the samples",
+        "edit_count": 1
+      },
+      {
+        "id": "X01",
+        "property": "/proc 'subset=' no longer refused",
+        "edit_count": 1
+      },
+      {
+        "id": "X02",
+        "property": "no /proc mount line counts as a complete view",
+        "edit_count": 1
+      },
+      {
+        "id": "X03",
+        "property": "unreadable livepatch counts as none applied",
+        "edit_count": 1
+      },
+      {
+        "id": "X04",
+        "property": "K' monotonic-ahead-of-boottime channel removed",
+        "edit_count": 1
+      },
+      {
+        "id": "X05",
+        "property": "durable_write read-back verification removed",
+        "edit_count": 1
+      },
+      {
+        "id": "X06",
+        "property": "absent samples no longer AMBIGUOUS",
+        "edit_count": 1
+      },
+      {
+        "id": "X07",
+        "property": "a transient .scope accepted as the campaign unit",
+        "edit_count": 1
+      },
+      {
+        "id": "X08",
+        "property": "v1 'unlimited' sentinel lowered to 1 GiB",
+        "edit_count": 1
+      },
+      {
+        "id": "X09",
+        "property": "unknown interpreter package drops out of the pin",
+        "edit_count": 1
+      },
+      {
+        "id": "N01",
+        "property": "D-HOST-LIFETIME treated as decided",
+        "edit_count": 1
+      },
+      {
+        "id": "N02",
+        "property": "attestation acceptance line not required",
+        "edit_count": 1
+      },
+      {
+        "id": "N03",
+        "property": "attestation schema not checked",
+        "edit_count": 1
+      },
+      {
+        "id": "N04",
+        "property": "caller-asserted fields accepted in the attestation reference",
+        "edit_count": 1
+      },
+      {
+        "id": "N05",
+        "property": "attestation's root_cgroup_is_real not required",
+        "edit_count": 1
+      },
+      {
+        "id": "N06",
+        "property": "nested PID namespace view accepted",
+        "edit_count": 1
+      },
+      {
+        "id": "N07",
+        "property": "boot id not validated",
+        "edit_count": 1
+      },
+      {
+        "id": "N08",
+        "property": "exited processes not reported",
+        "edit_count": 1
+      },
+      {
+        "id": "N09",
+        "property": "unreadable existing process skipped",
+        "edit_count": 1
+      },
+      {
+        "id": "N10",
+        "property": "campaign children exempt by pid alone",
+        "edit_count": 1
+      },
+      {
+        "id": "N11",
+        "property": "unrecorded namespace lets pid evidence count (revision-2 behaviour)",
+        "edit_count": 1
+      },
+      {
+        "id": "N12",
+        "property": "pin without libm / libc / loader accepted",
+        "edit_count": 1
+      },
+      {
+        "id": "N13",
+        "property": "launch record trusted on its 'pass' flag",
+        "edit_count": 1
+      },
+      {
+        "id": "N14",
+        "property": "unrecognised battery status read as not discharging",
+        "edit_count": 1
+      },
+      {
+        "id": "Y01",
+        "property": "any non-empty decided set opens D-HOST-LIFETIME",
+        "edit_count": 1
+      },
+      {
+        "id": "Y02",
+        "property": "exited children of a campaign pid exempt whatever their start",
+        "edit_count": 1
+      },
+      {
+        "id": "Y03",
+        "property": "acceptance token matched as a substring",
+        "edit_count": 1
+      },
+      {
+        "id": "Y04",
+        "property": "cgroup namespace reading hard-wired to initial",
+        "edit_count": 1
+      },
+      {
+        "id": "Y05",
+        "property": "attestation bound to /etc/machine-id only",
+        "edit_count": 1
+      },
+      {
+        "id": "Y06",
+        "property": "loader no longer a required pin member",
+        "edit_count": 1
+      },
+      {
+        "id": "Y07",
+        "property": "launch record unit type not checked",
+        "edit_count": 1
+      },
+      {
+        "id": "Y08",
+        "property": "merely truthy guest_updates_shown_disabled counts",
+        "edit_count": 1
+      },
+      {
+        "id": "Y09",
+        "property": "cgroup_resources reads the leaf only",
+        "edit_count": 1
+      },
+      {
+        "id": "P01",
+        "property": "acceptance committed with the attestation accepted (no order check)",
+        "edit_count": 1
+      },
+      {
+        "id": "P02",
+        "property": "a rejecting review ignored",
+        "edit_count": 1
+      },
+      {
+        "id": "P03",
+        "property": "acceptance review outside the fixed name set accepted",
+        "edit_count": 1
+      },
+      {
+        "id": "P04",
+        "property": "verdict line not required",
+        "edit_count": 1
+      },
+      {
+        "id": "P05",
+        "property": "non-initial cgroup namespace does not block a number",
+        "edit_count": 1
+      },
+      {
+        "id": "P06",
+        "property": "root attestation without D-HOST-LIFETIME decided",
+        "edit_count": 1
+      },
+      {
+        "id": "P07",
+        "property": "DECIDED not validated",
+        "edit_count": 1
+      },
+      {
+        "id": "P08",
+        "property": "passed launch record trusted instead of a fresh reading",
+        "edit_count": 1
+      },
+      {
+        "id": "P09",
+        "property": "MainPID type not checked",
+        "edit_count": 1
+      },
+      {
+        "id": "P10",
+        "property": "journal channel counted without a reviewed reader",
+        "edit_count": 1
+      },
+      {
+        "id": "P11",
+        "property": "masked unit not recognised",
+        "edit_count": 1
+      },
+      {
+        "id": "P12",
+        "property": "unknown update-unit state counted as disabled",
+        "edit_count": 1
+      },
+      {
+        "id": "P13",
+        "property": "only the first unit root searched (file mode)",
+        "edit_count": 1
+      },
+      {
+        "id": "P14",
+        "property": "identity record shape not validated",
+        "edit_count": 1
+      },
+      {
+        "id": "P15",
+        "property": "empty pin-point list accepted",
+        "edit_count": 1
+      },
+      {
+        "id": "Z01",
+        "property": "a rejecting review counts only if the negative word is on the same line as the sha",
+        "edit_count": 1
+      },
+      {
+        "id": "Z02",
+        "property": "update units enabled through a *.requires link are not seen",
+        "edit_count": 1
+      },
+      {
+        "id": "Z03",
+        "property": "systemctl is-enabled: enabled-runtime / indirect / alias / linked read as disabled",
+        "edit_count": 1
+      },
+      {
+        "id": "Z04",
+        "property": "a missing unit root ends the search (later roots never read)",
+        "edit_count": 1
+      },
+      {
+        "id": "Z05",
+        "property": "accepting line's first commit looked up by path only (a git mv into the set resets it)",
+        "edit_count": 1
+      },
+      {
+        "id": "Z06",
+        "property": "accepting line in the same commit as the attested blob counts as later",
+        "edit_count": 1
+      },
+      {
+        "id": "Z07",
+        "property": "a failed systemctl query (empty stdout) reads as 'disabled'",
+        "edit_count": 1
+      },
+      {
+        "id": "Z08",
+        "property": "only an UNREADABLE cgroup namespace blocks root attestation (a non-initial one passes)",
+        "edit_count": 1
+      },
+      {
+        "id": "Z09",
+        "property": "launch gate evaluated only for execute / resume (a record passed in launcher mode is ignored)",
+        "edit_count": 1
+      },
+      {
+        "id": "Z10",
+        "property": "an unreadable /proc view (None) treated as complete",
+        "edit_count": 1
+      },
+      {
+        "id": "Z11",
+        "property": "a bool starttime in a record passes the shape check",
+        "edit_count": 1
+      },
+      {
+        "id": "Q01",
+        "property": "negative scan not recursive (a rejection in a review subdirectory ignored)",
+        "edit_count": 1
+      },
+      {
+        "id": "Q02",
+        "property": "accepting set recursive (reviewer scratch can accept)",
+        "edit_count": 1
+      },
+      {
+        "id": "Q03",
+        "property": "negative words matched case-sensitively",
+        "edit_count": 1
+      },
+      {
+        "id": "Q04",
+        "property": "a second (conflicting) verdict line tolerated",
+        "edit_count": 1
+      },
+      {
+        "id": "Q05",
+        "property": "accepting file suffix not required",
+        "edit_count": 1
+      },
+      {
+        "id": "Q06",
+        "property": "attested commit found by path, not by blob (placeholder attestation filled later)",
+        "edit_count": 1
+      },
+      {
+        "id": "Q07",
+        "property": "systemctl is-active not consulted (a running but disabled update unit reads as off)",
+        "edit_count": 1
+      },
+      {
+        "id": "Q08",
+        "property": "is-enabled not-found read as disabled without checking the unit files",
+        "edit_count": 1
+      },
+      {
+        "id": "Q09",
+        "property": "dangling .wants / .requires link not counted",
+        "edit_count": 1
+      },
+      {
+        "id": "Q10",
+        "property": "preflight power reading replaced by a constant AC",
+        "edit_count": 1
+      },
+      {
+        "id": "Q11",
+        "property": "preflight free-disk reading replaced by a constant",
+        "edit_count": 1
+      },
+      {
+        "id": "Q12",
+        "property": "transient / generator roots dropped from the unit search path",
+        "edit_count": 1
+      },
+      {
+        "id": "Q13",
+        "property": "host_exclusive reports only its first open decision",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX01",
+        "property": "Codex Y01: effective memory minimum omits the host MemTotal cap",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX02",
+        "property": "Codex Y02: cgroup headroom uses the maximum instead of the minimum",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX03",
+        "property": "Codex Y03: sample order is ignored (both sample-order and pairwise non-increase guards removed)",
+        "edit_count": 2
+      },
+      {
+        "id": "CDEX04",
+        "property": "Codex P01: campaign child ownership ignores the parent's observed starttime identity",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX05",
+        "property": "Codex P02: a malformed current boot id counts as positive identity evidence",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX06",
+        "property": "Codex P03: matching malformed boot ids count as positive interval evidence",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX07",
+        "property": "Codex P04: nonfinite CPU window duration is accepted",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX08",
+        "property": "Codex P05: malformed NSpid entries count as a complete proc view",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX09",
+        "property": "Codex F01: clock-pair checks ignore intermediate observations and use only the endpoints",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX10",
+        "property": "Codex F02: suspend counter checks ignore intermediate observations and use only the endpoints",
+        "edit_count": 2
+      },
+      {
+        "id": "CDEX11",
+        "property": "Codex F03: malformed mount IDs and device numbers bypass numeric metadata validation",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX12",
+        "property": "Codex F04: the first NSpid field is trusted when duplicate NSpid records disagree",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX13",
+        "property": "Codex F05: multiple starttime identities for one PID are accepted in a single CPU snapshot",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX14",
+        "property": "Codex F06: payload adjoining NSpid's colon is discarded before validation",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX15",
+        "property": "Codex F07: malformed attestation/reference paths escape as subprocess argument exceptions",
+        "edit_count": 1
+      },
+      {
+        "id": "CDEX16",
+        "property": "Combined: unknown activity plus disabled state is not positive inactive evidence",
+        "edit_count": 1
+      },
+      {
+        "id": "R5SYNC01",
+        "property": "Combined R5 repair: complete negative-review scan includes nonASCII, tab and newline path names",
+        "edit_count": 1
+      },
+      {
+        "id": "R5SYNC02",
+        "property": "Combined R5 repair: unavailable recursive listing cannot be replaced by an independent accepting read",
+        "edit_count": 2
+      },
+      {
+        "id": "R5SYNC03",
+        "property": "Combined R5 repair: unavailable recursive review blob cannot be skipped in the veto scan",
+        "edit_count": 1
+      },
+      {
+        "id": "R5SYNC04",
+        "property": "Combined R5 repair: unknown supervisor state cannot imply filesystem-only update inactivity",
+        "edit_count": 1
+      }
+    ]
+  },
+  "explicit_test_files_preliminarily_read": {
+    "static_test_methods": 184,
+    "duplicate_method_names": {},
+    "note": "Counts cover only three explicit product test files plus snapshotted harness controls; await frozen complete input manifest for completeness."
+  },
+  "findings": [
+    {
+      "id": "IE-01",
+      "severity": "must resolve for strict classifier claim",
+      "path": "tests/run_mutants.py",
+      "line": 648,
+      "title": "Fake AssertionError suffix receives intended-property kill credit",
+      "detail": "Traceback marker is checked using substring membership, and the final regex-looking exception name wins even if it belongs to message text. Two independent reports carrying RuntimeError and a quoted fake AssertionError suffix are classified KILLED. One lacks a standalone traceback header entirely.",
+      "probes": [
+        "fake_assertion_after_runtime_error_message",
+        "traceback_marker_only_in_message"
+      ]
+    },
+    {
+      "id": "IE-02",
+      "severity": "strictness gap; duplicate-report ambiguity",
+      "path": "tests/run_mutants.py",
+      "line": 644,
+      "title": "Duplicate identical failure records receive kill credit",
+      "detail": "Two identical FAIL records with failures=2 pass counts and intended witness matching; duplicate outcome names and failure-total/ran coherence are not independently checked.",
+      "probes": [
+        "duplicate_identical_failure_blocks"
+      ]
+    }
+  ],
+  "static_observations": {
+    "baseline_runs_first_and_clears_inherited_LX_PLATFORM_DIR": true,
+    "mutation_source_anchor_requires_one_match_per_transform": true,
+    "mutated_source_AST_parse_before_subprocess": true,
+    "complete_raw_stdout_stderr_retained": true,
+    "before_after_dev_python_and_workflow_hashes_compared": true,
+    "registry_expected_unique_133_ids_and_witness_keys_guarded": true,
+    "warnings_errors_skips_timeout_launch_failure_exit_incoherence_refused": true,
+    "workflow_pins_checkout_to_github_sha_and_asserts_HEAD": true,
+    "workflow_artifact_gates_expected_133_mutants_134_suites": true,
+    "workflow_system_Linux_synthetic_only_dev_zero_target_evaluations_asserted": true,
+    "workflow_raw_traces_and_artifact_manifest_preserved": true
+  },
+  "stage2_requirements": [
+    "Exact frozen source commit and complete explicit input manifest",
+    "Native CI run identity + immutable artifact bytes",
+    "Independently check 134 suites if registry stays at 133 mutants, exact all test IDs, no errors/skips/warnings/timeout and coherent counts",
+    "Reapply each transform as text only to frozen lx_platform source; require unique anchors, parse, matching mutated hashes",
+    "Verify each killed intended direct witness from its full trace and corresponding test assertion/source",
+    "Compare reported before/after hashes against immutable exact-commit blobs, workflow command and runtime metadata",
+    "Do not issue final evidence verdict until native full CI audited"
+  ]
+}

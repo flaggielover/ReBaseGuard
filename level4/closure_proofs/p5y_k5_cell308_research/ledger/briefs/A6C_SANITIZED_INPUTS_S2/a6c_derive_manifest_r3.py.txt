@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+"""Derive A6c manifest R3 from the verified manifest R2 and the sanitized input set S2. No network use.
+
+Usage: python3 -I a6c_derive_manifest_r3.py <repo root> <S2 commit> <output manifest.json>
+Entry 24 is repointed to its S2 artifact at the S2 commit, with bytes and SHA-256 read from the git object. Every other
+entry, including the S1 entries 4, 6 and 7, is copied from R2 unchanged. Serialization as R1 and R2: sorted keys,
+compact separators, one LF.
+"""
+import hashlib
+import json
+import subprocess
+import sys
+
+BASE = "level4/closure_proofs/p5y_k5_cell308_research/"
+R2_COMMIT = "0c6c0a30f321ecc3d9891acef9fb5d99e1e6ffef"
+R2_PATH = BASE + "ledger/briefs/A6C_PHASE2_MANIFEST_R2.json"
+R2_BYTES = 20981
+R2_SHA256 = "a12470137f0f34c0a687a07c2b8f5e45517acd29ffc377143c50ae2e6e3c07cf"
+RAW = "https://raw.githubusercontent.com/flaggielover/ReBaseGuard/{commit}/{path}"
+S2_DIR = BASE + "ledger/briefs/A6C_SANITIZED_INPUTS_S2/"
+REPOINT = {24: "PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R5_ERRATUM_E1.A6C_SANITIZED_S2.md"}
+
+
+def blob(root, spec):
+    return subprocess.run(["git", "-C", root, "cat-file", "-p", spec], capture_output=True, check=True).stdout
+
+
+def main(root, s2, out):
+    raw = blob(root, R2_COMMIT + ":" + R2_PATH)
+    if len(raw) != R2_BYTES or hashlib.sha256(raw).hexdigest() != R2_SHA256:
+        sys.exit("STOP: manifest R2 mismatch")
+    r2 = json.loads(raw)
+    entries = []
+    for e in r2["entries"]:
+        e = dict(e)
+        if e["n"] in REPOINT:
+            path = S2_DIR + REPOINT[e["n"]]
+            data = blob(root, s2 + ":" + path)
+            e.update(commit=s2, path=path, bytes=len(data), sha256=hashlib.sha256(data).hexdigest(),
+                     url=RAW.format(commit=s2, path=path))
+        entries.append(e)
+    assert [e["n"] for e in entries] == list(range(1, 41))
+    manifest = {"brief_sha256": r2["brief_sha256"], "part1_commit": r2["part1_commit"],
+                "part2_commit": r2["part2_commit"],
+                "sanitized_sets": {"S1": {"commit": r2["sanitized_commit"], "entries": r2["sanitized_entries"]},
+                                   "S2": {"commit": s2, "entries": sorted(REPOINT)}},
+                "supersedes_manifest_sha256": R2_SHA256, "entries": entries}
+    text = json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n"
+    open(out, "w", encoding="utf-8").write(text)
+    print("entries", len(entries))
+    print("manifest_bytes", len(text.encode("utf-8")))
+    print("manifest_sha256", hashlib.sha256(text.encode("utf-8")).hexdigest())
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2], sys.argv[3])

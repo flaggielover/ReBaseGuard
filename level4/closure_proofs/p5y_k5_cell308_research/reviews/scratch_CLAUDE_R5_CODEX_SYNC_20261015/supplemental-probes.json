@@ -1,0 +1,78 @@
+{
+  "class": "SYNTHETIC_VALIDATION",
+  "dev_only": true,
+  "source_ref": "37c62102",
+  "source_sha256": "8ccddf8531716fc2bc1c96a70f7b29c547586fcc74099adfcb7320fd8dea7169",
+  "review_role": "coordinator-authored supplemental probes; not a fresh formal review",
+  "no_live_systemctl_or_proc_queries": true,
+  "source_unchanged": true,
+  "cases": [
+    {
+      "case": "update_unit",
+      "active": "inactive",
+      "enabled": "disabled",
+      "observed": false,
+      "expected": false,
+      "matches": true
+    },
+    {
+      "case": "update_unit",
+      "active": "active",
+      "enabled": "disabled",
+      "observed": true,
+      "expected": true,
+      "matches": true
+    },
+    {
+      "case": "update_unit",
+      "active": null,
+      "enabled": "disabled",
+      "observed": false,
+      "expected": null,
+      "matches": false
+    },
+    {
+      "case": "update_unit",
+      "active": "unrecognised",
+      "enabled": "disabled",
+      "observed": false,
+      "expected": null,
+      "matches": false
+    },
+    {
+      "case": "reused_campaign_parent_pid",
+      "observed": [],
+      "expected": "refusal or reporting external_child; never empty conflicts",
+      "matches": false
+    },
+    {
+      "case": "proc_view",
+      "status": "NSpid:\t77\n",
+      "observed": true,
+      "expected": true,
+      "matches": true
+    },
+    {
+      "case": "proc_view",
+      "status": "NSpid:garbage\t77\n",
+      "observed": true,
+      "expected": "not True",
+      "matches": false
+    },
+    {
+      "case": "proc_view",
+      "status": "NSpid:\t\n",
+      "observed": true,
+      "expected": "not True",
+      "matches": false
+    },
+    {
+      "case": "proc_view",
+      "status": "NSpid:\t77\nNSpid:\t77 88\n",
+      "observed": true,
+      "expected": "not True",
+      "matches": false
+    }
+  ],
+  "new_target_evaluations": 0
+}

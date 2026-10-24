@@ -1,0 +1,172 @@
+"""Review 66: (1) the registered mutants RV30-RV42 and Q01 re-run singly with the pinned harness's own run_suite /
+classify_mutant, recording every failing method; (2) the reviewer's new mutants RY1-RY5, classified the same way
+(strict criteria), each with an outcome check on a synthetic repository (base vs mutant, child interpreters).
+The pinned tree is never written: each mutant is a copy under a scratch temporary directory (LX_PLATFORM_DIR).
+usage: python3 -B -I reviewer66_mutants.py.txt <pinned DEV dir> <scratch tmp dir> <out.json>"""
+import hashlib, importlib.util, json, os, subprocess, sys, tempfile
+from pathlib import Path
+
+DEV, TMP, OUT = sys.argv[1:4]
+spec = importlib.util.spec_from_file_location("run_mutants_pinned", Path(DEV, "tests/run_mutants.py"))
+H = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(H)                 # module level only builds the registry; main() is not called
+
+REGISTERED = ["Q01", "RV30"] + [f"RV{i}" for i in range(31, 43)]
+
+MINE = [
+    ("RY1", "GIT_NO_LAZY_FETCH dropped alone (RV39's second edit by itself; the partial-clone key refusal stays)",
+     [('               GIT_GRAFT_FILE=os.devnull, GIT_NO_LAZY_FETCH="1")', '               GIT_GRAFT_FILE=os.devnull)')],
+     ["test_review65_partial_clone_runs_no_configured_command"], "lazy_include"),
+    ("RY2", "fsck without --strict (the stated precondition is a STRICT fsck)",
+     [('    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None',
+       '    return _git(repo_root, "fsck", "--full", "--no-dangling", "--no-progress") is not None')],
+     ["test_review65_forged_graph_and_rewritten_object_refuse"], "zero_padded"),
+    ("RY3", "_ordered takes the blob id of any exact-path entry (the regular-file mode check dropped)",
+     [('    blob = entry[2] if entry and entry[:2] in (("100644", "blob"), ("100755", "blob")) else ""',
+       '    blob = entry[2] if entry else ""')],
+     ["test_review65_range_like_attestation_path_and_deep_json", "test_review64_symlink_is_not_an_accepting_review"],
+     "symlink_json"),
+    ("RY4", "fsck --connectivity-only instead of a full strict fsck (object contents not re-hashed)",
+     [('    return _git(repo_root, "fsck", "--full", "--strict", "--no-dangling", "--no-progress") is not None',
+       '    return _git(repo_root, "fsck", "--connectivity-only", "--no-dangling", "--no-progress") is not None')],
+     ["test_review65_forged_graph_and_rewritten_object_refuse"], "rewritten_blob"),
+    ("RY5", "an unreadable local-configuration listing counts as clean",
+     [('    if names is None or any(_LOCAL_CONFIG_REFUSED.match(n)', '    if names is not None and any(_LOCAL_CONFIG_REFUSED.match(n)')],
+     ["test_review65_local_fsck_or_promisor_configuration_refuses"], "config_unreadable"),
+]
+
+CHILD = r'''
+import hashlib, json, os, subprocess, sys, zlib
+from pathlib import Path
+sys.path.insert(0, sys.argv[1]); import lx_platform as L
+kind, work = sys.argv[2], Path(sys.argv[3])
+HW = {"machine_id_sha256": "a"*64, "product_uuid_sha256": "b"*64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR; ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+OK = f"review\n{L.ACCEPTANCE_LINE}{SHA}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+CFG = ["-c","user.name=t","-c","user.email=t@t","-c","commit.gpgsign=false","-c","core.hooksPath=/dev/null","-c","gc.auto=0",
+       "-c","core.fsmonitor=false","-c","protocol.file.allow=always","-c","init.defaultBranch=main"]
+def git(d, *a, inp=None):
+    return subprocess.run(["git","-C",str(d),*CFG,*a],check=True,capture_output=True,input=inp).stdout.decode().strip()
+def commit(d, files=None, rm=()):
+    for k, v in (files or {}).items():
+        p = Path(d, k); p.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(v, tuple): os.symlink(v[1], p)
+        else: p.write_bytes(v)
+    for k in rm: git(d, "rm","-q",k)
+    git(d, "add","-A"); git(d, "commit","-q","--allow-empty","-m","c"); return git(d, "rev-parse","HEAD")
+def init(d):
+    Path(d).mkdir(parents=True, exist_ok=True); git(d, "init","-q")
+    for k, v in (("gc.auto","0"),("core.hooksPath","/dev/null"),("maintenance.auto","false")): git(d,"config","--local",k,v)
+def bad(d):
+    init(d); ids = [commit(d, {"att/HOST.json": ATT}), commit(d, {f"{RD}/veto.md": f"{SHA} REJECTED\n".encode()})]
+    ids += [commit(d, rm=[f"{RD}/veto.md"]), commit(d, {f"{ACC}1.md": OK})]; return ids
+def valid(d):
+    try:
+        rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": SHA}, repo_root=str(d))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}"}
+out = {}
+if kind == "lazy_include":
+    src, dst, marker, script = work/"src", work/"dst", work/"m", work/"up.sh"
+    bad(src); git(src, "config", "uploadpack.allowFilter", "true")
+    git(work.parent, "clone", "-q", "--no-local", "--filter=blob:none", src.as_uri(), str(dst))
+    script.write_text(f"#!/bin/sh\necho ran >> '{marker}'\nexec git-upload-pack \"$@\"\n"); script.chmod(0o755)
+    git(dst, "config", "remote.origin.uploadpack", str(script))
+    for k in ("remote.origin.promisor", "remote.origin.partialclonefilter"): git(dst, "config", "--unset", k)
+    Path(dst, ".git/extra.cfg").write_text('[remote "origin"]\n\tpromisor = true\n\tpartialclonefilter = blob:none\n')
+    git(dst, "config", "--local", "include.path", "extra.cfg")
+    out = dict(valid(dst), configured_command_ran=marker.exists())
+elif kind == "zero_padded":
+    init(work)
+    blob = git(work, "hash-object", "-w", "--stdin", inp=b"old\n")
+    tree = subprocess.run(["git","-C",str(work),"hash-object","-t","tree","-w","--literally","--stdin"],
+                          input=b"0100644 old.txt\0" + bytes.fromhex(blob), capture_output=True, check=True).stdout.decode().strip()
+    c0 = git(work, "hash-object", "-t", "commit", "-w", "--stdin",
+             inp=f"tree {tree}\nauthor t <t@t> 1 +0000\ncommitter t <t@t> 1 +0000\n\nold\n".encode())
+    git(work, "update-ref", "HEAD", c0); git(work, "reset", "-q", "--hard")
+    commit(work, {"att/HOST.json": ATT}); commit(work, {f"{ACC}1.md": OK})
+    out = valid(work)
+elif kind == "symlink_json":
+    init(work)
+    commit(work, {"att/HOST.json": ("symlink", ATT.decode())}); commit(work, {f"{ACC}1.md": OK})
+    out = dict(valid(work), mode=git(work, "ls-tree", "HEAD", "att/HOST.json").split()[0])
+elif kind == "rewritten_blob":
+    ids = bad(work)
+    oid = git(work, "rev-parse", f"{ids[1]}:{RD}/veto.md"); obj = Path(work, ".git/objects", oid[:2], oid[2:])
+    obj.chmod(0o644); obj.write_bytes(zlib.compress(b"blob 6\0draft\n"))
+    out = valid(work)
+elif kind == "config_unreadable":
+    init(work); commit(work, {"att/HOST.json": ATT}); commit(work, {f"{ACC}1.md": OK})
+    orig = L._git
+    def fault(repo_root, *a):
+        return None if a[:1] == ("config",) else orig(repo_root, *a)
+    L._git = fault
+    out = valid(work)
+print(json.dumps(out))
+'''
+
+
+def outcome(moddir, kind):
+    with tempfile.TemporaryDirectory(dir=TMP) as w:
+        p = subprocess.run([sys.executable, "-B", "-I", "-c", CHILD, moddir, kind, str(Path(w, "repo"))],
+                           capture_output=True, text=True, timeout=300)
+    try:
+        return json.loads(p.stdout.strip().splitlines()[-1])
+    except Exception:
+        return {"child_error": p.stderr[-800:]}
+
+
+src = H.SRC.read_text()
+env = dict(os.environ)
+env.pop("LX_PLATFORM_DIR", None)
+env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONWARNINGS="error", PYTHONHASHSEED="0")
+base = H.run_suite(env)
+out = {"source_sha256": hashlib.sha256(src.encode()).hexdigest(), "baseline_ran": base["ran"],
+       "baseline_pass": H.suite_passed(base), "expected_test_count": H.expected_test_count(),
+       "registered": [], "mutants": []}
+reg = {mid: (what, edits) for mid, what, edits in H.MUTANTS}
+for mid in REGISTERED:
+    what, edits = reg[mid]
+    mutated, counts, err = H.apply_mutation(src, edits)
+    row = {"id": mid, "witnesses": H.PROPERTY_WITNESSES[mid], "anchor_counts": counts}
+    if err:
+        row.update(status="NOT_APPLIED", reasons=[err])
+    else:
+        with tempfile.TemporaryDirectory(dir=TMP) as d:
+            Path(d, "lx_platform.py").write_text(mutated)
+            suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+        status, reasons = H.classify_mutant(suite, base, H.PROPERTY_WITNESSES[mid])
+        failed = sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]})
+        row.update(status=status, reasons=reasons, ran=suite["ran"], failed_methods=failed,
+                   only_own_witnesses=set(failed) <= set(H.PROPERTY_WITNESSES[mid]),
+                   mutated_sha256=hashlib.sha256(mutated.encode()).hexdigest())
+    out["registered"].append(row)
+    print(mid, row["status"], row.get("failed_methods"), flush=True)
+with tempfile.TemporaryDirectory(dir=TMP) as based:
+    Path(based, "lx_platform.py").write_text(src)
+    for mid, what, edits, witnesses, kind in MINE:
+        mutated, counts, err = H.apply_mutation(src, edits)
+        row = {"id": mid, "property": what, "witnesses": witnesses, "anchor_counts": counts,
+               "edits": [{"old": o, "new": n} for o, n in edits]}
+        if err:
+            row.update(status="NOT_APPLIED", reasons=[err])
+        else:
+            with tempfile.TemporaryDirectory(dir=TMP) as d:
+                Path(d, "lx_platform.py").write_text(mutated)
+                suite = H.run_suite(dict(env, LX_PLATFORM_DIR=d))
+                row["outcome_base"] = outcome(based, kind)
+                row["outcome_mutant"] = outcome(d, kind)
+            status, reasons = H.classify_mutant(suite, base, witnesses)
+            row.update(status=status, reasons=reasons, ran=suite["ran"], returncode=suite["returncode"],
+                       failed_methods=sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]}),
+                       mutated_sha256=hashlib.sha256(mutated.encode()).hexdigest())
+        out["mutants"].append(row)
+        print(mid, row["status"], row.get("reasons"), row.get("failed_methods"), "| base:",
+              json.dumps(row.get("outcome_base"))[:200], "| mutant:", json.dumps(row.get("outcome_mutant"))[:200],
+              flush=True)
+Path(OUT).write_text(json.dumps(out, indent=1) + "\n")

@@ -1,0 +1,165 @@
+# Review 69 Q4 (derived from review 68's check_records68.py.txt): recompute ledger bindings (lines 511-518), compare
+# review 68 + scratch with the scratchpad/review68 originals, check both compressed records (incl. re-classification of
+# every row with the harness of the commit it ran on), scan for credentials, list modified files. Read-only.
+# usage: python3 -B -I check_records69.py.txt <review69 scratch dir> <out.json>
+import gzip, hashlib, importlib.util, json, re, subprocess, sys
+from pathlib import Path
+
+R = Path(sys.argv[1]); T = R / "tree_dad3c948"; NS = "level4/closure_proofs/p5y_k5_cell308_research"
+DEVP = f"{NS}/streams/CLOUD_R1_LINUX_DEV"
+ORIG = R.parent / "review68"
+LEDGER = f"{NS}/ledger/TARGET_INTEGRITY_LEDGER.jsonl"
+CHAIN = ("05caa00e", "9250f473", "336bb0cb", "bf5987a5", "dad3c948")
+
+
+def sha(b): return hashlib.sha256(b).hexdigest()
+def git(*a): return subprocess.run(["git", "-C", str(T), *a], capture_output=True, check=True).stdout
+def blob(commit, path):
+    r = subprocess.run(["git", "-C", str(T), "show", f"{commit}:{path}"], capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+
+
+out = {"bindings": [], "problems": [], "notes": []}
+chain = [blob(c, LEDGER) for c in CHAIN]
+out["ledger_lines_at"] = {c: b.count(b"\n") for c, b in zip(CHAIN, chain)}
+out["prefix_chain"] = all(chain[i + 1].startswith(chain[i]) for i in range(len(chain) - 1))
+lines = chain[-1].decode().splitlines()
+intro = {}
+for c, b in zip(CHAIN, chain):
+    for i in range(b.count(b"\n")):
+        intro.setdefault(i + 1, c)
+
+
+def check(lineno, path, want, commits):
+    for c in commits:
+        b = blob(c, path)
+        got = sha(b) if b is not None else None
+        out["bindings"].append({"line": lineno, "path": path, "at": c, "want": want, "got": got, "ok": got == want})
+        if got != want:
+            out["problems"].append((lineno, path, c, want, got))
+
+
+records = {}
+for i, l in enumerate(lines[510:], start=511):
+    rec = json.loads(l)
+    c0 = intro[i]
+    later = (c0, "dad3c948") if c0 != "dad3c948" else (c0,)
+    if "brief_sha256" in rec: check(i, f"{NS}/{rec['brief']}", rec["brief_sha256"], later)
+    if "review_sha256" in rec: check(i, f"{NS}/{rec['review']}", rec["review_sha256"], later)
+    for p, h in rec.get("scratch_sha256", {}).items(): check(i, f"{NS}/{p}", h, later)
+    for p, h in rec.get("documents", {}).items(): check(i, f"{NS}/{p}", h, later)
+    for p, h in rec.get("input_sha256", {}).items():
+        # inputs are bound at the commit that introduces the line; they may legitimately change later
+        check(i, p, h, (c0,))
+        now = blob("dad3c948", p)
+        if sha(now) != h:
+            out["notes"].append(f"line {i}: {p} changed after {c0} (expected only for run_mutants.py at bf5987a5)")
+    if "record_sha256" in rec:
+        check(i, f"{NS}/{rec['record']}", rec["record_sha256"], later)
+        raw = blob("dad3c948", f"{NS}/{rec['record']}")
+        un = gzip.decompress(raw)
+        hdr = raw[:10]
+        records[i] = (rec, json.loads(un))
+        out.setdefault("gz", {})[i] = {"record": rec["record"], "uncompressed_sha256": sha(un),
+                                       "want": rec["uncompressed_sha256"], "ok": sha(un) == rec["uncompressed_sha256"],
+                                       "mtime": int.from_bytes(hdr[4:8], "little"), "flags": hdr[3], "xfl": hdr[8],
+                                       "os": hdr[9], "introduced_at": c0}
+
+# ---- the two local records: inputs vs commit blobs, counts, timing, re-classification
+SRC_COMMIT = {516: "336bb0cb", 518: "bf5987a5"}
+for i, (lrec, d) in records.items():
+    sc = SRC_COMMIT[i]
+    g = out["gz"][i]
+    g["top_keys"] = sorted(d)
+    for k in ("utc", "python", "source_commit", "status_counts", "expected_mutants", "expected_test_count", "pass",
+              "unmutated_suite", "inputs_unchanged", "full_registry_completed", "total", "killed",
+              "new_target_evaluations"):
+        g[k] = d.get(k)
+    ins, insa = d.get("input_sha256") or {}, d.get("input_sha256_after") or {}
+    cmp = {}
+    for p, h in ins.items():
+        full = p if p.startswith((".github", "level4/")) else f"{DEVP}/{p}"
+        b = blob(sc, full)
+        cmp[p] = {"rec": h, "after": insa.get(p), "blob_at_source": sha(b) if b else None}
+    g["inputs"] = cmp
+    g["inputs_all_equal_source_blobs"] = all(len({v["rec"], v["after"], v["blob_at_source"]}) == 1 for v in cmp.values())
+    # harness of the commit the record ran on, loaded from a scratch copy (never from the pinned tree's working files)
+    hp = R / "tmp" / f"run_mutants_{sc}.py"
+    hp.write_bytes(blob(sc, f"{DEVP}/tests/run_mutants.py"))
+    spec = importlib.util.spec_from_file_location(f"rm_{sc}", hp); H = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(H)
+    src = blob(sc, f"{DEVP}/lx_platform.py").decode()
+    reg = {m: (w, e) for m, w, e in H.MUTANTS}
+    base = d["baseline"]
+    probs, sel = [], {}
+    if [r["id"] for r in d["mutants"]] != [m for m, _, _ in H.MUTANTS]:
+        probs.append("order/ids differ from registry")
+    for r in d["mutants"]:
+        mid = r["id"]; w, e = reg[mid]
+        if [{"old": o, "new": n} for o, n in e] != r.get("edits"): probs.append((mid, "edits differ"))
+        if r.get("property") != w: probs.append((mid, "property differs"))
+        if r.get("intended_property_test_methods") != H.PROPERTY_WITNESSES[mid]: probs.append((mid, "witnesses differ"))
+        suite = r.get("suite") or r.get("mutated_suite")
+        st, why = H.classify_mutant(suite, base, H.PROPERTY_WITNESSES[mid])
+        if st != r["status"]: probs.append((mid, "status", st, r["status"], why))
+        mutated, counts, err = H.apply_mutation(src, e)
+        msha = hashlib.sha256(mutated.encode()).hexdigest() if mutated else None
+        if r.get("mutated_lx_platform_sha256") != msha: probs.append((mid, "mutated sha differs"))
+        if mid in ("Q01", "RV10", "RV26") or (mid.startswith("RV") and mid >= "RV55"):
+            sel[mid] = {"status": r["status"], "reasons": r.get("reasons") or r.get("status_reasons"),
+                        "failed": sorted({n.split(" ", 1)[0] for n in suite["assertion_failure_names"]}),
+                        "witness": H.PROPERTY_WITNESSES[mid], "ran": suite["ran"], "returncode": suite["returncode"],
+                        "origin": r.get("origin"), "n_edits": len(e)}
+    g["reclassify"] = {"rows": len(d["mutants"]), "baseline_ran": base["ran"], "problems": probs, "selected": sel,
+                       "registry_len": len(H.MUTANTS),
+                       "non_killed": {r["id"]: r["status"] for r in d["mutants"] if r["status"] != "KILLED"}}
+
+# ---- review 68 + scratch byte comparison
+cmpres = {}
+REVNAME = "REVIEW_REVIEW67_REPAIR_DELTA.md"
+cmpres[REVNAME] = blob("dad3c948", f"{NS}/reviews/{REVNAME}") == (ORIG / REVNAME).read_bytes()
+pref = f"{NS}/reviews/scratch_REVIEW_REVIEW67_REPAIR/"
+committed = [p for p in git("ls-tree", "-r", "--name-only", "dad3c948", "--", pref[:-1]).decode().split("\n") if p]
+for p in committed:
+    rel = p[len(pref):]
+    o = ORIG / rel
+    if not o.exists() and rel.endswith(".py.txt"):
+        o = ORIG / rel[:-4]
+    cmpres[rel] = (o.exists() and o.read_bytes() == blob("dad3c948", p), str(o.relative_to(ORIG)) if o.exists() else None)
+out["byte_compare"] = cmpres
+out["byte_compare_all_equal"] = all((v if isinstance(v, bool) else v[0]) for v in cmpres.values())
+origs = sorted(str(p.relative_to(ORIG)) for p in ORIG.rglob("*") if p.is_file()
+               and not str(p.relative_to(ORIG)).startswith(("tmp/", "tree_05caa00e/", "home/")))
+mapped = {v[1] for v in cmpres.values() if isinstance(v, tuple)}
+out["originals_not_committed"] = [o for o in origs if o not in mapped and o != REVNAME]
+l512 = json.loads(lines[511])
+out["scratch_bound_vs_committed"] = (len(l512["scratch_sha256"]), len(committed))
+out["committed_not_bound"] = sorted({f"reviews/scratch_REVIEW_REVIEW67_REPAIR/{p[len(pref):]}" for p in committed}
+                                    - set(l512["scratch_sha256"]))
+out["bound_not_committed"] = sorted(set(l512["scratch_sha256"]) - {f"reviews/scratch_REVIEW_REVIEW67_REPAIR/{p[len(pref):]}"
+                                                                   for p in committed})
+
+# ---- modified files and credential scan
+ns = git("diff", "--name-status", "05caa00e", "dad3c948").decode().splitlines()
+out["name_status_non_added"] = [l for l in ns if not l.startswith("A")]
+out["added_count"] = sum(1 for l in ns if l.startswith("A"))
+pat = re.compile(rb"(sig=|[?&]se=|[?&]sv=|X-Amz-|ghp_|gho_|ghs_|ghu_|github_pat_|Authorization:|Bearer |api[_-]?key|"
+                 rb"password|token=|blob\.core\.windows\.net|amazonaws\.com|https?://)", re.I)
+hits = []
+for l in ns:
+    st, p = l.split("\t", 1)
+    if st.startswith("D"): continue
+    b = blob("dad3c948", p)
+    if p.endswith(".gz"): b = gzip.decompress(b)
+    if p.endswith("TARGET_INTEGRITY_LEDGER.jsonl"): b = b[len(chain[0]):]
+    for m in pat.finditer(b):
+        ctx = b[max(0, m.start() - 40): m.end() + 60]
+        hits.append((p, m.group(0).decode(errors="replace"), ctx.decode(errors="replace").replace("\n", " ")))
+out["credential_scan_hits"] = hits
+out["commit_messages"] = git("log", "--format=%H%n%B%n----", "05caa00e..dad3c948").decode()
+Path(sys.argv[2]).write_text(json.dumps(out, indent=1, default=str) + "\n")
+print(json.dumps({k: out[k] for k in ("ledger_lines_at", "prefix_chain", "problems", "notes", "byte_compare_all_equal",
+                                      "originals_not_committed", "scratch_bound_vs_committed", "committed_not_bound",
+                                      "bound_not_committed", "name_status_non_added", "added_count")}, indent=1,
+                 default=str))
+print(len(out["bindings"]), "bindings;", sum(b["ok"] for b in out["bindings"]), "ok;", len(hits), "credential-pattern hits")

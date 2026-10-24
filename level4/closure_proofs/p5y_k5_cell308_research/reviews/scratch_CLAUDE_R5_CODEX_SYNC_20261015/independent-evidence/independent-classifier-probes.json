@@ -1,0 +1,1061 @@
+{
+  "harness_sha256": "7826d7f5c59bc824bcc17c738841cc5e8a9bb0b6e8b9b4c19ebbfe233386ff74",
+  "product_imported": false,
+  "suite_or_mutants_executed": false,
+  "probe_count": 24,
+  "mismatches": [
+    "duplicate_identical_failure_blocks",
+    "fake_assertion_after_runtime_error_message",
+    "traceback_marker_only_in_message"
+  ],
+  "probes": [
+    {
+      "case": "valid_intended_assertion",
+      "expected": "KILLED",
+      "actual": "KILLED",
+      "matches_expectation": true,
+      "reasons": [],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "valid_unrelated_assertion",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property)"
+        ],
+        "assertion_failure_names": [
+          "test_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "error_only_with_assertion_text_in_message",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "UNITTEST_ERRORS",
+        "EXIT_WITHOUT_ASSERTION_FAILURES",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (errors=1)",
+        "failures": 0,
+        "errors": 1,
+        "skipped": 0,
+        "failure_names": [],
+        "assertion_failure_names": [],
+        "error_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "invalid_reasons": [
+          "UNITTEST_ERRORS",
+          "EXIT_WITHOUT_ASSERTION_FAILURES"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nERROR: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in f\n    raise RuntimeError()\nRuntimeError: AssertionError: text\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (errors=1)\n",
+        "suite_tail": "FAILED (errors=1)"
+      }
+    },
+    {
+      "case": "duplicate_failure_count_token",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MALFORMED_UNITTEST_SUMMARY"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1, failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "MALFORMED_UNITTEST_SUMMARY"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1, failures=1)\n",
+        "suite_tail": "FAILED (failures=1, failures=1)"
+      }
+    },
+    {
+      "case": "duplicate_ran_line",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": null,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_UNITTEST_SUMMARY"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\nRan 2 tests in 0.001s\n",
+        "suite_tail": "Ran 2 tests in 0.001s"
+      }
+    },
+    {
+      "case": "duplicate_summary_line",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+        "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY",
+        "EXIT_WITHOUT_ASSERTION_FAILURES"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": null,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "MISSING_OR_INVALID_UNITTEST_SUMMARY",
+          "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY",
+          "EXIT_WITHOUT_ASSERTION_FAILURES"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "unknown_count_token",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MALFORMED_UNITTEST_SUMMARY"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1, other=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "MALFORMED_UNITTEST_SUMMARY"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1, other=1)\n",
+        "suite_tail": "FAILED (failures=1, other=1)"
+      }
+    },
+    {
+      "case": "duplicate_identical_failure_blocks",
+      "expected": "ERROR",
+      "actual": "KILLED",
+      "matches_expectation": false,
+      "reasons": [],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=2)",
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)",
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)",
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=2)\n",
+        "suite_tail": "FAILED (failures=2)"
+      }
+    },
+    {
+      "case": "run_count_smaller_than_failure_blocks",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "TEST_COUNT_DIFFERS_FROM_BASELINE"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 1,
+        "summary": "FAILED (failures=2)",
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)",
+          "test_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)",
+          "test_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n======================================================================\nFAIL: test_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 1 tests in 0.001s\n\nFAILED (failures=2)\n",
+        "suite_tail": "FAILED (failures=2)"
+      }
+    },
+    {
+      "case": "fake_assertion_after_runtime_error_message",
+      "expected": "ERROR",
+      "actual": "KILLED",
+      "matches_expectation": false,
+      "reasons": [],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nRuntimeError: true runtime failure\nAssertionError: quoted message suffix\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "fake_assertion_without_traceback",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "invalid_reasons": [
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nAssertionError: quoted text\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "fake_assertion_in_stdout_only",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "invalid_reasons": [
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "AssertionError: fake stdout\n",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nRuntimeError: actual failure\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "fake_assertion_before_runtime_terminal",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "invalid_reasons": [
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: quoted text\nRuntimeError: actual failure\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "missing_exception_with_assertion_in_source",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "invalid_reasons": [
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\n    raise AssertionError(\"source text\")\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "traceback_marker_only_in_message",
+      "expected": "ERROR",
+      "actual": "KILLED",
+      "matches_expectation": false,
+      "reasons": [],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nRuntimeError: message says Traceback (most recent call last):\nAssertionError: fake\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "extra_error_header_even_with_failure_summary",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY",
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [
+          "test_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property)"
+        ],
+        "invalid_reasons": [
+          "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY",
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\nERROR: test_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property)\nRuntimeError: extra\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "warning_in_stdout",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "UNRAISABLE_OR_WARNING"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "UNRAISABLE_OR_WARNING"
+        ],
+        "stdout": "UserWarning: synthetic\n",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "skip_token_on_failure",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "NONASSERTION_OUTCOMES"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1, skipped=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 1,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "NONASSERTION_OUTCOMES"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1, skipped=1)\n",
+        "suite_tail": "FAILED (failures=1, skipped=1)"
+      }
+    },
+    {
+      "case": "timeout_with_clean_looking_report",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "TIMEOUT",
+        "NO_COHERENT_UNITTEST_EXIT"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": null,
+        "elapsed_s": 0.001,
+        "timed_out": true,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "TIMEOUT",
+          "NO_COHERENT_UNITTEST_EXIT"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "zero_exit_with_failure",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "EXIT_AND_SUMMARY_DISAGREE"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 0,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "EXIT_AND_SUMMARY_DISAGREE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "negative_exit_with_failure",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "NO_COHERENT_UNITTEST_EXIT"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": -9,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "NO_COHERENT_UNITTEST_EXIT"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "fully_qualified_assertion_subclass_not_base",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "FAILURE_WITHOUT_ASSERTIONERROR_TRACE",
+        "NO_INTENDED_PROPERTY_ASSERTION"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures=1)",
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "invalid_reasons": [
+          "FAILURE_WITHOUT_ASSERTIONERROR_TRACE"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\ncustom.MyAssertionError: custom\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=1)\n",
+        "suite_tail": "FAILED (failures=1)"
+      }
+    },
+    {
+      "case": "success_summary_with_failure_count_zero_token",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MALFORMED_UNITTEST_SUMMARY",
+        "EXIT_AND_SUMMARY_DISAGREE"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 0,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "OK (failures=0)",
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [],
+        "assertion_failure_names": [],
+        "error_names": [],
+        "invalid_reasons": [
+          "MALFORMED_UNITTEST_SUMMARY",
+          "EXIT_AND_SUMMARY_DISAGREE"
+        ],
+        "stdout": "",
+        "stderr": "----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nOK (failures=0)\n",
+        "suite_tail": "OK (failures=0)"
+      }
+    },
+    {
+      "case": "spaces_in_malformed_count",
+      "expected": "ERROR",
+      "actual": "ERROR",
+      "matches_expectation": true,
+      "reasons": [
+        "MALFORMED_UNITTEST_SUMMARY",
+        "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY",
+        "EXIT_WITHOUT_ASSERTION_FAILURES"
+      ],
+      "suite": {
+        "command": [
+          "python",
+          "independent synthetic only"
+        ],
+        "cwd": "/private/tmp/cell308-claude-sync-20261015/independent-evidence/stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV",
+        "environment_controls": {
+          "LX_PLATFORM_DIR": null,
+          "PYTHONDONTWRITEBYTECODE": null,
+          "PYTHONWARNINGS": null,
+          "PYTHONHASHSEED": null
+        },
+        "returncode": 1,
+        "elapsed_s": 0.001,
+        "timed_out": false,
+        "launch_error": null,
+        "ran": 2,
+        "summary": "FAILED (failures = 1)",
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "assertion_failure_names": [
+          "test_intended_property (test_fixture.TestSynthetic.test_intended_property)"
+        ],
+        "error_names": [],
+        "invalid_reasons": [
+          "MALFORMED_UNITTEST_SUMMARY",
+          "OUTCOME_NAMES_DO_NOT_MATCH_SUMMARY",
+          "EXIT_WITHOUT_ASSERTION_FAILURES"
+        ],
+        "stdout": "",
+        "stderr": "======================================================================\nFAIL: test_intended_property (test_fixture.TestSynthetic.test_intended_property)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"fixture.py\", line 1, in test_intended_property\n    assert False\nAssertionError: intended property failed\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures = 1)\n",
+        "suite_tail": "FAILED (failures = 1)"
+      }
+    }
+  ]
+}

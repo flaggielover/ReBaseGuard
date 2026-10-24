@@ -1,0 +1,107 @@
+BRIEF B3-C — single correction confirmation by the SAME external reviewer B3-External. Cell-308 MB-S new-host route,
+Cloud r1. Prepared 2026-10-16 by the coordinator side, for the OWNER to forward to the same B3 conversation. This is the
+ONE bounded confirmation that brief B3 r2 allows ("After one bounded correction round you may be asked once to confirm
+the corrections; there will be no further rounds"). It is not a new review, not a general review, not review 72, and
+not an S12 rating.
+
+=== WHAT IS ASKED
+Your report REVIEW_EXTERNAL_B3_PROVENANCE.md (sha256 16188ffd92313f661dbd5c33d72b831af11a41d0c5a93877736e8896d88ce96a)
+has been recorded verbatim and answered with one bounded correction package at commit b047237a0e36f3af3ce35cf4b2b23fbcb4a0eef9.
+Confirm, finding by finding, whether the written corrections:
+  (a) address the unsupported claims you identified; and
+  (b) accurately PRESERVE the remaining evidence and gate limitations you stated, without upgrading any of them.
+You are NOT asked to:
+  - change your T6_TRANSFER verdict, or make transfer "met";
+  - issue or suggest an owner ruling;
+  - inspect any excluded source, or any file outside this allowlist;
+  - certify future operations, implementation or host evidence;
+  - give a risk rating.
+
+=== RESTRICTIONS (all of brief B3 r2's restrictions stand unchanged)
+Fetch ONLY the files below, each by raw URL at the pinned commit:
+  https://raw.githubusercontent.com/flaggielover/ReBaseGuard/b047237a0e36f3af3ce35cf4b2b23fbcb4a0eef9/<path>
+Verify each raw-byte sha256 before reading. Stop on any mismatch. Do not clone, check out, list directories or follow
+references outside this allowlist. Run no repository code. Excluded exactly as in brief r2: the E1'' disclosure, the
+interruption records, NS/audit/*, the incident-independence review and its T6 source, anything under
+p5y_k5_cell308_mb_r1/, and all Cell-309 material. Report only to the owner. Disclose any accidental contact.
+
+=== PRECEDENCE (as stated in the correction files)
+- Recommendations erratum E1 governs over the recommendations file. The values are unchanged.
+- Package erratum E2 replaces package erratum E1 §3 only. E1 §1–§2 stand.
+- The provenance record consolidates T01–T11, N1–N2, X01–X09, Z01–Z06 and O01–O30. It changes no rule.
+- The T6 disposition: proposed. It establishes no transfer.
+- Matrix R4 erratum E4 governs over R4 and errata E1–E3, on its named rows only.
+- Register r2 erratum E4 governs over register r2 and errata E1–E3, on its named rows only.
+- Owner package R4 erratum E1 governs over package R4, on its named items only. Nothing in it is issued.
+
+=== FINDING-BY-FINDING DISPOSITION (what to check)
+Y1  MAJOR    Recommendations erratum E1.1: N1's "none beyond reading about three days as 72 h" is withdrawn. Choices
+             C1–C6 are listed (fixed budget, shared, equal division, individual and readiness-triggered obligation,
+             EVAL_CAP ceiling, stop-before-freeze). It is a planning envelope with no response-capacity claim; the
+             7-day deadline governs. Value unchanged.
+Y2  MAJOR    Recommendations erratum E1.2–E1.3: N2 is discretionary (choices D1–D4); the cadence does not establish an
+             update-free interval or safe deferral; the urgent-update terminal rule is preserved. Your fetch failure is
+             recorded. The coordinator side's own retrieval (raw bytes in evidence/ubuntu_sru_20261016/; set-cookie
+             values redacted) is stated to be NOT independent. Also E1.4: "consumes nothing" is confined to target
+             consumption.
+Y3  MAJOR    Package erratum E2.1: T01, T02, T05, T06 and T07 are relabelled (new mapping, new host criterion, new
+             rule, new governance construction, free choice). T03's measurement non-equivalence is stated. T08 and T09
+             are policy slots with no adopted value. E2.2: target-free does not mean runtime-free sources, and a
+             rationale written now does not show historical non-dependence.
+Y4  MAJOR    Provenance record §2–§5: every row of your trace and omission tables, with categories (INH / MAP / CHO /
+             PSC / FUT / OPS), your qualification kept, and the gate where the remaining evidence arises.
+Y5  BLOCKING T6 disposition §2–§5: no route text claims TRANSFERS_MET (a search found none). The old placeholder is
+             replaced by a scoped determination: no automatic historical transfer; T6 and S13 unamended; role-holder
+             status from ER-T6; any prospective safeguard is a NEW ruling with its own review. Each of M1–M8 is kept
+             separate (§3). Conflicts K-T6-1..4 are named (§4): the M3 cycle, code-level trace timing, M2 as
+             historical, and role-holder status UNVERIFIED. Matrix E4 rows A9c, A14a, A14 (scope), A15, A17, B9-T and
+             C1-M3 implement the order. ER-T6 is prepared, not commissioned.
+Y6  MAJOR    Provenance record §6; matrix E4 B9-T: no OPS / IT / AX, and no historical mitigation satisfaction, is
+             marked; the deleted Q12 input stays deleted.
+Y7  NOTE     T6 disposition §6: Z1 / procedure E2 stays an author proposal with a separate pin.
+Y8  NOTE     T6 disposition §6; ER-T6 lists B3 as R6: your eligibility limits stay UNVERIFIED.
+
+=== OUTPUT (to the owner only)
+One Markdown file, CONFIRMATION_EXTERNAL_B3_CORRECTIONS.md, with these sections:
+  - header (identity as before, date, pinned commit, this brief's sha256);
+  - exposure (actual contact);
+  - these lines, exactly:
+      B3_CORRECTIONS: one of CONFIRMED / CONFIRMED_WITH_EXCEPTIONS / NOT_CONFIRMED
+      LIMITATIONS_PRESERVED: one of YES / PARTLY / NO
+      T6_TRANSFER: TRANSFERS_UNMET (unchanged unless you identify an error in your own original report)
+  - a table Y1..Y8: CONFIRMED / PARTLY / NOT_CONFIRMED, with file:line evidence;
+  - any new finding introduced by the corrections, numbered YC1..YCn, with severity BLOCKING / MAJOR / MINOR / NOTE.
+State plainly that the confirmation brings nothing into force. Return the file, its sha256 and the verdict lines
+directly to the owner. There is no further round.
+
+=== ALLOWLIST at b047237a0e36f3af3ce35cf4b2b23fbcb4a0eef9
+The correction files (path | bytes | sha256):
+| path | bytes | sha256 |
+|---|---|---|
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/NEW_CONSTANT_RECOMMENDATIONS_ERRATUM_E1_20261016.md` | 6406 | `688359b462cf2851015df47dbc8415c84180be1fe90ec77cf21077b544b9b24c` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/CONSOLIDATED_DSTAR_PACKAGE_R2_ERRATUM_E2_20261016.md` | 7261 | `95d4581c2ccf3245aac47012b582e1f80c909f525cad9e38fbbd74b7a8362252` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/PROVENANCE_DISPOSITION_RECORD_B3_20261016.md` | 14529 | `f8987a938a80dd0189ab1af7fc4f80ed01cae02f6d20dff39b3416eae8012046` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/T6_TRANSFER_DISPOSITION_20261016.md` | 9317 | `5782198420e26ccacf4ccc7a25f711a10e7eaabc3b8d7b60982bca7d718753ec` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/EVIDENCE_REQUEST_ER_T6_ROLE_HOLDER_CHECK_20261016.md` | 4575 | `b03fc997c7a5f76fe8eb002bcde62f6969d65283b8665da46929c3b712045a5b` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/READINESS_MATRIX_R4_ERRATUM_E4_20261016.md` | 3610 | `cba32db81b1add565fdcb2aac0fa57534e60d5a5d601baca4f7d44bec1aeb9e1` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/FINDINGS_STATUS_REGISTER_R2_ERRATUM_E4_20261016.md` | 2463 | `9687cc9d388bd5454b98b257a9a017b943b44908c72c9bc3ba8ef721cea54f77` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/OWNER_DECISION_PACKAGE_R4_ERRATUM_E1_20261016.md` | 6373 | `cb59f12bcb50cec98a5ed21baa3fd78d2493216be08f809fb1c380ada57862db` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/OWNER_RELEASE_B3_20261016.md` | 4819 | `2328d775cf5691d332f8a467ae3f6409024ee6f5cb8a9408ff91a4ac16911b85` |
+
+PROPOSED ADDITIONAL SOURCE PERMISSION. These files were not in brief r2. The owner must expressly permit them:
+| path | bytes | sha256 |
+|---|---|---|
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/evidence/ubuntu_sru_20261016/page.html.txt` | 32737 | `9f89bcfd22fa8a3ed04728bd92dc4c83bd012d3b8ad7adc71e7d4f53d71c2282` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/evidence/ubuntu_sru_20261016/headers_redacted.txt` | 1125 | `3907110121250f0303fde071f5e7c2369d1741f713f37c3e95796051c01df47d` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/evidence/ubuntu_sru_20261016/retrieved_utc.txt` | 21 | `510b3021b48fdfc9b0a06bebdd968a02b2bf57c280c9efe4f3ddde9947db8d5f` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/OWNER_DECISION_PACKAGE_R4_20261016.md` | 10948 | `7eb9951bebab6b10b62267e40180b91f41a6840e241ea1bdb7e4c193c052faee` |
+(The three evidence files are the coordinator side's recorded retrieval of the Ubuntu page you could not fetch. They
+are repository files, not the live page. Owner package R4 is given so you can see the placeholder that the T6
+disposition replaces.)
+
+Unchanged files you already verified at f9b28704. They are identical at this commit, and are listed for diffs only:
+| path | bytes | sha256 |
+|---|---|---|
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/NEW_CONSTANT_RECOMMENDATIONS_20261016.md` | 5629 | `fcac5f09a09ec33518c9940264c00600066afa16068c526526a4e3f9f8eb10fc` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/CONSOLIDATED_DSTAR_PACKAGE_R2_ERRATUM_E1_20261016.md` | 5969 | `a71e277a5a654022318af99f8d6a7c994a36b8885db5420faddf3d0681a50b81` |
+| `level4/closure_proofs/p5y_k5_cell308_research/governance/new_host_route_cloud_r1/READINESS_MATRIX_R4_20261016.md` | 18885 | `827822891a38293d6eb3a242dd7c502a7761216e470e7af854735895ca707414` |

@@ -1,0 +1,528 @@
+{
+  "results": [
+    {
+      "case": "_review_paths valid b''",
+      "matched_expected": true,
+      "observed": []
+    },
+    {
+      "case": "_review_paths valid b'a\\x00'",
+      "matched_expected": true,
+      "observed": [
+        "a"
+      ]
+    },
+    {
+      "case": "_review_paths valid b'a\\tb\\x00c\\nd\\x00'",
+      "matched_expected": true,
+      "observed": [
+        "a\tb",
+        "c\nd"
+      ]
+    },
+    {
+      "case": "_review_paths valid b'\\xe6\\x8b\\x92\\xe5\\x90\\xa6.txt\\x00'",
+      "matched_expected": true,
+      "observed": [
+        "\u62d2\u5426.txt"
+      ]
+    },
+    {
+      "case": "_review_paths malformed None",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_review_paths malformed 'a\\x00'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_review_paths malformed bytearray(b'a\\x00')",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_review_paths malformed b'a'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_review_paths malformed b'\\x00'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_review_paths malformed b'a\\x00\\x00'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_review_paths malformed b'\\xff\\x00'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False '0'",
+      "matched_expected": true,
+      "observed": 0
+    },
+    {
+      "case": "_nint signed=False '003'",
+      "matched_expected": true,
+      "observed": 3
+    },
+    {
+      "case": "_nint signed=False ' 7\\n'",
+      "matched_expected": true,
+      "observed": 7
+    },
+    {
+      "case": "_nint signed=False '-7'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False '+7'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False '--7'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False '-0'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False '\u00b2'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False '\uff11\uff12'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False '\u0661\u0662'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False b'7'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False 7",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False True",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False []",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False {}",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False None",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=False '99999999999999999999999999999999999999999999999999999999999",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint configured digit limit signed=False",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint explicit 4301 bound signed=False",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True '0'",
+      "matched_expected": true,
+      "observed": 0
+    },
+    {
+      "case": "_nint signed=True '003'",
+      "matched_expected": true,
+      "observed": 3
+    },
+    {
+      "case": "_nint signed=True ' 7\\n'",
+      "matched_expected": true,
+      "observed": 7
+    },
+    {
+      "case": "_nint signed=True '-7'",
+      "matched_expected": true,
+      "observed": -7
+    },
+    {
+      "case": "_nint signed=True '+7'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True '--7'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True '-0'",
+      "matched_expected": true,
+      "observed": 0
+    },
+    {
+      "case": "_nint signed=True '\u00b2'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True '\uff11\uff12'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True '\u0661\u0662'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True b'7'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True 7",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True True",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True []",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True {}",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True None",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint signed=True '99999999999999999999999999999999999999999999999999999999999",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint configured digit limit signed=True",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "_nint explicit 4301 bound signed=True",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "unit supervisor True",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "unit supervisor False",
+      "matched_expected": true,
+      "observed": false
+    },
+    {
+      "case": "unit supervisor None",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "unit supervisor 1",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "unit supervisor 0",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "unit supervisor 'systemd'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "unit supervisor []",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric '42000'",
+      "matched_expected": true,
+      "observed": 42000
+    },
+    {
+      "case": "thermal trip numeric '42000'",
+      "matched_expected": true,
+      "observed": 42000
+    },
+    {
+      "case": "thermal signed numeric '-12000'",
+      "matched_expected": true,
+      "observed": -12000
+    },
+    {
+      "case": "thermal trip numeric '-12000'",
+      "matched_expected": true,
+      "observed": -12000
+    },
+    {
+      "case": "thermal signed numeric '-0'",
+      "matched_expected": true,
+      "observed": 0
+    },
+    {
+      "case": "thermal trip numeric '-0'",
+      "matched_expected": true,
+      "observed": 0
+    },
+    {
+      "case": "thermal signed numeric '+2'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric '+2'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric '--2'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric '--2'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric '\u00b2'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric '\u00b2'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric '\uff11\uff12'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric '\uff11\uff12'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric '\u0661\u0662'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric '\u0661\u0662'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric None",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric None",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric b'7'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric b'7'",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric 7",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric 7",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric True",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric True",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal signed numeric '99999999999999999999999999999999999999999999999999999999999",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "thermal trip numeric '99999999999999999999999999999999999999999999999999999999999",
+      "matched_expected": true,
+      "observed": null
+    },
+    {
+      "case": "valid acceptance renamed 'UTF8_\u62d2\u5426'",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "valid acceptance renamed 'TAB_\\t'",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "valid acceptance renamed 'LINE_\\n'",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "required evidence fault direct_none",
+      "matched_expected": true,
+      "observed": false
+    },
+    {
+      "case": "required evidence reason direct_none",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "required evidence fault recursive_none",
+      "matched_expected": true,
+      "observed": false
+    },
+    {
+      "case": "required evidence reason recursive_none",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "required evidence fault direct_unterminated",
+      "matched_expected": true,
+      "observed": false
+    },
+    {
+      "case": "required evidence reason direct_unterminated",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "required evidence fault recursive_nonutf8",
+      "matched_expected": true,
+      "observed": false
+    },
+    {
+      "case": "required evidence reason recursive_nonutf8",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "required evidence fault recursive_missing_accepting",
+      "matched_expected": true,
+      "observed": false
+    },
+    {
+      "case": "required evidence reason recursive_missing_accepting",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "required evidence fault accepting_none",
+      "matched_expected": true,
+      "observed": false
+    },
+    {
+      "case": "required evidence reason accepting_none",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "required evidence fault accepting_binary",
+      "matched_expected": true,
+      "observed": false
+    },
+    {
+      "case": "required evidence reason accepting_binary",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "nonUTF8 committed veto path refuses",
+      "matched_expected": true,
+      "observed": false
+    },
+    {
+      "case": "nonUTF8 path explicit reason",
+      "matched_expected": true,
+      "observed": true
+    },
+    {
+      "case": "name-matching directory conservative refusal",
+      "observed": {
+        "verified": false,
+        "reasons": [
+          "rejected by UNAVAILABLE: accepting review absent from recursive listing: level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_HOST_ATTESTATION_ARCHIVE.md",
+          "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+        ]
+      },
+      "matched_expected": true
+    }
+  ],
+  "unexpected_host_access_attempts": []
+}

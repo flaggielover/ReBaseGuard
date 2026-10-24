@@ -1,0 +1,38 @@
+# Value-free audit of a reviewer transcript: prints counts and excluded PATH NAMES only, never content.
+import json, re, sys, hashlib
+EXCL = re.compile(r"(audit/EXECUTION_INTERRUPTION_ASSESSMENT|audit/INCIDENT_AUDIT|reviews/REVIEW_EXECUTION_INTERRUPTION|INCIDENT_INDEPENDENCE_REVIEW_MBS308|cell308_mb_r1/postexec|COORDINATOR_EXPOSURE_DISCLOSURE|309)")
+MBR1 = re.compile(r"p5y_k5_cell308_mb_r1/")
+path_re = re.compile(r"^((?:\.{0,2}/)?[\w./@+-]+?\.(?:md|txt|json|jsonl|py|csv|log|sh|yml|yaml)):(\d+)[:-]")
+for fn in sys.argv[1:]:
+    raw = open(fn, "rb").read()
+    uses = {}; res = []
+    for line in raw.decode("utf-8", "replace").splitlines():
+        try: d = json.loads(line)
+        except Exception: continue
+        c = d.get("message", {}).get("content")
+        if not isinstance(c, list): continue
+        for b in c:
+            if not isinstance(b, dict): continue
+            if b.get("type") == "tool_use": uses[b["id"]] = (b.get("name"), json.dumps(b.get("input")))
+            if b.get("type") == "tool_result":
+                cc = b.get("content")
+                txt = cc if isinstance(cc, str) else "\n".join(x.get("text", "") for x in (cc or []) if isinstance(x, dict))
+                res.append((b.get("tool_use_id"), txt))
+    n_in_excl = sum(1 for _, (nm, inp) in uses.items() if EXCL.search(inp))
+    read_excl = sorted({inp for _, (nm, inp) in uses.items() if nm == "Read" and (EXCL.search(inp) or MBR1.search(inp))})
+    excl_lines = 0; mbr1_lines = 0; total = 0; excl_names = set(); grep_calls = 0
+    for tid, txt in res:
+        nm, inp = uses.get(tid, ("?", ""))
+        if nm == "Bash" and re.search(r"\bgrep\b[^|]*-[a-zA-Z]*r", inp): grep_calls += 1
+        for ln in txt.splitlines():
+            m = path_re.match(ln.strip())
+            if not m: continue
+            total += 1
+            p = m.group(1)
+            if EXCL.search(p): excl_lines += 1; excl_names.add(p.split("/")[-1])
+            elif MBR1.search(p): mbr1_lines += 1
+    print(json.dumps({"transcript_sha256": hashlib.sha256(raw).hexdigest(), "file": fn.split("/")[-1],
+        "tool_uses": len(uses), "tool_uses_naming_excluded_patterns": n_in_excl, "recursive_grep_calls": grep_calls,
+        "read_calls_on_excluded_or_mbr1": len(read_excl),
+        "grep_style_output_lines": total, "output_lines_from_excluded_paths": excl_lines,
+        "output_lines_from_mbr1_paths": mbr1_lines, "excluded_names_in_output": sorted(excl_names)}))

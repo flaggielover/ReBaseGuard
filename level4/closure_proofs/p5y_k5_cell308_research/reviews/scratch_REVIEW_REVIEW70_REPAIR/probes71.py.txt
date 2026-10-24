@@ -1,0 +1,309 @@
+"""Review 71 constructions (brief 71). Synthetic git repositories only, under <tmp_root>; every attestation_valid /
+_review_dir_is_a_directory / _cat_file_batch / _tree_entry call passes a synthetic repository (or literal bytes);
+machine_identity is patched. Never the real repository.
+usage: python3 -B -I probes71.py.txt <dir_with_lx_platform.py> <tmp_root> <out.json> [kind ...]"""
+import hashlib, json, os, subprocess, sys, tempfile, time, traceback
+from pathlib import Path
+
+BASE, TMP, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+ONLY = sys.argv[4:]
+sys.path.insert(0, BASE)
+import lx_platform as L  # noqa: E402
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR
+TOP = RD.split("/")
+ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+OK = f"review\n{L.ACCEPTANCE_LINE}{SHA}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+VETO = f"{SHA} REJECTED\n".encode()
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main", "-c", "core.fsmonitor=false"]
+results = {"lx_platform_sha256": hashlib.sha256(Path(BASE, "lx_platform.py").read_bytes()).hexdigest(),
+           "git_version": subprocess.run(["git", "--version"], capture_output=True, text=True).stdout.strip()}
+
+
+def git(d, *a, inp=None, check=True):
+    r = subprocess.run(["git", "-C", str(d), *CFG, *a], capture_output=True, input=inp)
+    if check and r.returncode:
+        raise RuntimeError(f"git {a}: {r.stderr.decode()[-400:]}")
+    return r.stdout.decode().strip()
+
+
+def init(d, fmt=None):
+    Path(d).mkdir(parents=True, exist_ok=True)
+    git(d, "init", "-q", *([f"--object-format={fmt}"] if fmt else []))
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+        git(d, "config", "--local", k, v)
+
+
+def commit(d, files=None, rm=(), msg="c"):
+    for rel, data in (files or {}).items():
+        p = Path(d, rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(data, tuple):
+            os.symlink(data[1], p)
+        else:
+            p.write_bytes(data)
+    for rel in rm:
+        git(d, "rm", "-q", "-r", rel)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", msg)
+    return git(d, "rev-parse", "HEAD")
+
+
+def mkcommit(d, tree, parents, msg="c"):
+    body = f"tree {tree}\n" + "".join(f"parent {p}\n" for p in parents)
+    body += f"author t <t@t> 1700000000 +0000\ncommitter t <t@t> 1700000000 +0000\n\n{msg}\n"
+    return git(d, "hash-object", "-t", "commit", "-w", "--stdin", inp=body.encode())
+
+
+def raw_tree(entries):
+    return b"".join(m.encode() + b" " + n.encode() + b"\0" + bytes.fromhex(o) for m, n, o in entries)
+
+
+def mktree_literal(d, entries):
+    return git(d, "hash-object", "-t", "tree", "-w", "--literally", "--stdin", inp=raw_tree(entries))
+
+
+def blob(d, data):
+    return git(d, "hash-object", "-w", "--stdin", inp=data)
+
+
+def nested_tree(d, leaf_entries, names):
+    """tree for names[0]/names[1]/... holding leaf_entries at the bottom; returns the names[0] tree oid."""
+    sub = mktree_literal(d, leaf_entries)
+    for name in reversed(names[1:]):
+        sub = mktree_literal(d, [("40000", name, sub)])
+    return sub
+
+
+def valid(d, path="att/HOST.json"):
+    try:
+        rec, why = L.attestation_valid({"path": path, "sha256": SHA}, repo_root=str(d))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}"}
+
+
+def dircheck(d):
+    try:
+        return L._review_dir_is_a_directory(str(d))
+    except Exception as e:
+        return f"EXC {type(e).__name__}: {e}"
+
+
+def fsck(d):
+    r = subprocess.run(["git", "-C", str(d), *L._GIT_ISOLATION, "fsck", "--full", "--strict", "--no-dangling",
+                        "--no-progress"], capture_output=True, env=L._git_env())
+    err = [ln for ln in r.stderr.decode(errors="replace").splitlines() if not ln.startswith("hint:")]
+    return {"rc": r.returncode, "err": err[-3:]}
+
+
+def scan_lists(d):
+    """Commits the pathspec-limited history scan lists (rev-list --full-history HEAD -- <review dir>)."""
+    return len(git(d, "rev-list", "--full-history", "HEAD", "--", RD).split())
+
+
+def checkout_view(d, rev):
+    """Does a checkout of ``rev`` show a vetoing file at a review path (resolving symlinks)? Uses a scratch worktree
+    of the synthetic repository."""
+    wt = Path(d).parent / f"wt_{rev[:8]}"
+    git(d, "worktree", "add", "-q", "--detach", str(wt), rev)
+    try:
+        p = wt / RD
+        files = sorted(x.name for x in p.iterdir()) if p.is_dir() else None
+        vetoes = [n for n in (files or []) if (p / n).is_file() and SHA in (p / n).read_text(errors="replace")]
+        return {"review_dir_files": files, "vetoing": vetoes}
+    finally:
+        git(d, "worktree", "remove", "--force", str(wt))
+
+
+KINDS = {}
+
+
+def kind(name):
+    def deco(fn):
+        KINDS[name] = fn
+        return fn
+    return deco
+
+
+# ---- 1. the bad state only in a ROOT commit (no parent): symlink at level4 -> alt holding a veto
+@kind("root_commit_ancestor_symlink")
+def _(w):
+    d = w / "r"; init(d)
+    rest = "/".join(TOP[1:])
+    c0 = commit(d, {f"alt/{rest}/veto.md": VETO, TOP[0]: ("link", "alt")}, msg="root with symlink")
+    commit(d, {"att/HOST.json": ATT}, rm=[TOP[0], "alt"])
+    commit(d, {f"{ACC}1.md": OK})
+    return {"root_has_parent": git(d, "rev-list", "--max-parents=0", "HEAD") == c0, "scan_lists": scan_lists(d),
+            "checkout_of_root": checkout_view(d, c0), "fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---- 1b. same, but the root is a second (unrelated) root merged in, and the merge drops it
+@kind("unrelated_root_only_symlink")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    rest = "/".join(TOP[1:])
+    git(d, "checkout", "-q", "--orphan", "other")
+    git(d, "rm", "-q", "-r", "--cached", ".")
+    for p in Path(d).iterdir():
+        if p.name != ".git":
+            subprocess.run(["rm", "-rf", str(p)], check=True)
+    c0 = commit(d, {f"alt/{rest}/veto.md": VETO, TOP[0]: ("link", "alt")}, msg="orphan root")
+    git(d, "checkout", "-q", "-f", "main")
+    git(d, "merge", "-q", "-s", "ours", "--allow-unrelated-histories", "-m", "m", "other")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"scan_lists": scan_lists(d), "checkout_of_orphan_root": checkout_view(d, c0), "fsck": fsck(d),
+            "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---- 2. duplicate entries with the SAME mode (both 40000), the bad one first
+@kind("duplicate_same_mode_bad_first")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    att_tree = git(d, "rev-parse", "HEAD:att")
+    link = blob(d, b"alt")
+    bad = mktree_literal(d, [("120000", TOP[1], link)])
+    good = mktree_literal(d, [])
+    root = mktree_literal(d, [("40000", "att", att_tree), ("40000", TOP[0], bad), ("40000", TOP[0], good)])
+    c2 = mkcommit(d, root, [c1])
+    c3 = mkcommit(d, git(d, "rev-parse", f"{c1}^{{tree}}"), [c2], "rm")
+    git(d, "update-ref", "HEAD", c3); git(d, "reset", "-q", "--hard")
+    commit(d, {f"{ACC}1.md": OK})
+    data = subprocess.run(["git", "-C", str(d), "cat-file", "tree", root], capture_output=True).stdout
+    return {"tree_entry_direct": repr(L._tree_entry(data, TOP[0].encode(), 20)), "fsck": fsck(d),
+            "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---- 3. duplicate entries deeper (at the review directory's own name)
+@kind("duplicate_at_review_dir")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    att_tree = git(d, "rev-parse", "HEAD:att")
+    vb = blob(d, VETO)
+    rd_good = mktree_literal(d, [])
+    parent_tree = mktree_literal(d, [("100644", TOP[-1], vb), ("40000", TOP[-1], rd_good)])
+    sub = parent_tree
+    for name in reversed(TOP[1:-1]):
+        sub = mktree_literal(d, [("40000", name, sub)])
+    root = mktree_literal(d, [("40000", "att", att_tree), ("40000", TOP[0], sub)])
+    c2 = mkcommit(d, root, [c1])
+    c3 = mkcommit(d, git(d, "rev-parse", f"{c1}^{{tree}}"), [c2], "rm")
+    git(d, "update-ref", "HEAD", c3); git(d, "reset", "-q", "--hard")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---- 4. duplicates of an unrelated name only (not looked up by the walk)
+@kind("duplicate_unrelated_name")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    att_tree = git(d, "rev-parse", "HEAD:att")
+    b = blob(d, b"x\n")
+    root = mktree_literal(d, [("40000", "att", att_tree), ("100644", "zz", b), ("100644", "zz", b)])
+    c2 = mkcommit(d, root, [c1])
+    git(d, "update-ref", "HEAD", c2); git(d, "reset", "-q", "--hard")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---- 5. legitimate controls: siblings sharing a prefix with an ancestor name; review dir re-created; full clones
+@kind("prefix_sibling_controls")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {f"{TOP[0]}x": ("link", "att"), f"{TOP[0]}.orig": ("link", "att"),
+               f"{TOP[0]}/{TOP[1]}-old": ("link", "../att"), f"{RD}-archive": b"x\n", f"{RD}/keep.md": b"k\n"})
+    commit(d, rm=[RD])
+    commit(d, {f"{RD}/keep.md": b"k2\n"})
+    commit(d, {f"{ACC}1.md": OK})
+    return {"fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+@kind("full_clone_with_merges_controls")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    git(d, "checkout", "-q", "-b", "side")
+    commit(d, {f"{RD}/notes.md": b"n\n"})
+    git(d, "checkout", "-q", "main")
+    commit(d, {"m.txt": b"m\n"})
+    git(d, "merge", "-q", "--no-ff", "-m", "merge", "side")
+    commit(d, {f"{ACC}1.md": OK})
+    out = {"origin": valid(d)}
+    for name, extra in (("clone_local", []), ("clone_no_local", ["--no-local"]), ("clone_bare", ["--bare"]),
+                        ("clone_depth_1", ["--depth", "1"]), ("clone_depth_100", ["--depth", "100"])):
+        c = w / name
+        subprocess.run(["git", *CFG, "clone", "-q", *extra, f"file://{d}", str(c)], check=True, capture_output=True)
+        out[name] = valid(c)
+    out["sha256_merge_origin"] = None
+    d2 = w / "r256"; init(d2, "sha256")
+    commit(d2, {"att/HOST.json": ATT})
+    git(d2, "checkout", "-q", "-b", "side")
+    commit(d2, {f"{RD}/notes.md": b"n\n"})
+    git(d2, "checkout", "-q", "main")
+    commit(d2, {"m.txt": b"m\n"})
+    git(d2, "merge", "-q", "--no-ff", "-m", "merge", "side")
+    commit(d2, {f"{ACC}1.md": OK})
+    out["sha256_merge_origin"] = valid(d2)
+    return out
+
+
+# ---- 6. _tree_entry / _cat_file_batch edges after the T5 change
+@kind("tree_entry_edges")
+def _(w):
+    one = b"\x11" * 20
+    two = b"\x22" * 20
+    cases = {
+        "empty": (b"", b"level4"),
+        "single": (b"40000 level4\0" + one, b"level4"),
+        "dup_same_mode": (b"40000 level4\0" + one + b"40000 level4\0" + two, b"level4"),
+        "dup_then_truncated": (b"40000 level4\0" + one + b"40000 level4\0" + two[:5], b"level4"),
+        "dup_other_name": (b"100644 a\0" + one + b"100644 a\0" + two + b"40000 level4\0" + one, b"level4"),
+        "prefix_names": (b"40000 level\0" + one + b"40000 level4\0" + two + b"40000 level4x\0" + one, b"level4"),
+        "name_with_space": (b"40000 level4 copy\0" + one + b"40000 level4\0" + two, b"level4"),
+        "empty_name_lookup": (b"40000 level4\0" + one, b""),
+        "no_space": (b"40000level4\0" + one, b"level4"),
+        "nul_in_mode": (b"400\x0000 level4\0" + one, b"level4"),
+    }
+    out = {}
+    for k, (data, name) in cases.items():
+        try:
+            out[k] = repr(L._tree_entry(data, name, 20))
+        except Exception as e:
+            out[k] = f"EXC {type(e).__name__}: {e}"
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    for k, names, contents in (("dup_names", ["HEAD^{tree}", "HEAD^{tree}"], True),
+                               ("tag_like", ["HEAD"], False), ("newline_in_name", ["HEAD\nHEAD"], False),
+                               ("very_many", ["HEAD^{tree}"] * 5000, False)):
+        try:
+            r = L._cat_file_batch(str(d), names, contents=contents)
+            out["batch_" + k] = None if r is None else [len(r), r[0][1]]
+        except Exception as e:
+            out["batch_" + k] = f"EXC {type(e).__name__}: {e}"
+    return out
+
+
+for name, fn in KINDS.items():
+    if ONLY and name not in ONLY:
+        continue
+    try:
+        with tempfile.TemporaryDirectory(dir=TMP) as w:
+            results[name] = fn(Path(w))
+    except Exception:
+        results[name] = {"probe_error": traceback.format_exc()[-1500:]}
+    if not ONLY:
+        print(name, json.dumps(results[name].get("result", results[name]))[:400], flush=True)
+Path(OUT).write_text(json.dumps(results, indent=1, sort_keys=True) + "\n")
+if ONLY:
+    print(json.dumps({k: results[k] for k in ONLY}))

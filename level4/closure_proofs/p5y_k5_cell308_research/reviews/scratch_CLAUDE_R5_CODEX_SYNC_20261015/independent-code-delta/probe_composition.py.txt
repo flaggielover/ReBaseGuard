@@ -1,0 +1,71 @@
+"""Fresh independent malformed-input and composition probes; all inputs synthetic."""
+from probe_safety import *
+from contextlib import ExitStack
+import inspect
+import math
+
+ROWS=[]
+def capture(case,fn):
+    try:result=fn();row={'case':case,'result':result}
+    except Exception as exc:row={'case':case,'exception':type(exc).__name__,'message':str(exc)}
+    ROWS.append(row);return row
+BOOT='11111111-2222-3333-4444-555555555555'
+def snap(n,count=2):return {'clocks':{'monotonic_ns':n,'boottime_ns':n,'realtime_ns':n},'suspend_success':count,'boot_id':BOOT,'power':L.AC}
+def launched(inv='fresh'):
+    return {'systemd_pid1':True,'unit':L.CAMPAIGN_UNIT_PREFIX+'synthetic.service','invocation_id':inv,'systemctl':{'MainPID':os.getpid(),'InvocationID':inv},'pass':True}
+with guards():
+    # Read text supplied explicitly: no kernel I/O.
+    for value in ('0','003','²','Ⅷ','１２','١٢','-1','1.0','',b'7',7,True,[],{}):
+        capture('suspend_success_count '+repr(value),lambda value=value:L.suspend_success_count(value))
+    # Canonical-reader fault injection models a readable malformed sysfs counter.
+    for value in ('²',b'7',7,True):
+        with mock.patch.object(L,'_read',return_value=value):
+            capture('suspend_success_count canonical boundary '+repr(value),L.suspend_success_count)
+    for pid1 in (True,False,None):
+        with mock.patch.object(L,'systemd_is_pid1',return_value=pid1), mock.patch.object(L,'_systemctl_is_active',return_value=None), mock.patch.object(L,'_systemctl_is_enabled',return_value='disabled'):
+            capture('unit_enabled missing activity pid1='+repr(pid1),lambda:L.unit_enabled('synthetic.service',unit_roots=()))
+    with tempfile.TemporaryDirectory() as temp:
+        root=Path(temp)
+        for pid1 in (True,False,None):
+            with mock.patch.object(L,'systemd_is_pid1',return_value=pid1), mock.patch.object(L,'_systemctl_is_active',return_value=None), mock.patch.object(L,'_systemctl_is_enabled',return_value='disabled'):
+                capture('auto_update_settings activity unavailable pid1='+repr(pid1),lambda:L.auto_update_settings('APT::Periodic::Enable "0";\n',unit_roots=(),uu_binary=root/'no-uu',snapd_paths=(),cloud_dir=root/'no-cloud',livepatch_dir=root/'no-livepatch',use_live_apt=False))
+    # Fresh parent observation must be exact in the snapshot in question; t0 never substitutes for t1.
+    p=(42,100);c=(43,200);pr=(1,0,'p',None);cr=(42,100,'c',None)
+    with mock.patch.object(L,'proc_view_complete',return_value=True):
+        cases=[('parent present t0 only',{p:pr},{c:cr},{p}),('parent present t1 only',{}, {p:pr,c:cr},{p}),('reused parent',{p:pr},{(42,101):pr,c:cr},{p}),('child start same tick',{}, {p:pr,(43,100):cr},{p}),('negative own counter',{p:(1,-1,'p',None)}, {p:pr},{p}),('owned counter regression',{p:(1,10,'p',None)},{p:pr},{p})]
+        for name,t0,t1,own in cases:capture('busy '+name,lambda t0=t0,t1=t1,own=own:L.busy_processes(t0,t1,10,1,own,hz=100))
+    # Adjacent and endpoint clock changes, boolean counters, default journal refusal.
+    for middle in (snap(10),snap(10,True),snap(10,-1)):
+        capture('assess middle count '+repr(middle['suspend_success']),lambda middle=middle:L.assess(snap(0),snap(30),[middle,snap(20)],[]))
+    with mock.patch.object(L,'JOURNAL_READER_REVIEWED',True):
+        capture('assess reviewed synthetic clean',lambda:L.assess(snap(0),snap(30),[snap(10),snap(20)],[]))
+        capture('assess reordered synthetic',lambda:L.assess(snap(0),snap(30),[snap(20),snap(10)],[]))
+    # Compose real preflight/observer on mocked observation boundaries, never real host.
+    with ExitStack() as st:
+        for name,value in [('power_source',L.AC),('free_disk_bytes',L.MIN_FREE_DISK),('auto_update_settings',{'guest_updates_shown_disabled':True}),('launched_by_systemd',launched()),('attestation_valid',({'root_cgroup_is_real':True,'provider_image_updates':L.NO_IMAGE_CHANGE},[])),('meminfo',{'MemTotal':1000}),('memory_cgroup_chain',{'version':'v1','chain':[{'path':'/','limit':900,'usage':200,'root':True}]}),('_repository_root',OUT/'synthetic-repo'),('ns_inode',L.INIT_CGROUP_NS)]:
+            st.enter_context(mock.patch.object(L,name,return_value=value))
+        real_boot=L.boot_id
+        st.enter_context(mock.patch.object(L,'boot_id',side_effect=lambda text=None:BOOT if text is None else real_boot(text)))
+        for mode in L.MODES:
+            capture('observer mode '+mode,lambda mode=mode:V.observe({'path':'synthetic.json','sha256':'a'*64},mode=mode))
+        for kind,value in [('bool',True),('float',float(L.MIN_FREE_DISK)),('negative',-1),('unknown',None)]:
+            with mock.patch.object(L,'free_disk_bytes',return_value=value):
+                capture('preflight free_disk '+kind,lambda:L.preflight(OUT,mode='execute',other_job_running=None,launched=None,attestation_ref=None))
+        for pid in (None,True,1.0,42):
+            rec=launched();rec['systemctl']['MainPID']=pid
+            with mock.patch.object(L,'launched_by_systemd',return_value=rec):
+                capture('preflight invalid launch MainPID '+repr(pid),lambda:L.preflight(OUT,mode='execute',other_job_running=False,launched=None,attestation_ref=None))
+        for decided in (frozenset(),frozenset({'D-HOST-LIFETIME'}),frozenset(L.OPEN_DECISIONS)):
+            with mock.patch.object(L,'DECIDED',decided):
+                capture('root attestation decisions '+repr(sorted(decided)),lambda:L.root_attestation(None))
+                capture('observer decisions '+repr(sorted(decided)),lambda:V.observe(None))
+    capture('preflight signature',lambda:str(inspect.signature(L.preflight)))
+    capture('busy_processes signature',lambda:str(inspect.signature(L.busy_processes)))
+    capture('observer signature',lambda:str(inspect.signature(V.observe)))
+    # Pin point intentionally never invoked; inspect default and unconditional refusal statically.
+    capture('development defaults',lambda:{'DECIDED':sorted(L.DECIDED),'open_decision_count':len(L.OPEN_DECISIONS),'journal_reader_reviewed':L.JOURNAL_READER_REVIEWED,'pin_modules':L.PIN_POINT_MODULES})
+assert DENIED==[],DENIED
+(OUT/'composition_probes.json').write_text(json.dumps({'results':ROWS,'unexpected_host_access_attempts':DENIED},indent=2,ensure_ascii=True)+'\n')
+for row in ROWS:
+    if 'exception' in row or row['case'].startswith(('unit_enabled','suspend_success_count','busy','development defaults')):print(json.dumps(row,ensure_ascii=True))
+print('cases',len(ROWS),'unexpected_host_attempts',len(DENIED))

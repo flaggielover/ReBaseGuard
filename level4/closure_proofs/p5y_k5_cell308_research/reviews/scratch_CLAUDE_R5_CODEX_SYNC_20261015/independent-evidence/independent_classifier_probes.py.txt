@@ -1,0 +1,68 @@
+"""Independent synthetic-only probes; loads the snapshotted harness, no product imports or suite execution."""
+import ast
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+
+BASE = Path('/tmp/cell308-claude-sync-20261015/independent-evidence')
+PATH = BASE / 'stage1-inputs/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py'
+source = PATH.read_text()
+tree = ast.parse(source)
+assert all(not n.decorator_list for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef)))
+assert not any(isinstance(n, ast.ImportFrom) and n.module and n.module.startswith('lx_') for n in tree.body)
+spec = importlib.util.spec_from_file_location('independent_snapshotted_harness', PATH)
+H = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(H)
+METHOD = 'test_intended_property'
+NAME = METHOD + ' (test_fixture.TestSynthetic.' + METHOD + ')'
+OTHER = 'test_unrelated_property (test_fixture.TestSynthetic.test_unrelated_property)'
+SEP = '=' * 70
+DASH = '-' * 70
+
+def block(name=NAME, exception='AssertionError: intended property failed', trace=True):
+    return SEP + '\nFAIL: ' + name + '\n' + DASH + '\n' + ('Traceback (most recent call last):\n  File "fixture.py", line 1, in ' + METHOD + '\n    assert False\n' if trace else '') + exception + '\n\n'
+
+def tail(ran=2, summary='FAILED (failures=1)'):
+    return DASH + '\nRan ' + str(ran) + ' tests in 0.001s\n\n' + summary + '\n'
+
+def record(stderr, rc=1, stdout='', **kw):
+    return H._suite_record(['python', 'independent synthetic only'], {}, returncode=rc, stdout=stdout, stderr=stderr, elapsed_s=0.001, **kw)
+
+baseline = record(tail(summary='OK'), rc=0)
+cases = [
+ ('valid_intended_assertion', block() + tail(), 1, '', 'KILLED', {}),
+ ('valid_unrelated_assertion', block(OTHER) + tail(), 1, '', 'ERROR', {}),
+ ('error_only_with_assertion_text_in_message', SEP+'\nERROR: '+NAME+'\n'+DASH+'\nTraceback (most recent call last):\n  File "fixture.py", line 1, in f\n    raise RuntimeError()\nRuntimeError: AssertionError: text\n\n'+tail(summary='FAILED (errors=1)'), 1, '', 'ERROR', {}),
+ ('duplicate_failure_count_token', block() + tail(summary='FAILED (failures=1, failures=1)'), 1, '', 'ERROR', {}),
+ ('duplicate_ran_line', block() + tail() + 'Ran 2 tests in 0.001s\n', 1, '', 'ERROR', {}),
+ ('duplicate_summary_line', block() + tail() + 'FAILED (failures=1)\n', 1, '', 'ERROR', {}),
+ ('unknown_count_token', block() + tail(summary='FAILED (failures=1, other=1)'), 1, '', 'ERROR', {}),
+ ('duplicate_identical_failure_blocks', block()+block()+tail(summary='FAILED (failures=2)'), 1, '', 'ERROR', {}),
+ ('run_count_smaller_than_failure_blocks', block()+block(OTHER)+tail(ran=1,summary='FAILED (failures=2)'), 1, '', 'ERROR', {}),
+ ('fake_assertion_after_runtime_error_message', block(exception='RuntimeError: true runtime failure\nAssertionError: quoted message suffix')+tail(), 1, '', 'ERROR', {}),
+ ('fake_assertion_without_traceback', block(exception='AssertionError: quoted text', trace=False)+tail(), 1, '', 'ERROR', {}),
+ ('fake_assertion_in_stdout_only', block(exception='RuntimeError: actual failure')+tail(), 1, 'AssertionError: fake stdout\n', 'ERROR', {}),
+ ('fake_assertion_before_runtime_terminal', block(exception='AssertionError: quoted text\nRuntimeError: actual failure')+tail(), 1, '', 'ERROR', {}),
+ ('missing_exception_with_assertion_in_source', block(exception='    raise AssertionError("source text")')+tail(), 1, '', 'ERROR', {}),
+ ('traceback_marker_only_in_message', block(exception='RuntimeError: message says Traceback (most recent call last):\nAssertionError: fake', trace=False)+tail(), 1, '', 'ERROR', {}),
+ ('extra_error_header_even_with_failure_summary', block()+'ERROR: '+OTHER+'\nRuntimeError: extra\n'+tail(), 1, '', 'ERROR', {}),
+ ('warning_in_stdout', block()+tail(), 1, 'UserWarning: synthetic\n', 'ERROR', {}),
+ ('skip_token_on_failure', block()+tail(summary='FAILED (failures=1, skipped=1)'), 1, '', 'ERROR', {}),
+ ('timeout_with_clean_looking_report', block()+tail(), None, '', 'ERROR', {'timed_out':True}),
+ ('zero_exit_with_failure', block()+tail(), 0, '', 'ERROR', {}),
+ ('negative_exit_with_failure', block()+tail(), -9, '', 'ERROR', {}),
+ ('fully_qualified_assertion_subclass_not_base', block(exception='custom.MyAssertionError: custom')+tail(), 1, '', 'ERROR', {}),
+ ('success_summary_with_failure_count_zero_token', tail(summary='OK (failures=0)'), 0, '', 'ERROR', {}),
+ ('spaces_in_malformed_count', block()+tail(summary='FAILED (failures = 1)'), 1, '', 'ERROR', {}),
+]
+rows=[]
+for label, stderr, rc, stdout, expected, kwargs in cases:
+    rec=record(stderr,rc,stdout,**kwargs)
+    status,reasons=H.classify_mutant(rec,baseline,[METHOD])
+    rows.append({'case':label,'expected':expected,'actual':status,'matches_expectation':status==expected,'reasons':reasons,'suite':rec})
+result={'harness_sha256':hashlib.sha256(PATH.read_bytes()).hexdigest(),'product_imported':False,'suite_or_mutants_executed':False,'probe_count':len(rows),'mismatches':[r['case'] for r in rows if not r['matches_expectation']],'probes':rows}
+(BASE/'independent-classifier-probes.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({k:v for k,v in result.items() if k!='probes'},indent=2))
+for row in rows:
+    print(json.dumps({k:v for k,v in row.items() if k!='suite'}))

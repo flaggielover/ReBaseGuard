@@ -1,0 +1,101 @@
+"""Review 65 probes (b): the reading repository's object store is trusted. Synthetic repositories only.
+(1) a loose COMMIT object rewritten in place (same object id, parent line dropped);
+(2) a loose BLOB object rewritten in place (the deleted rejection's id now inflates to benign text);
+(3) lazy fetch in a partial clone runs a repository-configured upload-pack command during the check.
+usage: python3 -I probes65b.py.txt <dir_with_lx_platform.py> <tmp_root> <out.json>"""
+import hashlib, json, os, subprocess, sys, tempfile, zlib
+from pathlib import Path
+
+BASE, TMP, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+sys.path.insert(0, BASE)
+import lx_platform as L  # noqa: E402
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR
+ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+OK = f"review\n{L.ACCEPTANCE_LINE}{SHA}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+VETO = f"{RD}/veto.md"
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main"]
+results = {}
+
+
+def git(d, *a, check=True):
+    return subprocess.run(["git", "-C", str(d), *CFG, *a], check=check, capture_output=True)
+
+
+def commit(d, files=None, rm=()):
+    for rel, data in (files or {}).items():
+        Path(d, rel).parent.mkdir(parents=True, exist_ok=True)
+        Path(d, rel).write_bytes(data)
+    for rel in rm:
+        git(d, "rm", "-q", rel)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", "c")
+    return git(d, "rev-parse", "HEAD").stdout.decode().strip()
+
+
+def bad_repo(d):
+    Path(d).mkdir(parents=True)
+    git(d, "init", "-q")
+    git(d, "config", "gc.auto", "0")
+    c1 = commit(d, {"att/HOST.json": ATT})
+    c2 = commit(d, {VETO: f"{SHA} REJECTED\n".encode()})
+    c3 = commit(d, rm=[VETO])
+    c4 = commit(d, {f"{ACC}1.md": OK})
+    return [c1, c2, c3, c4]
+
+
+def valid(d):
+    rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": SHA}, repo_root=str(d))
+    return {"valid": rec is not None, "reasons": why}
+
+
+def overwrite_loose(d, oid, kind, body):
+    p = Path(d, ".git", "objects", oid[:2], oid[2:])
+    assert p.exists()
+    p.chmod(0o644)
+    p.write_bytes(zlib.compress(f"{kind} {len(body)}\0".encode() + body))
+
+
+with tempfile.TemporaryDirectory(dir=TMP) as t:
+    d = Path(t, "commit")
+    c = bad_repo(d)
+    results["commit_before"] = valid(d)
+    body = git(d, "cat-file", "commit", c[2]).stdout
+    lines = [ln for ln in body.split(b"\n") if not ln.startswith(b"parent ")]
+    overwrite_loose(d, c[2], "commit", b"\n".join(lines))
+    results["commit_object_parent_dropped"] = valid(d)
+    results["commit_head_id_unchanged"] = git(d, "rev-parse", "HEAD").stdout.decode().strip() == c[3]
+    results["commit_is_shallow"] = git(d, "rev-parse", "--is-shallow-repository").stdout.decode().strip()
+    results["commit_fsck_rc"] = git(d, "fsck", "--full", check=False).returncode
+    saved = L._GIT_ISOLATION
+    L._GIT_ISOLATION = saved + ("-c", "core.commitGraph=false")
+    results["commit_object_parent_dropped_with_commitGraph_off"] = valid(d)
+    L._GIT_ISOLATION = saved
+
+    d = Path(t, "blob")
+    c = bad_repo(d)
+    oid = git(d, "rev-parse", f"{c[1]}:{VETO}").stdout.decode().strip()
+    overwrite_loose(d, oid, "blob", b"draft notes\n")
+    results["blob_object_rewritten"] = valid(d)
+    results["blob_fsck_rc"] = git(d, "fsck", "--full", check=False).returncode
+
+    src, dst, marker = Path(t, "src"), Path(t, "dst"), Path(t, "marker")
+    bad_repo(src)
+    git(src, "config", "uploadpack.allowFilter", "true")
+    git(t, "clone", "-q", "--no-local", "--filter=blob:none", src.as_uri(), str(dst))
+    script = Path(t, "up.sh")
+    script.write_text(f"#!/bin/sh\necho ran >> {marker}\nexec git-upload-pack \"$@\"\n")
+    script.chmod(0o755)
+    git(dst, "config", "remote.origin.uploadpack", str(script))
+    results["lazy_fetch"] = valid(dst)
+    results["lazy_fetch_ran_configured_command"] = marker.exists()
+
+Path(OUT).write_text(json.dumps(results, indent=1, sort_keys=True))
+print(json.dumps({k: (v.get("valid"), v.get("reasons")) if isinstance(v, dict) else v for k, v in results.items()},
+                 indent=1))

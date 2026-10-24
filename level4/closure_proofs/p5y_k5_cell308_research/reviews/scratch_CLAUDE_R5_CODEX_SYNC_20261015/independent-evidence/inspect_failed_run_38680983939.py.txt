@@ -1,0 +1,57 @@
+"""Read-only coherence and rejection attribution for the immutable failed native run."""
+import collections,hashlib,json,re
+from pathlib import Path
+BASE=Path('/tmp/cell308-claude-sync-20261015/independent-evidence');FOLDER=Path('/tmp/cell308-claude-sync-20261015/native-38680983939')
+RAW=(FOLDER/'mutations.json').read_bytes();REC=json.loads(RAW);AUDIT=json.loads((BASE/'stage2-failed-run-38680983939-structural-audit.json').read_text())
+OUT=BASE/'stage2-failed-run-38680983939';OUT.mkdir(parents=True,exist_ok=True)
+BASE_IDS=REC['baseline']['controlled_runner_metadata']['executed_test_ids'];SOURCE_ROOT=BASE/'stage2-source-commit/inputs'
+roots={
+'M24':('fixture indexing','IndexError on born[0] after weakened birth detection returns an empty list.','tests/test_sync_boundaries.py',188,'Add explicit cardinality/schema assertion before indexing; preserve born-in-window property.'),
+'N04':('fixture implicit repository assumption','Malformed-reference loop calls attestation_valid(ref) without repo_root. Mutant bypasses early exact-schema refusal and resolves repository from shallow temporary mutant module; parents[5] raises IndexError.','tests/test_lx_platform.py',1057,'Bind malformed reference probes to an explicit synthetic repository, preserving direct exact-schema assertions.'),
+'N06':('synthetic repository cleanup error; specific cause unproven','OSError errno39 Directory not empty: .git during TemporaryDirectory cleanup in unrelated commit-order fixture. Intended proc-view assertion also fails. Raw evidence does not identify a background child or establish mutation causality.','tests/test_lx_platform.py',1028,'Review deterministic synthetic Git fixture lifecycle; do not count this run as a kill or infer a specific child from the trace.'),
+'N08':('fixture indexing','IndexError on exited[0] after weakened exited-process reporting returns an empty list.','tests/test_sync_boundaries.py',191,'Add explicit cardinality/schema assertion before indexing; preserve exited-in-window property.'),
+'P04':('genuine duplicate fixture subtest identity','Two different review-content cases use the identical reviews=list(reviews) label and thus identical full failing subtest IDs/descriptions. Both are real AssertionError events, but strict duplicate identity rejection is correct.','tests/test_lx_verified.py',273,'Include a stable case index or content-case label in the fixture subTest; retain duplicate rejection.'),
+'Q07':('fixture subtest continuation','subTest suppresses an earlier unit-state AssertionError before result is assigned; an assertion after the context references unbound result.','tests/test_sync_boundaries.py',481,'Keep dependent observation/composition assertions in the same subTest scope or otherwise avoid dependent use after an interrupted case.'),
+'CDEX16':('fixture subtest continuation','Same unbound result path as Q07 after an intended unit-state assertion fails within subTest.','tests/test_sync_boundaries.py',481,'Keep dependent observation/composition assertions in the same subTest scope or otherwise avoid dependent use after an interrupted case.')}
+checks=[];errors=[];raw_rejections=[];own_witnesses=[]
+for row in REC['mutants']:
+ mid=row['id'];s=row['suite'];md=s['controlled_runner_metadata'];events=md['events'];failed=[e for e in events if e['kind']=='failure'];errored=[e for e in events if e['kind']=='error'];issues=[]
+ fail_names=re.findall(r'^FAIL: (.+)$',s['stderr'],re.M);error_names=re.findall(r'^ERROR: (.+)$',s['stderr'],re.M)
+ progress_raw=re.findall(r'^(test_[A-Za-z0-9_]+ \([A-Za-z0-9_.]+\))(?= \.\.\.|$)',s['stderr'],re.M)
+ progress=[name for i,name in enumerate(progress_raw) if i==0 or name!=progress_raw[i-1]]
+ baseline_names=AUDIT['suite_audits'][0]['test_names']
+ coherent={
+ 'ran_full_static_count':s['ran']==md['ran']==191,
+ 'executed_IDs_exact_baseline_order':md['executed_test_ids']==BASE_IDS and len(set(md['executed_test_ids']))==191,
+ 'verbose_progress_after_adjacent_parent_status_repeats':progress==baseline_names,
+ 'failure_names_raw_and_metadata':[e['description'] for e in failed]==fail_names==s['failure_names'],
+ 'error_names_raw_and_metadata':[e['description'] for e in errored]==error_names==s['error_names'],
+ 'outcome_counts':len(failed)==s['failures'] and len(errored)==s['errors'],
+ 'all_failure_events_exact_AssertionError':all(e['exception_type']=='builtins.AssertionError' and e['is_exact_assertion_error'] is True for e in failed),
+ 'zero_skips_expected_unexpected':s['skipped']==md['skipped']==md['expected_failures']==md['unexpected_successes']==0,
+ 'no_timeout_launch_warning':not s['timed_out'] and not s['launch_error'] and not re.search(r'\b[A-Za-z_]*Warning\b',s['stdout']+'\n'+s['stderr']) and 'Exception ignored in:' not in s['stdout']+'\n'+s['stderr'],
+ 'exit_and_summary':s['returncode']==1 and md['successful'] is False and s['summary']=='FAILED ('+', '.join(f'{key}={value}' for key,value in [('failures',s['failures']),('errors',s['errors'])] if value)+')',
+ 'source_transform_binding':all(value for key,value in next(m for m in AUDIT['mutation_audits'] if m['id']==mid)['checks'].items() if key!='status')}
+ duplicates=collections.Counter(e['test_id'] for e in failed);duplicate_desc=collections.Counter(e['description'] for e in failed)
+ expected_reasons=[]
+ if errored:expected_reasons.append('UNITTEST_ERRORS')
+ if any(n>1 for n in duplicates.values()):expected_reasons.append('DUPLICATE_FAILURE_TEST_ID')
+ if any(n>1 for n in duplicate_desc.values()):expected_reasons.append('DUPLICATE_FAILURE_DESCRIPTION')
+ expected_status='ERROR' if expected_reasons else 'KILLED'
+ coherent['classifier_rejection_matches_actual_outcomes']=row['status']==expected_status and row['reasons']==expected_reasons
+ intended=next(m for m in AUDIT['mutation_audits'] if m['id']==mid)['direct_intended_assertions']
+ coherent['intended_direct_assertion_exists']=bool(intended)
+ check={'id':mid,'status':row['status'],'property':row['property'],'coherence':coherent,'coherent':all(coherent.values()),'progress_parent_status_repeats':len(progress_raw)-len(progress),'intended_direct_assertions':intended}
+ checks.append(check)
+ if mid in roots:
+  category,detail,shortpath,line,repair=roots[mid]
+  trace_blocks=re.findall(r'^(FAIL|ERROR): ([^\n]+)\n(.*?)(?=^={10,}$|^-{10,}\nRan |\Z)',s['stderr'],re.M|re.S)
+  raw_rejections.append({'id':mid,'status':row['status'],'reasons':row['reasons'],'summary':s['summary'],'events':events,'error_blocks':[{'kind':kind,'name':name,'trace':trace} for kind,name,trace in trace_blocks if kind=='ERROR' or mid=='P04'],'duplicate_failure_ids':{k:n for k,n in duplicates.items() if n>1},'source_assertion_credit':False})
+  errors.append({'id':mid,'status':'ERROR','kill_credit':False,'summary':s['summary'],'reasons':row['reasons'],'category':category,'root_attribution':detail,'source_path':shortpath,'source_line':line,'source_line_text':(SOURCE_ROOT/'level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV'/shortpath).read_text().splitlines()[line-1],'bounded_repair_direction':repair,'actual_error_types':[e['exception_type'] for e in errored],'intended_assertion_present_but_not_credited':bool(intended)})
+ if row['status']=='KILLED' and mid.startswith(('P','Z','Q','CDEX','R5SYNC')):
+  own_witnesses.append({'id':mid,'property':row['property'],'semantic_assessment':'Direct intended-property assertion matches weakened property in exact frozen source; no kill credit assigned to rejected rows.','direct_assertions':intended})
+metadata_root=Path('/tmp/cell308-claude-sync-20261015/run-38680983939-metadata');metadata={name:hashlib.sha256((metadata_root/name).read_bytes()).hexdigest() for name in ('run.json','jobs.json','artifacts.json','download-verification.json')}
+manifest=json.loads((FOLDER/'artifact-sha256.json').read_text());after={name:hashlib.sha256((FOLDER/name).read_bytes()).hexdigest() for name in sorted(AUDIT['artifact_bindings'])};artifact_unchanged=after==manifest
+report={'status':'NATIVE_FULL_RUN_FAILED; 126_KILLED_7_ERROR; NO_FULL_PASS','source_commit':REC['source_commit'],'run_id':38680983939,'run_attempt':1,'artifact_id':11948636749,'artifact_zip_digest_reported_by_GitHub':'bbed6afeb266779155054632736eefe5bfd2596c301f2a729b616eb976bbb4e1','mutations_json_sha256':hashlib.sha256(RAW).hexdigest(),'artifact_manifest_sha256':AUDIT['artifact_manifest_sha256'],'metadata_file_sha256':metadata,'source_inputs_exact_commit_bound':all(x['matches'] for x in AUDIT['source_bindings'].values()),'artifact_manifest_entries':len(manifest),'artifact_hashes_all_match_and_unchanged':artifact_unchanged,'baseline_191_pass':REC['baseline']['ran']==191 and REC['baseline']['summary']=='OK' and REC['baseline']['returncode']==0 and not REC['baseline']['invalid_reasons'],'full_suites':134,'full_suite_test_method_count':191,'top_level_method_executions':134*191,'registry_mutants':133,'reported_status_counts':REC['status_counts'],'all_133_coherence_checks_pass':all(c['coherent'] for c in checks),'errors_get_no_kill_credit':errors,'all_133_checks':checks,'limitations':['All-pass-gate auditor output is retained verbatim and correctly fails this native run; its verbose-progress duplicate flags include legitimate repeated parent status displays after subtest failure, resolved here using exact authoritative executed IDs and adjacent display normalization.','Structured sidecar type identity is authoritative under the exact trusted runner; arbitrary multiline exception messages are not authenticated by terminal text heuristics.','N06 trace establishes cleanup OSError on .git, but does not prove which child or background maintenance process caused it.','Auditor executes no product/tests/evaluator. Native synthetic suite includes empty/None/stdlib-only proposed pin_point helper fixtures; no scientific or operational pin point/evaluator acceptance is claimed.','No host, governance, production, or route acceptance conclusion.']}
+(OUT/'bounded-failed-run-report.json').write_text(json.dumps(report,indent=2)+'\n');(OUT/'seven-rejections-raw.json').write_text(json.dumps(raw_rejections,indent=2)+'\n');(OUT/'own-56-semantic-witness-review.json').write_text(json.dumps(own_witnesses,indent=2)+'\n')
+print(json.dumps({k:v for k,v in report.items() if k not in ('all_133_checks','errors_get_no_kill_credit','limitations','metadata_file_sha256')},indent=2));print('own_semantic_rows',len(own_witnesses));print('coherence_issues',[(r['id'],[k for k,v in r['coherence'].items() if not v]) for r in checks if not r['coherent']])

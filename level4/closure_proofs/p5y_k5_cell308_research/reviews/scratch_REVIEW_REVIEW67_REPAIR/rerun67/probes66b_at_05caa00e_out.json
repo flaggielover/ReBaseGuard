@@ -1,0 +1,57 @@
+{
+ "control": "",
+ "fsmonitor_rewrites_object_during_fsck": {
+  "before": {
+   "reasons": [
+    "rejected by HISTORICAL: level4/closure_proofs/p5y_k5_cell308_research/reviews/veto.md (blob 824fe50582b4)"
+   ],
+   "valid": false
+  },
+  "check_with_hook": {
+   "reasons": [
+    "rejected by HISTORICAL: level4/closure_proofs/p5y_k5_cell308_research/reviews/veto.md (blob 824fe50582b4)"
+   ],
+   "valid": false
+  },
+  "fsck_after_check_without_hook": {
+   "err_tail": "rt-graft-file\"\nhint: to convert the grafts into replace refs.\nhint: \nhint: Turn this message off by running\nhint: \"git config advice.graftFileDeprecated false\"\n",
+   "rc": 0
+  },
+  "fsck_with_hook": {
+   "err_tail": "rt-graft-file\"\nhint: to convert the grafts into replace refs.\nhint: \nhint: Turn this message off by running\nhint: \"git config advice.graftFileDeprecated false\"\n",
+   "rc": 0
+  },
+  "honest_object_restored_fsck_without_hook": {
+   "err_tail": "rt-graft-file\"\nhint: to convert the grafts into replace refs.\nhint: \nhint: Turn this message off by running\nhint: \"git config advice.graftFileDeprecated false\"\n",
+   "rc": 0
+  },
+  "hook_ran": 0
+ },
+ "isolation": [
+  "--no-replace-objects",
+  "-c",
+  "log.showRoot=true",
+  "-c",
+  "core.commitGraph=false",
+  "-c",
+  "core.fsmonitor=false",
+  "-c",
+  "log.showSignature=false",
+  "-c",
+  "core.attributesFile=/dev/null"
+ ],
+ "lx_platform_sha256": "fbcf9ef595365fb17f7f092a50d5c5df8e0b10b3fba8c1779ddc8a856ebd6284",
+ "skiplist_in_include_rewritten_blob": {
+  "fsck": {
+   "err_tail": "raftFileDeprecated false\"\nerror: f3d43775e65ac68c0589a8961c9e665ee8436944: hash-path mismatch, found at: .git/objects/82/4fe50582b448565cca5d249ef20a83e929aafb\n",
+   "rc": 3
+  },
+  "result": {
+   "reasons": [
+    "rejected by UNAVAILABLE: history completeness not established (shallow clone or unreadable)",
+    "no acceptance review in the fixed set whose accepting line post-dates the attested blob"
+   ],
+   "valid": false
+  }
+ }
+}

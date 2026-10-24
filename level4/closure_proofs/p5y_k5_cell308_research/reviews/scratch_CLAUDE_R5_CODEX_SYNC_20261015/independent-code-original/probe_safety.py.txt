@@ -1,0 +1,70 @@
+"""Independent controlled runner: immutable inputs, synthetic Git only, real host reads denied."""
+import ast
+import importlib.util
+import io
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest import mock
+
+OUT = Path(__file__).resolve().parent
+SOURCE = Path('/tmp/cell308-claude-sync-20261015/code-review-input').resolve()
+TMP = OUT / 'synthetic-tmp'
+TMP.mkdir(exist_ok=True)
+tempfile.tempdir = str(TMP)
+sys.dont_write_bytecode = True
+os.environ['LX_PLATFORM_DIR'] = str(SOURCE)
+os.environ['GIT_CONFIG_NOSYSTEM'] = '1'
+os.environ['GIT_CONFIG_GLOBAL'] = '/dev/null'
+os.environ['GIT_TERMINAL_PROMPT'] = '0'
+sys.path.insert(0,str(SOURCE))
+# Top level reviewed from AST before this runner was written; reparse before import.
+for rel in ('lx_platform.py','lx_verified.py','tests/test_sync_boundaries.py','tests/test_lx_verified.py'):
+    ast.parse((SOURCE/rel).read_bytes(), filename=str(SOURCE/rel))
+DENIED = []
+P = ('/proc', '/sys', '/etc/machine-id', '/etc/os-release', '/run/systemd')
+def forbidden(path):
+    try:
+        p = os.fsdecode(path)
+    except (TypeError, ValueError):
+        return False
+    return any(p == x or p.startswith(x+'/') for x in P)
+def deny_host(event, args):
+    if event in ('open','os.listdir','os.scandir') and args and forbidden(args[0]):
+        DENIED.append((event,repr(args[0])))
+        raise AssertionError('real host filesystem access forbidden: '+repr(args[0]))
+    if event == 'subprocess.Popen':
+        argv = args[1]
+        if not isinstance(argv,(tuple,list)) or len(argv)<3 or argv[0]!='git' or argv[1]!='-C':
+            DENIED.append((event,repr(argv)))
+            raise AssertionError('only synthetic Git subprocesses permitted')
+        path = Path(argv[2]).resolve()
+        if TMP.resolve() not in path.parents:
+            DENIED.append((event,repr(argv)))
+            raise AssertionError('Git escaped controlled synthetic temporary directory')
+sys.addaudithook(deny_host)
+import lx_platform as L
+import lx_verified as V
+assert Path(L.__file__).resolve() == SOURCE/'lx_platform.py'
+assert Path(V.__file__).resolve() == SOURCE/'lx_verified.py'
+def deny_reader(*args, **kw):
+    raise AssertionError('unexpected real host reader')
+real_stat,real_readlink = os.stat,os.readlink
+def guarded_stat(path,*a,**kw):
+    if forbidden(path):
+        DENIED.append(('os.stat',repr(path)));raise AssertionError('real host stat forbidden')
+    return real_stat(path,*a,**kw)
+def guarded_readlink(path,*a,**kw):
+    if forbidden(path):
+        DENIED.append(('os.readlink',repr(path)));raise AssertionError('real host readlink forbidden')
+    return real_readlink(path,*a,**kw)
+
+from contextlib import contextmanager
+@contextmanager
+def guards():
+    with mock.patch.object(L,"_read",side_effect=deny_reader), mock.patch.object(L,"ns_inode",side_effect=deny_reader), mock.patch.object(L,"_pid_exists",side_effect=deny_reader), mock.patch.object(os,"stat",side_effect=guarded_stat), mock.patch.object(os,"readlink",side_effect=guarded_readlink):
+        yield

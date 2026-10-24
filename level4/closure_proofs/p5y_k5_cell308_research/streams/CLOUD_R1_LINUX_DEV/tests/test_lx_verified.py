@@ -1,0 +1,386 @@
+"""Synthetic DEV observer tests: canonical verification, no host or science reads.
+
+Temporary Git repositories supply committed fixture evidence with acceptance in
+the fixed review set and strictly later commits. All host readers are mocked;
+unexpected /proc reads, systemctl commands and pin-point calls fail the test.
+LX_PLATFORM_DIR selects the low-level module under the mutation harness.
+"""
+from __future__ import annotations
+
+import ast
+import hashlib
+import inspect
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import unittest
+from contextlib import ExitStack
+from pathlib import Path
+from unittest import mock
+
+HERE = Path(__file__).resolve().parent
+LXDIR = os.environ.get("LX_PLATFORM_DIR", str(HERE.parent))
+sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, LXDIR)
+import lx_platform as L  # noqa: E402
+import lx_verified as V  # noqa: E402
+
+BOOT = "0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0"
+MACHINE = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+DEFAULT_DECIDED = L.DECIDED
+DEFAULT_PIN_MODULES = L.PIN_POINT_MODULES
+DEFAULT_JOURNAL_REVIEWED = L.JOURNAL_READER_REVIEWED
+
+
+class TestVerifiedObservation(unittest.TestCase):
+    def setUp(self):
+        self.stack = ExitStack()
+        self.addCleanup(self.stack.close)
+        self.repo = Path(self.stack.enter_context(tempfile.TemporaryDirectory()))
+        self.git("init", "-q")
+        self.stack.enter_context(mock.patch.object(L, "_repository_root", return_value=self.repo))
+        self.stack.enter_context(mock.patch.object(L, "DECIDED", frozenset()))
+        self.machine = self.stack.enter_context(mock.patch.object(L, "machine_identity", return_value=MACHINE))
+        # Fixtures replace observation boundaries; verifier, root and gates stay real.
+        self.stack.enter_context(mock.patch.object(L, "meminfo", return_value={"MemTotal": 1000, "MemFree": 100}))
+        self.stack.enter_context(mock.patch.object(L, "memory_cgroup_chain", return_value={
+            "version": "v1", "chain": [
+                {"path": "/job", "limit": 700, "usage": 200, "root": False},
+                {"path": "/", "limit": 900, "usage": 400, "root": True},
+            ]}))
+        self.ns = self.stack.enter_context(mock.patch.object(L, "ns_inode", return_value=L.INIT_CGROUP_NS))
+        self.stack.enter_context(mock.patch.object(L, "power_source", return_value=L.AC))
+        self.stack.enter_context(mock.patch.object(L, "free_disk_bytes", return_value=L.MIN_FREE_DISK))
+        self.stack.enter_context(mock.patch.object(L, "boot_id", side_effect=lambda text=None: text or BOOT))
+        self.stack.enter_context(mock.patch.object(L, "auto_update_settings", return_value={
+            "guest_updates_shown_disabled": True}))
+        self.launch = self.stack.enter_context(mock.patch.object(L, "launched_by_systemd", return_value=self.launch_record()))
+        self.denied = {}
+        for name in ("_read", "_pid_exists", "proc_stat", "cmdline_sha256", "proc_view_complete", "cpu_ticks",
+                     "cgroup_resources", "platform_readings", "pin_point", "clocks", "snapshot"):
+            self.denied[name] = self.stack.enter_context(mock.patch.object(
+                L, name, side_effect=AssertionError(f"unexpected host or science reader: {name}")))
+        run = subprocess.run
+
+        def git_only(args, *a, **kw):
+            self.assertIsInstance(args, list)
+            self.assertEqual(args[0], "git", "only synthetic Git commands may run")
+            self.assertEqual(args[1:3], ["-C", str(self.repo)], "Git must stay inside the synthetic repository")
+            return run(args, *a, **kw)
+
+        self.stack.enter_context(mock.patch.object(subprocess, "run", side_effect=git_only))
+
+    def git(self, *args):
+        return subprocess.run([
+            "git", "-C", str(self.repo), "-c", "commit.gpgSign=false",
+            "-c", "core.hooksPath=/dev/null", "-c", "core.fsmonitor=false",
+            "-c", "user.name=Synthetic dev fixture", "-c", "user.email=fixture@example.invalid", *args,
+        ], check=True, capture_output=True, text=True).stdout
+
+    @staticmethod
+    def launch_record(inv="synthetic-invocation"):
+        return {"systemd_pid1": True, "unit": L.CAMPAIGN_UNIT_PREFIX + "synthetic.service",
+                "invocation_id": inv, "systemctl": {"MainPID": os.getpid(), "InvocationID": inv}, "pass": True}
+
+    @staticmethod
+    def acceptance(sha):
+        return f"{L.ACCEPTANCE_LINE}{sha}\n{L.ACCEPTANCE_VERDICT_LINE}\n"
+
+    def write(self, rel, data):
+        path = self.repo / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data if isinstance(data, bytes) else data.encode())
+
+    def commit(self):
+        self.git("add", "-A")
+        self.git("commit", "-q", "--allow-empty", "-m", "Synthetic infrastructure fixture")
+
+    def fixture(self, *, commit=True, commit_review=True, reviews=None, same_commit=False, raw=None,
+                path="fixtures/host.json", **changes):
+        record = {"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True,
+                  "machine": MACHINE, "root_cgroup_is_real": True, "provider_image_updates": L.NO_IMAGE_CHANGE}
+        record.update(changes)
+        data = raw if raw is not None else (json.dumps(record, sort_keys=True) + "\n").encode()
+        sha = hashlib.sha256(data).hexdigest()
+        self.write(path, data)
+        if commit and not same_commit:
+            self.commit()
+        if reviews is None:
+            reviews = {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}SYNTHETIC.md": self.acceptance(sha)}
+        for rel, review in reviews.items():
+            self.write(rel, review.replace("<SHA>", sha))
+        if commit and (same_commit or (reviews and commit_review)):
+            self.commit()
+        return {"path": path, "sha256": sha}
+
+    def assert_withheld(self, result):
+        self.assertIs(result["development_only"], True)
+        self.assertIs(result["operational_ready"], False)
+        self.assertEqual(result["raw_memory"]["classification"], "RAW_LINUX_READINGS")
+        readings = result["raw_memory"]["readings"]
+        self.assertNotIn("effective_limit", readings)
+        self.assertNotIn("cgroup_min_headroom", readings)
+        self.assertEqual(result["raw_memory"]["withheld_quantities"], ["effective_limit", "cgroup_min_headroom"])
+        self.assertEqual(result["conditions"], {
+            "A1": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+            "A2": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+            "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT",
+        })
+
+    def assert_no_root(self, ref):
+        result = V.observe(ref)
+        self.assertIs(result["attestation"]["root_cgroup_is_real"], False)
+        self.assertIs(result["raw_memory"]["readings"]["root_attested"], False)
+        self.assert_withheld(result)
+        return result
+
+    def assert_unverified(self, ref):
+        result = self.assert_no_root(ref)
+        self.assertIs(result["attestation"]["verified"], False)
+        self.assertIs(result["attestation"]["record_root_cgroup_is_real"], False)
+        self.assertTrue(result["attestation"]["reasons"])
+        return result
+
+    def test_verified_committed_record_does_not_grant_root_contract(self):
+        ref = self.fixture()
+        with mock.patch.object(L, "memory_readings", wraps=L.memory_readings) as memory:
+            result = self.assert_no_root(ref)
+        self.assertIs(result["attestation"]["verified"], True)
+        self.assertIs(result["attestation"]["record_root_cgroup_is_real"], True)
+        self.assertEqual(result["attestation"]["reasons"], [])
+        memory.assert_called_once_with(attestation_ref=ref)
+        self.assertIn("D-HOST-LIFETIME open", result["raw_memory"]["readings"]["root_attestation_reasons"])
+        self.assertEqual(result["raw_memory"]["readings"]["visible_limit_upper_bound"], 700)
+
+    def test_canonical_verifier_binds_repository_and_current_machine_internally(self):
+        ref = self.fixture()
+        with mock.patch.object(L, "attestation_valid", wraps=L.attestation_valid) as verifier:
+            result = V.observe(ref)
+        self.assertIs(result["attestation"]["verified"], True)
+        self.assertEqual(verifier.call_args_list, [mock.call(ref, repo_root=self.repo), mock.call(ref)])
+        self.assertEqual(self.machine.call_args_list, [mock.call(), mock.call()])
+
+    def test_non_initial_namespace_cannot_grant_root_contract(self):
+        ref = self.fixture()
+        for inode in (None, 77):
+            with self.subTest(inode=inode):
+                self.ns.return_value = inode
+                result = self.assert_no_root(ref)
+                self.assertIs(result["attestation"]["verified"], True)
+                self.assertIs(result["raw_memory"]["readings"]["cgroup_ns_initial"], False)
+
+    def test_missing_reference_is_unverified(self):
+        self.assert_unverified(None)
+
+    def test_malformed_or_extra_reference_fields_are_unverified(self):
+        valid = self.fixture()
+        for ref in ({}, [], "caller facts", {"path": valid["path"], "sha256": "invalid"},
+                    dict(valid, root_cgroup_is_real=True), dict(valid, reviewed=True, accepted=True)):
+            with self.subTest(ref=ref):
+                self.assert_unverified(ref)
+
+    def test_uncommitted_record_is_unverified(self):
+        self.assert_unverified(self.fixture(commit=False))
+
+    def test_uncommitted_review_is_unverified(self):
+        self.assert_unverified(self.fixture(commit_review=False))
+
+    def test_missing_committed_blob_is_refused_before_hash_or_json(self):
+        ref = dict(self.fixture(), path="fixtures/missing.json")
+        with mock.patch.object(L, "_sha", side_effect=AssertionError("absent blob must not be hashed")), \
+                mock.patch.object(L.json, "loads", side_effect=AssertionError("absent blob must not be parsed")):
+            self.assert_unverified(ref)
+
+    def test_invalid_reference_paths_are_refused_without_exceptions(self):
+        valid = self.fixture()
+        for path in ("\x00", "\ud800"):
+            with self.subTest(path=repr(path)):
+                try:
+                    self.assert_unverified(dict(valid, path=path))
+                except (ValueError, UnicodeError) as escaped:
+                    self.fail(f"Malformed reference must be refused without leaking {type(escaped).__name__}")
+
+    def test_utf8_committed_path_is_supported(self):
+        result = V.observe(self.fixture(path="fixtures/hôte.json"))
+        self.assertIs(result["attestation"]["verified"], True)
+        self.assert_withheld(result)
+
+    def test_non_json_committed_record_is_unverified(self):
+        self.assert_unverified(self.fixture(raw=b"not-json\n"))
+
+    def test_unreviewed_record_is_unverified(self):
+        self.assert_unverified(self.fixture(reviewed=False))
+
+    def test_unaccepted_record_is_unverified(self):
+        self.assert_unverified(self.fixture(accepted=False))
+
+    def test_wrong_digest_is_unverified(self):
+        self.assert_unverified(dict(self.fixture(), sha256="0" * 64))
+
+    def test_other_valid_committed_blob_cannot_satisfy_requested_digest(self):
+        ref = self.fixture()
+        other = self.fixture(path="fixtures/other.json", root_cgroup_is_real=False)
+        self.assert_unverified(dict(other, sha256=ref["sha256"]))
+
+    def test_wrong_current_host_is_unverified(self):
+        self.assert_unverified(self.fixture(machine=dict(MACHINE, product_uuid_sha256="c" * 64)))
+
+    def test_machine_id_without_hardware_binding_is_unverified(self):
+        soft = dict(MACHINE, hardware_bound=False)
+        self.machine.return_value = soft
+        self.assert_unverified(self.fixture(machine=soft))
+
+    def test_verified_non_boolean_root_claims_never_grant_contract(self):
+        for value in (False, None, 1, "True", [], {"asserted": True}):
+            with self.subTest(value=value):
+                result = self.assert_no_root(self.fixture(root_cgroup_is_real=value))
+                self.assertIs(result["attestation"]["verified"], True)
+                self.assertIs(result["attestation"]["record_root_cgroup_is_real"], False)
+
+    def test_missing_record_root_claim_never_grants_contract(self):
+        data = {"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": MACHINE}
+        result = self.assert_no_root(self.fixture(raw=json.dumps(data).encode()))
+        self.assertIs(result["attestation"]["verified"], True)
+        self.assertIs(result["attestation"]["record_root_cgroup_is_real"], False)
+
+    def test_named_json_acceptance_record_is_ignored(self):
+        # G1: a path in JSON cannot extend the fixed accepting-review set.
+        text = self.acceptance("<SHA>")
+        ref = self.fixture(acceptance_record="fixtures/caller-review.md", reviews={"fixtures/caller-review.md": text})
+        self.assert_unverified(ref)
+
+    def test_malformed_legacy_json_acceptance_path_has_no_authority(self):
+        for path in ("\x00", "\ud800"):
+            with self.subTest(path=repr(path)):
+                # The fixed, canonical review accepts; no JSON path is read.
+                result = V.observe(self.fixture(acceptance_record=path))
+                self.assertIs(result["attestation"]["verified"], True)
+                self.assert_withheld(result)
+
+    def test_fixed_review_set_requires_direct_named_md_and_exact_verdict(self):
+        text = self.acceptance("<SHA>")
+        cases = (
+            {"notes/review.md": text},
+            {f"{L.ACCEPTANCE_REVIEW_DIR}/OTHER.md": text},
+            {f"{L.ACCEPTANCE_REVIEW_DIR}/scratch/{L.ACCEPTANCE_REVIEW_PREFIX}SYNTHETIC.md": text},
+            {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}SYNTHETIC.txt": text},
+            {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}SYNTHETIC.md": f"{L.ACCEPTANCE_LINE}<SHA>\n"},
+            {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}SYNTHETIC.md": text + "Verdict: extra\n"},
+        )
+        for case_index, reviews in enumerate(cases):
+            with self.subTest(case_index=case_index, reviews=list(reviews)):
+                # Remove prior reviews inside this synthetic repository only.
+                for old in (self.repo / L.ACCEPTANCE_REVIEW_DIR).rglob("*"):
+                    if old.is_file():
+                        old.unlink()
+                self.assert_unverified(self.fixture(reviews=reviews))
+
+    def test_acceptance_in_same_commit_as_blob_is_unverified(self):
+        self.assert_unverified(self.fixture(same_commit=True))
+
+    def test_acceptance_moved_from_same_commit_cannot_become_later_evidence(self):
+        ref = self.fixture(same_commit=True, reviews={"fixtures/review.md": self.acceptance("<SHA>")})
+        dest = f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}MOVED.md"
+        (self.repo / dest).parent.mkdir(parents=True, exist_ok=True)
+        self.git("mv", "fixtures/review.md", dest)
+        self.commit()
+        self.assert_unverified(ref)
+
+    def test_separate_negative_review_vetoes_acceptance_case_insensitively(self):
+        ref = self.fixture()
+        self.write(f"{L.ACCEPTANCE_REVIEW_DIR}/scratch/negative.txt", f"{ref['sha256']} NoT_AcCePtEd\n")
+        self.commit()
+        self.assert_unverified(ref)
+
+    def test_public_api_refuses_caller_selected_trust_or_reader_seams(self):
+        ref = self.fixture()
+        for key in ("root_attested", "root_cgroup_is_real", "repo_root", "machine", "attestation_check",
+                    "launch_observer", "readings", "decided", "launched", "other_job_running", "modules",
+                    "mem_text", "root"):
+            with self.subTest(key=key), self.assertRaises(TypeError):
+                V.observe(ref, **{key: True})
+        self.assertEqual(tuple(inspect.signature(V.observe).parameters), ("attestation_ref", "mode"))
+        self.assertEqual(V.__all__, ("observe",))
+
+    def test_default_launch_observation_is_independently_corroborated(self):
+        result = V.observe(self.fixture())
+        self.assertEqual(self.launch.call_args_list, [mock.call(), mock.call()])
+        self.assertEqual(result["preflight"]["gates"].get("launched_by_systemd"), L.PASS)
+
+    def test_changed_live_launch_observation_refuses_corroboration(self):
+        self.launch.side_effect = [self.launch_record("first"), self.launch_record("second")]
+        result = V.observe(self.fixture())
+        self.assertEqual(result["preflight"]["gates"].get("launched_by_systemd"), L.FAIL)
+        self.assert_withheld(result)
+
+    def test_launch_record_comparison_covers_extra_fields(self):
+        first = dict(self.launch_record(), synthetic_generation=1)
+        second = dict(self.launch_record(), synthetic_generation=2)
+        self.launch.side_effect = [first, second]
+        result = V.observe(self.fixture())
+        self.assertEqual(result["preflight"]["gates"].get("launched_by_systemd"), L.FAIL)
+
+    def test_missing_or_invalid_fresh_launch_observation_fails(self):
+        ref = self.fixture()
+        for fresh in (None, {}, dict(self.launch_record(), systemctl={"MainPID": True, "InvocationID": "synthetic-invocation"})):
+            with self.subTest(fresh=fresh):
+                self.launch.side_effect = [self.launch_record(), fresh]
+                result = V.observe(ref)
+                self.assertEqual(result["preflight"]["gates"].get("launched_by_systemd"), L.FAIL)
+
+    def test_open_decisions_and_unknown_job_detector_block_every_mode(self):
+        ref = self.fixture()
+        for mode in L.MODES:
+            with self.subTest(mode=mode):
+                result = V.observe(ref, mode=mode)
+                preflight = result["preflight"]
+                self.assertEqual(preflight["mode"], mode)
+                self.assertIs(preflight["pass"], False)
+                for gate in ("lowpowermode_0", "thermal_pressure_0", "memory_pressure_normal",
+                             "free_memory_ge_min", "host_exclusive", "host_lifetime_attested",
+                             "no_automatic_os_install"):
+                    self.assertEqual(preflight["gates"].get(gate), L.OPEN_DECISION, gate)
+                self.assertEqual(preflight["gates"].get("no_other_campaign_job"), L.UNKNOWN)
+                self.assertIn("D-HOST-LIFETIME", preflight["open_decisions"])
+                for decision in ("D-EXCL-WINDOW", "D-ALLOW-PATHS", "D-ALLOW-BASE39"):
+                    self.assertIn(decision, preflight["open_decisions"])
+                self.assert_withheld(result)
+
+    def test_preflight_uses_current_api_with_fixed_unknown_job_detector(self):
+        ref = self.fixture()
+        with mock.patch.object(L, "preflight", wraps=L.preflight) as preflight:
+            V.observe(ref)
+        self.assertEqual(preflight.call_args, mock.call(
+            self.repo, mode="execute", other_job_running=None, launched=self.launch_record(), attestation_ref=ref))
+
+    def test_invalid_mode_is_refused_before_any_observation(self):
+        with mock.patch.object(L, "attestation_valid") as verifier, \
+                mock.patch.object(L, "memory_readings") as memory:
+            with self.assertRaises(ValueError):
+                V.observe(mode="qualification")
+        verifier.assert_not_called()
+        memory.assert_not_called()
+        self.launch.assert_not_called()
+
+    def test_development_defaults_and_no_science_composition(self):
+        self.assertEqual(DEFAULT_DECIDED, frozenset())
+        self.assertIsNone(DEFAULT_PIN_MODULES)
+        self.assertIs(DEFAULT_JOURNAL_REVIEWED, False)
+        self.assertEqual(len(L.OPEN_DECISIONS), 21)
+        tree = ast.parse(Path(V.__file__).read_text())
+        imports = [node for node in ast.walk(tree) if isinstance(node, (ast.Import, ast.ImportFrom))]
+        self.assertEqual([(node.module if isinstance(node, ast.ImportFrom) else node.names[0].name) for node in imports],
+                         ["__future__", "lx_platform"])
+        V.observe(self.fixture())
+        for reader in self.denied.values():
+            reader.assert_not_called()
+
+    def test_wrapper_uses_platform_module_selected_by_harness(self):
+        self.assertIs(V.L, L)
+        self.assertEqual(Path(L.__file__).resolve().parent, Path(LXDIR).resolve())
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,0 +1,133 @@
+"""Review 66 probes (b): configured commands during fsck, include-hidden fsck keys, comparison with 2275b3a0, and
+isolation controls. Synthetic repositories only; every attestation_valid call passes repo_root=<synthetic repo>.
+usage: python3 -B -I probes66b.py.txt <dir_with_lx_platform.py> <tmp_root> <out.json> [isolation-control]
+With a fourth argument "commitgraph_off" / "fsmonitor_off" the module's _GIT_ISOLATION is extended in memory (control
+only; the file on disk is never changed)."""
+import hashlib, json, os, subprocess, sys, tempfile, traceback, zlib
+from pathlib import Path
+
+BASE, TMP, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+CONTROL = sys.argv[4] if len(sys.argv) > 4 else ""
+sys.path.insert(0, BASE)
+import lx_platform as L  # noqa: E402
+
+if CONTROL == "commitgraph_off":
+    L._GIT_ISOLATION = (*L._GIT_ISOLATION, "-c", "core.commitGraph=false")
+elif CONTROL == "fsmonitor_off":
+    L._GIT_ISOLATION = (*L._GIT_ISOLATION, "-c", "core.fsmonitor=false")
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR
+ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+OK = f"review\n{L.ACCEPTANCE_LINE}{SHA}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+VETO = f"{RD}/veto.md"
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main", "-c", "core.fsmonitor=false"]
+results = {"control": CONTROL, "isolation": list(L._GIT_ISOLATION)}
+
+
+def git(d, *a, check=True):
+    return subprocess.run(["git", "-C", str(d), *CFG, *a], check=check, capture_output=True)
+
+
+def init(d):
+    Path(d).mkdir(parents=True, exist_ok=True)
+    git(d, "init", "-q")
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+        git(d, "config", "--local", k, v)
+
+
+def commit(d, files=None, rm=()):
+    for rel, data in (files or {}).items():
+        p = Path(d, rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+    for rel in rm:
+        git(d, "rm", "-q", rel)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", "c")
+    return git(d, "rev-parse", "HEAD").stdout.decode().strip()
+
+
+def bad_repo(d):
+    init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    c2 = commit(d, {VETO: f"{SHA} REJECTED\n".encode()})
+    c3 = commit(d, rm=[VETO])
+    c4 = commit(d, {f"{ACC}1.md": OK})
+    return [c1, c2, c3, c4]
+
+
+def valid(d, path="att/HOST.json"):
+    try:
+        rec, why = L.attestation_valid({"path": path, "sha256": SHA}, repo_root=str(d))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}"}
+
+
+def rc(d, *a):
+    r = subprocess.run(["git", "-C", str(d), "--no-replace-objects", *a], capture_output=True, env=L._git_env())
+    return {"rc": r.returncode, "err_tail": r.stderr.decode(errors="replace")[-160:]}
+
+
+def veto_object(d, ids):
+    oid = git(d, "rev-parse", f"{ids[1]}:{VETO}").stdout.decode().strip()
+    return oid, Path(d, ".git", "objects", oid[:2], oid[2:])
+
+
+def p_fsmonitor_rewrites_object_during_fsck(d):
+    """The rewritten-blob construction of review 65 L1, but the rewrite is done by the repository's own
+    core.fsmonitor hook, which git fsck runs while reading the index (after it has verified the loose objects)."""
+    repo = d / "r"
+    ids = bad_repo(repo)
+    oid, obj = veto_object(repo, ids)
+    forged = d / "forged.obj"
+    forged.write_bytes(zlib.compress(b"blob 6\0draft\n"))
+    marker = d / "hook.marker"
+    hook = d / "hook.sh"
+    hook.write_text(f"#!/bin/sh\necho ran >> '{marker}'\nchmod u+w '{obj}'\ncp '{forged}' '{obj}'\nexit 1\n")
+    hook.chmod(0o755)
+    out = {"before": valid(repo)}
+    git(repo, "config", "--local", "core.fsmonitor", str(hook))
+    out["fsck_with_hook"] = rc(repo, "fsck", "--full", "--strict", "--no-dangling", "--no-progress")
+    # restore the honest object (the hook rewrote it during that fsck), then run the real check
+    obj.chmod(0o644)
+    obj.write_bytes(zlib.compress(b"blob %d\0" % len(f"{SHA} REJECTED\n") + f"{SHA} REJECTED\n".encode()))
+    out["honest_object_restored_fsck_without_hook"] = rc(repo, "-c", "core.fsmonitor=false", "fsck", "--full",
+                                                         "--strict", "--no-dangling", "--no-progress")
+    marker.unlink(missing_ok=True)
+    out["check_with_hook"] = valid(repo)
+    out["hook_ran"] = marker.read_text().count("ran") if marker.exists() else 0
+    out["fsck_after_check_without_hook"] = rc(repo, "-c", "core.fsmonitor=false", "fsck", "--full", "--strict",
+                                              "--no-dangling", "--no-progress")
+    return out
+
+
+def p_skiplist_in_include_rewritten_blob(d):
+    """Rewritten veto blob; fsck.skipList naming it, hidden in an included file (direct key would refuse)."""
+    repo = d / "r"
+    ids = bad_repo(repo)
+    oid, obj = veto_object(repo, ids)
+    obj.chmod(0o644)
+    obj.write_bytes(zlib.compress(b"blob 6\0draft\n"))
+    Path(repo, ".git/skip").write_text(oid + "\n")
+    Path(repo, ".git/fsck.cfg").write_text(f"[fsck]\n\tskipList = {Path(repo, '.git/skip')}\n")
+    git(repo, "config", "--local", "include.path", "fsck.cfg")
+    return {"fsck": rc(repo, "fsck", "--full", "--strict", "--no-dangling", "--no-progress"), "result": valid(repo)}
+
+
+for name, fn in [("fsmonitor_rewrites_object_during_fsck", p_fsmonitor_rewrites_object_during_fsck),
+                 ("skiplist_in_include_rewritten_blob", p_skiplist_in_include_rewritten_blob)]:
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        try:
+            results[name] = fn(Path(d))
+        except Exception as e:
+            results[name] = {"probe_error": f"{type(e).__name__}: {e}", "tb": traceback.format_exc()[-1200:]}
+
+results["lx_platform_sha256"] = hashlib.sha256(Path(BASE, "lx_platform.py").read_bytes()).hexdigest()
+Path(OUT).write_text(json.dumps(results, indent=1, sort_keys=True))
+print(json.dumps(results, indent=1, sort_keys=True))

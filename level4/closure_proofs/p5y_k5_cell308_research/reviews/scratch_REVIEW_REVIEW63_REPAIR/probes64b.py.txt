@@ -1,0 +1,52 @@
+"""Review 64 probes, part b: shallow clone + log.showRoot, and which odd review name makes the listing unavailable.
+usage: python3 -I probes64b.py.txt <base> <tmp> <out.json>"""
+import json, os, subprocess, sys, tempfile, hashlib
+from pathlib import Path
+BASE, TMP, OUT = sys.argv[1:4]
+sys.path.insert(0, BASE)
+import lx_platform as L
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR; ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest(); LINE = f"{L.ACCEPTANCE_LINE}{SHA}"
+OK = f"review\n{LINE}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "init.defaultBranch=main", "-c", "protocol.file.allow=always"]
+def git(d, *a): return subprocess.run(["git", "-C", d, *CFG, *a], check=True, capture_output=True)
+def commit(d, files):
+    for rel, data in files.items():
+        p = Path(d, rel); p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(data)
+    git(d, "add", "-A"); git(d, "commit", "-q", "--allow-empty", "-m", "c")
+def valid(d):
+    rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": SHA}, repo_root=d)
+    return {"valid": rec is not None, "reasons": why}
+res = {}
+with tempfile.TemporaryDirectory(dir=TMP) as d:
+    src = str(Path(d, "src")); os.mkdir(src); git(src, "init", "-q")
+    commit(src, {"README": b"x\n"}); commit(src, {"README": b"y\n"})
+    commit(src, {f"{ACC}1.md": OK})                 # acceptance BEFORE the blob
+    commit(src, {"att/HOST.json": ATT})
+    commit(src, {"notes/q.md": f"quoted: {LINE}\n".encode()})
+    res["full_clone_default"] = valid(src)
+    for depth in (2, 3, 4):
+        dst = str(Path(d, f"shallow{depth}"))
+        subprocess.run(["git", *CFG, "clone", "-q", "--depth", str(depth), f"file://{src}", dst], check=True, capture_output=True)
+        res[f"shallow_depth{depth}_default"] = valid(dst)
+        git(dst, "config", "--local", "log.showRoot", "false")
+        res[f"shallow_depth{depth}_log.showRoot=false"] = valid(dst)
+    # global-scope config (not the repository's own): GIT_CONFIG_GLOBAL pointing at a file with log.showRoot=false
+    gcfg = Path(d, "gcfg"); gcfg.write_text("[log]\n\tshowRoot = false\n")
+    git(str(Path(d, "shallow3")), "config", "--local", "--unset", "log.showRoot")
+    res["shallow_depth3_local_unset_again"] = valid(str(Path(d, "shallow3")))
+    os.environ["GIT_CONFIG_GLOBAL"] = str(gcfg)
+    res["shallow_depth3_global_scope_showRoot=false"] = valid(str(Path(d, "shallow3")))
+    del os.environ["GIT_CONFIG_GLOBAL"]
+for name in ("x..HEAD", "y^@", "-n.md", "a..b.md", "z^!"):
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        git(d, "init", "-q"); commit(d, {"att/HOST.json": ATT})
+        commit(d, {f"{ACC}1.md": OK, f"{RD}/x": b"x\n", f"{RD}/a": b"a\n", f"{RD}/{name}": b"n\n"})
+        res[f"odd_name_{name}"] = valid(d)
+Path(OUT).write_text(json.dumps(res, indent=1) + "\n")
+print(json.dumps({k: v["valid"] for k, v in res.items()}, indent=0))

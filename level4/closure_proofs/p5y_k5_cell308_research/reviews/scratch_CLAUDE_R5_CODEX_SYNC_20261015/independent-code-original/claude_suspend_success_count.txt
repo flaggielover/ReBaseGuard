@@ -1,0 +1,4 @@
+def suspend_success_count(text: str | None = None) -> int | None:
+    text = _read("/sys/power/suspend_stats/success") if text is None else text
+    t = (text or "").strip()
+    return int(t) if t.isdigit() else None

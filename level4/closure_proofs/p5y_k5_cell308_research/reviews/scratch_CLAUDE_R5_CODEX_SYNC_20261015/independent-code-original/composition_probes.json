@@ -1,0 +1,1491 @@
+{
+  "results": [
+    {
+      "case": "suspend_success_count '0'",
+      "result": 0
+    },
+    {
+      "case": "suspend_success_count '003'",
+      "result": 3
+    },
+    {
+      "case": "suspend_success_count '\u00b2'",
+      "exception": "ValueError",
+      "message": "invalid literal for int() with base 10: '\u00b2'"
+    },
+    {
+      "case": "suspend_success_count '\u2167'",
+      "result": null
+    },
+    {
+      "case": "suspend_success_count '\uff11\uff12'",
+      "result": 12
+    },
+    {
+      "case": "suspend_success_count '\u0661\u0662'",
+      "result": 12
+    },
+    {
+      "case": "suspend_success_count '-1'",
+      "result": null
+    },
+    {
+      "case": "suspend_success_count '1.0'",
+      "result": null
+    },
+    {
+      "case": "suspend_success_count ''",
+      "result": null
+    },
+    {
+      "case": "suspend_success_count b'7'",
+      "result": 7
+    },
+    {
+      "case": "suspend_success_count 7",
+      "exception": "AttributeError",
+      "message": "'int' object has no attribute 'strip'"
+    },
+    {
+      "case": "suspend_success_count True",
+      "exception": "AttributeError",
+      "message": "'bool' object has no attribute 'strip'"
+    },
+    {
+      "case": "suspend_success_count []",
+      "result": null
+    },
+    {
+      "case": "suspend_success_count {}",
+      "result": null
+    },
+    {
+      "case": "suspend_success_count canonical boundary '\u00b2'",
+      "exception": "ValueError",
+      "message": "invalid literal for int() with base 10: '\u00b2'"
+    },
+    {
+      "case": "suspend_success_count canonical boundary b'7'",
+      "result": 7
+    },
+    {
+      "case": "suspend_success_count canonical boundary 7",
+      "exception": "AttributeError",
+      "message": "'int' object has no attribute 'strip'"
+    },
+    {
+      "case": "suspend_success_count canonical boundary True",
+      "exception": "AttributeError",
+      "message": "'bool' object has no attribute 'strip'"
+    },
+    {
+      "case": "unit_enabled missing activity pid1=True",
+      "result": null
+    },
+    {
+      "case": "unit_enabled missing activity pid1=False",
+      "result": false
+    },
+    {
+      "case": "unit_enabled missing activity pid1=None",
+      "result": false
+    },
+    {
+      "case": "auto_update_settings activity unavailable pid1=True",
+      "result": {
+        "apt_config_readable": true,
+        "apt_periodic": {
+          "Enable": "0"
+        },
+        "unattended_automatic_reboot": null,
+        "update_units": {
+          "apt-daily-upgrade.timer": null,
+          "unattended-upgrades.service": null
+        },
+        "update_unit_enabled_or_unknown": true,
+        "unattended_upgrade_present": false,
+        "snapd_present": false,
+        "cloud_init_present": false,
+        "livepatch_applied": [],
+        "guest_updates_shown_disabled": false,
+        "provider_image_updates": "UNKNOWN"
+      }
+    },
+    {
+      "case": "auto_update_settings activity unavailable pid1=False",
+      "result": {
+        "apt_config_readable": true,
+        "apt_periodic": {
+          "Enable": "0"
+        },
+        "unattended_automatic_reboot": null,
+        "update_units": {
+          "apt-daily-upgrade.timer": false,
+          "unattended-upgrades.service": false
+        },
+        "update_unit_enabled_or_unknown": false,
+        "unattended_upgrade_present": false,
+        "snapd_present": false,
+        "cloud_init_present": false,
+        "livepatch_applied": [],
+        "guest_updates_shown_disabled": true,
+        "provider_image_updates": "UNKNOWN"
+      }
+    },
+    {
+      "case": "auto_update_settings activity unavailable pid1=None",
+      "result": {
+        "apt_config_readable": true,
+        "apt_periodic": {
+          "Enable": "0"
+        },
+        "unattended_automatic_reboot": null,
+        "update_units": {
+          "apt-daily-upgrade.timer": false,
+          "unattended-upgrades.service": false
+        },
+        "update_unit_enabled_or_unknown": false,
+        "unattended_upgrade_present": false,
+        "snapd_present": false,
+        "cloud_init_present": false,
+        "livepatch_applied": [],
+        "guest_updates_shown_disabled": true,
+        "provider_image_updates": "UNKNOWN"
+      }
+    },
+    {
+      "case": "busy parent present t0 only",
+      "result": [
+        {
+          "pid": 43,
+          "comm": "c",
+          "exe": null,
+          "pct": 10.0,
+          "born_in_window": true
+        }
+      ]
+    },
+    {
+      "case": "busy parent present t1 only",
+      "result": []
+    },
+    {
+      "case": "busy reused parent",
+      "result": [
+        {
+          "pid": 43,
+          "comm": "c",
+          "exe": null,
+          "pct": 10.0,
+          "born_in_window": true
+        }
+      ]
+    },
+    {
+      "case": "busy child start same tick",
+      "result": []
+    },
+    {
+      "case": "busy negative own counter",
+      "result": null
+    },
+    {
+      "case": "busy owned counter regression",
+      "result": null
+    },
+    {
+      "case": "assess middle count 2",
+      "result": {
+        "status": "AMBIGUOUS",
+        "clean": false,
+        "reasons": [
+          "AMBIGUOUS: L' no reviewed journal reader exists (whatever the caller passes, P7)"
+        ]
+      }
+    },
+    {
+      "case": "assess middle count True",
+      "result": {
+        "status": "AMBIGUOUS",
+        "clean": false,
+        "reasons": [
+          "AMBIGUOUS: S' suspend_stats absent",
+          "AMBIGUOUS: a suspend counter reading is malformed",
+          "AMBIGUOUS: L' no reviewed journal reader exists (whatever the caller passes, P7)"
+        ]
+      }
+    },
+    {
+      "case": "assess middle count -1",
+      "result": {
+        "status": "AMBIGUOUS",
+        "clean": false,
+        "reasons": [
+          "AMBIGUOUS: S' suspend_stats absent",
+          "AMBIGUOUS: a suspend counter reading is malformed",
+          "AMBIGUOUS: L' no reviewed journal reader exists (whatever the caller passes, P7)"
+        ]
+      }
+    },
+    {
+      "case": "assess reviewed synthetic clean",
+      "result": {
+        "status": "CLEAN",
+        "clean": true,
+        "reasons": []
+      }
+    },
+    {
+      "case": "assess reordered synthetic",
+      "result": {
+        "status": "AMBIGUOUS",
+        "clean": false,
+        "reasons": [
+          "AMBIGUOUS: K' clocks not increasing",
+          "AMBIGUOUS: samples out of order"
+        ]
+      }
+    },
+    {
+      "case": "observer mode launcher_preflight",
+      "result": {
+        "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.dev-observation.v1",
+        "development_only": true,
+        "operational_ready": false,
+        "attestation": {
+          "verified": true,
+          "record_root_cgroup_is_real": true,
+          "root_cgroup_is_real": false,
+          "reasons": []
+        },
+        "raw_memory": {
+          "classification": "RAW_LINUX_READINGS",
+          "readings": {
+            "meminfo_MemTotal": 1000,
+            "meminfo_MemAvailable": null,
+            "meminfo_MemFree": null,
+            "meminfo_Inactive_file": null,
+            "meminfo_SwapTotal": null,
+            "cgroup": {
+              "version": "v1",
+              "chain": [
+                {
+                  "path": "/",
+                  "limit": 900,
+                  "usage": 200,
+                  "root": true
+                }
+              ]
+            },
+            "root_attested": false,
+            "root_attestation_reasons": [
+              "D-HOST-LIFETIME open"
+            ],
+            "cgroup_ns_initial": true,
+            "visible_limit_upper_bound": 900,
+            "note": "RAW Linux readings; none is the macOS vm_stat free+inactive+speculative+purgeable quantity of R-FREE, and none is substituted for it (D-MEM-FREE, D-MEM-WIRED). effective_limit and headroom are numeric only with a verified root attestation in the initial cgroup namespace (H6)."
+          },
+          "withheld_quantities": [
+            "effective_limit",
+            "cgroup_min_headroom"
+          ],
+          "note": "No R-FREE/R-MEM rule quantity or operational allowance is established."
+        },
+        "preflight": {
+          "mode": "launcher_preflight",
+          "gates": {
+            "ac_power": "PASS",
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "free_disk_ge_2GiB": "PASS",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "boot_id_recorded": "PASS",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "OPEN_DECISION",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "OPEN_DECISION",
+            "launched_by_systemd": "PASS"
+          },
+          "pass": false,
+          "blocked": {
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "OPEN_DECISION",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "OPEN_DECISION"
+          },
+          "readings": {
+            "power": "AC",
+            "free_disk_bytes": 2147483648,
+            "boot_id": "11111111-2222-3333-4444-555555555555",
+            "updates": {
+              "guest_updates_shown_disabled": true
+            },
+            "launched": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "launched_fresh": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "attestation_reasons": []
+          },
+          "open_decisions": [
+            "D-ALLOW-BASE39",
+            "D-ALLOW-PATHS",
+            "D-EXCL-WINDOW",
+            "D-HOST-LIFETIME",
+            "D-LPM",
+            "D-MEM-FREE",
+            "D-MEM-PRESSURE",
+            "D-THERMAL"
+          ]
+        },
+        "conditions": {
+          "A1": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A2": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+        }
+      }
+    },
+    {
+      "case": "observer mode execute",
+      "result": {
+        "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.dev-observation.v1",
+        "development_only": true,
+        "operational_ready": false,
+        "attestation": {
+          "verified": true,
+          "record_root_cgroup_is_real": true,
+          "root_cgroup_is_real": false,
+          "reasons": []
+        },
+        "raw_memory": {
+          "classification": "RAW_LINUX_READINGS",
+          "readings": {
+            "meminfo_MemTotal": 1000,
+            "meminfo_MemAvailable": null,
+            "meminfo_MemFree": null,
+            "meminfo_Inactive_file": null,
+            "meminfo_SwapTotal": null,
+            "cgroup": {
+              "version": "v1",
+              "chain": [
+                {
+                  "path": "/",
+                  "limit": 900,
+                  "usage": 200,
+                  "root": true
+                }
+              ]
+            },
+            "root_attested": false,
+            "root_attestation_reasons": [
+              "D-HOST-LIFETIME open"
+            ],
+            "cgroup_ns_initial": true,
+            "visible_limit_upper_bound": 900,
+            "note": "RAW Linux readings; none is the macOS vm_stat free+inactive+speculative+purgeable quantity of R-FREE, and none is substituted for it (D-MEM-FREE, D-MEM-WIRED). effective_limit and headroom are numeric only with a verified root attestation in the initial cgroup namespace (H6)."
+          },
+          "withheld_quantities": [
+            "effective_limit",
+            "cgroup_min_headroom"
+          ],
+          "note": "No R-FREE/R-MEM rule quantity or operational allowance is established."
+        },
+        "preflight": {
+          "mode": "execute",
+          "gates": {
+            "ac_power": "PASS",
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "free_disk_ge_2GiB": "PASS",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "boot_id_recorded": "PASS",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "OPEN_DECISION",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "OPEN_DECISION",
+            "launched_by_systemd": "PASS"
+          },
+          "pass": false,
+          "blocked": {
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "OPEN_DECISION",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "OPEN_DECISION"
+          },
+          "readings": {
+            "power": "AC",
+            "free_disk_bytes": 2147483648,
+            "boot_id": "11111111-2222-3333-4444-555555555555",
+            "updates": {
+              "guest_updates_shown_disabled": true
+            },
+            "launched": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "launched_fresh": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "attestation_reasons": []
+          },
+          "open_decisions": [
+            "D-ALLOW-BASE39",
+            "D-ALLOW-PATHS",
+            "D-EXCL-WINDOW",
+            "D-HOST-LIFETIME",
+            "D-LPM",
+            "D-MEM-FREE",
+            "D-MEM-PRESSURE",
+            "D-THERMAL"
+          ]
+        },
+        "conditions": {
+          "A1": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A2": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+        }
+      }
+    },
+    {
+      "case": "observer mode resume",
+      "result": {
+        "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.dev-observation.v1",
+        "development_only": true,
+        "operational_ready": false,
+        "attestation": {
+          "verified": true,
+          "record_root_cgroup_is_real": true,
+          "root_cgroup_is_real": false,
+          "reasons": []
+        },
+        "raw_memory": {
+          "classification": "RAW_LINUX_READINGS",
+          "readings": {
+            "meminfo_MemTotal": 1000,
+            "meminfo_MemAvailable": null,
+            "meminfo_MemFree": null,
+            "meminfo_Inactive_file": null,
+            "meminfo_SwapTotal": null,
+            "cgroup": {
+              "version": "v1",
+              "chain": [
+                {
+                  "path": "/",
+                  "limit": 900,
+                  "usage": 200,
+                  "root": true
+                }
+              ]
+            },
+            "root_attested": false,
+            "root_attestation_reasons": [
+              "D-HOST-LIFETIME open"
+            ],
+            "cgroup_ns_initial": true,
+            "visible_limit_upper_bound": 900,
+            "note": "RAW Linux readings; none is the macOS vm_stat free+inactive+speculative+purgeable quantity of R-FREE, and none is substituted for it (D-MEM-FREE, D-MEM-WIRED). effective_limit and headroom are numeric only with a verified root attestation in the initial cgroup namespace (H6)."
+          },
+          "withheld_quantities": [
+            "effective_limit",
+            "cgroup_min_headroom"
+          ],
+          "note": "No R-FREE/R-MEM rule quantity or operational allowance is established."
+        },
+        "preflight": {
+          "mode": "resume",
+          "gates": {
+            "ac_power": "PASS",
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "free_disk_ge_2GiB": "PASS",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "boot_id_recorded": "PASS",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "OPEN_DECISION",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "OPEN_DECISION",
+            "launched_by_systemd": "PASS"
+          },
+          "pass": false,
+          "blocked": {
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "OPEN_DECISION",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "OPEN_DECISION"
+          },
+          "readings": {
+            "power": "AC",
+            "free_disk_bytes": 2147483648,
+            "boot_id": "11111111-2222-3333-4444-555555555555",
+            "updates": {
+              "guest_updates_shown_disabled": true
+            },
+            "launched": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "launched_fresh": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "attestation_reasons": []
+          },
+          "open_decisions": [
+            "D-ALLOW-BASE39",
+            "D-ALLOW-PATHS",
+            "D-EXCL-WINDOW",
+            "D-HOST-LIFETIME",
+            "D-LPM",
+            "D-MEM-FREE",
+            "D-MEM-PRESSURE",
+            "D-THERMAL"
+          ]
+        },
+        "conditions": {
+          "A1": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A2": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+        }
+      }
+    },
+    {
+      "case": "preflight free_disk bool",
+      "result": {
+        "mode": "execute",
+        "gates": {
+          "ac_power": "PASS",
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "UNKNOWN",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "boot_id_recorded": "PASS",
+          "no_other_campaign_job": "UNKNOWN",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "PASS"
+        },
+        "pass": false,
+        "blocked": {
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "UNKNOWN",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "no_other_campaign_job": "UNKNOWN",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION"
+        },
+        "readings": {
+          "power": "AC",
+          "free_disk_bytes": true,
+          "boot_id": "11111111-2222-3333-4444-555555555555",
+          "updates": {
+            "guest_updates_shown_disabled": true
+          },
+          "launched": null,
+          "launched_fresh": {
+            "systemd_pid1": true,
+            "unit": "rebaseguard-mbs308-synthetic.service",
+            "invocation_id": "fresh",
+            "systemctl": {
+              "MainPID": 44428,
+              "InvocationID": "fresh"
+            },
+            "pass": true
+          },
+          "attestation_reasons": []
+        },
+        "open_decisions": [
+          "D-ALLOW-BASE39",
+          "D-ALLOW-PATHS",
+          "D-EXCL-WINDOW",
+          "D-HOST-LIFETIME",
+          "D-LPM",
+          "D-MEM-FREE",
+          "D-MEM-PRESSURE",
+          "D-THERMAL"
+        ]
+      }
+    },
+    {
+      "case": "preflight free_disk float",
+      "result": {
+        "mode": "execute",
+        "gates": {
+          "ac_power": "PASS",
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "UNKNOWN",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "boot_id_recorded": "PASS",
+          "no_other_campaign_job": "UNKNOWN",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "PASS"
+        },
+        "pass": false,
+        "blocked": {
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "UNKNOWN",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "no_other_campaign_job": "UNKNOWN",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION"
+        },
+        "readings": {
+          "power": "AC",
+          "free_disk_bytes": 2147483648.0,
+          "boot_id": "11111111-2222-3333-4444-555555555555",
+          "updates": {
+            "guest_updates_shown_disabled": true
+          },
+          "launched": null,
+          "launched_fresh": {
+            "systemd_pid1": true,
+            "unit": "rebaseguard-mbs308-synthetic.service",
+            "invocation_id": "fresh",
+            "systemctl": {
+              "MainPID": 44428,
+              "InvocationID": "fresh"
+            },
+            "pass": true
+          },
+          "attestation_reasons": []
+        },
+        "open_decisions": [
+          "D-ALLOW-BASE39",
+          "D-ALLOW-PATHS",
+          "D-EXCL-WINDOW",
+          "D-HOST-LIFETIME",
+          "D-LPM",
+          "D-MEM-FREE",
+          "D-MEM-PRESSURE",
+          "D-THERMAL"
+        ]
+      }
+    },
+    {
+      "case": "preflight free_disk negative",
+      "result": {
+        "mode": "execute",
+        "gates": {
+          "ac_power": "PASS",
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "FAIL",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "boot_id_recorded": "PASS",
+          "no_other_campaign_job": "UNKNOWN",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "PASS"
+        },
+        "pass": false,
+        "blocked": {
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "FAIL",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "no_other_campaign_job": "UNKNOWN",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION"
+        },
+        "readings": {
+          "power": "AC",
+          "free_disk_bytes": -1,
+          "boot_id": "11111111-2222-3333-4444-555555555555",
+          "updates": {
+            "guest_updates_shown_disabled": true
+          },
+          "launched": null,
+          "launched_fresh": {
+            "systemd_pid1": true,
+            "unit": "rebaseguard-mbs308-synthetic.service",
+            "invocation_id": "fresh",
+            "systemctl": {
+              "MainPID": 44428,
+              "InvocationID": "fresh"
+            },
+            "pass": true
+          },
+          "attestation_reasons": []
+        },
+        "open_decisions": [
+          "D-ALLOW-BASE39",
+          "D-ALLOW-PATHS",
+          "D-EXCL-WINDOW",
+          "D-HOST-LIFETIME",
+          "D-LPM",
+          "D-MEM-FREE",
+          "D-MEM-PRESSURE",
+          "D-THERMAL"
+        ]
+      }
+    },
+    {
+      "case": "preflight free_disk unknown",
+      "result": {
+        "mode": "execute",
+        "gates": {
+          "ac_power": "PASS",
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "UNKNOWN",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "boot_id_recorded": "PASS",
+          "no_other_campaign_job": "UNKNOWN",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "PASS"
+        },
+        "pass": false,
+        "blocked": {
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "UNKNOWN",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "no_other_campaign_job": "UNKNOWN",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION"
+        },
+        "readings": {
+          "power": "AC",
+          "free_disk_bytes": null,
+          "boot_id": "11111111-2222-3333-4444-555555555555",
+          "updates": {
+            "guest_updates_shown_disabled": true
+          },
+          "launched": null,
+          "launched_fresh": {
+            "systemd_pid1": true,
+            "unit": "rebaseguard-mbs308-synthetic.service",
+            "invocation_id": "fresh",
+            "systemctl": {
+              "MainPID": 44428,
+              "InvocationID": "fresh"
+            },
+            "pass": true
+          },
+          "attestation_reasons": []
+        },
+        "open_decisions": [
+          "D-ALLOW-BASE39",
+          "D-ALLOW-PATHS",
+          "D-EXCL-WINDOW",
+          "D-HOST-LIFETIME",
+          "D-LPM",
+          "D-MEM-FREE",
+          "D-MEM-PRESSURE",
+          "D-THERMAL"
+        ]
+      }
+    },
+    {
+      "case": "preflight invalid launch MainPID None",
+      "result": {
+        "mode": "execute",
+        "gates": {
+          "ac_power": "PASS",
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "PASS",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "boot_id_recorded": "PASS",
+          "no_other_campaign_job": "PASS",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "FAIL"
+        },
+        "pass": false,
+        "blocked": {
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "FAIL"
+        },
+        "readings": {
+          "power": "AC",
+          "free_disk_bytes": 2147483648,
+          "boot_id": "11111111-2222-3333-4444-555555555555",
+          "updates": {
+            "guest_updates_shown_disabled": true
+          },
+          "launched": null,
+          "launched_fresh": {
+            "systemd_pid1": true,
+            "unit": "rebaseguard-mbs308-synthetic.service",
+            "invocation_id": "fresh",
+            "systemctl": {
+              "MainPID": null,
+              "InvocationID": "fresh"
+            },
+            "pass": true
+          },
+          "attestation_reasons": []
+        },
+        "open_decisions": [
+          "D-ALLOW-BASE39",
+          "D-ALLOW-PATHS",
+          "D-EXCL-WINDOW",
+          "D-HOST-LIFETIME",
+          "D-LPM",
+          "D-MEM-FREE",
+          "D-MEM-PRESSURE",
+          "D-THERMAL"
+        ]
+      }
+    },
+    {
+      "case": "preflight invalid launch MainPID True",
+      "result": {
+        "mode": "execute",
+        "gates": {
+          "ac_power": "PASS",
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "PASS",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "boot_id_recorded": "PASS",
+          "no_other_campaign_job": "PASS",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "FAIL"
+        },
+        "pass": false,
+        "blocked": {
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "FAIL"
+        },
+        "readings": {
+          "power": "AC",
+          "free_disk_bytes": 2147483648,
+          "boot_id": "11111111-2222-3333-4444-555555555555",
+          "updates": {
+            "guest_updates_shown_disabled": true
+          },
+          "launched": null,
+          "launched_fresh": {
+            "systemd_pid1": true,
+            "unit": "rebaseguard-mbs308-synthetic.service",
+            "invocation_id": "fresh",
+            "systemctl": {
+              "MainPID": true,
+              "InvocationID": "fresh"
+            },
+            "pass": true
+          },
+          "attestation_reasons": []
+        },
+        "open_decisions": [
+          "D-ALLOW-BASE39",
+          "D-ALLOW-PATHS",
+          "D-EXCL-WINDOW",
+          "D-HOST-LIFETIME",
+          "D-LPM",
+          "D-MEM-FREE",
+          "D-MEM-PRESSURE",
+          "D-THERMAL"
+        ]
+      }
+    },
+    {
+      "case": "preflight invalid launch MainPID 1.0",
+      "result": {
+        "mode": "execute",
+        "gates": {
+          "ac_power": "PASS",
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "PASS",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "boot_id_recorded": "PASS",
+          "no_other_campaign_job": "PASS",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "FAIL"
+        },
+        "pass": false,
+        "blocked": {
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "FAIL"
+        },
+        "readings": {
+          "power": "AC",
+          "free_disk_bytes": 2147483648,
+          "boot_id": "11111111-2222-3333-4444-555555555555",
+          "updates": {
+            "guest_updates_shown_disabled": true
+          },
+          "launched": null,
+          "launched_fresh": {
+            "systemd_pid1": true,
+            "unit": "rebaseguard-mbs308-synthetic.service",
+            "invocation_id": "fresh",
+            "systemctl": {
+              "MainPID": 1.0,
+              "InvocationID": "fresh"
+            },
+            "pass": true
+          },
+          "attestation_reasons": []
+        },
+        "open_decisions": [
+          "D-ALLOW-BASE39",
+          "D-ALLOW-PATHS",
+          "D-EXCL-WINDOW",
+          "D-HOST-LIFETIME",
+          "D-LPM",
+          "D-MEM-FREE",
+          "D-MEM-PRESSURE",
+          "D-THERMAL"
+        ]
+      }
+    },
+    {
+      "case": "preflight invalid launch MainPID 42",
+      "result": {
+        "mode": "execute",
+        "gates": {
+          "ac_power": "PASS",
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "free_disk_ge_2GiB": "PASS",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "boot_id_recorded": "PASS",
+          "no_other_campaign_job": "PASS",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "FAIL"
+        },
+        "pass": false,
+        "blocked": {
+          "lowpowermode_0": "OPEN_DECISION",
+          "thermal_pressure_0": "OPEN_DECISION",
+          "memory_pressure_normal": "OPEN_DECISION",
+          "free_memory_ge_min": "OPEN_DECISION",
+          "no_automatic_os_install": "OPEN_DECISION",
+          "host_exclusive": "OPEN_DECISION",
+          "host_lifetime_attested": "OPEN_DECISION",
+          "launched_by_systemd": "FAIL"
+        },
+        "readings": {
+          "power": "AC",
+          "free_disk_bytes": 2147483648,
+          "boot_id": "11111111-2222-3333-4444-555555555555",
+          "updates": {
+            "guest_updates_shown_disabled": true
+          },
+          "launched": null,
+          "launched_fresh": {
+            "systemd_pid1": true,
+            "unit": "rebaseguard-mbs308-synthetic.service",
+            "invocation_id": "fresh",
+            "systemctl": {
+              "MainPID": 42,
+              "InvocationID": "fresh"
+            },
+            "pass": true
+          },
+          "attestation_reasons": []
+        },
+        "open_decisions": [
+          "D-ALLOW-BASE39",
+          "D-ALLOW-PATHS",
+          "D-EXCL-WINDOW",
+          "D-HOST-LIFETIME",
+          "D-LPM",
+          "D-MEM-FREE",
+          "D-MEM-PRESSURE",
+          "D-THERMAL"
+        ]
+      }
+    },
+    {
+      "case": "root attestation decisions []",
+      "result": [
+        false,
+        [
+          "D-HOST-LIFETIME open"
+        ]
+      ]
+    },
+    {
+      "case": "observer decisions []",
+      "result": {
+        "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.dev-observation.v1",
+        "development_only": true,
+        "operational_ready": false,
+        "attestation": {
+          "verified": true,
+          "record_root_cgroup_is_real": true,
+          "root_cgroup_is_real": false,
+          "reasons": []
+        },
+        "raw_memory": {
+          "classification": "RAW_LINUX_READINGS",
+          "readings": {
+            "meminfo_MemTotal": 1000,
+            "meminfo_MemAvailable": null,
+            "meminfo_MemFree": null,
+            "meminfo_Inactive_file": null,
+            "meminfo_SwapTotal": null,
+            "cgroup": {
+              "version": "v1",
+              "chain": [
+                {
+                  "path": "/",
+                  "limit": 900,
+                  "usage": 200,
+                  "root": true
+                }
+              ]
+            },
+            "root_attested": false,
+            "root_attestation_reasons": [
+              "D-HOST-LIFETIME open"
+            ],
+            "cgroup_ns_initial": true,
+            "visible_limit_upper_bound": 900,
+            "note": "RAW Linux readings; none is the macOS vm_stat free+inactive+speculative+purgeable quantity of R-FREE, and none is substituted for it (D-MEM-FREE, D-MEM-WIRED). effective_limit and headroom are numeric only with a verified root attestation in the initial cgroup namespace (H6)."
+          },
+          "withheld_quantities": [
+            "effective_limit",
+            "cgroup_min_headroom"
+          ],
+          "note": "No R-FREE/R-MEM rule quantity or operational allowance is established."
+        },
+        "preflight": {
+          "mode": "execute",
+          "gates": {
+            "ac_power": "PASS",
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "free_disk_ge_2GiB": "PASS",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "boot_id_recorded": "PASS",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "OPEN_DECISION",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "OPEN_DECISION",
+            "launched_by_systemd": "PASS"
+          },
+          "pass": false,
+          "blocked": {
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "OPEN_DECISION",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "OPEN_DECISION"
+          },
+          "readings": {
+            "power": "AC",
+            "free_disk_bytes": 2147483648,
+            "boot_id": "11111111-2222-3333-4444-555555555555",
+            "updates": {
+              "guest_updates_shown_disabled": true
+            },
+            "launched": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "launched_fresh": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "attestation_reasons": []
+          },
+          "open_decisions": [
+            "D-ALLOW-BASE39",
+            "D-ALLOW-PATHS",
+            "D-EXCL-WINDOW",
+            "D-HOST-LIFETIME",
+            "D-LPM",
+            "D-MEM-FREE",
+            "D-MEM-PRESSURE",
+            "D-THERMAL"
+          ]
+        },
+        "conditions": {
+          "A1": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A2": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+        }
+      }
+    },
+    {
+      "case": "root attestation decisions ['D-HOST-LIFETIME']",
+      "result": [
+        true,
+        []
+      ]
+    },
+    {
+      "case": "observer decisions ['D-HOST-LIFETIME']",
+      "result": {
+        "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.dev-observation.v1",
+        "development_only": true,
+        "operational_ready": false,
+        "attestation": {
+          "verified": true,
+          "record_root_cgroup_is_real": true,
+          "root_cgroup_is_real": true,
+          "reasons": []
+        },
+        "raw_memory": {
+          "classification": "RAW_LINUX_READINGS",
+          "readings": {
+            "meminfo_MemTotal": 1000,
+            "meminfo_MemAvailable": null,
+            "meminfo_MemFree": null,
+            "meminfo_Inactive_file": null,
+            "meminfo_SwapTotal": null,
+            "cgroup": {
+              "version": "v1",
+              "chain": [
+                {
+                  "path": "/",
+                  "limit": 900,
+                  "usage": 200,
+                  "root": true
+                }
+              ]
+            },
+            "root_attested": true,
+            "root_attestation_reasons": [],
+            "cgroup_ns_initial": true,
+            "visible_limit_upper_bound": 900,
+            "note": "RAW Linux readings; none is the macOS vm_stat free+inactive+speculative+purgeable quantity of R-FREE, and none is substituted for it (D-MEM-FREE, D-MEM-WIRED). effective_limit and headroom are numeric only with a verified root attestation in the initial cgroup namespace (H6)."
+          },
+          "withheld_quantities": [
+            "effective_limit",
+            "cgroup_min_headroom"
+          ],
+          "note": "No R-FREE/R-MEM rule quantity or operational allowance is established."
+        },
+        "preflight": {
+          "mode": "execute",
+          "gates": {
+            "ac_power": "PASS",
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "free_disk_ge_2GiB": "PASS",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "boot_id_recorded": "PASS",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "PASS",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "PASS",
+            "launched_by_systemd": "PASS"
+          },
+          "pass": false,
+          "blocked": {
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "no_other_campaign_job": "UNKNOWN",
+            "host_exclusive": "OPEN_DECISION"
+          },
+          "readings": {
+            "power": "AC",
+            "free_disk_bytes": 2147483648,
+            "boot_id": "11111111-2222-3333-4444-555555555555",
+            "updates": {
+              "guest_updates_shown_disabled": true
+            },
+            "launched": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "launched_fresh": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "attestation_reasons": []
+          },
+          "open_decisions": [
+            "D-ALLOW-BASE39",
+            "D-ALLOW-PATHS",
+            "D-EXCL-WINDOW",
+            "D-LPM",
+            "D-MEM-FREE",
+            "D-MEM-PRESSURE",
+            "D-THERMAL"
+          ]
+        },
+        "conditions": {
+          "A1": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A2": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+        }
+      }
+    },
+    {
+      "case": "root attestation decisions ['D-ALLOW-BASE39', 'D-ALLOW-PATHS', 'D-CAPS-CPU', 'D-EXCL-WINDOW', 'D-HOST-LIFETIME', 'D-ID-ZOMBIE', 'D-INTERPRETER', 'D-LDET-REPEAT', 'D-LID', 'D-LPM', 'D-MEM-FREE', 'D-MEM-PRESSURE', 'D-MEM-WIRED', 'D-PAUSE', 'D-PIN-POINT', 'D-POWER-ABSENT', 'D-RC2-SCOPE', 'D-S15-NEWHOST', 'D-TEXT-LAUNCHD', 'D-THERMAL', 'D-WORKERS-CORES']",
+      "result": [
+        true,
+        []
+      ]
+    },
+    {
+      "case": "observer decisions ['D-ALLOW-BASE39', 'D-ALLOW-PATHS', 'D-CAPS-CPU', 'D-EXCL-WINDOW', 'D-HOST-LIFETIME', 'D-ID-ZOMBIE', 'D-INTERPRETER', 'D-LDET-REPEAT', 'D-LID', 'D-LPM', 'D-MEM-FREE', 'D-MEM-PRESSURE', 'D-MEM-WIRED', 'D-PAUSE', 'D-PIN-POINT', 'D-POWER-ABSENT', 'D-RC2-SCOPE', 'D-S15-NEWHOST', 'D-TEXT-LAUNCHD', 'D-THERMAL', 'D-WORKERS-CORES']",
+      "result": {
+        "schema": "rebaseguard.p5y.k5.newhost-cloud-r1.dev-observation.v1",
+        "development_only": true,
+        "operational_ready": false,
+        "attestation": {
+          "verified": true,
+          "record_root_cgroup_is_real": true,
+          "root_cgroup_is_real": true,
+          "reasons": []
+        },
+        "raw_memory": {
+          "classification": "RAW_LINUX_READINGS",
+          "readings": {
+            "meminfo_MemTotal": 1000,
+            "meminfo_MemAvailable": null,
+            "meminfo_MemFree": null,
+            "meminfo_Inactive_file": null,
+            "meminfo_SwapTotal": null,
+            "cgroup": {
+              "version": "v1",
+              "chain": [
+                {
+                  "path": "/",
+                  "limit": 900,
+                  "usage": 200,
+                  "root": true
+                }
+              ]
+            },
+            "root_attested": true,
+            "root_attestation_reasons": [],
+            "cgroup_ns_initial": true,
+            "visible_limit_upper_bound": 900,
+            "note": "RAW Linux readings; none is the macOS vm_stat free+inactive+speculative+purgeable quantity of R-FREE, and none is substituted for it (D-MEM-FREE, D-MEM-WIRED). effective_limit and headroom are numeric only with a verified root attestation in the initial cgroup namespace (H6)."
+          },
+          "withheld_quantities": [
+            "effective_limit",
+            "cgroup_min_headroom"
+          ],
+          "note": "No R-FREE/R-MEM rule quantity or operational allowance is established."
+        },
+        "preflight": {
+          "mode": "execute",
+          "gates": {
+            "ac_power": "PASS",
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "free_disk_ge_2GiB": "PASS",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "boot_id_recorded": "PASS",
+            "no_other_campaign_job": "UNKNOWN",
+            "no_automatic_os_install": "PASS",
+            "host_exclusive": "OPEN_DECISION",
+            "host_lifetime_attested": "PASS",
+            "launched_by_systemd": "PASS"
+          },
+          "pass": false,
+          "blocked": {
+            "lowpowermode_0": "OPEN_DECISION",
+            "thermal_pressure_0": "OPEN_DECISION",
+            "memory_pressure_normal": "OPEN_DECISION",
+            "free_memory_ge_min": "OPEN_DECISION",
+            "no_other_campaign_job": "UNKNOWN",
+            "host_exclusive": "OPEN_DECISION"
+          },
+          "readings": {
+            "power": "AC",
+            "free_disk_bytes": 2147483648,
+            "boot_id": "11111111-2222-3333-4444-555555555555",
+            "updates": {
+              "guest_updates_shown_disabled": true
+            },
+            "launched": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "launched_fresh": {
+              "systemd_pid1": true,
+              "unit": "rebaseguard-mbs308-synthetic.service",
+              "invocation_id": "fresh",
+              "systemctl": {
+                "MainPID": 44428,
+                "InvocationID": "fresh"
+              },
+              "pass": true
+            },
+            "attestation_reasons": []
+          },
+          "open_decisions": [
+            "D-ALLOW-BASE39",
+            "D-ALLOW-PATHS",
+            "D-EXCL-WINDOW",
+            "D-LPM",
+            "D-MEM-FREE",
+            "D-MEM-PRESSURE",
+            "D-THERMAL"
+          ]
+        },
+        "conditions": {
+          "A1": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A2": "DEV_COMPOSITION_ONLY_OPERATIONAL_REVIEW_UNMET",
+          "A5": "UNMET_FIXED_SCIENCE_IMPORT_LIST_AND_PIN_POINT"
+        }
+      }
+    },
+    {
+      "case": "preflight signature",
+      "result": "(repo_path, *, mode: 'str', other_job_running: 'bool | None', launched: 'dict | None', attestation_ref: 'dict | None') -> 'dict'"
+    },
+    {
+      "case": "busy_processes signature",
+      "result": "(t0: 'dict | None', t1: 'dict | None', dt_s: 'float', threshold_pct: 'float', own: 'set', hz: 'int | None' = None) -> 'list | None'"
+    },
+    {
+      "case": "observer signature",
+      "result": "(attestation_ref=None, *, mode='execute') -> 'dict'"
+    },
+    {
+      "case": "development defaults",
+      "result": {
+        "DECIDED": [],
+        "open_decision_count": 21,
+        "journal_reader_reviewed": false,
+        "pin_modules": null
+      }
+    }
+  ],
+  "unexpected_host_access_attempts": []
+}

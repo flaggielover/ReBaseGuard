@@ -1,0 +1,494 @@
+"""Review 70 constructions and probes (brief 70). Synthetic git repositories only; every attestation_valid /
+_review_dir_is_a_directory call passes repo_root=<synthetic repo under the scratch tmp dir>; machine_identity patched.
+usage: python3 -B -I cons70.py.txt <dir_with_lx_platform.py> <tmp_root> <out.json> [kind ...]
+With kinds, only those constructions run (the mutant script uses this in a child interpreter)."""
+import hashlib, json, os, subprocess, sys, tempfile, time, traceback, zlib
+from pathlib import Path
+
+BASE, TMP, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+ONLY = sys.argv[4:]
+sys.path.insert(0, BASE)
+import lx_platform as L  # noqa: E402
+
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR
+TOP = RD.split("/")
+ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest()
+OK = f"review\n{L.ACCEPTANCE_LINE}{SHA}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+VETO = f"{SHA} REJECTED\n".encode()
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "gc.auto=0", "-c", "init.defaultBranch=main", "-c", "core.fsmonitor=false",
+       "-c", "protocol.file.allow=always"]
+results = {"lx_platform_sha256": hashlib.sha256(Path(BASE, "lx_platform.py").read_bytes()).hexdigest(),
+           "git_version": subprocess.run(["git", "--version"], capture_output=True, text=True).stdout.strip()}
+
+
+def git(d, *a, inp=None, check=True, env=None):
+    r = subprocess.run(["git", "-C", str(d), *CFG, *a], capture_output=True, input=inp, env=env)
+    if check and r.returncode:
+        raise RuntimeError(f"git {a}: {r.stderr.decode()[-400:]}")
+    return r.stdout.decode().strip()
+
+
+def init(d, fmt=None):
+    Path(d).mkdir(parents=True, exist_ok=True)
+    git(d, "init", "-q", *([f"--object-format={fmt}"] if fmt else []))
+    for k, v in (("gc.auto", "0"), ("core.hooksPath", os.devnull), ("maintenance.auto", "false")):
+        git(d, "config", "--local", k, v)
+
+
+def commit(d, files=None, rm=()):
+    for rel, data in (files or {}).items():
+        p = Path(d, rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(data, tuple):
+            os.symlink(data[1], p)
+        else:
+            p.write_bytes(data)
+    for rel in rm:
+        git(d, "rm", "-q", "-r", rel)
+    git(d, "add", "-A")
+    git(d, "commit", "-q", "--allow-empty", "-m", "c")
+    return git(d, "rev-parse", "HEAD")
+
+
+def mkcommit(d, tree, parents, msg="c"):
+    body = f"tree {tree}\n" + "".join(f"parent {p}\n" for p in parents)
+    body += f"author t <t@t> 1700000000 +0000\ncommitter t <t@t> 1700000000 +0000\n\n{msg}\n"
+    return git(d, "hash-object", "-t", "commit", "-w", "--stdin", inp=body.encode())
+
+
+def raw_tree(entries):
+    return b"".join(m.encode() + b" " + n.encode() + b"\0" + bytes.fromhex(o) for m, n, o in entries)
+
+
+def mktree_literal(d, entries):
+    return git(d, "hash-object", "-t", "tree", "-w", "--literally", "--stdin", inp=raw_tree(entries))
+
+
+def valid(d, path="att/HOST.json"):
+    try:
+        rec, why = L.attestation_valid({"path": path, "sha256": SHA}, repo_root=str(d))
+        return {"valid": rec is not None, "reasons": why}
+    except Exception as e:
+        return {"valid": None, "exception": f"{type(e).__name__}: {e}"}
+
+
+def dircheck(d):
+    try:
+        return L._review_dir_is_a_directory(str(d))
+    except Exception as e:
+        return f"EXC {type(e).__name__}: {e}"
+
+
+def fsck(d):
+    r = subprocess.run(["git", "-C", str(d), *L._GIT_ISOLATION, "fsck", "--full", "--strict", "--no-dangling",
+                        "--no-progress"], capture_output=True, env=L._git_env())
+    err = [ln for ln in r.stderr.decode(errors="replace").splitlines() if not ln.startswith("hint:")]
+    return {"rc": r.returncode, "err": err[-4:]}
+
+
+def removed_later(d, bad_commit):
+    """Make HEAD a child of bad_commit whose tree is the first commit's tree, then add the acceptance."""
+    first = git(d, "rev-list", "--max-parents=0", "HEAD").split()[0]
+    c = mkcommit(d, git(d, "rev-parse", f"{first}^{{tree}}"), [bad_commit], "rm")
+    git(d, "update-ref", "HEAD", c)
+    git(d, "reset", "-q", "--hard")
+    return commit(d, {f"{ACC}1.md": OK})
+
+
+def nested(d, leaf_entries, upto=len(TOP)):
+    """A tree for TOP[:upto] holding leaf_entries at its bottom; returns the oid of the TOP[0] tree."""
+    sub = mktree_literal(d, leaf_entries)
+    for name in reversed(TOP[1:upto]):
+        sub = mktree_literal(d, [("40000", name, sub)])
+    return sub
+
+
+KINDS = {}
+
+
+def kind(name):
+    def deco(fn):
+        KINDS[name] = fn
+        return fn
+    return deco
+
+
+# ---------------------------------------------------------------- leaf: the review directory itself a regular file
+@kind("leaf_regular_file")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    c2 = commit(d, {RD: b"not a directory\n"})
+    commit(d, rm=[RD])
+    commit(d, {f"{ACC}1.md": OK})
+    return {"ls_tree_c2": git(d, "ls-tree", "-r", c2, "--", RD), "dir_check": dircheck(d), "result": valid(d)}
+
+
+@kind("leaf_executable_file")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    p = Path(d, RD); p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(b"#!/bin/sh\n"); p.chmod(0o755)
+    commit(d)
+    commit(d, rm=[RD])
+    commit(d, {f"{ACC}1.md": OK})
+    return {"dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---------------------------------------------------------------- an evil merge: the symlink exists only in the merge
+@kind("evil_merge_ancestor_symlink")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    git(d, "checkout", "-q", "-b", "side")
+    cs = commit(d, {"side.txt": b"s\n"})
+    git(d, "checkout", "-q", "main")
+    cm = commit(d, {"main.txt": b"m\n"})
+    # the merge's own tree: both files, plus alt/<rest>/veto.md and level4 -> alt (in no parent)
+    git(d, "read-tree", cm)
+    git(d, "update-index", "--add", "--cacheinfo", f"100644,{git(d, 'rev-parse', f'{cs}:side.txt')},side.txt")
+    blob = git(d, "hash-object", "-w", "--stdin", inp=VETO)
+    git(d, "update-index", "--add", "--cacheinfo", f"100644,{blob},alt/{'/'.join(TOP[1:])}/veto.md")
+    link = git(d, "hash-object", "-w", "--stdin", inp=b"alt")
+    git(d, "update-index", "--add", "--cacheinfo", f"120000,{link},{TOP[0]}")
+    m = mkcommit(d, git(d, "write-tree"), [cm, cs], "evil merge")
+    git(d, "update-ref", "HEAD", m)
+    git(d, "reset", "-q", "--hard")
+    commit(d, rm=[TOP[0], "alt"])
+    commit(d, {f"{ACC}1.md": OK})
+    return {"merge_parents": git(d, "rev-list", "--parents", "-n1", m).split()[1:],
+            "rev_list_no_merges_contains_merge": m in git(d, "rev-list", "--no-merges", "HEAD").split(),
+            "fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---------------------------------------------------------------- caller object directory forging one tree (RB6 class)
+def forged_odb(w, fmt=None):
+    d = w / "r"; init(d, fmt)
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {f"alt/{'/'.join(TOP[1:])}/veto.md": VETO})
+    c3 = commit(d, {TOP[0]: ("link", "alt")})
+    commit(d, rm=[TOP[0], "alt"])
+    head = commit(d, {f"{ACC}1.md": OK})
+    bad_root = git(d, "rev-parse", f"{c3}^{{tree}}")
+    good_l4 = git(d, "rev-parse", f"{head}:{TOP[0]}")
+    entries = [("40000", "alt", git(d, "rev-parse", f"{c3}:alt")), ("40000", "att", git(d, "rev-parse", f"{c3}:att")),
+               ("40000", TOP[0], good_l4)]
+    data = raw_tree(entries)
+    forged = w / "forged_objects"
+    p = forged / bad_root[:2] / bad_root[2:]
+    p.parent.mkdir(parents=True)
+    p.write_bytes(zlib.compress(b"tree %d\0" % len(data) + data))
+    env = {"GIT_OBJECT_DIRECTORY": str(forged), "GIT_ALTERNATE_OBJECT_DIRECTORIES": str(Path(d, ".git", "objects"))}
+    return d, env, bad_root
+
+
+@kind("caller_forged_object_directory")
+def _(w, fmt=None):
+    d, env, bad_root = forged_odb(w, fmt)
+    seen = subprocess.run(["git", "-C", str(d), "cat-file", "-p", bad_root], capture_output=True,
+                          env={**os.environ, **env}).stdout.decode(errors="replace")
+    old = {k: os.environ.get(k) for k in env}
+    os.environ.update(env)
+    try:
+        dc, res = dircheck(d), valid(d)
+    finally:
+        for k, v in old.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+    return {"caller_env_view_of_bad_root": seen.splitlines(), "dir_check": dc, "result": res,
+            "without_caller_env": {"dir_check": dircheck(d), "result": valid(d)}}
+
+
+# ---------------------------------------------------------------- raw-tree parsing: duplicates, order, spaces, empty
+@kind("duplicate_entry_symlink_then_dir")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    attt = git(d, "rev-parse", f"{c1}:att")
+    link = git(d, "hash-object", "-w", "--stdin", inp=b"att")
+    l4 = nested(d, [("100644", "x.md", git(d, "hash-object", "-w", "--stdin", inp=b"x\n"))])
+    root = mktree_literal(d, [("40000", "att", attt), ("120000", TOP[0], link), ("40000", TOP[0], l4)])
+    out = {"tree_entry_direct": repr(L._tree_entry(raw_tree([("40000", "att", attt), ("120000", TOP[0], link),
+                                                              ("40000", TOP[0], l4)]), TOP[0].encode(), 20))}
+    removed_later(d, mkcommit(d, root, [c1], "dup"))
+    out.update(fsck=fsck(d), history_complete=L._history_complete(str(d)), dir_check=dircheck(d), result=valid(d))
+    return out
+
+
+@kind("unsorted_tree_at_root")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    attt = git(d, "rev-parse", f"{c1}:att")
+    link = git(d, "hash-object", "-w", "--stdin", inp=b"att")
+    root = mktree_literal(d, [("120000", TOP[0], link), ("40000", "att", attt)])
+    removed_later(d, mkcommit(d, root, [c1], "unsorted"))
+    return {"fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+@kind("names_with_spaces_bad")
+def _(w):
+    """level4 a symlink next to 'level4 x' and 'a level4' directories."""
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {f"level4 x/{'/'.join(TOP[1:])}/veto.md": VETO, "a level4/y": b"y\n"})
+    c3 = commit(d, {TOP[0]: ("link", "level4 x")})
+    commit(d, rm=[TOP[0], "level4 x", "a level4"])
+    commit(d, {f"{ACC}1.md": OK})
+    return {"ls_tree_c3": git(d, "ls-tree", c3).splitlines(), "dir_check": dircheck(d), "result": valid(d)}
+
+
+@kind("names_with_spaces_control")
+def _(w):
+    """Legitimate: 'level4 copy' symlink and 'level4.x' file beside a real level4 directory; must be ACCEPTED."""
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {"level4 copy": ("link", "att"), "level4.x": b"x\n", f"{TOP[0]}/{TOP[1]} x": ("link", "../att"),
+               f"{RD} old": b"file beside\n"})
+    commit(d, {f"{ACC}1.md": OK})
+    return {"dir_check": dircheck(d), "result": valid(d)}
+
+
+@kind("empty_tree_at_ancestor")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    empty = mktree_literal(d, [])
+    root = mktree_literal(d, [("40000", "att", git(d, "rev-parse", f"{c1}:att")), ("40000", TOP[0], empty)])
+    removed_later(d, mkcommit(d, root, [c1], "empty"))
+    return {"fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+@kind("empty_tree_at_review_dir")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    top = nested(d, [], upto=len(TOP))
+    root = mktree_literal(d, [("40000", "att", git(d, "rev-parse", f"{c1}:att")), ("40000", TOP[0], top)])
+    removed_later(d, mkcommit(d, root, [c1], "empty rd"))
+    return {"fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---------------------------------------------------------------- odd directory-like modes (git reads them as trees)
+for odd in ("40755", "41000", "040000"):
+    @kind(f"odd_dir_mode_at_ancestor::{odd}")
+    def _(w, odd=odd):
+        d = w / "r"; init(d)
+        c1 = commit(d, {"att/HOST.json": ATT})
+        sub = nested(d, [("100644", "note.md", git(d, "hash-object", "-w", "--stdin", inp=b"neutral\n"))])
+        root = mktree_literal(d, [("40000", "att", git(d, "rev-parse", f"{c1}:att")), (odd, TOP[0], sub)])
+        bad = mkcommit(d, root, [c1], "odd")
+        wt = w / "wt"
+        git(d, "worktree", "add", "-q", "--detach", str(wt), bad)
+        shown = Path(wt, RD, "note.md").exists()
+        git(d, "worktree", "remove", "--force", str(wt))
+        removed_later(d, bad)
+        return {"ls_tree_bad": git(d, "ls-tree", bad).splitlines(), "checkout_shows_file_under_review_dir": shown,
+                "fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---------------------------------------------------------------- sha256 width
+@kind("sha256_gitlink_absent_at_ancestor")
+def _(w):
+    d = w / "r"; init(d, "sha256")
+    c1 = commit(d, {"att/HOST.json": ATT})
+    git(d, "update-index", "--add", "--cacheinfo", f"160000,{'1' * 64},{TOP[1 - 1]}/{TOP[1]}")
+    git(d, "commit", "-q", "-m", "gitlink")
+    git(d, "rm", "-q", "--cached", f"{TOP[0]}/{TOP[1]}")
+    git(d, "commit", "-q", "-m", "rm")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+@kind("sha256_control")
+def _(w):
+    d = w / "r"; init(d, "sha256")
+    commit(d, {"att/HOST.json": ATT})
+    commit(d, {f"{RD}/notes.md": b"n\n", f"{TOP[0]}/other.txt": b"o\n"})
+    commit(d, {f"{ACC}1.md": OK})
+    return {"dir_check": dircheck(d), "result": valid(d)}
+
+
+@kind("sha256_caller_forged_object_directory")
+def _(w):
+    return KINDS["caller_forged_object_directory"](w, "sha256")
+
+
+# ---------------------------------------------------------------- many roots, orphans, siblings
+@kind("unrelated_root_with_ancestor_symlink")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    git(d, "checkout", "-q", "--orphan", "other")
+    git(d, "rm", "-q", "-r", "--cached", ".")
+    for p in Path(d).iterdir():
+        if p.name != ".git":
+            subprocess.run(["rm", "-rf", str(p)], check=True)
+    commit(d, {f"alt/{'/'.join(TOP[1:])}/veto.md": VETO, TOP[0]: ("link", "alt")})
+    commit(d, rm=[TOP[0], "alt"])
+    commit(d, {"o.txt": b"o\n"})
+    git(d, "checkout", "-q", "main")
+    git(d, "merge", "-q", "--allow-unrelated-histories", "--no-edit", "other")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"roots": len(git(d, "rev-list", "--max-parents=0", "HEAD").split()), "dir_check": dircheck(d),
+            "result": valid(d)}
+
+
+@kind("unrelated_roots_control")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    git(d, "checkout", "-q", "--orphan", "other")
+    git(d, "rm", "-q", "-r", "--cached", ".")
+    for p in Path(d).iterdir():
+        if p.name != ".git":
+            subprocess.run(["rm", "-rf", str(p)], check=True)
+    commit(d, {"o.txt": b"o\n", f"{TOP[0]}/x.txt": b"x\n"})
+    git(d, "checkout", "-q", "main")
+    git(d, "merge", "-q", "--allow-unrelated-histories", "--no-edit", "other")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"dir_check": dircheck(d), "result": valid(d)}
+
+
+@kind("unmerged_branch_with_symlink_control")
+def _(w):
+    d = w / "r"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    git(d, "checkout", "-q", "-b", "side")
+    commit(d, {TOP[0]: ("link", "att")})
+    git(d, "checkout", "-q", "main")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"dir_check": dircheck(d), "result": valid(d), "note": "only HEAD's history is read (stated scope)"}
+
+
+@kind("sibling_gitlinks_control")
+def _(w):
+    d = w / "r"; init(d)
+    c1 = commit(d, {"att/HOST.json": ATT})
+    for p in ("vendor/x", f"{TOP[0]}/other", f"{'/'.join(TOP[:3])}/reviews2", f"{'/'.join(TOP[:3])}/reviews.bak"):
+        git(d, "update-index", "--add", "--cacheinfo", f"160000,{'2' * 40},{p}")
+    git(d, "commit", "-q", "-m", "gitlinks")
+    commit(d, {f"{ACC}1.md": OK})
+    return {"fsck": fsck(d), "dir_check": dircheck(d), "result": valid(d)}
+
+
+# ---------------------------------------------------------------- odd roots / exceptions
+@kind("odd_roots")
+def _(w):
+    out = {}
+    d = w / "headtree"; init(d)
+    commit(d, {"att/HOST.json": ATT})
+    tree = git(d, "rev-parse", "HEAD^{tree}")
+    Path(d, ".git", "HEAD").write_text(tree + "\n")
+    out["head_is_a_tree"] = {"dir_check": dircheck(d), "result": valid(d)}
+    out["nul_in_root"] = {"dir_check": dircheck(str(d) + "\0x")}
+    try:
+        out["nul_in_root"]["result"] = L.attestation_valid({"path": "att/HOST.json", "sha256": SHA},
+                                                           repo_root=str(d) + "\0x")[1]
+    except Exception as e:
+        out["nul_in_root"]["result"] = f"EXC {type(e).__name__}: {e}"
+    b = w / "bare"
+    src = w / "src"; init(src); commit(src, {"att/HOST.json": ATT}); commit(src, {f"{ACC}1.md": OK})
+    git(w, "clone", "-q", "--bare", str(src), str(b))
+    out["bare_clone"] = {"dir_check": dircheck(b), "result": valid(b)}
+    return out
+
+
+@kind("batch_parser_edges")
+def _(w):
+    """_cat_file_batch / _tree_entry directly on hand-made inputs (no git)."""
+    out = {}
+    out["tree_entry_truncated_oid"] = repr(L._tree_entry(b"40000 level4\0" + b"\x01" * 19, b"level4", 20))
+    out["tree_entry_no_nul"] = repr(L._tree_entry(b"40000 level4", b"level4", 20))
+    out["tree_entry_empty"] = repr(L._tree_entry(b"", b"level4", 20))
+    out["tree_entry_space_in_name"] = repr(L._tree_entry(b"40000 a level4\0" + b"\x01" * 20 + b"120000 level4\0"
+                                                         + b"\x02" * 20, b"level4", 20))
+    out["tree_entry_sha256"] = repr(L._tree_entry(b"40000 att\0" + b"\x01" * 32 + b"120000 level4\0" + b"\x02" * 32,
+                                                  b"level4", 32))
+    out["tree_entry_sha256_read_with_width_20"] = repr(L._tree_entry(b"40000 att\0" + b"\x01" * 32 + b"40000 level4\0"
+                                                                     + b"\x02" * 32, b"level4", 20))
+    d = w / "r"; init(d); c = commit(d, {"att/HOST.json": ATT})
+    out["batch_missing"] = repr(L._cat_file_batch(str(d), [c, "0" * 40], contents=False))
+    out["batch_ambiguous_prefix"] = repr(L._cat_file_batch(str(d), [c[:4]], contents=False))
+    out["batch_ok"] = repr(L._cat_file_batch(str(d), [f"{c}^{{tree}}"], contents=False))
+    out["batch_empty"] = repr(L._cat_file_batch(str(d), [], contents=True))
+    out["batch_name_with_space"] = repr(L._cat_file_batch(str(d), [f"{c}:att/HOST.json x"], contents=False))
+    return out
+
+
+# ---------------------------------------------------------------- configured commands during the new batch calls
+@kind("configured_command_sweep_cat_file")
+def _(w):
+    d = w / "r"; init(d)
+    mark = w / "marks"; mark.mkdir()
+    prog = w / "prog.sh"
+    prog.write_text(f"#!/bin/sh\necho \"$0 $*\" >> {mark}/ran\ncat\n")
+    prog.chmod(0o755)
+    hooks = w / "hooks"; hooks.mkdir()
+    for h in ("post-checkout", "post-merge", "reference-transaction", "pre-auto-gc", "post-index-change"):
+        (hooks / h).write_text(f"#!/bin/sh\necho {h} >> {mark}/ran\n"); (hooks / h).chmod(0o755)
+    commit(d, {"att/HOST.json": ATT, ".gitattributes": b"* filter=x diff=x\n"})
+    commit(d, {f"{ACC}1.md": OK})
+    for k, v in (("pager.cat-file", str(prog)), ("core.pager", str(prog)), ("filter.x.smudge", str(prog)),
+                 ("filter.x.clean", str(prog)), ("filter.x.process", str(prog)), ("diff.x.textconv", str(prog)),
+                 ("gpg.program", str(prog)), ("core.sshCommand", str(prog)), ("credential.helper", f"!{prog}"),
+                 ("core.askPass", str(prog)), ("uploadpack.packObjectsHook", str(prog)),
+                 ("core.alternateRefsCommand", str(prog)), ("core.hooksPath", str(hooks)),
+                 ("core.fsmonitor", str(prog)), ("log.showSignature", "true")):
+        git(d, "config", "--local", k, v)
+    res = valid(d)
+    return {"result": res, "dir_check": dircheck(d),
+            "commands_run": (mark / "ran").read_text().splitlines() if (mark / "ran").exists() else []}
+
+
+# ---------------------------------------------------------------- long histories, distinct trees at every depth
+def long_history(w, n):
+    d = w / "r"; init(d)
+    stream = [b"blob\nmark :1\ndata %d\n" % len(ATT) + ATT + b"\n", b"blob\nmark :2\ndata %d\n" % len(OK) + OK + b"\n"]
+    for i in range(n):
+        s = f"commit refs/heads/main\ncommitter t <t@t> {1700000000 + i} +0000\ndata 1\nx\n"
+        if i == 0:
+            s += "M 100644 :1 att/HOST.json\n"
+        else:
+            s += f"M 100644 inline {RD}/n{i % 5}.md\ndata {len(str(i)) + 1}\n{i}\n"
+        if i == n - 1:
+            s += f"M 100644 :2 {ACC}1.md\n"
+        stream.append(s.encode())
+    subprocess.run(["git", "-C", str(d), "fast-import", "--quiet"], input=b"".join(stream), check=True)
+    git(d, "reset", "-q", "--hard", "main")
+    t0 = time.time(); dc = dircheck(d); t1 = time.time()
+    return {"commits": n, "distinct_trees_every_depth": True, "dir_check": dc, "dir_check_s": round(t1 - t0, 2)}
+
+
+@kind("long_history_30000_deep_changes")
+def _(w):
+    return long_history(w, 30000)
+
+
+@kind("long_history_150000_deep_changes")
+def _(w):
+    return long_history(w, 150000)
+
+
+for name, fn in KINDS.items():
+    if ONLY and name not in ONLY:
+        continue
+    try:
+        with tempfile.TemporaryDirectory(dir=TMP) as w:
+            results[name] = fn(Path(w))
+    except Exception:
+        results[name] = {"probe_error": traceback.format_exc()[-1500:]}
+    if not ONLY:
+        print(name, json.dumps(results[name].get("result", results[name].get("dir_check", "..."))
+                               if isinstance(results[name], dict) else results[name])[:300], flush=True)
+Path(OUT).write_text(json.dumps(results, indent=1, sort_keys=True) + "\n")
+if ONLY:
+    print(json.dumps({k: results[k] for k in ONLY}))

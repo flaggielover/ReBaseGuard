@@ -1,0 +1,75 @@
+{
+ "base_copy_suite": {
+  "rc": 0,
+  "tail": "OK"
+ },
+ "mutants": [
+  {
+   "id": "W01",
+   "property": "the LATEST commit that touches the accepting line is taken as 'first' (order check on the wrong commit)",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -1046 +1046 @@\n-    return lines[0] if lines else None\n+    return lines[-1] if lines else None\n"
+  },
+  {
+   "id": "W02",
+   "property": "an upper-case cmdline digest passes the record shape check (a malformed record can then prove DEAD)",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -214 +214 @@\n-    return c is None or (isinstance(c, str) and re.fullmatch(r\"[0-9a-f]{64}\", c) is not None)\n+    return c is None or (isinstance(c, str) and re.fullmatch(r\"[0-9a-fA-F]{64}\", c) is not None)\n"
+  },
+  {
+   "id": "W03",
+   "property": "an upper-case boot id passes the record shape check (a malformed record can then prove DEAD)",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -207 +207 @@\n-    if b is not None and (not isinstance(b, str) or not _BOOT_ID.match(b)):\n+    if b is not None and (not isinstance(b, str) or not _BOOT_ID.match(b.lower())):\n"
+  },
+  {
+   "id": "W04",
+   "property": "not-found: a dangling unit link in a root is not a unit file (reads as not enabled)",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -730 +730 @@\n-        found |= f.is_symlink() or f.exists()\n+        found |= f.exists()\n"
+  },
+  {
+   "id": "W05",
+   "property": "not-found: a unit root that is not a directory is skipped (unknown becomes not enabled)",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -728 +728 @@\n-            return None\n+            continue\n"
+  },
+  {
+   "id": "W06",
+   "property": "'revoke' is not a negative word",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -1059 +1059 @@\n-_NEGATIVE = re.compile(r\"reject|withdraw|not[ _-]?accepted|revoke\", re.I)\n+_NEGATIVE = re.compile(r\"reject|withdraw|not[ _-]?accepted\", re.I)\n"
+  },
+  {
+   "id": "W07",
+   "property": "not-found: only the last root decides whether a unit file exists",
+   "status": "SURVIVED",
+   "tail": "OK",
+   "killed_by": [],
+   "diff": "@@ -730 +730 @@\n-        found |= f.is_symlink() or f.exists()\n+        found = f.is_symlink() or f.exists()\n"
+  },
+  {
+   "id": "W08",
+   "property": "a failed is-enabled query after a failed is-active query, with not-found, reads as not enabled",
+   "status": "KILLED",
+   "tail": "FAILED (failures=2)",
+   "killed_by": [
+    "test_failed_systemctl_query_is_no_reading",
+    "test_systemctl_path_when_systemd_is_pid1"
+   ],
+   "diff": "@@ -753 +753 @@\n-        if st == \"not-found\":\n+        if st in (\"not-found\", None):\n"
+  }
+ ]
+}

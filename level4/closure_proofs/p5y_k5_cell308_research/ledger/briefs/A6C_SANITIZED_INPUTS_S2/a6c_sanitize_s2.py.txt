@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+"""A6c sanitized input set S2: line-for-line redaction of manifest entry 24 line 115. No network use.
+
+Usage: python3 -I a6c_sanitize_s2.py <repo root> <output dir>
+Reads the source from its git object at the commit that the verified manifest R2 pins for it, and verifies the
+manifest's length and SHA-256 for it. Replaces each listed line by a marker of the same Markdown kind (line numbers are
+preserved), appends one trailer line, and writes the artifact. Redacted lines are never printed.
+"""
+import hashlib
+import json
+import subprocess
+import sys
+
+BASE = "level4/closure_proofs/p5y_k5_cell308_research/"
+MANIFEST_COMMIT = "0c6c0a30f321ecc3d9891acef9fb5d99e1e6ffef"
+MANIFEST_PATH = BASE + "ledger/briefs/A6C_PHASE2_MANIFEST_R2.json"
+MANIFEST_BYTES = 20981
+MANIFEST_SHA256 = "a12470137f0f34c0a687a07c2b8f5e45517acd29ffc377143c50ae2e6e3c07cf"
+CLASSES = {
+    "I": "possible incident-review attribution, redacted conservatively",
+}
+SOURCES = [
+    ("governance/new_host_route_cloud_r1/PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R5_ERRATUM_E1.md", {115: "I"}),
+]
+
+
+def marker(orig, n, cls):
+    text = "[A6C-SANITIZED S2: original line %d redacted, class %s: %s]" % (n, cls, CLASSES[cls])
+    if orig.startswith("#"):
+        return orig[:len(orig) - len(orig.lstrip("#"))] + " " + text
+    if orig.startswith("|"):
+        cols = len(orig.strip().strip("|").split("|"))
+        return "| " + text + " |" + " |" * (cols - 1)
+    return text
+
+
+def git_blob(root, spec):
+    return subprocess.run(["git", "-C", root, "cat-file", "-p", spec], capture_output=True, check=True).stdout
+
+
+def main(root, out):
+    raw = git_blob(root, MANIFEST_COMMIT + ":" + MANIFEST_PATH)
+    if len(raw) != MANIFEST_BYTES or hashlib.sha256(raw).hexdigest() != MANIFEST_SHA256:
+        sys.exit("STOP: manifest R2 mismatch")
+    pinned = {e["path"]: e for e in json.loads(raw)["entries"]}
+    for rel, redact in SOURCES:
+        e = pinned[BASE + rel]
+        commit, size, sha = e["commit"], e["bytes"], e["sha256"]
+        data = git_blob(root, commit + ":" + BASE + rel)
+        if len(data) != size or hashlib.sha256(data).hexdigest() != sha:
+            sys.exit("STOP: source mismatch " + rel)
+        lines = data.decode("utf-8").split("\n")
+        assert lines[-1] == "", rel
+        for n, cls in sorted(redact.items()):
+            assert lines[n - 1].strip(), (rel, n)
+            lines[n - 1] = marker(lines[n - 1], n, cls)
+        counts = {c: sum(1 for v in redact.values() if v == c) for c in sorted(set(redact.values()))}
+        trailer = ("[A6C-SANITIZED S2 artifact of %s at %s (%d bytes, sha256 %s). %d lines redacted line-for-line "
+                   "(%s); every other line is byte-identical to the original; line numbers are preserved.]"
+                   % (BASE + rel, commit, size, sha, len(redact), ", ".join("%s=%d" % kv for kv in counts.items())))
+        lines.insert(len(lines) - 1, trailer)
+        name = rel.rsplit("/", 1)[1].replace(".md", ".A6C_SANITIZED_S2.md")
+        text = "\n".join(lines).encode("utf-8")
+        open(out + "/" + name, "wb").write(text)
+        print(name, len(text), hashlib.sha256(text).hexdigest())
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2])

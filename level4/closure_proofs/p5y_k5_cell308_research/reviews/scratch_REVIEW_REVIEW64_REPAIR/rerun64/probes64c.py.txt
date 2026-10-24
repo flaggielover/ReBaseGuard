@@ -1,0 +1,35 @@
+"""Review 64 probes, part c: repository-local textconv (uncommitted .git/info/attributes + config) hides an acceptance
+written BEFORE the blob from git log -S. usage: python3 -I probes64c.py.txt <base> <tmp> <out.json>"""
+import json, os, subprocess, sys, tempfile, hashlib
+from pathlib import Path
+BASE, TMP, OUT = sys.argv[1:4]
+sys.path.insert(0, BASE)
+import lx_platform as L
+HW = {"machine_id_sha256": "a" * 64, "product_uuid_sha256": "b" * 64, "hardware_bound": True}
+L.machine_identity = lambda *a, **k: HW
+RD = L.ACCEPTANCE_REVIEW_DIR; ACC = f"{RD}/{L.ACCEPTANCE_REVIEW_PREFIX}"
+ATT = json.dumps({"schema": L.ATTESTATION_SCHEMA, "reviewed": True, "accepted": True, "machine": HW,
+                  "provider_image_updates": L.NO_IMAGE_CHANGE, "root_cgroup_is_real": True}).encode()
+SHA = hashlib.sha256(ATT).hexdigest(); LINE = f"{L.ACCEPTANCE_LINE}{SHA}"
+OK = f"review\n{LINE}\n{L.ACCEPTANCE_VERDICT_LINE}\n".encode()
+CFG = ["-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={os.devnull}",
+       "-c", "init.defaultBranch=main"]
+def git(d, *a): return subprocess.run(["git", "-C", d, *CFG, *a], check=True, capture_output=True)
+def commit(d, files):
+    for rel, data in files.items():
+        p = Path(d, rel); p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(data)
+    git(d, "add", "-A"); git(d, "commit", "-q", "--allow-empty", "-m", "c")
+res = {}
+for hide in (False, True):
+    with tempfile.TemporaryDirectory(dir=TMP) as d:
+        git(d, "init", "-q")
+        commit(d, {"README": b"x\n"})
+        commit(d, {f"{ACC}1.md": OK})                    # acceptance BEFORE the blob (not a root commit)
+        commit(d, {"att/HOST.json": ATT})
+        commit(d, {"notes/q.md": f"quoted: {LINE}\n".encode()})
+        if hide:
+            Path(d, ".git/info/attributes").write_text(f"{RD}/** diff=hide\n")
+            git(d, "config", "--local", "diff.hide.textconv", "true")   # prints nothing: the line count reads 0
+        rec, why = L.attestation_valid({"path": "att/HOST.json", "sha256": SHA}, repo_root=d)
+        res[f"textconv_hide={hide}"] = {"valid": rec is not None, "reasons": why}
+Path(OUT).write_text(json.dumps(res, indent=1) + "\n"); print(json.dumps(res))

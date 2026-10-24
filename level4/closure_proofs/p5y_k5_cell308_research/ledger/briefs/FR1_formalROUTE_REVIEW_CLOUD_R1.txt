@@ -1,0 +1,101 @@
+BRIEF FR1 — formal route / governance review of the Cell-308 MB-S new-host route, Cloud r1 (commissioned under the
+owner's OD-2 instruction of 2026-10-16, governance/new_host_route_cloud_r1/USER_AUTHORIZATION_20261016_OD2.md).
+Issued 2026-10-16 by the coordinator of a Claude Cloud session, who appoints you under that instruction.
+This is NOT development-review round 72 and does not reopen the development-review cycle (reviews 59-71).
+
+=== ROLE AND TWO PHASES
+You are reviewerFR1, a fresh, independent formal route / governance reviewer. You wrote none of the reviewed material and
+took no part in reviews 59-71, the Codex integration reviews, the MB r1 or MB-S campaigns, or the coordinator's
+preparation. You review; you do not repair, commit, push or edit any repository file. You write only under your scratch
+directory.
+
+PHASE 1 (eligibility; do this FIRST and then STOP): write
+  /tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/FR1/scratch/ELIGIBILITY_AND_EXPOSURE_FR1.md
+containing: your role label (reviewerFR1); a statement of any prior reading of the excluded material listed below or of
+MB r1 target-run observations (from this or any earlier context you can recall; a fresh context should say "none");
+whether you have taken any earlier role in this project; and your acceptance of the restrictions below. Then reply with
+only the file path and the line "PHASE 1 COMPLETE". Do not begin the substantive review until you receive a message
+"BEGIN PHASE 2".
+
+PHASE 2 (substantive review): only after "BEGIN PHASE 2".
+
+=== CHECKOUT (pinned)
+A detached worktree of exactly commit 29d79e7045e36c71fa1f30c03d83e92be8a58006 (branch
+codex/cell308-claude-r5-integration, draft PR flaggielover/ReBaseGuard#3) is at
+/tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/FR1/tree_29d79e70
+Use it for every read. Do not read the shared checkout /home/user/ReBaseGuard except this brief. NS =
+level4/closure_proofs/p5y_k5_cell308_research/ in the pinned tree. The checkout is a shallow clone.
+
+=== SCOPE (sha256 at 29d79e70)
+Under NS/governance/new_host_route_cloud_r1/:
+  PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R5.md                 d0963b110baab7beb86fa80184b9ebf2aab21362d7c7e35745fc10b06f9ba933
+  FORMAL_ROUTE_READINESS_PACKET_20261016.md                  078f2ab2ef68bfc73f0c90862aaadc44ef0983a450b6b691303ebb13e1b17a3b
+  PROPOSED_LDET_REFERENCE_ADDENDUM_R1_20261015.md            4efcd152127abf18ab9bc412ee2883465cfd841e63ed847e54aef4cc15fc5277
+  LDET_SPECIFICATION_PACKET_20261016.md                      f0f367a968279d24ac7e6c59e2e1579a4beffb23bc8aff04894cf2a5fa1180e4
+  HOST_EVIDENCE_PLAN_H1_H8_20261016.md                       901a05d746a5e79daefe2974d76b5dce8306e333b22719a28c32d34355b64ec8
+  CLOUD_HOST_INVENTORY_R3_20261016.json                      60159f974aec76fda93dfe92f92e978ad8457006cdbcd537d90efb2b37e3d7b4
+  HOST_ATTESTATION_ACCEPTANCE_PROCEDURE_20261016.md          91e61e8d83710461ae102ac88e98e8a5cc45f0d28ece4d7eff5d823310520322
+  S12_RISK_REVIEW_BRIEF_DRAFT_20261016.md (its §2 eligibility requirements)  d4d4f7cd8553a9db79d5f5305e2890df302ccb1f1c8ab5f3c90944e4cf66cd53
+plus, as applicable: OWNER_DECISION_BRIEF_CLOUD_R1_R5.md, ROUTE_PREPARATION.md, OWNER_SELECTION.md,
+USER_AUTHORIZATION_20261014.md, CLOUD_FEASIBILITY_R2.md with CLOUD_FEASIBILITY_R2_ERRATUM_E1.md,
+OFFICIAL_PROVIDER_FACTS_20261014.md with its ERRATUM_E1, PROPOSED_R5_INTEGRATION_TECHNICAL_SUPPLEMENT_CODEX_20261015.md,
+the disposition supplements PROPOSED_REVIEW63..71_* and PROPOSED_REVIEW64_DISPOSITION_SUPPLEMENT_ERRATUM_E1.md.
+Accepted sources you may read to check fidelity: NS/governance/SUCCESSOR_GOVERNANCE_308.md, _ADDENDUM_A1.md,
+_ADDENDUM_A1_ERRATUM_E1.md, CONSTANTS_RATIFICATION_MBS308.md, USER_DECISION_BRIEF_308_SUCCESSOR_R2.md,
+SUCCESSOR_CONDITIONS_REGISTER_308.md; NS/registry/SUCCESSOR_ROUTE_AUDIT_308_ADDENDUM_A1.md with errata E1, E2.
+Development evidence you may read: NS/streams/CLOUD_R1_LINUX_DEV/ (sources only; run nothing there except, optionally,
+`python3 -B -m unittest discover -s tests` from that directory), NS/ledger/TARGET_INTEGRITY_LEDGER.jsonl,
+NS/reviews/REVIEW_*REPAIR_DELTA.md (development reviews; not formal acceptance). The PR2 line
+(codex/cell308-review61-continuation, commit 3b244277) may be read by `git show` for the A1/A2/A5 trace only.
+
+=== EXPOSURE RESTRICTIONS (binding; governance S13, S10)
+Do NOT open, grep into or otherwise read: NS/audit/EXECUTION_INTERRUPTION_ASSESSMENT*, NS/audit/INCIDENT_AUDIT*,
+NS/reviews/REVIEW_EXECUTION_INTERRUPTION*, NS/reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308.md (use only its quotations in
+amendment r5 §6), anything under level4/closure_proofs/p5y_k5_cell308_mb_r1/postexec/ or any MB r1 target-run record,
+NS/ledger/COORDINATOR_EXPOSURE_DISCLOSURE.md, any Cell-309 branch, file or record. Do not open or print the MB r1
+qualification records; git-object hashing of their blobs (cat-file | sha256sum, never printing content) is permitted.
+Do not run any scientific, candidate, decoy, qualification or L-DET code. Do not call attestation_valid or lx_verified
+against the real repository. Disclose any accidental contact. Every git, gpg or Python process you start runs with
+HOME and GNUPGHOME under your scratch directory. Optionally, for reference-pin provenance, you may make a
+history-complete clone of github.com/flaggielover/ReBaseGuard into your scratch (e.g. `git clone --bare --filter=blob:none`
+and then fetch only the named blobs) to confirm introducing commits and ancestry by git object reads only.
+
+=== REQUIRED EXPLICIT FINDINGS (phase 2)
+F1. Accepted versus proposed: is every [ACCEPTED] quotation verbatim and correctly sourced; is any proposal presented as
+    accepted, or any accepted requirement weakened, in the amendment, the packet or the procedures?
+F2. The 21 D-* recommendations (packet §4): for EACH id give one of ENDORSE / ENDORSE_WITH_CHANGES (state the change) /
+    REJECT (state why) / OWNER_RESERVED (a choice only the owner can make; say what evidence the owner needs) /
+    CANNOT_ASSESS_WITHOUT_HOST (name the fact). Check the "amends which accepted text / new number" labels.
+F3. Host-selection criteria: which H1-H8 requirements and which D-*-derived criteria (e.g. CPU minimum, thermal zones,
+    bare metal / dedicated) are supported by accepted text, which are proposals, and the minimum criteria a candidate
+    host must meet before an inventory is worth taking.
+F4. Reproduction semantics: is the L-DET specification (packet §1-§6 and the addendum) a faithful implementation of
+    MBR1_REPRO (route A1 §3) and RC2; the exact-rational and canonical-byte comparison; the QC04 serial inclusion;
+    reference provenance (confirm the five records' blob ids / introducing commit on a history-complete clone if you
+    can, value-free); interpreter and source bindings; D-RC2-SCOPE.
+F5. Attestation trust assumptions: is the acceptance procedure (tree paths and blob contents only, ledger binding,
+    external anchor) sound and honest about what in-repository checks cannot establish; what is missing.
+F6. Reviewer independence: are the eligibility rules (acceptance reviewer, S12 reviewer) adequate; is the coordinator's
+    appointment of agent reviewers under the owner's delegation sufficient for each role, and for which roles it is not.
+F7. Progression authority: the ordered dependency list and readiness matrix: is every gate correctly classed (MET /
+    UNMET / OPEN_DECISION / BLOCKED), is any step skipped, and who holds authority at each step.
+F8. Any other finding.
+
+=== OUTPUT
+ONE Markdown file:
+  /tmp/claude-0/-home-user-ReBaseGuard/000d3115-48ec-594a-b3d0-49b4980206d0/scratchpad/FR1/REVIEW_FORMAL_ROUTE_CLOUD_R1_FR1.md
+  1. Header: reviewer = "reviewerFR1 (fresh agent, brief FR1)", date, pinned commit.
+  2. Exposure disclosure (actual contact during the review).
+  3. Verdict lines, exactly:
+     ROUTE_TEXTS: one of ACCEPTED / ACCEPTED_WITH_CONDITIONS / NOT_ACCEPTED   (amendment r5 + packet + procedures as
+                  a formal-review text)
+     LDET_SPEC: one of ACCEPTED / ACCEPTED_WITH_CONDITIONS / NOT_ACCEPTED
+     ATTESTATION_PROCEDURE: one of ACCEPTED / ACCEPTED_WITH_CONDITIONS / NOT_ACCEPTED
+     State plainly that a formal-review verdict brings nothing into force: owner decisions on the [OPEN] items, the
+     fresh S12 rating and the further gates remain required, and no D-* item is decided by this review.
+  4. F1-F8, each with evidence (file:line).
+  5. A table of the 21 D-* ids with your F2 disposition.
+  6. Numbered findings G1..Gn with severity BLOCKING / MAJOR / MINOR / NOTE, location, required correction.
+  7. Conditions (if ACCEPTED_WITH_CONDITIONS): a numbered, checkable list.
+Be specific and adversarial; no praise; say UNVERIFIED where you cannot verify. When finished, reply with only: the
+output path, the three verdict lines, and the count of findings by severity.

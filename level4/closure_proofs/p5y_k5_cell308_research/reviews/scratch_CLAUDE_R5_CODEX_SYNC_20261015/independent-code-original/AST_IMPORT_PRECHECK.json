@@ -1,0 +1,851 @@
+[
+  {
+    "path": "/tmp/cell308-claude-sync-20261015/code-review-input/lx_platform.py",
+    "sha256": "864e47ee93f2a2972e51f76c0c4d4a9f727e9be2ffd0a421016df90e72917263",
+    "top_level": [
+      {
+        "line": 1,
+        "type": "Expr",
+        "statement": "\"Cell-308 new-host route (Claude Cloud, r1) -- DEVELOPMENT-ONLY Linux platform layer (revision 5).\\n\\nSTATUS: DEV_ONLY \u00b7 NOT ACCEPTED BY ANY GOVERNANC"
+      },
+      {
+        "line": 53,
+        "type": "ImportFrom",
+        "import": "from __future__ import annotations"
+      },
+      {
+        "line": 55,
+        "type": "Import",
+        "import": "import hashlib"
+      },
+      {
+        "line": 56,
+        "type": "Import",
+        "import": "import json"
+      },
+      {
+        "line": 57,
+        "type": "Import",
+        "import": "import math"
+      },
+      {
+        "line": 58,
+        "type": "Import",
+        "import": "import os"
+      },
+      {
+        "line": 59,
+        "type": "Import",
+        "import": "import platform as _platform"
+      },
+      {
+        "line": 60,
+        "type": "Import",
+        "import": "import re"
+      },
+      {
+        "line": 61,
+        "type": "Import",
+        "import": "import subprocess"
+      },
+      {
+        "line": 62,
+        "type": "Import",
+        "import": "import sys"
+      },
+      {
+        "line": 63,
+        "type": "Import",
+        "import": "import time"
+      },
+      {
+        "line": 64,
+        "type": "ImportFrom",
+        "import": "from pathlib import Path"
+      },
+      {
+        "line": 66,
+        "type": "Assign",
+        "statement": "PASS, FAIL, UNKNOWN, OPEN_DECISION = ('PASS', 'FAIL', 'UNKNOWN', 'OPEN_DECISION')"
+      },
+      {
+        "line": 67,
+        "type": "Assign",
+        "statement": "ALIVE, DEAD = ('ALIVE', 'DEAD')"
+      },
+      {
+        "line": 68,
+        "type": "Assign",
+        "statement": "AC = 'AC'"
+      },
+      {
+        "line": 69,
+        "type": "Assign",
+        "statement": "UNLIMITED_CGROUP_V1 = 2 ** 62"
+      },
+      {
+        "line": 70,
+        "type": "Assign",
+        "statement": "SLEEP_GAP_TOL_NS = 2000000000"
+      },
+      {
+        "line": 71,
+        "type": "Assign",
+        "statement": "MAX_SAMPLE_GAP_S = 180"
+      },
+      {
+        "line": 72,
+        "type": "Assign",
+        "statement": "MIN_FREE_DISK = 2 * 1024 ** 3"
+      },
+      {
+        "line": 73,
+        "type": "Assign",
+        "statement": "CAMPAIGN_UNIT_PREFIX = 'rebaseguard-mbs308-'"
+      },
+      {
+        "line": 74,
+        "type": "Assign",
+        "statement": "NO_IMAGE_CHANGE = 'ATTESTED_NO_IMAGE_OR_OS_CHANGE'"
+      },
+      {
+        "line": 75,
+        "type": "Assign",
+        "statement": "KNOWN_NOT_DISCHARGING = ('Charging', 'Full', 'Not charging')"
+      },
+      {
+        "line": 76,
+        "type": "Assign",
+        "statement": "INIT_PID_NS, INIT_CGROUP_NS = (4026531836, 4026531835)"
+      },
+      {
+        "line": 77,
+        "type": "Assign",
+        "statement": "ATTESTATION_SCHEMA = 'rebaseguard.p5y.k5.newhost-cloud-r1.host-attestation.v1'"
+      },
+      {
+        "line": 78,
+        "type": "Assign",
+        "statement": "ACCEPTANCE_LINE = 'HOST_ATTESTATION_ACCEPTED sha256='"
+      },
+      {
+        "line": 79,
+        "type": "AnnAssign",
+        "statement": "DECIDED: frozenset = frozenset()"
+      },
+      {
+        "line": 80,
+        "type": "Assign",
+        "statement": "JOURNAL_READER_REVIEWED = False"
+      },
+      {
+        "line": 81,
+        "type": "AnnAssign",
+        "statement": "PIN_POINT_MODULES: tuple | None = None"
+      },
+      {
+        "line": 82,
+        "type": "Assign",
+        "statement": "ACCEPTANCE_REVIEW_DIR = 'level4/closure_proofs/p5y_k5_cell308_research/reviews'"
+      },
+      {
+        "line": 83,
+        "type": "Assign",
+        "statement": "ACCEPTANCE_REVIEW_PREFIX = 'REVIEW_HOST_ATTESTATION_'"
+      },
+      {
+        "line": 84,
+        "type": "Assign",
+        "statement": "ACCEPTANCE_VERDICT_LINE = 'VERDICT: HOST_ATTESTATION_ACCEPTED'"
+      },
+      {
+        "line": 86,
+        "type": "Assign",
+        "statement": "OPEN_DECISIONS = {'D-MEM-FREE': 'R-FREE quantity on Linux (macOS vm_stat free+inactive+speculative+purgeable has no Linux identity)', 'D-MEM-WIRED': \"R-MEM step 5 'hw.memsize - W_idle' on Linux under a cgroup limit\", 'D-MEM-PRESSURE': 'memory_pressur"
+      },
+      {
+        "line": 112,
+        "type": "ClassDef",
+        "name": "StaleTmp"
+      },
+      {
+        "line": 117,
+        "type": "FunctionDef",
+        "name": "_read"
+      },
+      {
+        "line": 124,
+        "type": "FunctionDef",
+        "name": "_sha"
+      },
+      {
+        "line": 129,
+        "type": "Assign",
+        "statement": "_BOOT_ID = re.compile('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')"
+      },
+      {
+        "line": 132,
+        "type": "FunctionDef",
+        "name": "boot_id"
+      },
+      {
+        "line": 139,
+        "type": "FunctionDef",
+        "name": "ns_inode"
+      },
+      {
+        "line": 146,
+        "type": "FunctionDef",
+        "name": "machine_identity"
+      },
+      {
+        "line": 156,
+        "type": "FunctionDef",
+        "name": "proc_stat"
+      },
+      {
+        "line": 179,
+        "type": "FunctionDef",
+        "name": "cmdline_sha256"
+      },
+      {
+        "line": 185,
+        "type": "FunctionDef",
+        "name": "identity"
+      },
+      {
+        "line": 193,
+        "type": "FunctionDef",
+        "name": "_pid_exists"
+      },
+      {
+        "line": 205,
+        "type": "FunctionDef",
+        "name": "_ident_shape_ok"
+      },
+      {
+        "line": 224,
+        "type": "FunctionDef",
+        "name": "identity_state"
+      },
+      {
+        "line": 292,
+        "type": "FunctionDef",
+        "name": "clocks"
+      },
+      {
+        "line": 299,
+        "type": "FunctionDef",
+        "name": "suspend_success_count"
+      },
+      {
+        "line": 305,
+        "type": "FunctionDef",
+        "name": "snapshot"
+      },
+      {
+        "line": 310,
+        "type": "FunctionDef",
+        "name": "assess"
+      },
+      {
+        "line": 392,
+        "type": "FunctionDef",
+        "name": "power_source"
+      },
+      {
+        "line": 425,
+        "type": "FunctionDef",
+        "name": "thermal_zones"
+      },
+      {
+        "line": 445,
+        "type": "FunctionDef",
+        "name": "meminfo"
+      },
+      {
+        "line": 457,
+        "type": "FunctionDef",
+        "name": "_cg_val"
+      },
+      {
+        "line": 464,
+        "type": "FunctionDef",
+        "name": "_proc_cgroup_paths"
+      },
+      {
+        "line": 477,
+        "type": "FunctionDef",
+        "name": "memory_cgroup_chain"
+      },
+      {
+        "line": 514,
+        "type": "FunctionDef",
+        "name": "_chain_values"
+      },
+      {
+        "line": 530,
+        "type": "FunctionDef",
+        "name": "_effective_memory_limit"
+      },
+      {
+        "line": 541,
+        "type": "FunctionDef",
+        "name": "visible_limit_upper_bound"
+      },
+      {
+        "line": 552,
+        "type": "FunctionDef",
+        "name": "_cgroup_min_headroom"
+      },
+      {
+        "line": 569,
+        "type": "FunctionDef",
+        "name": "cgroup_resources"
+      },
+      {
+        "line": 602,
+        "type": "FunctionDef",
+        "name": "root_attestation"
+      },
+      {
+        "line": 618,
+        "type": "FunctionDef",
+        "name": "memory_readings"
+      },
+      {
+        "line": 638,
+        "type": "FunctionDef",
+        "name": "psi_memory"
+      },
+      {
+        "line": 650,
+        "type": "FunctionDef",
+        "name": "proc_view_complete"
+      },
+      {
+        "line": 691,
+        "type": "FunctionDef",
+        "name": "cpu_ticks"
+      },
+      {
+        "line": 714,
+        "type": "FunctionDef",
+        "name": "busy_processes"
+      },
+      {
+        "line": 778,
+        "type": "FunctionDef",
+        "name": "apt_config_dump"
+      },
+      {
+        "line": 788,
+        "type": "Assign",
+        "statement": "UNIT_ROOTS = ('/etc/systemd/system.control', '/run/systemd/system.control', '/run/systemd/transient', '/run/systemd/generator.early', '/etc/systemd/system', '/etc/systemd/system.attached', '/run/systemd/system', '/run/systemd/system.attached', '/run/"
+      },
+      {
+        "line": 793,
+        "type": "Assign",
+        "statement": "UPDATE_UNITS = ('apt-daily-upgrade.timer', 'unattended-upgrades.service')"
+      },
+      {
+        "line": 796,
+        "type": "FunctionDef",
+        "name": "_systemctl_is_enabled"
+      },
+      {
+        "line": 800,
+        "type": "FunctionDef",
+        "name": "_systemctl_is_active"
+      },
+      {
+        "line": 804,
+        "type": "FunctionDef",
+        "name": "_systemctl_query"
+      },
+      {
+        "line": 813,
+        "type": "FunctionDef",
+        "name": "_unit_files"
+      },
+      {
+        "line": 827,
+        "type": "FunctionDef",
+        "name": "unit_enabled"
+      },
+      {
+        "line": 870,
+        "type": "FunctionDef",
+        "name": "auto_update_settings"
+      },
+      {
+        "line": 904,
+        "type": "FunctionDef",
+        "name": "systemd_is_pid1"
+      },
+      {
+        "line": 911,
+        "type": "FunctionDef",
+        "name": "launched_by_systemd"
+      },
+      {
+        "line": 935,
+        "type": "FunctionDef",
+        "name": "_systemctl_show"
+      },
+      {
+        "line": 951,
+        "type": "FunctionDef",
+        "name": "durable_write"
+      },
+      {
+        "line": 990,
+        "type": "FunctionDef",
+        "name": "os_release"
+      },
+      {
+        "line": 1002,
+        "type": "FunctionDef",
+        "name": "mapped_objects"
+      },
+      {
+        "line": 1027,
+        "type": "Assign",
+        "statement": "REQUIRED_MAPPED = ('libm.so.6', 'libc.so.6', 'ld-linux')"
+      },
+      {
+        "line": 1030,
+        "type": "FunctionDef",
+        "name": "dpkg_versions"
+      },
+      {
+        "line": 1046,
+        "type": "FunctionDef",
+        "name": "_python_packages"
+      },
+      {
+        "line": 1064,
+        "type": "Assign",
+        "statement": "UNKNOWN_PACKAGE = '<unknown-interpreter-package>'"
+      },
+      {
+        "line": 1067,
+        "type": "FunctionDef",
+        "name": "pin_point"
+      },
+      {
+        "line": 1081,
+        "type": "FunctionDef",
+        "name": "platform_readings"
+      },
+      {
+        "line": 1109,
+        "type": "Assign",
+        "statement": "PIN_KEYS = ('python_executable', 'python_sha256', 'python_sys_version', 'mapped_objects', 'dpkg_versions', 'livepatch', 'os_id', 'os_version_id', 'os_version', 'kernel_release', 'machine', 'glibc')"
+      },
+      {
+        "line": 1113,
+        "type": "FunctionDef",
+        "name": "pin_mismatches"
+      },
+      {
+        "line": 1121,
+        "type": "FunctionDef",
+        "name": "free_disk_bytes"
+      },
+      {
+        "line": 1130,
+        "type": "FunctionDef",
+        "name": "_git"
+      },
+      {
+        "line": 1139,
+        "type": "FunctionDef",
+        "name": "_first_commit"
+      },
+      {
+        "line": 1145,
+        "type": "FunctionDef",
+        "name": "_strictly_after"
+      },
+      {
+        "line": 1157,
+        "type": "Assign",
+        "statement": "_VERDICT = re.compile('^\\\\s*verdict\\\\s*:', re.I)"
+      },
+      {
+        "line": 1158,
+        "type": "Assign",
+        "statement": "_NEGATIVE = re.compile('reject|withdraw|not[ _-]?accepted|revoke', re.I)"
+      },
+      {
+        "line": 1161,
+        "type": "FunctionDef",
+        "name": "_acceptances"
+      },
+      {
+        "line": 1188,
+        "type": "FunctionDef",
+        "name": "_ordered"
+      },
+      {
+        "line": 1202,
+        "type": "FunctionDef",
+        "name": "_repository_root"
+      },
+      {
+        "line": 1207,
+        "type": "FunctionDef",
+        "name": "attestation_valid"
+      },
+      {
+        "line": 1248,
+        "type": "FunctionDef",
+        "name": "_g"
+      },
+      {
+        "line": 1252,
+        "type": "Assign",
+        "statement": "_GATE_DECISION = {'ac_power': 'D-POWER-ABSENT', 'lowpowermode_0': 'D-LPM', 'thermal_pressure_0': 'D-THERMAL', 'memory_pressure_normal': 'D-MEM-PRESSURE', 'free_memory_ge_min': 'D-MEM-FREE', 'host_exclusive': ('D-EXCL-WINDOW', 'D-ALLOW-PATHS', 'D-ALLO"
+      },
+      {
+        "line": 1257,
+        "type": "Assign",
+        "statement": "MODES = ('launcher_preflight', 'execute', 'resume')"
+      },
+      {
+        "line": 1260,
+        "type": "FunctionDef",
+        "name": "_decided"
+      },
+      {
+        "line": 1267,
+        "type": "FunctionDef",
+        "name": "launch_record_ok"
+      },
+      {
+        "line": 1280,
+        "type": "FunctionDef",
+        "name": "preflight"
+      }
+    ]
+  },
+  {
+    "path": "/tmp/cell308-claude-sync-20261015/code-review-input/lx_verified.py",
+    "sha256": "b78756eb377e91c4877b5bf0f96557257da64d4ac464ae339080e9f9e0ca29a9",
+    "top_level": [
+      {
+        "line": 1,
+        "type": "Expr",
+        "statement": "\"Restricted DEV_ONLY observation composition for Cell-308 conditions A1/A2.\\n\\nThe only public inputs are a committed attestation reference and an obs"
+      },
+      {
+        "line": 14,
+        "type": "ImportFrom",
+        "import": "from __future__ import annotations"
+      },
+      {
+        "line": 16,
+        "type": "Import",
+        "import": "import lx_platform as L"
+      },
+      {
+        "line": 18,
+        "type": "Assign",
+        "statement": "__all__ = ('observe',)"
+      },
+      {
+        "line": 21,
+        "type": "FunctionDef",
+        "name": "observe"
+      }
+    ]
+  },
+  {
+    "path": "/tmp/cell308-claude-sync-20261015/code-review-input/tests/test_sync_boundaries.py",
+    "sha256": "aebecf1e4cce000c78e3ed07d7d785f6bfe9ab06dcf99a8d9327b182dd8fff5f",
+    "top_level": [
+      {
+        "line": 1,
+        "type": "Expr",
+        "statement": "'Target-free synthetic controls for the selective Claude R5 / Codex integration.\\n\\nOnly planted records, parser strings and mocked module-reader boun"
+      },
+      {
+        "line": 6,
+        "type": "ImportFrom",
+        "import": "from __future__ import annotations"
+      },
+      {
+        "line": 8,
+        "type": "Import",
+        "import": "import os"
+      },
+      {
+        "line": 9,
+        "type": "Import",
+        "import": "import subprocess"
+      },
+      {
+        "line": 10,
+        "type": "Import",
+        "import": "import sys"
+      },
+      {
+        "line": 11,
+        "type": "Import",
+        "import": "import unittest"
+      },
+      {
+        "line": 12,
+        "type": "ImportFrom",
+        "import": "from pathlib import Path"
+      },
+      {
+        "line": 13,
+        "type": "ImportFrom",
+        "import": "from unittest import mock"
+      },
+      {
+        "line": 15,
+        "type": "Assign",
+        "statement": "HERE = Path(__file__).resolve().parent"
+      },
+      {
+        "line": 16,
+        "type": "Expr",
+        "statement": "sys.path.insert(0, os.environ.get('LX_PLATFORM_DIR', str(HERE.parent)))"
+      },
+      {
+        "line": 17,
+        "type": "Import",
+        "import": "import lx_platform as L"
+      },
+      {
+        "line": 19,
+        "type": "Assign",
+        "statement": "BOOT = '0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0'"
+      },
+      {
+        "line": 20,
+        "type": "Assign",
+        "statement": "OTHER_BOOT = '11111111-2222-3333-4444-555555555555'"
+      },
+      {
+        "line": 21,
+        "type": "Assign",
+        "statement": "NS = {'pidns': 4026531836, 'timens': 4026531834}"
+      },
+      {
+        "line": 22,
+        "type": "Assign",
+        "statement": "IDENT = {'pid': 4242, 'starttime_ticks': 777, 'boot_id': BOOT, 'cmdline_sha256': 'c' * 64, **NS}"
+      },
+      {
+        "line": 23,
+        "type": "Assign",
+        "statement": "STAT = {'pid': 4242, 'state': 'S', 'ppid': 1, 'utime': 10, 'stime': 5, 'starttime': 777}"
+      },
+      {
+        "line": 24,
+        "type": "Assign",
+        "statement": "MOUNT = '36 25 0:32 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw\\n'"
+      },
+      {
+        "line": 25,
+        "type": "Assign",
+        "statement": "S = 10 ** 9"
+      },
+      {
+        "line": 28,
+        "type": "FunctionDef",
+        "name": "stat_text"
+      },
+      {
+        "line": 33,
+        "type": "FunctionDef",
+        "name": "snap"
+      },
+      {
+        "line": 40,
+        "type": "ClassDef",
+        "name": "TestIdentityEvidence"
+      },
+      {
+        "line": 100,
+        "type": "ClassDef",
+        "name": "TestIntervalEvidence"
+      },
+      {
+        "line": 169,
+        "type": "ClassDef",
+        "name": "TestCpuWindowEvidence"
+      },
+      {
+        "line": 244,
+        "type": "ClassDef",
+        "name": "TestProcViewEvidence"
+      },
+      {
+        "line": 274,
+        "type": "ClassDef",
+        "name": "TestMemoryMinima"
+      },
+      {
+        "line": 292,
+        "type": "ClassDef",
+        "name": "TestGitRefusal"
+      },
+      {
+        "line": 329,
+        "type": "ClassDef",
+        "name": "TestUnitQueryEvidence"
+      },
+      {
+        "line": 351,
+        "type": "If",
+        "statement": "if __name__ == '__main__':\n    unittest.main()"
+      }
+    ]
+  },
+  {
+    "path": "/tmp/cell308-claude-sync-20261015/code-review-input/tests/test_lx_verified.py",
+    "sha256": "041b8dcf15fe5c998f140f9a9126676f301ea52401fc08eeb77069a738a4c781",
+    "top_level": [
+      {
+        "line": 1,
+        "type": "Expr",
+        "statement": "'Synthetic DEV observer tests: canonical verification, no host or science reads.\\n\\nTemporary Git repositories supply committed fixture evidence with "
+      },
+      {
+        "line": 8,
+        "type": "ImportFrom",
+        "import": "from __future__ import annotations"
+      },
+      {
+        "line": 10,
+        "type": "Import",
+        "import": "import ast"
+      },
+      {
+        "line": 11,
+        "type": "Import",
+        "import": "import hashlib"
+      },
+      {
+        "line": 12,
+        "type": "Import",
+        "import": "import inspect"
+      },
+      {
+        "line": 13,
+        "type": "Import",
+        "import": "import json"
+      },
+      {
+        "line": 14,
+        "type": "Import",
+        "import": "import os"
+      },
+      {
+        "line": 15,
+        "type": "Import",
+        "import": "import subprocess"
+      },
+      {
+        "line": 16,
+        "type": "Import",
+        "import": "import sys"
+      },
+      {
+        "line": 17,
+        "type": "Import",
+        "import": "import tempfile"
+      },
+      {
+        "line": 18,
+        "type": "Import",
+        "import": "import unittest"
+      },
+      {
+        "line": 19,
+        "type": "ImportFrom",
+        "import": "from contextlib import ExitStack"
+      },
+      {
+        "line": 20,
+        "type": "ImportFrom",
+        "import": "from pathlib import Path"
+      },
+      {
+        "line": 21,
+        "type": "ImportFrom",
+        "import": "from unittest import mock"
+      },
+      {
+        "line": 23,
+        "type": "Assign",
+        "statement": "HERE = Path(__file__).resolve().parent"
+      },
+      {
+        "line": 24,
+        "type": "Assign",
+        "statement": "LXDIR = os.environ.get('LX_PLATFORM_DIR', str(HERE.parent))"
+      },
+      {
+        "line": 25,
+        "type": "Expr",
+        "statement": "sys.path.insert(0, str(HERE.parent))"
+      },
+      {
+        "line": 26,
+        "type": "Expr",
+        "statement": "sys.path.insert(0, LXDIR)"
+      },
+      {
+        "line": 27,
+        "type": "Import",
+        "import": "import lx_platform as L"
+      },
+      {
+        "line": 28,
+        "type": "Import",
+        "import": "import lx_verified as V"
+      },
+      {
+        "line": 30,
+        "type": "Assign",
+        "statement": "BOOT = '0f1e2d3c-4b5a-6978-8796-a5b4c3d2e1f0'"
+      },
+      {
+        "line": 31,
+        "type": "Assign",
+        "statement": "MACHINE = {'machine_id_sha256': 'a' * 64, 'product_uuid_sha256': 'b' * 64, 'hardware_bound': True}"
+      },
+      {
+        "line": 32,
+        "type": "Assign",
+        "statement": "DEFAULT_DECIDED = L.DECIDED"
+      },
+      {
+        "line": 33,
+        "type": "Assign",
+        "statement": "DEFAULT_PIN_MODULES = L.PIN_POINT_MODULES"
+      },
+      {
+        "line": 34,
+        "type": "Assign",
+        "statement": "DEFAULT_JOURNAL_REVIEWED = L.JOURNAL_READER_REVIEWED"
+      },
+      {
+        "line": 37,
+        "type": "ClassDef",
+        "name": "TestVerifiedObservation"
+      },
+      {
+        "line": 382,
+        "type": "If",
+        "statement": "if __name__ == '__main__':\n    unittest.main()"
+      }
+    ]
+  }
+]

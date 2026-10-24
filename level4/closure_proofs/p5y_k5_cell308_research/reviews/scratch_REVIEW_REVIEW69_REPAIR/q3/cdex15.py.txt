@@ -1,0 +1,26 @@
+import ast, difflib, sys, re
+S = sys.argv[1]; T = sys.argv[2]
+def reg(path):
+    src = open(path).read()
+    m = src.index("MUTANTS = [")
+    end = src.index("\nMUTANT_GROUP_SIZES")
+    return ast.literal_eval(src[m + len("MUTANTS = "):end])
+old = {m: e for m, _, e in reg(f"{S}/q3/old/run_mutants.py.txt")}
+new = {m: e for m, _, e in reg(f"{T}/tests/run_mutants.py")}
+osrc = open(f"{S}/q3/old/lx_platform.py").read(); nsrc = open(f"{T}/lx_platform.py").read()
+def apply(src, edits):
+    for o, n in edits:
+        assert src.count(o) == 1, (src.count(o), o[:60]); src = src.replace(o, n)
+    return src
+for mid in ("CDEX15",):
+    print("old anchor count in old src", [osrc.count(o) for o, _ in old[mid]], "in new src", [nsrc.count(o) for o, _ in old[mid]])
+    a = list(difflib.unified_diff(osrc.splitlines(), apply(osrc, old[mid]).splitlines(), lineterm="", n=3))
+    b = list(difflib.unified_diff(nsrc.splitlines(), apply(nsrc, new[mid]).splitlines(), lineterm="", n=3))
+    strip = lambda d: [l for l in d if not l.startswith("@@")]
+    print("\n".join(a)); print("----"); print("\n".join(b)); print("same hunk text:", strip(a) == strip(b))
+# changed registry entries
+print("ids changed:", [m for m in new if m in old and new[m] != old[m]], "added:", [m for m in new if m not in old], "removed:", [m for m in old if m not in new])
+for m in old:
+    if m in new and new[m] == old[m]:
+        c = [nsrc.count(o) for o, _ in new[m]]
+        if c != [1] * len(c): print("anchor problem", m, c)

@@ -1,0 +1,75 @@
+{
+  "all_input_hashes_match": true,
+  "files": [
+    {
+      "path": ".github/workflows/cell-308-r5-integration.yml",
+      "expected": "49a2c918b694ed1095a04565917d88a476e9071c1165301a07899c185b4524c9",
+      "sha256": "49a2c918b694ed1095a04565917d88a476e9071c1165301a07899c185b4524c9",
+      "matches": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_inventory.py",
+      "expected": "8ea74ed3621e805066727a4ca3f20253f9a85c90857aca8d8e41e02607cfa597",
+      "sha256": "8ea74ed3621e805066727a4ca3f20253f9a85c90857aca8d8e41e02607cfa597",
+      "matches": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_platform.py",
+      "expected": "2f0489d376a7129ce4416004c37d1cf66f2bcfbede5a653ed068e382919fae15",
+      "sha256": "2f0489d376a7129ce4416004c37d1cf66f2bcfbede5a653ed068e382919fae15",
+      "matches": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_portmap.py",
+      "expected": "81dc94e9d8bbc4471dc04f3211613f6778e5d0ddc98b60e970c9e59c3445b89d",
+      "sha256": "81dc94e9d8bbc4471dc04f3211613f6778e5d0ddc98b60e970c9e59c3445b89d",
+      "matches": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/lx_verified.py",
+      "expected": "b78756eb377e91c4877b5bf0f96557257da64d4ac464ae339080e9f9e0ca29a9",
+      "sha256": "b78756eb377e91c4877b5bf0f96557257da64d4ac464ae339080e9f9e0ca29a9",
+      "matches": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/run_mutants.py",
+      "expected": "5d0e3b2b93441d438d574ce68fcc652337c16cb3209a98a3d0765d76f6e481cc",
+      "sha256": "5d0e3b2b93441d438d574ce68fcc652337c16cb3209a98a3d0765d76f6e481cc",
+      "matches": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_platform.py",
+      "expected": "b6ec81b5f4d65537e8dd9bc319c84e68e410eeafe7e0fe2f855aa3c5cdfb1dd4",
+      "sha256": "b6ec81b5f4d65537e8dd9bc319c84e68e410eeafe7e0fe2f855aa3c5cdfb1dd4",
+      "matches": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py",
+      "expected": "e1214c519c0cfb2fa8fedb890da54208f2c206c0cfe3ae696974170a731811c2",
+      "sha256": "e1214c519c0cfb2fa8fedb890da54208f2c206c0cfe3ae696974170a731811c2",
+      "matches": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_mutation_harness.py",
+      "expected": "c712c0b9a898d8bb98cf4100d8fd7d638481512f7279dc6dd29f9d613eed00cf",
+      "sha256": "c712c0b9a898d8bb98cf4100d8fd7d638481512f7279dc6dd29f9d613eed00cf",
+      "matches": true
+    },
+    {
+      "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_sync_boundaries.py",
+      "expected": "e305c7f847c2dd1a807c4e14eb1bfd965259753ab9655b486d96a168818e4451",
+      "sha256": "e305c7f847c2dd1a807c4e14eb1bfd965259753ab9655b486d96a168818e4451",
+      "matches": true
+    }
+  ],
+  "AST_equal_after_only_documentation_and_workflow_path_normalization": {
+    "run_mutants.py": true,
+    "test_mutation_harness.py": true
+  },
+  "workflow_equal_after_only_display_label_and_self_path_normalization": true,
+  "diffs": {
+    "run_mutants.py": "--- previous/run_mutants.py\n+++ path-delta/run_mutants.py\n@@ -1,4 +1,4 @@\n-\"\"\"Strict, target-free mutation evidence for the combined Cell308 development layer.\n+\"\"\"Strict, target-free mutation evidence for the combined Cell-308 development layer.\n \n Retains Claude revision-5 M/R/X/N/Y/P/Z/Q properties. CDEX01-CDEX15 are origin-qualified\n Codex property deltas (Y/P/F in its independent lineage); CDEX16 covers the combined\n@@ -873,7 +873,7 @@\n def input_paths() -> list[Path]:\n     \"\"\"All development Python inputs plus the exact CI entry point; no namespace-wide scan.\"\"\"\n     return sorted([*HERE.parent.glob(\"*.py\"), *HERE.glob(\"*.py\"),\n-                   HERE.parents[5] / \".github/workflows/cell308-r5-integration.yml\"])\n+                   HERE.parents[5] / \".github/workflows/cell-308-r5-integration.yml\"])\n \n \n def input_hashes() -> dict[str, str]:\n",
+    "test_mutation_harness.py": "--- previous/test_mutation_harness.py\n+++ path-delta/test_mutation_harness.py\n@@ -275,7 +275,7 @@\n                          \"tests/test_sync_boundaries.py\", \"tests/test_lx_verified.py\", \"tests/test_mutation_harness.py\",\n                          \"tests/run_mutants.py\"):\n             self.assertTrue(any(key.endswith(\"/\" + filename) for key in hashes), filename)\n-        self.assertIn(\".github/workflows/cell308-r5-integration.yml\", hashes)\n+        self.assertIn(\".github/workflows/cell-308-r5-integration.yml\", hashes)\n \n \n if __name__ == \"__main__\":\n",
+    "workflow": "--- .github/workflows/cell308-r5-integration.yml\n+++ .github/workflows/cell-308-r5-integration.yml\n@@ -1,4 +1,4 @@\n-name: Cell308 R5 combined synthetic evidence\n+name: Cell-308 R5 combined synthetic evidence\n \n on:\n   push:\n@@ -6,7 +6,7 @@\n     paths:\n       - level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/*.py\n       - level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/*.py\n-      - .github/workflows/cell308-r5-integration.yml\n+      - .github/workflows/cell-308-r5-integration.yml\n   workflow_dispatch:\n \n permissions:\n"
+  }
+}

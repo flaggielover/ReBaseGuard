@@ -1,0 +1,216 @@
+{
+ "source_sha256": "6d114218bcf96a7720d09958a8bf7b3585b7c5d9e017d6f112a15a1baed4af65",
+ "baseline_ran": 198,
+ "baseline_pass": true,
+ "expected_test_count": 198,
+ "mutants": [
+  {
+   "id": "RW1",
+   "property": "an EMPTY blob-commit set no longer refuses (all() over no blob commits is vacuously ordered)",
+   "witnesses": [
+    "test_accepting_line_must_post_date_the_attested_blob",
+    "test_review63_order_every_commit_merges_and_side_branches"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    if not blob_commits or not line_commits:\n",
+     "new": "    if not line_commits:\n"
+    }
+   ],
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 198,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "760621710fdad58f74c672e4017c58203075230f7e9890c963cf3028b44033b8"
+  },
+  {
+   "id": "RW2",
+   "property": "file mode: a dangling link that is the highest-precedence entry no longer shadows a lower mask",
+   "witnesses": [
+    "test_review63_upholds_and_mask_precedence",
+    "test_unit_enabled_from_every_root"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "        if first is None and (f.is_symlink() or f.exists()):",
+     "new": "        if first is None and f.exists():"
+    }
+   ],
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 198,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "62f0697268705fb0a0d62818fc606f187a611c9acfe1a804c10a2430b62c2de0"
+  },
+  {
+   "id": "RW3",
+   "property": "history scan: a historical review path that is not UTF-8 is skipped instead of refusing",
+   "witnesses": [
+    "test_review63_rejection_is_permanent",
+    "test_malformed_listing_and_nonutf8_review_blob_refuse_verification"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "                seen.setdefault(parts[2].decode(\"ascii\"), name.decode(\"utf-8\", errors=\"strict\"))\n            except UnicodeDecodeError:\n                return None\n",
+     "new": "                seen.setdefault(parts[2].decode(\"ascii\"), name.decode(\"utf-8\", errors=\"strict\"))\n            except UnicodeDecodeError:\n                continue\n"
+    }
+   ],
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 198,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "43ef60a089e856972153059202e5b10c17cb3f81cd462b053d3e7d2770716dbf"
+  },
+  {
+   "id": "RW4",
+   "property": "accepting file: the accepting verdict line may appear more than once (exactly ONE verdict-like line)",
+   "witnesses": [
+    "test_review63_verdict_like_lines_refuse_acceptance",
+    "test_acceptance_is_found_not_named",
+    "test_fixed_review_set_requires_direct_named_md_and_exact_verdict"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "and verdicts == [ACCEPTANCE_VERDICT_LINE]:",
+     "new": "and set(verdicts) == {ACCEPTANCE_VERDICT_LINE}:"
+    }
+   ],
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 198,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "4e5bbd7f6ad5fa2c303e3cb6a28c19d28037a816eb92a81f187bef4a1685f8a9"
+  },
+  {
+   "id": "RW5",
+   "property": "an 8-hex prefix no longer names the attestation (9 or more needed)",
+   "witnesses": [
+    "test_review63_veto_words_and_references"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "_HEX_TOKEN = re.compile(r\"[0-9A-Fa-f]{8,64}\")",
+     "new": "_HEX_TOKEN = re.compile(r\"[0-9A-Fa-f]{9,64}\")"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 198,
+   "returncode": 1,
+   "failed_methods": [
+    "test_review63_veto_words_and_references"
+   ],
+   "mutated_sha256": "0913887c695d00883da9cace697bca9d4e24830323cc5d55a8710f6839c85886"
+  },
+  {
+   "id": "RW6",
+   "property": "accepting-line commits searched on the first-parent chain only (side-branch acceptance commits unseen)",
+   "witnesses": [
+    "test_review63_order_every_commit_merges_and_side_branches"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    line_commits = _commits(repo_root, pick, \"HEAD\")\n",
+     "new": "    line_commits = _commits(repo_root, pick, \"--first-parent\", \"HEAD\")\n"
+    }
+   ],
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 198,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "6d40a64ae30c74baeec9b6bd45b68bebae440b37e18ec947fbae780f74801010"
+  },
+  {
+   "id": "W03r",
+   "property": "review 63 W03 re-run alone on this source (shape check only lower-cases the boot id)",
+   "witnesses": [
+    "test_review63_shape_rejects_uppercase_digest_and_boot_id"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "    if b is not None and (not isinstance(b, str) or not _BOOT_ID.fullmatch(b)):",
+     "new": "    if b is not None and (not isinstance(b, str) or not _BOOT_ID.fullmatch(b.lower())):"
+    }
+   ],
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 198,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "6b5f02f195a9d38b9f426efdbd5f0ce5766ccae3fcf8c4df85ea58b4fde5a748"
+  },
+  {
+   "id": "W08r",
+   "property": "review 63 W08 re-run: a failed is-enabled query treated like not-found",
+   "witnesses": [
+    "test_failed_systemctl_query_is_no_reading",
+    "test_systemctl_path_when_systemd_is_pid1"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "        if st == \"not-found\":",
+     "new": "        if st in (\"not-found\", None):"
+    }
+   ],
+   "status": "KILLED",
+   "reasons": [],
+   "ran": 198,
+   "returncode": 1,
+   "failed_methods": [
+    "test_systemctl_path_when_systemd_is_pid1"
+   ],
+   "mutated_sha256": "311410a1eb74de334aca0959a31032866bc454712eeb3a31d037f7b74e9e1ccf"
+  },
+  {
+   "id": "Q04s",
+   "property": "harness Q04 as it stood at 670ec7a4 (single site: second verdict tolerated at the acceptance check)",
+   "witnesses": [
+    "test_acceptance_is_found_not_named"
+   ],
+   "anchor_counts": [
+    1
+   ],
+   "edits": [
+    {
+     "old": "and verdicts == [ACCEPTANCE_VERDICT_LINE]:",
+     "new": "and ACCEPTANCE_VERDICT_LINE in verdicts:"
+    }
+   ],
+   "status": "SURVIVED",
+   "reasons": [],
+   "ran": 198,
+   "returncode": 0,
+   "failed_methods": [],
+   "mutated_sha256": "7a497c00268acc918be7adf028d3de52325bc56bff71a411e0a4722558ce66f9"
+  }
+ ]
+}

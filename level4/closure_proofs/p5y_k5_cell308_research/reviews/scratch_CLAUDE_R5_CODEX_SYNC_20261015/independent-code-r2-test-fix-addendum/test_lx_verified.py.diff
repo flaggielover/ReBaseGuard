@@ -1,0 +1,13 @@
+--- 7eb9bbd999a1ec07d31a15f0b391fcc32ffa4d6b:level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py
++++ /Users/suzhe/.codex/worktrees/cell308-claude-r5-sync/ReBaseGuard/level4/closure_proofs/p5y_k5_cell308_research/streams/CLOUD_R1_LINUX_DEV/tests/test_lx_verified.py
+@@ -269,8 +269,8 @@
+             {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}SYNTHETIC.md": f"{L.ACCEPTANCE_LINE}<SHA>\n"},
+             {f"{L.ACCEPTANCE_REVIEW_DIR}/{L.ACCEPTANCE_REVIEW_PREFIX}SYNTHETIC.md": text + "Verdict: extra\n"},
+         )
+-        for reviews in cases:
+-            with self.subTest(reviews=list(reviews)):
++        for case_index, reviews in enumerate(cases):
++            with self.subTest(case_index=case_index, reviews=list(reviews)):
+                 # Remove prior reviews inside this synthetic repository only.
+                 for old in (self.repo / L.ACCEPTANCE_REVIEW_DIR).rglob("*"):
+                     if old.is_file():
