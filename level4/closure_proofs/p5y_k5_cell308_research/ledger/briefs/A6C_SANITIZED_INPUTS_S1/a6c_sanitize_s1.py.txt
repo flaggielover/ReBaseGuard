@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+"""A6c sanitized input set S1: line-for-line redaction of B2-derived material. No network use.
+
+Usage: python3 -I a6c_sanitize_s1.py <repo root> <output dir>
+Reads each source from its git object at the commit that the verified manifest R1 pins for it, and verifies the
+manifest's length and SHA-256 for it. Replaces each listed line by a marker of the same Markdown kind (line numbers are preserved), appends one trailer line, and writes the artifact.
+Redacted lines are never printed.
+"""
+import hashlib
+import json
+import subprocess
+import sys
+
+BASE = "level4/closure_proofs/p5y_k5_cell308_research/"
+MANIFEST_COMMIT = "be78ccd5286ad0de4548e04361b3798d331f89bb"
+MANIFEST_PATH = BASE + "ledger/briefs/A6C_PHASE2_MANIFEST_R1.json"
+MANIFEST_BYTES = 20603
+MANIFEST_SHA256 = "45e2d97dbb07a24ef40d0a9027e2c67c08b6e44b36626742b46b9e68ec363999"
+CLASSES = {
+    "P": "B2-derived content attributed to a non-manifest B2 source",
+    "Q": "verbatim quotation attributed to a non-manifest B2 source",
+    "R": "reference to the historical T6 mitigation series, B2-derived",
+    "T": "out-of-scope T6 analysis built on B2-derived material",
+    "S": "pointer to a non-manifest B2 source file",
+}
+SOURCES = [
+    ("reviews/external/REVIEW_EXTERNAL_B3_PROVENANCE.md",
+     {11: "S", 18: "R", 30: "S", 51: "S", 155: "R", 157: "P", 159: "Q", 161: "P", 163: "P", 165: "T", 167: "T",
+      169: "P", 170: "P", 171: "P", 172: "P", 173: "P", 174: "P", 175: "P", 177: "T", 197: "T", 199: "R",
+      211: "R", 242: "S", 243: "S"}),
+    ("governance/new_host_route_cloud_r1/PROVENANCE_DISPOSITION_RECORD_B3_20261016.md",
+     {127: "R", 131: "R"}),
+    ("reviews/external/CONFIRMATION_EXTERNAL_B3_CORRECTIONS.md",
+     {33: "R", 60: "R", 61: "R", 69: "T", 70: "T", 71: "T", 72: "T", 98: "R", 100: "R", 102: "R",
+      118: "R"}),
+]
+
+
+def marker(orig, n, cls):
+    text = "[A6C-SANITIZED S1: original line %d redacted, class %s: %s]" % (n, cls, CLASSES[cls])
+    if orig.startswith("#"):
+        return orig[:len(orig) - len(orig.lstrip("#"))] + " " + text
+    if orig.startswith("|"):
+        cols = len(orig.strip().strip("|").split("|"))
+        if set(orig.replace("|", "").strip()) <= set("-: "):
+            return orig
+        return "| " + text + " |" + " |" * (cols - 1)
+    return text
+
+
+def git_blob(root, spec):
+    return subprocess.run(["git", "-C", root, "cat-file", "-p", spec], capture_output=True, check=True).stdout
+
+
+def main(root, out):
+    raw = git_blob(root, MANIFEST_COMMIT + ":" + MANIFEST_PATH)
+    if len(raw) != MANIFEST_BYTES or hashlib.sha256(raw).hexdigest() != MANIFEST_SHA256:
+        sys.exit("STOP: manifest R1 mismatch")
+    pinned = {e["path"]: e for e in json.loads(raw)["entries"]}
+    for rel, redact in SOURCES:
+        e = pinned[BASE + rel]
+        COMMIT, size, sha = e["commit"], e["bytes"], e["sha256"]
+        data = git_blob(root, COMMIT + ":" + BASE + rel)
+        if len(data) != size or hashlib.sha256(data).hexdigest() != sha:
+            sys.exit("STOP: source mismatch " + rel)
+        lines = data.decode("utf-8").split("\n")
+        assert lines[-1] == "", rel
+        for n, cls in sorted(redact.items()):
+            assert lines[n - 1].strip(), (rel, n)
+            lines[n - 1] = marker(lines[n - 1], n, cls)
+        counts = {c: sum(1 for v in redact.values() if v == c) for c in sorted(set(redact.values()))}
+        trailer = ("[A6C-SANITIZED S1 artifact of %s at %s (%d bytes, sha256 %s). %d lines redacted line-for-line "
+                   "(%s); every other line is byte-identical to the original; line numbers are preserved.]"
+                   % (BASE + rel, COMMIT, size, sha, len(redact), ", ".join("%s=%d" % kv for kv in counts.items())))
+        lines.insert(len(lines) - 1, trailer)
+        name = rel.rsplit("/", 1)[1].replace(".md", ".A6C_SANITIZED_S1.md")
+        text = "\n".join(lines).encode("utf-8")
+        open(out + "/" + name, "wb").write(text)
+        print(name, len(text), hashlib.sha256(text).hexdigest())
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2])
