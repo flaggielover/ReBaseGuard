@@ -1,0 +1,70 @@
+A6C BRIEF, PROTOCOL ERRATUM A6C-E15: SANITIZED INPUT SET S1 AND PINNED MANIFEST R2 (Cell-308 MB-S new-host route, Cloud r1)
+
+STATUS: PROPOSED. NOT IN FORCE until the owner adopts it by a recorded owner decision.
+Prepared by the recorder (claude_cloud_recorder_20261022) at the owner's direction (option B2, 2026-10-24).
+
+NAMING. Brief errata carry the prefix "A6C-". Readiness-matrix errata carry the prefix "RM-". So the brief erratum
+adopted on 2026-10-24 is A6C-E14 (file A6C_REDERIVATION_CLOUD_R1_ERRATUM_E14.txt), and this erratum is A6C-E15. The
+readiness-matrix errata are RM-E1 to RM-E15 (files READINESS_MATRIX_R4_ERRATUM_E1 ... _E15), and the next is RM-E16.
+
+WHAT THIS AMENDS. The canonical A6c brief stays byte-unchanged:
+  level4/closure_proofs/p5y_k5_cell308_research/ledger/briefs/A6C_REDERIVATION_CLOUD_R1.txt
+  at commit 797248fcdc45038eb10254b223a3a40838174c63, 17499 bytes,
+  sha256 489dec78a91aa0945f866ad6bbb72590988bcee0872961e45f279f76bf472f0c.
+This erratum also amends A6C-E14 (commit cd2fb2340b3a51f0b3e03c3a9e7dfc63279e5dd4, 4293 bytes,
+sha256 13622974f3f9f961ec6f8a41a6d33ef1279c0156a21397bbcd479c55bd83a39e).
+Precedence, highest first: this erratum, then A6C-E14, then the brief. In every other respect the earlier texts govern.
+
+A6C-E15.1  THE PINNED MANIFEST (supersedes the manifest binding in A6C-E14.1 and the values in A6C-E14.2 item 2)
+  path:    level4/closure_proofs/p5y_k5_cell308_research/ledger/briefs/A6C_PHASE2_MANIFEST_R2.json
+  commit:  0c6c0a30f321ecc3d9891acef9fb5d99e1e6ffef
+  bytes:   20981
+  sha256:  a12470137f0f34c0a687a07c2b8f5e45517acd29ffc377143c50ae2e6e3c07cf
+  raw URL: https://raw.githubusercontent.com/flaggielover/ReBaseGuard/0c6c0a30f321ecc3d9891acef9fb5d99e1e6ffef/level4/closure_proofs/p5y_k5_cell308_research/ledger/briefs/A6C_PHASE2_MANIFEST_R2.json
+
+  The manifest holds exactly 40 entries, numbered 1-40: 39 Part 1 and 1 Part 2. The scope is the same 40 files as
+  manifest R1, except that entries 4, 6 and 7 are sanitized copies (input set S1, commit
+  90d12cef2b97980991888a1cde819829c9a361ea). Manifest R1 (be78ccd5, 45e2d97d...3999) is no longer used.
+
+A6C-E15.2  SANITIZED ENTRIES 4, 6 AND 7
+  * Each sanitized entry reproduces its original line for line. Every redacted line is replaced, at the same line
+    number, by a marker beginning "[A6C-SANITIZED S1: original line N redacted, class X". A final trailer line cites
+    the original's pin.
+  * The markers are expected content. A marker is not a mismatch and not an exposure. Cite sanitized entries by their
+    line numbers, which equal the original line numbers.
+  * Do not fetch, seek, reconstruct or infer the redacted lines. Do not fetch the original entries 4, 6 or 7 at
+    4f814796. Neither is an input.
+  * A redacted line that an item needs makes that item NOT_DETERMINABLE, with the marker's line number cited.
+
+A6C-E15.3  OUT OF SCOPE: B2-DERIVED INCIDENT-REVIEW MATERIAL
+  B2-derived incident-review material is OUT OF SCOPE for A6c. It means:
+    * the B2 report and the B2 T6-mitigation supplement, and any content attributed to them (B2Q, B2S);
+    * any quotation of the T6 definition;
+    * the content of the historical T6 mitigation series;
+    * any analysis of T6 transfer or T6 dependency built on that material.
+  Do not fetch, seek, reconstruct or infer it. "T6 applicability" stays out of scope (brief line 114).
+
+A6C-E15.4  NOT B2-DERIVED BY ITSELF (context that does not trigger A6C-E15.6)
+  * the term "T6", the names ER-T6 and T6_TRANSFER, and their verdict labels such as TRANSFERS_UNMET;
+  * the gate designations B1-B9, including "B2" as a gate;
+  * the role names B1, B2 and B3 where they appear in a list of roles.
+
+A6C-E15.5  PHASE 1 (all future candidates)
+  Brief line 16 stands as written: in Phase 1, fetch nothing except the brief. Owner decision A1 applied to candidate
+  5 only. A6C-E14, this erratum and manifest R2 are fetched only after the owner's proceed instruction:
+    * each from its raw URL at its pinned commit;
+    * each verified by length and SHA-256 before reading.
+
+A6C-E15.6  ADDED STOP CONDITION
+  * Any B2-derived incident-review material (A6C-E15.3) reaching you, from any entry, in any form: stop, quote
+    nothing, and disclose only the entry number and line number.
+
+A6C-E15.7  ADDED TO THE DECLINE LIST
+  Decline if you are A6c candidate 1, 2, 3, 4 or 5, or the A6b External Candidate.
+
+A6C-E15.8  UNCHANGED
+  * A6C-E14.2 steps 1 and 3-5, applied to manifest R2.
+  * A6C-E14.3: the 40-file scope; Parts A, B and C; Part D / A16 NOT_IN_SCOPE; the brief's proposed
+    documentation-site list; the result vocabulary; OUTPUT; the STOP CONDITIONS; every prohibition; owner decision E-5.
+  * A6C-E14.5 and A6C-E14.6, with manifest R2's length and SHA-256 in place of R1's.
+  * Re-derivation cures no later-proven role, exposure, independence or control violation.
