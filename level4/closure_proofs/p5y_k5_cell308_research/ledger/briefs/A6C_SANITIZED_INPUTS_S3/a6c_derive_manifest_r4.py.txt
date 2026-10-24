@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""Derive A6c manifest R4 from the verified manifest R3 and the sanitized input set S3. No network use.
+
+Usage: python3 -I a6c_derive_manifest_r4.py <repo root> <S3 commit> <output manifest.json>
+Entries 9, 10, 11, 12, 23 and 25 are repointed to their S3 artifacts at the S3 commit, with bytes and SHA-256 read from
+the git objects. Every other entry, including the S1 entries 4, 6, 7 and the S2 entry 24, is copied from R3 unchanged.
+Serialization as R1-R3: sorted keys, compact separators, one LF.
+"""
+import hashlib
+import json
+import subprocess
+import sys
+
+BASE = "level4/closure_proofs/p5y_k5_cell308_research/"
+R3_COMMIT = "558a3dbd32623ee152feef7f74218813eafb8030"
+R3_PATH = BASE + "ledger/briefs/A6C_PHASE2_MANIFEST_R3.json"
+R3_BYTES = 21101
+R3_SHA256 = "eb93d4f17e745bbba818a17f9f86f0e29880ba7b535d61db8fb0412553a04fa1"
+RAW = "https://raw.githubusercontent.com/flaggielover/ReBaseGuard/{commit}/{path}"
+S3_DIR = BASE + "ledger/briefs/A6C_SANITIZED_INPUTS_S3/"
+REPOINT = {9: "SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1.A6C_SANITIZED_S3.md",
+           10: "SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1_ERRATUM_E1.A6C_SANITIZED_S3.md",
+           11: "SUCCESSOR_ROUTE_AUDIT_308_ADDENDUM_A1.A6C_SANITIZED_S3.md",
+           12: "SUCCESSOR_ROUTE_AUDIT_308_ADDENDUM_A1_ERRATUM_E1.A6C_SANITIZED_S3.md",
+           23: "PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R5.A6C_SANITIZED_S3.md",
+           25: "PROPOSED_ROUTE_AMENDMENT_CLOUD_R1_A1_R5_ERRATUM_E2.A6C_SANITIZED_S3.md"}
+
+
+def blob(root, spec):
+    return subprocess.run(["git", "-C", root, "cat-file", "-p", spec], capture_output=True, check=True).stdout
+
+
+def main(root, s3, out):
+    raw = blob(root, R3_COMMIT + ":" + R3_PATH)
+    if len(raw) != R3_BYTES or hashlib.sha256(raw).hexdigest() != R3_SHA256:
+        sys.exit("STOP: manifest R3 mismatch")
+    r3 = json.loads(raw)
+    entries = []
+    for e in r3["entries"]:
+        e = dict(e)
+        if e["n"] in REPOINT:
+            path = S3_DIR + REPOINT[e["n"]]
+            data = blob(root, s3 + ":" + path)
+            e.update(commit=s3, path=path, bytes=len(data), sha256=hashlib.sha256(data).hexdigest(),
+                     url=RAW.format(commit=s3, path=path))
+        entries.append(e)
+    assert [e["n"] for e in entries] == list(range(1, 41))
+    sets = dict(r3["sanitized_sets"])
+    sets["S3"] = {"commit": s3, "entries": sorted(REPOINT)}
+    manifest = {"brief_sha256": r3["brief_sha256"], "part1_commit": r3["part1_commit"],
+                "part2_commit": r3["part2_commit"], "sanitized_sets": sets,
+                "supersedes_manifest_sha256": R3_SHA256, "entries": entries}
+    text = json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n"
+    open(out, "w", encoding="utf-8").write(text)
+    print("entries", len(entries))
+    print("manifest_bytes", len(text.encode("utf-8")))
+    print("manifest_sha256", hashlib.sha256(text.encode("utf-8")).hexdigest())
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2], sys.argv[3])
